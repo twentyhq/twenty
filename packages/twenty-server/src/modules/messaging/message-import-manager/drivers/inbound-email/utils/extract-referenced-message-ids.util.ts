@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MessageHeader } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageHeader } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 const MESSAGE_ID_PATTERN = /<[^<>\s]{1,996}>/g;
 

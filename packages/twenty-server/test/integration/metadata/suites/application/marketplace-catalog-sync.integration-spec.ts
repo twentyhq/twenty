@@ -12,7 +12,7 @@ import { findApplicationRegistrationByUniversalIdentifier } from 'test/integrati
 import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
 import { syncMarketplaceCatalogFromRegistryPackage } from 'test/integration/metadata/suites/application/utils/sync-marketplace-catalog-from-registry-package.util';
 import { upsertApplicationRegistrationFromCatalog } from 'test/integration/metadata/suites/application/utils/upsert-application-registration-from-catalog.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
@@ -210,7 +210,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
           expect(registration).toMatchObject({ isVetted: !isVetted });
 
-          const updateResponse = await makeAdminPanelAPIRequest({
+          const updateResponse = await makeAdminPanelApiRequest({
             query: gql`
               mutation UpdateAdminApplicationRegistration(
                 $input: AdminUpdateApplicationRegistrationInput!
@@ -233,7 +233,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
           await applicationRegistrationService.upsertFromCatalog(catalogParams);
 
-          const refreshedResponse = await makeAdminPanelAPIRequest({
+          const refreshedResponse = await makeAdminPanelApiRequest({
             query: gql`
               query FindOneAdminApplicationRegistration($id: String!) {
                 findOneAdminApplicationRegistration(id: $id) {

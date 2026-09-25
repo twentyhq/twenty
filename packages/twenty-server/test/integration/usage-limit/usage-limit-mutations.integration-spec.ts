@@ -1,4 +1,4 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -72,7 +72,7 @@ describe('Usage limit mutations', () => {
   const createUsageLimitRequest = (
     overrides: Partial<CreateUsageLimitInput> = {},
   ) =>
-    makeMetadataAPIRequest({
+    makeMetadataApiRequest({
       query: CREATE_USAGE_LIMIT,
       variables: { input: buildPayload(overrides) },
     });
@@ -81,13 +81,13 @@ describe('Usage limit mutations', () => {
     id: string,
     overrides: Partial<CreateUsageLimitInput> = {},
   ) =>
-    makeMetadataAPIRequest({
+    makeMetadataApiRequest({
       query: UPDATE_USAGE_LIMIT,
       variables: { input: { id, payload: buildPayload(overrides) } },
     });
 
   const findQuotasWithConsumption = async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: USAGE_QUOTAS_WITH_CONSUMPTION,
     });
 
@@ -229,7 +229,7 @@ describe('Usage limit mutations', () => {
     it('removes the limit from the list', async () => {
       const usageLimitId = await createUsageLimit();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId },
       });
@@ -239,7 +239,7 @@ describe('Usage limit mutations', () => {
     });
 
     it('reports nothing deleted for an unknown id', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId: '20202020-0000-4000-8000-000000000000' },
       });
@@ -303,7 +303,7 @@ describe('Usage limit mutations', () => {
     it('refuses a workspace delete of one', async () => {
       const usageLimit = await seedOperatorRow();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId: usageLimit.id },
       });
@@ -353,7 +353,7 @@ describe('Usage limit mutations', () => {
     };
 
     it('refuses a workspace write that would replace a default', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: CREATE_USAGE_LIMIT,
         variables: { input: storageStockPayload() },
       });
@@ -369,7 +369,7 @@ describe('Usage limit mutations', () => {
     });
 
     it('allows a workspace write on a meter no default covers', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: CREATE_USAGE_LIMIT,
         variables: { input: storageStockPayload({ meter: 'quantity' }) },
       });
@@ -380,7 +380,7 @@ describe('Usage limit mutations', () => {
     it('refuses moving an operator override off the default it replaces', async () => {
       const usageLimit = await seedOperatorOverride();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: UPDATE_USAGE_LIMIT,
         variables: {
           input: {
@@ -402,7 +402,7 @@ describe('Usage limit mutations', () => {
     it('refuses deleting an operator override', async () => {
       const usageLimit = await seedOperatorOverride();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId: usageLimit.id },
       });

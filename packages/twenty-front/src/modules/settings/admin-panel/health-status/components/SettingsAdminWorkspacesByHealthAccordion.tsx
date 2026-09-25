@@ -82,7 +82,7 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
   const hasWorkspaces = workspaces.length > 0;
 
   return (
-    <Card rounded={true}>
+    <Card.Root rounded={true}>
       {hasWorkspaces ? (
         <StyledAccordionHeaderButton
           onClick={() => setIsExpanded((currentValue) => !currentValue)}
@@ -125,6 +125,6 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
           </StyledAccordionContent>
         </AnimatedExpandableContainer>
       )}
-    </Card>
+    </Card.Root>
   );
 };

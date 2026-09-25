@@ -9,7 +9,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 const COVER_WIDTH_PX = 272;
 const CARD_MIN_HEIGHT_PX = 150;
 
-const StyledCard = styled(Card)`
+const StyledCard = styled(Card.Root)`
   display: flex;
   min-height: ${CARD_MIN_HEIGHT_PX}px;
 `;

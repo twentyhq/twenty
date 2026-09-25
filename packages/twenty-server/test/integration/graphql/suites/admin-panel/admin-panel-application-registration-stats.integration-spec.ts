@@ -3,8 +3,8 @@ import { randomUUID } from 'crypto';
 import { gql } from 'graphql-tag';
 import { type DataSource } from 'typeorm';
 
-import { makeAdminPanelAPIRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -201,7 +201,7 @@ describe('Admin panel application registration stats and installed workspaces (i
 
   describe('findAdminApplicationRegistrationStats', () => {
     it('returns active installs, version distribution and the most installed version', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_STATS,
         variables: { id: applicationRegistrationId },
       });
@@ -231,7 +231,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('excludes installs on soft-deleted workspaces', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_STATS,
         variables: { id: applicationRegistrationId },
       });
@@ -249,7 +249,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelAPIRequestWithGuestRole({
+      const response = await makeAdminPanelApiRequestWithGuestRole({
         query: FIND_STATS,
         variables: { id: applicationRegistrationId },
       });
@@ -263,7 +263,7 @@ describe('Admin panel application registration stats and installed workspaces (i
 
   describe('findAdminApplicationRegistrationInstalledWorkspaces', () => {
     it('returns installed workspaces ordered by display name with totalCount and hasMore', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_INSTALLED_WORKSPACES,
         variables: { input: { id: applicationRegistrationId, offset: 0 } },
       });
@@ -292,7 +292,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('filters by workspace display name via searchTerm', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_INSTALLED_WORKSPACES,
         variables: {
           input: {
@@ -317,7 +317,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('returns an empty result instead of erroring when a search only matches installs on soft-deleted workspaces', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_INSTALLED_WORKSPACES,
         variables: {
           input: {
@@ -339,7 +339,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('filters by application version via searchTerm', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_INSTALLED_WORKSPACES,
         variables: {
           input: {
@@ -364,7 +364,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelAPIRequestWithGuestRole({
+      const response = await makeAdminPanelApiRequestWithGuestRole({
         query: FIND_INSTALLED_WORKSPACES,
         variables: { input: { id: applicationRegistrationId, offset: 0 } },
       });
@@ -378,7 +378,7 @@ describe('Admin panel application registration stats and installed workspaces (i
 
   describe('findAllApplicationRegistrations', () => {
     it('filters registrations by name via searchTerm', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_ALL_REGISTRATIONS,
         variables: { limit: 25, offset: 0, searchTerm: REGISTRATION_NAME },
       });
@@ -395,7 +395,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('returns no registrations when searchTerm matches nothing', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_ALL_REGISTRATIONS,
         variables: {
           limit: 25,
@@ -413,7 +413,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelAPIRequestWithGuestRole({
+      const response = await makeAdminPanelApiRequestWithGuestRole({
         query: FIND_ALL_REGISTRATIONS,
         variables: { limit: 25, offset: 0 },
       });
@@ -468,7 +468,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('counts them as installs and reports them separately', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_STATS,
         variables: { id: applicationRegistrationId },
       });
@@ -482,7 +482,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     it('lists them alongside installs on active workspaces', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: FIND_INSTALLED_WORKSPACES,
         variables: {
           input: {

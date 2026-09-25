@@ -82,17 +82,17 @@ export const useCoreObjectsCommands = () => {
     workflowObjectPermissions.canSoftDeleteObjectRecords &&
     matchesSidePanelSearch(coreWorkflowsDeleteCommandLabel);
 
-  const coreObjectsCommandIds = [
-    ...(shouldDisplayCoreWorkflowFiltersCommand
-      ? [CORE_WORKFLOW_FILTERS_COMMAND_ID]
-      : []),
-    ...(shouldDisplayCoreWorkflowsDeleteCommand
-      ? [CORE_WORKFLOWS_DELETE_COMMAND_ID]
-      : []),
-  ];
+  const coreViewCommandIds = shouldDisplayCoreWorkflowFiltersCommand
+    ? [CORE_WORKFLOW_FILTERS_COMMAND_ID]
+    : [];
+
+  const coreSelectionCommandIds = shouldDisplayCoreWorkflowsDeleteCommand
+    ? [CORE_WORKFLOWS_DELETE_COMMAND_ID]
+    : [];
 
   return {
-    coreObjectsCommandIds,
+    coreViewCommandIds,
+    coreSelectionCommandIds,
     coreWorkflowFiltersCommandLabel,
     shouldDisplayCoreWorkflowFiltersCommand,
     coreWorkflowsDeleteCommandLabel,

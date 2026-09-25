@@ -24,7 +24,7 @@ Set `type` on `Dropdown.Root` to match the popup's contents.
 | `picker` | Search, selectable values, and optional commands | A dialog containing a search field and selectable toggle buttons. Arrow keys navigate result rows. |
 | `panel`  | Inputs, forms, and supporting actions            | A dialog with native input behavior and Tab navigation.                                            |
 
-Pickers allow creation actions and selectable values in the same list, in any order. Options expose their selected state with `aria-pressed`; commands keep their button semantics. Use a descriptive accessible name on `Content` and `Search`.
+Pickers allow creation actions and selectable values in the same list, in any order. Options expose their selected state with `aria-pressed`; commands keep their button semantics. Name `Content` with `aria-label`, or with a `Title` inside a `Header`, and give `Search` an accessible name.
 
 The underlying [Menu](/ui/primitives/surfaces/menu), [Select](/ui/primitives/input/select), and [Popover](/ui/primitives/surfaces/popover) remain available for direct composition.
 
@@ -34,6 +34,9 @@ The underlying [Menu](/ui/primitives/surfaces/menu), [Select](/ui/primitives/inp
 Dropdown.Root
 ├── Dropdown.Trigger
 └── Dropdown.Content
+    ├── Dropdown.Header
+    │   ├── Dropdown.Close
+    │   └── Dropdown.Title
     ├── Dropdown.Search
     └── Dropdown.Section
         ├── Dropdown.ActionItem
@@ -62,6 +65,10 @@ export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
 ```
 
 Pass custom trigger elements through `render` so the trigger remains one interactive element. Custom components must forward the supplied props and ref. `ActionItem` also accepts `render` for links.
+
+## Headers
+
+`Header` lays out a row at the top of the popup. Put a `Title` in it to name the popup: the title labels `Content` for assistive technology, so `Content` no longer needs `aria-label`. `Close` closes the popup the same way an outside press does. It renders an icon button with an X by default, so give it an `aria-label`, or pass `render` and children for another control. Other controls, such as a button that returns to a previous step, can sit in the same row. Use `Dropdown.Back` when navigating the root's page history.
 
 ## Search and selection
 
@@ -110,6 +117,8 @@ export const PersonPicker = () => {
   );
 };
 ```
+
+While `Search` holds text, the first enabled `OptionItem` is highlighted and Enter activates it. Action rows are never picked this way. With an empty search, Enter does nothing; ArrowDown moves focus into the results. When rows are pinned above the matches, such as the current value or a "none" row, render them only when they match the search text, so Enter picks the first real match. The popup stays open when no option matches. Filtering remains caller-owned.
 
 Actions and single selection close by default. Set `multiple` on the root to keep option selection open. The application still owns the selected values. `closeOnClick` on actions and `closeOnSelect` on options override those defaults, including repeated actions or asynchronous progress. Use `disabled` to prevent activation while retaining the row's appearance.
 
@@ -165,6 +174,16 @@ Dropdown.Content
     └── Dropdown.Content
         └── Dropdown.ActionItem
 ```
+
+## Independent nested pickers
+
+Place another `Dropdown.Root` inside `Content` when a control opens its own picker, such as a sort direction selector. Selecting an inner option closes only that picker and restores focus to its trigger. Escape and outside presses dismiss one layer at a time. Use `Submenu` for commands that should close the entire menu tree when selected.
+
+<StoryEmbed
+  storyId="ui-components-dropdown--nested"
+  title="Sort picker with a nested direction picker"
+  height={420}
+/>
 
 ## Panels and controlled state
 

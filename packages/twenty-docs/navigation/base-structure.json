@@ -565,6 +565,7 @@
                   "label": "Surfaces",
                   "pages": [
                     "ui/primitives/surfaces/alert-dialog",
+                    "ui/primitives/surfaces/card",
                     "ui/primitives/surfaces/dialog",
                     "ui/primitives/surfaces/menu",
                     "ui/primitives/surfaces/popover",
