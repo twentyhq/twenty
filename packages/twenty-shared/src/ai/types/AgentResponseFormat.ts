@@ -1,4 +1,4 @@
-import { type AgentResponseSchema } from '@/ai/types/agent-response-schema.type';
+import { type AgentResponseSchema } from '@/ai/types/AgentResponseSchema';
 
 export type AgentResponseFormatType = AgentResponseFormat['type'];
 

@@ -14,11 +14,8 @@ const DEFAULT_ALLOWED_SUFFIXES = [
   'schema',
   'constant',
   'const',
-  'types',
   'input',
   'guard',
-  'validator',
-  'composite-type',
 ];
 
 type Convention = 'PascalCase' | 'kebab-case-type-suffix';

@@ -98,7 +98,7 @@
     "twenty/no-miscased-acronym-in-identifier": "error",
     "twenty/no-miscased-acronym-in-message": "error",
     "twenty/types-folder-filename": [
-      "warn",
+      "error",
       { "convention": "kebab-case-type-suffix" }
     ],
     "twenty/enforce-module-boundaries": [

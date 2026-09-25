@@ -7,7 +7,7 @@ import {
   type Leaf,
   type LeafType,
   type Node,
-} from '@/workflow/workflow-schema/types/base-output-schema.type';
+} from '@/workflow/workflow-schema/types/BaseOutputSchema';
 import { isObject } from '@sniptt/guards';
 
 const LEAF_TYPES: LeafType[] = [

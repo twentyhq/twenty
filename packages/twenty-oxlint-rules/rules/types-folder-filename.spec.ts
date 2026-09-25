@@ -145,6 +145,12 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
+      filename: server('engine/core-modules/dpa/types/dpa.types.ts'),
+      options: KEBAB_CASE_TYPE_SUFFIX,
+      errors: [{ messageId: 'invalidKebabCaseTypeFilename' }],
+    },
+    {
+      code: DUMMY_CODE,
       filename: server(
         'engine/metadata-modules/ai/types/modelConfiguration.ts',
       ),

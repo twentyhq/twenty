@@ -21,7 +21,7 @@ import { ADD_TIMELINE_ACTIVITY_HAPPENS_AT_FIELD_UPGRADE_COMMAND_NAME } from 'src
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 
-import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 
 export type TimelineActivityTypeOverrides = {
   isActive?: boolean;
