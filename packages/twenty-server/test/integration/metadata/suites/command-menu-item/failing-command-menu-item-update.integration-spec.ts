@@ -1,4 +1,6 @@
 import { faker } from '@faker-js/faker';
+import gql from 'graphql-tag';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
@@ -124,4 +126,32 @@ describe('CommandMenuItem update should fail', () => {
       });
     },
   );
+
+  it('when the caller lacks the LAYOUTS permission', async () => {
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: { id: testCommandMenuItemId, label: 'Updated By Member' },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+  });
+
+  it('when resetting without the LAYOUTS permission', async () => {
+    const response = await makeMetadataAPIRequest(
+      {
+        query: gql`
+          mutation ResetCommandMenuItem($id: UUID!) {
+            resetCommandMenuItem(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: { id: testCommandMenuItemId },
+      },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+  });
 });
