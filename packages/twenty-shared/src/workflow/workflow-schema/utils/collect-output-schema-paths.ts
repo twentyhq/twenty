@@ -1,6 +1,6 @@
 import { isObject } from '@sniptt/guards';
 
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/BaseOutputSchema';
 
 export const collectOutputSchemaPaths = (
   schema: BaseOutputSchemaV2,

@@ -2,7 +2,7 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 
@@ -41,7 +41,7 @@ describe('Mutate by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createCompanies);
+    await makeGraphqlApiRequest(createCompanies);
 
     const createPeople = createManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -77,12 +77,12 @@ describe('Mutate by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createPeople);
+    await makeGraphqlApiRequest(createPeople);
   };
 
   beforeEach(async () => {
     // Each test mutates state, so wipe + reseed before every one.
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -91,7 +91,7 @@ describe('Mutate by relation field (e2e)', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -117,7 +117,7 @@ describe('Mutate by relation field (e2e)', () => {
       },
     });
 
-    const updateResponse = await makeGraphqlAPIRequest(updateOperation);
+    const updateResponse = await makeGraphqlApiRequest(updateOperation);
 
     expect(updateResponse.body.errors).toBeUndefined();
 
@@ -137,7 +137,7 @@ describe('Mutate by relation field (e2e)', () => {
       filter: { id: { in: ALL_TEST_PERSON_IDS } },
     });
 
-    const findResponse = await makeGraphqlAPIRequest(findOperation);
+    const findResponse = await makeGraphqlApiRequest(findOperation);
 
     const jobTitleByPersonId = Object.fromEntries(
       findResponse.body.data.people.edges.map(
@@ -181,7 +181,7 @@ describe('Mutate by relation field (e2e)', () => {
       },
     });
 
-    const deleteResponse = await makeGraphqlAPIRequest(deleteOperation);
+    const deleteResponse = await makeGraphqlApiRequest(deleteOperation);
 
     expect(deleteResponse.body.errors).toBeUndefined();
 
@@ -198,7 +198,7 @@ describe('Mutate by relation field (e2e)', () => {
       filter: { id: { in: ALL_TEST_PERSON_IDS } },
     });
 
-    const findResponse = await makeGraphqlAPIRequest(findOperation);
+    const findResponse = await makeGraphqlApiRequest(findOperation);
     const remainingIds = findResponse.body.data.people.edges.map(
       (edge: { node: { id: string } }) => edge.node.id,
     );
@@ -231,7 +231,7 @@ describe('Mutate by relation field (e2e)', () => {
       },
     });
 
-    await makeGraphqlAPIRequest(deleteOperation);
+    await makeGraphqlApiRequest(deleteOperation);
 
     const restoreOperation = restoreManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -245,7 +245,7 @@ describe('Mutate by relation field (e2e)', () => {
       },
     });
 
-    const restoreResponse = await makeGraphqlAPIRequest(restoreOperation);
+    const restoreResponse = await makeGraphqlApiRequest(restoreOperation);
 
     expect(restoreResponse.body.errors).toBeUndefined();
 
@@ -270,7 +270,7 @@ describe('Mutate by relation field (e2e)', () => {
       filter: { id: { in: [TEST_PERSON_IDS.STRIPE_ENGINEER] } },
     });
 
-    const findStripeResponse = await makeGraphqlAPIRequest(findStripe);
+    const findStripeResponse = await makeGraphqlApiRequest(findStripe);
 
     expect(findStripeResponse.body.data.people.edges).toEqual([]);
   });
@@ -288,7 +288,7 @@ describe('Mutate by relation field (e2e)', () => {
       },
     });
 
-    const destroyResponse = await makeGraphqlAPIRequest(destroyOperation);
+    const destroyResponse = await makeGraphqlApiRequest(destroyOperation);
 
     expect(destroyResponse.body.errors).toBeUndefined();
 
@@ -309,7 +309,7 @@ describe('Mutate by relation field (e2e)', () => {
       },
     });
 
-    const findResponse = await makeGraphqlAPIRequest(findOperation);
+    const findResponse = await makeGraphqlApiRequest(findOperation);
 
     expect(findResponse.body.data.people.edges).toEqual([]);
   });
@@ -325,7 +325,7 @@ describe('Mutate by relation field (e2e)', () => {
       filter: { id: { eq: TEST_PERSON_IDS.UNAFFILIATED } },
     });
 
-    const updateResponse = await makeGraphqlAPIRequest(updateOperation);
+    const updateResponse = await makeGraphqlApiRequest(updateOperation);
 
     expect(updateResponse.body.errors).toBeUndefined();
     expect(updateResponse.body.data.updatePeople).toHaveLength(1);

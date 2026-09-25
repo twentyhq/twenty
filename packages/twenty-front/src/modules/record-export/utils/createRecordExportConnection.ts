@@ -10,6 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const createRecordExportConnection = () => {
+  const serverBaseUrl = REACT_APP_SERVER_BASE_URL.replace(/\/$/, '');
   let cancel: (() => void) | undefined;
 
   const exportRecords = ({
@@ -22,7 +23,7 @@ export const createRecordExportConnection = () => {
     cancel?.();
     onProgress?.(0);
     const client = createClient({
-      url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
+      url: `${serverBaseUrl}/metadata`,
       credentials: 'include',
       retryAttempts: 0,
     });
@@ -63,16 +64,9 @@ export const createRecordExportConnection = () => {
                 throw new Error(recordExport.errorMessage);
               }
               onProgress?.(recordExport.progress);
-              if (isDefined(recordExport.downloadUrl)) {
-                const { pathname, search } = new URL(
-                  recordExport.downloadUrl,
-                  REACT_APP_SERVER_BASE_URL,
-                );
-                const downloadUrl = new URL(REACT_APP_SERVER_BASE_URL);
-                downloadUrl.pathname = pathname;
-                downloadUrl.search = search;
+              if (isDefined(recordExport.downloadPath)) {
                 const link = document.createElement('a');
-                link.href = downloadUrl.toString();
+                link.href = `${serverBaseUrl}${recordExport.downloadPath}`;
                 link.download = recordExport.filename;
                 document.body.appendChild(link);
                 link.click();

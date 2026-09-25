@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const updateOneApplicationVariable = async ({
   key,
@@ -11,7 +11,7 @@ export const updateOneApplicationVariable = async ({
   value: string;
   applicationId: string;
 }): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation UpdateOneApplicationVariable(
         $key: String!

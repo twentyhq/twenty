@@ -26,6 +26,9 @@ export class ApplicationRegistrationVariableService {
     private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    // Answers "which workspaces installed this registration" for the whole
+    // instance, so the query filters by registration rather than workspace.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,

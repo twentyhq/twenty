@@ -1,14 +1,11 @@
 import { type Country } from '@/ui/input/components/internal/types/Country';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import 'react-phone-number-input/style.css';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIconContainer = styled.div`
@@ -48,26 +45,24 @@ export const PhoneCountryPickerDropdownSelect = ({
   );
 
   return (
-    <LegacyDropdownContent>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Search
         value={searchFilter}
-        onChange={(event) => setSearchFilter(event.currentTarget.value)}
-        autoFocus
+        placeholder={t`Search`}
+        aria-label={t`Search`}
+        onValueChange={setSearchFilter}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredCountries?.length === 0 ? (
-          <ListItem disabled>{t`No results`}</ListItem>
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        {!isNonEmptyArray(filteredCountries) ? (
+          <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
         ) : (
           <>
-            {selectedCountry && (
-              <ListItem
+            {isDefined(selectedCountry) && (
+              <Dropdown.OptionItem
                 key={selectedCountry.countryCode}
-                onClick={() => onChange(selectedCountry.countryCode)}
-                role="option"
-                aria-selected={true}
+                onSelect={() => onChange(selectedCountry.countryCode)}
                 selected={true}
-                indicator="check"
                 startIcon={
                   <StyledIconContainer>
                     <selectedCountry.Flag />
@@ -77,18 +72,15 @@ export const PhoneCountryPickerDropdownSelect = ({
                 <OverflowingTextWithTooltip
                   text={`${selectedCountry.countryName} (+${selectedCountry.callingCode})`}
                 />
-              </ListItem>
+              </Dropdown.OptionItem>
             )}
             {filteredCountries.map(
               ({ countryCode, countryName, callingCode, Flag }) =>
                 selectedCountry?.countryCode === countryCode ? null : (
-                  <ListItem
+                  <Dropdown.OptionItem
                     key={countryCode}
-                    onClick={() => onChange(countryCode)}
-                    role="option"
-                    aria-selected={selectedCountry?.countryCode === countryCode}
+                    onSelect={() => onChange(countryCode)}
                     selected={selectedCountry?.countryCode === countryCode}
-                    indicator="check"
                     startIcon={
                       <StyledIconContainer>
                         <Flag />
@@ -98,12 +90,12 @@ export const PhoneCountryPickerDropdownSelect = ({
                     <OverflowingTextWithTooltip
                       text={`${countryName} (+${callingCode})`}
                     />
-                  </ListItem>
+                  </Dropdown.OptionItem>
                 ),
             )}
           </>
         )}
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

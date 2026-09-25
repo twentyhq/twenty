@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
@@ -7,7 +7,7 @@ import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/de
 describe('calendarChannelResolver (e2e)', () => {
   describe('myCalendarChannels', () => {
     it('should return only the current user calendar channels', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyCalendarChannels {
             myCalendarChannels {
@@ -32,7 +32,7 @@ describe('calendarChannelResolver (e2e)', () => {
     });
 
     it('should deny filtering by another user connectedAccountId', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyCalendarChannels($connectedAccountId: UUID) {
             myCalendarChannels(connectedAccountId: $connectedAccountId) {
@@ -52,7 +52,7 @@ describe('calendarChannelResolver (e2e)', () => {
 
   describe('updateCalendarChannel', () => {
     it('should allow updating own channel', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation UpdateCalendarChannel($input: UpdateCalendarChannelInput!) {
             updateCalendarChannel(input: $input) {
@@ -77,7 +77,7 @@ describe('calendarChannelResolver (e2e)', () => {
     });
 
     it('should deny updating another user channel', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation UpdateCalendarChannel($input: UpdateCalendarChannelInput!) {
             updateCalendarChannel(input: $input) {

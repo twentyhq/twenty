@@ -1,6 +1,6 @@
 import { uploadWorkspaceMemberProfilePictureQueryFactory } from 'test/integration/graphql/suites/application-role-intersection/utils/upload-workspace-member-profile-picture-query-factory.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
@@ -14,7 +14,7 @@ export const uploadWorkspaceMemberProfilePicture = async ({
 }): CommonResponseBody<{
   uploadWorkspaceMemberProfilePicture: { id: string; url: string };
 }> => {
-  const response = await makeMetadataAPIRequestWithFileUpload(
+  const response = await makeMetadataApiRequestWithFileUpload(
     uploadWorkspaceMemberProfilePictureQueryFactory(),
     {
       field: 'file',

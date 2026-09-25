@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -23,6 +24,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -31,9 +34,15 @@ export class ApplicationUpgradeService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    // Picking the rollout targets spans workspaces: the query filters by
+    // registration, with an explicit workspace id list only when one is given.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
@@ -54,6 +63,7 @@ export class ApplicationUpgradeService {
     targetVersion: string | null;
     applicationsToUpgrade: ApplicationEntity[];
     skippedNonProvisionedWorkspaceIds: string[];
+    skippedIncompatibleWorkspaceIds: string[];
   }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -67,10 +77,11 @@ export class ApplicationUpgradeService {
         targetVersion: null,
         applicationsToUpgrade: [],
         skippedNonProvisionedWorkspaceIds: [],
+        skippedIncompatibleWorkspaceIds: [],
       };
     }
 
-    const applications = await this.applicationRepository.find({
+    const applications = await this.unscopedApplicationRepository.find({
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
@@ -98,15 +109,40 @@ export class ApplicationUpgradeService {
       )
       .map((application) => application.workspaceId);
 
+    const requiredServerVersion =
+      appRegistration.manifest?.application.requiredServerVersionRange ??
+      undefined;
+
+    const compatibleApplications: ApplicationEntity[] = [];
+    const skippedIncompatibleWorkspaceIds: string[] = [];
+
+    for (const application of provisionedApplications) {
+      const validation =
+        await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+          { requiredServerVersion, workspaceId: application.workspaceId },
+        );
+
+      if (
+        !validation.compatible &&
+        validation.reason === 'WORKSPACE_INCOMPATIBLE'
+      ) {
+        skippedIncompatibleWorkspaceIds.push(application.workspaceId);
+        continue;
+      }
+
+      compatibleApplications.push(application);
+    }
+
     const applicationsToUpgrade = isDefined(workspaceCountLimit)
-      ? provisionedApplications.slice(0, workspaceCountLimit)
-      : provisionedApplications;
+      ? compatibleApplications.slice(0, workspaceCountLimit)
+      : compatibleApplications;
 
     return {
       appRegistration,
       targetVersion,
       applicationsToUpgrade,
       skippedNonProvisionedWorkspaceIds,
+      skippedIncompatibleWorkspaceIds,
     };
   }
 
@@ -155,14 +191,24 @@ export class ApplicationUpgradeService {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
   }): Promise<string[]> {
-    const { appRegistration, targetVersion, applicationsToUpgrade } =
-      await this.findApplicationsToUpgrade({
-        applicationRegistrationId,
-        onlyAutoUpgrade,
-      });
+    const {
+      appRegistration,
+      targetVersion,
+      applicationsToUpgrade,
+      skippedIncompatibleWorkspaceIds,
+    } = await this.findApplicationsToUpgrade({
+      applicationRegistrationId,
+      onlyAutoUpgrade,
+    });
 
     if (!isDefined(targetVersion)) {
       return [];
+    }
+
+    if (skippedIncompatibleWorkspaceIds.length > 0) {
+      this.logger.log(
+        `Skipping ${skippedIncompatibleWorkspaceIds.length} workspace(s) that have not finished the server upgrade ${appRegistration.universalIdentifier}@${targetVersion} requires`,
+      );
     }
 
     const jobIds = await this.enqueueWorkspaceApplicationUpgrades({
@@ -209,8 +255,8 @@ export class ApplicationUpgradeService {
       return;
     }
 
-    const application = await this.applicationRepository.findOne({
-      where: { applicationRegistrationId, workspaceId },
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { applicationRegistrationId },
     });
 
     if (!isDefined(application)) {
