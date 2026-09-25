@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { Label } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownMenuSubheaderContainer = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
@@ -15,6 +15,12 @@ export const StyledDropdownMenuSubheader = ({
   children: ReactNode;
 }) => (
   <StyledDropdownMenuSubheaderContainer>
-    <Label>{children}</Label>
+    <StyledDisplayLabel>{children}</StyledDisplayLabel>
   </StyledDropdownMenuSubheaderContainer>
 );
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

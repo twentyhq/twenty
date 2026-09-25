@@ -9,4 +9,5 @@ export const USAGE_LIMIT_METER_LABELS: Record<
 > = {
   creditsUsedMicro: msg`Credits`,
   quantity: msg`Operations`,
+  bytes: msg`Bytes`,
 };

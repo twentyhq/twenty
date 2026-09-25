@@ -1,6 +1,6 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -85,7 +85,7 @@ export const MultiItemFieldMenuItem = <T,>({
       RightIcon={!isHovered && showPrimaryIcon ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             {showSetAsPrimaryButton && (
               <ListItem
@@ -109,7 +109,7 @@ export const MultiItemFieldMenuItem = <T,>({
               >{t`Copy`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

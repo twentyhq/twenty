@@ -6,7 +6,7 @@ import { t } from '@lingui/core/macro';
 import React, { useRef } from 'react';
 import { IconPaperclip } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFileUploadContainer = styled.div`
   display: flex;

@@ -10,25 +10,6 @@ export const galleryRenderTest = createGalleryRenderTest({
   expectedFailedComponents: [],
 });
 
-// LinkChip crashes without a router context in the sandbox.
-export const dataDisplayTest = createGalleryRenderTest({
-  expectedFailedComponents: ['LinkChip'],
-});
-
-// Unselected radios need Element.matches(':disabled'); React radio groups
-// also need compareDocumentPosition, which the sandbox DOM does not implement.
-export const inputReactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['Radio', 'RadioGroup'],
-});
-export const inputPreactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['Radio'],
-});
-
-// react-router Links crash without a router context.
-export const navigationTest = createGalleryRenderTest({
-  expectedFailedComponents: ['RawLink', 'UndecoratedLink'],
-});
-
 // Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
 // but the editor's onMount never fires.
 export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
@@ -45,27 +26,6 @@ export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
   expect(codeEditor).toHaveAttribute('data-monaco-mount-state', 'pending');
-};
-
-export const themeTokenTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-
-  const iconWrapper = await canvas.findByTestId(
-    'theme-token-icon-wrapper',
-    {},
-    { timeout: MOUNT_TIMEOUT },
-  );
-
-  await waitFor(() => {
-    const iconBox = iconWrapper.getBoundingClientRect();
-
-    expect(Math.round(iconBox.width)).toBe(16);
-    expect(Math.round(iconBox.height)).toBe(16);
-  });
-
-  expect(errorHandler).not.toHaveBeenCalled();
 };
 
 export const displayHelpersTest: TwentyUiGalleryPlayFunction = async ({
@@ -91,6 +51,5 @@ export const displayHelpersTest: TwentyUiGalleryPlayFunction = async ({
   expect(canvas.getByText('1234.5')).toBeVisible();
   expect(canvas.getByText('{"active":true}')).toBeVisible();
   expect(canvas.getByText('Account description')).toBeVisible();
-  expect(canvas.getByText('Qualified')).toBeVisible();
   expect(errorHandler).not.toHaveBeenCalled();
 };

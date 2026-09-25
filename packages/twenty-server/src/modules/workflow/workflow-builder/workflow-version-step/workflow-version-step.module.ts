@@ -46,6 +46,7 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
     WorkflowVersionStepUpdateWorkspaceService,
     WorkflowVersionStepDeletionWorkspaceService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
+    provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
   exports: [
     WorkflowVersionStepWorkspaceService,

@@ -33,7 +33,7 @@ import {
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -149,7 +149,7 @@ const setRecordSharingEnabled = (value: boolean) =>
   });
 
 describe('createShareWithObjectRecordsPermissions', () => {
-  let recordShareService: RecordShareService;
+  let recordShareStorageService: RecordShareStorageService;
   let objectMetadataId: string;
   let personRelationFieldMetadataId: string;
   let memberRoleId: string;
@@ -159,7 +159,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
   const createdPersonIds: string[] = [];
 
   const findRecordShares = (recordId: string) =>
-    recordShareService.findByRecordIds({
+    recordShareStorageService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
       recordIds: [recordId],
@@ -174,8 +174,10 @@ describe('createShareWithObjectRecordsPermissions', () => {
   };
 
   beforeAll(async () => {
-    recordShareService =
-      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
 
     const { data } = await createOneObjectMetadata({
       input: {
@@ -666,62 +668,140 @@ describe('createShareWithObjectRecordsPermissions', () => {
     });
   });
 
-  describe('PRIVATE readability with record sharing disabled', () => {
-    beforeAll(async () => {
-      await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
-      await setRecordSharingEnabled(false);
-    });
+  describe.each([MetadataReadability.SYSTEM, MetadataReadability.PRIVATE])(
+    'PRIVATE creates with the flag off and conversation readability %s',
+    (conversationReadability) => {
+      let conversationObjectMetadata: ObjectMetadataEntity;
+      const isLegacyOpen =
+        conversationReadability === MetadataReadability.SYSTEM;
 
-    it('should accept an api key create without shareWith and grant everyone FULL access', async () => {
-      const recordId = trackRecordId();
+      beforeAll(async () => {
+        conversationObjectMetadata =
+          await getCoreRepository<ObjectMetadataEntity>(
+            ObjectMetadataEntity,
+          ).findOneOrFail({
+            where: {
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+              nameSingular: 'agentChatThread',
+            },
+          });
+        await setObjectReadability(
+          conversationObjectMetadata.id,
+          conversationReadability,
+        );
+        await setObjectReadability(
+          objectMetadataId,
+          MetadataReadability.PRIVATE,
+        );
+        await setRecordSharingEnabled(false);
+      });
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
-        createOneOperation({
-          data: { id: recordId, name: 'api key without shareWith' },
-        }),
-      );
+      afterAll(async () => {
+        await setObjectReadability(
+          conversationObjectMetadata.id,
+          conversationObjectMetadata.readability,
+        );
+      });
 
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.createShareWithTestObject.id).toBe(recordId);
-
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining({
-          recordId,
-          principalId: EVERYONE_PRINCIPAL_ID,
-          principalType: RecordSharePrincipalType.EVERYONE,
-          accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.APPLICATION,
-          sourceId: objectMetadataId,
-        }),
-      ]);
-    });
-
-    it('should give the creating member the owner row and everyone FULL access, so the record stays open once the flag turns on', async () => {
-      const recordId = trackRecordId();
-
-      const response = await makeGraphqlAPIRequest(
-        createOneOperation({
-          data: { id: recordId, name: 'member with flag off' },
-        }),
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      expect(await findRecordShares(recordId)).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining(
-            ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
-          ),
-          expect.objectContaining({
-            recordId,
-            principalId: EVERYONE_PRINCIPAL_ID,
-            accessLevel: RecordShareAccessLevel.FULL,
+      it('requires an explicit API sharing target after activation', async () => {
+        const recordId = trackRecordId();
+        const response = await makeGraphqlAPIRequestWithApiKey(
+          createOneOperation({
+            data: { id: recordId, name: 'API create without shareWith' },
           }),
-        ]),
-      );
-      expect(await findRecordShares(recordId)).toHaveLength(2);
-    });
-  });
+        );
+
+        if (isLegacyOpen) {
+          expect(response.body.errors).toBeUndefined();
+          expect(response.body.data.createShareWithTestObject.id).toBe(
+            recordId,
+          );
+          expect(await findRecordShares(recordId)).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                principalType: RecordSharePrincipalType.EVERYONE,
+                accessLevel: RecordShareAccessLevel.FULL,
+                rowCause: RecordShareRowCause.APPLICATION,
+                sourceId: objectMetadataId,
+              }),
+            ]),
+          );
+        } else {
+          expect(response.body.errors[0].message).toBe(
+            SHARE_WITH_REQUIRED_MESSAGE,
+          );
+          expect(await findRecordShares(recordId)).toEqual([]);
+        }
+      });
+
+      it('keeps new member records private after activation', async () => {
+        const recordId = trackRecordId();
+        const response = await makeGraphqlAPIRequest(
+          createOneOperation({
+            data: { id: recordId, name: 'Member create with flag off' },
+          }),
+        );
+        expect(response.body.errors).toBeUndefined();
+        const shares = await findRecordShares(recordId);
+        expect(shares).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(
+              ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
+            ),
+          ]),
+        );
+        expect(shares).toHaveLength(isLegacyOpen ? 2 : 1);
+
+        const otherMemberResponse = await makeGraphqlAPIRequestWithMemberRole(
+          findManyOperation(recordId),
+        );
+        expect(otherMemberResponse.body.errors).toBeUndefined();
+        expect(
+          otherMemberResponse.body.data.shareWithTestObjects.edges,
+        ).toHaveLength(isLegacyOpen ? 1 : 0);
+        const ownerResponse = await makeGraphqlAPIRequest(
+          findManyOperation(recordId),
+        );
+        expect(ownerResponse.body.errors).toBeUndefined();
+        expect(ownerResponse.body.data.shareWithTestObjects.edges).toHaveLength(
+          1,
+        );
+      });
+
+      it('honors explicit API targets without creating an everyone grant', async () => {
+        const recordId = trackRecordId();
+        const response = await makeGraphqlAPIRequestWithApiKey(
+          createOneOperation({
+            data: { id: recordId, name: 'API create with explicit sharing' },
+            shareWith: [
+              {
+                roleId: memberRoleId,
+                accessLevel: RecordShareAccessLevel.READ,
+              },
+            ],
+          }),
+        );
+        expect(response.body.errors).toBeUndefined();
+        expect(await findRecordShares(recordId)).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(apiKeyRoleRowFor(recordId, adminRoleId)),
+            expect.objectContaining({
+              principalId: memberRoleId,
+              accessLevel: RecordShareAccessLevel.READ,
+            }),
+          ]),
+        );
+        expect(await findRecordShares(recordId)).toHaveLength(2);
+        const readerResponse = await makeGraphqlAPIRequestWithMemberRole(
+          findManyOperation(recordId),
+        );
+        expect(readerResponse.body.errors).toBeUndefined();
+        expect(
+          readerResponse.body.data.shareWithTestObjects.edges,
+        ).toHaveLength(1);
+      });
+    },
+  );
 
   describe('OPEN readability', () => {
     beforeAll(async () => {

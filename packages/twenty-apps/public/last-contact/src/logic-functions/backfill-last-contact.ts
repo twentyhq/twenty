@@ -3,11 +3,8 @@ import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/
 import { compare } from 'semver'
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import {
-  getBackfillBatchSize,
-  getBackfillSleepMs,
-} from 'src/utils/backfill-settings';
-import { enqueueBackfillJobs } from 'src/utils/enqueue-backfill-jobs';
+import { getBackfillBatchSize } from 'src/utils/backfill-settings';
+import { runLastContactBackfill } from 'src/utils/run-last-contact-backfill';
 import { isDefined } from 'twenty-sdk/utils';
 
 const shouldRunPostInstall = ({
@@ -18,7 +15,7 @@ const shouldRunPostInstall = ({
     return true;
   }
 
-  if (compare(previousVersion, "1.4.0") < 0 && compare(newVersion, "1.4.0") >= 1) { // Rate limitation fix
+  if (compare(previousVersion, "1.5.0") <= 0 && compare(newVersion, "1.6.0") >= 0) { // Rate limitation fix
     return true;
   }
 
@@ -40,23 +37,20 @@ const handler = async ({
 
   console.log(
     'Backfill params',
-    JSON.stringify({
-      batchSize: getBackfillBatchSize(),
-      sleepMs: getBackfillSleepMs(),
-    }),
+    JSON.stringify({ batchSize: getBackfillBatchSize() }),
   );
 
-  const plans = await enqueueBackfillJobs(new CoreApiClient());
+  const phases = await runLastContactBackfill(new CoreApiClient());
 
-  return { outcome: 'enqueued', plans };
+  return { outcome: 'completed', phases };
 };
 
 export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Counts people, opportunities and companies after installation and enqueues one backfill job per record batch.',
-  timeoutSeconds: 300,
+    'Backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time within this run.',
+  timeoutSeconds: 900,
   shouldRunOnVersionUpgrade: true,
   handler,
 });

@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/primitives/feedback';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
@@ -20,9 +21,13 @@ export const CoreWorkflowEditor = ({
   coreWorkflowVersionId: string;
   readonly: boolean;
 }) => {
-  const { coreWorkflowVersion, loading, error } = useCoreWorkflowVersion(
-    coreWorkflowVersionId,
-  );
+  const { coreWorkflowVersion, loading, error, refetchCoreWorkflowVersion } =
+    useCoreWorkflowVersion(coreWorkflowVersionId);
+
+  useListenToCoreWorkflowEvents({
+    coreWorkflowId,
+    refetch: refetchCoreWorkflowVersion,
+  });
 
   if (loading && !isDefined(coreWorkflowVersion)) {
     return <Loader />;

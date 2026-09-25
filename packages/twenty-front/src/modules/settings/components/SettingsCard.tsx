@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 
-import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Pill } from 'twenty-ui/primitives/data-display';
-import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsCardProps = {
   description?: string;
@@ -107,7 +107,7 @@ export const SettingsCard = ({
   className,
   Status,
 }: SettingsCardProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledCardWrapper

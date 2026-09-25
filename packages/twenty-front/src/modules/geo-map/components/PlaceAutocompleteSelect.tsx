@@ -1,12 +1,12 @@
-import { Tag } from 'twenty-ui/primitives/data-display';
 import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useMemo, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -42,7 +42,7 @@ export const PlaceAutocompleteSelect = ({
         selectableItemIdArray={selectableItemIdArray}
         focusId={dropdownId}
       >
-        <DropdownContent
+        <LegacyDropdownContent
           ref={selectContainerRef}
           selectDisabled
           widthInPixels={345}
@@ -75,7 +75,7 @@ export const PlaceAutocompleteSelect = ({
               );
             })}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       </SelectableList>
     </StyledContainer>
   );

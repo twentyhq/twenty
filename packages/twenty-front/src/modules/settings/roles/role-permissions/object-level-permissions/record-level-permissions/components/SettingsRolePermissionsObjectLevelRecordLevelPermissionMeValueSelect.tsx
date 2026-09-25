@@ -6,13 +6,13 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
-  compositeTypeDefinitions,
-  FieldMetadataType,
   CoreObjectNameSingular,
+  FieldMetadataType,
+  compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -26,7 +26,7 @@ import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/Com
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -283,7 +283,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       : t`Search 1 field`;
 
     return (
-      <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+      <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent
@@ -322,6 +322,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
             <ListItem disabled>{t`No compatible fields`}</ListItem>
           )}
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     );
   };

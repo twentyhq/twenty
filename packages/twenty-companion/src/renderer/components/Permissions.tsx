@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
-import { MainButton } from '@ui/components/MainButton/MainButton';
+import { MainButton } from '@ui/components/input/MainButton/MainButton';
 import {
   IconMicrophone,
   IconHeadphones,

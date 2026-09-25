@@ -92,6 +92,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (timelineActivityType) => timelineActivityType.label,
       ),
   },
+  settingsMenuItem: {
+    entityKind: 'settings menu item',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.settingsMenuItems,
+        (settingsMenuItem) => settingsMenuItem.title,
+      ),
+  },
   view: {
     entityKind: 'view',
     getCandidates: (manifest) =>

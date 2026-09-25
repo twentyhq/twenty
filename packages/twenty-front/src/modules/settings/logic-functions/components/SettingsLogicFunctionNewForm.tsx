@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
 import { IconClockHour8 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledInputsContainer = styled.div`
   display: flex;

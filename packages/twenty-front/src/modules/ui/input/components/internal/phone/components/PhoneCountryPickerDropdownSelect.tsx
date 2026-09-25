@@ -1,17 +1,15 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { useMemo, useState } from 'react';
-
 import { type Country } from '@/ui/input/components/internal/types/Country';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
 import 'react-phone-number-input/style.css';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -50,7 +48,7 @@ export const PhoneCountryPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.currentTarget.value)}
@@ -106,6 +104,6 @@ export const PhoneCountryPickerDropdownSelect = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

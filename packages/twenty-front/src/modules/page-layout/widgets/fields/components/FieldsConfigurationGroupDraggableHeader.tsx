@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { IconGripVertical } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Text } from 'twenty-ui/primitives/typography';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -30,7 +29,7 @@ type FieldsConfigurationGroupDraggableHeaderProps = {
 export const FieldsConfigurationGroupDraggableHeader = ({
   text,
 }: FieldsConfigurationGroupDraggableHeaderProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledContainer>
@@ -41,7 +40,13 @@ export const FieldsConfigurationGroupDraggableHeader = ({
           color={themeCssVariables.font.color.tertiary}
         />
       </StyledIconContainer>
-      <Label>{text}</Label>
+      <StyledDisplayLabel>{text}</StyledDisplayLabel>
     </StyledContainer>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

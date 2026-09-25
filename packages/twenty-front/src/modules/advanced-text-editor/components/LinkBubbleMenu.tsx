@@ -1,8 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
-import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
+import { EditLinkDropdown } from '@/advanced-text-editor/components/EditLinkDropdown';
 import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
+import { getEditLinkDropdownId } from '@/advanced-text-editor/utils/getEditLinkDropdownId';
 import { type Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { IconExternalLink, IconLinkOff } from 'twenty-ui/icon';
@@ -51,7 +52,14 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
       updateDelay={0}
     >
       <StyledBubbleMenuContainer>
-        <EditLinkPopover defaultValue={state.linkHref} editor={editor} />
+        <EditLinkDropdown
+          dropdownId={getEditLinkDropdownId({
+            editorInstanceId: editor.instanceId,
+            bubbleMenuType: 'link',
+          })}
+          defaultValue={state.linkHref}
+          editor={editor}
+        />
         {menuActions.map(({ label, Icon, onClick }) => {
           return (
             <BubbleMenuIconButton

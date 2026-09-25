@@ -1,18 +1,18 @@
-import { useUploadWorkflowFile } from '@/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile';
-import { AttachmentChip } from '@/file/components/AttachmentChip';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
+import { AttachmentChip } from '@/file/components/AttachmentChip';
 import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputLabel } from 'twenty-ui/primitives/input';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
+import { useUploadWorkflowFile } from '@/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile';
 
-import { isString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useId } from 'react';
+import { isString } from '@sniptt/guards';
+import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowEmailFiles } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type WorkflowSendEmailAttachmentsProps = {
   files: WorkflowEmailFiles;
@@ -87,7 +87,7 @@ export const WorkflowSendEmailAttachments = ({
   VariablePicker,
 }: WorkflowSendEmailAttachmentsProps) => {
   const instanceId = useId();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { uploadWorkflowFile } = useUploadWorkflowFile();
   const { openFileUpload } = useFileUpload();
   const { t } = useLingui();

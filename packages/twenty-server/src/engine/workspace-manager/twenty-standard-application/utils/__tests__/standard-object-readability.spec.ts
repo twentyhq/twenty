@@ -68,6 +68,9 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
     STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
 
+    STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
+    STANDARD_OBJECTS.messageSuppression.universalIdentifier,
+
     STANDARD_OBJECTS.recordShare.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
@@ -108,6 +111,7 @@ describe('Standard object readability', () => {
 
     expect(parentJoinColumnNames).toEqual(
       [
+        'targetAgentChatThreadId',
         'targetCompanyId',
         'targetDashboardId',
         'targetNoteId',
@@ -117,6 +121,24 @@ describe('Standard object readability', () => {
         'targetWorkflowId',
       ].sort(),
     );
+  });
+
+  it('resolves the agent chat thread as the parent of a chat attachment', () => {
+    expect(
+      resolveParents('attachment').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+              parentReadability: parent.parentFlatObjectMetadata.readability,
+            }
+          : parent.kind,
+      ),
+    ).toContainEqual({
+      joinColumnName: 'targetAgentChatThreadId',
+      parentNameSingular: 'agentChatThread',
+      parentReadability: MetadataReadability.PRIVATE,
+    });
   });
 
   it('resolves every target of a noteTarget as its parent, not the note', () => {

@@ -15,6 +15,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -32,6 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       AgentEntity,
       FrontComponentEntity,
       CommandMenuItemEntity,
+      SettingsMenuItemEntity,
       ObjectMetadataEntity,
       ApplicationVariableEntity,
     ]),
@@ -55,8 +57,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(ApplicationVariableEntity),
     provideWorkspaceScopedRepository(CommandMenuItemEntity),
+    provideWorkspaceScopedRepository(SettingsMenuItemEntity),
     provideWorkspaceScopedRepository(FrontComponentEntity),
     provideWorkspaceScopedRepository(LogicFunctionEntity),
+    provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
 })
 export class ApplicationModule {}

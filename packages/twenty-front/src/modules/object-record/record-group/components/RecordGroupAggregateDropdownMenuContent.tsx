@@ -3,7 +3,7 @@ import { useDropdownContextStateManagement } from '@/dropdown-context-state-mana
 import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
 
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useLingui } from '@lingui/react/macro';
 
@@ -18,7 +18,7 @@ export const RecordGroupAggregateDropdownMenuContent = () => {
     );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuItemsContainer>
         <ListItem
           onClick={() => {
@@ -45,6 +45,6 @@ export const RecordGroupAggregateDropdownMenuContent = () => {
           hasSubmenu
         >{t`More options`}</ListItem>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

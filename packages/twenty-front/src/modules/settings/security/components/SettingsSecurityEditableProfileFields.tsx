@@ -1,17 +1,17 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   IconMail,
   IconPhoto,
@@ -21,7 +21,7 @@ import {
 } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledDropdownContainer = styled.div`
@@ -127,7 +127,7 @@ export const SettingsSecurityEditableProfileFields = () => {
           />
         }
         dropdownComponents={
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuItemsContainer isMultiSelect>
               {profileFieldOptions.map((option) => (
                 <ListItem
@@ -145,7 +145,7 @@ export const SettingsSecurityEditableProfileFields = () => {
                 </ListItem>
               ))}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         }
       />
     </StyledDropdownContainer>

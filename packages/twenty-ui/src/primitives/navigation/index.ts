@@ -8,8 +8,6 @@
  */
 
 export { ClickToActionLink } from './ClickToActionLink/ClickToActionLink';
-export { ContactLink } from './ContactLink/ContactLink';
-export { GithubVersionLink } from './GithubVersionLink/GithubVersionLink';
 export { CAL_LINK } from './Link/constants/Cal';
 export { GITHUB_LINK } from './Link/constants/GithubLink';
 export { TWENTY_PRICING_LINK } from './Link/constants/TwentyPricingLink';
@@ -19,41 +17,9 @@ export type { ListItemDescriptionPlacement } from './ListItem/types/ListItemDesc
 export type { ListItemIndicator } from './ListItem/types/ListItemIndicator';
 export type { ListItemProps } from './ListItem/types/ListItemProps';
 export type { ListItemState } from './ListItem/types/ListItemState';
-export type { ColorLabels } from './MenuItem/constants/DefaultColorLabels';
-export { DEFAULT_COLOR_LABELS } from './MenuItem/constants/DefaultColorLabels';
-export type { MenuItemProps } from './MenuItem/MenuItem';
-export {
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
-  StyledMenuItemIconCheck,
-  StyledMenuItemLabel,
-  StyledMenuItemLeftContent,
-  MenuItem,
-} from './MenuItem/MenuItem';
-export type { MenuItemAccent } from './MenuItem/types/MenuItemAccent';
-export type { MenuItemDraggableGripMode } from './MenuItem/types/MenuItemDraggableGripMode';
-export type { MenuItemAvatarProps } from './MenuItemAvatar/MenuItemAvatar';
-export { MenuItemAvatar } from './MenuItemAvatar/MenuItemAvatar';
-export type { MenuItemDraggableProps } from './MenuItemDraggable/MenuItemDraggable';
-export { MenuItemDraggable } from './MenuItemDraggable/MenuItemDraggable';
-export type { MenuItemHotKeysProps } from './MenuItemHotKeys/MenuItemHotKeys';
-export { MenuItemHotKeys } from './MenuItemHotKeys/MenuItemHotKeys';
-export type { MenuItemSuggestionProps } from './MenuItemSuggestion/MenuItemSuggestion';
-export { MenuItemSuggestion } from './MenuItemSuggestion/MenuItemSuggestion';
-export { MenuPicker } from './MenuPicker/MenuPicker';
-export type { MenuPickerProps } from './MenuPicker/types/MenuPickerProps';
-export { NavigationBar } from './NavigationBar/NavigationBar';
-export { NavigationBarItem } from './NavigationBarItem/NavigationBarItem';
-export { RawLink } from './RawLink/RawLink';
-export { RoundedLink } from './RoundedLink/RoundedLink';
-export { LinkType } from './SocialLink/LinkType';
-export { SocialLink } from './SocialLink/SocialLink';
-export type { SocialLinkProvider } from './SocialLink/socialLinkProviders';
-export { SOCIAL_LINK_PROVIDERS } from './SocialLink/socialLinkProviders';
 export { Tabs } from './Tabs/Tabs';
 export type { TabsListProps } from './Tabs/types/TabsListProps';
 export type { TabsPanelProps } from './Tabs/types/TabsPanelProps';
 export type { TabsRootProps } from './Tabs/types/TabsRootProps';
 export type { TabsSize } from './Tabs/types/TabsSize';
 export type { TabsTabProps } from './Tabs/types/TabsTabProps';
-export { UndecoratedLink } from './UndecoratedLink/UndecoratedLink';

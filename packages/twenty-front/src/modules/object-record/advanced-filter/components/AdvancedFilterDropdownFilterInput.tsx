@@ -17,7 +17,7 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { isFilterOnActorWorkspaceMemberSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorWorkspaceMemberSubField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -57,35 +57,39 @@ export const AdvancedFilterDropdownFilterInput = ({
       {filterType === 'DATE_TIME' && <ObjectFilterDropdownDateTimeInput />}
       {filterType === 'DATE' && <ObjectFilterDropdownDateInput />}
       {filterType === 'RELATION' && (
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+        >
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownRecordSelect
             recordFilterId={recordFilter.id}
             dropdownId={filterDropdownId}
           />
-        </DropdownContent>
+        </LegacyDropdownContent>
       )}
       {filterType === 'ACTOR' &&
         (isActorSourceCompositeFilter ? (
           <ObjectFilterDropdownSourceSelect dropdownId={filterDropdownId} />
         ) : isActorWorkspaceMemberCompositeFilter ? (
-          <DropdownContent
+          <LegacyDropdownContent
             widthInPixels={GenericDropdownContentWidth.ExtraLarge}
           >
             <ObjectFilterDropdownSearchInput />
             <DropdownMenuSeparator />
             <ObjectFilterDropdownActorSelect dropdownId={filterDropdownId} />
-          </DropdownContent>
+          </LegacyDropdownContent>
         ) : (
           <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
         ))}
       {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+        >
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
-        </DropdownContent>
+        </LegacyDropdownContent>
       )}
       {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
       {filterType === 'CURRENCY' &&

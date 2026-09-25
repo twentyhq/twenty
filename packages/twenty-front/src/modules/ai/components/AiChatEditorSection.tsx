@@ -1,10 +1,11 @@
+import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -144,7 +145,7 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-export const AiChatEditorSection = () => {
+const EditableAiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
@@ -212,4 +213,25 @@ export const AiChatEditorSection = () => {
       />
     </>
   );
+};
+
+export const AiChatEditorSection = () => {
+  const { t } = useLingui();
+  const isMobile = useIsMobile();
+  const access = useCurrentAiChatThreadAccess();
+  if (access !== 'writer') {
+    return (
+      <StyledInputArea isMobile={isMobile}>
+        <div role="status">
+          {access === 'loading'
+            ? t`Loading conversation…`
+            : access === 'unavailable'
+              ? t`This conversation is no longer available.`
+              : t`View only — You can read this conversation.`}
+        </div>
+        <AiChatStandaloneError />
+      </StyledInputArea>
+    );
+  }
+  return <EditableAiChatEditorSection />;
 };

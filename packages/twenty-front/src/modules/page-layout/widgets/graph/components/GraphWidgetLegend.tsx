@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
@@ -12,12 +11,13 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useContext, useRef, useState } from 'react';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { useRef, useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -136,7 +136,7 @@ export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const containerRef = useRef<HTMLDivElement>(null);
 

@@ -13,8 +13,14 @@ import {
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderGraphqlApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-builder-graphql-api-exception-handler.util';
+import { workspaceMigrationRunnerExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-runner-exception-formatter';
+import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export const indexMetadataGraphqlApiExceptionHandler = (error: Error) => {
+  if (error instanceof WorkspaceMigrationRunnerException) {
+    workspaceMigrationRunnerExceptionFormatter(error);
+  }
+
   if (error instanceof WorkspaceMigrationBuilderException) {
     return workspaceMigrationBuilderGraphqlApiExceptionHandler(error);
   }

@@ -18,14 +18,13 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { slugify } from 'transliteration';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Info, Section, useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { Info, useToast } from 'twenty-ui/primitives/feedback';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
@@ -276,7 +275,12 @@ export const SettingsAdminNewAiProvider = () => {
               accent="danger"
               text={customAiProviderGateDescription}
               buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+              href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+              render={
+                <Link
+                  to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                />
+              }
             />
           )}
 

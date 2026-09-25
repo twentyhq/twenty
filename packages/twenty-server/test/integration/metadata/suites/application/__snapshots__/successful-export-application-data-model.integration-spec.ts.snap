@@ -1150,6 +1150,7 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TEST_ROLE>",
     },
   ],
+  "settingsMenuItems": [],
   "skills": [],
   "timelineActivityTypes": [],
   "translations": {
@@ -1212,6 +1213,7 @@ exports[`Application export - data model exports the whole application as a stab
           "viewFilterGroupUniversalIdentifier": "<OPEN_TICKETS_NOT_FILTER_GROUP>",
         },
       ],
+      "groupLoadLimit": 8,
       "groups": [
         {
           "fieldValue": "open",
