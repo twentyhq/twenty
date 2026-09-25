@@ -105,7 +105,6 @@ export const USER_QUERY_FRAGMENT = gql`
       aiAgentModelTier
       isAutoModelSelectionEnabled
       aiModelIdByTier
-      aiEvaluationModelId
       aiAdditionalInstructions
       isTwoFactorAuthenticationEnforced
       trashRetentionDays

@@ -86,7 +86,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
-        isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+        isRecordSharingEnforced:
+          this.isRecordSharingEnforced(queryRunnerContext),
         shareWith: args.shareWith,
       });
     }
@@ -618,9 +619,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
+      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
       shareWith,
       transactionScope,
     });
@@ -632,20 +633,20 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     switch (queryRunnerContext.flatObjectMetadata.readability) {
       case MetadataReadability.PRIVATE:
         return true;
-      // An inherited record gets its creator's share row like a PRIVATE one,
-      // but one created while the flag is off must keep following its parent
-      // once the flag turns on instead of becoming readable by everyone
+      // Legacy inherited records must keep following their parent after
+      // activation instead of receiving an EVERYONE compatibility grant.
       case MetadataReadability.INHERITED:
-        return this.isRecordSharingEnabled(queryRunnerContext);
+        return this.isRecordSharingEnforced(queryRunnerContext);
       default:
         return false;
     }
   }
 
-  private isRecordSharingEnabled(
+  private isRecordSharingEnforced(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    return queryRunnerContext.isRecordSharingEnabled;
+    return !queryRunnerContext.repository.internalContext
+      .isLegacyRecordAccessOpen;
   }
 
   private resolveNestedRelationsForCreate({

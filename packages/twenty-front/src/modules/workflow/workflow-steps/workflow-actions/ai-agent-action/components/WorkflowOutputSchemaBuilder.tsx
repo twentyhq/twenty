@@ -1,18 +1,17 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
-import { InputLabel } from 'twenty-ui/primitives/input';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconPlus } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 import { WorkflowOutputSchemaFieldHeader } from './WorkflowOutputSchemaFieldHeader';
 type WorkflowOutputSchemaBuilderProps = {

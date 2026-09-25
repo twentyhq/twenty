@@ -7,7 +7,7 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { isDefined } from 'twenty-shared/utils';
@@ -171,15 +171,12 @@ describe('Workspace deletion application token', () => {
 
     applicationId = standardApplication.id;
 
-    const { data: applicationTokenData } = await generateApplicationToken({
+    const applicationTokenPair = await generateApplicationTokenPair({
+      workspaceId,
       applicationId,
-      expectToFail: false,
-      token: workspaceAccessToken,
     });
 
-    applicationAccessToken =
-      applicationTokenData.generateApplicationToken.applicationAccessToken
-        .token;
+    applicationAccessToken = applicationTokenPair.applicationAccessToken.token;
   }, 120000);
 
   afterEach(async () => {

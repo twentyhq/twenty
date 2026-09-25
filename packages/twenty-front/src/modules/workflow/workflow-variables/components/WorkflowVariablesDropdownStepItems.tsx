@@ -5,7 +5,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
@@ -23,9 +23,9 @@ import {
 } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
@@ -129,7 +129,9 @@ export const WorkflowVariablesDropdownStepItems = ({
     displayedSubStepObjectDisplay?.isSelectable === true;
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -237,6 +239,6 @@ export const WorkflowVariablesDropdownStepItems = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

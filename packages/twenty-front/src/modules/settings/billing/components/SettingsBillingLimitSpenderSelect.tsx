@@ -1,11 +1,3 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
 import { AVATAR_SPENDER_TYPES } from '@/settings/billing/constants/AvatarSpenderTypes';
@@ -18,14 +10,21 @@ import {
 } from '@/settings/billing/hooks/useUsageLimitSpenderOptions';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { getUsageLimitSpenderGroups } from '@/settings/billing/utils/getUsageLimitSpenderGroups';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const SPENDER_DROPDOWN_ID = 'usage-limit-spender';
@@ -225,21 +224,21 @@ export const SettingsBillingLimitSpenderSelect = ({
   );
 
   const renderSubSpenderContent = (kind: UsageLimitSpenderType) => (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {renderBackHeader(t(USAGE_LIMIT_SPENDER_TYPE_LABELS[kind]), () =>
         setBrowsedSpenderType(null),
       )}
       <DropdownMenuItemsContainer>
         {renderOptionList(kind)}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 
   const workspaceGroup = groups.find((group) => group.id === 'workspace');
   const otherGroups = groups.filter((group) => group.id !== 'workspace');
 
   const renderRootContent = () => (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {isDefined(workspaceGroup) && (
         <DropdownMenuItemsContainer>
           <ListItem
@@ -299,7 +298,7 @@ export const SettingsBillingLimitSpenderSelect = ({
           )}
         </DropdownMenuItemsContainer>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 
   const renderContent = () => {

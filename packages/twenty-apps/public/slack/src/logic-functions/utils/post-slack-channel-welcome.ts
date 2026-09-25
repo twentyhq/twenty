@@ -1,10 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { SLACK_CHANNEL_SILENCED_SKIP_REASON } from 'src/logic-functions/constants/slack-channel-silenced-skip-reason';
 import { SLACK_CHANNEL_WELCOME_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-text';
 import { SLACK_CHANNEL_WELCOME_THREAD_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-thread-text';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { claimSlackChannelWelcome } from 'src/logic-functions/utils/claim-slack-channel-welcome';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { isSlackChannelSilenced } from 'src/logic-functions/utils/is-slack-channel-silenced';
 import { parseSlackChannelWelcomeEvent } from 'src/logic-functions/utils/parse-slack-channel-welcome-event';
 import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
 import { releaseSlackChannelWelcome } from 'src/logic-functions/utils/release-slack-channel-welcome';
@@ -27,6 +30,15 @@ export const postSlackChannelWelcome = async (
 
   if (botUserId !== slackUserId) {
     return { ok: true, skipped: 'Someone other than the bot joined' };
+  }
+
+  const isSilenced = await isSlackChannelSilenced({
+    client: new CoreApiClient(),
+    slackChannelId,
+  });
+
+  if (isSilenced) {
+    return { ok: true, skipped: SLACK_CHANNEL_SILENCED_SKIP_REASON };
   }
 
   const isFirstWelcome = await claimSlackChannelWelcome(slackChannelId);

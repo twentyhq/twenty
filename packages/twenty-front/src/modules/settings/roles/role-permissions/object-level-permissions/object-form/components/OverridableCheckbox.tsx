@@ -1,9 +1,8 @@
+import { AnimatedRotate } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/internal/AnimatedRotate/AnimatedRotate';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconReload, IconX } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedRotate } from 'twenty-ui/primitives/layout';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type OverridableCheckboxType = 'default' | 'override' | 'no_cta';
 
@@ -47,7 +46,7 @@ export const OverridableCheckbox = ({
   checked,
   disabled,
 }: OverridableCheckboxProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledOverridableCheckboxContainer>

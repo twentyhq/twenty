@@ -1,10 +1,11 @@
+import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption, InputHint } from 'twenty-ui/primitives/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -20,7 +21,7 @@ import { type WorkflowPickRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.light};

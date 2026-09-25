@@ -36,6 +36,9 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     {} as never,
     {} as never,
     {} as never,
+    {
+      getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
+    } as never,
   );
 
   return { service, messageRepository, turnRepository, messagePartRepository };
@@ -43,6 +46,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
 
 const ensureKickoff = (service: AgentChatService) =>
   service.ensureHiddenKickoffMessage({
+    userWorkspaceId: 'user-workspace-id',
     threadId: THREAD_ID,
     workspaceId: WORKSPACE_ID,
     text: KICKOFF_TEXT,

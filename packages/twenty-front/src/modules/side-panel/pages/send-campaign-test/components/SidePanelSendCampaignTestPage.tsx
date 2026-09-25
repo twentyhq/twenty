@@ -16,7 +16,7 @@ import { sendCampaignTestCampaignIdComponentState } from '@/side-panel/pages/sen
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;

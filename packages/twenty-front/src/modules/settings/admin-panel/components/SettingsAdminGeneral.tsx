@@ -1,9 +1,9 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -14,17 +14,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
-import { useDebounce } from 'use-debounce';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { useDebounce } from 'use-debounce';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Section } from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   AdminPanelRecentUsersDocument,
   AdminPanelTopWorkspacesDocument,
@@ -44,7 +44,7 @@ const RECENT_USERS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
 const TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS = '2fr 1fr 36px';
 
 export const SettingsAdminGeneral = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatNumber } = useNumberFormat();
   const apolloAdminClient = useApolloAdminClient();
   const [userSearchTerm, setUserSearchTerm] = useState('');

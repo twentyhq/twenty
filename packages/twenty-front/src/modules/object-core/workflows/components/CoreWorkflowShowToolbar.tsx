@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Select } from '@/ui/input/components/Select';
 import { CoreWorkflowVisibilitySelect } from '@/object-core/workflows/components/CoreWorkflowVisibilitySelect';

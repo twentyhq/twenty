@@ -1,7 +1,7 @@
+import { AnimatedEaseIn } from '@/auth/components/internal/AnimatedEaseIn/AnimatedEaseIn';
 import { styled } from '@linaria/react';
 import React from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type TitleProps = React.PropsWithChildren & {
   animate?: boolean;

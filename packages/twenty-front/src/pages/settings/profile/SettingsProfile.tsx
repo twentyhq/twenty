@@ -1,23 +1,23 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
-import { SettingsProfileDevicesSection } from '@/settings/profile/devices/components/SettingsProfileDevicesSection';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
-import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
+import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
+import { SettingsProfileDevicesSection } from '@/settings/profile/devices/components/SettingsProfileDevicesSection';
 import { useCanChangePassword } from '@/settings/profile/hooks/useCanChangePassword';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import { Status } from 'twenty-ui/primitives/data-display';
 import { IconShield } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { Status } from 'twenty-ui/primitives/data-display';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();

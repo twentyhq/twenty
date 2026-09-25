@@ -5,13 +5,17 @@ import {
 } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  useTheme,
+  useThemeColorScheme,
+  themeCssVariables,
+} from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -54,7 +58,8 @@ type RestPlaygroundProps = {
 };
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
-  const { theme, colorScheme } = useContext(ThemeContext);
+  const theme = useTheme();
+  const colorScheme = useThemeColorScheme();
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const [specContent, setSpecContent] = useState<object | null>(null);
 

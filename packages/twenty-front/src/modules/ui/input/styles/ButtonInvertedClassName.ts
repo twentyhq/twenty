@@ -1,5 +1,5 @@
 import { css } from '@linaria/core';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const BUTTON_INVERTED_CLASS_NAME = css`
   &[data-variant='outline'],

@@ -6,15 +6,16 @@ import { pipeline } from 'stream/promises';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import bytes from 'bytes';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { settings } from 'src/engine/constants/settings';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
@@ -27,12 +28,14 @@ import {
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -44,6 +47,16 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
   FileFolder.EmailImage,
+  FileFolder.AppTarball,
+  FileFolder.CorePicture,
+] as const;
+
+// A tarball leaves quarantine through completeAppTarballUpload only, behind
+// the marketplace-apps permission: the generic completion, open to any member
+// allowed to upload files, must not persist bytes in that folder.
+export const DEDICATED_COMPLETION_FILE_FOLDERS = [
+  FileFolder.AppTarball,
+  FileFolder.CorePicture,
 ] as const;
 
 @Injectable()
@@ -55,11 +68,12 @@ export class FileUploadService {
     private readonly fileUrlService: FileUrlService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    private readonly applicationService: ApplicationService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
@@ -93,17 +107,7 @@ export class FileUploadService {
       );
     }
 
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
-
-    if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
-      throw new FileUploadException(
-        `Invalid file size ${size} (max ${maxFileSize} bytes)`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
-        },
-      );
-    }
+    assertValidDirectUploadSize({ size, fileFolder });
 
     const { ext } = buildFileInfo(filename);
 
@@ -247,9 +251,11 @@ export class FileUploadService {
   async completeFileUpload({
     workspaceId,
     fileId,
+    dedicatedFileFolder,
   }: {
     workspaceId: string;
     fileId: string;
+    dedicatedFileFolder?: FileFolder;
   }): Promise<CompletedFileUpload> {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
     const [fileFolder] = file.path.split('/');
@@ -264,6 +270,21 @@ export class FileUploadService {
         FileUploadExceptionCode.FILE_NOT_FOUND,
         {
           userFriendlyMessage: msg`File not found.`,
+        },
+      );
+    }
+
+    if (
+      fileFolder !== dedicatedFileFolder &&
+      DEDICATED_COMPLETION_FILE_FOLDERS.includes(
+        fileFolder as (typeof DEDICATED_COMPLETION_FILE_FOLDERS)[number],
+      )
+    ) {
+      throw new FileUploadException(
+        `File ${fileId} in folder ${fileFolder} is completed by its dedicated mutation`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file must be completed with its dedicated mutation.`,
         },
       );
     }
@@ -354,16 +375,18 @@ export class FileUploadService {
         );
       }
 
-      const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
-        select: ['applicationId', 'universalIdentifier'],
-        where: {
-          ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
-          ...(fieldMetadataUniversalIdentifier
-            ? { universalIdentifier: fieldMetadataUniversalIdentifier }
-            : {}),
-          workspaceId,
+      const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
+        workspaceId,
+        {
+          select: ['applicationId', 'universalIdentifier'],
+          where: {
+            ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
+            ...(fieldMetadataUniversalIdentifier
+              ? { universalIdentifier: fieldMetadataUniversalIdentifier }
+              : {}),
+          },
         },
-      });
+      );
 
       const application = await this.applicationRepository.findOneOrFail({
         where: {
@@ -378,16 +401,35 @@ export class FileUploadService {
       };
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
+    const workspace = await this.workspaceRepository.findOne({
+      select: ['id', 'workspaceCustomApplicationId'],
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
+    }
+
+    const workspaceCustomApplication = await this.applicationRepository.findOne(
+      {
+        where: { id: workspace.workspaceCustomApplicationId, workspaceId },
+      },
+    );
+
+    if (!isDefined(workspaceCustomApplication)) {
+      throw new ApplicationException(
+        `Could not find workspace custom application ${workspace.workspaceCustomApplicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     return {
       applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplication.universalIdentifier,
       resourcePath: name,
     };
   }

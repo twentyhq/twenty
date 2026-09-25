@@ -1,15 +1,15 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -17,11 +17,10 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SettingsRow } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { SearchInput, SettingsRow, useToast } from 'twenty-ui/components';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -172,7 +171,7 @@ export const SettingsObjectIndexesSection = ({
             dropdownOffset={{ x: 0, y: 8 }}
             clickableComponent={filterButton}
             dropdownComponents={
-              <DropdownContent>
+              <LegacyDropdownContent>
                 <DropdownMenuItemsContainer>
                   <SettingsRow
                     startIcon={<IconEyeOff />}
@@ -182,7 +181,7 @@ export const SettingsObjectIndexesSection = ({
                     checked={hideSystemIndexes}
                   >{t`Hide system indexes`}</SettingsRow>
                 </DropdownMenuItemsContainer>
-              </DropdownContent>
+              </LegacyDropdownContent>
             }
           />
         )}

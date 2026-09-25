@@ -50,8 +50,24 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Record sharing`,
     description: msg`Allow sharing individual records with workspace members.`,
   },
+  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
+    label: msg`AI chat sharing dropdown`,
+    description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
+  },
   [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
     label: msg`Webhook rate limits`,
     description: msg`Limit the rate of outgoing webhook deliveries.`,
+  },
+  [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
+    label: msg`Deferred workspace migration actions`,
+    description: msg`Run the slow parts of data model changes in the background after they are saved.`,
+  },
+  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: {
+    label: msg`Execution quotas`,
+    description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
+  },
+  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
+    label: msg`Record creation form`,
+    description: msg`Use a dedicated form when creating records.`,
   },
 };

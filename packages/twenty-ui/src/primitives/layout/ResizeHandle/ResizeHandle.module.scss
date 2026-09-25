@@ -1,21 +1,42 @@
 .area {
+  @include focus-ring;
+
   align-items: center;
   cursor: ns-resize;
   display: flex;
-  height: 8px;
+  block-size: 8px;
+  flex-shrink: 0;
   justify-content: center;
   user-select: none;
+  touch-action: none;
+
+  &[data-axis='x'] {
+    block-size: auto;
+    inline-size: 8px;
+    cursor: ew-resize;
+    align-self: stretch;
+  }
+
+  &[data-disabled] {
+    cursor: default;
+    opacity: 0.5;
+  }
 }
 
 .bar {
   background-color: var(--t-background-quaternary);
   border-radius: var(--t-border-radius-pill);
   corner-shape: round;
-  height: 3px;
+  block-size: 3px;
   transition: background-color duration(fast);
-  width: 32px;
+  inline-size: 32px;
 }
 
-.area:hover > .bar {
+.area[data-axis='x'] > .bar {
+  block-size: 32px;
+  inline-size: 3px;
+}
+
+.area:not([data-disabled]):hover > .bar {
   background-color: var(--t-font-color-tertiary);
 }

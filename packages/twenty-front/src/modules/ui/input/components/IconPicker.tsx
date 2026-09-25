@@ -5,27 +5,27 @@ import { useStore } from 'jotai';
 import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  ColorSample,
+  IconButton,
+  LightIconButton,
   getIconTileColorShades,
-} from 'twenty-ui/primitives/data-display';
+} from 'twenty-ui/components';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   type ButtonSize,
   type ButtonVariant,
 } from 'twenty-ui/primitives/input';
-import { IconButton, LightIconButton } from 'twenty-ui/components';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
-import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
+import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
 import {
   ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconPickerVisibleCountState,
 } from '@/ui/input/states/iconPickerVisibleCountState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -124,7 +124,7 @@ const IconPickerSearchRow = ({
             </LightIconButton>
           }
           dropdownComponents={
-            <DropdownContent
+            <LegacyDropdownContent
               widthInPixels={
                 dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
               }
@@ -136,7 +136,7 @@ const IconPickerSearchRow = ({
                   closeDropdown(iconColorPickerDropdownId);
                 }}
               />
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       </ClickOutsideListenerContext.Provider>
@@ -435,7 +435,7 @@ export const IconPicker = ({
         }
         dropdownComponents={
           <ScrollWrapper componentInstanceId="icon-picker-scroll">
-            <DropdownContent
+            <LegacyDropdownContent
               widthInPixels={
                 dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
               }
@@ -484,7 +484,7 @@ export const IconPicker = ({
                   </DropdownMenuItemsContainer>
                 </div>
               </SelectableList>
-            </DropdownContent>
+            </LegacyDropdownContent>
           </ScrollWrapper>
         }
         onClickOutside={onClickOutside}

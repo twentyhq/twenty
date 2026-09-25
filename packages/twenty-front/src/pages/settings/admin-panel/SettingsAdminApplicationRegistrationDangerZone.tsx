@@ -1,6 +1,6 @@
-import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -10,12 +10,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistration,
   ClaimApplicationRegistrationOwnershipDocument,

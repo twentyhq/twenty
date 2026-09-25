@@ -5,7 +5,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelFieldPreviewWidgetProps = {

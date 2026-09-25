@@ -115,7 +115,10 @@ export const slackSetChannelRuleHandler = async (
     };
   }
 
-  const installedTeamId = await getInstalledSlackTeamId(slackClient);
+  const installedTeamId = await getInstalledSlackTeamId({
+    slackClient,
+    slackConnectionId: slackClientResult.connectionId,
+  });
   const slackTeamId =
     readOptionalString(channel.context_team_id) ?? installedTeamId;
 

@@ -1,21 +1,24 @@
-import { SettingsRow, Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  SearchInput,
+  Section,
+  SettingsRow,
+  useToast,
+} from 'twenty-ui/components';
+import { IconArchive, IconSettings } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   ActivateSkillDocument,
   DeleteSkillDocument,
@@ -135,7 +138,7 @@ export const SettingsAgentSkillsTab = () => {
               dropdownOffset={{ x: 0, y: 8 }}
               clickableComponent={filterButton}
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <DropdownMenuItemsContainer>
                     <SettingsRow
                       startIcon={<IconArchive />}
@@ -150,7 +153,7 @@ export const SettingsAgentSkillsTab = () => {
                       >{t`System skills`}</SettingsRow>
                     )}
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           )}

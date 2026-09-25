@@ -1,14 +1,13 @@
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
-import { SettingsRow, Section } from 'twenty-ui/components';
+import { SearchInput, Section, SettingsRow } from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
@@ -90,7 +89,7 @@ export const SettingsAgentToolsTab = () => {
               dropdownOffset={{ x: 0, y: 8 }}
               clickableComponent={filterButton}
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <DropdownMenuItemsContainer>
                     <SettingsRow
                       startIcon={<IconTool />}
@@ -108,7 +107,7 @@ export const SettingsAgentToolsTab = () => {
                       checked={showStandardTools}
                     >{t`Standard`}</SettingsRow>
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           )}

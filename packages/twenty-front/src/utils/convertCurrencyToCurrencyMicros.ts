@@ -1,9 +1,7 @@
 export const convertCurrencyAmountToCurrencyMicros = (
   currencyAmount: number,
 ) => {
-  const currencyAmountAsMicros = currencyAmount * 1000000;
-
-  return currencyAmountAsMicros;
+  return Math.round(currencyAmount * 1000000);
 };
 
 export const convertCurrencyMicrosToCurrencyAmount = (

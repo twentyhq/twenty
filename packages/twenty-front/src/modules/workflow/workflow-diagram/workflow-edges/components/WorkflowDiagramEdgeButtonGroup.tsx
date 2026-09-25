@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonGroupContainer = styled.div`
   pointer-events: all;

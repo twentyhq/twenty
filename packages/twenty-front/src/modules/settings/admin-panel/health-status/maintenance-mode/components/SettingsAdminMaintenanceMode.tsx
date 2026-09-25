@@ -6,6 +6,7 @@ import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-st
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,14 +17,11 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconLink, IconTool } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { InputHint } from 'twenty-ui/primitives/input';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormContainer = styled.div`
   display: flex;

@@ -1,15 +1,15 @@
-import { t } from '@lingui/core/macro';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
+import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components';
+import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 
 type SendMessageButtonProps = {
   onSend: () => void;

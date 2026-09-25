@@ -5,7 +5,7 @@ import {
   WorkflowVersionEdgeException,
   WorkflowVersionEdgeExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-edge.exception';
-import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepConnectionOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 type UpdatedSourceStepResult = {

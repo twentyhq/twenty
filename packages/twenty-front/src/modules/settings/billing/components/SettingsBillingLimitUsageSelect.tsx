@@ -1,21 +1,20 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
 import { USAGE_LIMIT_OPERATION_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitOperationTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';
 import { getUsageLimitOperationTypes } from '@/settings/billing/utils/getUsageLimitOperationTypes';
 import { USAGE_OPERATION_TYPE_LABELS } from '@/settings/usage/constants/UsageOperationTypeLabels';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type UsageOperationType,
   type UsageQuotaDefinitionsQuery,
@@ -84,7 +83,7 @@ export const SettingsBillingLimitUsageSelect = ({
       onClose={() => setBrowsedResourceType(null)}
       dropdownComponents={
         isDefined(browsedResourceType) && isDefined(browsedDefinition) ? (
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuHeader
               StartComponent={
                 <DropdownMenuHeaderLeftComponent
@@ -122,9 +121,9 @@ export const SettingsBillingLimitUsageSelect = ({
                 ),
               )}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         ) : (
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuItemsContainer>
               {definitions.definitions.map((definition) => (
                 <ListItem
@@ -149,7 +148,7 @@ export const SettingsBillingLimitUsageSelect = ({
                 </ListItem>
               ))}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         )
       }
     />

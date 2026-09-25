@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { LightIconButton } from 'twenty-ui/components';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
 import { useReorderRecordTableWidgetFields } from '@/page-layout/widgets/record-table/hooks/useReorderRecordTableWidgetFields';
 import { useToggleRecordTableWidgetFieldVisibility } from '@/page-layout/widgets/record-table/hooks/useToggleRecordTableWidgetFieldVisibility';
@@ -7,10 +5,11 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
+import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldListContainer = styled.div`
   display: flex;

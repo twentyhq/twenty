@@ -23,7 +23,7 @@
     "yarn": ">=4.0.2"
   },
   "license": "AGPL-3.0",
-  "name": "twenty",
+  "name": "twenty-monorepo",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
     "@module-federation/dts-plugin/undici": "^7.29.0",
@@ -64,6 +64,7 @@
     "docs:generate-navigation-template": "tsx packages/twenty-docs/scripts/generate-navigation-template.ts",
     "docs:generate-paths": "tsx packages/twenty-docs/scripts/generate-documentation-paths.ts",
     "docs:prune-orphans": "tsx packages/twenty-docs/scripts/prune-orphan-translations.ts",
+    "docs:fix-links": "tsx packages/twenty-docs/scripts/fix-translated-links.ts",
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
   },
   "workspaces": {

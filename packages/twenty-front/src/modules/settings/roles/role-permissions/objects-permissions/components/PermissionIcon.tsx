@@ -3,8 +3,7 @@ import {
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type PermissionIconProps = {
   permission: SettingsRoleObjectPermissionKey;
@@ -41,7 +40,7 @@ export const PermissionIcon = ({ permission, state }: PermissionIconProps) => {
   const { Icon, IconForbidden } =
     SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[permission];
 
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isRevoked = state === 'revoked';
 
   return (
