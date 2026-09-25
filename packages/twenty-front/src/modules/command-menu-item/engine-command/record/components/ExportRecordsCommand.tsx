@@ -12,7 +12,7 @@ import { useExportSingleRecord } from '@/object-record/record-show/hooks/useExpo
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const ExportIndexRecordsContent = ({
@@ -56,11 +56,26 @@ const ExportAsyncIndexRecordsContent = ({
   recordIndexId: string;
   onProgress: (progress: number) => void;
 }) => {
-  const { download, cancel } = useRecordIndexAsyncExportRecords({
+  const [abortController] = useState(() => new AbortController());
+  const { download: downloadAsync, cancel: cancelAsync } =
+    useRecordIndexAsyncExportRecords({
+      objectMetadataItem,
+      recordIndexId,
+      onProgress,
+    });
+  const { download } = useRecordIndexExportRecords({
     objectMetadataItem,
     recordIndexId,
-    onProgress,
+    filename: `${objectMetadataItem.nameSingular}.csv`,
+    delayMs: 0,
+    onMoreRecords: downloadAsync,
+    abortSignal: abortController.signal,
   });
+  const cancel = useCallback(() => {
+    abortController.abort();
+    cancelAsync();
+  }, [abortController, cancelAsync]);
+
   return (
     <>
       <RecordExportConnectionEffect cancel={cancel} />

@@ -8,7 +8,8 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const mockSynchronousDownload = jest.fn().mockResolvedValue(undefined);
+const mockIndexDownload = jest.fn().mockResolvedValue(undefined);
+let mockHasMoreRecords = false;
 const mockAsyncDownload = jest.fn().mockResolvedValue(undefined);
 const mockCancelAsyncDownload = jest.fn();
 const mockSingleRecordDownload = jest.fn().mockResolvedValue(undefined);
@@ -28,8 +29,17 @@ jest.mock(
 jest.mock(
   '@/object-record/record-index/export/hooks/useRecordIndexExportRecords',
   () => ({
-    useRecordIndexExportRecords: () => ({
-      download: mockSynchronousDownload,
+    useRecordIndexExportRecords: ({
+      onMoreRecords,
+    }: {
+      onMoreRecords?: () => Promise<void>;
+    }) => ({
+      download: async () => {
+        await mockIndexDownload();
+        if (mockHasMoreRecords && onMoreRecords) {
+          await onMoreRecords();
+        }
+      },
       progress: {},
     }),
   }),
@@ -82,20 +92,30 @@ beforeEach(() => {
   jest.useRealTimers();
   jest.clearAllMocks();
   mockRecordIndexId = 'record-index';
+  mockHasMoreRecords = false;
 });
 
 it.each([undefined, false, true])(
-  'selects the export path when the workspace flag is %s',
+  'exports a single batch locally when the workspace flag is %s',
   async (enabled) => {
     renderExport(enabled);
-    await waitFor(() =>
-      expect(
-        enabled ? mockAsyncDownload : mockSynchronousDownload,
-      ).toHaveBeenCalledTimes(1),
-    );
-    expect(
-      enabled ? mockSynchronousDownload : mockAsyncDownload,
-    ).not.toHaveBeenCalled();
+    await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
+    expect(mockAsyncDownload).not.toHaveBeenCalled();
+    expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+  },
+);
+
+it.each([undefined, false, true])(
+  'uses the async fallback for additional pages only when the workspace flag is enabled (%s)',
+  async (enabled) => {
+    mockHasMoreRecords = true;
+    renderExport(enabled);
+    await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
+    if (enabled) {
+      await waitFor(() => expect(mockAsyncDownload).toHaveBeenCalledTimes(1));
+    } else {
+      expect(mockAsyncDownload).not.toHaveBeenCalled();
+    }
     expect(mockSingleRecordDownload).not.toHaveBeenCalled();
   },
 );
@@ -109,6 +129,6 @@ it.each([false, true])(
       expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
     );
     expect(mockAsyncDownload).not.toHaveBeenCalled();
-    expect(mockSynchronousDownload).not.toHaveBeenCalled();
+    expect(mockIndexDownload).not.toHaveBeenCalled();
   },
 );
