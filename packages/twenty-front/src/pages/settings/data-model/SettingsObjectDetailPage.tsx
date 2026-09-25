@@ -9,7 +9,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectLayout } from '@/settings/data-model/object-details/components/tabs/ObjectLayout';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
-import { ObjectValidationRules } from '@/settings/data-model/object-details/components/tabs/ObjectValidationRules';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -32,7 +31,6 @@ import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUpRight,
   IconAppWindow,
-  IconListCheck,
   IconListDetails,
   IconPlus,
   IconSettings,
@@ -128,12 +126,6 @@ export const SettingsObjectDetailPage = () => {
         objectMetadataItem.isRemote ||
         objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
     },
-    {
-      id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.VALIDATION_RULES,
-      title: t`Validation`,
-      Icon: IconListCheck,
-      hide: objectMetadataItem.isRemote || objectMetadataItem.isSystem,
-    },
   ];
 
   const renderActiveTabContent = () => {
@@ -150,10 +142,6 @@ export const SettingsObjectDetailPage = () => {
         );
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT:
         return <ObjectLayout objectMetadataItem={objectMetadataItem} />;
-      case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.VALIDATION_RULES:
-        return (
-          <ObjectValidationRules objectMetadataItem={objectMetadataItem} />
-        );
       default:
         return <></>;
     }
