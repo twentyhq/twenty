@@ -9,6 +9,7 @@ import {
   pipe,
   type Plugin,
 } from 'graphql-yoga';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -242,7 +243,7 @@ describe('subscription error delivery', () => {
     });
     const reader = response.body?.getReader();
 
-    if (!reader) {
+    if (!isDefined(reader)) {
       throw new Error('Missing SSE response body');
     }
 
