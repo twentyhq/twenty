@@ -1,8 +1,11 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type ExecutionResult, print } from 'graphql';
+import { type RequestParams, type Sink } from 'graphql-sse';
 import { http, HttpResponse } from 'msw';
 import { type ReactNode, useEffect } from 'react';
 import { expect, screen, userEvent, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -20,8 +23,10 @@ import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRan
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
+import { EVENT_LOGS_LIVE_SUBSCRIPTION } from '@/settings/event-logs/graphql/subscriptions/EventLogsLiveSubscription';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -31,8 +36,10 @@ import {
   BillingEntitlementKey,
   EventLogFilterOperand,
   type EventLogRecord,
+  type EventLogsLiveSubscription,
   type EventLogsQuery,
   type EventLogsQueryVariables,
+  EventLogTable,
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -45,6 +52,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import {
   mockedEventLogApplications,
+  mockedEventLogLiveApplicationLogs,
   mockedEventLogLogicFunctions,
   mockedEventLogRecordsByTable,
   mockedEventLogWorkspaceMembers,
@@ -55,6 +63,7 @@ import {
 } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getOperationName } from '~/utils/getOperationName';
+import { sleep } from '~/utils/sleep';
 
 const WORKSPACE_WITH_LOGS_CONSOLE = {
   ...mockCurrentWorkspace,
@@ -63,6 +72,32 @@ const WORKSPACE_WITH_LOGS_CONSOLE = {
   ],
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
+
+const [firstLiveApplicationLog, secondLiveApplicationLog] =
+  mockedEventLogLiveApplicationLogs;
+
+const eventLogsLiveSubscriptions = new Map<
+  Sink<ExecutionResult<EventLogsLiveSubscription>>,
+  RequestParams['variables']
+>();
+
+const fakeSseClient = {
+  subscribe: (
+    request: RequestParams,
+    sink: Sink<ExecutionResult<EventLogsLiveSubscription>>,
+  ) => {
+    if (request.query === print(EVENT_LOGS_LIVE_SUBSCRIPTION)) {
+      eventLogsLiveSubscriptions.set(sink, request.variables);
+    }
+
+    return () => eventLogsLiveSubscriptions.delete(sink);
+  },
+};
+
+const emitEventLogsLive = (records: EventLogRecord[]) =>
+  eventLogsLiveSubscriptions.forEach((_variables, sink) =>
+    sink.next({ data: { eventLogsLive: records } }),
+  );
 
 const StyledPageWithSidePanel = styled.div`
   display: flex;
@@ -157,8 +192,14 @@ const meta: Meta<PageDecoratorArgs> = {
         metadataGraphql.query<EventLogsQuery, EventLogsQueryVariables>(
           getOperationName(GET_EVENT_LOGS) ?? '',
           ({ variables }) => {
+            const rangeStart = variables.input.filters?.dateRange?.start;
+            const isRangeStartingNow =
+              isDefined(rangeStart) &&
+              Date.now() - Date.parse(rangeStart) < 60_000;
             const records = (
-              mockedEventLogRecordsByTable[variables.input.table] ?? []
+              isRangeStartingNow
+                ? []
+                : (mockedEventLogRecordsByTable[variables.input.table] ?? [])
             ).filter((record) =>
               (variables.input.filters?.fieldFilters ?? []).every(
                 ({ field, operand, values }) =>
@@ -290,6 +331,86 @@ export const AppLogDetail: Story = {
     await userEvent.click(typeErrorMessage);
 
     await canvas.findByText(/at mapInvoiceToOpportunity/, { selector: 'pre' });
+  },
+};
+
+export const AppLogsLive: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-logs',
+    );
+    jotaiStore.set(sseClientState.atom, fakeSseClient as never);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('8 logs', {}, { timeout: 5000 });
+
+    expect([...eventLogsLiveSubscriptions.values()]).toEqual([
+      { table: EventLogTable.APPLICATION_LOG, fieldFilters: [] },
+    ]);
+
+    emitEventLogsLive([firstLiveApplicationLog]);
+
+    const liveMessage = await canvas.findByText('Lead score for Omar Aziz: 72');
+
+    expect(
+      liveMessage.compareDocumentPosition(
+        canvas.getByText(
+          'Missing job title for Omar Aziz, using default title score (20)',
+        ),
+      ),
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    await canvas.findByText(/^9 logs/);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Pause' }));
+    emitEventLogsLive([secondLiveApplicationLog]);
+    await sleep(500);
+
+    expect(
+      canvas.queryByText('Lead score for Lena Park: 64'),
+    ).not.toBeInTheDocument();
+    expect(canvas.getByText(/^9 logs/)).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Resume' }));
+
+    await canvas.findByText('Lead score for Lena Park: 64');
+    await canvas.findByText(/^10 logs/);
+  },
+};
+
+export const ClearAndReloadHistory: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-logs',
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('8 logs', {}, { timeout: 5000 });
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
+
+    await canvas.findByText('No event logs found');
+    await canvas.findByText('0 logs');
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Reload history' }),
+    );
+
+    await canvas.findByText('Received 9 invoices from Stripe');
+    await canvas.findByText('8 logs');
+    expect(
+      canvas.queryByRole('button', { name: 'Reload history' }),
+    ).not.toBeInTheDocument();
   },
 };
 

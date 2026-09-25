@@ -145,7 +145,7 @@ export const SettingsLogs = () => {
     isDefined(filters.dateRange?.start) ||
     isDefined(filters.dateRange?.end);
 
-  const liveRecords = useEventLogsLiveStream({
+  const { liveRecords } = useEventLogsLiveStream({
     table: selectedTable,
     enabled: !isPaused && !hasActiveFilters && canQuery,
   });

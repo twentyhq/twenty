@@ -4,8 +4,13 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
-import { IconRefresh } from 'twenty-ui/icon';
+import { IconButton, LightButton } from 'twenty-ui/components';
+import {
+  IconEraser,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconRefresh,
+} from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -30,6 +35,7 @@ import { getLogConsoleFieldFilters } from '@/log-console/utils/getLogConsoleFiel
 import { getLogConsoleTimeRangeBounds } from '@/log-console/utils/getLogConsoleTimeRangeBounds';
 import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogConsoleTimeRangeWithinRetention';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogsLiveStream';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -39,6 +45,9 @@ import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const RECORDS_PER_PAGE = 100;
+
+const getLaterDate = (date: string, otherDate: string) =>
+  new Date(otherDate).getTime() > new Date(date).getTime() ? otherDate : date;
 
 const StyledResults = styled.div`
   display: flex;
@@ -93,6 +102,9 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const [refreshedAt, setRefreshedAt] = useState(() =>
     new Date().toISOString(),
   );
+  const [clearedAt, setClearedAt] = useState<string>();
+  const [pausedLiveRecords, setPausedLiveRecords] =
+    useState<EventLogRecord[]>();
 
   const timeRange = isLogConsoleTimeRangeWithinRetention({
     timeRange: logConsoleTimeRange,
@@ -101,25 +113,46 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     ? logConsoleTimeRange
     : '24h';
 
-  const getDateRange = (now: string) =>
-    getLogConsoleTimeRangeBounds({ timeRange, now, timeZone });
+  const fieldFilters = getLogConsoleFieldFilters({
+    source,
+    filters: logConsoleFilters,
+  });
+
+  const getDateRange = (now: string) => {
+    const rangeBounds = getLogConsoleTimeRangeBounds({
+      timeRange,
+      now,
+      timeZone,
+    });
+
+    return isDefined(clearedAt)
+      ? { ...rangeBounds, start: getLaterDate(rangeBounds.start, clearedAt) }
+      : rangeBounds;
+  };
 
   const getEventLogsInput = (now: string) => ({
     table: source.table,
     first: RECORDS_PER_PAGE,
-    filters: {
-      dateRange: getDateRange(now),
-      fieldFilters: getLogConsoleFieldFilters({
-        source,
-        filters: logConsoleFilters,
-      }),
-    },
+    filters: { dateRange: getDateRange(now), fieldFilters },
   });
 
   const dateRange = getDateRange(refreshedAt);
 
+  const isLive = !isDefined(dateRange.end);
+  const isPaused = isDefined(pausedLiveRecords);
+
   const { records, totalCount, loading, error, loadMore, refetch } =
     useEventLogs(getEventLogsInput(refreshedAt));
+
+  const { liveRecords, clearLiveRecords } = useEventLogsLiveStream({
+    table: source.table,
+    fieldFilters,
+    enabled: isLive,
+  });
+
+  const displayedLiveRecords = pausedLiveRecords ?? liveRecords;
+
+  const displayedRecords = [...displayedLiveRecords, ...records];
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
@@ -129,23 +162,45 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     getScrollWrapperElement().scrollWrapperElement?.scrollTo({ top: 0 });
   };
 
+  const restartLogs = (now: string) => {
+    scrollToTop();
+    setRefreshedAt(now);
+    clearLiveRecords();
+    setPausedLiveRecords(isPaused ? [] : undefined);
+  };
+
   const refreshLogs = () => {
     const now = new Date().toISOString();
 
-    scrollToTop();
-    setRefreshedAt(now);
+    restartLogs(now);
     void refetch({ input: getEventLogsInput(now) });
   };
 
+  const clearLogs = () => {
+    const now = new Date().toISOString();
+
+    restartLogs(now);
+    setPausedLiveRecords(undefined);
+    setClearedAt(now);
+  };
+
+  const reloadHistory = () => {
+    restartLogs(new Date().toISOString());
+    setClearedAt(undefined);
+  };
+
+  const togglePause = () => {
+    setPausedLiveRecords(isPaused ? undefined : liveRecords);
+  };
+
   const changeTimeRange = (selectedTimeRange: LogConsoleTimeRange) => {
-    scrollToTop();
-    setRefreshedAt(new Date().toISOString());
+    restartLogs(new Date().toISOString());
+    setClearedAt(undefined);
     setLogConsoleTimeRange(selectedTimeRange);
   };
 
   const changeFilters = (filters: LogConsoleFilter[]) => {
-    scrollToTop();
-    setRefreshedAt(new Date().toISOString());
+    restartLogs(new Date().toISOString());
     setLogConsoleFilters(filters);
   };
 
@@ -173,18 +228,27 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     return formatRangeDate(date, `${boundDateFormat}, ${timeFormat}`);
   };
 
-  const rangeEnd = dateRange.end ?? refreshedAt;
+  const rangeEnd =
+    dateRange.end ??
+    [
+      refreshedAt,
+      ...displayedLiveRecords.map(({ timestamp }) => timestamp),
+    ].reduce(getLaterDate);
+
+  const displayedCount = totalCount + displayedLiveRecords.length;
 
   const countLabel = source.getCountLabel({
-    count: totalCount,
-    formattedCount: formatNumber(totalCount),
+    count: displayedCount,
+    formattedCount: formatNumber(displayedCount),
   });
 
   const summaryRange = `· ${formatRangeBound(dateRange.start)} – ${formatRangeBound(rangeEnd)}`;
 
   const summaryTimeZone = formatRangeDate(rangeEnd, 'zzz');
 
-  const isInitialLoading = loading && records.length === 0;
+  const isInitialLoading = loading && displayedRecords.length === 0;
+
+  const pauseLabel = isPaused ? t`Resume` : t`Pause`;
 
   const renderLogs = () => {
     if (isDefined(error)) {
@@ -195,7 +259,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
       );
     }
 
-    if (!loading && records.length === 0) {
+    if (!loading && displayedRecords.length === 0) {
       return (
         <SettingsEmptyPlaceholder>{t`No event logs found`}</SettingsEmptyPlaceholder>
       );
@@ -204,7 +268,8 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     return (
       <LogConsoleTable
         source={source}
-        entries={records}
+        entries={displayedRecords}
+        liveEntryCount={displayedLiveRecords.length}
         loading={loading}
         selectedEntry={
           isLogConsoleSelectedLogOpened
@@ -244,6 +309,33 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
             </>
           )}
         </StyledSummary>
+        {isDefined(clearedAt) && (
+          <LightButton emphasis="subtle" onClick={reloadHistory}>
+            {t`Reload history`}
+          </LightButton>
+        )}
+        {isLive && (
+          <>
+            <IconButton
+              size="sm"
+              variant="ghost"
+              tooltip={pauseLabel}
+              aria-label={pauseLabel}
+              onClick={togglePause}
+            >
+              {isPaused ? <IconPlayerPlay /> : <IconPlayerPause />}
+            </IconButton>
+            <IconButton
+              size="sm"
+              variant="ghost"
+              tooltip={t`Clear`}
+              aria-label={t`Clear`}
+              onClick={clearLogs}
+            >
+              <IconEraser />
+            </IconButton>
+          </>
+        )}
         <IconButton
           size="sm"
           variant="ghost"

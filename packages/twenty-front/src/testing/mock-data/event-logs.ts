@@ -565,3 +565,20 @@ export const mockedEventLogRecordsByTable: Partial<
     },
   ],
 };
+
+export const mockedEventLogLiveApplicationLogs: EventLogRecord[] = [
+  buildApplicationLogRecord({
+    timestamp: '2026-09-24T12:05:12.418Z',
+    logicFunction: SCORE_INBOUND_LEAD,
+    executionId: 'a3c8f0e2-6b1d-4f7a-9e25-8d4b1c7f3a60',
+    level: 'INFO',
+    message: 'Lead score for Omar Aziz: 72',
+  }),
+  buildApplicationLogRecord({
+    timestamp: '2026-09-24T12:05:41.207Z',
+    logicFunction: SCORE_INBOUND_LEAD,
+    executionId: '6e1f4b9d-2c7a-4d83-b5f0-1a9e7c3d2b48',
+    level: 'INFO',
+    message: 'Lead score for Lena Park: 64',
+  }),
+];

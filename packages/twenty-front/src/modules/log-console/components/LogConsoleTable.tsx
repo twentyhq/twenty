@@ -51,6 +51,7 @@ const StyledLoadMoreTrigger = styled.div`
 type LogConsoleTableProps = {
   source: LogConsoleSource;
   entries: EventLogRecord[];
+  liveEntryCount: number;
   loading: boolean;
   selectedEntry?: EventLogRecord;
   onLoadMore: () => void;
@@ -60,6 +61,7 @@ type LogConsoleTableProps = {
 export const LogConsoleTable = ({
   source,
   entries,
+  liveEntryCount,
   loading,
   selectedEntry,
   onLoadMore,
@@ -128,7 +130,7 @@ export const LogConsoleTable = ({
         ) : (
           entries.map((entry, entryIndex) => (
             <StyledEntryRow
-              key={entryIndex}
+              key={liveEntryCount - entryIndex}
               gridTemplateColumns={gridTemplateColumns}
               severity={source.getSeverity?.(entry)}
               isSelected={
