@@ -1,10 +1,15 @@
+import { msg } from '@lingui/core/macro';
 import {
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
+  PageLayoutWidgetVerticalListHeightBehavior,
   type PageLayoutWidgetVerticalListPosition,
   WidgetType,
 } from 'twenty-shared/types';
+
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
   and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
@@ -19,6 +24,12 @@ export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
 
 export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
   'device == "DESKTOP"';
+
+// Record pages carry both presentations and the flag picks one, so turning it
+// on or off never needs a layout migration.
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_ENABLED = `featureFlags.${FeatureFlagKey.IS_MESSAGES_TAB_ENABLED}`;
+
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_DISABLED = `not ${CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_ENABLED}`;
 
 export const GRID_LAYOUT_POSITIONS = {
   FULL_WIDTH: {
@@ -65,6 +76,13 @@ export const VERTICAL_LIST_LAYOUT_POSITIONS = {
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     index: 4,
   },
+  // A tab holds a single full-height widget, placed last, so a list widget
+  // stacked above it has to fit its content.
+  FIRST_FIT_CONTENT: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 0,
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+  },
 } as const satisfies Record<string, PageLayoutWidgetVerticalListPosition>;
 
 export const TAB_PROPS = {
@@ -102,6 +120,14 @@ export const TAB_PROPS = {
     title: 'Emails',
     position: 60,
     icon: 'IconMail',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  },
+  messages: {
+    title: i18nLabel(
+      msg({ message: `Messages`, context: 'pageLayoutTab.title' }),
+    ),
+    position: 65,
+    icon: 'IconMessages',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   calendar: {
@@ -171,6 +197,13 @@ export const WIDGET_PROPS = {
   emails: {
     title: 'Emails',
     type: WidgetType.EMAILS,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+  },
+  conversations: {
+    title: i18nLabel(
+      msg({ message: `Conversations`, context: 'pageLayoutWidget.title' }),
+    ),
+    type: WidgetType.CHAT_THREADS,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   calendar: {

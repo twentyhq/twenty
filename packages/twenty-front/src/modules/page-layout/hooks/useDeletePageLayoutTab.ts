@@ -1,9 +1,11 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -26,6 +28,8 @@ export const useDeletePageLayoutTab = ({
 
   const store = useStore();
 
+  const featureFlags = useWorkspaceFeatureFlagsMap();
+
   const activeTabIdAtom = activeTabIdComponentState.atomFamily({
     instanceId: tabListInstanceId,
   });
@@ -33,7 +37,13 @@ export const useDeletePageLayoutTab = ({
   const deleteTab = useCallback(
     (tabId: string) => {
       const draft = store.get(pageLayoutDraftState);
-      const activeTabs = draft.tabs.filter((t) => t.isActive);
+      // A tab feature flags hide can neither be the last one standing nor take
+      // over as the active tab.
+      const activeTabs = draft.tabs.filter(
+        (t) =>
+          t.isActive &&
+          !isPageLayoutTabHiddenByFeatureFlags({ tab: t, featureFlags }),
+      );
 
       if (activeTabs.length <= 1) {
         return;
@@ -58,7 +68,7 @@ export const useDeletePageLayoutTab = ({
         store.set(activeTabIdAtom, nextActiveId);
       }
     },
-    [pageLayoutDraftState, activeTabIdAtom, store],
+    [pageLayoutDraftState, activeTabIdAtom, featureFlags, store],
   );
 
   return { deleteTab };

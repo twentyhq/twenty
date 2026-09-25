@@ -1,4 +1,5 @@
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { replaceViewerConditionInAvailabilityExpression } from '@/page-layout/utils/replaceViewerConditionInAvailabilityExpression';
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
 import { expressionToOptionId } from '@/side-panel/pages/page-layout/utils/expressionToOptionId';
 import { optionIdToExpression } from '@/side-panel/pages/page-layout/utils/optionIdToExpression';
@@ -21,7 +22,11 @@ export const SingleWidgetTabVisibilityDropdownContent = ({
 
   const handleSelectVisibility = (optionId: string) => {
     updatePageLayoutWidget(widgetId, {
-      conditionalAvailabilityExpression: optionIdToExpression(optionId),
+      conditionalAvailabilityExpression:
+        replaceViewerConditionInAvailabilityExpression({
+          expression: currentExpression,
+          viewerCondition: optionIdToExpression(optionId),
+        }),
     });
     closeDropdown();
   };

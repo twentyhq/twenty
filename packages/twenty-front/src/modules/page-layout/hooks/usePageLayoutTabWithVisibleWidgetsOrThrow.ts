@@ -3,6 +3,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { isWidgetEnabledByFeatureFlags } from '@/page-layout/utils/isWidgetEnabledByFeatureFlags';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +28,12 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
 
     const widgets = isPageLayoutInEditMode
-      ? activeWidgets
+      ? activeWidgets.filter((widget) =>
+          isWidgetEnabledByFeatureFlags({
+            widget,
+            featureFlags: widgetVisibilityContext.featureFlags,
+          }),
+        )
       : filterVisibleWidgets({
           widgets: activeWidgets,
           context: widgetVisibilityContext,

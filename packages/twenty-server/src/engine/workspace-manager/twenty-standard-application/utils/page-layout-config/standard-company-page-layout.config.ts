@@ -5,6 +5,8 @@ import {
 
 import { PageLayoutType, WidgetType } from 'twenty-shared/types';
 import {
+  CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_DISABLED,
+  CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_ENABLED,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -88,6 +90,8 @@ const COMPANY_PAGE_TABS = {
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
             .notes.widgets.notes.universalIdentifier,
         ...WIDGET_PROPS.notes,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_DISABLED,
       },
     },
   },
@@ -97,11 +101,21 @@ const COMPANY_PAGE_TABS = {
         .universalIdentifier,
     ...TAB_PROPS.files,
     widgets: {
+      notes: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .files.widgets.notes.universalIdentifier,
+        ...WIDGET_PROPS.notes,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST_FIT_CONTENT,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_ENABLED,
+      },
       files: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
             .files.widgets.files.universalIdentifier,
         ...WIDGET_PROPS.files,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
       },
     },
   },
@@ -116,6 +130,34 @@ const COMPANY_PAGE_TABS = {
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
             .emails.widgets.emails.universalIdentifier,
         ...WIDGET_PROPS.emails,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_DISABLED,
+      },
+    },
+  },
+  messages: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.messages
+        .universalIdentifier,
+    ...TAB_PROPS.messages,
+    widgets: {
+      conversations: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .messages.widgets.conversations.universalIdentifier,
+        ...WIDGET_PROPS.conversations,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST_FIT_CONTENT,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_ENABLED,
+      },
+      emails: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .messages.widgets.emails.universalIdentifier,
+        ...WIDGET_PROPS.emails,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_MESSAGES_TAB_ENABLED,
       },
     },
   },

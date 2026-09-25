@@ -2,6 +2,7 @@ import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import {
   makeDraft,
+  makeFlagGatedWidget,
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
@@ -77,6 +78,22 @@ describe('useMovePageLayoutTab', () => {
     act(() => result.current.moveLeft('tab-3'));
 
     expect(getActiveTabIds()).toEqual(['tab-3', 'tab-1']);
+  });
+
+  it('should skip a tab feature flags hide standing between two rendered tabs', () => {
+    const { result, getActiveTabIds } = renderUseMovePageLayoutTab([
+      makeTab('tab-1', [], 0),
+      makeTab(
+        'flag-gated-tab',
+        [makeFlagGatedWidget('flag-gated-widget', 0, 'flag-gated-tab')],
+        1,
+      ),
+      makeTab('tab-3', [], 2),
+    ]);
+
+    act(() => result.current.moveLeft('tab-3'));
+
+    expect(getActiveTabIds()).toEqual(['tab-3', 'flag-gated-tab', 'tab-1']);
   });
 
   it('should leave the first and last rendered tabs where they are', () => {

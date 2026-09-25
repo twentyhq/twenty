@@ -6,6 +6,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
+import { getWidgetIndexInDraftTab } from '@/page-layout/utils/getWidgetIndexInDraftTab';
 import { moveWidgetToTabInDraft } from '@/page-layout/utils/moveWidgetToTabInDraft';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { reorderTabInDraft } from '@/page-layout/utils/reorderTabInDraft';
@@ -124,7 +125,7 @@ export const usePageLayoutWidgetDragAndDrop = (
         sourceData?.type === 'widget' &&
         isDefined(targetData)
       ) {
-        const { widgetId, tabId: sourceTabId, index: sourceIndex } = sourceData;
+        const { widgetId, tabId: sourceTabId } = sourceData;
 
         if (targetData.type === 'tab-widget-drop') {
           const destinationTabId = targetData.tabId;
@@ -153,7 +154,7 @@ export const usePageLayoutWidgetDragAndDrop = (
 
             return moveWidgetWithinTabInDraft(prev, {
               tabId: sourceTabId,
-              fromIndex: sourceIndex,
+              fromIndex: getWidgetIndexInDraftTab({ tab, widgetId }),
               toIndex: tab.widgets.length - 1,
             });
           });
@@ -167,15 +168,47 @@ export const usePageLayoutWidgetDragAndDrop = (
           });
 
           if (isDefined(resolvedDrop)) {
-            const destinationIndex = getDestinationIndex({
-              dropTargetIndex: resolvedDrop.dropTargetIndex,
-              sourceIndex,
-              sourceDroppableId: sourceTabId,
-              destinationDroppableId: destinationTabId,
-            });
+            const isDroppedAfterTarget =
+              resolvedDrop.dropTargetIndex > targetData.index;
 
-            store.set(pageLayoutDraftState, (prev) =>
-              destinationTabId === sourceTabId
+            // The rendered list leaves out the widgets feature flags hide, so
+            // its indices are carried over to the draft through the widgets
+            // they point at.
+            store.set(pageLayoutDraftState, (prev) => {
+              const sourceTab = prev.tabs.find(
+                (candidateTab) => candidateTab.id === sourceTabId,
+              );
+              const destinationTab = prev.tabs.find(
+                (candidateTab) => candidateTab.id === destinationTabId,
+              );
+
+              if (!isDefined(sourceTab) || !isDefined(destinationTab)) {
+                return prev;
+              }
+
+              const sourceIndex = getWidgetIndexInDraftTab({
+                tab: sourceTab,
+                widgetId,
+              });
+              const targetIndex = getWidgetIndexInDraftTab({
+                tab: destinationTab,
+                widgetId: targetData.widgetId,
+              });
+
+              if (sourceIndex < 0 || targetIndex < 0) {
+                return prev;
+              }
+
+              const destinationIndex = getDestinationIndex({
+                dropTargetIndex: isDroppedAfterTarget
+                  ? targetIndex + 1
+                  : targetIndex,
+                sourceIndex,
+                sourceDroppableId: sourceTabId,
+                destinationDroppableId: destinationTabId,
+              });
+
+              return destinationTabId === sourceTabId
                 ? moveWidgetWithinTabInDraft(prev, {
                     tabId: sourceTabId,
                     fromIndex: sourceIndex,
@@ -185,8 +218,8 @@ export const usePageLayoutWidgetDragAndDrop = (
                     widgetId,
                     destinationTabId,
                     destinationIndex,
-                  }),
-            );
+                  });
+            });
           }
         }
       }

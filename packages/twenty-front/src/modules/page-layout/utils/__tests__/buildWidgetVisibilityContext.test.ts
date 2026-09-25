@@ -7,7 +7,11 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'MOBILE',
+      selectedRecords: [],
+      featureFlags: {},
+    });
   });
 
   it('should return MOBILE device when isInSidePanel is true', () => {
@@ -16,7 +20,11 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'MOBILE',
+      selectedRecords: [],
+      featureFlags: {},
+    });
   });
 
   it('should return MOBILE device when both isMobile and isInSidePanel are true', () => {
@@ -25,7 +33,11 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'MOBILE',
+      selectedRecords: [],
+      featureFlags: {},
+    });
   });
 
   it('should return DESKTOP device when both are false', () => {
@@ -34,7 +46,11 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({ device: 'DESKTOP', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'DESKTOP',
+      selectedRecords: [],
+      featureFlags: {},
+    });
   });
 
   it('should expose the target record as a single-record selection', () => {
@@ -47,7 +63,18 @@ describe('buildWidgetVisibilityContext', () => {
     expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
+      featureFlags: {},
     });
+  });
+
+  it('should expose the workspace feature flags', () => {
+    const result = buildWidgetVisibilityContext({
+      isMobile: false,
+      isInSidePanel: false,
+      featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+    });
+
+    expect(result.featureFlags).toEqual({ IS_MESSAGES_TAB_ENABLED: true });
   });
 
   it('should expose an empty selection when there is no target record', () => {

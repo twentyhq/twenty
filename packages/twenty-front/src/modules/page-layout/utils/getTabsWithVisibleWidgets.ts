@@ -1,6 +1,8 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
+import { isWidgetEnabledByFeatureFlags } from '@/page-layout/utils/isWidgetEnabledByFeatureFlags';
 
 type GetTabsWithVisibleWidgetsParams = {
   tabs: PageLayoutTab[];
@@ -16,7 +18,23 @@ export const getTabsWithVisibleWidgets = ({
   const activeTabs = tabs.filter((tab) => tab.isActive);
 
   if (isEditMode) {
-    return activeTabs;
+    return activeTabs
+      .filter(
+        (tab) =>
+          !isPageLayoutTabHiddenByFeatureFlags({
+            tab,
+            featureFlags: context.featureFlags,
+          }),
+      )
+      .map((tab) => ({
+        ...tab,
+        widgets: tab.widgets.filter((widget) =>
+          isWidgetEnabledByFeatureFlags({
+            widget,
+            featureFlags: context.featureFlags,
+          }),
+        ),
+      }));
   }
 
   const tabsWithFilteredWidgets = activeTabs.map((tab) => ({

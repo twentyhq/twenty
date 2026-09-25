@@ -50,7 +50,7 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [] },
+      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
     });
 
     expect(result).toHaveLength(3);
@@ -70,7 +70,7 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'MOBILE', selectedRecords: [] },
+      context: { device: 'MOBILE', selectedRecords: [], featureFlags: {} },
     });
 
     expect(result).toHaveLength(2);
@@ -90,7 +90,7 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [] },
+      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
     });
 
     expect(result).toHaveLength(2);
@@ -100,7 +100,7 @@ describe('filterVisibleWidgets', () => {
   it('should handle empty widgets array', () => {
     const result = filterVisibleWidgets({
       widgets: [],
-      context: { device: 'DESKTOP', selectedRecords: [] },
+      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
     });
 
     expect(result).toHaveLength(0);
@@ -118,7 +118,7 @@ describe('filterVisibleWidgets', () => {
 
     filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [] },
+      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
     });
 
     expect(widgets).toHaveLength(originalLength);
@@ -148,6 +148,7 @@ describe('filterVisibleWidgets', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
           hiddenFieldMetadataIdsOrNames: ['field-id-1'],
         },
       });
@@ -162,6 +163,7 @@ describe('filterVisibleWidgets', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
           hiddenFieldMetadataIdsOrNames: ['field-id-1', 'workflow'],
         },
       });
@@ -175,6 +177,7 @@ describe('filterVisibleWidgets', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
           hiddenFieldMetadataIdsOrNames: ['workflow'],
         },
       });
@@ -188,7 +191,7 @@ describe('filterVisibleWidgets', () => {
           createMockFieldWidget('widget-1', 'field-id-1'),
           createMockFieldWidget('widget-2', 'field-id-2'),
         ],
-        context: { device: 'DESKTOP', selectedRecords: [] },
+        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       });
 
       expect(result).toHaveLength(2);

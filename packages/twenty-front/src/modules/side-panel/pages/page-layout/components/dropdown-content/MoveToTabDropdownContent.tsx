@@ -3,10 +3,12 @@ import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
+import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
@@ -26,6 +28,8 @@ export const MoveToTabDropdownContent = () => {
 
   const { moveWidgetToTab } = useMoveWidgetToTab(pageLayoutId);
 
+  const featureFlags = useWorkspaceFeatureFlagsMap();
+
   const { closeDropdown } = useCloseDropdown();
 
   const currentTab = isDefined(pageLayoutEditingWidgetId)
@@ -42,6 +46,7 @@ export const MoveToTabDropdownContent = () => {
     (tab) =>
       tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
       tab.id !== currentTab?.id &&
+      !isPageLayoutTabHiddenByFeatureFlags({ tab, featureFlags }) &&
       isDefined(currentWidget) &&
       canVerticalListAcceptWidget({
         destinationWidgets: tab.widgets,
