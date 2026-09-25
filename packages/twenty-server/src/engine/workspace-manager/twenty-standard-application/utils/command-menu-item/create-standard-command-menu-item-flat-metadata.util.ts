@@ -1,3 +1,4 @@
+import { CommandMenuItemVariant } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -79,6 +80,10 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:
       resolvedObjectMetadataUniversalIdentifier,
+    availabilityFieldMetadataId: null,
+    availabilityFieldMetadataUniversalIdentifier: null,
+    variant: CommandMenuItemVariant.SECONDARY,
+    conditionalVariantExpression: null,
     navigationTargetObjectMetadataId: null,
     navigationTargetObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,

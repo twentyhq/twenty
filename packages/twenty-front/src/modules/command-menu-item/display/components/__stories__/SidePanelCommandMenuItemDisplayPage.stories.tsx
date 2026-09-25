@@ -39,6 +39,7 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
   EngineComponentKey,
   PermissionFlagType,
   type CommandMenuItemFieldsFragment,
@@ -71,6 +72,7 @@ const createCommandMenuItem = (
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  variant: CommandMenuItemVariant.SECONDARY,
   availabilityObjectMetadataId: null,
   payload: null,
   ...overrides,

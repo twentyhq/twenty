@@ -1,4 +1,5 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { CommandMenuItemVariant } from 'twenty-shared/types';
 
 import {
   buildDiscardDraftWorkflowCommandMenuItemsToUpdate,
@@ -71,6 +72,10 @@ const buildDiscardDraftWorkflowCommandMenuItem = ({
   availabilityObjectMetadataId: 'workflow-object-metadata-id',
   availabilityObjectMetadataUniversalIdentifier:
     DISCARD_DRAFT_WORKFLOW_DEFINITION.availabilityObjectMetadataUniversalIdentifier,
+  availabilityFieldMetadataId: null,
+  availabilityFieldMetadataUniversalIdentifier: null,
+  variant: CommandMenuItemVariant.SECONDARY,
+  conditionalVariantExpression: null,
   navigationTargetObjectMetadataId: null,
   navigationTargetObjectMetadataUniversalIdentifier: null,
   pageLayoutId: null,

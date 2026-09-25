@@ -68,4 +68,69 @@ describe('defineCommandMenuItem', () => {
       'CommandMenuItem icon will be ignored in favor of application icon, you should remove it',
     );
   });
+
+  describe('RECORD_FIELD availability', () => {
+    const recordFieldConfig = {
+      ...baseValidConfig,
+      availabilityType: 'RECORD_FIELD' as const,
+      availabilityObjectUniversalIdentifier:
+        '33333333-3333-4333-8333-333333333333',
+      availabilityFieldUniversalIdentifier:
+        '44444444-4444-4444-8444-444444444444',
+    };
+
+    it('returns success with an object, a field, a variant and an icon', () => {
+      const result = defineCommandMenuItem({
+        ...recordFieldConfig,
+        icon: 'IconVideo',
+        variant: 'PRIMARY',
+        conditionalVariantExpression:
+          'none(selectedRecords, "videoLink.primaryLinkUrl") ? "PRIMARY" : "SECONDARY"',
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.warnings).toEqual([]);
+    });
+
+    it('reports a missing availabilityFieldUniversalIdentifier', () => {
+      const result = defineCommandMenuItem({
+        ...recordFieldConfig,
+        availabilityFieldUniversalIdentifier: undefined,
+      });
+
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) =>
+          error.includes('availabilityFieldUniversalIdentifier'),
+        ),
+      ).toBe(true);
+    });
+
+    it('reports a missing availabilityObjectUniversalIdentifier', () => {
+      const result = defineCommandMenuItem({
+        ...recordFieldConfig,
+        availabilityObjectUniversalIdentifier: undefined,
+      });
+
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) =>
+          error.includes('availabilityObjectUniversalIdentifier'),
+        ),
+      ).toBe(true);
+    });
+
+    it('reports a field on a command that is not RECORD_FIELD', () => {
+      const result = defineCommandMenuItem({
+        ...recordFieldConfig,
+        availabilityType: 'RECORD_SELECTION',
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        'CommandMenuItem availabilityFieldUniversalIdentifier requires availabilityType RECORD_FIELD',
+      );
+    });
+  });
 });

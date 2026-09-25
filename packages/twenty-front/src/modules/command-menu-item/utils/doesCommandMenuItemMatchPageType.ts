@@ -12,6 +12,7 @@ const PAGE_TYPES_WITH_RECORD_CONTEXT = new Set([
 const AVAILABILITY_TYPES_REQUIRING_RECORD_CONTEXT = new Set([
   CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
   CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  CommandMenuItemAvailabilityType.RECORD_FIELD,
 ]);
 
 export const doesCommandMenuItemMatchPageType =

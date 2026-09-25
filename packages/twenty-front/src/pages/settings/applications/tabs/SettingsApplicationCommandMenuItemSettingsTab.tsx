@@ -15,7 +15,9 @@ type SettingsApplicationCommandMenuItemSettingsTabProps = {
   icon?: string | null;
   isPinned: boolean;
   availabilityType: string;
+  fieldName?: string;
   conditionalAvailabilityExpression?: string | null;
+  conditionalVariantExpression?: string | null;
   frontComponentName?: string | null;
   universalIdentifier?: string | null;
   createdAt: string;
@@ -47,7 +49,9 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
   icon,
   isPinned,
   availabilityType,
+  fieldName,
   conditionalAvailabilityExpression,
+  conditionalVariantExpression,
   frontComponentName,
   universalIdentifier,
   createdAt,
@@ -80,10 +84,24 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
       value: <StyledMonoText>{availabilityType}</StyledMonoText>,
     },
     {
+      key: 'field',
+      label: t`Field`,
+      value: fieldName ?? t`Not set`,
+    },
+    {
       key: 'conditionalAvailabilityExpression',
       label: t`Conditional availability`,
       value: conditionalAvailabilityExpression ? (
         <StyledMonoText>{conditionalAvailabilityExpression}</StyledMonoText>
+      ) : (
+        t`Not set`
+      ),
+    },
+    {
+      key: 'conditionalVariantExpression',
+      label: t`Conditional variant`,
+      value: conditionalVariantExpression ? (
+        <StyledMonoText>{conditionalVariantExpression}</StyledMonoText>
       ) : (
         t`Not set`
       ),

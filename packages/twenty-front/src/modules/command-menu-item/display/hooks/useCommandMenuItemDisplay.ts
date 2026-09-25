@@ -6,7 +6,10 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  CommandMenuItemVariant,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemDisplay = (item: CommandMenuItemDefinition) => {
   const isAsyncCsvExportEnabled = useIsFeatureEnabled(
@@ -30,7 +33,7 @@ export const useCommandMenuItemDisplay = (item: CommandMenuItemDefinition) => {
     label,
     shortLabel,
     handleClick,
-    disabled,
+    disabled: disabled || item.variant === CommandMenuItemVariant.DISABLED,
     progress: isAsyncCsvExportEnabled ? progress : undefined,
     isLoading: isAsyncCsvExportEnabled && showDisabledLoader,
   };

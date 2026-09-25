@@ -2,7 +2,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
+} from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -15,6 +18,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   workspaceId,
   flatApplication,
   flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
   flatFrontComponentMaps,
   flatPageLayoutMaps,
 }: {
@@ -23,7 +27,10 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatFrontComponentMaps' | 'flatPageLayoutMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatFrontComponentMaps'
+  | 'flatPageLayoutMaps'
 >): FlatCommandMenuItem => {
   const id = uuidv4();
   const now = new Date().toISOString();
@@ -48,6 +55,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
 
   const {
     availabilityObjectMetadataUniversalIdentifier,
+    availabilityFieldMetadataUniversalIdentifier,
     frontComponentUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     navigationTargetObjectMetadataUniversalIdentifier,
@@ -56,12 +64,15 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     foreignKeyValues: {
       availabilityObjectMetadataId:
         createCommandMenuItemInput.availabilityObjectMetadataId,
+      availabilityFieldMetadataId:
+        createCommandMenuItemInput.availabilityFieldMetadataId,
       frontComponentId: createCommandMenuItemInput.frontComponentId,
       pageLayoutId: createCommandMenuItemInput.pageLayoutId,
       navigationTargetObjectMetadataId,
     },
     flatEntityMaps: {
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatFrontComponentMaps,
       flatPageLayoutMaps,
     },
@@ -92,7 +103,14 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
       createCommandMenuItemInput.conditionalAvailabilityExpression ?? null,
     conditionalPinnedExpression:
       createCommandMenuItemInput.conditionalPinnedExpression ?? null,
+    variant:
+      createCommandMenuItemInput.variant ?? CommandMenuItemVariant.SECONDARY,
+    conditionalVariantExpression:
+      createCommandMenuItemInput.conditionalVariantExpression ?? null,
     availabilityObjectMetadataUniversalIdentifier,
+    availabilityFieldMetadataId:
+      createCommandMenuItemInput.availabilityFieldMetadataId ?? null,
+    availabilityFieldMetadataUniversalIdentifier,
     navigationTargetObjectMetadataId,
     navigationTargetObjectMetadataUniversalIdentifier,
     pageLayoutId: createCommandMenuItemInput.pageLayoutId ?? null,

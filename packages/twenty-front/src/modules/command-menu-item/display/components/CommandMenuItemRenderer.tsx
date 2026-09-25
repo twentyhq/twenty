@@ -15,6 +15,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { CommandMenuItemVariant } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -48,6 +49,9 @@ const CommandMenuItemButtonRenderer = ({
     isLoading,
   } = useCommandMenuItemDisplay(item);
 
+  const isPrimary =
+    isPrimaryAction || item.variant === CommandMenuItemVariant.PRIMARY;
+
   const command = {
     key: item.id,
     label,
@@ -61,7 +65,7 @@ const CommandMenuItemButtonRenderer = ({
       <StyledPreviewWrapper>
         <CommandMenuButton
           command={command}
-          isPrimaryAction={isPrimaryAction}
+          isPrimaryAction={isPrimary}
           shouldHideLabel={shouldHideLabel}
         />
       </StyledPreviewWrapper>
@@ -75,7 +79,7 @@ const CommandMenuItemButtonRenderer = ({
       disabled={disabled}
       progress={progress}
       loading={isLoading}
-      isPrimaryAction={isPrimaryAction}
+      isPrimaryAction={isPrimary}
       shouldHideLabel={shouldHideLabel}
     />
   );

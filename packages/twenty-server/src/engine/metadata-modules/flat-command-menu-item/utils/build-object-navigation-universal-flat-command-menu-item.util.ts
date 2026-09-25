@@ -4,6 +4,7 @@ import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
   FeatureFlagKey,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -119,6 +120,9 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     workflowVersionId: null,
     coreWorkflowVersionId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
+    availabilityFieldMetadataUniversalIdentifier: null,
+    variant: CommandMenuItemVariant.SECONDARY,
+    conditionalVariantExpression: null,
     pageLayoutUniversalIdentifier: null,
     isActive: objectMetadata.isActive,
     isSystemSideEffect: true,

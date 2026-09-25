@@ -34,6 +34,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateCommandMenuItemAction>): Promise<FlatCreateCommandMenuItemAction> {
     const {
       availabilityObjectMetadataId,
+      availabilityFieldMetadataId,
       frontComponentId,
       pageLayoutId,
       navigationTargetObjectMetadataId,
@@ -61,6 +62,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
       flatEntity: {
         ...action.flatEntity,
         availabilityObjectMetadataId,
+        availabilityFieldMetadataId,
         frontComponentId,
         pageLayoutId,
         navigationTargetObjectMetadataId,

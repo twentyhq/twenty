@@ -1280,11 +1280,26 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    conditionalVariantExpression: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    variant: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     availabilityObjectMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
       isOverridable: true,
+    },
+    availabilityFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'availabilityFieldMetadataUniversalIdentifier',
     },
     navigationTargetObjectMetadataId: {
       toCompare: true,

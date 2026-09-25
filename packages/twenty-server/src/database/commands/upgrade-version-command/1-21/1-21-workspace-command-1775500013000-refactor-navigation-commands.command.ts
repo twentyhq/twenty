@@ -1,6 +1,7 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { CommandMenuItemVariant } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
@@ -240,6 +241,10 @@ export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceComma
         coreWorkflowVersionId: null,
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
+        availabilityFieldMetadataId: null,
+        availabilityFieldMetadataUniversalIdentifier: null,
+        variant: CommandMenuItemVariant.SECONDARY,
+        conditionalVariantExpression: null,
         navigationTargetObjectMetadataId: null,
         navigationTargetObjectMetadataUniversalIdentifier: null,
         pageLayoutId: null,

@@ -1204,6 +1204,58 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
+  describe('openUrl', () => {
+    it('should open an absolute https url in a new tab without opener', async () => {
+      const windowOpenSpy = jest
+        .spyOn(window, 'open')
+        .mockImplementation(() => null);
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openUrl(
+          'https://www.google.com/maps/dir/?api=1&destination=Berlin',
+        );
+      });
+
+      expect(windowOpenSpy).toHaveBeenCalledWith(
+        'https://www.google.com/maps/dir/?api=1&destination=Berlin',
+        '_blank',
+        'noopener,noreferrer',
+      );
+
+      windowOpenSpy.mockRestore();
+    });
+
+    it.each([
+      // oxlint-disable-next-line no-script-url -- the unsafe url under test
+      ['javascript scheme', 'javascript:alert(1)'],
+      ['data scheme', 'data:text/html,<script>alert(1)</script>'],
+      ['relative path', '/objects/people'],
+      ['empty string', ''],
+      ['number', 123],
+      ['undefined', undefined],
+    ])('should silently drop unsafe urls (%s)', async (_, value) => {
+      const windowOpenSpy = jest
+        .spyOn(window, 'open')
+        .mockImplementation(() => null);
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openUrl(
+          value as unknown as string,
+        );
+      });
+
+      expect(windowOpenSpy).not.toHaveBeenCalled();
+
+      windowOpenSpy.mockRestore();
+    });
+  });
+
   describe('storage', () => {
     it('should namespace writes by application, user and storage type', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
