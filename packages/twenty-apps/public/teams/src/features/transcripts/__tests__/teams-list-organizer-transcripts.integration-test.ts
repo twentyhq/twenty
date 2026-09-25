@@ -291,11 +291,12 @@ describe('List My Teams Transcripts', () => {
     it('uses the requester personal connection over another user connection', async () => {
       addRoadmapMeeting();
       appRuntime.setConnections([
-        buildTeamsAppConnection('someone-elses-token', {
+        buildTeamsAppConnection({
+          accessToken: 'someone-elses-token',
           id: 'connected-account-teams-2',
           userWorkspaceId: 'user-workspace-2',
         }),
-        buildTeamsAppConnection(graph.accessToken),
+        buildTeamsAppConnection({ accessToken: graph.accessToken }),
       ]);
 
       const result = await teamsListOrganizerTranscriptsHandler(
@@ -318,7 +319,8 @@ describe('List My Teams Transcripts', () => {
 
     it('does not expose another user personal connection', async () => {
       appRuntime.setConnections([
-        buildTeamsAppConnection(graph.accessToken, {
+        buildTeamsAppConnection({
+          accessToken: graph.accessToken,
           userWorkspaceId: 'user-workspace-2',
         }),
       ]);
@@ -338,7 +340,8 @@ describe('List My Teams Transcripts', () => {
     it('falls back to a workspace-shared connection when nobody triggered the run', async () => {
       addRoadmapMeeting();
       appRuntime.setConnections([
-        buildTeamsAppConnection(graph.accessToken, {
+        buildTeamsAppConnection({
+          accessToken: graph.accessToken,
           visibility: 'workspace',
           userWorkspaceId: 'user-workspace-2',
         }),
@@ -360,7 +363,8 @@ describe('List My Teams Transcripts', () => {
 
     it('asks to reconnect when Microsoft authorization has failed', async () => {
       appRuntime.setConnections([
-        buildTeamsAppConnection(graph.accessToken, {
+        buildTeamsAppConnection({
+          accessToken: graph.accessToken,
           authFailedAt: '2026-09-19T00:00:00Z',
           authFailedReason: 'invalid_grant',
         }),

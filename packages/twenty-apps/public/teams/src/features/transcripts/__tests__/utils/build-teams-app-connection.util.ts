@@ -4,10 +4,11 @@ import { TEAMS_TEST_CONNECTED_ACCOUNT_ID } from 'src/features/transcripts/__test
 import { TEAMS_TEST_USER_WORKSPACE_ID } from 'src/features/transcripts/__tests__/constants/teams-test-user-workspace-id.constant';
 import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams.constant';
 
-export const buildTeamsAppConnection = (
-  accessToken: string,
-  overrides: Partial<AppConnection> = {},
-): AppConnection => ({
+export const buildTeamsAppConnection = ({
+  accessToken,
+  ...overrides
+}: Pick<AppConnection, 'accessToken'> &
+  Partial<AppConnection>): AppConnection => ({
   id: TEAMS_TEST_CONNECTED_ACCOUNT_ID,
   providerName: TEAMS_PROVIDER_NAME,
   name: 'Organizer',

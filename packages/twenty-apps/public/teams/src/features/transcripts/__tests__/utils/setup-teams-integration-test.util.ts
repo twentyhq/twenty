@@ -33,7 +33,7 @@ export const setupTeamsIntegrationTest = (): TeamsIntegrationTestContext => {
   const graph = createGraphApiMock();
   const appRuntime = createAppRuntimeMock({
     apiUrl,
-    connections: [buildTeamsAppConnection(graph.accessToken)],
+    connections: [buildTeamsAppConnection({ accessToken: graph.accessToken })],
   });
 
   const mockServer = setupServer(
