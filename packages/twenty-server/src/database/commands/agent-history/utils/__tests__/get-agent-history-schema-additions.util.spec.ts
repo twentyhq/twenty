@@ -12,7 +12,7 @@ const createStandardMetadata = () =>
     twentyStandardApplicationId: '20202020-2222-4222-8222-222222222222',
   }).allFlatEntityMaps;
 
-const HISTORY_IDENTIFIERS = [
+const HISTORY_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   STANDARD_OBJECTS.agentTurn.universalIdentifier,
   STANDARD_OBJECTS.agentMessage.universalIdentifier,
@@ -21,7 +21,7 @@ const HISTORY_IDENTIFIERS = [
 ];
 
 describe('getAgentHistorySchemaAdditions', () => {
-  it('selects only history objects and their fields and indexes', () => {
+  it('selects only history objects and the fields and indexes relating to them', () => {
     const additions = getAgentHistorySchemaAdditions({
       existing: {
         flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
@@ -41,17 +41,101 @@ describe('getAgentHistorySchemaAdditions', () => {
       ),
     ).toBe(true);
     expect(
-      additions.fields.every(
-        (field) => field.writability === MetadataWritability.SYSTEM,
-      ),
+      additions.fields
+        .filter((field) =>
+          HISTORY_IDENTIFIERS.includes(field.objectMetadataUniversalIdentifier),
+        )
+        .every((field) => field.writability === MetadataWritability.SYSTEM),
     ).toBe(true);
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
-    for (const entry of [...additions.fields, ...additions.indexes]) {
-      expect(HISTORY_IDENTIFIERS).toContain(
-        entry.objectMetadataUniversalIdentifier,
-      );
+    const historyIdentifiers = new Set<string>(HISTORY_IDENTIFIERS);
+
+    for (const field of additions.fields) {
+      expect(
+        historyIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
+          historyIdentifiers.has(
+            field.relationTargetObjectMetadataUniversalIdentifier ?? '',
+          ),
+      ).toBe(true);
     }
+  });
+
+  it('provisions both sides of relations from other objects into history objects', () => {
+    const standard = createStandardMetadata();
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: standard.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard,
+    });
+    const fieldIdentifiers = additions.fields.map(
+      (field) => field.universalIdentifier,
+    );
+    const indexIdentifiers = additions.indexes.map(
+      (index) => index.universalIdentifier,
+    );
+
+    expect(fieldIdentifiers).toEqual(
+      expect.arrayContaining([
+        STANDARD_OBJECTS.agentChatThread.fields.attachments.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetAgentChatThread
+          .universalIdentifier,
+      ]),
+    );
+    expect(indexIdentifiers).toContain(
+      STANDARD_OBJECTS.attachment.indexes.agentChatThreadIdIndex
+        .universalIdentifier,
+    );
+    expect(fieldIdentifiers).not.toContain(
+      STANDARD_OBJECTS.attachment.fields.targetNote.universalIdentifier,
+    );
+    expect(indexIdentifiers).not.toContain(
+      STANDARD_OBJECTS.attachment.indexes.noteIdIndex.universalIdentifier,
+    );
+  });
+
+  it('repairs a missing attachment index whose chat thread field already exists', () => {
+    const standard = createStandardMetadata();
+    const existing = structuredClone(standard);
+    const indexIdentifier =
+      STANDARD_OBJECTS.attachment.indexes.agentChatThreadIdIndex
+        .universalIdentifier;
+
+    delete existing.flatIndexMaps.byUniversalIdentifier[indexIdentifier];
+
+    const additions = getAgentHistorySchemaAdditions({ existing, standard });
+
+    expect(additions.fields).toEqual([]);
+    expect(additions.indexes.map((index) => index.universalIdentifier)).toEqual(
+      [indexIdentifier],
+    );
+  });
+
+  it('keeps the attachment side of the chat thread target standard', () => {
+    const standard = createStandardMetadata();
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard,
+    });
+    const targetIdentifier =
+      STANDARD_OBJECTS.attachment.fields.targetAgentChatThread
+        .universalIdentifier;
+
+    expect(
+      additions.fields.find(
+        (field) => field.universalIdentifier === targetIdentifier,
+      )?.writability,
+    ).toBe(
+      standard.flatFieldMetadataMaps.byUniversalIdentifier[targetIdentifier]
+        ?.writability,
+    );
   });
 
   it('adds nothing when all history metadata already exists', () => {
