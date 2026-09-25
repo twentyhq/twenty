@@ -3,7 +3,7 @@ import {
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -13,12 +13,13 @@ type AgentHistorySchemaMaps = Pick<
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 >;
 
-// agentChatThread.recordTargets is the far leg of a relation whose near leg
-// lives on agentChatThreadTarget, an object this migration does not provision.
-// Creating it here would emit half a relation and fail validation, so the
-// command that provisions that object owns both legs instead.
+// agentChatThreadTarget is provisioned by its own command, which owns both legs
+// of its relation to agentChatThread: `thread` on the target and
+// `recordTargets` on the thread. This migration does not create that object, so
+// emitting either leg here would fail validation.
 const FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE = new Set([
   STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread.universalIdentifier,
 ]);
 
 export const getAgentHistorySchemaAdditions = ({
@@ -77,36 +78,57 @@ export const getAgentHistorySchemaAdditions = ({
     readability: MetadataReadability.SYSTEM,
     writability: MetadataWritability.SYSTEM,
   }));
-  const fields = Object.values(
+  // Relations from other standard objects into history objects (e.g. the
+  // attachment morph target) must be provisioned with the history objects,
+  // otherwise only the history-side half of the relation gets created.
+  const historyFields = Object.values(
     standard.flatFieldMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
     .filter(
       (field) =>
-        objectIdentifiers.has(field.objectMetadataUniversalIdentifier) &&
+        (objectIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
+          (isDefined(field.relationTargetObjectMetadataUniversalIdentifier) &&
+            objectIdentifiers.has(
+              field.relationTargetObjectMetadataUniversalIdentifier,
+            ))) &&
         !FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE.has(
           field.universalIdentifier,
-        ) &&
-        !isDefined(
-          existing.flatFieldMetadataMaps.byUniversalIdentifier[
-            field.universalIdentifier
-          ],
         ),
     );
+  const fields = historyFields.filter(
+    (field) =>
+      !isDefined(
+        existing.flatFieldMetadataMaps.byUniversalIdentifier[
+          field.universalIdentifier
+        ],
+      ),
+  );
+  const historyFieldIdentifiers = new Set<string>(
+    historyFields.map(({ universalIdentifier }) => universalIdentifier),
+  );
   const indexes = Object.values(standard.flatIndexMaps.byUniversalIdentifier)
     .filter(isDefined)
     .filter(
       (index) =>
-        objectIdentifiers.has(index.objectMetadataUniversalIdentifier) &&
+        (objectIdentifiers.has(index.objectMetadataUniversalIdentifier) ||
+          (isNonEmptyArray(index.universalFlatIndexFieldMetadatas) &&
+            index.universalFlatIndexFieldMetadatas.every(
+              ({ fieldMetadataUniversalIdentifier }) =>
+                historyFieldIdentifiers.has(fieldMetadataUniversalIdentifier),
+            ))) &&
         !isDefined(
           existing.flatIndexMaps.byUniversalIdentifier[
             index.universalIdentifier
           ],
         ),
     );
-  const protectedFields: typeof fields = fields.map((field) => ({
-    ...field,
-    writability: MetadataWritability.SYSTEM,
-  }));
+  // Inverse fields on other objects keep their standard definition so every
+  // provisioning path creates them identically.
+  const protectedFields: typeof fields = fields.map((field) =>
+    objectIdentifiers.has(field.objectMetadataUniversalIdentifier)
+      ? { ...field, writability: MetadataWritability.SYSTEM }
+      : field,
+  );
   return { objects: protectedObjects, fields: protectedFields, indexes };
 };

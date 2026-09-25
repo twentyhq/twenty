@@ -26,7 +26,7 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 // provisioned its five objects: an additive from/to migration over the standard
 // definitions, which custom-object side effects must not expand. Objects created
 // before it then get the relation their creation would give them today.
-@RegisteredWorkspaceCommand('2.43.0', 1790268647460)
+@RegisteredWorkspaceCommand('2.43.0', 1790317893308)
 @Command({
   name: 'upgrade:2-43:provision-agent-chat-thread-target',
   description:

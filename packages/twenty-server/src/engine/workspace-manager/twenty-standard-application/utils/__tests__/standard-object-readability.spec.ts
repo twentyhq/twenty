@@ -129,6 +129,7 @@ describe('Standard object readability', () => {
 
     expect(parentJoinColumnNames).toEqual(
       [
+        'targetAgentChatThreadId',
         'targetCompanyId',
         'targetDashboardId',
         'targetNoteId',
@@ -138,6 +139,24 @@ describe('Standard object readability', () => {
         'targetWorkflowId',
       ].sort(),
     );
+  });
+
+  it('resolves the agent chat thread as the parent of a chat attachment', () => {
+    expect(
+      resolveParents('attachment').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+              parentReadability: parent.parentFlatObjectMetadata.readability,
+            }
+          : parent.kind,
+      ),
+    ).toContainEqual({
+      joinColumnName: 'targetAgentChatThreadId',
+      parentNameSingular: 'agentChatThread',
+      parentReadability: MetadataReadability.PRIVATE,
+    });
   });
 
   it('resolves every target of a noteTarget as its parent, not the note', () => {
