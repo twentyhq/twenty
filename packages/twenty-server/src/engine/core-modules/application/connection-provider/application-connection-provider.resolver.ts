@@ -33,10 +33,10 @@ export class ApplicationConnectionProviderResolver {
     });
 
     const credentialsConfiguredByProviderId =
-      await this.oauthProviderService.areClientCredentialsConfiguredBatch(
+      await this.oauthProviderService.areClientCredentialsConfiguredBatch({
         providers,
-        workspace.id,
-      );
+        workspaceId: workspace.id,
+      });
 
     return providers.map((provider) => ({
       id: provider.id,

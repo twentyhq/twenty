@@ -75,18 +75,21 @@ export class ConnectionProviderService {
   async areClientCredentialsConfigured(
     provider: ConnectionProviderEntity,
   ): Promise<boolean> {
-    const result = await this.areClientCredentialsConfiguredBatch(
-      [provider],
-      provider.workspaceId,
-    );
+    const result = await this.areClientCredentialsConfiguredBatch({
+      providers: [provider],
+      workspaceId: provider.workspaceId,
+    });
 
     return result.get(provider.id) ?? false;
   }
 
-  async areClientCredentialsConfiguredBatch(
-    providers: ConnectionProviderEntity[],
-    workspaceId: string,
-  ): Promise<Map<string, boolean>> {
+  async areClientCredentialsConfiguredBatch({
+    providers,
+    workspaceId,
+  }: {
+    providers: ConnectionProviderEntity[];
+    workspaceId: string;
+  }): Promise<Map<string, boolean>> {
     const result = new Map<string, boolean>();
 
     if (providers.length === 0) {
