@@ -13,6 +13,8 @@ import { ApplicationInstallService } from 'src/engine/core-modules/application/a
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 type InstallApplicationCommandOptions = {
   applicationRegistrationUniversalIdentifier: string;
@@ -35,11 +37,13 @@ export class InstallApplicationCommand extends CommandRunner {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    // CLI command over an operator-supplied set of workspaces; the query filters
-    // on In(workspaceIds) rather than one request workspace.
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    // Narrowing the operator-supplied workspace list to the ones that already
+    // have the application spans workspaces, so it filters on In(workspaceIds).
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
@@ -257,7 +261,7 @@ export class InstallApplicationCommand extends CommandRunner {
     universalIdentifier: string;
     workspaceIds: string[];
   }): Promise<Set<string>> {
-    const existingApplications = await this.applicationRepository.find({
+    const existingApplications = await this.unscopedApplicationRepository.find({
       select: ['workspaceId'],
       where: { universalIdentifier, workspaceId: In(workspaceIds) },
     });
@@ -278,8 +282,8 @@ export class InstallApplicationCommand extends CommandRunner {
     universalIdentifier: string;
     workspaceId: string;
   }): Promise<boolean> {
-    return this.applicationRepository.exists({
-      where: { universalIdentifier, workspaceId },
+    return this.applicationRepository.exists(workspaceId, {
+      where: { universalIdentifier },
     });
   }
 }

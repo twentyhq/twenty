@@ -12,6 +12,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ApplicationUpgradeService,
     ApplicationUpgradeResolver,
     UpgradeApplicationCommand,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [ApplicationUpgradeService],
 })

@@ -23,6 +23,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -31,11 +33,13 @@ export class ApplicationUpgradeService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    // Rolls a version out across every workspace that installed the registration,
-    // so the query filters by registration and an explicit workspace id list.
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    // Picking the rollout targets spans workspaces: the query filters by
+    // registration, with an explicit workspace id list only when one is given.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
@@ -73,7 +77,7 @@ export class ApplicationUpgradeService {
       };
     }
 
-    const applications = await this.applicationRepository.find({
+    const applications = await this.unscopedApplicationRepository.find({
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
@@ -212,8 +216,8 @@ export class ApplicationUpgradeService {
       return;
     }
 
-    const application = await this.applicationRepository.findOne({
-      where: { applicationRegistrationId, workspaceId },
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { applicationRegistrationId },
     });
 
     if (!isDefined(application)) {
