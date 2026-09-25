@@ -2,7 +2,7 @@ import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('people resolvers (integration)', () => {
@@ -52,7 +52,7 @@ describe('people resolvers (integration)', () => {
       upsert: true,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.createPeople).toHaveLength(3);
     expect(response.body.errors).toBeUndefined();
@@ -71,7 +71,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const findOneResponse = await makeGraphqlAPIRequest(findOneOperation);
+    const findOneResponse = await makeGraphqlApiRequest(findOneOperation);
 
     person2Id = findOneResponse.body.data.person.id;
 
@@ -94,7 +94,7 @@ describe('people resolvers (integration)', () => {
       upsert: true,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const findAllOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -102,7 +102,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
     });
 
-    const findAllResponse = await makeGraphqlAPIRequest(findAllOperation);
+    const findAllResponse = await makeGraphqlApiRequest(findAllOperation);
 
     expect(findAllResponse.body.data.people.edges.length).toBe(3);
 
@@ -143,7 +143,7 @@ describe('people resolvers (integration)', () => {
       upsert: true,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const findAllOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -151,7 +151,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
     });
 
-    const findAllResponse = await makeGraphqlAPIRequest(findAllOperation);
+    const findAllResponse = await makeGraphqlApiRequest(findAllOperation);
 
     expect(findAllResponse.body.data.people.edges.length).toBe(4);
 

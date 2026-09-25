@@ -20,7 +20,7 @@ import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/util
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 @Injectable()
 export class ToolRegistryService {
@@ -329,7 +329,7 @@ export class ToolRegistryService {
         return {
           success: false,
           message: `Tool "${toolName}" not found`,
-          error: `Tool "${toolName}" not found.${suggestionHint} Use learn_tools to discover available tools.`,
+          error: `Tool "${toolName}" not found.${suggestionHint} Pass your best candidate name to learn_tools to confirm it before executing.`,
         };
       }
 

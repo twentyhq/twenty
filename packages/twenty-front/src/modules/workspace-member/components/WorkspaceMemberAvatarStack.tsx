@@ -6,7 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const DEFAULT_MAX_VISIBLE_MEMBER_AVATARS = 5;
-const WORKSPACE_MEMBER_AVATAR_CHIP_SIZE = '18px';
 
 type WorkspaceMemberAvatarStackMember = {
   avatarUrl?: string | null;
@@ -36,23 +35,6 @@ const StyledAvatarContainer = styled.div`
   border-radius: 50%;
   corner-shape: round;
   display: flex;
-`;
-
-const StyledMoreAvatar = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
-  border: 1px solid ${themeCssVariables.background.secondary};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: 12px;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: ${WORKSPACE_MEMBER_AVATAR_CHIP_SIZE};
-  justify-content: center;
-  min-width: ${WORKSPACE_MEMBER_AVATAR_CHIP_SIZE};
-  padding: 0 ${themeCssVariables.spacing[1]};
-  width: fit-content;
 `;
 
 const getWorkspaceMemberDisplayName = (
@@ -110,11 +92,8 @@ export const WorkspaceMemberAvatarStack = ({
           );
         })}
         maxVisible={maxVisible}
-        overflowAvatar={
-          hiddenWorkspaceMembersCount > 0 ? (
-            <StyledMoreAvatar>+{hiddenWorkspaceMembersCount}</StyledMoreAvatar>
-          ) : undefined
-        }
+        overflowCount={hiddenWorkspaceMembersCount}
+        overflowShape="circle"
         overlap="left"
         overlapOffset="4px"
       />

@@ -31,7 +31,7 @@ import {
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
-import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
@@ -137,19 +137,11 @@ export class AgentChatStreamingService {
       }
     | { queued: true; messageId: string }
   > {
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: {
-        id: threadId,
-        userWorkspaceId,
-      },
+    const thread = await this.agentChatService.getWritableThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
     });
-
-    if (!thread) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
 
     const hasQueuedBacklog = await this.agentChatService.hasQueuedMessages({
       threadId,
@@ -208,6 +200,12 @@ export class AgentChatStreamingService {
           parts: userMessageParts,
         },
         workspaceId: workspace.id,
+      });
+
+      await this.eventPublisherService.publish({
+        workspaceId: workspace.id,
+        threadId,
+        event: { type: 'message-persisted', messageId: savedUserMessage.id },
       });
 
       await this.agentChatService.notifyThreadActivityUpdated({
@@ -378,16 +376,11 @@ export class AgentChatStreamingService {
     workspace: WorkspaceEntity;
     modelId?: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string }> {
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
+    const thread = await this.agentChatService.getWritableThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
     });
-
-    if (!thread) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
 
     if (
       !isDefined(thread.lastStreamError) ||
@@ -539,6 +532,11 @@ export class AgentChatStreamingService {
     modelId?: string;
     fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
+    const thread = await this.agentChatService.getWritableThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
     if (
       !answers.some(
         (answer) =>
@@ -557,14 +555,7 @@ export class AgentChatStreamingService {
       threadId,
       messageId,
     });
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId },
-      select: ['id', 'activeStreamId'],
-    });
-
-    if (isDefined(thread)) {
-      await this.reapDeadStream({ thread, workspaceId: workspace.id });
-    }
+    await this.reapDeadStream({ thread, workspaceId: workspace.id });
 
     const streamId = generateId();
 
@@ -943,7 +934,12 @@ export class AgentChatStreamingService {
         // insert time is meaningless and later than the first real message it sorts before.
         ...(message.isHidden
           ? {}
-          : { metadata: { createdAt: message.createdAt.toISOString() } }),
+          : {
+              metadata: {
+                createdAt: message.createdAt.toISOString(),
+                senderUserWorkspaceId: message.senderUserWorkspaceId,
+              },
+            }),
       })),
     );
   }

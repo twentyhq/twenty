@@ -97,7 +97,7 @@ type FrontComponent {
   updatedAt: DateTime!
   isHeadless: Boolean!
   usesSdkClient: Boolean!
-  applicationTokenPair: ApplicationTokenPair
+  applicationTokenPair: ApplicationTokenPair @deprecated(reason: "Use generateFrontComponentApplicationTokenPair")
   applicationVariables: JSON
   frontComponentSharedDependenciesChecksum: String
   applicationName: String
@@ -1740,6 +1740,41 @@ enum NavigationMenuItemType {
   PAGE_LAYOUT
 }
 
+type RecordPermissionsDTO {
+  canRead: Boolean!
+  canUpdate: Boolean!
+  canDelete: Boolean!
+  canSoftDelete: Boolean!
+}
+
+type RecordSharingGrantDTO {
+  id: ID!
+  principalType: String!
+  principalId: UUID!
+  accessLevel: RecordShareAccessLevel!
+  rowCause: String!
+}
+
+enum RecordShareAccessLevel {
+  READ
+  READ_WRITE
+  FULL
+}
+
+type RecordSharingRoleDTO {
+  id: UUID!
+  label: String!
+}
+
+type RecordSharingDTO {
+  viewerAccessLevel: RecordShareAccessLevel
+  permissions: RecordPermissionsDTO!
+  isEnabled: Boolean!
+  hasInheritedAccess: Boolean!
+  roles: [RecordSharingRoleDTO!]!
+  shares: [RecordSharingGrantDTO!]!
+}
+
 type JobStatus {
   jobId: String!
   state: JobState!
@@ -2025,6 +2060,7 @@ enum FeatureFlagKey {
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_RECORD_SHARING_ENABLED
+  IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
@@ -3385,7 +3421,7 @@ type RecordExport {
   filename: String!
   progress: Int!
   errorMessage: String
-  downloadUrl: String
+  downloadPath: String
 }
 
 type AiChatUsage {
@@ -3480,6 +3516,12 @@ enum WorkspaceSetupChatOutcome {
   STARTED
   ALREADY_STARTED
   UNAVAILABLE
+}
+
+type RecordPermissionsResult {
+  objectMetadataId: UUID!
+  recordId: UUID!
+  permissions: RecordPermissionsDTO!
 }
 
 type AgentTurnEvaluation {
@@ -3732,6 +3774,7 @@ type MinimalMetadata {
 }
 
 type Query {
+  recordSharing(target: RecordSharingTargetInput!): RecordSharingDTO!
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   enterprisePortalSession(returnUrlPath: String): String
@@ -3862,6 +3905,7 @@ type Query {
   agentTurns(agentId: UUID!): [AgentTurn!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
+  recordPermissions(targets: [RecordPermissionsTargetInput!]!): [RecordPermissionsResult!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -3882,6 +3926,11 @@ type Query {
   exportApplication(universalIdentifier: UUID!): ApplicationExport!
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
+}
+
+input RecordSharingTargetInput {
+  objectMetadataId: UUID!
+  recordId: UUID!
 }
 
 input UsageQuotaScopeInput {
@@ -3957,6 +4006,11 @@ input MetadataTranslationsInput {
   locale: String
 }
 
+input RecordPermissionsTargetInput {
+  objectMetadataId: UUID!
+  recordId: UUID!
+}
+
 input EventLogQueryInput {
   table: EventLogTable!
   filters: EventLogFiltersInput
@@ -4003,6 +4057,7 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
+  setRecordShare(target: RecordSharingTargetInput!, principal: RecordSharePrincipalInput!, enabled: Boolean!, accessLevel: RecordShareAccessLevel = READ): RecordSharingDTO!
   createManyNavigationMenuItems(inputs: [CreateNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
@@ -4109,6 +4164,7 @@ type Mutation {
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   resetCommandMenuItem(id: UUID!): CommandMenuItem!
   deleteCommandMenuItem(id: UUID!): CommandMenuItem!
+  generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
@@ -4277,6 +4333,12 @@ input AddQuerySubscriptionInput {
 input RemoveQueryFromEventStreamInput {
   eventStreamId: String!
   queryId: String!
+}
+
+input RecordSharePrincipalInput {
+  workspaceMemberId: UUID
+  roleId: UUID
+  everyone: Boolean
 }
 
 input CreateNavigationMenuItemInput {

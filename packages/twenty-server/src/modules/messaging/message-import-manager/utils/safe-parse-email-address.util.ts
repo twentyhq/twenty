@@ -1,4 +1,4 @@
-import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address.type';
 import { safeParseEmailAddressAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-address-address.util';
 
 export const safeParseEmailAddress = (

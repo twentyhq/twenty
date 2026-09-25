@@ -1,4 +1,4 @@
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export const getRoleIdsFromRolePermissionConfig = (
   rolePermissionConfig: RolePermissionConfig,

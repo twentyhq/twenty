@@ -1,11 +1,9 @@
-import { type Repository } from 'typeorm';
-
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -15,8 +13,12 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
   const fieldMetadataId = '20202020-0000-4000-8000-000000000004';
 
   let fileStorageService: jest.Mocked<FileStorageService>;
-  let applicationRepository: jest.Mocked<Repository<ApplicationEntity>>;
-  let fieldMetadataRepository: jest.Mocked<Repository<FieldMetadataEntity>>;
+  let applicationRepository: jest.Mocked<
+    WorkspaceScopedRepository<ApplicationEntity>
+  >;
+  let fieldMetadataRepository: jest.Mocked<
+    WorkspaceScopedRepository<FieldMetadataEntity>
+  >;
   let fileRepository: jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
 
   const buildService = () =>
@@ -47,17 +49,19 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
     } as unknown as jest.Mocked<FileStorageService>;
 
     applicationRepository = {
-      findOneOrFail: jest.fn().mockImplementation(async ({ where }) => ({
-        universalIdentifier: `${where.id}-universal-identifier`,
-      })),
-    } as unknown as jest.Mocked<Repository<ApplicationEntity>>;
+      findOneOrFail: jest
+        .fn()
+        .mockImplementation(async (_workspaceId, { where }) => ({
+          universalIdentifier: `${where.id}-universal-identifier`,
+        })),
+    } as unknown as jest.Mocked<WorkspaceScopedRepository<ApplicationEntity>>;
 
     fieldMetadataRepository = {
       findOneOrFail: jest.fn().mockResolvedValue({
         applicationId: 'field-application-id',
         universalIdentifier: 'field-universal-identifier',
       }),
-    } as unknown as jest.Mocked<Repository<FieldMetadataEntity>>;
+    } as unknown as jest.Mocked<WorkspaceScopedRepository<FieldMetadataEntity>>;
 
     fileRepository = {
       findOne: jest.fn().mockResolvedValue(null),

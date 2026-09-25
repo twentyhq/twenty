@@ -209,6 +209,16 @@ export const TWENTY_ICON_DICTIONARY = [
     avoidWhen: 'Representing a complete dashboard or generic application.',
   },
   {
+    key: 'transcript',
+    label: 'Transcript',
+    category: 'layouts',
+    iconName: 'IconBlockquote',
+    tablerName: 'blockquote',
+    keywords: ['transcript', 'transcription', 'spoken words'],
+    useWhen: 'Representing a transcript tab or widget.',
+    avoidWhen: 'Representing recording controls or audio and video playback.',
+  },
+  {
     key: 'record-page',
     label: 'Record Page',
     category: 'layouts',

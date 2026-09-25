@@ -2,7 +2,7 @@ import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/inpu
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 
@@ -50,7 +50,7 @@ describe('Empty filter bulk mutation validation', () => {
       filter: {},
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expectEmptyFilterRejection(response);
   });
@@ -63,7 +63,7 @@ describe('Empty filter bulk mutation validation', () => {
       filter: {},
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expectEmptyFilterRejection(response);
   });
@@ -77,7 +77,7 @@ describe('Empty filter bulk mutation validation', () => {
       filter: {},
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expectEmptyFilterRejection(response);
   });
@@ -90,7 +90,7 @@ describe('Empty filter bulk mutation validation', () => {
       filter: {},
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expectEmptyFilterRejection(response);
   });
@@ -103,7 +103,7 @@ describe('Empty filter bulk mutation validation', () => {
       filter: { and: [] },
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expectEmptyFilterRejection(response);
   });

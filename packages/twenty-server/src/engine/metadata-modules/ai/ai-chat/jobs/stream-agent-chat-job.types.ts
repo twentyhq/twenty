@@ -1,6 +1,6 @@
 import type { ExtendedUIMessage } from 'twenty-shared/ai';
 
-import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 
 export type StreamAgentChatJobData = {
   threadId: string;

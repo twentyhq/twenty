@@ -103,6 +103,9 @@ const innerServerUpgrade = async (
   const volumeStorage = isTest
     ? 'twenty-app-dev-test-storage'
     : 'twenty-app-dev-storage';
+  const volumeClickHouse = isTest
+    ? 'twenty-app-dev-test-clickhouse'
+    : 'twenty-app-dev-clickhouse';
 
   onProgress?.('Starting container with new image...');
 
@@ -121,6 +124,8 @@ const innerServerUpgrade = async (
       `SERVER_URL=http://localhost:${port}`,
       '-v',
       `${volumeData}:/data/postgres`,
+      '-v',
+      `${volumeClickHouse}:/data/clickhouse`,
       '-v',
       `${volumeStorage}:/app/packages/twenty-server/.local-storage`,
       image,
