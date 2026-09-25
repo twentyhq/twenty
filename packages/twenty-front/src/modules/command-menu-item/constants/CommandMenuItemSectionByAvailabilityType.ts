@@ -6,6 +6,7 @@ export const COMMAND_MENU_ITEM_SECTION_BY_AVAILABILITY_TYPE = {
   [CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT]: 'THIS_OBJECT',
   [CommandMenuItemAvailabilityType.FALLBACK]: 'FALLBACK',
   [CommandMenuItemAvailabilityType.GLOBAL]: 'WORKSPACE',
+  [CommandMenuItemAvailabilityType.RECORD_FIELD]: 'SELECTION',
 } as const satisfies Record<
   CommandMenuItemAvailabilityType,
   CommandMenuItemSection

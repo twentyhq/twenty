@@ -1,3 +1,5 @@
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { buildObjectNavigationUniversalFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { FlatCommandMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service';
@@ -33,9 +35,17 @@ const buildArgs = (
     flatEntityToValidate: buildCommand(overrides),
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+      flatFieldMetadataMaps: {
+        byUniversalIdentifier: {
+          'address-field-identifier': {
+            universalIdentifier: 'address-field-identifier',
+            objectMetadataUniversalIdentifier: 'company-identifier',
+          },
+        },
+      },
       flatCommandMenuItemMaps: { byUniversalIdentifier: {} },
     },
-  }) as CreationArgs;
+  }) as unknown as CreationArgs;
 
 describe('workflow command menu validation', () => {
   const service = new FlatCommandMenuItemValidatorService();
@@ -86,5 +96,42 @@ describe('workflow command menu validation', () => {
       FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemUpdate']
     >[0];
     expect(service.validateFlatCommandMenuItemUpdate(args).errors).toEqual([]);
+  });
+});
+
+describe('record field command menu validation', () => {
+  const service = new FlatCommandMenuItemValidatorService();
+
+  const buildRecordFieldArgs = (
+    overrides: Partial<CreationArgs['flatEntityToValidate']> = {},
+  ) =>
+    buildArgs({
+      engineComponentKey: EngineComponentKey.FRONT_COMPONENT_RENDERER,
+      frontComponentUniversalIdentifier: 'front-component-identifier',
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_FIELD,
+      availabilityObjectMetadataUniversalIdentifier: 'company-identifier',
+      availabilityFieldMetadataUniversalIdentifier: 'address-field-identifier',
+      ...overrides,
+    });
+
+  it('accepts a field that belongs to the availability object', () => {
+    expect(
+      service.validateFlatCommandMenuItemCreation(buildRecordFieldArgs())
+        .errors,
+    ).toEqual([]);
+  });
+
+  it.each([
+    { availabilityFieldMetadataUniversalIdentifier: null },
+    { availabilityObjectMetadataUniversalIdentifier: null },
+    { availabilityFieldMetadataUniversalIdentifier: 'unknown-field' },
+    { availabilityObjectMetadataUniversalIdentifier: 'person-identifier' },
+    { availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION },
+  ])('rejects an invalid record field target: %j', (overrides) => {
+    expect(
+      service.validateFlatCommandMenuItemCreation(
+        buildRecordFieldArgs(overrides),
+      ).errors,
+    ).toHaveLength(1);
   });
 });

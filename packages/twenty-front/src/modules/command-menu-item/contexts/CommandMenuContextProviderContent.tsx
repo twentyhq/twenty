@@ -7,9 +7,11 @@ import {
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { doesCommandMenuItemMatchContainerType } from '@/command-menu-item/utils/doesCommandMenuItemMatchContainerType';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
+import { resolveCommandMenuItemVariant } from '@/command-menu-item/utils/resolveCommandMenuItemVariant';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
 import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
@@ -124,6 +126,7 @@ export const CommandMenuContextProviderContent = ({
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
       )
+      .filter(doesCommandMenuItemMatchContainerType(containerType))
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
@@ -141,6 +144,12 @@ export const CommandMenuContextProviderContent = ({
           item,
           commandMenuContextApiForAvailability,
         ),
+      )
+      .map((item) =>
+        resolveCommandMenuItemVariant(
+          item,
+          commandMenuContextApiForAvailability,
+        ),
       );
 
     return mergeGlobalRecordCreationCommandMenuItems({
@@ -154,6 +163,7 @@ export const CommandMenuContextProviderContent = ({
   }, [
     commandMenuContextApi,
     commandMenuContextApiForAvailability,
+    containerType,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
     isCoreWorkflow,

@@ -1,0 +1,2 @@
+export const ADD_COMMAND_MENU_ITEM_RECORD_FIELD_UPGRADE_COMMAND_NAME =
+  '2.43.0_AddCommandMenuItemRecordFieldFastInstanceCommand_1790319254140';

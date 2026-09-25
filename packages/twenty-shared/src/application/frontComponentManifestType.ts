@@ -1,5 +1,8 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
-import { type CommandMenuItemAvailabilityType } from '@/types';
+import {
+  type CommandMenuItemAvailabilityType,
+  type CommandMenuItemVariant,
+} from '@/types';
 
 export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
@@ -9,9 +12,12 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   isPinned?: boolean;
   availabilityType?: `${CommandMenuItemAvailabilityType}`;
   availabilityObjectUniversalIdentifier?: string;
+  availabilityFieldUniversalIdentifier?: string;
   frontComponentUniversalIdentifier: string;
   conditionalAvailabilityExpression?: string;
   conditionalPinnedExpression?: string;
+  variant?: `${CommandMenuItemVariant}`;
+  conditionalVariantExpression?: string;
 };
 
 export type FrontComponentManifest = {

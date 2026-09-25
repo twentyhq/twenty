@@ -8,6 +8,7 @@ import {
   useRecordInlineCellContext,
   type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import { RecordInlineCellCommandMenuItems } from '@/object-record/record-inline-cell/components/RecordInlineCellCommandMenuItems';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -124,6 +125,9 @@ export const RecordInlineCellDisplayMode = ({
         ))}
       {showEditButton && (
         <RecordInlineCellButton Icon={buttonIcon} onClick={onClick} />
+      )}
+      {!editModeContentOnly && !isForbidden && (
+        <RecordInlineCellCommandMenuItems />
       )}
     </>
   );

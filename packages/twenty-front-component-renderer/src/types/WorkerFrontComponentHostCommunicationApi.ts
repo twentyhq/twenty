@@ -5,6 +5,7 @@ import {
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
+  type OpenUrlFunction,
   type RequestAccessTokenRefreshFunction,
   type StorageClearFunction,
   type StorageDeleteFunction,
@@ -24,6 +25,7 @@ export type WorkerFrontComponentHostCommunicationApi = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  openUrl?: OpenUrlFunction;
   uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;

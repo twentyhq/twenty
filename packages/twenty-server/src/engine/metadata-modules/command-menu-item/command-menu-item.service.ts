@@ -104,6 +104,7 @@ export class CommandMenuItemService {
   ): Promise<CommandMenuItemDTO> {
     const {
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatFrontComponentMaps,
       flatPageLayoutMaps,
     } =
@@ -112,6 +113,7 @@ export class CommandMenuItemService {
           workspaceId,
           flatMapsKeys: [
             'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
             'flatFrontComponentMaps',
             'flatPageLayoutMaps',
           ],
@@ -129,6 +131,7 @@ export class CommandMenuItemService {
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         flatFrontComponentMaps,
         flatPageLayoutMaps,
       });

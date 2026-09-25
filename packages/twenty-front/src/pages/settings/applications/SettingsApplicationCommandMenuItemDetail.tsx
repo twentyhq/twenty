@@ -1,6 +1,9 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
@@ -30,6 +33,22 @@ export const SettingsApplicationCommandMenuItemDetail = () => {
         (fc) => fc.id === commandMenuItem.frontComponentId,
       )
     : undefined;
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
+  const { objectMetadataItem, fieldMetadataItem } = isDefined(
+    commandMenuItem?.availabilityFieldMetadataId,
+  )
+    ? getFieldMetadataItemById({
+        fieldMetadataId: commandMenuItem.availabilityFieldMetadataId,
+        objectMetadataItems,
+      })
+    : { objectMetadataItem: undefined, fieldMetadataItem: undefined };
+
+  const fieldName =
+    isDefined(objectMetadataItem) && isDefined(fieldMetadataItem)
+      ? `${objectMetadataItem.labelSingular} → ${fieldMetadataItem.label}`
+      : undefined;
 
   const applicationContentHref = getSettingsPath(
     SettingsPath.ApplicationDetail,
@@ -66,8 +85,12 @@ export const SettingsApplicationCommandMenuItemDetail = () => {
             icon={commandMenuItem.icon}
             isPinned={commandMenuItem.isPinned}
             availabilityType={commandMenuItem.availabilityType}
+            fieldName={fieldName}
             conditionalAvailabilityExpression={
               commandMenuItem.conditionalAvailabilityExpression
+            }
+            conditionalVariantExpression={
+              commandMenuItem.conditionalVariantExpression
             }
             frontComponentName={frontComponent?.name}
             universalIdentifier={commandMenuItem.universalIdentifier}

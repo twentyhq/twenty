@@ -79,6 +79,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'availabilityObjectMetadataUniversalIdentifier',
     },
+    availabilityFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'availabilityFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'availabilityFieldMetadataUniversalIdentifier',
+    },
     navigationTargetObjectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'navigationTargetObjectMetadataId',

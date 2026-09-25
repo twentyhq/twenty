@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
@@ -21,6 +22,7 @@ export class FlatCommandMenuItemValidatorService {
     flatEntityToValidate: flatCommandMenuItem,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
     },
   }: UniversalFlatEntityValidationArgs<
@@ -84,6 +86,16 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    this.validateRecordFieldAvailability({
+      availabilityType: flatCommandMenuItem.availabilityType,
+      availabilityObjectMetadataUniversalIdentifier:
+        flatCommandMenuItem.availabilityObjectMetadataUniversalIdentifier,
+      availabilityFieldMetadataUniversalIdentifier:
+        flatCommandMenuItem.availabilityFieldMetadataUniversalIdentifier,
+      flatFieldMetadataMaps,
+      validationResult,
+    });
+
     return validationResult;
   }
 
@@ -125,6 +137,7 @@ export class FlatCommandMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
@@ -194,7 +207,95 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    this.validateRecordFieldAvailability({
+      availabilityType:
+        flatEntityUpdate.availabilityType ??
+        fromFlatCommandMenuItem.availabilityType,
+      availabilityObjectMetadataUniversalIdentifier:
+        flatEntityUpdate.availabilityObjectMetadataUniversalIdentifier !==
+        undefined
+          ? flatEntityUpdate.availabilityObjectMetadataUniversalIdentifier
+          : fromFlatCommandMenuItem.availabilityObjectMetadataUniversalIdentifier,
+      availabilityFieldMetadataUniversalIdentifier:
+        flatEntityUpdate.availabilityFieldMetadataUniversalIdentifier !==
+        undefined
+          ? flatEntityUpdate.availabilityFieldMetadataUniversalIdentifier
+          : fromFlatCommandMenuItem.availabilityFieldMetadataUniversalIdentifier,
+      flatFieldMetadataMaps,
+      validationResult,
+    });
+
     return validationResult;
+  }
+
+  private validateRecordFieldAvailability({
+    availabilityType,
+    availabilityObjectMetadataUniversalIdentifier,
+    availabilityFieldMetadataUniversalIdentifier,
+    flatFieldMetadataMaps,
+    validationResult,
+  }: {
+    availabilityType: CommandMenuItemAvailabilityType;
+    availabilityObjectMetadataUniversalIdentifier: string | null;
+    availabilityFieldMetadataUniversalIdentifier: string | null;
+    flatFieldMetadataMaps: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.commandMenuItem
+    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps']['flatFieldMetadataMaps'];
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }): void {
+    if (availabilityType !== CommandMenuItemAvailabilityType.RECORD_FIELD) {
+      if (isDefined(availabilityFieldMetadataUniversalIdentifier)) {
+        validationResult.errors.push({
+          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+          message: t`Availability field metadata requires availability type RECORD_FIELD`,
+          userFriendlyMessage: msg`Only record field command menu items can target a field`,
+        });
+      }
+
+      return;
+    }
+
+    if (
+      !isDefined(availabilityObjectMetadataUniversalIdentifier) ||
+      !isDefined(availabilityFieldMetadataUniversalIdentifier)
+    ) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Availability type RECORD_FIELD requires availability object and field metadata`,
+        userFriendlyMessage: msg`Record field command menu items need an object and a field`,
+      });
+
+      return;
+    }
+
+    const availabilityFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: availabilityFieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(availabilityFlatFieldMetadata)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Availability field metadata not found`,
+        userFriendlyMessage: msg`Field not found`,
+      });
+
+      return;
+    }
+
+    if (
+      availabilityFlatFieldMetadata.objectMetadataUniversalIdentifier !==
+      availabilityObjectMetadataUniversalIdentifier
+    ) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Availability field metadata does not belong to the availability object metadata`,
+        userFriendlyMessage: msg`Field does not belong to the object`,
+      });
+    }
   }
 
   private validateNavigationTarget({
