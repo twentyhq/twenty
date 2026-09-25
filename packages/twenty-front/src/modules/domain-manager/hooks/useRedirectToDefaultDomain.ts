@@ -1,5 +1,5 @@
+import { CHOOSE_WORKSPACE_ACTION } from '@/auth/sign-in-up/constants/ChooseWorkspaceAction';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import { STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM } from '@/domain-manager/constants/StayOnDefaultDomainSearchParam';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -20,9 +20,7 @@ export const useRedirectToDefaultDomain = () => {
     const url = new URL(window.location.href);
     if (url.hostname !== defaultDomain) {
       setLastAuthenticateWorkspaceDomain(null);
-
-      // A custom domain cannot clear the cookie, and the cookie never stopped the session resume
-      url.searchParams.set(STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM, 'true');
+      url.searchParams.set('action', CHOOSE_WORKSPACE_ACTION);
 
       const returnToPath = store.get(returnToPathState.atom);
       if (

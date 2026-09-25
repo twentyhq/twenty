@@ -19,7 +19,6 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
-import { isStayingOnDefaultDomainState } from '@/domain-manager/states/isStayingOnDefaultDomainState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -130,9 +129,6 @@ export const SignInUpGlobalScopeForm = () => {
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);
-  const setIsStayingOnDefaultDomain = useSetAtomState(
-    isStayingOnDefaultDomainState,
-  );
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
   const { t } = useLingui();
@@ -178,7 +174,6 @@ export const SignInUpGlobalScopeForm = () => {
               >
                 <UndecoratedLink
                   to={getAvailableWorkspaceUrl(availableWorkspace)}
-                  onClick={() => setIsStayingOnDefaultDomain(false)}
                 >
                   <StyledWorkspaceItem>
                     <StyledWorkspaceContent>
