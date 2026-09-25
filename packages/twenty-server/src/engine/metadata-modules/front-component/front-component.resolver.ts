@@ -129,8 +129,6 @@ export class FrontComponentResolver {
     const selectedFields = graphqlFields(info);
 
     const [applicationTokenPair, applicationVariables] = await Promise.all([
-      // Deprecated: only fronts predating
-      // generateFrontComponentApplicationTokenPair still select it
       isDefined(selectedFields.applicationTokenPair)
         ? this.applicationTokenService.generateApplicationTokenPair({
             applicationId: dto.applicationId,

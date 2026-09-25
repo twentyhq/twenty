@@ -17,13 +17,8 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE =
   'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED';
 
-// The access token handed out on mount is used right away to fetch the
-// component source, which has no refresh path; the margin also absorbs
-// browser clock skew.
 const MINIMUM_ACCESS_TOKEN_REMAINING_VALIDITY_MS = 5 * 60 * 1000;
 
-// Workers of an application hit 401 around the same time; those arriving
-// just after a renewal reuse it instead of renewing again.
 const RECENT_TOKEN_PAIR_RENEWAL_WINDOW_MS = 30 * 1000;
 
 const hasApplicationRefreshTokenInvalidOrExpiredSubCode = (
@@ -152,8 +147,6 @@ export const useFrontComponentApplicationTokenPair = () => {
           }
         };
 
-      // Not awaited: the promise is stored synchronously so callers arriving
-      // while it is pending reuse it instead of starting another request
       const applicationTokenPairPromise = renewOrGenerateApplicationTokenPair();
 
       store.set(

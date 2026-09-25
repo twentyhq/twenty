@@ -153,8 +153,6 @@ const FrontComponentRendererContent = ({
     [enqueueToast],
   );
 
-  // The worker is created once with these values and refreshes its token
-  // through the host, so a renewal or refetch must not re-create it
   const [initialApplicationVariables] = useState(
     () => frontComponent.applicationVariables ?? undefined,
   );
