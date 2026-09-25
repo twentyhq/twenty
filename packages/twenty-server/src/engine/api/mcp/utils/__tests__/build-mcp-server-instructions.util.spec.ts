@@ -65,7 +65,7 @@ describe('buildMcpServerInstructions', () => {
 
   it('should document every meta-tool the MCP server exposes', () => {
     const instructions = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['send_email'],
     });
 
@@ -83,7 +83,7 @@ describe('buildMcpServerInstructions', () => {
 
   it('should route an unverified tool name to learn_tools, not to the catalog', () => {
     const instructions = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['send_email'],
     });
 
@@ -124,24 +124,22 @@ describe('buildMcpServerInstructions', () => {
     );
   });
 
-  it('should describe both discovery paths and advertise get_tool_catalog', () => {
+  it('should advertise query search on get_tool_catalog', () => {
     const instructions = buildMcpServerInstructions({
       objects: [COMPANY],
       actionToolNames: [],
     });
 
-    expect(instructions).toContain('Finding the right tool:');
-    expect(instructions).toContain(
-      'CRUD on a known object: build the name from the grammar below → learn_tools → execute_tool.',
-    );
-    expect(instructions).toContain(
-      'Unsure what exists: get_tool_catalog with query',
-    );
-    expect(getLine(instructions, 'get_tool_catalog(')).toContain('when unsure');
-    expect(getLine(instructions, 'get_tool_catalog(').indexOf('—')).toBe(
+    const catalogLine = getLine(instructions, 'get_tool_catalog(');
+
+    expect(catalogLine).toContain('get_tool_catalog(query, categories)');
+    expect(catalogLine).toContain('Pass a short query or ONE category');
+    expect(catalogLine.indexOf('—')).toBe(
       getLine(instructions, 'execute_tool(').indexOf('—'),
     );
-    expect(instructions).not.toContain('without prior discovery');
+    expect(getLine(instructions, "Don't know which tool exists")).toContain(
+      'or a short query',
+    );
   });
 
   it('should point logic function discovery to the catalog', () => {

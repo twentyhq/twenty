@@ -184,6 +184,27 @@ describe('createLearnToolsTool', () => {
     expect(result.message).toBe('Learned 1 tool: find_many_people.');
   });
 
+  it('does not append the hint when the only missing tools are unavailable', async () => {
+    const toolRegistry = {
+      getToolInfo: jest.fn().mockResolvedValue([]),
+      suggestSimilarToolNames: jest.fn(),
+    } as unknown as ToolRegistryService;
+
+    const learnTools = createLearnToolsTool(toolRegistry, context, {
+      isToolAllowed: (toolName) => toolName !== 'code_interpreter',
+      discoveryHint: 'Use get_tool_catalog with a query.',
+    });
+
+    const result = await learnTools.execute({
+      toolNames: ['code_interpreter'],
+      aspects: ['description'],
+    });
+
+    expect(result.message).toBe(
+      'Could not find: code_interpreter (not available in this context).',
+    );
+  });
+
   it('does not consult the spill service when spillLargeOutput is not set', async () => {
     const spillToolOutputIfTooLarge = jest.fn();
     const toolRegistry = {

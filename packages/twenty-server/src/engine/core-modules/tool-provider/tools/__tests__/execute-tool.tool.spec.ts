@@ -43,11 +43,11 @@ describe('createExecuteToolTool', () => {
     expect(toolRegistry.resolveAndExecute).not.toHaveBeenCalled();
     expect(result.success).toBe(false);
     expect(result.error).toBe(
-      'Tool "create_one_workflow" is not available in this context.',
+      'Tool "create_one_workflow" is not available in this context and cannot be called here. Do not retry it.',
     );
   });
 
-  it('appends the caller discovery hint when refusing a tool', async () => {
+  it('does not append the discovery hint when refusing a tool', async () => {
     const toolRegistry = buildRegistry();
 
     const executeTool = createExecuteToolTool(toolRegistry, context, {
@@ -61,7 +61,7 @@ describe('createExecuteToolTool', () => {
     });
 
     expect(result.error).toBe(
-      'Tool "code_interpreter" is not available in this context. Use get_tool_catalog with a query.',
+      'Tool "code_interpreter" is not available in this context and cannot be called here. Do not retry it.',
     );
   });
 
@@ -84,7 +84,7 @@ describe('createExecuteToolTool', () => {
       success: false,
       message: 'Tool "find_many_persons" not found',
       error:
-        'Tool "find_many_persons" not found. Did you mean: find_many_people? learn_tools confirms exact tool names and suggests close matches.',
+        'Tool "find_many_persons" not found. Did you mean: find_many_people? Pass your best candidate name to learn_tools to confirm it before executing.',
     };
 
     const buildNotFoundRegistry = () =>
