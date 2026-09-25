@@ -8,12 +8,15 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
+import { buildEmailQuotaCost } from 'src/modules/emailing/utils/build-email-quota-cost.util';
 import { computeEmailCreditsUsedMicro } from 'src/modules/emailing/utils/compute-email-credits-used-micro.util';
 
 type EmailUsageScope = {
   workspaceId: string;
   spenders: UsageSpenders;
 };
+
+type EmailSendScope = EmailUsageScope & { emailCount?: number };
 
 @Injectable()
 export class EmailBillingService {
@@ -26,24 +29,28 @@ export class EmailBillingService {
   async validateEmailSendOrThrow({
     workspaceId,
     spenders,
-  }: EmailUsageScope): Promise<void> {
+    emailCount,
+  }: EmailSendScope): Promise<void> {
     await this.billingUsageService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
       spenders,
+      cost: buildEmailQuotaCost(emailCount),
     });
   }
 
   async findEmailSendRefusal({
     workspaceId,
     spenders,
-  }: EmailUsageScope): Promise<UsageRefusal | null> {
+    emailCount,
+  }: EmailSendScope): Promise<UsageRefusal | null> {
     return this.billingUsageService.findUsageRefusal({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
       spenders,
+      cost: buildEmailQuotaCost(emailCount),
     });
   }
 
