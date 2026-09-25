@@ -27,10 +27,10 @@ import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRange';
 import { getLogConsoleTimeRangeBounds } from '@/log-console/utils/getLogConsoleTimeRangeBounds';
 import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogConsoleTimeRangeWithinRetention';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
-import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -189,18 +189,9 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const renderLogs = () => {
     if (isDefined(error)) {
       return (
-        <ErrorState.Root>
-          <ErrorState.Content>
-            <ErrorState.Title>{t`Couldn't load logs`}</ErrorState.Title>
-          </ErrorState.Content>
-          <Button
-            variant="outline"
-            startIcon={<IconRefresh />}
-            onClick={refreshLogs}
-          >
-            {t`Try again`}
-          </Button>
-        </ErrorState.Root>
+        <SettingsEmptyPlaceholder>
+          {t`Something went wrong while loading logs. Please try again.`}
+        </SettingsEmptyPlaceholder>
       );
     }
 
