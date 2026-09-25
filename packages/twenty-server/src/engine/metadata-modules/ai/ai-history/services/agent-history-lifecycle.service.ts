@@ -39,14 +39,9 @@ export class AgentHistoryLifecycleService {
       }
       // Detect lost routes with workspace data before an initialization retry.
       await this.storage.readState(runner, workspaceId);
-      const defaults: { value: { storage: string } }[] = await runner.query(
-        `SELECT value FROM core."keyValuePair" WHERE "key" = $1 AND "workspaceId" IS NULL AND "userId" IS NULL AND "applicationId" IS NULL AND type = 'CONFIG_VARIABLE'`,
-        [AGENT_HISTORY_DEFAULT_STORAGE_KEY],
-      );
-      const selected = defaults[0]?.value?.storage ?? 'workspace';
-      if (selected !== 'core' && selected !== 'workspace') {
-        throw new Error('Invalid default agent history storage');
-      }
+      // New workspace metadata uses generic record permissions, whose repository
+      // reads workspace tables. A legacy operator default cannot route new chats to core.
+      const selected = 'workspace';
       // Initialization can be retried. Existing data must use verified migration.
       const legacy = await runner.query(
         'SELECT 1 FROM core."agentChatThread" WHERE "workspaceId" = $1 LIMIT 1',
@@ -62,6 +57,9 @@ export class AgentHistoryLifecycleService {
   }
 
   async setNewWorkspaceDefault(storage: 'core' | 'workspace'): Promise<void> {
+    if (storage === 'core') {
+      throw new Error('New workspaces require workspace agent history storage');
+    }
     await this.dataSource.query(
       `INSERT INTO core."keyValuePair" ("key", "type", "value") VALUES ($1, 'CONFIG_VARIABLE', $2::jsonb)
       ON CONFLICT ("key") WHERE "userId" IS NULL AND "workspaceId" IS NULL AND "applicationId" IS NULL

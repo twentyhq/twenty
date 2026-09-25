@@ -1,3 +1,4 @@
+import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
@@ -247,13 +248,19 @@ export class DevSeederService {
   }) {
     await this.agentHistoryStorageService.run(
       workspaceId,
-      async ({ manager, storage }) => {
+      async ({ manager, storage, table }) => {
         await seedAgents({
           queryRunner: manager.queryRunner!,
           schemaName:
             storage === 'core' ? 'core' : getWorkspaceSchemaName(workspaceId),
           workspaceId,
           chatReferenceIds,
+        });
+        await backfillChatThreadOwnerGrants({
+          manager,
+          workspaceId,
+          threadTableExpression: table('agentChatThread'),
+          isCoreStorage: storage === 'core',
         });
       },
     );

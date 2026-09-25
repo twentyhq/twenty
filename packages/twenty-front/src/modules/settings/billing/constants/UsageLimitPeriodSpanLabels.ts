@@ -3,9 +3,8 @@ import { msg } from '@lingui/core/macro';
 
 import { type UsageLimitPeriodUnit } from '@/settings/billing/types/UsageLimitPeriodUnit';
 
-export const USAGE_LIMIT_PERIOD_SPAN_LABELS: Record<
-  UsageLimitPeriodUnit,
-  MessageDescriptor
+export const USAGE_LIMIT_PERIOD_SPAN_LABELS: Partial<
+  Record<UsageLimitPeriodUnit, MessageDescriptor>
 > = {
   day: msg`Today`,
   week: msg`This week`,
