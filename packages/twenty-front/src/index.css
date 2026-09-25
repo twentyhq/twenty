@@ -42,6 +42,37 @@ html[lang='fa-IR'] body {
   font-family: Vazirmatn, Inter, sans-serif;
 }
 
+/* Horizontal arrows mirror with the writing direction. `scale` stays
+   independent of `transform`, so a motion rotate (closed chevron to open)
+   still composes instead of being overwritten. */
+html[dir='rtl'] :is(
+  .tabler-icon-chevron-left,
+  .tabler-icon-chevron-right,
+  .tabler-icon-chevron-left-pipe,
+  .tabler-icon-chevron-right-pipe,
+  .tabler-icon-chevrons-left,
+  .tabler-icon-chevrons-right,
+  .tabler-icon-caret-left,
+  .tabler-icon-caret-right,
+  .tabler-icon-arrow-left,
+  .tabler-icon-arrow-right,
+  .tabler-icon-arrow-narrow-left,
+  .tabler-icon-arrow-narrow-right,
+  .tabler-icon-arrow-up-left,
+  .tabler-icon-arrow-up-right,
+  .tabler-icon-arrow-back-up,
+  .tabler-icon-arrow-forward-up,
+  .tabler-icon-corner-down-left,
+  .tabler-icon-corner-down-right,
+  .tabler-icon-corner-up-left,
+  .tabler-icon-corner-up-right,
+  .tabler-icon-logout,
+  .tabler-icon-login,
+  .tabler-icon-external-link
+) {
+  scale: -1 1;
+}
+
 /* Phones get a slightly larger base, mirroring native apps. 1.0769… is 14/13,
    precomputed because media queries cannot read custom properties. */
 @media (max-width: 768px) {
