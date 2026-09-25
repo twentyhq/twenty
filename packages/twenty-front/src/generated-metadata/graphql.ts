@@ -1650,13 +1650,13 @@ export type CreateViewInput = {
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
   key?: InputMaybe<ViewKey>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  toggleMineFilterFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
   objectMetadataId: Scalars['UUID']['input'];
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  toggleMineFilterFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };
@@ -6877,12 +6877,12 @@ export type UpdateViewInput = {
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
   mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  toggleMineFilterFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  toggleMineFilterFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };
@@ -7325,13 +7325,13 @@ export type View = {
   kanbanColumnWidth?: Maybe<Scalars['Int']['output']>;
   key?: Maybe<ViewKey>;
   mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
-  toggleMineFilterFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   objectMetadataId: Scalars['UUID']['output'];
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float']['output'];
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
+  toggleMineFilterFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   type: ViewType;
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
