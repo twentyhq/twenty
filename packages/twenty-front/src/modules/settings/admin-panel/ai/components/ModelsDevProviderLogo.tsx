@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { type IconComponentProps } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type ModelsDevProviderLogoProps = {
   logoUrl: string;
@@ -32,7 +31,7 @@ export const ModelsDevProviderLogo = ({
   className,
   style,
 }: ModelsDevProviderLogoProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const pixelSize = resolvePixelSize(size);
   const isLightTheme = theme.name === 'light';
 

@@ -4,7 +4,7 @@ import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsBillingLimitUsageSelect } from '@/settings/billing/components/SettingsBillingLimitUsageSelect';
 import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
@@ -22,6 +22,7 @@ import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFo
 import { type UsageQuotaScopeConsumption } from '@/settings/billing/types/UsageQuotaScopeConsumption';
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
 import { getUsageLimitFormOptions } from '@/settings/billing/utils/getUsageLimitFormOptions';
+import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -139,8 +140,11 @@ export const SettingsBillingLimitForm = ({
         operationType: values.operationType ?? UsageOperationType.ALL,
       })
     : '';
-  const periodSpanLabel = isDefined(values.periodUnit)
-    ? t(USAGE_LIMIT_PERIOD_SPAN_LABELS[values.periodUnit])
+  const periodSpanLabelDescriptor = isDefined(values.periodUnit)
+    ? getUsageLimitLabel(USAGE_LIMIT_PERIOD_SPAN_LABELS, values.periodUnit)
+    : undefined;
+  const periodSpanLabel = isDefined(periodSpanLabelDescriptor)
+    ? t(periodSpanLabelDescriptor)
     : '';
 
   const hasResource = isDefined(values.resourceType);

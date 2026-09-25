@@ -50,6 +50,7 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
         const user = this.twentyConfigService.get('EMAIL_SMTP_USER');
         const pass = this.twentyConfigService.get('EMAIL_SMTP_PASSWORD');
         const noTLS = this.twentyConfigService.get('EMAIL_SMTP_NO_TLS');
+        const name = this.twentyConfigService.get('EMAIL_SMTP_NAME');
 
         if (!host || !port) {
           throw new Error('SMTP driver requires host and port to be defined');
@@ -62,7 +63,12 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
           secure?: boolean;
           ignoreTLS?: boolean;
           requireTLS?: boolean;
+          name?: string;
         } = { host, port };
+
+        if (name) {
+          options.name = name;
+        }
 
         if (user && pass) {
           options.auth = { user, pass };

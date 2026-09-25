@@ -8,7 +8,7 @@ import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { styled } from '@linaria/react';
 import { type JSX } from 'react';
 import { AppPath } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledTitleContainer = styled.div`

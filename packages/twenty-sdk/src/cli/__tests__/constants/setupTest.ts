@@ -1,8 +1,6 @@
-import { writeFile } from 'node:fs/promises';
-import * as path from 'path';
 import { beforeAll } from 'vitest';
 
-import { ensureDir } from '@/cli/utilities/file/fs-utils';
+import { writePrivateFile } from '@/cli/utilities/file/fs-utils';
 import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 
 const testConfigPath = getConfigPath(true);
@@ -28,9 +26,7 @@ beforeAll(async () => {
     );
   }
 
-  await ensureDir(path.dirname(testConfigPath));
-
-  await writeFile(
+  await writePrivateFile(
     testConfigPath,
     JSON.stringify(
       {

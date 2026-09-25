@@ -28,7 +28,7 @@ import {
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
@@ -75,7 +75,7 @@ const setRecordSharingEnabled = (value: boolean) =>
   });
 
 describe('recordShareTwinObjectRecordsPermissions', () => {
-  let recordShareService: RecordShareService;
+  let recordShareStorageService: RecordShareStorageService;
   let objectMetadataId: string;
   let recordShares: RecordShare[];
   let memberRoleId: string;
@@ -102,8 +102,10 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
   };
 
   beforeAll(async () => {
-    recordShareService =
-      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
 
     const { data } = await createOneObjectMetadata({
       input: {
@@ -163,7 +165,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
       sourceId,
     });
 
-    await recordShareService.insertMany({
+    await recordShareStorageService.insertMany({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       recordShares: [
         buildRecordShare({
@@ -193,7 +195,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
       ],
     });
 
-    recordShares = await recordShareService.findByRecordIds({
+    recordShares = await recordShareStorageService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
       recordIds: ALL_RECORD_IDS,
@@ -205,7 +207,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
 
   afterAll(async () => {
     await setRecordSharingEnabled(false);
-    await recordShareService.deleteBySourceId({
+    await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
     });

@@ -1,12 +1,12 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { type CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { type CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/constants/campaign-provider-outcome.constant';
 import { type CampaignProviderOutcome } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
 
 type CampaignDeliveryOutcomeUpdate = Partial<
   Pick<
-    CampaignDeliveryEntity,
+    CampaignDeliveryWorkspaceEntity,
     | 'deliveredAt'
     | 'bouncedAt'
     | 'complainedAt'

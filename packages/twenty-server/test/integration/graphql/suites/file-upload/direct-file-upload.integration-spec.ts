@@ -311,9 +311,9 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
 
   it('should reject file folders without direct upload support', async () => {
     const createResponse = await createFileUpload({
-      filename: 'picture.png',
+      filename: 'export.csv',
       size: 10,
-      fileFolder: 'CorePicture',
+      fileFolder: 'RecordExport',
     });
 
     expect(createResponse.body.errors).toBeDefined();

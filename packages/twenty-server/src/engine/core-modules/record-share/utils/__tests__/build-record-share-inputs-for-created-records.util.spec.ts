@@ -44,20 +44,8 @@ const systemAuthContext = {
 
 const apiKeyRoleMap = { [API_KEY_ID]: API_KEY_ROLE_ID };
 
-const everyoneFullRowFor = (recordId: string) => ({
-  recordId,
-  objectMetadataId: OBJECT_METADATA_ID,
-  principalId: EVERYONE_PRINCIPAL_ID,
-  principalType: RecordSharePrincipalType.EVERYONE,
-  accessLevel: RecordShareAccessLevel.FULL,
-  rowCause: RecordShareRowCause.APPLICATION,
-  sourceId: OBJECT_METADATA_ID,
-});
-
 describe('buildRecordShareInputsForCreatedRecords', () => {
   describe('with record sharing enabled', () => {
-    const isRecordSharingEnabled = true;
-
     it('should give a user a FULL owner row per record', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
@@ -65,7 +53,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
         }),
       ).toEqual([
         {
@@ -96,7 +83,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.READ },
             {
@@ -135,7 +121,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -169,7 +154,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap: {},
-          isRecordSharingEnabled,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -189,7 +173,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: applicationAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
@@ -223,7 +206,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: applicationAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [
             {
               roleId: APPLICATION_ROLE_ID,
@@ -254,7 +236,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             application: { id: APPLICATION_ID, defaultRoleId: null },
           } as unknown as WorkspaceAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
@@ -269,7 +250,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: systemAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -289,16 +269,13 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
   });
 
   describe('with record sharing disabled', () => {
-    const isRecordSharingEnabled = false;
-
-    it('should give a user the FULL owner row and an EVERYONE FULL row, so the record stays open once the flag turns on', () => {
+    it('keeps a new private record restricted to its creator when sharing is disabled', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: null,
         }),
       ).toEqual([
@@ -306,36 +283,41 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           principalId: WORKSPACE_MEMBER_ID,
           rowCause: RecordShareRowCause.OWNER,
         }),
-        everyoneFullRowFor('record-1'),
       ]);
     });
 
-    it('should write one EVERYONE FULL row per record for an api key without shareWith', () => {
+    it('retains the creating API key role without granting everyone access', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1', 'record-2'],
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
         }),
       ).toEqual([
-        everyoneFullRowFor('record-1'),
-        everyoneFullRowFor('record-2'),
+        expect.objectContaining({
+          recordId: 'record-1',
+          principalId: API_KEY_ROLE_ID,
+          accessLevel: RecordShareAccessLevel.FULL,
+        }),
+        expect.objectContaining({
+          recordId: 'record-2',
+          principalId: API_KEY_ROLE_ID,
+          accessLevel: RecordShareAccessLevel.FULL,
+        }),
       ]);
     });
 
-    it('should write one EVERYONE FULL row for a system caller with an empty shareWith', () => {
+    it('requires a system producer to assign access explicitly', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: systemAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [],
         }),
-      ).toEqual([everyoneFullRowFor('record-1')]);
+      ).toEqual([]);
     });
 
     it('should honour an explicit shareWith from an api key', () => {
@@ -345,7 +327,6 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
           shareWith: [
             {
               workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,
@@ -366,3 +347,30 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
     });
   });
 });
+
+it.each([
+  userAuthContext,
+  apiKeyAuthContext,
+  applicationAuthContext,
+  systemAuthContext,
+])(
+  'preserves flag-off shared access for $type creates without invitations',
+  (authContext) => {
+    const rows = buildRecordShareInputsForCreatedRecords({
+      recordIds: ['record'],
+      objectMetadataId: OBJECT_METADATA_ID,
+      authContext,
+      apiKeyRoleMap,
+      isRecordSharingEnforced: false,
+    });
+    expect(rows).toContainEqual({
+      recordId: 'record',
+      objectMetadataId: OBJECT_METADATA_ID,
+      principalId: EVERYONE_PRINCIPAL_ID,
+      principalType: RecordSharePrincipalType.EVERYONE,
+      accessLevel: RecordShareAccessLevel.FULL,
+      rowCause: RecordShareRowCause.APPLICATION,
+      sourceId: OBJECT_METADATA_ID,
+    });
+  },
+);

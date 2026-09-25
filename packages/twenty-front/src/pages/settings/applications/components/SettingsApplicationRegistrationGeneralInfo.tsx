@@ -19,7 +19,7 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Chip, Tag } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistration,
   ApplicationRegistrationSourceType,

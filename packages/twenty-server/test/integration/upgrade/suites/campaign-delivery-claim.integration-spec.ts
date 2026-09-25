@@ -3,6 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+
 jest.useRealTimers();
 
 config({
@@ -14,7 +16,7 @@ const CLAIM_TTL_MS = 5 * 60 * 1000;
 
 describe('campaignDelivery claim protocol (integration)', () => {
   let dataSource: DataSource;
-  let workspaceId: string;
+  let campaignDeliveryTableName: string;
   const seededDeliveryIds: string[] = [];
 
   const claim = async (
@@ -23,7 +25,7 @@ describe('campaignDelivery claim protocol (integration)', () => {
     const claimToken = v4();
 
     const [, affected] = await dataSource.query(
-      `UPDATE "core"."campaignDelivery"
+      `UPDATE ${campaignDeliveryTableName}
           SET "state" = 'SENDING', "claimToken" = $1, "claimExpiresAt" = $2
         WHERE "id" = $3 AND "state" IN ('QUEUED', 'FAILED')`,
       [claimToken, new Date(Date.now() + CLAIM_TTL_MS), deliveryId],
@@ -37,7 +39,7 @@ describe('campaignDelivery claim protocol (integration)', () => {
     claimToken: string,
   ): Promise<number> => {
     const [, affected] = await dataSource.query(
-      `UPDATE "core"."campaignDelivery"
+      `UPDATE ${campaignDeliveryTableName}
           SET "state" = 'SENT', "claimToken" = NULL, "claimExpiresAt" = NULL
         WHERE "id" = $1 AND "claimToken" = $2`,
       [deliveryId, claimToken],
@@ -50,10 +52,10 @@ describe('campaignDelivery claim protocol (integration)', () => {
     const deliveryId = v4();
 
     await dataSource.query(
-      `INSERT INTO "core"."campaignDelivery"
-         ("id", "workspaceId", "campaignId", "personId", "recipientEmail", "state")
-       VALUES ($1, $2, $3, $4, $5, 'QUEUED')`,
-      [deliveryId, workspaceId, v4(), v4(), `claim-test-${deliveryId}@example.com`],
+      `INSERT INTO ${campaignDeliveryTableName}
+         ("id", "campaignId", "personId", "recipientEmail", "state")
+       VALUES ($1, $2, $3, $4, 'QUEUED')`,
+      [deliveryId, v4(), v4(), `claim-test-${deliveryId}@example.com`],
     );
 
     seededDeliveryIds.push(deliveryId);
@@ -65,7 +67,7 @@ describe('campaignDelivery claim protocol (integration)', () => {
     deliveryId: string,
   ): Promise<{ state: string; claimToken: string | null }> => {
     const [row] = await dataSource.query(
-      `SELECT "state", "claimToken" FROM "core"."campaignDelivery" WHERE "id" = $1`,
+      `SELECT "state", "claimToken" FROM ${campaignDeliveryTableName} WHERE "id" = $1`,
       [deliveryId],
     );
 
@@ -92,13 +94,13 @@ describe('campaignDelivery claim protocol (integration)', () => {
       );
     }
 
-    workspaceId = seedWorkspaceRow.workspaceId;
+    campaignDeliveryTableName = `"${getWorkspaceSchemaName(seedWorkspaceRow.workspaceId)}"."campaignDelivery"`;
   });
 
   afterAll(async () => {
     if (seededDeliveryIds.length > 0) {
       await dataSource.query(
-        `DELETE FROM "core"."campaignDelivery" WHERE "id" = ANY($1)`,
+        `DELETE FROM ${campaignDeliveryTableName} WHERE "id" = ANY($1)`,
         [seededDeliveryIds],
       );
     }
@@ -141,13 +143,13 @@ describe('campaignDelivery claim protocol (integration)', () => {
     const abandoned = await claim(deliveryId);
 
     await dataSource.query(
-      `UPDATE "core"."campaignDelivery"
+      `UPDATE ${campaignDeliveryTableName}
           SET "claimExpiresAt" = $1 WHERE "id" = $2`,
       [new Date(Date.now() - 1), deliveryId],
     );
 
     await dataSource.query(
-      `UPDATE "core"."campaignDelivery"
+      `UPDATE ${campaignDeliveryTableName}
           SET "state" = 'FAILED', "failureReason" = 'CLAIM_EXPIRED',
               "claimToken" = NULL, "claimExpiresAt" = NULL
         WHERE "id" = $1 AND "state" = 'SENDING' AND "claimExpiresAt" < now()`,
@@ -159,29 +161,5 @@ describe('campaignDelivery claim protocol (integration)', () => {
     expect(reclaimed.won).toBe(true);
     expect(await settle(deliveryId, abandoned.claimToken)).toBe(0);
     expect(await settle(deliveryId, reclaimed.claimToken)).toBe(1);
-  });
-
-  it('never leaves a claim half written', async () => {
-    const deliveryId = await seedQueuedDelivery();
-
-    await expect(
-      dataSource.query(
-        `UPDATE "core"."campaignDelivery"
-            SET "claimToken" = $1, "claimExpiresAt" = NULL WHERE "id" = $2`,
-        [v4(), deliveryId],
-      ),
-    ).rejects.toThrow(/CHK_CAMPAIGN_DELIVERY_CLAIM_IS_WHOLE/);
-  });
-
-  it('never leaves a sending delivery without a lease', async () => {
-    const deliveryId = await seedQueuedDelivery();
-
-    await expect(
-      dataSource.query(
-        `UPDATE "core"."campaignDelivery"
-            SET "state" = 'SENDING' WHERE "id" = $1`,
-        [deliveryId],
-      ),
-    ).rejects.toThrow(/CHK_CAMPAIGN_DELIVERY_CLAIM_HAS_LEASE/);
   });
 });

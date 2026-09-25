@@ -13,7 +13,7 @@ import {
   isRouteParams,
 } from '~/testing/decorators/PageDecorator';
 
-import { ComponentStorybookLayout } from '~/testing/ComponentStorybookLayout';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
 
 interface StrictArgs {
   [name: string]: unknown;

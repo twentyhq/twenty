@@ -22,7 +22,7 @@ import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dr
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -179,7 +179,9 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <AdvancedFilterFieldSelectSearchInput />
       <SelectableList
         focusId={advancedFilterFieldSelectDropdownId}
@@ -236,6 +238,6 @@ export const AdvancedFilterFieldSelectMenu = ({
           </>
         )}
       </SelectableList>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

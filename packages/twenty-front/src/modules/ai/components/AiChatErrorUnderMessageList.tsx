@@ -1,3 +1,4 @@
+import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
@@ -11,7 +12,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledErrorWrapper = styled.div`
   padding-top: ${themeCssVariables.spacing[3]};
@@ -19,6 +20,7 @@ const StyledErrorWrapper = styled.div`
 
 export const AiChatErrorUnderMessageList = () => {
   const { retryChatMessage } = useRetryChatMessage();
+  const canRetry = useCanRetryCurrentAiChatTurn();
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
@@ -52,7 +54,10 @@ export const AiChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AiChatErrorRenderer error={agentChatError} onRetry={retryChatMessage} />
+      <AiChatErrorRenderer
+        error={agentChatError}
+        onRetry={canRetry ? retryChatMessage : undefined}
+      />
     </StyledErrorWrapper>
   );
 };

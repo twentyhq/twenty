@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconArrowsDiagonal, IconUserCircle } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type OpenRecordInCardMediaProps = {
   type: 'member-preference' | 'side-panel' | 'full-page';

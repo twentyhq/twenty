@@ -711,7 +711,7 @@ yarn add twenty-ui@1.0.0-alpha.1
 | `twenty-ui/feedback`        | `Callout`、`Banner`、`Info` 等             |
 | `twenty-ui/typography`      | `H1Title`、`H2Title`、`H3Title`、`Label` 等 |
 | `twenty-ui/icon`            | `Icon*` 组件（例如 `IconCheck`）              |
-| `twenty-ui/theme-constants` | `ThemeProvider`、`themeCssVariables`     |
+| `twenty-ui/theme` | `ThemeProvider`、`themeCssVariables`     |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Twenty UI 组件会自动匹配工作区的明暗主题——渲染器会在宿�
 要在你自己的行内样式中使用相同的设计令牌，请调用 `useTheme()` hook。 它会返回与当前主题关联的 Twenty 主题令牌（间距、颜色、圆角、字体），你的组件中无需设置 `ThemeProvider`：
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

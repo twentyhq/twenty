@@ -5,7 +5,7 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -26,7 +26,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
   OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
@@ -214,7 +214,7 @@ export const SettingsObjectRelationsTable = ({
             />
           }
           dropdownComponents={
-            <DropdownContent>
+            <LegacyDropdownContent>
               <DropdownMenuItemsContainer>
                 <SettingsRow
                   startIcon={<IconArchive />}
@@ -222,7 +222,7 @@ export const SettingsObjectRelationsTable = ({
                   checked={showInactive}
                 >{t`Inactive`}</SettingsRow>
               </DropdownMenuItemsContainer>
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       </StyledSearchAndFilterContainer>
