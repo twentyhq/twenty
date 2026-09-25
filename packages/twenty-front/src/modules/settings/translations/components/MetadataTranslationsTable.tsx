@@ -8,7 +8,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type LocaleOption } from '~/localization/hooks/useLocaleOptions';
@@ -79,7 +79,7 @@ export const MetadataTranslationsTable = ({
               onSaveTranslationRows={onSaveTranslationRows}
             />
           ))}
-          {localeRows.length === 0 && (
+          {!isNonEmptyArray(localeRows) && (
             <TableCell color={themeCssVariables.font.color.tertiary}>
               {t`No languages found`}
             </TableCell>
