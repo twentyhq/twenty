@@ -72,23 +72,22 @@ export class CalendarEventWebhookSyncService {
     calendarChannelId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const updateResult = await this.calendarChannelRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-        syncStageStartedAt: new Date(),
-      })
-      .where({
-        id: calendarChannelId,
+    const scheduledCalendarChannels =
+      await this.calendarChannelRepository.updateAndReturn(
         workspaceId,
-        isSyncEnabled: true,
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-      })
-      .returning('id')
-      .execute();
+        {
+          id: calendarChannelId,
+          isSyncEnabled: true,
+          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        },
+        {
+          syncStage:
+            CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+          syncStageStartedAt: new Date(),
+        },
+      );
 
-    return updateResult.raw.length > 0;
+    return scheduledCalendarChannels.length > 0;
   }
 
   private async findSyncEnabledCalendarChannel({

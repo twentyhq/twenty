@@ -5,7 +5,7 @@ import {
   WebhookSubscriptionChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { Repository, type SelectQueryBuilder } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -21,6 +21,8 @@ import {
   CreateWebhookSubscriptionJob,
   type CreateWebhookSubscriptionJobData,
 } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const WEBHOOK_BACKFILL_SPACING_MS = 2000;
 
@@ -35,12 +37,8 @@ export class CreateWebhookSubscriptionForConnectedAccountCommand extends Provisi
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    // findEligibleChannelIds is shared with the still-raw MessageChannelEntity
-    // repository. Its query already filters on workspaceId, so this moves to
-    // the scoped repository together with MessageChannelEntity.
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
@@ -55,8 +53,9 @@ export class CreateWebhookSubscriptionForConnectedAccountCommand extends Provisi
     const isDryRun = options.dryRun ?? false;
 
     const messageChannelIds = await this.findEligibleChannelIds(
-      this.messageChannelRepository,
-      workspaceId,
+      this.messageChannelRepository
+        .createQueryBuilder('core')
+        .where('core.workspaceId = :workspaceId', { workspaceId }),
     );
 
     await this.enqueueChannels(
@@ -67,8 +66,10 @@ export class CreateWebhookSubscriptionForConnectedAccountCommand extends Provisi
     );
 
     const calendarChannelIds = await this.findEligibleChannelIds(
-      this.calendarChannelRepository,
-      workspaceId,
+      this.calendarChannelRepository.createScopedQueryBuilder(
+        workspaceId,
+        'core',
+      ),
     );
 
     await this.enqueueChannels(
@@ -81,12 +82,13 @@ export class CreateWebhookSubscriptionForConnectedAccountCommand extends Provisi
 
   private async findEligibleChannelIds<
     TChannel extends MessageChannelEntity | CalendarChannelEntity,
-  >(repository: Repository<TChannel>, workspaceId: string): Promise<string[]> {
-    const rows = await repository
-      .createQueryBuilder('core')
+  >(
+    workspaceChannelsQueryBuilder: SelectQueryBuilder<TChannel>,
+  ): Promise<string[]> {
+    // andWhere only: a where() here would drop the caller's workspace filter.
+    const rows = await workspaceChannelsQueryBuilder
       .select('core.id', 'id')
       .innerJoin('core.connectedAccount', 'connectedAccount')
-      .where('core.workspaceId = :workspaceId', { workspaceId })
       .andWhere('core.isSyncEnabled = true')
       .andWhere('connectedAccount.provider IN (:...providers)', {
         providers: WEBHOOK_CAPABLE_PROVIDERS,

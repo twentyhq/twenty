@@ -21,6 +21,8 @@ import {
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { isLastSuccessfulSyncStale } from 'src/modules/connected-account/utils/is-last-successful-sync-stale.util';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
@@ -38,12 +40,12 @@ export class CalendarEventListFetchCronJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     // Instance-wide cron sweep across every active workspace, so there is no
-    // single request workspace to scope by. The per-workspace claim update
-    // is a query builder, which the scoped wrapper does not scope either, so
-    // it filters on workspaceId itself.
+    // single request workspace to scope by.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    private readonly unscopedCalendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
   ) {}
 
   @Process(CalendarEventListFetchCronJob.name)
@@ -53,7 +55,7 @@ export class CalendarEventListFetchCronJob {
   )
   async handle(): Promise<void> {
     const pendingCalendarChannelsAcrossWorkspaces =
-      await this.calendarChannelRepository.find({
+      await this.unscopedCalendarChannelRepository.find({
         where: {
           isSyncEnabled: true,
           syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
@@ -103,29 +105,23 @@ export class CalendarEventListFetchCronJob {
           (calendarChannel) => calendarChannel.id,
         );
 
-        const updateResult = await this.calendarChannelRepository
-          .createQueryBuilder()
-          .update()
-          .set({
-            syncStage:
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-            syncStageStartedAt: new Date(),
-          })
-          .where({
-            id: In(calendarChannelIds),
+        const scheduledCalendarChannels =
+          await this.calendarChannelRepository.updateAndReturn(
             workspaceId,
-            isSyncEnabled: true,
-            syncStage:
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-          })
-          .returning('id')
-          .execute();
+            {
+              id: In(calendarChannelIds),
+              isSyncEnabled: true,
+              syncStage:
+                CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+            },
+            {
+              syncStage:
+                CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+              syncStageStartedAt: new Date(),
+            },
+          );
 
-        const updatedIds = updateResult.raw.map(
-          (row: { id: string }) => row.id,
-        );
-
-        for (const calendarChannelId of updatedIds) {
+        for (const { id: calendarChannelId } of scheduledCalendarChannels) {
           await this.messageQueueService.add<CalendarEventListFetchJobData>(
             CalendarEventListFetchJob.name,
             {
