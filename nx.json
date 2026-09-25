@@ -102,6 +102,7 @@
     "knip": {
       "executor": "nx:run-commands",
       "cache": true,
+      "inputs": ["default", "{workspaceRoot}/knip.json"],
       "options": {
         "command": "knip --workspace {projectRoot}"
       }

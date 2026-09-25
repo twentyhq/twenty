@@ -1,25 +1,39 @@
 name: CI Knip
 
-on:
-  schedule:
-    - cron: '0 9 * * 1'
-  workflow_dispatch:
-
 permissions:
   contents: read
 
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
 concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        knip.json
+        package.json
+        yarn.lock
+        packages/twenty-front/**
+        packages/twenty-server/**
+        packages/twenty-ui/**
   knip:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions
-        uses: actions/checkout@v4.3.1
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run knip
-        run: npx nx run-many -t knip -- --no-exit-code --reporter markdown | tee -a "$GITHUB_STEP_SUMMARY"
+        run: npx nx run-many -t knip --parallel=1

@@ -3,11 +3,12 @@
   "ignoreWorkspaces": ["packages/twenty-docs", "packages/twenty-apps/**"],
   "rules": {
     "binaries": "warn",
-    "dependencies": "warn",
-    "devDependencies": "warn",
+    "dependencies": "error",
+    "devDependencies": "error",
     "duplicates": "warn",
     "enumMembers": "warn",
     "exports": "warn",
+    "files": "error",
     "optionalPeerDependencies": "warn",
     "types": "warn",
     "unlisted": "warn",
@@ -42,7 +43,10 @@
         "src/**/constants/seed-project/**",
         "src/database/typeorm/core/migrations/**",
         "**/*.workspace-entity.ts",
-        "src/engine/core-modules/logic-function/logic-function-resource/constants/**"
+        "src/engine/core-modules/logic-function/logic-function-resource/constants/**",
+        "src/database/commands/upgrade-version-command/**",
+        "src/engine/metadata-modules/*/constants/standard-*-names.ts",
+        "src/engine/metadata-modules/*/constants/standard-*-titles.ts"
       ],
       "ignoreDependencies": ["@types/psl"]
     },
@@ -61,10 +65,19 @@
         "codegen-admin.cjs",
         "codegen-metadata.cjs"
       ],
-      "ignore": ["src/locales/generated/**"]
+      "ignore": ["src/locales/generated/**", ".eloqnt/config.ts"],
+      "ignoreDependencies": [
+        "@babel/preset-typescript",
+        "buffer",
+        "esbuild",
+        "playwright",
+        "rollup-plugin-node-polyfills"
+      ]
     },
     "packages/twenty-ui": {
-      "entry": ["scripts/**/*.ts", "docs/**/*.ts"]
+      "entry": ["scripts/**/*.ts", "docs/**/*.ts"],
+      "ignore": ["src/styles/abstracts/**"],
+      "ignoreDependencies": ["@swc/core"]
     }
   }
 }
