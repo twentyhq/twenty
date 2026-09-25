@@ -7,11 +7,9 @@ import {
   Query,
   ResolveField,
 } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -61,6 +59,8 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -76,8 +76,8 @@ export class ObjectMetadataResolver {
     private readonly objectRecordCountService: ObjectRecordCountService,
     private readonly mostlyEmptyFieldsService: MostlyEmptyFieldsService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
   ) {}
 
   @UseGuards(NoPermissionGuard)
@@ -134,9 +134,10 @@ export class ObjectMetadataResolver {
     id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ObjectMetadataDTO> {
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id, workspaceId },
-    });
+    const objectMetadata = await this.objectMetadataRepository.findOne(
+      workspaceId,
+      { where: { id } },
+    );
 
     if (!isDefined(objectMetadata)) {
       throw new NotFoundError(

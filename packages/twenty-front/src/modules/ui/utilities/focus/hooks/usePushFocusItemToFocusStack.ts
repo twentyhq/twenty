@@ -50,6 +50,8 @@ export const usePushFocusItemToFocusStack = () => {
           enableGlobalHotkeysConflictingWithKeyboard:
             globalHotkeysConfig?.enableGlobalHotkeysConflictingWithKeyboard ??
             true,
+          enableGlobalEscapeHotkeysConflictingWithKeyboard:
+            globalHotkeysConfig?.enableGlobalEscapeHotkeysConflictingWithKeyboard,
         },
       };
 
