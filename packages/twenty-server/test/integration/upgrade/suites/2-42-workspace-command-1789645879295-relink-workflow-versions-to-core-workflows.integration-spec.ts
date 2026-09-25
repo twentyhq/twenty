@@ -11,6 +11,7 @@ describe('RelinkWorkflowVersionsToCoreWorkflowsCommand (integration)', () => {
   let dataSource: DataSource;
   let command: RelinkWorkflowVersionsToCoreWorkflowsCommand;
   let applicationId: string;
+  let isCoreWorkflowIdRequired: boolean;
 
   const seededCoreWorkflowIds: string[] = [];
   const seededCoreVersionIds: string[] = [];
@@ -106,6 +107,19 @@ describe('RelinkWorkflowVersionsToCoreWorkflowsCommand (integration)', () => {
     );
 
     applicationId = workspace.workspaceCustomApplicationId;
+
+    const [coreWorkflowIdColumn] = await dataSource.query(
+      `SELECT "is_nullable" FROM information_schema.columns
+       WHERE table_schema = 'core' AND table_name = 'workflowVersion' AND column_name = 'coreWorkflowId'`,
+    );
+
+    isCoreWorkflowIdRequired = coreWorkflowIdColumn.is_nullable === 'NO';
+
+    if (isCoreWorkflowIdRequired) {
+      await dataSource.query(
+        `ALTER TABLE core."workflowVersion" ALTER COLUMN "coreWorkflowId" DROP NOT NULL`,
+      );
+    }
   });
 
   afterAll(async () => {
@@ -120,6 +134,12 @@ describe('RelinkWorkflowVersionsToCoreWorkflowsCommand (integration)', () => {
       await dataSource.query(
         `DELETE FROM core."workflow" WHERE "id" = ANY($1::uuid[])`,
         [seededCoreWorkflowIds],
+      );
+    }
+
+    if (isCoreWorkflowIdRequired) {
+      await dataSource.query(
+        `ALTER TABLE core."workflowVersion" ALTER COLUMN "coreWorkflowId" SET NOT NULL`,
       );
     }
 

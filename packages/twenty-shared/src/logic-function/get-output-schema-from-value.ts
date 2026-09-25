@@ -2,7 +2,7 @@ import { isDefined } from '@/utils';
 import {
   type BaseOutputSchemaV2,
   type LeafType,
-} from '@/workflow/workflow-schema/types/base-output-schema.type';
+} from '@/workflow/workflow-schema/types/BaseOutputSchema';
 import { isObject } from '@sniptt/guards';
 
 const getValueType = (value: any): LeafType => {

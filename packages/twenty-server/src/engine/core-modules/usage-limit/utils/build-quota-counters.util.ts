@@ -4,8 +4,11 @@ import { SPENDER_TYPE_SPECIFICITY } from 'src/engine/core-modules/usage-limit/co
 import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
+import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
+import { buildQuotaDefaultCounter } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
+import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
@@ -18,12 +21,14 @@ const counterSpecificity = (counter: LimitQuotaCounter): number =>
 
 export const buildQuotaCounters = ({
   limits,
+  quotaLimitDefaults,
   usageSpenders,
   workspaceId,
   operationType,
   periodByUnit,
 }: {
   limits: FlatQuotaLimit[];
+  quotaLimitDefaults: QuotaLimitDefault[];
   usageSpenders: UsageSpenders;
   workspaceId: string;
   operationType: UsageOperationType;
@@ -31,7 +36,7 @@ export const buildQuotaCounters = ({
 }): LimitQuotaCounter[] => {
   const spenders = buildSpendersFromUsageSpenders(usageSpenders);
 
-  const counters = spenders.flatMap((spender) =>
+  const limitCounters = spenders.flatMap((spender) =>
     findLimitsForSpender({ limits, spender, operationType }).flatMap(
       (limit) => {
         const period = periodByUnit[limit.periodUnit];
@@ -45,5 +50,29 @@ export const buildQuotaCounters = ({
     ),
   );
 
-  return counters.sort((a, b) => counterSpecificity(a) - counterSpecificity(b));
+  const spenderTypes = new Set(spenders.map((spender) => spender.spenderType));
+
+  const defaultCounters = quotaLimitDefaults
+    .filter(
+      (quotaLimitDefault) =>
+        quotaLimitDefault.operationType === operationType &&
+        spenderTypes.has(quotaLimitDefault.spenderType) &&
+        !limits.some((limit) =>
+          doesUsageLimitRowSuppressDefault({
+            scope: limit,
+            usageLimitDefault: quotaLimitDefault,
+          }),
+        ),
+    )
+    .flatMap((quotaLimitDefault) => {
+      const period = periodByUnit[quotaLimitDefault.periodUnit];
+
+      return isDefined(period)
+        ? [buildQuotaDefaultCounter({ workspaceId, quotaLimitDefault, period })]
+        : [];
+    });
+
+  return [...limitCounters, ...defaultCounters].sort(
+    (a, b) => counterSpecificity(a) - counterSpecificity(b),
+  );
 };

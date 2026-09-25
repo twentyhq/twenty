@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
@@ -12,7 +12,10 @@ import {
   AllMetadataEventName,
   AllMetadataEventType,
   MetadataEvent,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+
+// Shutdown must not hang on a stalled listener: notifications are best effort.
+const DRAIN_TIMEOUT_MS = 30_000;
 
 type EmitMetadataEventsArgs = {
   metadataEvents: MetadataEvent[];
@@ -22,6 +25,9 @@ type EmitMetadataEventsArgs = {
 
 @Injectable()
 export class MetadataEventEmitter {
+  private readonly logger = new Logger(MetadataEventEmitter.name);
+  private readonly pendingEvents = new Set<Promise<unknown>>();
+
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
   public emitMetadataEvents({
@@ -63,7 +69,42 @@ export class MetadataEventEmitter {
         apiKeyId,
       };
 
-      this.eventEmitter.emit(eventName, metadataEventBatch);
+      const pendingEvent = this.eventEmitter
+        .emitAsync(eventName, metadataEventBatch)
+        .catch((error: unknown) => {
+          this.logger.error(
+            `Failed to handle ${eventName} for workspace ${workspaceId}`,
+            error instanceof Error ? error.stack : String(error),
+          );
+        })
+        .finally(() => {
+          this.pendingEvents.delete(pendingEvent);
+        });
+
+      this.pendingEvents.add(pendingEvent);
+    }
+  }
+
+  async drain(timeoutMs = DRAIN_TIMEOUT_MS): Promise<void> {
+    if (this.pendingEvents.size === 0) {
+      return;
+    }
+
+    let timeout: NodeJS.Timeout | undefined;
+
+    const hasTimedOut = await Promise.race([
+      Promise.allSettled([...this.pendingEvents]).then(() => false),
+      new Promise<boolean>((resolve) => {
+        timeout = setTimeout(() => resolve(true), timeoutMs);
+      }),
+    ]);
+
+    clearTimeout(timeout);
+
+    if (hasTimedOut) {
+      this.logger.warn(
+        `Stopped waiting for ${this.pendingEvents.size} metadata event batches after ${timeoutMs}ms`,
+      );
     }
   }
 

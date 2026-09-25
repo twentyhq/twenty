@@ -1,11 +1,23 @@
 import { Inject, UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Info,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
+import { type GraphQLResolveInfo } from 'graphql';
+import graphqlFields from 'graphql-fields';
 import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -106,6 +118,7 @@ export class FrontComponentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Info() info: GraphQLResolveInfo,
   ): Promise<FrontComponentDTO | null> {
     const dto = await this.frontComponentService.findById(id, workspace.id);
 
@@ -113,24 +126,48 @@ export class FrontComponentResolver {
       return null;
     }
 
-    const [tokenPair, applicationVariables] = await Promise.all([
-      this.applicationTokenService.generateApplicationTokenPair({
-        applicationId: dto.applicationId,
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        userId: user.id,
-      }),
-      this.applicationVariableService.getPublicEnvVariables({
-        workspaceId: workspace.id,
-        applicationId: dto.applicationId,
-      }),
+    const selectedFields = graphqlFields(info);
+
+    const [applicationTokenPair, applicationVariables] = await Promise.all([
+      isDefined(selectedFields.applicationTokenPair)
+        ? this.applicationTokenService.generateApplicationTokenPair({
+            applicationId: dto.applicationId,
+            workspaceId: workspace.id,
+            userWorkspaceId,
+            userId: user.id,
+          })
+        : undefined,
+      isDefined(selectedFields.applicationVariables)
+        ? this.applicationVariableService.getPublicEnvVariables({
+            workspaceId: workspace.id,
+            applicationId: dto.applicationId,
+          })
+        : undefined,
     ]);
 
     return {
       ...dto,
-      applicationTokenPair: tokenPair,
+      applicationTokenPair,
       applicationVariables,
     };
+  }
+
+  @Mutation(() => ApplicationTokenPairDTO)
+  @UseGuards(RequireAccessTokenGuard, NoPermissionGuard)
+  @UseFilters(ApplicationExceptionFilter)
+  async generateFrontComponentApplicationTokenPair(
+    @Args('applicationId', { type: () => UUIDScalarType })
+    applicationId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<ApplicationTokenPairDTO> {
+    return this.applicationTokenService.generateApplicationTokenPair({
+      applicationId,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      userId: user.id,
+    });
   }
 
   @Mutation(() => FrontComponentDTO)

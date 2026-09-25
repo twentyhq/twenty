@@ -108,7 +108,10 @@ const ACTIVATE_VERSION_MUTATION = `
   }
 `;
 
-const setVisibility = (coreWorkflowId: string, visibility: WorkflowVisibility) =>
+const setVisibility = (
+  coreWorkflowId: string,
+  visibility: WorkflowVisibility,
+) =>
   workflowGraphqlRequest(UPDATE_VISIBILITY_MUTATION, {
     input: { coreWorkflowId, visibility },
   });

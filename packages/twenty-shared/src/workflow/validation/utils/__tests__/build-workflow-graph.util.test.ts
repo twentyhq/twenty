@@ -2,7 +2,7 @@ import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import {
   type ValidatableWorkflow,
   type ValidatableWorkflowStep,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { buildWorkflowGraph } from '../build-workflow-graph.util';
 
 const buildStep = (

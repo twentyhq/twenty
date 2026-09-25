@@ -2,9 +2,9 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
@@ -47,7 +47,7 @@ describe('updateManyObjectRecordsPermissions', () => {
       ],
     });
 
-    await makeGraphqlAPIRequest(createGraphqlOperation);
+    await makeGraphqlApiRequest(createGraphqlOperation);
     createdPersonIds.push(personId1, personId2);
 
     const updateGraphqlOperation = updateManyOperationFactory({
@@ -64,7 +64,7 @@ describe('updateManyObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(
+    const response = await makeGraphqlApiRequestWithGuestRole(
       updateGraphqlOperation,
     );
 
@@ -93,7 +93,7 @@ describe('updateManyObjectRecordsPermissions', () => {
       ],
     });
 
-    await makeGraphqlAPIRequest(createGraphqlOperation);
+    await makeGraphqlApiRequest(createGraphqlOperation);
     createdPersonIds.push(personId1, personId2);
 
     const updateGraphqlOperation = updateManyOperationFactory({
@@ -110,7 +110,7 @@ describe('updateManyObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(updateGraphqlOperation);
+    const response = await makeGraphqlApiRequest(updateGraphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.updatePeople).toBeDefined();
@@ -138,7 +138,7 @@ describe('updateManyObjectRecordsPermissions', () => {
       ],
     });
 
-    await makeGraphqlAPIRequest(createGraphqlOperation);
+    await makeGraphqlApiRequest(createGraphqlOperation);
     createdPersonIds.push(personId1, personId2);
 
     const updateGraphqlOperation = updateManyOperationFactory({
@@ -155,7 +155,7 @@ describe('updateManyObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(
+    const response = await makeGraphqlApiRequestWithApiKey(
       updateGraphqlOperation,
     );
 

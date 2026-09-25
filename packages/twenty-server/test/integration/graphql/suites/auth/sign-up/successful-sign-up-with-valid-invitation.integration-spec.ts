@@ -5,7 +5,7 @@ import {
   seedWorkspaceInvitation,
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -34,7 +34,7 @@ describe('signUpInWorkspace with a valid personal invitation (integration)', () 
   });
 
   it('grants access when the personal invitation is still valid', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       signUpInWorkspaceOperationFactory({
         email,
         workspaceId: SEED_APPLE_WORKSPACE_ID,

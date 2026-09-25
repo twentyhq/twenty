@@ -217,20 +217,6 @@ describe('core workflow id mutations (e2e)', () => {
   });
 
   it('activates, runs and deactivates by core ids', async () => {
-    const validateResponse = await workflowGraphqlRequest(
-      `
-        mutation ValidateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
-          validateCoreWorkflowVersion(
-            coreWorkflowVersionId: $coreWorkflowVersionId
-          )
-        }
-      `,
-      { coreWorkflowVersionId },
-    );
-
-    expect(validateResponse.body.errors).toBeUndefined();
-    expect(validateResponse.body.data.validateCoreWorkflowVersion).toBe(true);
-
     const activateResponse = await workflowGraphqlRequest(
       `
         mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {

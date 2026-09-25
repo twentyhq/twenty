@@ -1,5 +1,6 @@
 import { EditLinkDropdownForm } from '@/advanced-text-editor/components/EditLinkDropdownForm';
 import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -34,7 +35,7 @@ export const EditLinkDropdown = ({
           </LightIconButton>
         }
       />
-      <Dropdown.Content
+      <DropdownContent
         sideOffset={0}
         align="end"
         finalFocus={(interaction) =>
@@ -45,7 +46,7 @@ export const EditLinkDropdown = ({
         <Dropdown.Section>
           <EditLinkDropdownForm defaultValue={defaultValue} editor={editor} />
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownContent>
     </DropdownRoot>
   );
 };
