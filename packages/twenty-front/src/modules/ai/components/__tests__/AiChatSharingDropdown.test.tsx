@@ -15,7 +15,9 @@ const mockRefetch = jest.fn().mockResolvedValue(undefined);
 let mockRecordSharingEnabled = true;
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({ objectMetadataItem: { id: 'thread-object' } }),
+  useObjectMetadataItem: () => ({
+    objectMetadataItem: { id: 'thread-object' },
+  }),
 }));
 jest.mock('@/object-record/record-sharing/hooks/useRecordSharing', () => ({
   useRecordSharing: () => ({
