@@ -57,14 +57,17 @@ No stories are skipped or marked as expected-to-fail by the runner.
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
-`css-select`, and property accessors for boolean ARIA attributes so React and
-Preact forward `true`/`false` instead of empty strings and remove the attribute
-when the prop is cleared. `getAttribute` and the selector engine read the remote
-properties React and Preact set, and the selector engine matches the sandbox's
-custom element tags by their HTML tag names and reads live control properties.
-`TooltipPreact` therefore covers hover opening and Escape dismissal. Pointer
-leave still needs document-level `mousemove` delivery for the safe polygon, and
-the compound tooltip's title and description are not covered yet.
+`css-select`, local `focus`/`blur` with a `document.activeElement` that the host
+keeps in sync with the page's focus inside the component and that clears when
+the focused subtree is detached, and property accessors for boolean ARIA
+attributes so React and Preact forward `true`/`false` instead of empty strings
+and remove the attribute when the prop is cleared. `getAttribute` and the
+selector engine read the remote properties React and Preact set, and the
+selector engine matches the sandbox's custom element tags by their HTML tag
+names and reads live control properties. `TooltipPreact` therefore covers hover
+opening and Escape dismissal. Pointer leave still needs document-level
+`mousemove` delivery for the safe polygon, and the compound tooltip's title and
+description are not covered yet.
 
 Once the remaining gaps are fixed, extend the stories to verify selection,
 disabled items, keyboard navigation, and overlay content, dismissal, and focus
