@@ -28,7 +28,6 @@ const StyledButton = styled.button<{ disabled: boolean }>`
 type AiModelTierBarsProps = ComponentProps<'button'> & {
   selectedTier: AiModelTier;
   label: string;
-  disabled?: boolean;
 };
 
 export const AiModelTierBars = ({
