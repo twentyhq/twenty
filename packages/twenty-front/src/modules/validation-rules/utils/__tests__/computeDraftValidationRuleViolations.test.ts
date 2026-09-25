@@ -28,13 +28,6 @@ const FIELDS = [
   },
 ];
 
-const POINT_OF_CONTACTS_FIELD = {
-  name: 'pointOfContacts',
-  type: FieldMetadataType.RELATION,
-  universalIdentifier: 'pointOfContacts',
-  relationType: RelationType.ONE_TO_MANY,
-};
-
 const AMOUNT_RULE = {
   id: 'amount-rule',
   objectMetadataId: 'opportunity',
@@ -151,22 +144,5 @@ describe('computeDraftValidationRuleViolations', () => {
         (violation) => violation.ruleId,
       ),
     ).toEqual(['company-rule']);
-  });
-
-  it('should count no related records on a draft', () => {
-    const draftRule = {
-      ...AMOUNT_RULE,
-      expression: 'stage != "CUSTOMER" or count(pointOfContacts) > 0',
-    };
-
-    expect(
-      computeDraftValidationRuleViolations({
-        validationRules: [draftRule],
-        draftRecord: { stage: 'CUSTOMER' },
-        fields: [...FIELDS, POINT_OF_CONTACTS_FIELD],
-        serverFilledFieldNames: [],
-        now: '2026-09-23T10:00:00.000Z',
-      }).map((violation) => violation.ruleId),
-    ).toEqual(['amount-rule']);
   });
 });

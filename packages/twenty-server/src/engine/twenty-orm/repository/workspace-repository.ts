@@ -6,15 +6,8 @@ import {
   type ObjectRecord,
   type ObjectsPermissions,
   type ObjectValidationRule,
-  type ValidationRuleAggregateFunctionName,
-  type ValidationRuleAggregateValues,
 } from 'twenty-shared/types';
-import {
-  assertUnreachable,
-  buildValidationRuleEmptySetAggregateValues,
-  extractValidationRuleAggregates,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -68,7 +61,6 @@ import {
   RecordValidationRuleException,
   RecordValidationRuleExceptionCode,
 } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
-import { VALIDATION_RULE_AGGREGATE_SQL_EXPRESSION_BY_FUNCTION_NAME } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-aggregate-sql-expression-by-function-name.constant';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 import {
@@ -1410,52 +1402,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  async computeAggregatesForValidationRules({
-    joinColumnName,
-    parentRecordIds,
-    functionNames,
-  }: {
-    joinColumnName: string;
-    parentRecordIds: string[];
-    functionNames: ValidationRuleAggregateFunctionName[];
-  }): Promise<Map<string, ValidationRuleAggregateValues>> {
-    if (parentRecordIds.length === 0 || functionNames.length === 0) {
-      return new Map();
-    }
-
-    const { schemaName, tableName, hasDeletedAtColumn } =
-      this.options.tableShape;
-    const escapedJoinColumnName = escapeIdentifier(joinColumnName);
-
-    const aggregateSelections = functionNames.map(
-      (functionName) =>
-        `${VALIDATION_RULE_AGGREGATE_SQL_EXPRESSION_BY_FUNCTION_NAME[functionName]} AS ${escapeIdentifier(functionName)}`,
-    );
-
-    const rows = await this.executeRaw<Record<string, unknown>>(
-      `SELECT ${escapedJoinColumnName} AS "parentRecordId", ${aggregateSelections.join(
-        ', ',
-      )} FROM ${escapeIdentifier(schemaName)}.${escapeIdentifier(
-        tableName,
-      )} WHERE ${escapedJoinColumnName} IN (:...parentRecordIds)${
-        hasDeletedAtColumn ? ' AND "deletedAt" IS NULL' : ''
-      } GROUP BY ${escapedJoinColumnName}`,
-      { parentRecordIds },
-    );
-
-    return new Map(
-      rows.map((row) => [
-        String(row.parentRecordId),
-        Object.fromEntries(
-          functionNames.map((functionName) => [
-            functionName,
-            isDefined(row[functionName]) ? Number(row[functionName]) : null,
-          ]),
-        ),
-      ]),
-    );
-  }
-
   private getActiveValidationRules(): ObjectValidationRule[] {
     return (this.options.flatObjectMetadata.validationRules ?? []).filter(
       (validationRule) => validationRule.isActive,
@@ -1559,92 +1505,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return recordsWithRelatedRecords;
   }
 
-  private async attachAggregatesForValidationRules({
-    records,
-    validationRules,
-  }: {
-    records: ObjectRecord[];
-    validationRules: ObjectValidationRule[];
-  }): Promise<ObjectRecord[]> {
-    const functionNamesByRelationFieldName = new Map<
-      string,
-      Set<ValidationRuleAggregateFunctionName>
-    >();
-
-    for (const validationRule of validationRules) {
-      for (const {
-        functionName,
-        relationFieldName,
-      } of extractValidationRuleAggregates(validationRule.expression)) {
-        functionNamesByRelationFieldName.set(
-          relationFieldName,
-          new Set([
-            ...(functionNamesByRelationFieldName.get(relationFieldName) ?? []),
-            functionName,
-          ]),
-        );
-      }
-    }
-
-    let recordsWithAggregates = records;
-
-    for (const [
-      relationFieldName,
-      functionNameSet,
-    ] of functionNamesByRelationFieldName) {
-      const relationShape =
-        this.options.tableShape.relationShapeByFieldName[relationFieldName];
-
-      if (
-        !isDefined(relationShape) ||
-        relationShape.relationType !== RelationType.ONE_TO_MANY
-      ) {
-        continue;
-      }
-
-      const joinColumnName = Object.values(
-        this.options.tableShapeByObjectMetadataId(
-          relationShape.targetObjectMetadataId,
-        ).relationShapeByFieldName,
-      ).find(
-        (targetRelationShape) =>
-          targetRelationShape.fieldMetadataId ===
-          relationShape.targetFieldMetadataId,
-      )?.joinColumnName;
-
-      if (!isNonEmptyString(joinColumnName)) {
-        continue;
-      }
-
-      const functionNames = [...functionNameSet];
-
-      const aggregateValuesByParentRecordId = await this.options
-        .getRepositoryForObjectMetadataId(relationShape.targetObjectMetadataId)
-        .computeAggregatesForValidationRules({
-          joinColumnName,
-          parentRecordIds: records.map((record) => String(record.id)),
-          functionNames,
-        });
-
-      const emptySetAggregateValues =
-        buildValidationRuleEmptySetAggregateValues(
-          functionNames.map((functionName) => ({
-            functionName,
-            relationFieldName,
-          })),
-        )[relationFieldName];
-
-      recordsWithAggregates = recordsWithAggregates.map((record) => ({
-        ...record,
-        [relationFieldName]:
-          aggregateValuesByParentRecordId.get(String(record.id)) ??
-          emptySetAggregateValues,
-      }));
-    }
-
-    return recordsWithAggregates;
-  }
-
   private async validateWrittenRecordsAgainstValidationRulesOrThrow({
     recordIds,
     inputIndexByRecordId = new Map(),
@@ -1662,12 +1522,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordIds,
     ).getMany<ObjectRecord>({ noFormatting: true });
 
-    const records = await this.attachAggregatesForValidationRules({
-      records: await this.attachRelatedRecordsForValidationRules({
-        writtenRecords: this.formatResult<ObjectRecord[]>(rawWrittenRecords),
-        rawWrittenRecords,
-        validationRules,
-      }),
+    const records = await this.attachRelatedRecordsForValidationRules({
+      writtenRecords: this.formatResult<ObjectRecord[]>(rawWrittenRecords),
+      rawWrittenRecords,
       validationRules,
     });
 

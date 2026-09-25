@@ -1,11 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
-import { VALIDATION_RULE_AGGREGATE_FUNCTIONS } from '@/constants/ValidationRuleAggregateFunctions';
-import { isValidationRuleAggregateFunctionName } from '@/utils/validation-rule/isValidationRuleAggregateFunctionName';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
 import { isValidationRuleValueEmpty } from '@/utils/validation-rule/isValidationRuleValueEmpty';
-import { readValidationRuleAggregateValue } from '@/utils/validation-rule/readValidationRuleAggregateValue';
 
 export const validationRuleParser = new Parser({
   allowMemberAccess: true,
@@ -88,13 +85,4 @@ validationRuleParser.functions = {
   includes: (array: unknown, value: unknown) =>
     Array.isArray(array) && array.includes(value),
   arrayLength: (value: unknown) => (Array.isArray(value) ? value.length : 0),
-  ...Object.fromEntries(
-    Object.keys(VALIDATION_RULE_AGGREGATE_FUNCTIONS)
-      .filter(isValidationRuleAggregateFunctionName)
-      .map((functionName) => [
-        functionName,
-        (aggregateValues: unknown) =>
-          readValidationRuleAggregateValue(aggregateValues, functionName),
-      ]),
-  ),
 };
