@@ -74,6 +74,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/overview',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
     '/developers/extend/apps/logic/skills-and-agents',
+  DEVELOPERS_EXTEND_APPS_LOGIC_WORKFLOWS:
+    '/developers/extend/apps/logic/workflows',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
     '/developers/extend/apps/operations/cli',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
