@@ -125,3 +125,38 @@ exports[`CommandMenuItem update should fail when changing engineComponentKey to 
   "name": "GraphQLError",
 }
 `;
+
+exports[`Navigation CommandMenuItem activation should fail when showing a navigation command whose object is inactive 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "commandMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_COMMAND_MENU_ITEM_INPUT",
+              "message": "Cannot activate a navigation command menu item whose target object is inactive",
+              "userFriendlyMessage": "This command cannot be shown while its object is inactive",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "commandMenuItem",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 commandMenuItem",
+    "summary": {
+      "commandMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This command cannot be shown while its object is inactive",
+  },
+  "message": "Multiple validation errors occurred while updating command menu item",
+  "name": "GraphQLError",
+}
+`;

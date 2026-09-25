@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconPencil } from 'twenty-ui/icon';
 
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
-import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { commandMenuItemsWithInactiveSelector } from '@/command-menu-item/states/commandMenuItemsWithInactiveSelector';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
@@ -70,7 +70,9 @@ export const useEnterLayoutCustomizationMode = () => {
     );
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
 
-    const persistedCommandMenuItems = store.get(commandMenuItemsSelector.atom);
+    const persistedCommandMenuItems = store.get(
+      commandMenuItemsWithInactiveSelector.atom,
+    );
     store.set(commandMenuItemsDraftState.atom, persistedCommandMenuItems);
 
     store.set(activeCustomizationPageLayoutIdsState.atom, []);

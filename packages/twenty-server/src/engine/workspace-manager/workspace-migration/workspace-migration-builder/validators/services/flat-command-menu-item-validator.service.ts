@@ -10,6 +10,7 @@ import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modu
 import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -194,7 +195,67 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    const isBeingActivated =
+      !resolveEffectiveUniversalFlatEntityProperty({
+        metadataName: 'commandMenuItem',
+        universalFlatEntity: fromFlatCommandMenuItem,
+        property: 'isActive',
+      }) &&
+      resolveEffectiveUniversalFlatEntityProperty({
+        metadataName: 'commandMenuItem',
+        universalFlatEntity: {
+          ...fromFlatCommandMenuItem,
+          ...flatEntityUpdate,
+        },
+        property: 'isActive',
+      });
+
+    if (isBeingActivated) {
+      this.validateNavigationTargetIsActive({
+        navigationTargetObjectMetadataUniversalIdentifier,
+        flatObjectMetadataMaps,
+        validationResult,
+      });
+    }
+
     return validationResult;
+  }
+
+  private validateNavigationTargetIsActive({
+    navigationTargetObjectMetadataUniversalIdentifier,
+    flatObjectMetadataMaps,
+    validationResult,
+  }: {
+    navigationTargetObjectMetadataUniversalIdentifier: string | null;
+    flatObjectMetadataMaps: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.commandMenuItem
+    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps']['flatObjectMetadataMaps'];
+    validationResult: FailedFlatEntityValidation<'commandMenuItem', 'update'>;
+  }): void {
+    if (!isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
+      return;
+    }
+
+    const navigationTargetFlatObjectMetadata =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: navigationTargetObjectMetadataUniversalIdentifier,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+    if (
+      isDefined(navigationTargetFlatObjectMetadata) &&
+      !resolveEffectiveUniversalFlatEntityProperty({
+        metadataName: 'objectMetadata',
+        universalFlatEntity: navigationTargetFlatObjectMetadata,
+        property: 'isActive',
+      })
+    ) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Cannot activate a navigation command menu item whose target object is inactive`,
+        userFriendlyMessage: msg`This command cannot be shown while its object is inactive`,
+      });
+    }
   }
 
   private validateNavigationTarget({

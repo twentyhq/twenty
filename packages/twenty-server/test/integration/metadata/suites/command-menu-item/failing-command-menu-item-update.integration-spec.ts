@@ -2,7 +2,13 @@ import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -124,4 +130,66 @@ describe('CommandMenuItem update should fail', () => {
       });
     },
   );
+});
+
+describe('Navigation CommandMenuItem activation should fail', () => {
+  let inactiveObjectMetadataId: string;
+
+  beforeAll(async () => {
+    const { data } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: getMockCreateObjectInput({
+        nameSingular: 'hiddenNavigationTarget',
+        namePlural: 'hiddenNavigationTargets',
+        labelSingular: 'Hidden navigation target',
+        labelPlural: 'Hidden navigation targets',
+      }),
+    });
+
+    inactiveObjectMetadataId = data.createOneObject.id;
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: inactiveObjectMetadataId,
+        updatePayload: { isActive: false },
+      },
+    });
+  });
+
+  afterAll(async () => {
+    await deleteOneObjectMetadata({
+      expectToFail: false,
+      input: { idToDelete: inactiveObjectMetadataId },
+    });
+  });
+
+  it('when showing a navigation command whose object is inactive', async () => {
+    const { data } = await findCommandMenuItems({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: `
+        id
+        isActive
+        navigationTargetObjectMetadataId
+      `,
+    });
+
+    const navigationCommandMenuItem = data.commandMenuItems.find(
+      (item) =>
+        item.navigationTargetObjectMetadataId === inactiveObjectMetadataId,
+    );
+
+    jestExpectToBeDefined(navigationCommandMenuItem);
+    expect(navigationCommandMenuItem.isActive).toBe(false);
+
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: { id: navigationCommandMenuItem.id, isActive: true },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
+  });
 });
