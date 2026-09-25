@@ -1,3 +1,5 @@
+import { buildCampaignDeliveryStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-campaign-delivery-standard-flat-index-metadata.util';
+import { buildMessageSuppressionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util';
 import { buildAgentTurnEvaluationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-turn-evaluation-standard-flat-index-metadata.util';
 import { buildAgentMessagePartStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-part-standard-flat-index-metadata.util';
 import { buildAgentMessageStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-standard-flat-index-metadata.util';
@@ -45,6 +47,8 @@ type StandardIndexBuilder<P extends AllStandardObjectName> = (
 
 const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   agentTurnEvaluation: buildAgentTurnEvaluationStandardFlatIndexMetadatas,
+  campaignDelivery: buildCampaignDeliveryStandardFlatIndexMetadatas,
+  messageSuppression: buildMessageSuppressionStandardFlatIndexMetadatas,
   agentMessagePart: buildAgentMessagePartStandardFlatIndexMetadatas,
   agentMessage: buildAgentMessageStandardFlatIndexMetadatas,
   agentTurn: buildAgentTurnStandardFlatIndexMetadatas,

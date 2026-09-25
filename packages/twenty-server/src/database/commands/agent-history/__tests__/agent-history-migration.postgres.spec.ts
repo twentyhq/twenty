@@ -215,6 +215,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         {} as never,
         { broadcast: jest.fn().mockResolvedValue(undefined) } as never,
         {} as never,
+        {
+          getThreadWithAccess: ({
+            workspaceId,
+            threadId,
+          }: {
+            workspaceId: string;
+            threadId: string;
+          }) => threads.findOne(workspaceId, { where: { id: threadId } }),
+          getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
+        } as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
@@ -347,7 +357,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       } finally {
         await runner.release();
       }
-      await lifecycle.prepareCoreReferences(WORKSPACE_ID);
       emitDatabaseBatchEvent.mockClear();
       await dataSource.query(
         `INSERT INTO core."agentChatThread" (id, "workspaceId", "userWorkspaceId", title, "totalInputCredits", "deletedAt") VALUES ($1, $2, $3, 'Private archived chat', 9007199254740993, '2026-01-01T00:00:00Z')`,
@@ -914,33 +923,21 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(insert()).resolves.toBeDefined();
     });
 
-    it('preserves owner deletion cascades and attachment restrictions', async () => {
+    it('does not create constraints referencing core tables', async () => {
+      await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
-      await dataSource.query('INSERT INTO core.file VALUES ($1, $2)', [
-        MESSAGE_ID,
-        WORKSPACE_ID,
-      ]);
-      await dataSource.query(
-        `UPDATE "${SCHEMA}"."agentMessagePart" SET "fileId" = $1`,
-        [MESSAGE_ID],
+      const constraints = await dataSource.query(
+        `SELECT c.conname FROM pg_constraint c
+         JOIN pg_namespace child ON child.oid = c.connamespace
+         JOIN pg_class parent ON parent.oid = c.confrelid
+         JOIN pg_namespace parent_namespace ON parent_namespace.oid = parent.relnamespace
+         WHERE c.contype = 'f' AND child.nspname = $1 AND parent_namespace.nspname = 'core'`,
+        [SCHEMA],
       );
-      await expect(
-        dataSource.query('DELETE FROM core.file WHERE id = $1', [MESSAGE_ID]),
-      ).rejects.toThrow('foreign key');
-      await dataSource.query('DELETE FROM core."userWorkspace" WHERE id = $1', [
-        OWNER_ID,
-      ]);
-      for (const table of AGENT_HISTORY_TABLES)
-        expect(
-          (
-            await dataSource.query(
-              `SELECT count(*) FROM "${SCHEMA}"."${table.name}"`,
-            )
-          )[0].count,
-        ).toBe('0');
+      expect(constraints).toEqual([]);
     });
 
     it('rejects cross-workspace membership before changing the route', async () => {
@@ -1122,23 +1119,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
         'route is missing',
       );
-    });
-
-    it('repairs missing core constraints and detects changed delete semantics', async () => {
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessagePart" DROP CONSTRAINT "FK_agent_history_fileId"`,
-      );
-      await lifecycle.prepareCoreReferences(WORKSPACE_ID);
-      await lifecycle.prepareCoreReferences(WORKSPACE_ID);
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessagePart" DROP CONSTRAINT "FK_agent_history_fileId"`,
-      );
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessagePart" ADD CONSTRAINT "FK_agent_history_fileId" FOREIGN KEY ("fileId") REFERENCES core.file(id) ON DELETE CASCADE`,
-      );
-      await expect(
-        lifecycle.prepareCoreReferences(WORKSPACE_ID),
-      ).rejects.toThrow('has drifted');
     });
 
     it('keeps a report snapshot stable across cutover and core cleanup', async () => {
@@ -1523,20 +1503,27 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
         expect(selected).toBe('workspace'),
       );
-      await lifecycle.setNewWorkspaceDefault('core');
+      await expect(lifecycle.setNewWorkspaceDefault('core')).rejects.toThrow(
+        'New workspaces require workspace agent history storage',
+      );
       await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
         expect(selected).toBe('workspace'),
       );
     });
 
-    it('honors an explicit core default for a new empty workspace', async () => {
+    it('ignores a legacy core default when provisioning a new empty workspace', async () => {
       for (const table of [...AGENT_HISTORY_TABLES].reverse())
         await dataSource.query(`DELETE FROM core."${table.name}"`);
-      await lifecycle.setNewWorkspaceDefault('core');
+      await expect(lifecycle.setNewWorkspaceDefault('core')).rejects.toThrow(
+        'New workspaces require workspace agent history storage',
+      );
+      await dataSource.query(
+        `INSERT INTO core."keyValuePair" ("key", "type", "value") VALUES ('agent-history-new-workspace-storage-v1', 'CONFIG_VARIABLE', '{"storage":"core"}'::jsonb)`,
+      );
       await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('core'),
+        expect(selected).toBe('workspace'),
       );
     });
     it('does not allow copy to resume after an interrupted abort', async () => {
