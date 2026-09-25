@@ -31,7 +31,7 @@ const WORKSPACE_MEMBER_OWNER_INDEX_UNIVERSAL_IDENTIFIERS = [
 // Expand step of the chat thread owner move. The legacy userWorkspaceId column
 // stays untouched so servers that still read it keep working; the contract
 // step removes it (twentyhq/core-team-issues#2925).
-@RegisteredWorkspaceCommand('2.43.0', 1790338657365)
+@RegisteredWorkspaceCommand('2.43.0', 1790347473813)
 @Command({
   name: 'upgrade:2-43:link-chat-threads-to-workspace-members',
   description:
