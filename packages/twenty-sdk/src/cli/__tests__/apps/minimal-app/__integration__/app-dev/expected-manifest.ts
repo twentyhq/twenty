@@ -3,6 +3,7 @@ import type { Manifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  workflows: [],
   commandMenuItems: [],
   timelineActivityTypes: [],
   settingsMenuItems: [],

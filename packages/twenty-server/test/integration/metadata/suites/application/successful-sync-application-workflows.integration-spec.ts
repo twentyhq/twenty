@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { type Manifest } from 'twenty-shared/application';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -134,12 +134,13 @@ describe('application-owned core workflows', () => {
     expect(oldRun.coreWorkflowVersionId).toBe(installed.versionId);
     expect(oldRun.state?.flow?.steps).toEqual(installed.steps);
 
-    const ownerFlatApplication = await globalThis.testDataSource
-      .getRepository(ApplicationEntity)
-      .findOneByOrFail({
-        universalIdentifier: APP_ID,
-        workspaceId: WORKSPACE_ID,
-      });
+    const [ownerFlatApplication] = await globalThis.testDataSource.query<
+      FlatApplication[]
+    >(
+      'SELECT * FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2',
+      [APP_ID, WORKSPACE_ID],
+    );
+    expect(ownerFlatApplication).toBeDefined();
     const migrationService =
       getAppProviderByClassName<ApplicationManifestMigrationService>(
         'ApplicationManifestMigrationService',
