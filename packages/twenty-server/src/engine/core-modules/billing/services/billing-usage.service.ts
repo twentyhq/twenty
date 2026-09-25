@@ -28,6 +28,7 @@ import { buildUsageRefusalException } from 'src/engine/core-modules/billing/util
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -43,6 +44,7 @@ type UsageQuotaScope = {
   resourceType: UsageResourceType;
   operationType: UsageOperationType;
   spenders: UsageSpenders;
+  cost?: QuotaCost;
 };
 
 @Injectable()
@@ -75,6 +77,7 @@ export class BillingUsageService {
     resourceType,
     operationType,
     spenders,
+    cost,
   }: UsageQuotaScope): Promise<UsageRefusal | null> {
     const subscriptionInactiveReason =
       await this.getSubscriptionInactiveReason(workspaceId);
@@ -87,7 +90,7 @@ export class BillingUsageService {
     }
 
     const exhaustedScope = await this.usageLimitQuotaService.findExhaustedScope(
-      { workspaceId, resourceType, operationType, spenders },
+      { workspaceId, resourceType, operationType, spenders, cost },
     );
 
     return isDefined(exhaustedScope)

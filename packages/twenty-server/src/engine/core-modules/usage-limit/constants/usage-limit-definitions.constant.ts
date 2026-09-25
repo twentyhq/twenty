@@ -64,6 +64,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
         'application',
       ],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [],
     },
   },
   [UsageResourceType.WORKFLOW]: {
@@ -71,6 +72,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedOperationTypes: [UsageOperationType.WORKFLOW_EXECUTION],
       allowedSpenderTypes: ['workspace', 'application'],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [],
     },
   },
   [UsageResourceType.APP]: {},
@@ -100,6 +102,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
       allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [],
     },
   },
   [UsageResourceType.EMAIL]: {
@@ -175,6 +178,20 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
       allowedSpenderTypes: ['workspace', 'userWorkspace'],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [
+        {
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
+          limitKind: 'quota',
+          spenderType: 'workspace',
+          spenderId: '',
+          meter: 'quantity',
+          periodUnit: 'day',
+          periodCount: 1,
+          limitValueConfigVariable: 'EMAIL_SEND_WORKSPACE_DAILY_LIMIT',
+          isOverridable: true,
+        },
+      ],
     },
   },
   [UsageResourceType.WEBHOOK]: {

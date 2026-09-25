@@ -43,7 +43,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 
-import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -335,7 +335,7 @@ export const SettingsDataModelFieldSelectForm = ({
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainerWrapper>
-              <CardContent>
+              <Card.Content>
                 <StyledOptionsHeaderContainer>
                   <StyledLabelContainer>
                     {!isBulkInputMode && (
@@ -523,18 +523,18 @@ export const SettingsDataModelFieldSelectForm = ({
                     />
                   </>
                 )}
-              </CardContent>
+              </Card.Content>
             </StyledContainerWrapper>
             {!disabled && !isBulkInputMode && (
               <StyledFooterContainer>
-                <CardFooter>
+                <Card.Footer>
                   <StyledButtonContainer>
                     <LightButton
                       startIcon={<IconPlus />}
                       onClick={handleAddOption}
                     >{t`Add option`}</LightButton>
                   </StyledButtonContainer>
-                </CardFooter>
+                </Card.Footer>
               </StyledFooterContainer>
             )}
           </>

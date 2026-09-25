@@ -455,7 +455,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 {isLoadingThreads ? (
                   <SettingsSectionSkeletonLoader />
                 ) : threads.length === 0 ? (
-                  <Card rounded>
+                  <Card.Root rounded>
                     <TableRow gridTemplateColumns="1fr">
                       <TableCell
                         color={themeCssVariables.font.color.tertiary}
@@ -464,7 +464,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                         {t`No chat threads found.`}
                       </TableCell>
                     </TableRow>
-                  </Card>
+                  </Card.Root>
                 ) : (
                   <Table>
                     <TableRow gridTemplateColumns="1fr 120px 120px">
