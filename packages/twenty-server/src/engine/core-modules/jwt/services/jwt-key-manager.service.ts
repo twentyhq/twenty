@@ -165,7 +165,7 @@ export class JwtKeyManagerService {
       return await this.generateAndPersistCurrent();
     } catch (error) {
       this.logger.error(
-        `Failed to load or create current signing key. Falling back to legacy HS256 signing. Error: ${
+        `Failed to load or create current signing key: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
