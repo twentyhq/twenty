@@ -73,7 +73,6 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Languages');
-    await canvas.findByText('Source');
     await canvas.findByText('Entreprises');
     await canvas.findByTitle('Reset to default');
   },

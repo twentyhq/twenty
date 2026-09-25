@@ -32,11 +32,6 @@ const StyledContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
-
-  // A collapsed advanced section leaves an empty wrapper that would still take a gap
-  > :empty {
-    display: none;
-  }
 `;
 
 const StyledFormSectionContainer = styled.div`

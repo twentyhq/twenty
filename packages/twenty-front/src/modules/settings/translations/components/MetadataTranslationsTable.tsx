@@ -9,7 +9,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type LocaleOption } from '~/localization/hooks/useLocaleOptions';
 
@@ -50,26 +49,6 @@ export const MetadataTranslationsTable = ({
       </TableRow>
       <StyledSettingsDataModelTableBodyContainer>
         <TableBody>
-          <TableRow gridTemplateColumns={gridTemplateColumns}>
-            <TableCell color={themeCssVariables.font.color.tertiary}>
-              {t`Source`}
-            </TableCell>
-            {columns.map(({ property }) => (
-              <TableCell
-                key={property}
-                color={themeCssVariables.font.color.primary}
-                overflow="hidden"
-              >
-                <OverflowingTextWithTooltip
-                  text={
-                    rowsByProperty.get(property)?.values().next().value
-                      ?.canonicalValue
-                  }
-                />
-              </TableCell>
-            ))}
-            <TableCell />
-          </TableRow>
           {localeRows.map(({ locale, label, rows }) => (
             <MetadataTranslationsTableRow
               key={locale}
