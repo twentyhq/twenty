@@ -7,8 +7,9 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { act } from 'react';
 import { ObjectOpenRecordIn, OpenRecordIn } from 'twenty-shared/types';
 
-jest.mock('react-responsive', () => ({
-  useMediaQuery: jest.fn().mockReturnValue(false),
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: jest.fn().mockReturnValue(false),
 }));
 
 jest.mock(

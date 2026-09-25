@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -79,7 +79,7 @@ const OBJECTS_WITH_FIELDS_QUERY = gql`
 
 describe('metadata list pagination', () => {
   const queryObjects = async (paging: Record<string, unknown>) => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: OBJECTS_WITH_FIELDS_QUERY,
       variables: { objectPaging: paging },
     });
@@ -165,7 +165,7 @@ describe('metadata list pagination', () => {
   });
 
   it('hydrates isUnique in top-level and nested field connections', async () => {
-    const fieldsResponse = await makeMetadataAPIRequest({
+    const fieldsResponse = await makeMetadataApiRequest({
       query: gql`
         query UniqueFields {
           fields(filter: { isActive: { is: true } }, paging: { first: 1000 }) {
@@ -194,7 +194,7 @@ describe('metadata list pagination', () => {
     expect(fieldsResponse.body.errors).toBeUndefined();
     expect(uniqueField).toBeDefined();
 
-    const objectResponse = await makeMetadataAPIRequest({
+    const objectResponse = await makeMetadataApiRequest({
       query: gql`
         query NestedUniqueField($fieldId: UUID!, $objectId: UUID!) {
           field(id: $fieldId) {
@@ -254,7 +254,7 @@ describe('metadata list pagination', () => {
       'Invalid cursor',
     );
 
-    const invalidFilterResponse = await makeMetadataAPIRequest({
+    const invalidFilterResponse = await makeMetadataApiRequest({
       query: gql`
         query InvalidUuidFilter {
           objects(filter: { id: { is: true } }, paging: { first: 1 }) {

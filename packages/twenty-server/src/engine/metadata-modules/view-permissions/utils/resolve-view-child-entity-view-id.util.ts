@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { resolveViewChildEntityViewIds } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-view-ids.util';
 
 export const resolveViewChildEntityViewId = ({
   args,
@@ -8,7 +8,4 @@ export const resolveViewChildEntityViewId = ({
     | { input?: { viewId?: unknown }; inputs?: { viewId?: unknown }[] }
     | undefined;
   body: { viewId?: unknown } | undefined;
-}): string | null =>
-  [args?.input?.viewId, args?.inputs?.[0]?.viewId, body?.viewId].find(
-    isNonEmptyString,
-  ) ?? null;
+}): string | null => resolveViewChildEntityViewIds({ args, body })[0] ?? null;

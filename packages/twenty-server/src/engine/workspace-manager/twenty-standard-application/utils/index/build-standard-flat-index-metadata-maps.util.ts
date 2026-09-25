@@ -5,6 +5,7 @@ import { buildAgentMessagePartStandardFlatIndexMetadatas } from 'src/engine/work
 import { buildAgentMessageStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-standard-flat-index-metadata.util';
 import { buildAgentTurnStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-turn-standard-flat-index-metadata.util';
 import { buildAgentChatThreadStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-chat-thread-standard-flat-index-metadata.util';
+import { buildAgentChatThreadTargetStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-chat-thread-target-standard-flat-index-metadata.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -53,6 +54,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   agentMessage: buildAgentMessageStandardFlatIndexMetadatas,
   agentTurn: buildAgentTurnStandardFlatIndexMetadatas,
   agentChatThread: buildAgentChatThreadStandardFlatIndexMetadatas,
+  agentChatThreadTarget: buildAgentChatThreadTargetStandardFlatIndexMetadatas,
   attachment: buildAttachmentStandardFlatIndexMetadatas,
   blocklist: buildBlocklistStandardFlatIndexMetadatas,
   calendarChannelEventAssociation:

@@ -62,7 +62,7 @@ const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
               id: 'export',
               filename: 'person.csv',
               progress,
-              downloadUrl:
+              downloadPath:
                 progress === 100
                   ? '/file/record-export/export?token=token'
                   : null,

@@ -6,7 +6,7 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
@@ -223,7 +223,7 @@ describe('Field permission upsert should fail', () => {
       `,
     };
 
-    const objectMetadataResponse = await makeMetadataAPIRequest(
+    const objectMetadataResponse = await makeMetadataApiRequest(
       getObjectMetadataOperation,
     );
     const edges = objectMetadataResponse.body.data?.objects?.edges ?? [];
