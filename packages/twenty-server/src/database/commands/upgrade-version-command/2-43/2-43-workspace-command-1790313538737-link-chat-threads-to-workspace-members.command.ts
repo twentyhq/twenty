@@ -23,7 +23,7 @@ const LEGACY_USER_WORKSPACE_ID_FIELD_UNIVERSAL_IDENTIFIER =
 const LEGACY_OWNER_INDEX_UNIVERSAL_IDENTIFIER =
   'c97a4c97-266b-490a-a4d6-76274f5de429';
 
-@RegisteredWorkspaceCommand('2.43.0', 1790272700792)
+@RegisteredWorkspaceCommand('2.43.0', 1790313538737)
 @Command({
   name: 'upgrade:2-43:link-chat-threads-to-workspace-members',
   description:
