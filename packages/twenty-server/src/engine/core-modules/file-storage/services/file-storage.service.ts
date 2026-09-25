@@ -826,15 +826,6 @@ export class FileStorageService {
     await driver.delete({ folderPath: workspaceId });
   }
 
-  copyLegacy(params: {
-    from: { folderPath: string; filename?: string };
-    to: { folderPath: string; filename?: string };
-  }): Promise<void> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.copy(params);
-  }
-
   async copyFile({
     from,
     to,
@@ -921,7 +912,7 @@ export class FileStorageService {
     });
   }
 
-  async copy({
+  private async copy({
     from,
     to,
   }: {
