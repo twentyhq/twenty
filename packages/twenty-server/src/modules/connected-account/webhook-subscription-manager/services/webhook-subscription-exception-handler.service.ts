@@ -160,7 +160,7 @@ export class WebhookSubscriptionExceptionHandlerService {
     exception: unknown,
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
-    workspaceId: string,
+    _workspaceId: string,
   ): Promise<WebhookSubscriptionRecoveryAction> {
     await this.webhookSubscriptionStatusService.markAsFailed(
       channelType,
