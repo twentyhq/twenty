@@ -51,6 +51,8 @@ Every encrypted value is wrapped as `enc:v2:<keyId>:<payload>`, where `<keyId>` 
 
 4. **Drop the fallback** once `--dry-run` shows zero remaining rows: remove `FALLBACK_ENCRYPTION_KEY` and restart.
 
+<Note>Campaign click links also use `ENCRYPTION_KEY` for signing. Unlike encrypted rows, links already sent in emails cannot be re-signed. They remain valid only while their signing key is either `ENCRYPTION_KEY` or `FALLBACK_ENCRYPTION_KEY`. Dropping the fallback invalidates links signed with the old key; rotating again also invalidates links signed before the previous rotation. Plan a link lifetime before rotating if old campaign links must continue to work.</Note>
+
 ## Legacy `APP_SECRET` support
 
 Older instances that never set `ENCRYPTION_KEY` use `APP_SECRET` as the at-rest encryption key (and as the session-cookie secret, derived from it). This path is preserved for backward compatibility but is **deprecated** — set a dedicated `ENCRYPTION_KEY` and follow the rotation procedure above to migrate off it. `APP_SECRET` itself stays in use to verify legacy HS256 access tokens.
