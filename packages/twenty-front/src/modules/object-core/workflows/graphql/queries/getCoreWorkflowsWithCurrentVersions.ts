@@ -10,8 +10,6 @@ export const GET_CORE_WORKFLOWS_WITH_CURRENT_VERSIONS = gql`
         name
         statuses
         lastPublishedCoreWorkflowVersionId
-        visibility
-        canChangeVisibility
       }
       versions {
         id
