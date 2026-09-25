@@ -159,10 +159,39 @@ export const RecordChangesOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    expect(
+      await canvas.findAllByText('Moved to trash', {}, { timeout: 5000 }),
+    ).toHaveLength(3);
+  },
+};
+
+export const RecordChangeDiff: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     await userEvent.click(
-      await canvas.findByRole('tab', { name: 'Record changes' }),
+      await canvas.findByText('Lumen Health - Pilot', {}, { timeout: 5000 }),
     );
-    await canvas.findByText('Sarah Chen');
+
+    await canvas.findByText('Proposal');
+  },
+};
+
+export const RecordDeletion: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByText('Maple Consulting Inc.', {}, { timeout: 5000 }),
+    );
+
+    await canvas.findByText('Values before deletion');
   },
 };
 

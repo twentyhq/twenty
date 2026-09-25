@@ -1,4 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
@@ -21,4 +22,7 @@ export type LogConsoleSource = {
   idFields: LogConsoleIdField[];
   getCountLabel: (input: { count: number; formattedCount: string }) => string;
   getSeverity?: (entry: EventLogRecord) => LogConsoleSeverity | undefined;
+  renderDetailTitle?: (entry: EventLogRecord) => ReactNode;
+  renderDetailSubtitle?: (entry: EventLogRecord) => ReactNode;
+  renderDetailContent?: (entry: EventLogRecord) => ReactNode;
 };

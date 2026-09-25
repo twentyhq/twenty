@@ -5,7 +5,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonTree, LightButton, Section } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
@@ -16,6 +16,8 @@ import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import {
   SettingsTableCard,
   type TableItem,
@@ -67,6 +69,14 @@ const StyledTimestamp = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+const StyledSubtitle = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledMessage = styled.pre<{ severity?: LogConsoleSeverity }>`
   background-color: ${({ severity }) =>
     isDefined(severity)
@@ -97,6 +107,9 @@ export const SidePanelLogDetailPage = () => {
   const { dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const logConsoleSelectedLog = useAtomStateValue(logConsoleSelectedLogState);
+  const objectMetadataItemsByIdMap = useAtomStateValue(
+    objectMetadataItemsByIdMapSelector,
+  );
 
   if (!isDefined(logConsoleSelectedLog)) {
     return null;
@@ -106,11 +119,31 @@ export const SidePanelLogDetailPage = () => {
   const { __typename, ...rawEvent } = entry;
   const level = LOG_CONSOLE_LEVELS[entry.properties?.level];
   const message = entry.properties?.message;
+  const objectMetadataItem = objectMetadataItemsByIdMap.get(
+    entry.objectMetadataId ?? '',
+  );
 
   const timeWithMillisecondsFormat =
     timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
 
   const detailItems: TableItem[] = [
+    ...(isDefined(objectMetadataItem)
+      ? [
+          {
+            label: t`Object`,
+            value: (
+              <Chip
+                startElement={
+                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+                }
+                style={{ paddingInlineStart: 0 }}
+              >
+                {objectMetadataItem.labelPlural}
+              </Chip>
+            ),
+          },
+        ]
+      : []),
     ...source.columns
       .filter((column) => !column.hiddenInDetails)
       .map((column) => ({
@@ -136,12 +169,16 @@ export const SidePanelLogDetailPage = () => {
     <StyledPage>
       <StyledHeader>
         <StyledTitle>
-          {isDefined(level) && (
-            <Tag color={level.color} variant={level.variant}>
-              {t(level.label)}
-            </Tag>
+          {source.renderDetailTitle?.(entry) ?? (
+            <>
+              {isDefined(level) && (
+                <Tag color={level.color} variant={level.variant}>
+                  {t(level.label)}
+                </Tag>
+              )}
+              {entry.event}
+            </>
           )}
-          {entry.event}
         </StyledTitle>
         <StyledTimestamp>
           {formatInTimeZone(
@@ -153,7 +190,11 @@ export const SidePanelLogDetailPage = () => {
           {' · '}
           {beautifyPastDateRelativeToNow(entry.timestamp, localeCatalog)}
         </StyledTimestamp>
+        {isDefined(source.renderDetailSubtitle) && (
+          <StyledSubtitle>{source.renderDetailSubtitle(entry)}</StyledSubtitle>
+        )}
       </StyledHeader>
+      {source.renderDetailContent?.(entry)}
       {isNonEmptyString(message) && (
         <Section.Root>
           <Section.Header

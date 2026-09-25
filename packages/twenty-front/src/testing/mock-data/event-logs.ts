@@ -153,6 +153,50 @@ const ETHAN_BROOKS_AFTER_CREATION = {
   updatedBy: MARC_DUBOIS_ACTOR,
 };
 
+const MAPLE_CONSULTING = {
+  id: 'e0c49b77-894b-449b-9c31-6bfcff73a0e5',
+  name: 'Maple Consulting Inc.',
+  employees: 2383,
+  annualRecurringRevenue: { amountMicros: 88000000000, currencyCode: 'USD' },
+};
+
+const KEYSTONE_RETAIL = {
+  id: '6b1f5a7e-3c1d-4f0e-9d8a-2e4b7c9a1f03',
+  name: 'Keystone Retail LLC',
+  employees: 640,
+};
+
+const BEACON_FREIGHT = {
+  id: '9d2c8e4a-7b6f-4a1e-8c3d-5f0b2a6e7d19',
+  name: 'Beacon Freight GmbH',
+  employees: 1150,
+};
+
+const PURGED_COMPANY_ID = '3f8a2c1d-5e7b-4d9a-b6c0-8e1f4a2d7c55';
+
+const BULK_DELETE_TIMESTAMP = '2026-09-24T09:42:30.903Z';
+
+const buildCompanyDeletionRecord = ({
+  timestamp,
+  company,
+}: {
+  timestamp: string;
+  company: { id: string };
+}): EventLogRecord => ({
+  __typename: 'EventLogRecord',
+  event: 'Object Record Deleted',
+  timestamp,
+  userId: MARC_DUBOIS.userId,
+  recordId: company.id,
+  objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+  properties: {
+    before: { ...company, deletedAt: null },
+    after: { ...company, deletedAt: timestamp },
+    updatedFields: ['deletedAt'],
+    diff: { deletedAt: { before: null, after: timestamp } },
+  },
+});
+
 const CHROME_ON_MAC_USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
 
@@ -211,6 +255,44 @@ export const mockedEventLogRecordsByTable: Partial<
       recordId: ETHAN_BROOKS_AFTER_CREATION.id,
       objectMetadataId: getMockObjectMetadataItemOrThrow('person').id,
       properties: { after: ETHAN_BROOKS_AFTER_CREATION },
+    },
+    {
+      __typename: 'EventLogRecord',
+      event: 'Object Record Restored',
+      timestamp: '2026-09-24T10:05:17.482Z',
+      userId: PRIYA_NAIR.userId,
+      recordId: KEYSTONE_RETAIL.id,
+      objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+      properties: {
+        before: { ...KEYSTONE_RETAIL, deletedAt: BULK_DELETE_TIMESTAMP },
+        after: { ...KEYSTONE_RETAIL, deletedAt: null },
+        updatedFields: ['deletedAt'],
+        diff: { deletedAt: { before: BULK_DELETE_TIMESTAMP, after: null } },
+      },
+    },
+    buildCompanyDeletionRecord({
+      timestamp: '2026-09-24T09:42:31.096Z',
+      company: MAPLE_CONSULTING,
+    }),
+    buildCompanyDeletionRecord({
+      timestamp: BULK_DELETE_TIMESTAMP,
+      company: KEYSTONE_RETAIL,
+    }),
+    buildCompanyDeletionRecord({
+      timestamp: BULK_DELETE_TIMESTAMP,
+      company: BEACON_FREIGHT,
+    }),
+    {
+      __typename: 'EventLogRecord',
+      event: 'Object Record Destroyed',
+      timestamp: '2026-09-24T02:00:04.117Z',
+      userId: null,
+      recordId: PURGED_COMPANY_ID,
+      objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+      properties: {
+        recordId: PURGED_COMPANY_ID,
+        objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+      },
     },
   ],
   [EventLogTable.APPLICATION_LOG]: [
