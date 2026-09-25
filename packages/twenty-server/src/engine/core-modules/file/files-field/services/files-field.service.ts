@@ -32,8 +32,8 @@ export class FilesFieldService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
@@ -70,16 +70,18 @@ export class FilesFieldService {
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
 
-    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
-      select: ['applicationId', 'universalIdentifier'],
-      where: {
-        ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
-        ...(fieldMetadataUniversalIdentifier
-          ? { universalIdentifier: fieldMetadataUniversalIdentifier }
-          : {}),
-        workspaceId,
+    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
+      workspaceId,
+      {
+        select: ['applicationId', 'universalIdentifier'],
+        where: {
+          ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
+          ...(fieldMetadataUniversalIdentifier
+            ? { universalIdentifier: fieldMetadataUniversalIdentifier }
+            : {}),
+        },
       },
-    });
+    );
 
     const application = await this.applicationRepository.findOneOrFail({
       where: {
@@ -142,10 +144,13 @@ export class FilesFieldService {
       );
     }
 
-    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
-      select: ['applicationId', 'universalIdentifier'],
-      where: { id: fieldMetadataId, workspaceId },
-    });
+    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
+      workspaceId,
+      {
+        select: ['applicationId', 'universalIdentifier'],
+        where: { id: fieldMetadataId },
+      },
+    );
 
     const [sourceApplication, destinationApplication] = await Promise.all([
       this.applicationRepository.findOneOrFail({

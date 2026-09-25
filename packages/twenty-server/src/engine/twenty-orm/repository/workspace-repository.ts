@@ -237,6 +237,50 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     this.applyRowLevelPermissionPredicates(queryBuilder, kind);
   }
 
+  // Capability reads use the same validators and SQL predicates as a mutation,
+  // without performing a no-op write or emitting record events.
+  async findRecordIdsAllowedForOperation({
+    recordIds,
+    operationType,
+    updatedColumns = [],
+    withDeleted = false,
+  }: {
+    recordIds: string[];
+    operationType: OperationType;
+    updatedColumns?: string[];
+    withDeleted?: boolean;
+  }): Promise<string[]> {
+    if (recordIds.length === 0) {
+      return [];
+    }
+    try {
+      if (operationType !== 'select') {
+        this.validateWriteIsPermitted({
+          operationType,
+          columnsToReturn: ['id'],
+          updatedColumns,
+        });
+      }
+      const queryBuilder = this.createQueryBuilder()
+        .select(['id'])
+        .where({ id: In(recordIds) });
+      if (withDeleted) {
+        queryBuilder.withDeleted();
+      }
+      this.applyRowLevelPermissionPredicates(queryBuilder, operationType);
+      const records = await queryBuilder.getMany<ObjectRecord>();
+      return records.map(({ id }) => id);
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.PERMISSION_DENIED
+      ) {
+        return [];
+      }
+      throw error;
+    }
+  }
+
   getInternalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
   }
@@ -1726,10 +1770,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private shouldValidateInheritedParents(): boolean {
-    return (
-      !this.options.shouldBypassPermissionChecks &&
-      this.isRecordSharingEnforced()
-    );
+    return !this.options.shouldBypassPermissionChecks;
   }
 
   private hasInheritingRecordLinks(): boolean {
@@ -1809,10 +1850,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  private isRecordSharingEnforced(): boolean {
-    return !this.options.internalContext.isLegacyRecordAccessOpen;
-  }
-
   private async resolveWritableRecordIds({
     ids,
     operationType,
@@ -1873,6 +1910,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
+    this.validateWriteIsPermitted({
+      operationType: kind,
+      columnsToReturn,
+      updatedColumns: isDefined(data)
+        ? Object.keys(this.formatWriteData(data)).filter(
+            (column) => column !== 'id',
+          )
+        : [],
+    });
+
     if (!rowLevelPermissionsApplied) {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
     }
@@ -1933,12 +1980,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       setColumns = columns;
     }
-
-    this.validateWriteIsPermitted({
-      operationType: kind,
-      columnsToReturn,
-      updatedColumns: isDefined(setColumns) ? Object.keys(setColumns) : [],
-    });
 
     if (kind === 'update' && isDefined(setColumns)) {
       this.validateRLSPredicatesForWrittenRecords(
@@ -2037,8 +2078,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (
       records.length === 0 ||
-      flatObjectMetadata.readability !== MetadataReadability.INHERITED ||
-      !this.isRecordSharingEnforced()
+      flatObjectMetadata.readability !== MetadataReadability.INHERITED
     ) {
       return undefined;
     }
@@ -2139,7 +2179,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .withDeleted();
   }
 
-  private validateWriteIsPermitted({
+  validateWriteIsPermitted({
     operationType,
     columnsToReturn,
     updatedColumns,
@@ -2341,7 +2381,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       case 'open':
         return;
       case 'denied':
-        this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
+        this.denyAccessForAlias({
+          queryBuilder,
+          alias,
+          flatObjectMetadata,
+          operationType,
+        });
 
         return;
       case 'gated':
@@ -2388,6 +2433,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private resolveRowAccessPolicySubject(): RowAccessPolicySubject {
     return {
+      isSystemContext: this.options.authContext?.type === 'system',
       objectsPermissions: this.options.objectRecordsPermissions,
       principalIds: resolvePrincipalIdsFromAuthContext({
         authContext: this.options.authContext,
@@ -2410,7 +2456,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment {
     return {
-      isRecordSharingEnabled: this.isRecordSharingEnforced(),
+      isLegacyRecordAccessOpen:
+        this.options.internalContext.isLegacyRecordAccessOpen,
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
@@ -2446,14 +2493,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder,
     alias,
     flatObjectMetadata,
+    operationType,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
   }): void {
     if (alias === queryBuilder.alias) {
       throw new PermissionsException(
-        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not readable through the API`,
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not ${operationType === 'select' ? 'readable' : 'writable'} through the API`,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
