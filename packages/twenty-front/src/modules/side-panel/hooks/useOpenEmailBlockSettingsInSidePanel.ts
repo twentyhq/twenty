@@ -12,7 +12,7 @@ export const useOpenEmailBlockSettingsInSidePanel = () => {
   const openEmailBlockSettingsInSidePanel = useCallback(() => {
     navigateSidePanelMenu({
       page: SidePanelPages.EmailBlockSettings,
-      pageTitle: t`Block Settings`,
+      pageTitle: t`Design`,
       pageIcon: IconAdjustments,
       pageId: v4(),
     });

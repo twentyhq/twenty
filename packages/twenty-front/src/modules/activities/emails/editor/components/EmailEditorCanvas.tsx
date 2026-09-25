@@ -1,4 +1,6 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
+import { AdvancedTextEditorBlockHandleArea } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandleArea';
+import { useOpenEmailBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel';
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { styled } from '@linaria/react';
@@ -41,6 +43,31 @@ export const EmailEditorCanvas = ({
     resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
   );
   const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
+  const { openEmailBlockSettingsInSidePanel } =
+    useOpenEmailBlockSettingsInSidePanel();
+
+  const canvasPage = (
+    <StyledCanvasPage
+      style={{
+        backgroundColor: canvasTheme.bodyBackground || undefined,
+        border:
+          canvasTheme.borderWidth !== '' && canvasTheme.borderWidth !== '0px'
+            ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
+            : undefined,
+        borderRadius: canvasTheme.cornerRadius,
+        color: canvasTheme.textColor,
+        padding: canvasTheme.padding,
+        textAlign: canvasTheme.textAlign,
+        width: canvasTheme.width,
+      }}
+    >
+      <AdvancedTextEditor
+        editor={editor}
+        readonly={readonly}
+        minHeight={minHeight}
+      />
+    </StyledCanvasPage>
+  );
 
   return (
     <StyledCanvasBackdrop
@@ -49,26 +76,16 @@ export const EmailEditorCanvas = ({
         padding: canvasTheme.pagePadding,
       }}
     >
-      <StyledCanvasPage
-        style={{
-          backgroundColor: canvasTheme.bodyBackground || undefined,
-          border:
-            canvasTheme.borderWidth !== '' && canvasTheme.borderWidth !== '0px'
-              ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
-              : undefined,
-          borderRadius: canvasTheme.cornerRadius,
-          color: canvasTheme.textColor,
-          padding: canvasTheme.padding,
-          textAlign: canvasTheme.textAlign,
-          width: canvasTheme.width,
-        }}
-      >
-        <AdvancedTextEditor
+      {readonly === true ? (
+        canvasPage
+      ) : (
+        <AdvancedTextEditorBlockHandleArea
           editor={editor}
-          readonly={readonly}
-          minHeight={minHeight}
-        />
-      </StyledCanvasPage>
+          onOpenBlockSettings={openEmailBlockSettingsInSidePanel}
+        >
+          {canvasPage}
+        </AdvancedTextEditorBlockHandleArea>
+      )}
     </StyledCanvasBackdrop>
   );
 };

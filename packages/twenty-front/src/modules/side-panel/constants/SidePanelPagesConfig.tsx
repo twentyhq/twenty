@@ -6,6 +6,7 @@ import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versi
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
+import { SidePanelEmailPageStylePage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailPageStylePage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
@@ -96,6 +97,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.RecordCreationForm, <SidePanelRecordCreationFormPage />],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
+  [SidePanelPages.EmailPageStyle, <SidePanelEmailPageStylePage />],
   [
     SidePanelPages.SettingsMetadataTranslations,
     <SidePanelSettingsMetadataTranslationsPage />,

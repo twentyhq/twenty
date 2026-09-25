@@ -16,12 +16,12 @@ import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorSt
 import { type AdvancedTextEditorBlockSetting } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { getBlockStyle } from '@/advanced-text-editor/utils/getBlockStyle';
+import { EmailBlockInsertList } from '@/side-panel/pages/email-block-settings/components/EmailBlockInsertList';
 import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
 import {
   EmailBoxSidesInput,
   type CssBoxSides,
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
-import { EmailPageStyleSection } from '@/side-panel/pages/email-block-settings/components/EmailPageStyleSection';
 import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -76,7 +76,7 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   );
 
   if (!isDefined(target)) {
-    return <EmailPageStyleSection editor={editor} />;
+    return <EmailBlockInsertList editor={editor} />;
   }
 
   const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];

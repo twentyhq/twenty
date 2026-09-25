@@ -79,12 +79,12 @@ const StyledEditorContainer = styled.div<{
       border-radius: ${themeCssVariables.border.radius.sm};
       box-sizing: border-box;
       margin-bottom: ${themeCssVariables.spacing[2]};
-      outline: 1px dashed transparent;
-      outline-offset: 2px;
+    }
 
-      &:hover {
-        outline-color: ${themeCssVariables.border.color.medium};
-      }
+    .block-drag-source {
+      opacity: 0.4;
+      transition: opacity
+        calc(${themeCssVariables.animation.duration.fast} * 1s) ease-out;
     }
 
     .block-columns {
