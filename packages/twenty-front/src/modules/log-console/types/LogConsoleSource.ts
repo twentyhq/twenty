@@ -7,6 +7,7 @@ import { type LogConsoleIdField } from '@/log-console/types/LogConsoleIdField';
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { type LogConsoleSourceId } from '@/log-console/types/LogConsoleSourceId';
 import {
+  type EventLogFieldFilterInput,
   type EventLogRecord,
   type EventLogTable,
 } from '~/generated-metadata/graphql';
@@ -17,8 +18,10 @@ export type LogConsoleSource = {
   entryLabel: MessageDescriptor;
   Icon: IconComponent;
   table: EventLogTable;
+  fieldFilters?: EventLogFieldFilterInput[];
   requiresAuditLogs: boolean;
   columns: LogConsoleColumn[];
+  detailFields?: Pick<LogConsoleColumn, 'label' | 'renderCell'>[];
   idFields: LogConsoleIdField[];
   getCountLabel: (input: { count: number; formattedCount: string }) => string;
   getSeverity?: (entry: EventLogRecord) => LogConsoleSeverity | undefined;

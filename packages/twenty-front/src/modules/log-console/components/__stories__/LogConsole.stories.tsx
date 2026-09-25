@@ -22,6 +22,8 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   BillingEntitlementKey,
+  EventLogFilterOperand,
+  type EventLogRecord,
   type EventLogsQuery,
   type EventLogsQueryVariables,
   FeatureFlagKey,
@@ -123,8 +125,18 @@ const meta: Meta<PageDecoratorArgs> = {
         metadataGraphql.query<EventLogsQuery, EventLogsQueryVariables>(
           getOperationName(GET_EVENT_LOGS) ?? '',
           ({ variables }) => {
-            const records =
-              mockedEventLogRecordsByTable[variables.input.table] ?? [];
+            const records = (
+              mockedEventLogRecordsByTable[variables.input.table] ?? []
+            ).filter((record) =>
+              (variables.input.filters?.fieldFilters ?? []).every(
+                ({ field, operand, values }) =>
+                  values.includes(
+                    record[field as keyof EventLogRecord] ??
+                      record.properties?.[field],
+                  ) ===
+                  (operand === EventLogFilterOperand.IS),
+              ),
+            );
 
             return HttpResponse.json({
               data: {
@@ -197,6 +209,22 @@ export const RecordDeletion: Story = {
   },
 };
 
+export const SecurityOpen: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('tab', { name: 'Security' }, { timeout: 5000 }),
+    );
+
+    expect(await canvas.findAllByText('Support team')).toHaveLength(3);
+    await canvas.findByText(/^6 events · /);
+  },
+};
+
 export const AppLogsOpen: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -230,6 +258,23 @@ export const AppLogDetail: Story = {
     await userEvent.click(typeErrorMessage);
 
     await canvas.findByText(/at mapInvoiceToOpportunity/, { selector: 'pre' });
+  },
+};
+
+export const WebhookFailureDetail: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('tab', { name: 'Webhooks' }, { timeout: 5000 }),
+    );
+    await userEvent.click(await canvas.findByText('503'));
+
+    await canvas.findByText('person.created → ingest.northwind-data.io');
+    await canvas.findByRole('link', { name: 'Open webhook settings' });
   },
 };
 
@@ -272,6 +317,8 @@ export const UsageOpen: Story = {
 
     await userEvent.click(await canvas.findByRole('tab', { name: 'Usage' }));
     await canvas.findByText('Jonas Weber');
+    await canvas.findByText('AI Chat');
+    await canvas.findByText('0.0055 credits');
   },
 };
 

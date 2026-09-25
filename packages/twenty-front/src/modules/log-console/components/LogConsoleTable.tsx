@@ -101,7 +101,9 @@ export const LogConsoleTable = ({
           hoverBackgroundColor={themeCssVariables.background.primary}
         >
           {columns.map((column) => (
-            <TableHeader key={column.id}>{t(column.label)}</TableHeader>
+            <TableHeader key={column.id} align={column.align}>
+              {t(column.label)}
+            </TableHeader>
           ))}
         </StyledHeaderRow>
         {isInitialLoading ? (
@@ -137,6 +139,7 @@ export const LogConsoleTable = ({
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
+                  align={column.align}
                   gap={themeCssVariables.spacing[2]}
                   overflow="hidden"
                   whiteSpace="nowrap"

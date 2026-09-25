@@ -104,7 +104,10 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const getEventLogsInput = (now: string) => ({
     table: source.table,
     first: RECORDS_PER_PAGE,
-    filters: { dateRange: getDateRange(now) },
+    filters: {
+      dateRange: getDateRange(now),
+      fieldFilters: source.fieldFilters,
+    },
   });
 
   const dateRange = getDateRange(refreshedAt);

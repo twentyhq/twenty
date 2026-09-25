@@ -1,34 +1,41 @@
 import { msg } from '@lingui/core/macro';
-import { Text } from 'twenty-ui/primitives/typography';
 
+import { LogConsoleCreditsCell } from '@/log-console/components/LogConsoleCreditsCell';
 import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberCell';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
+import { LOG_CONSOLE_USAGE_OPERATION_COLUMN } from '@/log-console/constants/LogConsoleUsageOperationColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
   LOG_CONSOLE_TIME_COLUMN,
+  LOG_CONSOLE_USAGE_OPERATION_COLUMN,
   {
-    id: 'event',
-    label: msg`Event`,
-    gridTrack: 'minmax(0, 216px)',
-    renderCell: (entry) => <Text truncate>{entry.event}</Text>,
-  },
-  {
-    id: 'member',
-    label: msg`Member`,
-    gridTrack: 'minmax(0, 200px)',
+    id: 'spender',
+    label: msg`Spender`,
+    gridTrack: 'minmax(0, 1fr)',
     renderCell: (entry) => (
       <LogConsoleMemberCell userWorkspaceId={entry.userId} />
     ),
   },
   {
-    id: 'details',
-    label: msg`Details`,
-    gridTrack: 'minmax(0, 1fr)',
-    renderCell: (entry) => (
-      <Text truncate>{JSON.stringify(entry.properties)}</Text>
-    ),
+    id: 'quantity',
+    label: msg`Quantity`,
+    gridTrack: '104px',
+    renderCell: (entry) => formatNumber(entry.properties?.quantity),
+    align: 'right',
     hiddenWhenPanelOpen: true,
-    hiddenInDetails: true,
+  },
+  {
+    id: 'usage',
+    label: msg`Usage`,
+    gridTrack: '120px',
+    renderCell: (entry) => (
+      <LogConsoleCreditsCell
+        creditsUsedMicro={entry.properties?.creditsUsedMicro}
+      />
+    ),
+    align: 'right',
+    hiddenWhenPanelOpen: true,
   },
 ];

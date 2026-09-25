@@ -200,6 +200,28 @@ const buildCompanyDeletionRecord = ({
 const CHROME_ON_MAC_USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
 
+const SUPPORT_TEAM_USER_ID = '54277312-cdf2-4cb5-be40-ca7c49aa1293';
+
+const buildWorkspaceEventRecord = ({
+  event,
+  timestamp,
+  userId = null,
+  properties,
+}: {
+  event: string;
+  timestamp: string;
+  userId?: string | null;
+  properties: Record<string, unknown>;
+}): EventLogRecord => ({
+  __typename: 'EventLogRecord',
+  event,
+  timestamp,
+  userId,
+  recordId: null,
+  objectMetadataId: null,
+  properties,
+});
+
 export const mockedEventLogRecordsByTable: Partial<
   Record<EventLogTable, EventLogRecord[]>
 > = {
@@ -353,6 +375,108 @@ export const mockedEventLogRecordsByTable: Partial<
       executionId: 'f24ef7d8-b678-4eea-88bd-3301a8722bb0',
       level: 'INFO',
       message: 'Fetched firmographics for halcyon-robotics.com in 819 ms',
+    }),
+  ],
+  [EventLogTable.WORKSPACE_EVENT]: [
+    buildWorkspaceEventRecord({
+      event: 'Webhook Response',
+      timestamp: '2026-09-24T12:02:54.034Z',
+      properties: {
+        status: 200,
+        success: true,
+        url: 'https://hooks.zapier.com/hooks/catch/1284551/b7kq2x/',
+        webhookId: 'b9a726ce-3d8a-45b2-bb73-22f5b008afca',
+        eventName: 'opportunity.updated',
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'AuthSession',
+      timestamp: '2026-09-24T11:47:34.761Z',
+      userId: PRIYA_NAIR.userId,
+      properties: {
+        action: 'user_signed_in',
+        message:
+          'sessionId=b3077ad7-7730-471f-aa15-741670e55781; authProvider=google',
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'Impersonation',
+      timestamp: '2026-09-24T10:48:52.901Z',
+      userId: SUPPORT_TEAM_USER_ID,
+      properties: {
+        level: 'workspace',
+        action: 'ended',
+        message:
+          'Impersonation ended by impersonatorUserWorkspaceId=6ce5e52e-604a-4256-8557-11be219a6436; workspaceId=142932b1-197e-490a-9d49-9e84ac8f15c1',
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'Impersonation',
+      timestamp: '2026-09-24T10:31:05.377Z',
+      userId: SUPPORT_TEAM_USER_ID,
+      properties: {
+        level: 'server',
+        action: 'token_exchange_success',
+        message: `Impersonation token exchanged for ${PRIYA_NAIR.userEmail} by userId ${SUPPORT_TEAM_USER_ID}`,
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'Impersonation',
+      timestamp: '2026-09-24T10:30:40.012Z',
+      userId: SUPPORT_TEAM_USER_ID,
+      properties: {
+        level: 'server',
+        action: 'token_exchange_failed',
+        message: `Server level impersonation denied (2FA verification required) for ${PRIYA_NAIR.userEmail} by userId ${SUPPORT_TEAM_USER_ID}`,
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'AuthSession',
+      timestamp: '2026-09-24T08:02:14.604Z',
+      userId: SARAH_CHEN.userId,
+      properties: {
+        action: 'session_revoked',
+        message:
+          'sessionId=e1290762-81d6-431b-bb1b-3ecae9015524; authProvider=google',
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'Webhook Response',
+      timestamp: '2026-09-24T07:25:09.302Z',
+      properties: {
+        status: 503,
+        success: false,
+        url: 'https://ingest.northwind-data.io/v1/twenty',
+        webhookId: 'f67afe3e-110d-4d48-856d-cf2fc9e60eff',
+        eventName: 'person.created',
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'Webhook Response',
+      timestamp: '2026-09-24T06:10:40.500Z',
+      properties: {
+        success: false,
+        url: 'https://n8n.acme.io/webhook/people-enrich',
+        webhookId: 'b98afda0-c63a-497a-a02d-f3c722180be7',
+        eventName: 'person.created',
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'Webhook Response',
+      timestamp: '2026-09-24T05:31:18.227Z',
+      properties: {
+        success: false,
+        url: 'https://crm-sync.acme.internal/hooks/twenty',
+        webhookId: '68685c9a-6393-47a3-b01d-a693fe5f26ea',
+        eventName: 'company.updated',
+        error: 'Webhook URL resolves to a private/internal IP address',
+      },
+    }),
+    buildWorkspaceEventRecord({
+      event: 'User Signup',
+      timestamp: '2026-09-23T13:20:03.055Z',
+      userId: JONAS_WEBER.userId,
+      properties: {},
     }),
   ],
   [EventLogTable.PAGEVIEW]: [

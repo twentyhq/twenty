@@ -118,7 +118,7 @@ export const SidePanelLogDetailPage = () => {
   const { source, entry } = logConsoleSelectedLog;
   const { __typename, ...rawEvent } = entry;
   const level = LOG_CONSOLE_LEVELS[entry.properties?.level];
-  const message = entry.properties?.message;
+  const message = entry.properties?.message ?? entry.properties?.error;
   const objectMetadataItem = objectMetadataItemsByIdMap.get(
     entry.objectMetadataId ?? '',
   );
@@ -144,12 +144,14 @@ export const SidePanelLogDetailPage = () => {
           },
         ]
       : []),
-    ...source.columns
-      .filter((column) => !column.hiddenInDetails)
-      .map((column) => ({
-        label: t(column.label),
-        value: column.renderCell(entry),
-      })),
+    ...[
+      ...source.columns.filter((column) => !column.hiddenInDetails),
+      ...(source.detailFields ?? []),
+    ].flatMap((field) => {
+      const value = field.renderCell(entry);
+
+      return isDefined(value) ? [{ label: t(field.label), value }] : [];
+    }),
     ...source.idFields.flatMap((idField) => {
       const id = idField.getId(entry);
 
@@ -157,7 +159,12 @@ export const SidePanelLogDetailPage = () => {
         ? [
             {
               label: t(idField.label),
-              value: <OverflowingTextWithTooltip text={id} />,
+              value: (
+                <OverflowingTextWithTooltip
+                  text={<>{id}</>}
+                  tooltipContent={id}
+                />
+              ),
               onClick: () => copyToClipboard(id),
             },
           ]
@@ -194,7 +201,6 @@ export const SidePanelLogDetailPage = () => {
           <StyledSubtitle>{source.renderDetailSubtitle(entry)}</StyledSubtitle>
         )}
       </StyledHeader>
-      {source.renderDetailContent?.(entry)}
       {isNonEmptyString(message) && (
         <Section.Root>
           <Section.Header
@@ -213,6 +219,7 @@ export const SidePanelLogDetailPage = () => {
           </StyledMessage>
         </Section.Root>
       )}
+      {source.renderDetailContent?.(entry)}
       <Section.Root>
         <Section.Header title={t`Details`} />
         <SettingsTableCard
