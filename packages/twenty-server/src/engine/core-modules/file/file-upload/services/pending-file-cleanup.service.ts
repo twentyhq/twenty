@@ -27,7 +27,6 @@ export class PendingFileCleanupService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- the reaper runs in a cron with no workspace context and must sweep stale PENDING files across every workspace
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- resolves the application universalIdentifier of a cross-workspace file while reaping outside any workspace context
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly fileStorageService: FileStorageService,
