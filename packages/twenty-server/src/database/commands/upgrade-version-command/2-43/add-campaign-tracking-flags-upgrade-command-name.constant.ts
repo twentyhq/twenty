@@ -1,0 +1,2 @@
+export const ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME =
+  '2.43.0_AddCampaignTrackingFlagsFastInstanceCommand_1790333284554';
