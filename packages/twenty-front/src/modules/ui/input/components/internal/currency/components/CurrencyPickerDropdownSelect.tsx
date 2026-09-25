@@ -27,6 +27,10 @@ export const CurrencyPickerDropdownSelect = ({
     [searchFilter],
   );
 
+  const isSelectedCurrencyMatchingSearch =
+    isDefined(selectedCurrency) &&
+    filteredCurrencies.some(({ value }) => value === selectedCurrency.value);
+
   return (
     <>
       <Dropdown.Search
@@ -41,7 +45,7 @@ export const CurrencyPickerDropdownSelect = ({
           <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
         ) : (
           <>
-            {isDefined(selectedCurrency) && (
+            {isSelectedCurrencyMatchingSearch && (
               <Dropdown.OptionItem
                 key={selectedCurrency.value}
                 onSelect={() => onChange(selectedCurrency)}
