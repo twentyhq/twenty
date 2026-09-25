@@ -1028,6 +1028,18 @@ describe('UsageLimitQuotaService', () => {
       ]);
     });
 
+    it('declares no default where ClickHouse is not configured', async () => {
+      twentyConfigService.get.mockImplementation((key: string) =>
+        key === 'CLICKHOUSE_URL' ? undefined : 1_000,
+      );
+      mockRemaining(undefined);
+
+      await expect(findEmailExhaustedScope()).resolves.toBeNull();
+      expect(
+        usageAnalyticsService.getConsumptionRowsForAllScopes,
+      ).not.toHaveBeenCalled();
+    });
+
     it('gives way to a workspace limit that overrides it', async () => {
       setLimits([buildEmailLimit({ limitValue: 50 })], UsageResourceType.EMAIL);
       cacheStorage.mget.mockResolvedValue([0]);

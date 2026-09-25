@@ -617,6 +617,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private buildQuotaLimitDefaults(
     resourceType: UsageResourceType,
   ): QuotaLimitDefault[] {
+    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
+      return [];
+    }
+
     const definition = findUsageLimitDefinition({
       resourceType,
       limitKind: 'quota',
