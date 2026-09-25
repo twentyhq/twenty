@@ -12,7 +12,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import {
@@ -60,7 +60,7 @@ export class RecordAccessPolicyService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareService: RecordShareService,
+    private readonly recordShareStorageService: RecordShareStorageService,
     private readonly recordSharingFeatureService: RecordSharingFeatureService,
   ) {}
 
@@ -74,7 +74,7 @@ export class RecordAccessPolicyService {
   }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordAccessGate {
     let recordSharesPromise: Promise<RecordShare[]> | undefined;
     const fetchRecordShares: FetchRecordShares = () =>
-      (recordSharesPromise ??= this.recordShareService.findByRecordIds({
+      (recordSharesPromise ??= this.recordShareStorageService.findByRecordIds({
         workspaceId,
         objectMetadataId: objectMetadata.id,
         recordIds: events.map((event) => event.recordId),
@@ -179,7 +179,7 @@ export class RecordAccessPolicyService {
         evaluation.workspaceId,
       ));
     const gateKind = resolveRecordShareGateKind({
-      isRecordSharingEnabled: !legacyOpen,
+      isLegacyRecordAccessOpen: legacyOpen,
       readability: objectMetadata.readability,
       isOwningApplication: subject.isOwningApplication(objectMetadata),
     });
@@ -418,7 +418,7 @@ export class RecordAccessPolicyService {
     return this.resolveSnapshotIdsAdmittedByRecordShareGate(
       { ...evaluation, snapshots: candidateSnapshots },
       () =>
-        this.recordShareService.findByRecordIds({
+        this.recordShareStorageService.findByRecordIds({
           workspaceId,
           objectMetadataId: objectMetadata.id,
           recordIds: candidateSnapshots.map((snapshot) => snapshot.id),

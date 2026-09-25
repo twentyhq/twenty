@@ -24,7 +24,7 @@ export class DeferredWorkspaceMigrationActionEntity extends WorkspaceRelatedEnti
   applicationUniversalIdentifier: string;
 
   @Column({ type: 'varchar' })
-  actionHandlerKey: PersistedDeferredWorkspaceMigrationAction['actionHandlerKey'];
+  name: PersistedDeferredWorkspaceMigrationAction['name'];
 
   @Column({ type: 'jsonb' })
   payload: PersistedDeferredWorkspaceMigrationAction['payload'];
