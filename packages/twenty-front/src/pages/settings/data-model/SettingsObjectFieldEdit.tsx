@@ -161,8 +161,6 @@ export const SettingsObjectFieldEdit = () => {
 
   const canSave = isDirty && isValid && !isSubmitting;
 
-  // Settings forms fill in their own defaults on mount, which sets isDirty
-  // before any edit; dirtyFields only lists what the user changed
   const hasUnsavedEdits = !isEmptyObject(dirtyFields);
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {

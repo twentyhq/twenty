@@ -29,8 +29,6 @@ export const SettingsMetadataTranslationsSection = ({
 }: SettingsMetadataTranslationsSectionProps) => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  // Registry property keys are unique across metadata names, except
-  // `description`, which reads the same on both.
   const columnLabelByProperty: Record<string, string> = {
     labelSingular: t`Singular`,
     labelPlural: t`Plural`,

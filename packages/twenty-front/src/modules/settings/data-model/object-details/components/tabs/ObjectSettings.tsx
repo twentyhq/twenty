@@ -70,8 +70,6 @@ export const ObjectSettings = ({
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
-  // Owned here so the translations link can wait for unsaved About edits,
-  // which stay dirty until their save or translate-or-rename choice completes
   const aboutFormConfig = useForm<SettingsDataModelObjectAboutFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),

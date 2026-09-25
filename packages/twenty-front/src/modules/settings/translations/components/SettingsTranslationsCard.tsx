@@ -21,7 +21,6 @@ export const SettingsTranslationsCard = ({
   const theme = useTheme();
   const icon = <IconLanguage size={theme.icon.size.md} />;
 
-  // Leaving the page discards unsaved form edits, so the link waits for a save
   if (disabled) {
     return (
       <SettingsCard
