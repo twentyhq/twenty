@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 import { workflowSendEmailActionSettingsSchema } from '@/workflow/schemas/send-email-action-settings-schema';
 import { workflowCreateCalendarEventActionSettingsSchema } from '@/workflow/schemas/create-calendar-event-action-settings-schema';
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
@@ -149,7 +151,10 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
           .optional(),
       })
       .superRefine((input, context) => {
-        if (input.strategy === 'LOAD_BALANCED' && !input.loadBalance) {
+        if (
+          input.strategy === 'LOAD_BALANCED' &&
+          !isDefined(input.loadBalance)
+        ) {
           context.addIssue({
             code: 'custom',
             path: ['loadBalance'],
