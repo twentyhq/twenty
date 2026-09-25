@@ -110,9 +110,7 @@ export class LoginTokenService {
     return decoded;
   }
 
-  async consumeLoginTokenOrThrow(
-    payload: LoginTokenJwtPayload,
-  ): Promise<void> {
+  async consumeLoginTokenOrThrow(payload: LoginTokenJwtPayload): Promise<void> {
     if (!isNonEmptyString(payload.jti)) {
       throw buildInvalidLoginTokenException();
     }
