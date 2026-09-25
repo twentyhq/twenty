@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { SLACK_CHANNEL_SILENCED_SKIP_REASON } from 'src/logic-functions/constants/slack-channel-silenced-skip-reason';
 import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { enqueueSlackAssistantRequestRecord } from 'src/logic-functions/utils/enqueue-slack-assistant-request-record';
@@ -10,8 +11,6 @@ import { isSlackChannelSilenced } from 'src/logic-functions/utils/is-slack-chann
 import { notifySilencedSlackChannel } from 'src/logic-functions/utils/notify-silenced-slack-channel';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 import { replyToEmptySlackAssistantRequest } from 'src/logic-functions/utils/reply-to-empty-slack-assistant-request';
-
-const SILENCED_CHANNEL_SKIP_REASON = 'Channel is silenced by a channel rule';
 
 const DIRECT_MESSAGE_CHANNEL_TYPE = 'im';
 
@@ -47,7 +46,7 @@ const gateSilencedChannelEvent = async ({
     });
   }
 
-  return { ok: true, skipped: SILENCED_CHANNEL_SKIP_REASON };
+  return { ok: true, skipped: SLACK_CHANNEL_SILENCED_SKIP_REASON };
 };
 
 export const enqueueSlackAssistantRequest = async (

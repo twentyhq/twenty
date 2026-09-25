@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/primitives/feedback';
+import { Callout } from 'twenty-ui/components';
 import { type ApplicationHealthStatus } from '~/generated-metadata/graphql';
 import { getApplicationHealthBannerAppearance } from '~/pages/settings/applications/utils/getApplicationHealthBannerAppearance';
 

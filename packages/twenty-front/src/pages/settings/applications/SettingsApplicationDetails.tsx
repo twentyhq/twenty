@@ -25,14 +25,14 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/components';
 import {
   IconAlertTriangle,
-  IconAdjustments,
   IconDeviceFloppy,
   IconSettings,
   IconVariable,
+  useIcons,
 } from 'twenty-ui/icon';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import {
   FindMarketplaceAppDetailDocument,
@@ -40,12 +40,12 @@ import {
   IsApplicationStoppedDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
+import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
-import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
-import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
@@ -53,6 +53,7 @@ import { getApplicationDescriptionSummary } from '~/pages/settings/applications/
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { getWorkspaceSettingsMenuItems } from '~/pages/settings/applications/utils/getWorkspaceSettingsMenuItems';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
@@ -60,12 +61,10 @@ const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
-const CUSTOM_SETTINGS_TAB_ID = 'settings';
-
-const CONFIGURATION_TAB_IDS = [CUSTOM_SETTINGS_TAB_ID, VARIABLES_TAB_ID];
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
+  const { getIcon } = useIcons();
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -173,15 +172,16 @@ export const SettingsApplicationDetails = () => {
     applicationVariables: displayedApplicationVariables,
   });
 
-  const settingsFrontComponentId =
-    application?.settingsCustomTabFrontComponentId;
-  const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
+  const workspaceSettingsMenuItems = getWorkspaceSettingsMenuItems(
+    application?.settingsMenuItems ?? [],
+  );
 
   const missingRequiredApplicationVariables =
     getMissingRequiredApplicationVariables(displayedApplicationVariables);
 
   const hasVariablesTab =
-    !hasCustomSettingsTab && displayedApplicationVariables.length > 0;
+    !isNonEmptyArray(workspaceSettingsMenuItems) &&
+    displayedApplicationVariables.length > 0;
 
   const { healthCheckResult, runHealthCheck } = useApplicationHealthCheck({
     applicationId,
@@ -200,20 +200,16 @@ export const SettingsApplicationDetails = () => {
     ...(hasVariablesTab
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),
-    ...(hasCustomSettingsTab
-      ? [
-          {
-            id: CUSTOM_SETTINGS_TAB_ID,
-            title: t`Settings`,
-            Icon: IconAdjustments,
-          },
-        ]
-      : []),
+    ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
+      id: settingsMenuItem.universalIdentifier,
+      title: settingsMenuItem.title,
+      Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
+    })),
   ];
 
-  const configurationTabId = tabs.find((tab) =>
-    CONFIGURATION_TAB_IDS.includes(tab.id),
-  )?.id;
+  const configurationTabId = hasVariablesTab
+    ? VARIABLES_TAB_ID
+    : workspaceSettingsMenuItems.at(0)?.universalIdentifier;
 
   const configurationTabLocation = isDefined(configurationTabId)
     ? getSettingsPath(
@@ -272,14 +268,22 @@ export const SettingsApplicationDetails = () => {
             onVariableChange={setApplicationVariableValue}
           />
         );
-      case CUSTOM_SETTINGS_TAB_ID:
-        return hasCustomSettingsTab ? (
+      default: {
+        const activeSettingsMenuItem = workspaceSettingsMenuItems.find(
+          (settingsMenuItem) =>
+            settingsMenuItem.universalIdentifier === activeTabId,
+        );
+
+        if (!isDefined(activeSettingsMenuItem)) {
+          return <></>;
+        }
+
+        return (
           <SettingsApplicationCustomSettingsSection
-            frontComponentId={settingsFrontComponentId}
+            frontComponentId={activeSettingsMenuItem.frontComponentId}
           />
-        ) : null;
-      default:
-        return <></>;
+        );
+      }
     }
   };
 

@@ -15,7 +15,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -26,8 +26,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 

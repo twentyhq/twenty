@@ -86,13 +86,25 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
 
-    ...aggregatedOrchestratorActionsReport.frontComponent.delete,
+    // Menu items hold a frontComponentId with onDelete: CASCADE, so one sync that
+    // repoints an item onto a new component while removing the old one would lose
+    // the row if the component went first: the update would then match nothing and
+    // report success. Items the manifest drops go first, then the new components,
+    // then the items repoint, and only then is a component nothing references left
+    // deleted.
+    ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.delete,
+
     ...aggregatedOrchestratorActionsReport.frontComponent.create,
     ...aggregatedOrchestratorActionsReport.frontComponent.update,
 
-    ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
+
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.create,
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.update,
+
+    ...aggregatedOrchestratorActionsReport.frontComponent.delete,
 
     ...aggregatedOrchestratorActionsReport.pageLayout.delete,
     ...aggregatedOrchestratorActionsReport.pageLayout.create,

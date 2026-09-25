@@ -4,8 +4,8 @@ import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
-import { MenuItemHotKeys } from '@ui/primitives/navigation/MenuItemHotKeys/MenuItemHotKeys';
-import { OverflowingTextWithTooltip } from '@ui/primitives/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { MenuItemHotKeys } from '@ui/primitives/navigation/ListItem/internal/MenuItemHotKeys/MenuItemHotKeys';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { isRenderableSlot } from './internal/isRenderableSlot';
@@ -24,6 +24,7 @@ export const ListItem = ({
   description,
   descriptionPlacement = 'inline',
   actions,
+  actionsVisibility = 'hover',
   hotkeys,
   hasSubmenu = false,
   className,
@@ -55,6 +56,7 @@ export const ListItem = ({
     state: { color, indicator, selected, highlighted: focused, disabled },
     props: {
       ...props,
+      'data-actions-visibility': actionsVisibility,
       className: clsx(styles.root, className),
       'aria-disabled': disabled || undefined,
       onClick: handleClick,

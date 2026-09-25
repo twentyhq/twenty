@@ -77,6 +77,7 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
 
     const {
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatViewMaps,
       flatViewFieldMaps,
       flatViewFieldGroupMaps,
@@ -85,6 +86,7 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
       flatPageLayoutWidgetMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
       'flatViewMaps',
       'flatViewFieldMaps',
       'flatViewFieldGroupMaps',
@@ -181,6 +183,22 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
         existingFlatEntityMaps: flatViewFieldMaps,
         universalIdentifiers: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+      }).filter((viewField) => {
+        if (
+          isDefined(
+            flatFieldMetadataMaps.byUniversalIdentifier[
+              viewField.fieldMetadataUniversalIdentifier
+            ],
+          )
+        ) {
+          return true;
+        }
+
+        this.logger.warn(
+          `Skipping message record page view field ${viewField.universalIdentifier} for workspace ${workspaceId}: field metadata ${viewField.fieldMetadataUniversalIdentifier} does not exist`,
+        );
+
+        return false;
       });
 
     const pageLayoutsToCreate =
@@ -231,14 +249,11 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
       `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${viewsToCreate.length} view(s), ${viewFieldGroupsToCreate.length} field group(s), ${viewFieldsToCreate.length} view field(s), ${pageLayoutsToCreate.length} layout(s), ${pageLayoutTabsToCreate.length} tab(s), ${pageLayoutWidgetsToCreate.length} widget(s)`,
     );
 
-    if (isDryRun) {
-      return;
-    }
-
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
+          dryRun: isDryRun,
           workspaceId,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
@@ -285,7 +300,7 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
     }
 
     this.logger.log(
-      `Synced the message record page for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] Validated' : 'Synced'} the message record page for workspace ${workspaceId}`,
     );
   }
 }

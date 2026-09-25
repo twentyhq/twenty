@@ -1,5 +1,5 @@
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
@@ -12,6 +12,7 @@ import { useRecordListContextOrThrow } from '@/object-record/record-list/context
 import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -19,7 +20,7 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, LinkChip } from 'twenty-ui/primitives/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`

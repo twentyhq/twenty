@@ -4,9 +4,9 @@ import bcrypt from 'bcrypt';
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import {
@@ -319,12 +319,12 @@ describe('core workflow API with application credentials (integration)', () => {
   });
 
   it('should keep the application role when a user acts through the application', async () => {
-    const { data } = await generateApplicationToken({
-      applicationId: authorizedApplication.applicationId,
-    });
+    const { applicationAccessToken } =
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: authorizedApplication.applicationId,
+      });
 
-    const delegatedToken =
-      data.generateApplicationToken.applicationAccessToken.token;
+    const delegatedToken = applicationAccessToken.token;
 
     const createResponse = await graphqlAs(
       delegatedToken,

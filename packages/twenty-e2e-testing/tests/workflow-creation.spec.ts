@@ -14,7 +14,7 @@ test('Create workflow', async ({ page }) => {
   await workflowsLink.click();
 
   const createWorkflowButton = page.getByRole('button', {
-    name: 'Create new workflow',
+    name: 'Create Workflow',
   });
 
   const [createWorkflowResponse] = await Promise.all([

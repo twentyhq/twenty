@@ -24,6 +24,7 @@ import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-con
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
+import { type SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
@@ -53,6 +54,7 @@ import {
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
+  type SettingsMenuItemManifest,
   type TimelineActivityTypeManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
@@ -124,6 +126,7 @@ export const buildManifest = async (
   const pageLayoutWidgets: StandalonePageLayoutWidgetManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
   const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
+  const settingsMenuItems: SettingsMenuItemManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
@@ -154,6 +157,7 @@ export const buildManifest = async (
   const pageLayoutWidgetsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
+  const settingsMenuItemsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -534,6 +538,18 @@ export const buildManifest = async (
         timelineActivityTypesFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.SettingsMenuItems: {
+        const extract = await extractManifestFromFile<SettingsMenuItemConfig>({
+          appPath,
+          filePath,
+        });
+
+        settingsMenuItems.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        settingsMenuItemsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -730,6 +746,7 @@ export const buildManifest = async (
         pageLayoutWidgets: pageLayoutWidgets.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
+        settingsMenuItems: settingsMenuItems.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -753,6 +770,7 @@ export const buildManifest = async (
     pageLayoutWidgets: pageLayoutWidgetsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
     timelineActivityTypes: timelineActivityTypesFilePaths,
+    settingsMenuItems: settingsMenuItemsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

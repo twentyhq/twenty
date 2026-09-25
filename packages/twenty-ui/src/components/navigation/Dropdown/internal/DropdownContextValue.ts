@@ -1,0 +1,29 @@
+import { type DropdownType } from '../types/DropdownType';
+import { type DropdownFocusTarget } from './DropdownFocusTarget';
+import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
+
+export type DropdownContextValue = {
+  type: DropdownType;
+  rootType: DropdownType;
+  open: boolean;
+  multiple: boolean;
+  isSubmenu: boolean;
+  parentType?: DropdownType;
+  activeItemId?: string;
+  parentActiveItemId?: string;
+  setActiveItemId: (id: string) => void;
+  setParentActiveItemId?: (id: string) => void;
+  pageId?: string;
+  pageFocusRequest?: DropdownPageFocusRequest;
+  setPageFocusRequest: (request: DropdownPageFocusRequest | undefined) => void;
+  canGoBack: boolean;
+  initialFocusEdge: 'first' | 'last';
+  setInitialFocusEdge: (edge: 'first' | 'last') => void;
+  focusOnOpen: boolean;
+  setFocusOnOpen: (focusOnOpen: boolean) => void;
+  setOpen: (open: boolean) => void;
+  closeTree: () => void;
+  goToPage: (page: { id: string; trigger: DropdownFocusTarget }) => void;
+  goBack: () => void;
+  registerPage: (page: { id: string; type?: DropdownType }) => void;
+};

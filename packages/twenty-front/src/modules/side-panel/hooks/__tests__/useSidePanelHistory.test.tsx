@@ -163,6 +163,46 @@ describe('useSidePanelHistory', () => {
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
   });
 
+  it('removes a page from deeper in the history and keeps the current one', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.RecordCreationForm,
+        pageTitle: 'Create Company',
+        pageIcon: IconList,
+        pageId: 'creation-form',
+      });
+    });
+
+    act(() => {
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.SearchRecords,
+        pageTitle: 'Search',
+        pageIcon: IconSearch,
+        pageId: 'search',
+      });
+    });
+
+    act(() => {
+      result.current.commandMenuHistory.removePageFromSidePanelHistory(
+        'creation-form',
+      );
+    });
+
+    const navigationStack = jotaiStore.get(sidePanelNavigationStackState.atom);
+    expect(navigationStack.map(({ pageId }) => pageId)).not.toContain(
+      'creation-form',
+    );
+    expect(navigationStack.at(-1)?.pageId).toBe('search');
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
+
+    act(() => {
+      result.current.commandMenu.closeSidePanelMenu();
+      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
+    });
+  });
+
   it('should navigate to a page in history', () => {
     const { result } = renderHooks();
 

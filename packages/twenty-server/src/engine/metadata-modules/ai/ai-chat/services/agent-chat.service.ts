@@ -1,3 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
@@ -224,6 +227,27 @@ export class AgentChatService {
     return result?.last_message_at ?? null;
   }
 
+  private getMessageSenderValues({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }) {
+    const context = workspaceAuthContextStorage.getStore();
+    const applicationId =
+      isDefined(context) &&
+      isUserAuthContext(context) &&
+      context.workspace.id === workspaceId &&
+      context.userWorkspaceId === userWorkspaceId
+        ? context.application?.id
+        : undefined;
+    return {
+      senderUserWorkspaceId: userWorkspaceId ?? null,
+      senderApplicationId: applicationId ?? null,
+    };
+  }
+
   async addMessage({
     threadId,
     uiMessage,
@@ -233,6 +257,7 @@ export class AgentChatService {
     workspaceId,
     isHidden,
     processedAt,
+    userWorkspaceId,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -243,6 +268,7 @@ export class AgentChatService {
     workspaceId: string;
     isHidden?: boolean;
     processedAt?: Date;
+    userWorkspaceId?: string;
   }) {
     let actualTurnId = turnId;
 
@@ -262,6 +288,7 @@ export class AgentChatService {
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       processedAt: processedAt ?? new Date(),
+      ...this.getMessageSenderValues({ workspaceId, userWorkspaceId }),
       ...(isDefined(isHidden) ? { isHidden } : {}),
     };
 
@@ -294,6 +321,8 @@ export class AgentChatService {
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       processedAt: messageValues.processedAt,
+      senderUserWorkspaceId: messageValues.senderUserWorkspaceId,
+      senderApplicationId: messageValues.senderApplicationId,
       workspaceId,
     } as AgentMessageEntity;
   }
@@ -430,10 +459,12 @@ export class AgentChatService {
     threadId,
     workspaceId,
     text,
+    userWorkspaceId,
   }: {
     threadId: string;
     workspaceId: string;
     text: string;
+    userWorkspaceId: string;
   }): Promise<{ id: string; turnId: string }> {
     const existingKickoffMessage = await this.messageRepository.findOne(
       workspaceId,
@@ -468,6 +499,7 @@ export class AgentChatService {
     const savedMessage = await this.addMessage({
       threadId,
       workspaceId,
+      userWorkspaceId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text' as const, text }],
@@ -507,6 +539,7 @@ export class AgentChatService {
       role: AgentMessageRole.USER,
       agentId: null,
       status: AgentMessageStatus.QUEUED,
+      ...this.getMessageSenderValues({ workspaceId, userWorkspaceId }),
     };
 
     const insertResult = await this.messageRepository.insert(
@@ -676,6 +709,7 @@ export class AgentChatService {
     streamId: string;
     workspaceId: string;
   }): Promise<{
+    answerText: string;
     turnId: string | null;
     rollback: { partId: string; previousOutput: Record<string, unknown> };
   }> {
@@ -716,7 +750,11 @@ export class AgentChatService {
 
     const claim = await this.threadRepository.update(
       workspaceId,
-      { id: threadId, pendingQuestionMessageId: messageId },
+      {
+        id: threadId,
+        pendingQuestionMessageId: messageId,
+        activeStreamId: IsNull(),
+      },
       {
         pendingQuestionMessageId: null,
         activeStreamId: streamId,
@@ -768,7 +806,20 @@ export class AgentChatService {
       throw error;
     }
 
+    const answerText = answers
+      .map((answer) => {
+        const question = questions[answer.questionIndex];
+        const value = isNonEmptyString(answer.freeText)
+          ? answer.freeText
+          : answer.selectedOptionIndices
+              .map((optionIndex) => question.options[optionIndex].label)
+              .join(', ');
+        return `${question.question}\n${value}`;
+      })
+      .join('\n\n');
+
     return {
+      answerText,
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
@@ -1152,10 +1203,12 @@ export class AgentChatService {
     threadId,
     messageContent,
     workspaceId,
+    userWorkspaceId,
   }: {
     threadId: string;
     messageContent: string;
     workspaceId: string;
+    userWorkspaceId: string;
   }): Promise<string | null> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
@@ -1168,7 +1221,7 @@ export class AgentChatService {
     const title = await this.titleGenerationService.generateThreadTitle(
       messageContent,
       workspaceId,
-      thread.userWorkspaceId,
+      userWorkspaceId,
     );
 
     await this.threadRepository.update(
