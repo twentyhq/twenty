@@ -5,6 +5,7 @@ import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot'
 export type GeometryTracker = {
   registerNode: (remoteElementId: string, node: Element) => void;
   unregisterNode: (remoteElementId: string, node: Element) => void;
+  findRemoteElementIdContainingNode: (node: unknown) => string | undefined;
   observe: (remoteElementIds: unknown) => void;
   unobserve: (remoteElementIds: unknown) => void;
   setRoot: ElementRefCallback;

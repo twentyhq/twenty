@@ -10,9 +10,6 @@ export const SANDBOX_ERROR_PATTERNS = {
   ELEMENT_CONTAINS:
     /^(?:Uncaught TypeError: )?\w+\.contains is not a function$/,
   HOST_EVENT_LISTENER: 'Uncaught TypeError: listener is not a function',
-  ELEMENT_REF_FOCUS:
-    /^(?:Uncaught TypeError: )?\w+\.current\?\.focus is not a function$/,
-  ELEMENT_FOCUS: /^(?:Uncaught TypeError: )?\w+\?\.focus is not a function$/,
   POINTER_EVENT_CONSTRUCTOR:
     /^Uncaught TypeError: .+\.PointerEvent is not a constructor$/,
 };
