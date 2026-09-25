@@ -7,12 +7,16 @@ export const getTimelineCalendarEventsFromObjectRecord = gql`
     $recordId: UUID!
     $page: Int!
     $pageSize: Int!
+    $startsAtFrom: DateTime
+    $startsAtBefore: DateTime
   ) {
     getTimelineCalendarEventsFromObjectRecord(
       objectNameSingular: $objectNameSingular
       recordId: $recordId
       page: $page
       pageSize: $pageSize
+      startsAtFrom: $startsAtFrom
+      startsAtBefore: $startsAtBefore
     ) {
       ...TimelineCalendarEventsWithTotalFragment
     }
