@@ -126,11 +126,21 @@ describe('findExhaustedCounters', () => {
     ).toMatchObject([{ key: 'first' }]);
   });
 
-  it('leaves the credit allowance to drain rather than charging it the whole cost', () => {
+  it('refuses a credit allowance that cannot cover the whole cost', () => {
     expect(
       findExhaustedCounters({
         counters: [buildAllowanceCounter('allowance')],
         remainings: [10],
+        cost: { creditsUsedMicro: 5_000, quantity: 100 },
+      }),
+    ).toMatchObject([{ key: 'allowance' }]);
+  });
+
+  it('admits a credit allowance holding exactly the whole cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildAllowanceCounter('allowance')],
+        remainings: [5_000],
         cost: { creditsUsedMicro: 5_000, quantity: 100 },
       }),
     ).toEqual([]);
