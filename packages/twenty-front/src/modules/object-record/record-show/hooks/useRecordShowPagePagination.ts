@@ -11,9 +11,9 @@ import {
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { computeCursorArgFilter } from '@/object-record/graphql/utils/computeCursorArgFilter';
 import { extractOrderByFieldNames } from '@/object-record/graphql/utils/extractOrderByFieldNames';
 import { reverseOrderBy } from '@/object-record/graphql/utils/reverseOrderBy';
+import { computeRecordShowNeighborQueryArgs } from '@/object-record/record-show/utils/computeRecordShowNeighborQueryArgs';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -68,15 +68,20 @@ export const useRecordShowPagePagination = (
 
   const reversedOrderBy = reverseOrderBy(orderBy);
 
-  const { loading: loadingCurrentRecord, records: currentRecords } =
-    useFindManyRecords({
-      filter: { id: { eq: objectRecordId } },
-      orderBy,
-      limit: 1,
-      objectNameSingular,
-      recordGqlFields: { ...orderByGqlFields, deletedAt: true },
-      withSoftDeleted: true,
-    });
+  const {
+    loading: loadingCurrentRecord,
+    records: currentRecords,
+    pageInfo: currentRecordPageInfo,
+  } = useFindManyRecords({
+    filter: { id: { eq: objectRecordId } },
+    orderBy,
+    limit: 1,
+    objectNameSingular,
+    recordGqlFields: { ...orderByGqlFields, deletedAt: true },
+    withSoftDeleted: true,
+  });
+
+  const currentRecordCursor = currentRecordPageInfo?.endCursor;
 
   const currentRecord = currentRecords[0];
   const isCurrentRecordDeleted = isDefined(currentRecord?.deletedAt);
@@ -99,24 +104,17 @@ export const useRecordShowPagePagination = (
         }
       : undefined;
 
-  const beforeFilter = isDefined(currentRecordKeysetValues)
-    ? computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: currentRecordKeysetValues,
-        isForwardPagination: false,
-      })
-    : undefined;
-
-  const afterFilter = isDefined(currentRecordKeysetValues)
-    ? computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: currentRecordKeysetValues,
-        isForwardPagination: true,
-      })
-    : undefined;
-
-  const hasKeysetFilters = isDefined(beforeFilter) && isDefined(afterFilter);
-  const skipNeighborQueries = loadingCurrentRecord || !hasKeysetFilters;
+  const {
+    hasNeighborQueryArgs,
+    skipNeighborQueries,
+    before: beforeNeighborQueryArgs,
+    after: afterNeighborQueryArgs,
+  } = computeRecordShowNeighborQueryArgs({
+    orderBy,
+    currentRecordKeysetValues,
+    currentRecordCursor,
+    isLoadingCurrentRecord: loadingCurrentRecord,
+  });
 
   const baseNeighborOptions = {
     skip: skipNeighborQueries,
@@ -137,8 +135,11 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     ...baseNeighborOptions,
     fetchPolicy: 'network-only',
-    filter: combineFilters([mergedFilter, beforeFilter].filter(isDefined)),
-    orderBy: reversedOrderBy,
+    filter: combineFilters(
+      [mergedFilter, beforeNeighborQueryArgs.keysetFilter].filter(isDefined),
+    ),
+    orderBy: beforeNeighborQueryArgs.orderBy,
+    cursorFilter: beforeNeighborQueryArgs.cursorFilter,
   });
 
   const {
@@ -148,12 +149,18 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     ...baseNeighborOptions,
     fetchPolicy: 'network-only',
-    filter: combineFilters([mergedFilter, afterFilter].filter(isDefined)),
-    orderBy,
+    filter: combineFilters(
+      [mergedFilter, afterNeighborQueryArgs.keysetFilter].filter(isDefined),
+    ),
+    orderBy: afterNeighborQueryArgs.orderBy,
+    cursorFilter: afterNeighborQueryArgs.cursorFilter,
   });
 
-  const isAtFirstRecord = !loadingRecordBefore && totalCountBefore === 0;
-  const isAtLastRecord = !loadingRecordAfter && totalCountAfter === 0;
+  const recordBefore = recordsBefore[0];
+  const recordAfter = recordsAfter[0];
+
+  const isAtFirstRecord = !loadingRecordBefore && !isDefined(recordBefore);
+  const isAtLastRecord = !loadingRecordAfter && !isDefined(recordAfter);
 
   const { loading: loadingFirstRecord, records: firstRecords } =
     useFindManyRecords({
@@ -175,12 +182,9 @@ export const useRecordShowPagePagination = (
     loadingRecordAfter ||
     loadingRecordBefore ||
     loadingCurrentRecord ||
-    !hasKeysetFilters ||
+    !hasNeighborQueryArgs ||
     (isAtLastRecord && loadingFirstRecord) ||
     (isAtFirstRecord && loadingLastRecord);
-
-  const recordBefore = recordsBefore[0];
-  const recordAfter = recordsAfter[0];
 
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToRecord = (targetRecordId: string) => {
