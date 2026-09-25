@@ -23,7 +23,9 @@ import { findObjectNameByUniversalIdentifier } from 'src/engine/workspace-manage
 export type BuildStandardFlatPageLayoutWidgetMetadataMapsArgs = Omit<
   CreateStandardPageLayoutWidgetArgs,
   'context'
->;
+> & {
+  excludedWidgetTypes: WidgetType[];
+};
 
 const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.FIELDS,
@@ -336,6 +338,7 @@ const computeRecordPageWidgets = ({
   twentyStandardApplicationId,
   standardObjectMetadataRelatedEntityIds,
   standardPageLayoutMetadataRelatedEntityIds,
+  excludedWidgetTypes,
 }: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs): FlatPageLayoutWidget[] => {
   const allWidgets: FlatPageLayoutWidget[] = [];
 
@@ -362,6 +365,10 @@ const computeRecordPageWidgets = ({
 
       for (const widgetName of Object.keys(tab.widgets)) {
         const widget = tab.widgets[widgetName];
+
+        if (excludedWidgetTypes.includes(widget.type)) {
+          continue;
+        }
 
         const isRecordPageWidget = RECORD_PAGE_LAYOUT_WIDGET_TYPES.includes(
           widget.type,
