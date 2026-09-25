@@ -512,7 +512,7 @@ msgstr "{headersCount, plural, zero {لم يتم استلام أي رؤوس} one
 #. js-lingui-id: UKiDo3
 #: src/modules/command-menu-item/display/components/CommandMenuItemSectionGroup.tsx
 msgid "{heading}: {contextLabel}"
-msgstr ""
+msgstr "{heading}: {contextLabel}"
 
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
@@ -569,7 +569,7 @@ msgstr "{label} (مهمل)"
 #. js-lingui-id: cNJhkq
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "{label} access"
-msgstr ""
+msgstr "وصول {label}"
 
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -1109,7 +1109,7 @@ msgstr "اتفاقيات معالجة البيانات (DPA) المقبولة و
 #. js-lingui-id: F3vVuj
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Access is also inherited from related records."
-msgstr ""
+msgstr "يتم توريث الوصول أيضًا من السجلات المرتبطة."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -1635,7 +1635,7 @@ msgstr "إضافة طريقة دفع"
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Add people or roles"
-msgstr ""
+msgstr "إضافة أشخاص أو أدوار"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -2087,7 +2087,7 @@ msgstr "دردشة الذكاء الاصطناعي"
 #. js-lingui-id: /YYegB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat sharing dropdown"
-msgstr ""
+msgstr "القائمة المنسدلة لمشاركة محادثة الذكاء الاصطناعي."
 
 #. js-lingui-id: qiD/6r
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -7311,7 +7311,7 @@ msgstr "تم حذف {objectLabel}"
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted member"
-msgstr ""
+msgstr "عضو محذوف"
 
 #. js-lingui-id: oAhMKF
 #: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
@@ -7322,7 +7322,7 @@ msgstr "السجل المحذوف"
 #. js-lingui-id: vaFq49
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted role"
-msgstr ""
+msgstr "دور محذوف"
 
 #. js-lingui-id: mhwpOC
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -9093,7 +9093,7 @@ msgstr "الجميع"
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Everyone in the workspace"
-msgstr ""
+msgstr "كل من في مساحة العمل"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -10338,7 +10338,7 @@ msgstr "تنسيقات"
 #. js-lingui-id: CjVkbV
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Former member"
-msgstr ""
+msgstr "عضو سابق"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -10450,12 +10450,12 @@ msgstr "كامل"
 #. js-lingui-id: scmRyR
 #: src/modules/object-record/record-sharing/constants/RecordShareAccessLevelOptions.ts
 msgid "Full access"
-msgstr ""
+msgstr "وصول كامل"
 
 #. js-lingui-id: XLveVS
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Full access and edit permission are required to manage sharing."
-msgstr ""
+msgstr "يلزم توفر إذن الوصول الكامل والتحرير لإدارة المشاركة."
 
 #. js-lingui-id: C4RwTo
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -10567,7 +10567,7 @@ msgstr "الإعدادات العامة"
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "General access"
-msgstr ""
+msgstr "الوصول العام"
 
 #. js-lingui-id: Ye6I4I
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -11952,7 +11952,7 @@ msgstr "رمز التحقق غير صالح. الرجاء المحاولة مر�
 #. js-lingui-id: eoPFiu
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Invitation access"
-msgstr ""
+msgstr "وصول الدعوة"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -11971,7 +11971,7 @@ msgstr "دعوة"
 #. js-lingui-id: YiNcxh
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Invite as"
-msgstr ""
+msgstr "دعوة بصفة"
 
 #. js-lingui-id: 0M8+El
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -13007,7 +13007,7 @@ msgstr "جارٍ تحميل المحادثات..."
 #. js-lingui-id: w81Nov
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Loading conversation…"
-msgstr ""
+msgstr "جارٍ تحميل المحادثة..."
 
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -13350,7 +13350,7 @@ msgstr "مدارة"
 #. js-lingui-id: sByWNI
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Managed access"
-msgstr ""
+msgstr "الوصول المُدار"
 
 #. js-lingui-id: BWTzAb
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -14613,13 +14613,11 @@ msgstr "لا يوجد متن"
 
 #. js-lingui-id: O7I76L
 #: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No Call Recording"
 msgstr "لا يوجد تسجيل مكالمة"
 
 #. js-lingui-id: 8Qo8A6
 #: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No call recording exists for this calendar event yet."
 msgstr "لا يوجد تسجيل للمكالمة لهذا الحدث في التقويم بعد."
 
@@ -14896,7 +14894,7 @@ msgstr "لا يوجد نشاط مطابق"
 #. js-lingui-id: Dfn8RY
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "No matching people or roles"
-msgstr ""
+msgstr "لا توجد أشخاص أو أدوار مطابقة"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -15143,9 +15141,15 @@ msgid "No topic"
 msgstr "بدون موضوع"
 
 #. js-lingui-id: 3Y/oDZ
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No Transcript"
 msgstr "لا يوجد نص مفرّغ"
+
+#. js-lingui-id: oHPm8v
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No transcript is available for this calendar event yet."
+msgstr "لا تتوفر أي نسخة نصية (تفريغ) لهذا الحدث في التقويم بعد."
 
 #. js-lingui-id: g+1H2/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -16481,7 +16485,7 @@ msgstr "قيد الانتظار"
 #. js-lingui-id: R/RRKy
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "People and roles with access"
-msgstr ""
+msgstr "الأشخاص والأدوار الذين لديهم صلاحية الوصول"
 
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -17721,7 +17725,7 @@ msgstr "إزالة {origin}"
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessSelect.tsx
 msgid "Remove access"
-msgstr ""
+msgstr "إزالة صلاحية الوصول"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -18174,7 +18178,7 @@ msgstr "استعادة إعدادات نوع النشاط التي حددها ا
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Restricted"
-msgstr ""
+msgstr "مقيّد"
 
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -18304,7 +18308,7 @@ msgstr "دور"
 #. js-lingui-id: mZjYrm
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Role and field permissions still apply."
-msgstr ""
+msgstr "تظل أذونات الدور والحقل سارية."
 
 #. js-lingui-id: l2yKTq
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -18878,7 +18882,7 @@ msgstr "ابحث في الخيارات"
 #. js-lingui-id: 0baLFk
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Search people or roles"
-msgstr ""
+msgstr "البحث عن أشخاص أو أدوار"
 
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -19713,7 +19717,7 @@ msgstr "شارك"
 #. js-lingui-id: xt9Ypy
 #: src/modules/ai/components/AiChatSharingDropdown.tsx
 msgid "Share conversation"
-msgstr ""
+msgstr "مشاركة المحادثة"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -19748,7 +19752,7 @@ msgstr "تم نسخ رابط المشاركة إلى الحافظة"
 #. js-lingui-id: Z+MFnO
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Sharing settings could not be loaded."
-msgstr ""
+msgstr "تعذر تحميل إعدادات المشاركة."
 
 #. js-lingui-id: Xzq3Vx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -19832,7 +19836,7 @@ msgstr "اعرض الصفوف التي تحتوي على أخطاء فقط"
 #. js-lingui-id: iBertJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the sharing dropdown on AI conversations when record sharing is enabled."
-msgstr ""
+msgstr "إظهار القائمة المنسدلة للمشاركة في محادثات الذكاء الاصطناعي عند تمكين مشاركة السجل."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -21562,7 +21566,7 @@ msgstr "تم حفظ هذا المحتوى بتنسيق أقدم ولا يمكن 
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "This conversation is no longer available."
-msgstr ""
+msgstr "لم تعد هذه المحادثة متاحة."
 
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -23267,7 +23271,7 @@ msgstr "فترة الاستخدام"
 #. js-lingui-id: js4Y6w
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
-msgstr ""
+msgstr "استخدم ‘{trimmedSidePanelSearch}’ مع..."
 
 #. js-lingui-id: MNOlLY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23730,7 +23734,7 @@ msgstr "طريقة العرض غير مشتركة"
 #. js-lingui-id: K946OL
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "View only — You can read this conversation."
-msgstr ""
+msgstr "للعرض فقط — يمكنك قراءة هذه المحادثة."
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -23775,7 +23779,7 @@ msgstr "عرض الاستخدام"
 #. js-lingui-id: M/TIv1
 #: src/modules/object-record/record-sharing/constants/RecordShareAccessLevelOptions.ts
 msgid "Viewer"
-msgstr ""
+msgstr "عارض"
 
 #. js-lingui-id: 1I6UoR
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -24475,7 +24479,7 @@ msgstr "مساحة العمل"
 #. js-lingui-id: QlqLcK
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Workspace access is also managed by an application."
-msgstr ""
+msgstr "تُدار صلاحية الوصول إلى مساحة العمل أيضًا بواسطة تطبيق."
 
 #. js-lingui-id: rxazlH
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -24691,7 +24695,7 @@ msgstr "أمس"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "You"
-msgstr ""
+msgstr "أنت"
 
 #. js-lingui-id: lWUeEt
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts

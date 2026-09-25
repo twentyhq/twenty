@@ -673,13 +673,13 @@ msgstr "Agenten-Chat-Thread"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent chat thread target"
-msgstr ""
+msgstr "Ziel eines Agenten-Chat-Threads"
 
 #. js-lingui-id: vQUuTU
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat thread targets"
-msgstr ""
+msgstr "Ziele von Agenten-Chat-Threads"
 
 #. js-lingui-id: d9XlI/
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1261,13 +1261,13 @@ msgstr "hat eine Datei angehängt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
-msgstr ""
+msgstr "Angehängt an"
 
 #. js-lingui-id: a/olsN
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Attached to"
-msgstr ""
+msgstr "Angehängt an"
 
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1335,7 +1335,7 @@ msgstr "Anhänge"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the chat thread"
-msgstr ""
+msgstr "Mit dem Chat-Thread verbundene Anhänge"
 
 #. js-lingui-id: 4hKZBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -2345,25 +2345,25 @@ msgstr "Chat-Thread-Titel darf nicht leer sein."
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
 msgctxt "fieldMetadata.label"
 msgid "Chats"
-msgstr ""
+msgstr "Chats"
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the company"
-msgstr ""
+msgstr "Mit dem Unternehmen verbundene Chats"
 
 #. js-lingui-id: rRV3D2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the contact"
-msgstr ""
+msgstr "Mit dem Kontakt verbundene Chats"
 
 #. js-lingui-id: ro3F4h
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
-msgstr ""
+msgstr "Mit der Opportunity verbundene Chats"
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3406,7 +3406,7 @@ msgstr "Abgelehnt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Attachment Layout"
-msgstr ""
+msgstr "Standard-Anhangslayout"
 
 #. js-lingui-id: RbQaAF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -9095,7 +9095,7 @@ msgstr "Präsentation"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Preview"
-msgstr ""
+msgstr "Vorschau"
 
 #. js-lingui-id: ysRzX6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9354,7 +9354,7 @@ msgstr "Empfänger"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Record an agent chat thread is attached to"
-msgstr ""
+msgstr "Datensatz, an den ein Agenten-Chat-Thread angehängt ist"
 
 #. js-lingui-id: EESfI5
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9405,7 +9405,7 @@ msgstr "Datensatztabelle-Widget nicht gefunden"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Record Targets"
-msgstr ""
+msgstr "Datensatz-Ziele"
 
 #. js-lingui-id: BwOej2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -9413,7 +9413,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Record the chat is attached to"
-msgstr ""
+msgstr "Datensatz, an den der Chat angehängt ist"
 
 #. js-lingui-id: tsYhp1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9443,7 +9443,7 @@ msgstr "Zusammenfassung der Aufnahme"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
-msgstr ""
+msgstr "Datensätze, an die dieser Thread angehängt ist"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -12945,6 +12945,13 @@ msgstr "Gesamte Ausgabe-Token"
 #. js-lingui-id: 4nPpGt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Transcript"
+msgstr "Transkript"
+
+#. js-lingui-id: N1IXk3
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-calendar-event-page-layout.config.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-call-recording-page-layout.config.ts
+msgctxt "pageLayoutTab.title"
 msgid "Transcript"
 msgstr "Transkript"
 

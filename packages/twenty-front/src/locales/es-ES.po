@@ -512,7 +512,7 @@ msgstr "Se recibieron {headersCount} encabezados"
 #. js-lingui-id: UKiDo3
 #: src/modules/command-menu-item/display/components/CommandMenuItemSectionGroup.tsx
 msgid "{heading}: {contextLabel}"
-msgstr ""
+msgstr "{heading}: {contextLabel}"
 
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
@@ -569,7 +569,7 @@ msgstr "{label} (obsoleto)"
 #. js-lingui-id: cNJhkq
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "{label} access"
-msgstr ""
+msgstr "Acceso a {label}"
 
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -1109,7 +1109,7 @@ msgstr "DPA aceptados y firmados para este espacio de trabajo, con su versión d
 #. js-lingui-id: F3vVuj
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Access is also inherited from related records."
-msgstr ""
+msgstr "El acceso también se hereda de los registros relacionados."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -1635,7 +1635,7 @@ msgstr "Añadir un método de pago"
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Add people or roles"
-msgstr ""
+msgstr "Añadir personas o roles"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -2087,7 +2087,7 @@ msgstr "Chat de IA"
 #. js-lingui-id: /YYegB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat sharing dropdown"
-msgstr ""
+msgstr "Menú desplegable para compartir chats de IA"
 
 #. js-lingui-id: qiD/6r
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -7311,7 +7311,7 @@ msgstr "Eliminó {objectLabel}"
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted member"
-msgstr ""
+msgstr "Miembro eliminado"
 
 #. js-lingui-id: oAhMKF
 #: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
@@ -7322,7 +7322,7 @@ msgstr "Registro eliminado"
 #. js-lingui-id: vaFq49
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted role"
-msgstr ""
+msgstr "Rol eliminado"
 
 #. js-lingui-id: mhwpOC
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -9093,7 +9093,7 @@ msgstr "Todos"
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Everyone in the workspace"
-msgstr ""
+msgstr "Todos en el espacio de trabajo"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -10338,7 +10338,7 @@ msgstr "Formatos"
 #. js-lingui-id: CjVkbV
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Former member"
-msgstr ""
+msgstr "Antiguo miembro"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -10450,12 +10450,12 @@ msgstr "Completo"
 #. js-lingui-id: scmRyR
 #: src/modules/object-record/record-sharing/constants/RecordShareAccessLevelOptions.ts
 msgid "Full access"
-msgstr ""
+msgstr "Acceso total"
 
 #. js-lingui-id: XLveVS
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Full access and edit permission are required to manage sharing."
-msgstr ""
+msgstr "Se requieren acceso completo y permiso de edición para administrar el uso compartido."
 
 #. js-lingui-id: C4RwTo
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -10567,7 +10567,7 @@ msgstr "General - Ajustes"
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "General access"
-msgstr ""
+msgstr "Acceso general"
 
 #. js-lingui-id: Ye6I4I
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -11952,7 +11952,7 @@ msgstr "Código de verificación inválido. Por favor intenta de nuevo."
 #. js-lingui-id: eoPFiu
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Invitation access"
-msgstr ""
+msgstr "Acceso mediante invitación"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -11971,7 +11971,7 @@ msgstr "Invitar"
 #. js-lingui-id: YiNcxh
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Invite as"
-msgstr ""
+msgstr "Invitar como"
 
 #. js-lingui-id: 0M8+El
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -13007,7 +13007,7 @@ msgstr "Cargando chats..."
 #. js-lingui-id: w81Nov
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Loading conversation…"
-msgstr ""
+msgstr "Cargando conversación…"
 
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -13350,7 +13350,7 @@ msgstr "Administrado"
 #. js-lingui-id: sByWNI
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Managed access"
-msgstr ""
+msgstr "Acceso administrado"
 
 #. js-lingui-id: BWTzAb
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -14613,13 +14613,11 @@ msgstr "Sin cuerpo"
 
 #. js-lingui-id: O7I76L
 #: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No Call Recording"
 msgstr "Sin grabación de llamada"
 
 #. js-lingui-id: 8Qo8A6
 #: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No call recording exists for this calendar event yet."
 msgstr "Todavía no existe ninguna grabación de llamadas para este evento de calendario."
 
@@ -14896,7 +14894,7 @@ msgstr "Ninguna actividad coincidente"
 #. js-lingui-id: Dfn8RY
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "No matching people or roles"
-msgstr ""
+msgstr "No hay personas ni roles coincidentes"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -15143,9 +15141,15 @@ msgid "No topic"
 msgstr "Sin tema"
 
 #. js-lingui-id: 3Y/oDZ
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No Transcript"
 msgstr "Sin transcripción"
+
+#. js-lingui-id: oHPm8v
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No transcript is available for this calendar event yet."
+msgstr "Aún no hay una transcripción disponible para este evento del calendario."
 
 #. js-lingui-id: g+1H2/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -16481,7 +16485,7 @@ msgstr "Pendiente"
 #. js-lingui-id: R/RRKy
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "People and roles with access"
-msgstr ""
+msgstr "Personas y roles con acceso"
 
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -17721,7 +17725,7 @@ msgstr "Eliminar {origin}"
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessSelect.tsx
 msgid "Remove access"
-msgstr ""
+msgstr "Quitar acceso"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -18174,7 +18178,7 @@ msgstr "Restaurar la configuración del tipo de actividad definida por la aplica
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Restricted"
-msgstr ""
+msgstr "Restringido"
 
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -18304,7 +18308,7 @@ msgstr "Rol"
 #. js-lingui-id: mZjYrm
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Role and field permissions still apply."
-msgstr ""
+msgstr "Los permisos de roles y campos siguen aplicándose."
 
 #. js-lingui-id: l2yKTq
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -18878,7 +18882,7 @@ msgstr "Opciones de búsqueda"
 #. js-lingui-id: 0baLFk
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Search people or roles"
-msgstr ""
+msgstr "Buscar personas o roles"
 
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -19713,7 +19717,7 @@ msgstr "Compartir"
 #. js-lingui-id: xt9Ypy
 #: src/modules/ai/components/AiChatSharingDropdown.tsx
 msgid "Share conversation"
-msgstr ""
+msgstr "Compartir conversación"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -19748,7 +19752,7 @@ msgstr "Enlace para compartir copiado al portapapeles"
 #. js-lingui-id: Z+MFnO
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Sharing settings could not be loaded."
-msgstr ""
+msgstr "No se pudieron cargar los ajustes de uso compartido."
 
 #. js-lingui-id: Xzq3Vx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -19832,7 +19836,7 @@ msgstr "Mostrar solo filas con errores"
 #. js-lingui-id: iBertJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the sharing dropdown on AI conversations when record sharing is enabled."
-msgstr ""
+msgstr "Mostrar el menú desplegable para compartir en las conversaciones de IA cuando esté habilitado el uso compartido de registros."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -21564,7 +21568,7 @@ msgstr "Este contenido se guardó en un formato anterior y no se puede editar aq
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "This conversation is no longer available."
-msgstr ""
+msgstr "Esta conversación ya no está disponible."
 
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -23269,7 +23273,7 @@ msgstr "Período de uso"
 #. js-lingui-id: js4Y6w
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
-msgstr ""
+msgstr "Usar ‘{trimmedSidePanelSearch}’ con..."
 
 #. js-lingui-id: MNOlLY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23732,7 +23736,7 @@ msgstr "Vista no compartida"
 #. js-lingui-id: K946OL
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "View only — You can read this conversation."
-msgstr ""
+msgstr "Solo lectura — Puedes leer esta conversación."
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -23777,7 +23781,7 @@ msgstr "Ver uso"
 #. js-lingui-id: M/TIv1
 #: src/modules/object-record/record-sharing/constants/RecordShareAccessLevelOptions.ts
 msgid "Viewer"
-msgstr ""
+msgstr "Lector"
 
 #. js-lingui-id: 1I6UoR
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -24477,7 +24481,7 @@ msgstr "Espacio de trabajo"
 #. js-lingui-id: QlqLcK
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Workspace access is also managed by an application."
-msgstr ""
+msgstr "El acceso al espacio de trabajo también se administra mediante una aplicación."
 
 #. js-lingui-id: rxazlH
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -24693,7 +24697,7 @@ msgstr "Ayer"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "You"
-msgstr ""
+msgstr "Tú"
 
 #. js-lingui-id: lWUeEt
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
