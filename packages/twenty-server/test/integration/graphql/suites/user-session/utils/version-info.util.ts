@@ -1,7 +1,7 @@
 import { versionInfoQueryFactory } from 'test/integration/graphql/suites/user-session/utils/version-info-query-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
@@ -13,7 +13,7 @@ export const versionInfo = async ({
 }: Omit<PerformMetadataQueryParams<never>, 'input'>): CommonResponseBody<{
   versionInfo: VersionInfoDTO;
 }> => {
-  const response = await makeAdminPanelAPIRequest(
+  const response = await makeAdminPanelApiRequest(
     versionInfoQueryFactory(),
     token,
   );

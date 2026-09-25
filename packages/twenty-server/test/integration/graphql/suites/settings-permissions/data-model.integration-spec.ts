@@ -8,7 +8,7 @@ import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/s
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -76,7 +76,7 @@ describe('datamodel permissions', () => {
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -105,7 +105,7 @@ describe('datamodel permissions', () => {
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -125,7 +125,7 @@ describe('datamodel permissions', () => {
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -155,7 +155,7 @@ describe('datamodel permissions', () => {
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -214,7 +214,7 @@ describe('datamodel permissions', () => {
           });
 
           const response =
-            await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+            await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
           expect(response.body.data).toBeNull();
           expect(response.body.errors).toBeDefined();
@@ -233,7 +233,7 @@ describe('datamodel permissions', () => {
           });
 
           const response =
-            await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+            await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
           expect(response.body.data).toBeNull();
           expect(response.body.errors).toBeDefined();

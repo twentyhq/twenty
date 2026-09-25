@@ -1,5 +1,5 @@
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -21,7 +21,7 @@ export const findOneOperation = async ({
     filter,
   });
 
-  const response = await makeGraphqlAPIRequest(graphqlOperation);
+  const response = await makeGraphqlApiRequest(graphqlOperation);
 
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
