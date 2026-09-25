@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { CronExpressionParser } from 'cron-parser';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -42,9 +43,11 @@ export class CronTriggerDeduplicationService {
 
     const dedupKey = `${keyPrefix}:${lastTriggerTimestamp}`;
 
-    return this.cacheStorageService.acquireLock(
+    const lockToken = await this.cacheStorageService.acquireLock(
       dedupKey,
       CRON_DISPATCH_DEDUP_TTL_MS,
     );
+
+    return isDefined(lockToken);
   }
 }

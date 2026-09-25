@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   CacheLockException,
   CacheLockExceptionCode,
@@ -35,14 +37,22 @@ export class CacheLockService {
     const { ms = 100, maxRetries = 50, ttl = 5_500 } = options || {};
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const acquired = await this.cacheStorageService.acquireLock(key, ttl);
+      const token = await this.cacheStorageService.acquireLock(key, ttl);
 
-      if (acquired) {
+      if (isDefined(token)) {
+        // Renewing the lease while fn runs keeps a slow critical section from
+        // outliving the TTL and letting a second caller in
+        const leaseRenewal = setInterval(() => {
+          void this.renewLease(key, token, ttl);
+        }, ttl / 3);
+
         try {
           return await fn();
         } finally {
+          clearInterval(leaseRenewal);
+
           try {
-            await this.cacheStorageService.releaseLock(key);
+            await this.cacheStorageService.releaseLock(key, token);
           } catch (releaseError) {
             this.logger.warn(
               `Failed to release lock for key "${key}": ${releaseError}`,
@@ -58,5 +68,21 @@ export class CacheLockService {
       `Failed to acquire lock for key: ${key}`,
       CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT,
     );
+  }
+
+  private async renewLease(key: string, token: string, ttl: number) {
+    try {
+      const extended = await this.cacheStorageService.extendLock(
+        key,
+        token,
+        ttl,
+      );
+
+      if (!extended) {
+        this.logger.warn(`Lost lock for key "${key}" before it was released`);
+      }
+    } catch (error) {
+      this.logger.warn(`Failed to renew lock for key "${key}": ${error}`);
+    }
   }
 }
