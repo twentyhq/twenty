@@ -955,21 +955,18 @@ export class FileStorageService {
       this.resolveApplicationIdOrThrow(to),
     ]);
 
-    let sourceFile: Pick<FileEntity, 'mimeType' | 'size' | 'settings'> | null =
-      await this.findFileByPath({
+    const sourceFile =
+      (await this.findFileByPath({
         fileRepository: this.fileRepository,
         workspaceId: from.workspaceId,
         filePath,
         applicationId: sourceApplicationId,
-      });
-
-    if (!isDefined(sourceFile)) {
-      sourceFile = await this.createFileRowFromStorageOrThrow({
+      })) ??
+      (await this.createFileRowFromStorageOrThrow({
         resourceIdentifier: from,
         filePath,
         applicationId: sourceApplicationId,
-      });
-    }
+      }));
 
     return this.copyFile({
       from,
