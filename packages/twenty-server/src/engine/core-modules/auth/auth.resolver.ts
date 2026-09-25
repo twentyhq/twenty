@@ -792,6 +792,8 @@ export class AuthResolver {
         user.email,
       );
 
+      await this.loginTokenService.consumeLoginToken(tokenPayload);
+
       authTokens =
         await this.authService.generateImpersonationAccessTokenAndRefreshToken({
           workspaceId,
@@ -802,6 +804,8 @@ export class AuthResolver {
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
+
+      await this.loginTokenService.consumeLoginToken(tokenPayload);
 
       authTokens = await this.authService.verify(
         user.email,
@@ -861,7 +865,7 @@ export class AuthResolver {
   private async validateAndDecodeLoginToken(
     loginToken: string,
   ): Promise<LoginTokenJwtPayload> {
-    return await this.loginTokenService.verifyAndConsumeLoginToken(loginToken);
+    return await this.loginTokenService.verifyLoginToken(loginToken);
   }
 
   private async validateWorkspaceAccess(
