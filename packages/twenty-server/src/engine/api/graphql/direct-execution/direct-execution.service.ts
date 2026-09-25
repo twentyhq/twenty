@@ -78,7 +78,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type DirectExecutionResult = {
+export type DirectExecutionResult = {
   data?: Record<string, unknown>;
   errors?: GraphQLFormattedError[];
 };
@@ -200,19 +200,13 @@ export class DirectExecutionService {
       hasWorkspaceFields ? this.executeWorkspaceQuery(req, document) : null,
     ]);
 
-    const result = this.mergeDirectExecutionResults(
+    return this.mergeDirectExecutionResults(
       introspectionResult,
       workspaceResult,
     );
-
-    if (isDefined(result)) {
-      this.recordOperationMetrics(result);
-    }
-
-    return result;
   }
 
-  private recordOperationMetrics(result: DirectExecutionResult): void {
+  recordOperationMetrics(result: DirectExecutionResult): void {
     if (!isNonEmptyArray(result.errors)) {
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.GraphqlOperation200,
