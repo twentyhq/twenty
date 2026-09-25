@@ -162,8 +162,34 @@ describe('DeleteWorkflowRunsCommand', () => {
       getIds(getWorkflowRunTable(OTHER_WORKSPACE_ID).getRecords()),
     ).toEqual(getIds(otherWorkspaceWorkflowRuns));
     expect(loggerLogSpy).toHaveBeenCalledWith(
-      `Deleted ${oldWorkflowRuns.length} workflow runs`,
+      `Deleted ${oldWorkflowRuns.length + oldSoftDeletedWorkflowRuns.length} workflow runs`,
     );
+  });
+
+  it('should delete old runs that are all soft-deleted', async () => {
+    const oldSoftDeletedWorkflowRuns = buildWorkflowRuns({
+      count: 3,
+      createdAt: OLD_CREATED_AT,
+      idPrefix: 'old-trashed',
+      deletedAt: OLD_CREATED_AT,
+    });
+    const recentWorkflowRuns = buildWorkflowRuns({
+      count: 5,
+      createdAt: RECENT_CREATED_AT,
+      idPrefix: 'recent',
+    });
+
+    setWorkflowRuns({
+      [WORKSPACE_ID]: [...oldSoftDeletedWorkflowRuns, ...recentWorkflowRuns],
+    });
+    command.parseCreatedBefore(CREATED_BEFORE);
+
+    await runOnWorkspace();
+
+    expect(getIds(getWorkflowRunTable(WORKSPACE_ID).getRecords())).toEqual(
+      getIds(recentWorkflowRuns),
+    );
+    expect(loggerLogSpy).toHaveBeenCalledWith('Deleted 3 workflow runs');
   });
 
   it('should not delete anything when no run is older than the cutoff', async () => {

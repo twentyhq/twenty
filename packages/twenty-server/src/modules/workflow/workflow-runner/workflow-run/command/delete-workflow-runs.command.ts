@@ -64,6 +64,7 @@ export class DeleteWorkflowRunsCommand extends ProvisionedWorkspaceCommandRunner
 
         const workflowRunCount = await workflowRunRepository.count({
           where: { createdAt: LessThan(createdBefore) },
+          withDeleted: true,
         });
 
         if (!options.dryRun && workflowRunCount > 0) {
