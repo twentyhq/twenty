@@ -12345,7 +12345,7 @@ msgstr "Idiomas"
 #. js-lingui-id: oWZaVM
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages without a translation show the source text."
-msgstr ""
+msgstr "Los idiomas sin traducción muestran el texto de origen."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14841,7 +14841,7 @@ msgstr "No se reintentó ningún trabajo{errorDetails}"
 #. js-lingui-id: CYafz+
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 msgid "No languages found"
-msgstr ""
+msgstr "No se encontraron idiomas"
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -18555,7 +18555,7 @@ msgstr "Guarda el registro antes de adjuntar un archivo."
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
-msgstr ""
+msgstr "Guarda primero los cambios"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -18685,7 +18685,7 @@ msgstr "Buscar un campo..."
 #. js-lingui-id: grvmBE
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Search a language..."
-msgstr ""
+msgstr "Buscar un idioma..."
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -21029,7 +21029,7 @@ msgstr "Texto"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 msgid "Text and background colors"
-msgstr ""
+msgstr "Colores de texto y de fondo"
 
 #. js-lingui-id: MapzEo
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -22333,7 +22333,7 @@ msgstr ""
 #. js-lingui-id: M4zYAl
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
-msgstr ""
+msgstr "Convertir en"
 
 #. js-lingui-id: 8680YN
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
