@@ -101,6 +101,9 @@ const meta: Meta<PageDecoratorArgs> = {
 
     return () => finishLoadingPermissions?.();
   },
+  afterEach: () => {
+    jotaiStore.set(isCookieAuthActiveState.atom, false);
+  },
   parameters: {
     msw: {
       handlers: buildHandlers(),
