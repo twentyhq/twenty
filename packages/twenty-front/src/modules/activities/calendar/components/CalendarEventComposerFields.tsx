@@ -21,6 +21,7 @@ import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/Dra
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -56,7 +57,7 @@ type CalendarEventComposerFieldsProps = {
   composerState: ReturnType<typeof useCalendarEventComposer>;
   contextRecord: EmailComposerContextRecord;
   onAddAccount: () => void;
-  onReauthorize: () => void;
+  onReauthorize?: () => void;
 };
 
 export const CalendarEventComposerFields = ({
@@ -317,8 +318,16 @@ export const CalendarEventComposerFields = ({
             <Callout
               variant="error"
               title={t`Calendar access needs approval`}
-              description={t`Reconnect this account to grant permission to create calendar events.`}
-              action={{ label: t`Reconnect`, onClick: onReauthorize }}
+              description={
+                isDefined(onReauthorize)
+                  ? t`Reconnect this account to grant permission to create calendar events.`
+                  : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
+              }
+              action={
+                isDefined(onReauthorize)
+                  ? { label: t`Reconnect`, onClick: onReauthorize }
+                  : undefined
+              }
             />
           )}
           {!composerState.hasValidDateRange && (

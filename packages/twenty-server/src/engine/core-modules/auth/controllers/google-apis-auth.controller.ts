@@ -22,6 +22,7 @@ import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-module
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -37,6 +38,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class GoogleAPIsAuthController {
   constructor(
     private readonly googleAPIsService: GoogleAPIsService,
+    private readonly transientTokenService: TransientTokenService,
     private readonly connectedAccountOAuthService: ConnectedAccountOAuthService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly onboardingService: OnboardingService,
@@ -84,9 +86,7 @@ export class GoogleAPIsAuthController {
       } = user;
 
       const { workspaceMemberId, userId, workspaceId } =
-        await this.connectedAccountOAuthService.verifyTransientTokenAndPermissions(
-          transientToken,
-        );
+        await this.transientTokenService.verifyTransientToken(transientToken);
 
       if (!workspaceId) {
         throw new AuthException(
@@ -97,6 +97,11 @@ export class GoogleAPIsAuthController {
 
       workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
+      });
+
+      await this.connectedAccountOAuthService.verifyUserCanConnectAccount({
+        userId,
+        workspaceId,
       });
 
       const handle = emails[0].value.toLowerCase();
@@ -114,12 +119,10 @@ export class GoogleAPIsAuthController {
           skipMessageChannelConfiguration,
         });
 
-      if (userId) {
-        await this.onboardingService.completeOnboardingConnectAccountStep({
-          userId,
-          workspaceId,
-        });
-      }
+      await this.onboardingService.completeOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+      });
 
       if (!workspace) {
         throw new AuthException(

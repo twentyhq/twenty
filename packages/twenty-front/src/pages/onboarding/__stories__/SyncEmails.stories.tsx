@@ -7,6 +7,7 @@ import { AppPath } from 'twenty-shared/types';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { SKIP_SYNC_EMAIL_ONBOARDING_STEP } from '@/onboarding/graphql/mutations/skipSyncEmailOnboardingStep';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -93,6 +94,7 @@ const meta: Meta<PageDecoratorArgs> = {
   beforeEach: async () => {
     await mockedApolloClient.clearStore();
     jotaiStore.set(isCookieAuthActiveState.atom, true);
+    jotaiStore.set(isCurrentUserLoadedState.atom, false);
     jotaiStore.set(currentUserWorkspaceState.atom, null);
     skipSyncEmailRequest.mockClear();
     finishLoadingPermissions = undefined;
@@ -206,6 +208,14 @@ export const PermissionsLoading: Story = {
         shouldWaitForPermissions: true,
       }),
     },
+  },
+  beforeEach: () => {
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      permissionFlags: [],
+      objectsPermissions: [],
+      twoFactorAuthenticationMethodSummary: [],
+      isImpersonating: false,
+    });
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);

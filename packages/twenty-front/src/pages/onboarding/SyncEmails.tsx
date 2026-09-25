@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -15,7 +15,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
@@ -28,7 +27,7 @@ export const SyncEmails = () => {
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
-  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const hasConnectedAccountsPermission = useHasPermissionFlag(
     PermissionFlagType.CONNECTED_ACCOUNTS,
   );
@@ -101,7 +100,7 @@ export const SyncEmails = () => {
     setHasAutoSkipFailed(true);
   }, []);
 
-  if (!isClientConfigLoaded || !isDefined(currentUserWorkspace)) {
+  if (!isClientConfigLoaded || !isCurrentUserLoaded) {
     return null;
   }
 
