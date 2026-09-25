@@ -23,6 +23,9 @@ export const buildLeafTree = ({
       node = child;
     }
     const leafKey = leaf.path[leaf.path.length - 1];
+    if (leafKey === undefined) {
+      throw new Error('Token leaf has an empty path.');
+    }
     if (node[leafKey] !== undefined) {
       throw new Error(
         `Token path collision at "${leaf.path.join('.')}": "${leafKey}" is already defined.`,

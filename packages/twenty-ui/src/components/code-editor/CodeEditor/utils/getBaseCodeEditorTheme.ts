@@ -13,6 +13,9 @@ const convertColorToHex = (color: string): string => {
 
   if (isDefined(displayP3Match)) {
     const [, r, g, b, a] = displayP3Match;
+    if (!isDefined(r) || !isDefined(g) || !isDefined(b)) {
+      return color;
+    }
     const rHex = Math.round(parseFloat(r) * 255)
       .toString(16)
       .padStart(2, '0');

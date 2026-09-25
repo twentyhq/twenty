@@ -13,8 +13,7 @@ const collectLeavesUnderPath = (
   path: string[],
 ): CollectedTokenLeaf[] => {
   const leaves: CollectedTokenLeaf[] = [];
-  for (const key of Object.keys(node)) {
-    const value = node[key];
+  for (const [key, value] of Object.entries(node)) {
     const valuePath = [...path, key];
     if (isLeaf(value)) {
       leaves.push({

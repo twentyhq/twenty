@@ -24,7 +24,7 @@ describe('collectLeaves', () => {
           dark: '2147483647',
           unit: 'number',
         },
-      })[0].unit,
+      })[0]?.unit,
     ).toBe('number');
   });
 

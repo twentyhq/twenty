@@ -212,7 +212,7 @@ export const RendererRemountDuringExit: Story = {
       expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
     await userEvent.click(
-      within(region).getAllByRole('button', { name: 'Close' })[0],
+      within(region).getAllByRole('button', { name: 'Close' })[0]!,
     );
     await userEvent.click(
       canvas.getByRole('button', { name: 'Enter workspace' }),
@@ -376,7 +376,11 @@ export const StackReflow: Story = {
     await waitFor(() =>
       expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
-    const [first, middle, last] = body.getAllByRole('status');
+    const statuses = body.getAllByRole('status');
+    expect(statuses).toHaveLength(3);
+    const first = statuses[0]!;
+    const middle = statuses[1]!;
+    const last = statuses[2]!;
     const firstTop = first.getBoundingClientRect().top;
     const gap = middle.getBoundingClientRect().top - firstTop;
     const isTopAnchored = getComputedStyle(region).top === '0px';
@@ -424,7 +428,11 @@ export const ReopenDuringExit: Story = {
     await waitFor(() =>
       expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
-    const [toast, secondToast, thirdToast] = body.getAllByRole('status');
+    const statuses = body.getAllByRole('status');
+    expect(statuses).toHaveLength(3);
+    const toast = statuses[0]!;
+    const secondToast = statuses[1]!;
+    const thirdToast = statuses[2]!;
     const id = toast.id;
     await userEvent.click(within(toast).getByRole('button', { name: 'Close' }));
     if (isMotionEnabled()) {
@@ -439,7 +447,7 @@ export const ReopenDuringExit: Story = {
       restoredToasts.slice(0, 2).map((notification) => notification.id),
     ).toEqual([secondToast.id, thirdToast.id]);
     expect(toast).not.toBeInTheDocument();
-    expect(restoredToasts[2].id).not.toBe(id);
+    expect(restoredToasts[2]?.id).not.toBe(id);
     expect(restoredToasts[2]).toHaveTextContent('Already saved');
     expect(restoredToasts[2]).toBeVisible();
     expect(args.onClose).toHaveBeenCalledOnce();
