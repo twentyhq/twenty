@@ -1,4 +1,4 @@
-import { type EachTestingContext } from '@/testing/types/EachTestingContext.type';
+import { type EachTestingContext } from '@/testing/types/EachTestingContext';
 import { deepMerge } from '@/utils';
 
 type DeepMergeTestCase<T extends object> = {

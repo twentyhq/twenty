@@ -11,7 +11,7 @@ import { CustomSlashMenuSelectedIndexSyncEffect } from '@/blocknote-editor/compo
 import type {
   CustomSlashMenuProps,
   SuggestionItem,
-} from '@/blocknote-editor/types/types';
+} from '@/blocknote-editor/types/SuggestionMenuItems';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';

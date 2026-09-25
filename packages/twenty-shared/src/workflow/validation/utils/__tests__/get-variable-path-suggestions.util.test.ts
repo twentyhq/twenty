@@ -1,4 +1,4 @@
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/BaseOutputSchema';
 
 import { getVariablePathSuggestions } from '../get-variable-path-suggestions.util';
 
