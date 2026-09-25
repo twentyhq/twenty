@@ -197,7 +197,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
         <>
-          <Card rounded>
+          <Card.Root rounded>
             {authProviders.google === true && (
               <SettingsOptionCardContentSwitch
                 Icon={IconGoogle}
@@ -234,8 +234,8 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 onChange={() => toggleAuthMethod('password')}
               />
             )}
-          </Card>
-          <Card rounded>
+          </Card.Root>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconLink}
               title={t`Invite by Link`}
@@ -268,7 +268,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               </SettingsOptionCardContentSelect>
             )}
             <TwoFactorAuthenticationSwitch />
-          </Card>
+          </Card.Root>
         </>
       )}
     </StyledSettingsSecurityOptionsList>

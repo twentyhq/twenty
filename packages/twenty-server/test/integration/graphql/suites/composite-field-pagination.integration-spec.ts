@@ -8,7 +8,7 @@ import {
 } from 'test/integration/constants/test-person-ids.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('GraphQL People Pagination with Composite Field Sorting', () => {
@@ -56,7 +56,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(graphqlOperation).expect(200);
+      await makeGraphqlApiRequest(graphqlOperation).expect(200);
     }
   });
 
@@ -75,7 +75,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
     });
 
     const firstPageResponse =
-      await makeGraphqlAPIRequest(firstPageOperation).expect(200);
+      await makeGraphqlApiRequest(firstPageOperation).expect(200);
 
     const firstPagePeople = firstPageResponse.body.data.people.edges.map(
       (edge: any) => edge.node,
@@ -109,7 +109,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
     });
 
     const secondPageResponse =
-      await makeGraphqlAPIRequest(secondPageOperation).expect(200);
+      await makeGraphqlApiRequest(secondPageOperation).expect(200);
 
     const secondPagePeople = secondPageResponse.body.data.people.edges.map(
       (edge: any) => edge.node,
@@ -148,7 +148,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
     });
 
     const thirdPageResponse =
-      await makeGraphqlAPIRequest(thirdPageOperation).expect(200);
+      await makeGraphqlApiRequest(thirdPageOperation).expect(200);
 
     const thirdPagePeople = thirdPageResponse.body.data.people.edges.map(
       (edge: any) => edge.node,
@@ -175,7 +175,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
     });
 
     const firstPageResponse =
-      await makeGraphqlAPIRequest(firstPageOperation).expect(200);
+      await makeGraphqlApiRequest(firstPageOperation).expect(200);
 
     const firstPagePeople = firstPageResponse.body.data.people.edges.map(
       (edge: any) => edge.node,
@@ -203,7 +203,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
     });
 
     const secondPageResponse =
-      await makeGraphqlAPIRequest(secondPageOperation).expect(200);
+      await makeGraphqlApiRequest(secondPageOperation).expect(200);
 
     const secondPagePeople = secondPageResponse.body.data.people.edges.map(
       (edge: any) => edge.node,
@@ -231,7 +231,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
     });
 
     const allPeopleResponse =
-      await makeGraphqlAPIRequest(allPeopleOperation).expect(200);
+      await makeGraphqlApiRequest(allPeopleOperation).expect(200);
 
     const allPeople = allPeopleResponse.body.data.people.edges.map(
       (edge: any) => edge.node,
@@ -253,7 +253,7 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       before: lastPersonCursor,
     });
 
-    const backwardPageResponse = await makeGraphqlAPIRequest(
+    const backwardPageResponse = await makeGraphqlApiRequest(
       backwardPageOperation,
     ).expect(200);
 

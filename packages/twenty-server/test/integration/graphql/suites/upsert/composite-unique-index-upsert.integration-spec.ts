@@ -1,5 +1,5 @@
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -176,7 +176,7 @@ const GQL_FIELDS = `
 `;
 
 const upsertRecords = (data: object[], upsert: boolean) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     createManyOperationFactory({
       objectMetadataSingularName: OBJECT.nameSingular,
       objectMetadataPluralName: OBJECT.namePlural,
@@ -204,7 +204,7 @@ const DUAL_GQL_FIELDS = `
 `;
 
 const upsertDualRecords = (data: object[], upsert: boolean) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     createManyOperationFactory({
       objectMetadataSingularName: DUAL_OBJECT.nameSingular,
       objectMetadataPluralName: DUAL_OBJECT.namePlural,
@@ -214,7 +214,9 @@ const upsertDualRecords = (data: object[], upsert: boolean) =>
     }),
   );
 
-const getDualRecords = (response: { body: { data: Record<string, unknown> } }) =>
+const getDualRecords = (response: {
+  body: { data: Record<string, unknown> };
+}) =>
   response.body.data.createDualCompositeUpsertRecords as {
     id: string;
     aFirstKey: string;
@@ -254,7 +256,6 @@ describe('upsert with composite unique index', () => {
 
     expect(created.id).toBe(recordId);
     expect(created.payload).toBe('original');
-
 
     const upserted = getRecords(
       await upsertRecords(

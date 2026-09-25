@@ -49,6 +49,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationUninstallService,
     ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     ApplicationManifestExportService,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     ApplicationManifestApplyService,

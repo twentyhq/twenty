@@ -1,5 +1,5 @@
 import { getMinutesDescription } from '@/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription';
-import { DEFAULT_CRON_DESCRIPTION_OPTIONS } from '@/workflow/workflow-trigger/utils/cron-to-human/types/cronDescriptionOptions';
+import { DEFAULT_CRON_DESCRIPTION_OPTIONS } from '@/workflow/workflow-trigger/utils/cron-to-human/types/CronDescriptionOptions';
 
 describe('getMinutesDescription', () => {
   const options = DEFAULT_CRON_DESCRIPTION_OPTIONS;

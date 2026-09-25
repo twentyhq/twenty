@@ -33,7 +33,7 @@ export const SettingsTableCard = ({
 }: SettingsTableCardProps) => {
   const theme = useTheme();
   return (
-    <Card
+    <Card.Root
       rounded={rounded}
       className={className}
       backgroundColor={themeCssVariables.background.secondary}
@@ -61,6 +61,6 @@ export const SettingsTableCard = ({
           </TableRow>
         ))}
       </Table>
-    </Card>
+    </Card.Root>
   );
 };

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SAML identity provider creation should fail when the id is already used by an identity provider 1`] = `
+{
+  "extensions": {
+    "code": "CONFLICT",
+    "subCode": "IDENTITY_PROVIDER_ALREADY_EXISTS",
+    "userFriendlyMessage": "Identity provider already exists.",
+  },
+  "message": "Identity provider already exists",
+  "name": "ConflictError",
+}
+`;

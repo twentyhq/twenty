@@ -3,7 +3,7 @@ import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
@@ -22,7 +22,7 @@ const StyledCardContentContainer = styled.div`
   }
 `;
 
-const StyledDayCardContent = styled(CardContent)`
+const StyledDayCardContent = styled(Card.Content)`
   @keyframes calendarDayEnded {
     to {
       background-color: ${themeCssVariables.background.primary};

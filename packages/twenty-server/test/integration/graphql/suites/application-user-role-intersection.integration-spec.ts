@@ -4,7 +4,7 @@ import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-field
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -93,7 +93,7 @@ const findApplicationDefaultRoleId = async (): Promise<string | null> => {
 };
 
 const createCompany = async (id: string, name: string) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: COMPANY_GQL_FIELDS,
@@ -102,7 +102,7 @@ const createCompany = async (id: string, name: string) =>
   );
 
 const destroyCompany = async (id: string) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     destroyOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: 'id',
@@ -111,7 +111,7 @@ const destroyCompany = async (id: string) =>
   );
 
 const findCompanyNames = async (token?: string): Promise<string[]> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -191,7 +191,7 @@ describe('An application acting for a user is bound by both roles', () => {
   });
 
   it('should refuse an update the application role forbids and the user role allows', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -220,7 +220,7 @@ describe('An application acting for a user is bound by both roles', () => {
   });
 
   it('should let the same update through when the user acts on their own', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,

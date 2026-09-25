@@ -44,6 +44,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     PendingFileCleanupCronCommand,
     provideWorkspaceScopedRepository(FileEntity),
     provideWorkspaceScopedRepository(FieldMetadataEntity),
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     FileUploadService,
