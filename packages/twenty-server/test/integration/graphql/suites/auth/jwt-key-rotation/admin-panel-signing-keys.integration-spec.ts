@@ -8,7 +8,7 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
@@ -111,7 +111,7 @@ describe('Admin panel signing keys (integration)', () => {
   });
 
   it('exposes signing keys with current marker and a 7-day window', async () => {
-    const response = await makeAdminPanelAPIRequest({
+    const response = await makeAdminPanelApiRequest({
       query: GET_SIGNING_KEYS,
     });
 
@@ -163,7 +163,7 @@ describe('Admin panel signing keys (integration)', () => {
     expect(userBeforeRevokeErrors).toBeUndefined();
     expect(userBeforeRevoke?.currentUser?.id).toBe(sharedAccessPayload.userId);
 
-    const response = await makeAdminPanelAPIRequest({
+    const response = await makeAdminPanelApiRequest({
       query: REVOKE_SIGNING_KEY,
       variables: { id: obsoleteKid },
     });
@@ -203,7 +203,7 @@ describe('Admin panel signing keys (integration)', () => {
     );
     const previousCurrentKid: string = before[0].id;
 
-    const response = await makeAdminPanelAPIRequest({
+    const response = await makeAdminPanelApiRequest({
       query: REVOKE_SIGNING_KEY,
       variables: { id: previousCurrentKid },
     });

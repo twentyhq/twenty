@@ -8,7 +8,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { findOneApplicationIdByUniversalIdentifier } from 'test/integration/secret-encryption/utils/find-one-application.util';
 import { updateOneApplicationVariable } from 'test/integration/secret-encryption/utils/update-one-application-variable.util';
 
@@ -110,7 +110,7 @@ describe('Manifest sync - deprecating an application variable', () => {
   });
 
   it('should still expose a deprecated variable to the application', async () => {
-    const { data } = await makeMetadataAPIRequest({
+    const { data } = await makeMetadataApiRequest({
       query: gql`
         query FindAppVariablesForDeprecatedVariableTest(
           $universalIdentifier: UUID!

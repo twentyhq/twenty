@@ -1,11 +1,11 @@
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 export const testRestFailingScenario = async (
   objectMetadataPluralName: string,
   filter: any,
 ) => {
   const encodedFilter = encodeURIComponent(filter);
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'get',
     path: `/${objectMetadataPluralName}?filter=${encodedFilter}`,
   });

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { Step, type StepProps } from './Step';

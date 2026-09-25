@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -75,7 +75,7 @@ describe('unsubscribeTopicResolver (integration)', () => {
     description?: string;
     visibility?: 'PUBLIC' | 'PRIVATE';
   }) => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: CREATE_UNSUBSCRIBE_TOPIC,
       variables: { input },
     });
@@ -111,7 +111,7 @@ describe('unsubscribeTopicResolver (integration)', () => {
     });
     const createdId = createResponse.body.data.createUnsubscribeTopic.id;
 
-    const listResponse = await makeMetadataAPIRequest({
+    const listResponse = await makeMetadataApiRequest({
       query: UNSUBSCRIBE_TOPICS,
     });
 
@@ -131,7 +131,7 @@ describe('unsubscribeTopicResolver (integration)', () => {
     const createResponse = await createTopic({ name: 'Draft topic' });
     const createdId = createResponse.body.data.createUnsubscribeTopic.id;
 
-    const updateResponse = await makeMetadataAPIRequest({
+    const updateResponse = await makeMetadataApiRequest({
       query: UPDATE_UNSUBSCRIBE_TOPIC,
       variables: {
         input: { id: createdId, name: 'Renamed topic', visibility: 'PUBLIC' },
@@ -150,7 +150,7 @@ describe('unsubscribeTopicResolver (integration)', () => {
     const createResponse = await createTopic({ name: 'Temporary topic' });
     const createdId = createResponse.body.data.createUnsubscribeTopic.id;
 
-    const deleteResponse = await makeMetadataAPIRequest({
+    const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_UNSUBSCRIBE_TOPIC,
       variables: { id: createdId },
     });
@@ -158,7 +158,7 @@ describe('unsubscribeTopicResolver (integration)', () => {
     expect(deleteResponse.body.errors).toBeUndefined();
     expect(deleteResponse.body.data.deleteUnsubscribeTopic).toBe(true);
 
-    const listResponse = await makeMetadataAPIRequest({
+    const listResponse = await makeMetadataApiRequest({
       query: UNSUBSCRIBE_TOPICS,
     });
 

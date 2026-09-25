@@ -1,7 +1,7 @@
 import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -34,7 +34,7 @@ describe('user identity is case-insensitive on email (integration)', () => {
   });
 
   it('issues a login token when signing in with a differently-cased address', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       getLoginTokenFromCredentialsQueryFactory({
         email: IDENTITY_PROVIDER_ADDRESS,
         password: PASSWORD,
@@ -52,7 +52,7 @@ describe('user identity is case-insensitive on email (integration)', () => {
   it('signs the existing user into the workspace instead of creating a second row', async () => {
     expect(await countLiveUsersWithAddress(STORED_ADDRESS)).toBe(1);
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       signUpInWorkspaceOperationFactory({
         email: IDENTITY_PROVIDER_ADDRESS,
         password: PASSWORD,

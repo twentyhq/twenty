@@ -7,7 +7,7 @@ import { type DataSource } from 'typeorm';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 
@@ -119,7 +119,7 @@ describe('Application registration claim state binding (integration)', () => {
   // Mints an authorization url the way the settings page does, and returns the
   // state GitHub will echo back plus the nonce cookie the browser receives.
   const startClaim = async (registrationId: string) => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query GithubClaimAuthorizationUrl($applicationRegistrationId: String!) {
           githubClaimAuthorizationUrl(
@@ -172,7 +172,7 @@ describe('Application registration claim state binding (integration)', () => {
       });
 
       try {
-        const response = await makeMetadataAPIRequest({
+        const response = await makeMetadataApiRequest({
           query: gql`
             query GithubClaimAuthorizationUrl(
               $applicationRegistrationId: String!

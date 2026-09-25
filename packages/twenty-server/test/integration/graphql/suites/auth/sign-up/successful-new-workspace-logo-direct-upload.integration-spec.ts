@@ -6,7 +6,7 @@ import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { putFileToUploadTarget } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { settings } from 'src/engine/constants/settings';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
@@ -97,7 +97,7 @@ describe('New workspace logo direct upload', () => {
   }, 60000);
 
   it('should let the creator upload a logo for the workspace being created', async () => {
-    const createResponse = await makeMetadataAPIRequest(
+    const createResponse = await makeMetadataApiRequest(
       {
         query: createNewWorkspaceLogoUploadMutation,
         variables: {
@@ -122,7 +122,7 @@ describe('New workspace logo direct upload', () => {
 
     expect(putResponse.status).toBe(204);
 
-    const completeResponse = await makeMetadataAPIRequest(
+    const completeResponse = await makeMetadataApiRequest(
       {
         query: completeNewWorkspaceLogoUploadMutation,
         variables: { workspaceId: newWorkspaceId, fileId: uploadTarget.fileId },
@@ -159,7 +159,7 @@ describe('New workspace logo direct upload', () => {
   }, 30000);
 
   it('should refuse a logo larger than the core picture size limit', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: createNewWorkspaceLogoUploadMutation,
         variables: {
@@ -177,7 +177,7 @@ describe('New workspace logo direct upload', () => {
   }, 30000);
 
   it('should refuse a user who is not a member of the workspace being created', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: createNewWorkspaceLogoUploadMutation,
         variables: {
@@ -197,7 +197,7 @@ describe('New workspace logo direct upload', () => {
   }, 30000);
 
   it('should refuse a workspace that is not pending creation', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: createNewWorkspaceLogoUploadMutation,
         variables: {
