@@ -3,7 +3,6 @@ import {
   type FieldMetadataType,
   type FromTo,
 } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeMorphRelationFlatFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-flat-field-name.util';
@@ -14,6 +13,7 @@ import { findFieldRelatedIndexes } from 'src/engine/metadata-modules/flat-field-
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-many-to-one-target-morph-relation-flat-field-metadatas-or-throw.util';
+import { computeSystemMorphTargetFieldLabel } from 'src/engine/metadata-modules/object-metadata/utils/compute-system-morph-target-field-label.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
@@ -55,7 +55,11 @@ const updateMorphFlatFieldName = ({
 
   const newLabel =
     fromMorphFlatFieldMetadata.isSystemSideEffect === true
-      ? capitalize(toRelationTargetFlatObjectMetadata.nameSingular)
+      ? computeSystemMorphTargetFieldLabel({
+          morphId: fromMorphFlatFieldMetadata.morphId,
+          targetObjectNameSingular:
+            toRelationTargetFlatObjectMetadata.nameSingular,
+        })
       : fromMorphFlatFieldMetadata.label;
 
   return {

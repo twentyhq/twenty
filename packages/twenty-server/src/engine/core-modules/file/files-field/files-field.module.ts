@@ -36,6 +36,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     FilesFieldDeletionListener,
     FilesFieldDeletionJob,
     provideWorkspaceScopedRepository(FileEntity),
+    provideWorkspaceScopedRepository(FieldMetadataEntity),
   ],
   exports: [FilesFieldService],
 })

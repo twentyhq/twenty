@@ -48,6 +48,9 @@ export const STANDARD_OBJECTS = {
       workflowIdIndex: {
         universalIdentifier: 'fadeab4b-79ee-4173-af79-72c51fbad888',
       },
+      agentChatThreadIdIndex: {
+        universalIdentifier: '69857371-6ff9-48fa-a9de-db4f71593431',
+      },
     },
     views: {
       allAttachments: buildStandardObjectIndexView({
@@ -67,6 +70,13 @@ export const STANDARD_OBJECTS = {
           'targetDashboard',
           'targetWorkflow',
         ],
+      }),
+      attachmentRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+        fields: STANDARD_OBJECT_FIELDS.attachment,
+        viewFieldNames: ['createdBy', 'createdAt'],
+        viewFieldGroupNames: {},
       }),
     },
   },
