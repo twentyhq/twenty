@@ -1480,6 +1480,70 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
+    describe('raw JSON operands', () => {
+      const jsonValue = { name: 'Acme', tags: ['vip-gold'] };
+
+      const evaluateRawJson = (
+        operand: ViewFilterOperand,
+        leftOperand: unknown,
+        rightOperand: unknown = '',
+      ) =>
+        evaluateFilterConditions({
+          filters: [
+            createFilter(operand, leftOperand, rightOperand, 'RAW_JSON'),
+          ],
+        });
+
+      it('should search inside objects case-insensitively', () => {
+        expect(
+          evaluateRawJson(ViewFilterOperand.CONTAINS, jsonValue, 'acme'),
+        ).toBe(true);
+        expect(
+          evaluateRawJson(ViewFilterOperand.CONTAINS, jsonValue, 'vip'),
+        ).toBe(true);
+        expect(
+          evaluateRawJson(ViewFilterOperand.CONTAINS, jsonValue, 'other'),
+        ).toBe(false);
+      });
+
+      it('should search inside stringified JSON', () => {
+        expect(
+          evaluateRawJson(
+            ViewFilterOperand.CONTAINS,
+            JSON.stringify(jsonValue),
+            'ACME',
+          ),
+        ).toBe(true);
+      });
+
+      it('should handle does not contain', () => {
+        expect(
+          evaluateRawJson(
+            ViewFilterOperand.DOES_NOT_CONTAIN,
+            jsonValue,
+            'Acme',
+          ),
+        ).toBe(false);
+        expect(
+          evaluateRawJson(ViewFilterOperand.DOES_NOT_CONTAIN, null, 'Acme'),
+        ).toBe(true);
+      });
+
+      it('should only treat missing values as empty', () => {
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, jsonValue)).toBe(
+          false,
+        );
+        expect(evaluateRawJson(ViewFilterOperand.IS_NOT_EMPTY, jsonValue)).toBe(
+          true,
+        );
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, null)).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, undefined)).toBe(
+          true,
+        );
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, '')).toBe(true);
+      });
+    });
+
     describe('error cases', () => {
       it('should throw error for unknown operand', () => {
         const filter = createFilter(

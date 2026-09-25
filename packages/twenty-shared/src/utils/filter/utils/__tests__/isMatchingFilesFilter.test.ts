@@ -104,10 +104,28 @@ describe('isMatchingFilesFilter', () => {
       ).toBe(false);
     });
 
-    it('should be case insensitive', () => {
+    it('should be case sensitive', () => {
       expect(
         isMatchingFilesFilter({
           filesFilter: { like: '%FILE.PDF%' },
+          value: [
+            {
+              fileId: '1',
+              label: 'file.pdf',
+              url: 'http://example.com/file.pdf',
+              extension: 'pdf',
+            },
+          ],
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('ilike filter', () => {
+    it('should be case insensitive', () => {
+      expect(
+        isMatchingFilesFilter({
+          filesFilter: { ilike: '%FILE.PDF%' },
           value: [
             {
               fileId: '1',
