@@ -1,9 +1,8 @@
-import { Test } from '@nestjs/testing';
-
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { randomUUID } from 'crypto';
 
-import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { RepairInitialCompanyTargetsCommand } from 'src/database/commands/repair-initial-company-targets/repair-initial-company-targets.command';
+import { type RepairInitialCompanyTargetsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790339692474-repair-initial-company-targets.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -89,14 +88,9 @@ describe('repair initial company activity targets (PostgreSQL)', () => {
     });
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      providers: [
-        RepairInitialCompanyTargetsCommand,
-        { provide: WorkspaceIteratorService, useValue: {} },
-      ],
-    }).compile();
-
-    command = module.get(RepairInitialCompanyTargetsCommand);
+    command = getAppProviderByClassName<RepairInitialCompanyTargetsCommand>(
+      'RepairInitialCompanyTargetsCommand',
+    );
     jest.spyOn(command['logger'], 'log').mockImplementation();
     jest.spyOn(command['logger'], 'warn').mockImplementation();
 
@@ -152,6 +146,55 @@ describe('repair initial company activity targets (PostgreSQL)', () => {
       happensAt: ASSIGNED_AT,
       properties: assignmentProperties(null, companyId),
     });
+  });
+
+  it('is pending in the automatic 2.43 upgrade until its cursor is completed', () => {
+    const reader = getAppProviderByClassName<UpgradeSequenceReaderService>(
+      'UpgradeSequenceReaderService',
+    );
+    const commands = reader
+      .getUpgradeSequence()
+      .filter((step) => step.kind === 'workspace' && step.version === '2.43.0');
+    const repairIndex = commands.findIndex((step) => step.command === command);
+
+    expect(repairIndex).toBeGreaterThan(0);
+    const repair = commands[repairIndex];
+    const precedingCommand = commands[repairIndex - 1];
+
+    expect(repair.timestamp).toBeGreaterThan(precedingCommand.timestamp);
+    expect(
+      reader.getPendingWorkspaceCommands({
+        workspaceCommands: commands,
+        workspaceCursor: { name: precedingCommand.name, status: 'completed' },
+      }),
+    ).toContain(repair);
+    expect(
+      reader.getPendingWorkspaceCommands({
+        workspaceCommands: commands,
+        workspaceCursor: { name: repair.name, status: 'failed' },
+      }),
+    ).toContain(repair);
+    expect(
+      reader.getPendingWorkspaceCommands({
+        workspaceCommands: commands,
+        workspaceCursor: { name: repair.name, status: 'completed' },
+      }),
+    ).not.toContain(repair);
+  });
+
+  it('retains repaired history on rollback', async () => {
+    await runRepair();
+    const before = await Promise.all(TARGET_TABLE_NAMES.map(targets));
+
+    await command.down({
+      workspaceId,
+      dataSource: global.testDataSource,
+      options: {},
+      index: 0,
+      total: 1,
+    });
+
+    expect(await Promise.all(TARGET_TABLE_NAMES.map(targets))).toEqual(before);
   });
 
   it('previews missing links, repairs both histories, and preserves existing attribution on reruns', async () => {

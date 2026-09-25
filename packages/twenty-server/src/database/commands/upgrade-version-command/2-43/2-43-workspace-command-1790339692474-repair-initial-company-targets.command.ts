@@ -4,13 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { buildInitialCompanyTargetRepairQueries } from 'src/database/commands/repair-initial-company-targets/utils/build-initial-company-target-repair-queries.util';
+import { buildInitialCompanyTargetRepairQueries } from 'src/database/commands/upgrade-version-command/2-43/utils/build-initial-company-target-repair-queries.util';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const REPAIR_BATCH_SIZE = 5_000;
 
+@RegisteredWorkspaceCommand('2.43.0', 1790339692474)
 @Command({
-  name: 'workspace:repair-initial-company-targets',
+  name: 'upgrade:2-43:repair-initial-company-targets',
   description:
     'Restore missing company activity targets supported by initial-assignment audit history',
 })
@@ -21,7 +23,16 @@ export class RepairInitialCompanyTargetsCommand extends ProvisionedWorkspaceComm
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.up(args);
+  }
+
+  async down(_args: RunOnWorkspaceArgs): Promise<void> {
+    // Repaired links have no migration-specific provenance; deleting them on
+    // rollback could remove valid activity or later user assignments.
+  }
+
+  async up({
     workspaceId,
     dataSource,
     options,
