@@ -17,11 +17,11 @@ import { ADD_STATUS_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/u
 import { ALLOW_SERVER_SCOPED_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/allow-server-scoped-file-upgrade-command-name.constant';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.type';
 import {
   FILE_STATUS,
   FileStatus,
-} from 'src/engine/core-modules/file/types/file-status.types';
+} from 'src/engine/core-modules/file/types/file-status.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';

@@ -5,7 +5,7 @@ import { MessageDirection } from 'src/modules/messaging/common/enums/message-dir
 import {
   type MessageParticipant,
   type MessageWithParticipants,
-} from 'src/modules/messaging/message-import-manager/types/message';
+} from 'src/modules/messaging/message-import-manager/types/message.type';
 import { type PersistSentMessageInput } from 'src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type';
 import { resolveOutboundThreadExternalId } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-thread-external-id.util';
 
