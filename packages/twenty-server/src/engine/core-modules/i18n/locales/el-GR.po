@@ -5451,7 +5451,7 @@ msgstr "Δεν είναι δυνατή η αναζήτηση στο πεδίο I
 #. js-lingui-id: TGM/Xy
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider already exists."
-msgstr ""
+msgstr "Ο πάροχος ταυτότητας υπάρχει ήδη."
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts

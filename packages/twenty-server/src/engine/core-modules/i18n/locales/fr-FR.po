@@ -5451,7 +5451,7 @@ msgstr "Le champ ID ne peut pas faire l'objet d'une recherche"
 #. js-lingui-id: TGM/Xy
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider already exists."
-msgstr ""
+msgstr "Le fournisseur d'identité existe déjà."
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts

@@ -5451,7 +5451,7 @@ msgstr "Az ID mezőben nem lehet keresni"
 #. js-lingui-id: TGM/Xy
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider already exists."
-msgstr ""
+msgstr "Az identitásszolgáltató már létezik."
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts

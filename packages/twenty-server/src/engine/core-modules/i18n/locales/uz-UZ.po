@@ -5451,7 +5451,7 @@ msgstr "ID maydonida qidirib bo‘lmaydi"
 #. js-lingui-id: TGM/Xy
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider already exists."
-msgstr ""
+msgstr "Identifikatsiya provayderi allaqachon mavjud."
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts

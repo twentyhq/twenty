@@ -5451,7 +5451,7 @@ msgstr "ID 필드는 검색할 수 없습니다"
 #. js-lingui-id: TGM/Xy
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider already exists."
-msgstr ""
+msgstr "ID 공급자가 이미 존재합니다."
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
