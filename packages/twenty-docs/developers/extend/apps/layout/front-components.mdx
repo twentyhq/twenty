@@ -451,7 +451,7 @@ Available hooks:
 
 ### Object metadata
 
-Use `useSelectedObjectMetadata()` to identify the object associated with a record-page widget, a front component opened in the side panel with record context, or an object-scoped command. This lets an integration select templates or other configuration for the current object without searching across objects for a record ID.
+Use `useSelectedObjectMetadata()` to identify the object associated with a record-page widget, a custom timeline row, an object-scoped command, or a front component opened in the side panel with an object (from a command, or through `openSidePanelPage` with an `objectNameSingular`). This lets an integration select templates or other configuration for the current object without searching across objects for a record ID.
 
 ```tsx
 import {

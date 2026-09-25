@@ -8,22 +8,15 @@ import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [
-      {
-        id: 'workflow-object-id',
-        nameSingular: 'workflow',
-        namePlural: 'workflows',
-        openRecordIn: 'RECORD_PAGE',
-      },
-      {
-        id: 'lead-object-id',
-        nameSingular: 'lead',
-        namePlural: 'leads',
-        openRecordIn: 'USER_CHOICE',
-      },
+      { nameSingular: 'workflow', openRecordIn: 'RECORD_PAGE' },
+      { nameSingular: 'lead', openRecordIn: 'USER_CHOICE' },
     ],
   }),
 }));
@@ -230,6 +223,13 @@ const createParentView = (parentViewObjectNameSingular: string) => ({
 });
 
 describe('useFrontComponentExecutionContext', () => {
+  beforeAll(() => {
+    setTestObjectMetadataItemsInMetadataStore(
+      getDefaultStore(),
+      getTestEnrichedObjectMetadataItemsMock(),
+    );
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
@@ -313,15 +313,18 @@ describe('useFrontComponentExecutionContext', () => {
     });
 
     it.each([
-      { objectNameSingular: 'workflow', selectedRecordIds: ['record-1'] },
+      { objectNameSingular: 'company', selectedRecordIds: ['record-1'] },
       {
-        objectNameSingular: 'lead',
+        objectNameSingular: 'person',
         selectedRecordIds: ['record-1', 'record-2'],
       },
-      { objectNameSingular: 'lead', selectedRecordIds: [] },
+      { objectNameSingular: 'person', selectedRecordIds: [] },
     ])(
       'should expose only object identity for $objectNameSingular with $selectedRecordIds',
       ({ objectNameSingular, selectedRecordIds }) => {
+        const objectMetadataItem =
+          getMockObjectMetadataItemOrThrow(objectNameSingular);
+
         const { result } = renderUseFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
           objectNameSingular,
@@ -329,9 +332,9 @@ describe('useFrontComponentExecutionContext', () => {
         });
 
         expect(result.current.executionContext.selectedObjectMetadata).toEqual({
-          id: `${objectNameSingular}-object-id`,
-          nameSingular: objectNameSingular,
-          namePlural: `${objectNameSingular}s`,
+          id: objectMetadataItem.id,
+          nameSingular: objectMetadataItem.nameSingular,
+          namePlural: objectMetadataItem.namePlural,
         });
         expect(result.current.executionContext.selectedRecordIds).toEqual(
           selectedRecordIds,
@@ -342,24 +345,24 @@ describe('useFrontComponentExecutionContext', () => {
     it('should update object metadata and clear it when context is absent or unresolved', () => {
       const { result, rerender } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
-        objectNameSingular: 'workflow',
+        objectNameSingular: 'company',
         selectedRecordIds: ['record-1'],
       });
 
       expect(result.current.executionContext.selectedObjectMetadata?.id).toBe(
-        'workflow-object-id',
+        getMockObjectMetadataItemOrThrow('company').id,
       );
 
       rerender({
         frontComponentId: FRONT_COMPONENT_ID,
-        objectNameSingular: 'lead',
+        objectNameSingular: 'person',
         selectedRecordIds: ['record-2'],
       });
 
       expect(result.current.executionContext.selectedObjectMetadata).toEqual({
-        id: 'lead-object-id',
-        nameSingular: 'lead',
-        namePlural: 'leads',
+        id: getMockObjectMetadataItemOrThrow('person').id,
+        nameSingular: 'person',
+        namePlural: 'people',
       });
 
       rerender({
@@ -822,6 +825,32 @@ describe('useFrontComponentExecutionContext', () => {
         pageIcon: 'icon-IconBolt',
         resetNavigationStack: undefined,
         recordContext: { recordId: 'lead-1', objectNameSingular: 'lead' },
+      });
+    });
+
+    it('should keep the object context when no record id is provided', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            pageIcon: 'IconBolt',
+            objectNameSingular: 'lead',
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-IconBolt',
+        resetNavigationStack: undefined,
+        recordContext: { objectNameSingular: 'lead', recordId: undefined },
       });
     });
   });
