@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -6,7 +7,7 @@ import { type DataSource } from 'typeorm';
 
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
-import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790268647460-provision-agent-chat-thread-target.command';
+import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790317893308-provision-agent-chat-thread-target.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { type WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -154,6 +155,19 @@ describe('versioned agent history upgrade (integration)', () => {
     for (const { name } of [...AGENT_HISTORY_TABLES].reverse()) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}" CASCADE`);
     }
+    // Pre-upgrade workspaces have no attachment side of the chat thread
+    // relation either; the object deletion above only cascades its metadata.
+    await dataSource.query(
+      'DELETE FROM core."indexMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2',
+      [
+        WORKSPACE_ID,
+        STANDARD_OBJECTS.attachment.indexes.agentChatThreadIdIndex
+          .universalIdentifier,
+      ],
+    );
+    await dataSource.query(
+      `ALTER TABLE "${SCHEMA}"."attachment" DROP COLUMN IF EXISTS "targetAgentChatThreadId"`,
+    );
     await dataSource.query(
       'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
       [WORKSPACE_ID, AGENT_HISTORY_STORAGE_KEY],
