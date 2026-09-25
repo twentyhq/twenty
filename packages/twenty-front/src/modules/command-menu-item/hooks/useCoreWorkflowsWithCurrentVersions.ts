@@ -2,13 +2,13 @@ import { skipToken, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { type CoreWorkflowWithCurrentVersion } from '@/object-core/workflows/types/CoreWorkflowWithCurrentVersion';
 import { buildWorkflowVersionFromCore } from '@/object-core/workflows/utils/buildWorkflowVersionFromCore';
-import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { GetCoreWorkflowsWithCurrentVersionsDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowsWithCurrentVersions = (
   coreWorkflowIds: string[],
-): WorkflowWithCurrentVersion[] => {
+): CoreWorkflowWithCurrentVersion[] => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { data } = useQuery(
@@ -44,6 +44,8 @@ export const useCoreWorkflowsWithCurrentVersions = (
             createdAt: version.createdAt,
           })),
           currentVersion: builtCurrentVersion,
+          visibility: workflow.visibility,
+          canChangeVisibility: workflow.canChangeVisibility,
         },
       ];
     },

@@ -4,6 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
+import { type CoreWorkflowWithCurrentVersion } from '@/object-core/workflows/types/CoreWorkflowWithCurrentVersion';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
@@ -33,7 +35,10 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
     isCore ? selectedWorkflowRecordIds : [],
   );
 
-  const workflows = isCore
+  const workflows: (WorkflowWithCurrentVersion &
+    Partial<
+      Pick<CoreWorkflowWithCurrentVersion, 'visibility' | 'canChangeVisibility'>
+    >)[] = isCore
     ? coreWorkflowsWithCurrentVersions
     : workflowsWithCurrentVersions;
 
@@ -54,6 +59,8 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
         statuses: workflowWithCurrentVersion.statuses,
         lastPublishedVersionId:
           workflowWithCurrentVersion.lastPublishedVersionId,
+        visibility: workflowWithCurrentVersion.visibility,
+        canChangeVisibility: workflowWithCurrentVersion.canChangeVisibility,
       };
     },
   );
