@@ -1,60 +1,60 @@
-import { type ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { ForbiddenException } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { runGuardedQuery } from 'src/engine/guards/__tests__/run-guarded-query.test-util';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 
 describe('FeatureFlagGuard', () => {
-  const executionContext = {} as ExecutionContext;
   let isFeatureEnabled: jest.Mock;
-  let request: { workspace?: { id: string } };
 
-  const canActivate = () => {
-    const GuardClass = FeatureFlagGuard(
-      FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-    );
-    const guard = new GuardClass({
-      isFeatureEnabled,
-    } as unknown as FeatureFlagService);
-
-    return guard.canActivate(executionContext);
-  };
+  const runQuery = (request: Record<string, unknown>) =>
+    runGuardedQuery({
+      guard: FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED),
+      request,
+      providers: [
+        { provide: FeatureFlagService, useValue: { isFeatureEnabled } },
+      ],
+    });
 
   beforeEach(() => {
     isFeatureEnabled = jest.fn();
-    request = { workspace: { id: 'workspace-id' } };
-
-    jest.spyOn(GqlExecutionContext, 'create').mockReturnValue({
-      getContext: () => ({ req: request }),
-    } as unknown as GqlExecutionContext);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it('should allow the request when the flag is enabled for the workspace', async () => {
+  it('should let the request through when the flag is enabled for the workspace', async () => {
     isFeatureEnabled.mockResolvedValue(true);
 
-    await expect(canActivate()).resolves.toBe(true);
+    const result = await runQuery({ workspace: { id: 'workspace-id' } });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data?.guardedQuery).toBe('ok');
     expect(isFeatureEnabled).toHaveBeenCalledWith(
       FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
       'workspace-id',
     );
   });
 
-  it('should throw when the flag is disabled for the workspace', async () => {
+  it('should refuse the request when the flag is disabled for the workspace', async () => {
     isFeatureEnabled.mockResolvedValue(false);
 
-    await expect(canActivate()).rejects.toThrow(ForbiddenException);
+    const result = await runQuery({ workspace: { id: 'workspace-id' } });
+
+    expect(result.errors?.[0]?.originalError).toBeInstanceOf(
+      ForbiddenException,
+    );
+    expect(result.errors?.[0]?.message).toBe(
+      `Feature flag "${FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED}" is not enabled for this workspace`,
+    );
   });
 
-  it('should deny the request without checking the flag when there is no workspace', async () => {
-    request = {};
+  it('should refuse the request without checking the flag when there is no workspace', async () => {
+    const result = await runQuery({});
 
-    await expect(canActivate()).resolves.toBe(false);
+    expect(result.errors?.[0]?.originalError).toBeInstanceOf(
+      ForbiddenException,
+    );
+    expect(result.errors?.[0]?.message).toBe('Forbidden resource');
     expect(isFeatureEnabled).not.toHaveBeenCalled();
   });
 });
