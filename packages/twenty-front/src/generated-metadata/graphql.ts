@@ -3202,7 +3202,6 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
-  sendEmailViaEmailingDomain: SendEmailViaDomainOutput;
   sendInvitations: SendInvitations;
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
@@ -4165,11 +4164,6 @@ export type MutationSendChatMessageArgs = {
 
 export type MutationSendEmailArgs = {
   input: SendEmailInput;
-};
-
-
-export type MutationSendEmailViaEmailingDomainArgs = {
-  input: SendEmailViaDomainInput;
 };
 
 
@@ -6157,18 +6151,6 @@ export type SendEmailOutput = {
   error?: Maybe<Scalars['String']['output']>;
   messageThreadId?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
-};
-
-export type SendEmailViaDomainInput = {
-  bcc?: InputMaybe<Array<Scalars['String']['input']>>;
-  cc?: InputMaybe<Array<Scalars['String']['input']>>;
-  emailingDomainId: Scalars['String']['input'];
-  from: Scalars['String']['input'];
-  html?: InputMaybe<Scalars['String']['input']>;
-  replyTo?: InputMaybe<Array<Scalars['String']['input']>>;
-  subject: Scalars['String']['input'];
-  text: Scalars['String']['input'];
-  to: Array<Scalars['String']['input']>;
 };
 
 export type SendEmailViaDomainOutput = {
