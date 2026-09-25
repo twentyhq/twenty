@@ -725,7 +725,7 @@ export type BillingUsageType = 'METERED' | 'LICENSED'
 
 
 /** The different billing products available */
-export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
+export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT' | 'ADD_ON'
 
 export interface BillingPriceLicensed {
     recurringInterval: SubscriptionInterval
@@ -10958,7 +10958,8 @@ export const enumBillingUsageType = {
 
 export const enumBillingProductKey = {
    BASE_PRODUCT: 'BASE_PRODUCT' as const,
-   RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const
+   RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const,
+   ADD_ON: 'ADD_ON' as const
 }
 
 export const enumSubscriptionInterval = {

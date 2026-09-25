@@ -40,21 +40,18 @@ import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/bil
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
-import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-licensed-billing-subscription-item-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
+import { buildPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/build-phase-update-params.util';
+import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
+import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
+import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-export type SubscriptionStripePrices = {
-  licensedPriceId: string;
-  seats: number;
-  resourceCreditPriceId: string;
-};
-
 @Injectable()
 export class BillingSubscriptionUpdateService {
   protected readonly logger = new Logger(BillingSubscriptionUpdateService.name);
@@ -92,6 +89,10 @@ export class BillingSubscriptionUpdateService {
         where: { stripePriceId: resourceCreditPriceId },
         relations: ['billingProduct'],
       });
+
+    billingValidator.assertIsLicensedResourceCreditPrice(
+      newResourceCreditPrice,
+    );
 
     if (!isSellableCatalogPrice(newResourceCreditPrice)) {
       throw new BillingException(
@@ -141,8 +142,8 @@ export class BillingSubscriptionUpdateService {
       );
 
     const currentPlan =
-      getCurrentLicensedBillingSubscriptionItemOrThrow(billingSubscription)
-        .billingProduct?.metadata.planKey;
+      getBaseProductSubscriptionItemOrThrow(billingSubscription).billingProduct
+        ?.metadata.planKey;
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN,
@@ -188,8 +189,8 @@ export class BillingSubscriptionUpdateService {
       );
 
     const currentPlan =
-      getCurrentLicensedBillingSubscriptionItemOrThrow(billingSubscription)
-        .billingProduct?.metadata.planKey;
+      getBaseProductSubscriptionItemOrThrow(billingSubscription).billingProduct
+        ?.metadata.planKey;
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN,
@@ -228,7 +229,7 @@ export class BillingSubscriptionUpdateService {
       },
     );
 
-    const licensedItem = getBaseProductSubscriptionItemOrThrow(subscription);
+    const baseProductItem = getBaseProductSubscriptionItemOrThrow(subscription);
     const resourceCreditItem =
       getCurrentResourceCreditSubscriptionItemOrThrow(subscription);
 
@@ -240,9 +241,9 @@ export class BillingSubscriptionUpdateService {
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
       {
-        licensedPriceId: licensedItem.stripePriceId,
+        baseProductPriceId: baseProductItem.stripePriceId,
         resourceCreditPriceId: resourceCreditItem.stripePriceId,
-        seats: seats > 0 ? seats : licensedItem.quantity,
+        seats: seats > 0 ? seats : baseProductItem.quantity,
       },
     );
 
@@ -305,7 +306,7 @@ export class BillingSubscriptionUpdateService {
       const subscriptionOptions = computeSubscriptionUpdateOptions(
         subscriptionUpdate,
         {
-          currentSeats: licensedItem.quantity,
+          currentSeats: baseProductItem.quantity,
           isTrialing: subscription.status === SubscriptionStatus.Trialing,
         },
       );
@@ -323,12 +324,10 @@ export class BillingSubscriptionUpdateService {
 
       await this.runSubscriptionUpdate({
         stripeSubscriptionId: subscription.stripeSubscriptionId,
-        licensedStripeItemId: licensedItem.stripeSubscriptionItemId,
-        resourceCreditStripeItemId: resourceCreditItem.stripeSubscriptionItemId,
-        licensedStripePriceId: toUpdateCurrentPrices.licensedPriceId,
-        resourceCreditStripePriceId:
-          toUpdateCurrentPrices.resourceCreditPriceId,
-        seats: toUpdateCurrentPrices.seats,
+        items: buildSubscriptionItemsUpdate({
+          billingSubscriptionItems: subscription.billingSubscriptionItems,
+          toUpdatePrices: toUpdateCurrentPrices,
+        }),
         ...subscriptionOptions,
       });
 
@@ -431,16 +430,16 @@ export class BillingSubscriptionUpdateService {
   private async getSubscriptionPricesFromSchedulePhase(
     phase: Stripe.SubscriptionSchedule.Phase,
   ): Promise<SubscriptionStripePrices> {
-    const licensedItemPriceIds = phase.items
-      .filter((item) => item.quantity != null)
-      .map((item) => normalizePriceRef(item.price));
+    const phaseItemPriceIds = phase.items.map((item) =>
+      normalizePriceRef(item.price),
+    );
 
-    const licensedItemPrices = await this.billingPriceRepository.find({
-      where: { stripePriceId: In(licensedItemPriceIds) },
+    const phaseItemPrices = await this.billingPriceRepository.find({
+      where: { stripePriceId: In(phaseItemPriceIds) },
       relations: ['billingProduct'],
     });
 
-    const basePlanPrice = licensedItemPrices.find(
+    const basePlanPrice = phaseItemPrices.find(
       (price) =>
         price.billingProduct?.metadata?.productKey ===
         BillingProductKey.BASE_PRODUCT,
@@ -455,7 +454,7 @@ export class BillingSubscriptionUpdateService {
 
     assertIsDefinedOrThrow(basePlanPhaseItem.quantity);
 
-    const resourceCreditPrice = licensedItemPrices.find(
+    const resourceCreditPrice = phaseItemPrices.find(
       (price) =>
         price.billingProduct?.metadata?.productKey ===
         BillingProductKey.RESOURCE_CREDIT,
@@ -464,7 +463,7 @@ export class BillingSubscriptionUpdateService {
     assertIsDefinedOrThrow(resourceCreditPrice);
 
     return {
-      licensedPriceId: basePlanPrice.stripePriceId,
+      baseProductPriceId: basePlanPrice.stripePriceId,
       seats: basePlanPhaseItem.quantity,
       resourceCreditPriceId: resourceCreditPrice.stripePriceId,
     };
@@ -472,21 +471,13 @@ export class BillingSubscriptionUpdateService {
 
   private async runSubscriptionUpdate({
     stripeSubscriptionId,
-    licensedStripeItemId,
-    resourceCreditStripeItemId,
-    licensedStripePriceId,
-    resourceCreditStripePriceId,
-    seats,
+    items,
     anchor,
     proration,
     metadata,
   }: {
     stripeSubscriptionId: string;
-    licensedStripeItemId: string;
-    resourceCreditStripeItemId: string;
-    licensedStripePriceId: string;
-    resourceCreditStripePriceId: string;
-    seats: number;
+    items: Stripe.SubscriptionUpdateParams.Item[];
     anchor?: Stripe.SubscriptionUpdateParams.BillingCycleAnchor;
     proration?: Stripe.SubscriptionUpdateParams.ProrationBehavior;
     metadata?: Record<string, string>;
@@ -494,18 +485,7 @@ export class BillingSubscriptionUpdateService {
     return await this.stripeSubscriptionService.updateSubscription(
       stripeSubscriptionId,
       {
-        items: [
-          {
-            id: licensedStripeItemId,
-            price: licensedStripePriceId,
-            quantity: seats,
-          },
-          {
-            id: resourceCreditStripeItemId,
-            price: resourceCreditStripePriceId,
-            quantity: 1,
-          },
-        ],
+        items,
         ...(anchor ? { billing_cycle_anchor: anchor } : {}),
         ...(proration ? { proration_behavior: proration } : {}),
         ...(metadata ? { metadata } : {}),
@@ -526,33 +506,31 @@ export class BillingSubscriptionUpdateService {
     currentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase;
     subscriptionCurrentPeriodEnd: number;
   }) {
-    let toUpdateCurrentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase = {
-      ...currentPhase,
-      end_date: subscriptionCurrentPeriodEnd,
-    };
+    const productKeyByPriceId =
+      await this.billingSubscriptionPhaseService.getProductKeyByPriceId(
+        (currentPhase.items ?? []).map(({ price }) => price).filter(isDefined),
+      );
 
-    if (isDefined(toUpdateCurrentPrices)) {
-      toUpdateCurrentPhase =
-        await this.billingSubscriptionPhaseService.buildPhaseUpdateParams({
-          toUpdatePrices: toUpdateCurrentPrices,
-          endDate: subscriptionCurrentPeriodEnd,
-          startDate: currentPhase.start_date,
-        });
-    }
+    const toUpdateCurrentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase =
+      isDefined(toUpdateCurrentPrices)
+        ? buildPhaseUpdateParams({
+            currentPhase,
+            productKeyByPriceId,
+            toUpdatePrices: toUpdateCurrentPrices,
+            endDate: subscriptionCurrentPeriodEnd,
+            startDate: currentPhase.start_date,
+          })
+        : { ...currentPhase, end_date: subscriptionCurrentPeriodEnd };
 
-    const toUpdateNextPhase =
-      await this.billingSubscriptionPhaseService.buildPhaseUpdateParams({
-        toUpdatePrices: toUpdateNextPrices,
-        startDate: subscriptionCurrentPeriodEnd,
-        endDate: undefined,
-      });
+    const toUpdateNextPhase = buildPhaseUpdateParams({
+      currentPhase,
+      productKeyByPriceId,
+      toUpdatePrices: toUpdateNextPrices,
+      startDate: subscriptionCurrentPeriodEnd,
+      endDate: undefined,
+    });
 
-    if (
-      await this.billingSubscriptionPhaseService.isSamePhaseSignature(
-        toUpdateCurrentPhase,
-        toUpdateNextPhase,
-      )
-    ) {
+    if (isSamePhaseSignature(toUpdateCurrentPhase, toUpdateNextPhase)) {
       return await this.stripeSubscriptionScheduleService.releaseSubscriptionSchedule(
         stripeScheduleId,
       );
@@ -581,8 +559,8 @@ export class BillingSubscriptionUpdateService {
     switch (update.type) {
       case SubscriptionUpdateType.PLAN: {
         const currentPlan =
-          subscription.billingSubscriptionItems[0].billingProduct?.metadata
-            .planKey;
+          getBaseProductSubscriptionItemOrThrow(subscription).billingProduct
+            ?.metadata.planKey;
 
         const isDowngrade =
           currentPlan !== update.newPlan &&
@@ -689,14 +667,14 @@ export class BillingSubscriptionUpdateService {
     newResourceCreditPriceId: string,
     currentPrices: SubscriptionStripePrices,
   ): Promise<SubscriptionStripePrices> {
-    const currentLicensedPrice =
+    const currentBaseProductPrice =
       await this.billingPriceRepository.findOneOrFail({
-        where: { stripePriceId: currentPrices.licensedPriceId },
+        where: { stripePriceId: currentPrices.baseProductPriceId },
         relations: ['billingProduct'],
       });
-    const currentInterval = currentLicensedPrice.interval;
+    const currentInterval = currentBaseProductPrice.interval;
     const currentPlanKey =
-      currentLicensedPrice.billingProduct?.metadata.planKey;
+      currentBaseProductPrice.billingProduct?.metadata.planKey;
 
     assertIsDefinedOrThrow(currentPlanKey);
 
@@ -739,15 +717,15 @@ export class BillingSubscriptionUpdateService {
     newPlan: BillingPlanKey,
     currentPrices: SubscriptionStripePrices,
   ): Promise<SubscriptionStripePrices> {
-    const currentLicensedPrice =
+    const currentBaseProductPrice =
       await this.billingPriceRepository.findOneOrFail({
-        where: { stripePriceId: currentPrices.licensedPriceId },
+        where: { stripePriceId: currentPrices.baseProductPriceId },
         relations: ['billingProduct'],
       });
 
-    const currentInterval = currentLicensedPrice.interval;
+    const currentInterval = currentBaseProductPrice.interval;
     const currentPlanKey =
-      currentLicensedPrice.billingProduct?.metadata.planKey;
+      currentBaseProductPrice.billingProduct?.metadata.planKey;
 
     assertIsDefinedOrThrow(currentPlanKey);
 
@@ -761,7 +739,7 @@ export class BillingSubscriptionUpdateService {
         planKey: newPlan,
       });
 
-    const targetLicensedPrice = findSellableBaseProductPriceOrThrow(
+    const targetBaseProductPrice = findSellableBaseProductPriceOrThrow(
       billingPricesPerPlanAndIntervalArray,
     );
 
@@ -786,7 +764,7 @@ export class BillingSubscriptionUpdateService {
 
     return {
       ...currentPrices,
-      licensedPriceId: targetLicensedPrice.stripePriceId,
+      baseProductPriceId: targetBaseProductPrice.stripePriceId,
       resourceCreditPriceId: targetResourceCreditPrice.stripePriceId,
     };
   }
@@ -795,14 +773,14 @@ export class BillingSubscriptionUpdateService {
     newInterval: SubscriptionInterval,
     currentPrices: SubscriptionStripePrices,
   ): Promise<SubscriptionStripePrices> {
-    const currentLicensedPrice =
+    const currentBaseProductPrice =
       await this.billingPriceRepository.findOneOrFail({
-        where: { stripePriceId: currentPrices.licensedPriceId },
+        where: { stripePriceId: currentPrices.baseProductPriceId },
         relations: ['billingProduct', 'billingProduct.billingPrices'],
       });
 
-    const currentInterval = currentLicensedPrice.interval;
-    const currentBillingProduct = currentLicensedPrice.billingProduct;
+    const currentInterval = currentBaseProductPrice.interval;
+    const currentBillingProduct = currentBaseProductPrice.billingProduct;
 
     assertIsDefinedOrThrow(currentBillingProduct);
 
@@ -816,7 +794,7 @@ export class BillingSubscriptionUpdateService {
 
     // Switching interval is not a repackaging, so the subscription stays on the
     // products it already sits on rather than being resolved from the catalog.
-    const targetLicensedPrice = findProductPriceForIntervalOrThrow(
+    const targetBaseProductPrice = findProductPriceForIntervalOrThrow(
       currentBillingProduct,
       newInterval,
     );
@@ -844,7 +822,7 @@ export class BillingSubscriptionUpdateService {
 
     return {
       ...currentPrices,
-      licensedPriceId: targetLicensedPrice.stripePriceId,
+      baseProductPriceId: targetBaseProductPrice.stripePriceId,
       resourceCreditPriceId: targetResourceCreditPrice.stripePriceId,
     };
   }

@@ -3,7 +3,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { findOrThrow } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -63,30 +62,6 @@ export class BillingPlanService {
         baseProducts,
         resourceCreditProducts,
       };
-    });
-  }
-
-  async getPlanByPriceId(stripePriceId: string) {
-    const plans = await this.listPlans();
-
-    return findOrThrow(plans, (plan) => {
-      return (
-        plan.meteredProducts.some((product) =>
-          product.billingPrices.some(
-            (price) => price.stripePriceId === stripePriceId,
-          ),
-        ) ||
-        plan.baseProducts.some((product) =>
-          product.billingPrices.some(
-            (price) => price.stripePriceId === stripePriceId,
-          ),
-        ) ||
-        plan.resourceCreditProducts.some((product) =>
-          product.billingPrices.some(
-            (price) => price.stripePriceId === stripePriceId,
-          ),
-        )
-      );
     });
   }
 

@@ -1014,6 +1014,7 @@ enum BillingUsageType {
 enum BillingProductKey {
   BASE_PRODUCT
   RESOURCE_CREDIT
+  ADD_ON
 }
 
 type BillingPriceLicensed {
