@@ -2,7 +2,7 @@ import {
   type PlaceAutocompleteResult,
   type PlaceAutocompleteVariables,
   type PlaceDetailsResult,
-} from '@/geo-map/types/placeApi';
+} from '@/geo-map/types/PlaceApi';
 
 describe('placeApi types', () => {
   describe('PlaceAutocompleteVariables', () => {

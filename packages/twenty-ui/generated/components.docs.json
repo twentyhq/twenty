@@ -6298,6 +6298,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "indicator",
+            "type": "\"check\" | \"checkbox\" | \"none\"",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -6659,6 +6666,13 @@
           {
             "name": "label",
             "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "scrollable",
+            "type": "boolean",
             "required": false,
             "defaultValue": null,
             "description": ""

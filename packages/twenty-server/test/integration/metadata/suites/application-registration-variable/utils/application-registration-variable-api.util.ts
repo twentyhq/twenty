@@ -4,7 +4,7 @@ import {
   findApplicationRegistrationVariablesQueryFactory,
   updateApplicationRegistrationVariableMutationFactory,
 } from 'test/integration/metadata/suites/application-registration-variable/utils/application-registration-variable-query-factories.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
@@ -59,7 +59,7 @@ export const findApplicationRegistrationVariables = async ({
     applicationRegistrationId,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   handleExpectation(response, expectToFail, 'Find variables');
 
@@ -95,7 +95,7 @@ export const createApplicationRegistrationVariable = async ({
     },
   );
 
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   handleExpectation(response, expectToFail, 'Create variable');
 
@@ -125,7 +125,7 @@ export const updateApplicationRegistrationVariable = async ({
     },
   );
 
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   handleExpectation(response, expectToFail, 'Update variable');
 
@@ -147,7 +147,7 @@ export const deleteApplicationRegistrationVariable = async ({
     { id },
   );
 
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   handleExpectation(response, expectToFail, 'Delete variable');
 

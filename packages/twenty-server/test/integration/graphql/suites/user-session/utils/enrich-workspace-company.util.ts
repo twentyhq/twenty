@@ -1,5 +1,5 @@
 import { enrichWorkspaceCompanyQueryFactory } from 'test/integration/graphql/suites/user-session/utils/enrich-workspace-company-query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
@@ -11,7 +11,7 @@ export const enrichWorkspaceCompany = async ({
 }: Omit<PerformMetadataQueryParams<never>, 'input'>): CommonResponseBody<{
   enrichWorkspaceCompany: { outcome: string };
 }> => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     enrichWorkspaceCompanyQueryFactory(),
     token,
   );

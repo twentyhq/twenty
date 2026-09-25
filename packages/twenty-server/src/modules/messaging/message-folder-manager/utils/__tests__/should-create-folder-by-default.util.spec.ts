@@ -1,5 +1,5 @@
 import { shouldCreateFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-create-folder-by-default.util';
-import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
+import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder.type';
 
 describe('shouldCreateFolderByDefault', () => {
   it('should allow creating user folders', () => {

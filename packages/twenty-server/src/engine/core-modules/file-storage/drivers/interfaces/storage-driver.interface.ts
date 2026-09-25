@@ -28,15 +28,6 @@ export interface StorageDriver {
     filePath: string;
   }): Promise<FileStorageMetadata | null>;
 
-  downloadFolder(params: {
-    onStoragePath: string;
-    localPath: string;
-  }): Promise<void>;
-  uploadFolder(params: {
-    localPath: string;
-    onStoragePath: string;
-  }): Promise<void>;
-
   downloadFile(params: {
     onStoragePath: string;
     localPath: string;

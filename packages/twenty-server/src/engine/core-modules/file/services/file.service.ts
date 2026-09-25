@@ -20,7 +20,7 @@ import {
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { resolveByteRange } from 'src/engine/core-modules/file/utils/resolve-byte-range.utils';

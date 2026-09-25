@@ -5,9 +5,9 @@ import { randomUUID } from 'node:crypto';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -131,7 +131,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
     });
 
     for (const [name, id] of Object.entries(RECORD_IDS)) {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -212,7 +212,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
       sourceId,
     });
     await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: OBJECT_SINGULAR,
         objectMetadataPluralName: OBJECT_PLURAL,
@@ -242,7 +242,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
   });
 
   it('should read the same records in memory as the SQL gate for the admin', async () => {
-    const response = await makeGraphqlAPIRequest(findManyOperation);
+    const response = await makeGraphqlApiRequest(findManyOperation);
 
     expect(response.body.errors).toBeUndefined();
     expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
@@ -259,7 +259,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
 
   it('should read the same records in memory as the SQL gate for the member', async () => {
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+      await makeGraphqlApiRequestWithMemberRole(findManyOperation);
 
     expect(response.body.errors).toBeUndefined();
 
@@ -285,7 +285,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
   });
 
   it('should read the same records in memory as the SQL gate for the api key', async () => {
-    const response = await makeGraphqlAPIRequestWithApiKey(findManyOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(findManyOperation);
 
     expect(response.body.errors).toBeUndefined();
     expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
@@ -297,7 +297,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
   });
 
   it('should update the same records in memory as the SQL gate for the member', async () => {
-    const response = await makeGraphqlAPIRequestWithMemberRole(
+    const response = await makeGraphqlApiRequestWithMemberRole(
       updateManyOperationFactory({
         objectMetadataSingularName: OBJECT_SINGULAR,
         objectMetadataPluralName: OBJECT_PLURAL,
