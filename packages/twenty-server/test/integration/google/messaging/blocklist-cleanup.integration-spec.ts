@@ -6,7 +6,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { getGmailMessageSubject } from 'test/integration/google/mocks/gmail-message-subject.util';
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
@@ -79,7 +79,7 @@ describe('Blocklist cleanup (integration)', () => {
 
   afterAll(async () => {
     for (const blocklistId of blocklistIds) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'blocklist',
           gqlFields: 'id',
@@ -109,7 +109,7 @@ describe('Blocklist cleanup (integration)', () => {
   }, 60000);
 
   it('deletes the blocked handle messages and keeps the calendar events imported before the block', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
         gqlFields: 'id handle',
@@ -139,7 +139,7 @@ describe('Blocklist cleanup (integration)', () => {
   }, 120000);
 
   it('deletes the messages of a handle blocked for the whole workspace', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
         gqlFields: 'id handle scope workspaceMemberId',

@@ -1,10 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
@@ -47,7 +45,6 @@ export const TurnIntoBlockDropdown = ({
   const theme = useTheme();
   const instanceId = useId();
   const dropdownId = `turn-into-block-dropdown-${instanceId}`;
-  const { toggleDropdown } = useToggleDropdown();
 
   const options = useTurnIntoBlockOptions(editor);
   const activeItem = options.find((option) => option.isActive());
@@ -55,37 +52,34 @@ export const TurnIntoBlockDropdown = ({
     activeItem ?? {};
 
   return (
-    <Dropdown
-      dropdownComponents={
-        <LegacyDropdownContent>
-          <DropdownMenuItemsContainer>
-            {options.map(({ id, title, icon, onClick }) => (
-              <ListItem
-                key={id}
-                startIcon={<SelectOptionIcon Icon={icon} />}
-                onClick={() => {
-                  onClick();
-                  toggleDropdown({
-                    dropdownComponentInstanceIdFromProps: dropdownId,
-                  });
-                }}
-              >
-                {title}
-              </ListItem>
-            ))}
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
-      }
-      dropdownId={dropdownId}
-      clickableComponent={
-        <StyledMenuItem>
-          <ActiveIcon size={theme.icon.size.md} />
-          {activeTitle}
-        </StyledMenuItem>
-      }
-      dropdownOffset={{
-        y: parseInt(theme.spacing[1], 10),
-      }}
-    />
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <Dropdown.Trigger
+        render={
+          <StyledMenuItem>
+            <ActiveIcon size={theme.icon.size.md} />
+            {activeTitle}
+          </StyledMenuItem>
+        }
+      />
+      <DropdownContent
+        align="end"
+        sideOffset={parseInt(theme.spacing[1], 10)}
+        finalFocus={() => editor.view.dom}
+        aria-label={t`Turn into`}
+      >
+        <Dropdown.Section>
+          {options.map(({ id, title, icon, onClick, isActive }) => (
+            <Dropdown.OptionItem
+              key={id}
+              selected={isActive()}
+              startIcon={<SelectOptionIcon Icon={icon} />}
+              onSelect={onClick}
+            >
+              {title}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

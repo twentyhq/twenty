@@ -8,13 +8,13 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,7 +44,7 @@ const createApiKeyForRole = async ({
   name: string;
   roleId: string;
 }) => {
-  const createApiKeyResponse = await makeMetadataAPIRequest({
+  const createApiKeyResponse = await makeMetadataApiRequest({
     query: gql`
       mutation CreateApiKey($input: CreateApiKeyInput!) {
         createApiKey(input: $input) {
@@ -109,7 +109,7 @@ describe('systemObjectRecordsPermissions', () => {
     jestExpectToBeDefined(messageObjectMetadataId);
     jestExpectToBeDefined(messageThreadObjectMetadataId);
 
-    const createMessageResponse = await makeGraphqlAPIRequest(
+    const createMessageResponse = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'message',
         gqlFields: MESSAGE_GQL_FIELDS,
@@ -124,7 +124,7 @@ describe('systemObjectRecordsPermissions', () => {
     expect(createMessageResponse.body.errors).toBeUndefined();
     expect(createMessageResponse.body.data.createMessage.id).toBe(messageId);
 
-    const createPersonResponse = await makeGraphqlAPIRequest(
+    const createPersonResponse = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
@@ -233,7 +233,7 @@ describe('systemObjectRecordsPermissions', () => {
 
   describe('API key whose role overrides message to read-only', () => {
     it('should allow reading messages', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         findOneOperationFactory({
           objectMetadataSingularName: 'message',
           gqlFields: MESSAGE_GQL_FIELDS,
@@ -247,7 +247,7 @@ describe('systemObjectRecordsPermissions', () => {
     });
 
     it('should deny updating a message', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: 'message',
           gqlFields: MESSAGE_GQL_FIELDS,
@@ -261,7 +261,7 @@ describe('systemObjectRecordsPermissions', () => {
     });
 
     it('should deny soft-deleting a message', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         deleteOneOperationFactory({
           objectMetadataSingularName: 'message',
           gqlFields: 'id',
@@ -274,7 +274,7 @@ describe('systemObjectRecordsPermissions', () => {
     });
 
     it('should deny destroying a message', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'message',
           gqlFields: 'id',
@@ -287,7 +287,7 @@ describe('systemObjectRecordsPermissions', () => {
     });
 
     it('should deny creating a message thread', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'messageThread',
           gqlFields: 'id',
@@ -302,7 +302,7 @@ describe('systemObjectRecordsPermissions', () => {
 
   describe('API key whose role has no override on message', () => {
     it('should allow updating a message through the system object default', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: 'message',
           gqlFields: MESSAGE_GQL_FIELDS,
@@ -319,7 +319,7 @@ describe('systemObjectRecordsPermissions', () => {
     });
 
     it('should deny updating a standard object', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,

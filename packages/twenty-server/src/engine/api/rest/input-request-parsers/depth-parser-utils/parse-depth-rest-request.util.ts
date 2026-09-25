@@ -4,7 +4,7 @@ import {
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { type Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 
 export const parseDepthRestRequest = (request: AuthenticatedRequest): Depth => {
   if (!request.query.depth) {

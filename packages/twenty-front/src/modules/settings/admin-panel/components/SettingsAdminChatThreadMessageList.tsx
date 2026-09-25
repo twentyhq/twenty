@@ -34,7 +34,7 @@ export const SettingsAdminChatThreadMessageList = ({
 
   if (!isNonEmptyArray(visibleMessages)) {
     return (
-      <Card rounded>
+      <Card.Root rounded>
         <TableRow gridTemplateColumns="1fr">
           <TableCell
             color={themeCssVariables.font.color.tertiary}
@@ -43,7 +43,7 @@ export const SettingsAdminChatThreadMessageList = ({
             {t`No messages found.`}
           </TableCell>
         </TableRow>
-      </Card>
+      </Card.Root>
     );
   }
 

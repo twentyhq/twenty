@@ -5,6 +5,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type DropdownType } from '../types/DropdownType';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
+import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownItem } from './getNextDropdownItem';
 
@@ -69,6 +70,17 @@ export const useDropdownKeyboardNavigation = ({
     const items = getDropdownItems(content).filter(
       (item) => !isDefined(search) || !item.hasAttribute('data-dropdown-back'),
     );
+    const searchTarget =
+      isSearch && event.key === 'Enter' && !event.nativeEvent.isComposing
+        ? getDropdownSearchTarget(content)
+        : undefined;
+
+    if (isDefined(searchTarget)) {
+      event.preventDefault();
+      searchTarget.click();
+      return;
+    }
+
     const currentIndex = items.indexOf(target);
     const nextItem = getNextDropdownItem({
       key: event.key,

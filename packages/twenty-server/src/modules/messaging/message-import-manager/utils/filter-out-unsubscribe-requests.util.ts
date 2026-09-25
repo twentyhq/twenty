@@ -5,7 +5,7 @@ import { MessageDirection } from 'src/modules/messaging/common/enums/message-dir
 import { AUTO_GENERATED_BODY_MARKER } from 'src/modules/messaging/message-import-manager/constants/auto-generated-body-marker.constant';
 import { RECIPIENT_ROLES } from 'src/modules/messaging/message-import-manager/constants/recipient-roles.constant';
 import { UNSUBSCRIBE_COMMAND_SUBJECT } from 'src/modules/messaging/message-import-manager/constants/unsubscribe-command-subject.constant';
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { isBulkMail } from 'src/modules/messaging/message-import-manager/utils/is-bulk-mail.util';
 import { isUnsubscribeEmail } from 'src/modules/messaging/message-import-manager/utils/is-unsubscribe-email.util';
 

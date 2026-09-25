@@ -162,6 +162,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',
   UI_PRIMITIVES_OVERVIEW: '/ui/primitives/overview',
   UI_PRIMITIVES_SURFACES_ALERT_DIALOG: '/ui/primitives/surfaces/alert-dialog',
+  UI_PRIMITIVES_SURFACES_CARD: '/ui/primitives/surfaces/card',
   UI_PRIMITIVES_SURFACES_DIALOG: '/ui/primitives/surfaces/dialog',
   UI_PRIMITIVES_SURFACES_MENU: '/ui/primitives/surfaces/menu',
   UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',

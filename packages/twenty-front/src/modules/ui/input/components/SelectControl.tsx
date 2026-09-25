@@ -1,13 +1,13 @@
-import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
+import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TintedIconTile } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';

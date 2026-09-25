@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 // End-to-end coverage for the self-serve DPA generator. The generate mutation
 // renders the PDF with @react-pdf/renderer on the server, so this also guards
@@ -19,7 +19,7 @@ describe('DPA resolver (integration)', () => {
 
   describe('dpaPreview query', () => {
     it('resolves the deployment document with no unresolved merge fields', async () => {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query DpaPreview {
             dpaPreview {
@@ -64,7 +64,7 @@ describe('DPA resolver (integration)', () => {
         signatoryTitle: 'Directeur Général',
       };
 
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           mutation GenerateSignedDpa($input: GenerateSignedDpaInput!) {
             generateSignedDpa(input: $input) {
@@ -124,7 +124,7 @@ describe('DPA resolver (integration)', () => {
     });
 
     it('rejects blank execution fields via server-side validation', async () => {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           mutation GenerateSignedDpa($input: GenerateSignedDpaInput!) {
             generateSignedDpa(input: $input) {
@@ -147,7 +147,7 @@ describe('DPA resolver (integration)', () => {
 
   describe('dpaAgreements query', () => {
     it('lists executed copies with a re-download URL', async () => {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query DpaAgreements {
             dpaAgreements {

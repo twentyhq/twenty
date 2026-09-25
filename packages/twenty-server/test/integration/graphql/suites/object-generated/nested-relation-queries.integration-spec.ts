@@ -18,7 +18,7 @@ import { createManyOperation } from 'test/integration/graphql/utils/create-many-
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -54,7 +54,7 @@ const findRecordById = (
   id: string,
   gqlFields = 'id',
 ) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     findOneOperationFactory({
       objectMetadataSingularName,
       gqlFields,
@@ -73,7 +73,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
   ];
 
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -95,7 +95,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
   });
 
   beforeEach(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -122,7 +122,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
         continue;
       }
 
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyManyOperationFactory({
           objectMetadataSingularName: nameSingular,
           objectMetadataPluralName: namePlural,
@@ -139,7 +139,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
   });
 
   afterAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -151,7 +151,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
         },
       }),
     );
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -170,7 +170,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const companyId = v4();
     generatedPersonIds.push(personId);
     generatedCompanyIds.push(companyId);
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
@@ -195,7 +195,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     generatedPersonIds.push(personId);
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id jobTitle company { id name }',
@@ -235,7 +235,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     generatedPersonIds.push(...personIds);
     generatedCompanyIds.push(...companyIds);
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -276,7 +276,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     generatedPersonIds.push(existingPersonId, insertedPersonId);
     generatedCompanyIds.push(existingPersonCompanyId, insertedPersonCompanyId);
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id',
@@ -287,7 +287,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       }),
     );
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -343,7 +343,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const personId = v4();
     generatedTaskTargetIds.push(taskTargetId);
     generatedPersonIds.push(personId);
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'taskTarget',
         gqlFields: 'id targetPerson { id }',
@@ -366,7 +366,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     generatedPetIds.push(petId);
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'pet',
         gqlFields: 'id extraData',
@@ -384,7 +384,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     generatedPersonIds.push(personId);
     generatedCompanyIds.push(companyId);
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id',
@@ -392,7 +392,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       }),
     );
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
@@ -423,7 +423,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     generatedPersonIds.push(newPersonId, duplicatePersonId);
     generatedCompanyIds.push(...companyIds);
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id',
@@ -431,7 +431,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       }),
     );
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -472,7 +472,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     generatedCompanyIds.push(companyId);
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id',
@@ -499,7 +499,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     generatedPersonIds.push(personId);
     generatedCompanyIds.push(companyId);
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
@@ -540,7 +540,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.createPerson).toBeDefined();
     expect(response.body.data.createPerson.id).toBe(TEST_PERSON_1_ID);
@@ -572,7 +572,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       ],
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.createPeople).toBeDefined();
     expect(response.body.data.createPeople).toHaveLength(2);
@@ -595,7 +595,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+    await makeGraphqlApiRequest(createPersonToUpdateOperation);
 
     const graphqlOperation = createManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -623,7 +623,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       upsert: true,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.createPeople).toBeDefined();
     expect(response.body.data.createPeople).toHaveLength(2);
@@ -654,7 +654,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+    await makeGraphqlApiRequest(createPersonToUpdateOperation);
 
     const graphqlOperation = updateOneOperationFactory({
       objectMetadataSingularName: 'person',
@@ -669,7 +669,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.updatePerson).toBeDefined();
     expect(response.body.data.updatePerson.company.id).toBe(TEST_COMPANY_2_ID);
@@ -692,7 +692,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       ],
     });
 
-    await makeGraphqlAPIRequest(createPeopleToUpdateOperation);
+    await makeGraphqlApiRequest(createPeopleToUpdateOperation);
 
     const graphqlOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -712,7 +712,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.updatePeople).toBeDefined();
     expect(response.body.data.updatePeople).toHaveLength(2);
@@ -739,7 +739,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
@@ -764,7 +764,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
@@ -800,7 +800,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       ],
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
@@ -825,7 +825,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
@@ -851,7 +851,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
@@ -869,7 +869,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+    await makeGraphqlApiRequest(createPersonToUpdateOperation);
 
     const graphqlOperation = updateOneOperationFactory({
       objectMetadataSingularName: 'person',
@@ -882,7 +882,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.updatePerson).toBeDefined();
     expect(response.body.data.updatePerson.company?.id).toBeUndefined();
@@ -898,7 +898,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+    await makeGraphqlApiRequest(createPersonToUpdateOperation);
 
     const graphqlOperation = updateOneOperationFactory({
       objectMetadataSingularName: 'person',
@@ -911,7 +911,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.updatePerson).toBeDefined();
     expect(response.body.data.updatePerson.company?.id).toBe(TEST_COMPANY_1_ID);
@@ -933,7 +933,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       ],
     });
 
-    await makeGraphqlAPIRequest(createPeopleToUpdateOperation);
+    await makeGraphqlApiRequest(createPeopleToUpdateOperation);
 
     const graphqlOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -951,7 +951,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.updatePeople).toBeDefined();
     expect(response.body.data.updatePeople).toHaveLength(2);
@@ -969,7 +969,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    await makeGraphqlAPIRequest(createPersonToUpdateOperation);
+    await makeGraphqlApiRequest(createPersonToUpdateOperation);
 
     const graphqlOperation = createManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -994,7 +994,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       upsert: true,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.createPeople).toBeDefined();
     expect(response.body.data.createPeople).toHaveLength(2);
@@ -1017,7 +1017,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const TEST_PET_ID = TEST_PET_ID_1;
     const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: SURVEY_RESULT_OBJECT_NAME,
         gqlFields: 'id',
@@ -1028,7 +1028,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: PET_OBJECT_NAME,
         gqlFields: 'id',
@@ -1052,7 +1052,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    const response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
+    const response = await makeGraphqlApiRequest(updatePetOwnerSurveyResultOp);
 
     expect(response.body.data.updatePet).toBeDefined();
     expect(
@@ -1071,7 +1071,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
 
     // Create the survey result record first (if not already created by previous test)
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: SURVEY_RESULT_OBJECT_NAME,
         gqlFields: 'id',
@@ -1082,7 +1082,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: PET_OBJECT_NAME,
         gqlFields: 'id',
@@ -1106,7 +1106,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    let response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
+    let response = await makeGraphqlApiRequest(updatePetOwnerSurveyResultOp);
 
     expect(
       response.body.data.updatePet.polymorphicOwnerSurveyResult,
@@ -1123,7 +1123,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    response = await makeGraphqlAPIRequest(
+    response = await makeGraphqlApiRequest(
       updatePetOwnerSurveyResultDisconnectOp,
     );
     expect(
@@ -1137,7 +1137,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const TEST_PET_ID = TEST_PET_ID_3;
     const TEST_ROCKET_ID = TEST_ROCKET_ID_1;
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: PET_OBJECT_NAME,
         gqlFields: 'id',
@@ -1168,7 +1168,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    let response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
+    let response = await makeGraphqlApiRequest(updatePetOwnerSurveyResultOp);
 
     expect(response.body.errors).toBeTruthy();
   });
