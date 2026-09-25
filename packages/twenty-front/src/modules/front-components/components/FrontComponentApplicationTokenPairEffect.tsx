@@ -1,25 +1,50 @@
-import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
-import { type ApplicationTokenPair } from '~/generated-metadata/graphql';
+
+import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
+import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
 
 type FrontComponentApplicationTokenPairEffectProps = {
-  frontComponentId: string;
-  applicationTokenPair: ApplicationTokenPair | null;
+  applicationId: string;
+  onApplicationTokenPairLoaded: (
+    applicationTokenPair: FrontComponentApplicationTokenPair,
+  ) => void;
+  onApplicationTokenPairLoadFailed: (error: Error) => void;
 };
 
 export const FrontComponentApplicationTokenPairEffect = ({
-  frontComponentId,
-  applicationTokenPair,
+  applicationId,
+  onApplicationTokenPairLoaded,
+  onApplicationTokenPairLoadFailed,
 }: FrontComponentApplicationTokenPairEffectProps) => {
-  const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
-    frontComponentApplicationTokenPairComponentState,
-    frontComponentId,
-  );
+  const { loadFrontComponentApplicationTokenPair } =
+    useFrontComponentApplicationTokenPair();
 
   useEffect(() => {
-    setFrontComponentApplicationTokenPair(applicationTokenPair);
-  }, [applicationTokenPair, setFrontComponentApplicationTokenPair]);
+    let isCancelled = false;
+
+    loadFrontComponentApplicationTokenPair(applicationId)
+      .then((applicationTokenPair) => {
+        if (!isCancelled) {
+          onApplicationTokenPairLoaded(applicationTokenPair);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!isCancelled) {
+          onApplicationTokenPairLoadFailed(
+            error instanceof Error ? error : new Error(String(error)),
+          );
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    applicationId,
+    loadFrontComponentApplicationTokenPair,
+    onApplicationTokenPairLoaded,
+    onApplicationTokenPairLoadFailed,
+  ]);
 
   return null;
 };

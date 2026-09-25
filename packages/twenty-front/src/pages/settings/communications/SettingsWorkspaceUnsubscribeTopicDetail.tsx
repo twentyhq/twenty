@@ -188,7 +188,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}
@@ -196,7 +196,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
               checked={isPublic}
               onChange={handleVisibilityChange}
             />
-          </Card>
+          </Card.Root>
         </Section.Root>
       </SettingsPageContainer>
       <ConfirmationDialog

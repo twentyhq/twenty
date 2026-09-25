@@ -33,6 +33,7 @@ export enum LogicFunctionExecutionMode {
 }
 
 @Entity('logicFunction')
+@Index('IDX_LOGIC_FUNCTION_APPLICATION_ID', ['applicationId'])
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
 export class LogicFunctionEntity
   extends SyncableEntity

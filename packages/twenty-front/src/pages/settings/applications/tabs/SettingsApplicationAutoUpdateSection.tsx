@@ -37,7 +37,7 @@ export const SettingsApplicationAutoUpdateSection = ({
   return (
     <Section.Root>
       <Section.Header title={t`Auto update`} />
-      <Card rounded fullWidth>
+      <Card.Root rounded fullWidth>
         <SettingsOptionCardContentSwitch
           Icon={IconRefresh}
           title={t`Auto-upgrade`}
@@ -45,7 +45,7 @@ export const SettingsApplicationAutoUpdateSection = ({
           checked={autoUpgrade}
           onChange={handleAutoUpgradeChange}
         />
-      </Card>
+      </Card.Root>
     </Section.Root>
   );
 };

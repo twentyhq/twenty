@@ -83,6 +83,7 @@ export class EmailingSendResolver {
     await this.emailBillingService.validateEmailSendOrThrow({
       workspaceId: currentWorkspace.id,
       spenders,
+      emailCount: countDeliveredRecipients(input),
     });
 
     const { emailingDomainId, ...content } = input;

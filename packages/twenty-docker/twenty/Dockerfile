@@ -202,7 +202,7 @@ USER 1000
 
 
 # ===========================================================================
-# Target: twenty-app-dev (all-in-one with Postgres + Redis)
+# Target: twenty-app-dev (all-in-one with Postgres + Redis + ClickHouse)
 #   docker build --target twenty-app-dev -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
@@ -226,6 +226,8 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
+FROM clickhouse/clickhouse-server:25.8.8-alpine@sha256:68b9d9eb4cb949a03d1f90b76fd8d396a5999dd57ba1ee914ea36c77716ce937 AS clickhouse
+
 FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-app-dev
 
 # s6-overlay
@@ -244,6 +246,21 @@ RUN apk add --no-cache \
     'libssl3>=3.5.8-r0' \
     'libexpat>=2.8.5-r0' \
     'curl>=8.22.0-r0' 'jq>=1.8.2-r0' su-exec
+
+# ClickHouse binaries are linked against glibc: reuse the glibc runtime its
+# official alpine image ships alongside musl, and expose the loader at the path
+# glibc binaries expect.
+ARG TARGETARCH
+COPY --from=clickhouse --chown=root:root /usr/bin/clickhouse /usr/bin/clickhouse
+COPY --from=clickhouse \
+     /lib/ld-2.35.so /lib/libc.so.6 /lib/libdl.so.2 /lib/libm.so.6 \
+     /lib/libpthread.so.0 /lib/librt.so.1 /lib/libresolv.so.2 \
+     /lib/libnss_dns.so.2 /lib/libnss_files.so.2 \
+     /lib/
+RUN if [ "$TARGETARCH" = "arm64" ]; then ln -s /lib/ld-2.35.so /lib/ld-linux-aarch64.so.1; \
+    else mkdir -p /lib64 && ln -s /lib/ld-2.35.so /lib64/ld-linux-x86-64.so.2; fi \
+ && addgroup -S clickhouse \
+ && adduser -S -D -H -h /data/clickhouse -G clickhouse clickhouse
 
 # Workspace root config
 COPY --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
@@ -275,8 +292,9 @@ RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete \
 # s6 service definitions
 COPY packages/twenty-docker/twenty-app-dev/rootfs/ /
 
-RUN mkdir -p /data/postgres /data/redis /app/packages/twenty-server/.local-storage \
+RUN mkdir -p /data/postgres /data/redis /data/clickhouse /app/packages/twenty-server/.local-storage \
  && chown -R postgres:postgres /data/postgres \
+ && chown clickhouse:clickhouse /data/clickhouse \
  && chown 1000:1000 /data/redis /app/packages/twenty-server/.local-storage
 
 ARG APP_VERSION=0.0.0
@@ -285,6 +303,7 @@ ENV S6_KEEP_ENV=1
 ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     SERVER_URL=http://localhost:2020 \
     REDIS_URL=redis://localhost:6379 \
+    CLICKHOUSE_URL=http://localhost:8123/twenty \
     STORAGE_TYPE=local \
     APP_SECRET=twenty-app-dev-secret-not-for-production \
     APP_VERSION=$APP_VERSION \
@@ -297,9 +316,9 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     APPLICATION_LOG_DRIVER=CONSOLE
 
 EXPOSE 2020
-VOLUME ["/data/postgres", "/app/packages/twenty-server/.local-storage"]
+VOLUME ["/data/postgres", "/data/clickhouse", "/app/packages/twenty-server/.local-storage"]
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
-LABEL org.opencontainers.image.description="All-in-one Twenty image for local development and SDK usage. Includes PostgreSQL, Redis, server, and worker."
+LABEL org.opencontainers.image.description="All-in-one Twenty image for local development and SDK usage. Includes PostgreSQL, Redis, ClickHouse, server, and worker."
 
 ENTRYPOINT ["/init"]

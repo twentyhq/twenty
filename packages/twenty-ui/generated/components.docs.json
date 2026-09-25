@@ -54,6 +54,13 @@
         "description": "Whether the button should be focusable when disabled."
       },
       {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
+      },
+      {
         "name": "loading",
         "type": "boolean",
         "required": false,
@@ -171,6 +178,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
       },
       {
         "name": "loading",
@@ -299,6 +313,13 @@
         "description": "Keyboard shortcut hints displayed on non-mobile screens."
       },
       {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
+      },
+      {
         "name": "loading",
         "type": "boolean",
         "required": false,
@@ -418,6 +439,13 @@
         "description": "Keyboard shortcut hints displayed on non-mobile screens."
       },
       {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
+      },
+      {
         "name": "loading",
         "type": "boolean",
         "required": false,
@@ -528,6 +556,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
       },
       {
         "name": "loading",
@@ -2705,6 +2740,125 @@
     ]
   },
   {
+    "name": "Card",
+    "entryPoint": "twenty-ui/primitives/surfaces",
+    "slug": "surfaces/card",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "backgroundColor",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS background color of the outer card. Child sections have their own backgrounds."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Card sections or other content."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Sets the card width to 100% of its container."
+          },
+          {
+            "name": "rounded",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Compatibility styling flag. Cards already use the same rounded corners when omitted."
+          }
+        ]
+      },
+      {
+        "name": "Header",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Header content. Supply a Heading when the title should be a semantic heading."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the header."
+          }
+        ]
+      },
+      {
+        "name": "Content",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content displayed in the padded body."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the body."
+          },
+          {
+            "name": "divider",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a bottom border."
+          },
+          {
+            "name": "hasHoverHighlight",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Changes the background on hover. Does not add an action."
+          },
+          {
+            "name": "isClickable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a pointer cursor. Does not add button semantics or keyboard interaction."
+          }
+        ]
+      },
+      {
+        "name": "Footer",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Footer content, such as actions or supporting text."
+          },
+          {
+            "name": "divider",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Shows the top border unless explicitly set to false."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "Dialog",
     "entryPoint": "twenty-ui/primitives/surfaces",
     "slug": "surfaces/dialog",
@@ -4868,6 +5022,13 @@
         "description": "CSS positioning method for the popup."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the popup element."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
         "required": false,
@@ -5107,6 +5268,13 @@
             "description": "Displays an arrow pointing to the trigger. Defaults to false."
           },
           {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content displayed inside the popup."
+          },
+          {
             "name": "className",
             "type": "string | ((state: TooltipPopupState) => string | undefined)",
             "required": false,
@@ -5142,6 +5310,13 @@
             "description": "Portal destination. Defaults to the current theme container."
           },
           {
+            "name": "content",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supplementary content displayed in the tooltip."
+          },
+          {
             "name": "disableAnchorTracking",
             "type": "boolean",
             "required": false,
@@ -5168,6 +5343,13 @@
             "required": false,
             "defaultValue": "absolute",
             "description": "CSS positioning method for the popup."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref forwarded to the popup element."
           },
           {
             "name": "render",
@@ -5209,6 +5391,13 @@
       {
         "name": "Content",
         "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Primary text displayed in the tooltip."
+          },
           {
             "name": "description",
             "type": "ReactNode",
@@ -6396,6 +6585,84 @@
         ]
       },
       {
+        "name": "Header",
+        "props": [
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          }
+        ]
+      },
+      {
+        "name": "Title",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTitleState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTitleState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverTitleState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Close",
+        "props": [
+          {
+            "name": "aria-label",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverCloseState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverCloseState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverCloseState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
         "name": "Page",
         "props": [
           {
@@ -6962,6 +7229,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
       },
       {
         "name": "render",

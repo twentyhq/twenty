@@ -12,6 +12,7 @@ const buildLimitCounter = (
   overrides: Partial<LimitQuotaCounter> = {},
 ): LimitQuotaCounter => ({
   kind: 'limit',
+  isDefault: false,
   key: 'counter-key',
   limitValue: 1_000,
   meter: 'creditsUsedMicro',
@@ -61,7 +62,18 @@ describe('buildQuotaExhaustedScope', () => {
       periodCount: 1,
       periodUnit: 'month',
       retryAfterMs: PERIOD_END.getTime() - NOW.getTime(),
+      isDefault: false,
     });
+  });
+
+  it('marks a scope built from a default counter', () => {
+    expect(
+      buildQuotaExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        counter: buildLimitCounter({ isDefault: true }),
+        allowance: null,
+      }),
+    ).toMatchObject({ exhaustedKind: 'limit', isDefault: true });
   });
 
   it('scopes an exhausted allowance counter to the whole workspace', () => {

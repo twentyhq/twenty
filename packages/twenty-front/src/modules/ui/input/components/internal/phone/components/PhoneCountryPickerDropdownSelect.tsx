@@ -44,6 +44,12 @@ export const PhoneCountryPickerDropdownSelect = ({
     [countries, searchFilter],
   );
 
+  const isSelectedCountryMatchingSearch =
+    isDefined(selectedCountry) &&
+    filteredCountries.some(
+      ({ countryCode }) => countryCode === selectedCountry.countryCode,
+    );
+
   return (
     <>
       <Dropdown.Search
@@ -58,7 +64,7 @@ export const PhoneCountryPickerDropdownSelect = ({
           <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
         ) : (
           <>
-            {isDefined(selectedCountry) && (
+            {isSelectedCountryMatchingSearch && (
               <Dropdown.OptionItem
                 key={selectedCountry.countryCode}
                 onSelect={() => onChange(selectedCountry.countryCode)}

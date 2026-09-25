@@ -39,21 +39,31 @@ export const SearchAndHiddenObjects: Story = {
       within(popup).getByRole('searchbox', { name: 'Search' }),
       'compan',
     );
-    await userEvent.click(
-      await within(popup).findByRole('button', { name: 'Companies' }),
-    );
+    const companies = await within(popup).findByRole('button', {
+      name: 'Companies',
+    });
+    expect(
+      within(popup).queryByRole('button', { name: 'All objects' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(companies).toHaveAttribute('data-highlighted'));
+    await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await userEvent.click(trigger);
     const reopened = await body.findByRole('dialog');
-    expect(
-      within(reopened).getByRole('searchbox', { name: 'Search' }),
-    ).toHaveValue('');
+    const reopenedSearch = within(reopened).getByRole('searchbox', {
+      name: 'Search',
+    });
+    expect(reopenedSearch).toHaveValue('');
     expect(
       within(reopened).getByRole('button', { name: 'Companies' }),
     ).toHaveAttribute('aria-pressed', 'true');
-    await userEvent.click(
-      within(reopened).getByRole('button', { name: 'All objects' }),
+    await userEvent.type(reopenedSearch, 'all');
+    await waitFor(() =>
+      expect(
+        within(reopened).getByRole('button', { name: 'All objects' }),
+      ).toHaveAttribute('data-highlighted'),
     );
+    await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(reopened).not.toBeInTheDocument());
   },
 };

@@ -48,6 +48,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ConnectionProviderOAuthFlowService,
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     ConnectionProviderService,
