@@ -100,7 +100,7 @@ describe('record export lifecycle (integration)', () => {
     const events = connection.iterate<{ exportRecords: RecordExportDTO }>({
       query: `subscription ExportRecords($input: CreateRecordExportInput!) {
         exportRecords(input: $input) {
-          id filename progress downloadUrl errorMessage
+          id filename progress downloadPath errorMessage
         }
       }`,
       variables: { input: parameters },
@@ -129,8 +129,10 @@ describe('record export lifecycle (integration)', () => {
         if (isDefined(recordExport.errorMessage)) {
           throw new Error(recordExport.errorMessage ?? 'Export failed');
         }
-        if (isDefined(recordExport.downloadUrl)) {
-          expect(recordExport.downloadUrl).toBeDefined();
+        if (isDefined(recordExport.downloadPath)) {
+          expect(recordExport.downloadPath).toMatch(
+            new RegExp(`^/file/record-export/${recordExport.id}\\?token=.+$`),
+          );
           downloadTokens.set(recordExport.id, token);
           return recordExport;
         }
@@ -145,9 +147,8 @@ describe('record export lifecycle (integration)', () => {
     token = downloadTokens.get(recordExport.id) ??
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
   ) => {
-    const url = new URL(recordExport.downloadUrl!);
     return client
-      .get(url.pathname + url.search)
+      .get(recordExport.downloadPath!)
       .set(authenticationHeaders(token));
   };
   const getExport = (id: string) =>
@@ -175,7 +176,10 @@ describe('record export lifecycle (integration)', () => {
     getAppProviderByClassName<JwtWrapperService>(
       'JwtWrapperService',
     ).verifyJwtToken(
-      new URL(recordExport.downloadUrl!).searchParams.get('token')!,
+      new URL(
+        recordExport.downloadPath!,
+        `http://localhost:${APP_PORT}`,
+      ).searchParams.get('token')!,
     );
   const isConnected = async ({
     workspaceId,
@@ -398,7 +402,7 @@ describe('record export lifecycle (integration)', () => {
   it('cancels on a lost SSE connection and allows the next export', async () => {
     const { connection, events } = subscribe();
     const recordExport = await nextExport(events);
-    expect(recordExport.downloadUrl).toBeNull();
+    expect(recordExport.downloadPath).toBeNull();
     connection.dispose();
     await waitUntil(
       async () =>
@@ -430,7 +434,7 @@ describe('record export lifecycle (integration)', () => {
         progress = await nextExport(first.events);
       }
       expect(progress.progress).toBe(99);
-      expect(progress.downloadUrl).toBeNull();
+      expect(progress.downloadPath).toBeNull();
       const second = subscribe();
       await expect(nextExport(second.events)).rejects.toThrow();
     } finally {
@@ -616,7 +620,7 @@ describe('record export lifecycle (integration)', () => {
       });
       const update = await exports.getProgress(recordExport, 'job');
       expect(await fileExists(await getExport(ready.id))).toBe(true);
-      expect(update.downloadUrl).toBeUndefined();
+      expect(update.downloadPath).toBeUndefined();
       expect(update.errorMessage).toContain('interrupted');
       expect(update.progress).toBe(expectedProgress);
     },
@@ -726,7 +730,10 @@ describe('record export lifecycle (integration)', () => {
 
   it('rejects a download token used for another export and an invalid signature', async () => {
     const recordExport = await exportToCompletion();
-    const url = new URL(recordExport.downloadUrl!);
+    const url = new URL(
+      recordExport.downloadPath!,
+      `http://localhost:${APP_PORT}`,
+    );
     await client
       .get(`/file/record-export/${v4()}${url.search}`)
       .set(authenticationHeaders(APPLE_JANE_ADMIN_ACCESS_TOKEN))
@@ -825,7 +832,7 @@ describe('record export lifecycle (integration)', () => {
         while (!isDefined(recordExport.errorMessage)) {
           recordExport = await nextExport(events);
         }
-        expect(recordExport.downloadUrl).toBeNull();
+        expect(recordExport.downloadPath).toBeNull();
         expect(recordExport.progress).toBeLessThan(100);
       } finally {
         releasePage();
@@ -880,7 +887,7 @@ describe('record export lifecycle (integration)', () => {
     while (!isDefined(recordExport.errorMessage)) {
       recordExport = await nextExport(events);
     }
-    expect(recordExport.downloadUrl).toBeNull();
+    expect(recordExport.downloadPath).toBeNull();
     expect(partialFilePath).toBeDefined();
     expect(pendingFile).toMatchObject({ status: 'PENDING' });
     expect(await fileRowExists(pendingFile!)).toBe(false);
@@ -909,7 +916,10 @@ describe('record export lifecycle (integration)', () => {
   it('requires the exact requesting token without consuming the file on denied requests', async () => {
     const recordExport = await exportToCompletion();
     const stored = await getExport(recordExport.id);
-    const url = new URL(recordExport.downloadUrl!);
+    const url = new URL(
+      recordExport.downloadPath!,
+      `http://localhost:${APP_PORT}`,
+    );
     const requester = await query.resolveRequester(
       await authorization(recordExport),
     );
@@ -988,7 +998,10 @@ describe('record export lifecycle (integration)', () => {
       const token = await jwt.signAsyncOrThrow(payload, {
         expiresIn: tokenKind === 'expired-export-token' ? -1 : 60,
       });
-      const url = new URL(recordExport.downloadUrl!);
+      const url = new URL(
+        recordExport.downloadPath!,
+        `http://localhost:${APP_PORT}`,
+      );
       await client
         .get(`${url.pathname}?token=${token}`)
         .set(authenticationHeaders(APPLE_JANE_ADMIN_ACCESS_TOKEN))
@@ -1059,7 +1072,7 @@ describe('record export lifecycle (integration)', () => {
   );
 
   it.each(['access-check', 'token-signing'])(
-    'rejects URL issuance when row permissions change during %s',
+    'rejects download path issuance when row permissions change during %s',
     async (when) => {
       const ready = await exportToCompletion(
         input,
@@ -1096,7 +1109,7 @@ describe('record export lifecycle (integration)', () => {
           });
       }
       await expect(
-        exports.getDownloadUrl({ ...claims, id: stored.id }),
+        exports.getDownloadPath({ ...claims, id: stored.id }),
       ).rejects.toThrow('Access permissions have changed');
       await download(ready).expect(403);
       await expect(getExport(stored.id)).rejects.toThrow('Export not found');
