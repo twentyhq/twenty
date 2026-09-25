@@ -15,6 +15,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
+@Index('IDX_VIEW_GROUP_APPLICATION_ID', ['applicationId'])
 @Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'])
 export class ViewGroupEntity

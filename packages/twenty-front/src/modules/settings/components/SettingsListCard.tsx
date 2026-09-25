@@ -4,7 +4,7 @@ import { type ComponentType } from 'react';
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
 import { type IconComponent, IconPlus } from 'twenty-ui/icon';
-import { Card, CardFooter } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
@@ -78,7 +78,7 @@ export const SettingsListCard = <
   if (isLoading === true) return <SettingsListSkeletonCard />;
 
   return (
-    <Card rounded={rounded}>
+    <Card.Root rounded={rounded}>
       {items.map((item, index) => (
         <SettingsListItemCardContent
           key={item.id}
@@ -94,14 +94,14 @@ export const SettingsListCard = <
       ))}
       {hasFooter && (
         <StyledFooterContainer>
-          <CardFooter divider={!!items.length}>
+          <Card.Footer divider={!!items.length}>
             <StyledButton onClick={onFooterButtonClick}>
               <IconPlus size={theme.icon.size.md} />
               {footerButtonLabel}
             </StyledButton>
-          </CardFooter>
+          </Card.Footer>
         </StyledFooterContainer>
       )}
-    </Card>
+    </Card.Root>
   );
 };

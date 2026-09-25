@@ -97,7 +97,7 @@ type FrontComponent {
   updatedAt: DateTime!
   isHeadless: Boolean!
   usesSdkClient: Boolean!
-  applicationTokenPair: ApplicationTokenPair
+  applicationTokenPair: ApplicationTokenPair @deprecated(reason: "Use generateFrontComponentApplicationTokenPair")
   applicationVariables: JSON
   frontComponentSharedDependenciesChecksum: String
   applicationName: String
@@ -2059,8 +2059,8 @@ enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_RECORD_SHARING_ENABLED
+  IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
@@ -3131,7 +3131,6 @@ type CampaignAudiencePreviewDTO {
   totalMembers: Int!
   withoutEmail: Int!
   duplicateEmails: Int!
-  overCap: Int!
   hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
@@ -3421,7 +3420,7 @@ type RecordExport {
   filename: String!
   progress: Int!
   errorMessage: String
-  downloadUrl: String
+  downloadPath: String
 }
 
 type AiChatUsage {
@@ -3899,6 +3898,7 @@ type Query {
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
+  chatThreadsForRecord(objectNameSingular: String!, recordId: UUID!, limit: Int! = 20, offset: Int! = 0): [AgentChatThread!]!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
@@ -4164,6 +4164,7 @@ type Mutation {
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   resetCommandMenuItem(id: UUID!): CommandMenuItem!
   deleteCommandMenuItem(id: UUID!): CommandMenuItem!
+  generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
@@ -4213,7 +4214,6 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
-  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
@@ -4246,6 +4246,8 @@ type Mutation {
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
+  attachChatThreadToRecord(threadId: UUID!, objectNameSingular: String!, recordId: UUID!): Boolean!
+  detachChatThreadFromRecord(threadId: UUID!, objectNameSingular: String!, recordId: UUID!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -5320,18 +5322,6 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
-}
-
-input SendEmailViaDomainInput {
-  emailingDomainId: String!
-  to: [String!]!
-  cc: [String!]
-  bcc: [String!]
-  subject: String!
-  text: String!
-  html: String
-  from: String!
-  replyTo: [String!]
 }
 
 input SendMessageCampaignInput {

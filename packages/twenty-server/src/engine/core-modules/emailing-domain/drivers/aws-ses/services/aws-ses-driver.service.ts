@@ -39,7 +39,7 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
+import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 
 export class AwsSesDriver implements EmailingDomainDriverInterface {
   private readonly logger = new Logger(AwsSesDriver.name);

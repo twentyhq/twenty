@@ -64,6 +64,7 @@ export const FrontComponentWidgetRenderer = ({
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
+          objectNameSingular={targetRecordIdentifier?.targetObjectNameSingular}
           loadingFallback={<FrontComponentSkeletonLoader />}
         />
       </Suspense>

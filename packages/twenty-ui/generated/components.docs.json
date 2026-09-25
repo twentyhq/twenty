@@ -1,5 +1,656 @@
 [
   {
+    "name": "VisibilityHidden",
+    "entryPoint": "twenty-ui/primitives/accessibility",
+    "slug": "accessibility/visibility-hidden",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Content hidden visually while remaining available to assistive technology."
+      }
+    ]
+  },
+  {
+    "name": "ColorSample",
+    "entryPoint": "twenty-ui/primitives/data-display",
+    "slug": "data-display/color-sample",
+    "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the swatch."
+      },
+      {
+        "name": "color",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS color that overrides the background; the border still uses `colorName`."
+      },
+      {
+        "name": "colorName",
+        "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"turquoise\" | \"violet\" | \"yellow\"",
+        "required": true,
+        "defaultValue": null,
+        "description": "Theme color used for the background and border. Required even when `color` overrides the background."
+      },
+      {
+        "name": "variant",
+        "type": "\"circle\" | \"default\" | \"pipeline\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Swatch shape: `default`, `circle`, or `pipeline`. Omitting it uses the default shape."
+      }
+    ]
+  },
+  {
+    "name": "Pill",
+    "entryPoint": "twenty-ui/primitives/data-display",
+    "slug": "data-display/pill",
+    "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the pill."
+      },
+      {
+        "name": "Icon",
+        "type": "IconComponent",
+        "required": false,
+        "defaultValue": null,
+        "description": "Icon component rendered before the label at 12px. Import icons from `twenty-ui/icon`."
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Short text displayed inside the pill."
+      }
+    ]
+  },
+  {
+    "name": "Banner",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/banner",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Message and optional actions displayed inside the banner."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the banner."
+      },
+      {
+        "name": "color",
+        "type": "\"blue\" | \"danger\"",
+        "required": false,
+        "defaultValue": "blue",
+        "description": "Blue information treatment or danger treatment."
+      },
+      {
+        "name": "variant",
+        "type": "\"primary\" | \"secondary\"",
+        "required": false,
+        "defaultValue": "primary",
+        "description": "Primary solid treatment or secondary translucent treatment."
+      }
+    ]
+  },
+  {
+    "name": "CircularProgressBar",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/circular-progress-bar",
+    "props": [
+      {
+        "name": "barColor",
+        "type": "string",
+        "required": false,
+        "defaultValue": "currentColor",
+        "description": "CSS stroke color. Defaults to the inherited text color."
+      },
+      {
+        "name": "barWidth",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5",
+        "description": "Stroke width in pixels. Keep it smaller than half of `size`."
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "required": false,
+        "defaultValue": "50",
+        "description": "Width and height of the spinner in pixels."
+      }
+    ]
+  },
+  {
+    "name": "Loader",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/loader",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"turquoise\" | \"violet\" | \"yellow\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme color for the animated dot and border. When omitted, inherits the button color if available, otherwise the tertiary text color."
+      }
+    ]
+  },
+  {
+    "name": "ProgressBar",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/progress-bar",
+    "props": [
+      {
+        "name": "ariaLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name describing the operation being measured."
+      },
+      {
+        "name": "backgroundColor",
+        "type": "string",
+        "required": false,
+        "defaultValue": "none",
+        "description": "CSS background color of the track."
+      },
+      {
+        "name": "barColor",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS color of the filled bar. Defaults to the primary text color."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the progress root."
+      },
+      {
+        "name": "countdownDurationInMs",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Starts a visual animation from full to empty over this duration in milliseconds. Does not update `value`."
+      },
+      {
+        "name": "isCountdownPaused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Pauses the countdown animation without resetting its position."
+      },
+      {
+        "name": "onCountdownComplete",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when the countdown animation ends."
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Current progress from 0 to 100. Also supplies the accessible value during a countdown."
+      },
+      {
+        "name": "withBorderRadius",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Rounds the track and indicator corners."
+      }
+    ]
+  },
+  {
+    "name": "SegmentedControl",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/segmented-control",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible group name. Supply this or `aria-labelledby`."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "ID of an element that labels the group. Supply this or `aria-label`."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: RadioGroupState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "The uncontrolled value of the radio button that should be initially selected.\n\nTo render a controlled radio group, use the `value` prop instead."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the component should ignore user interaction."
+      },
+      {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Identifies the form that owns the radio inputs.\nUseful when the radio group is rendered outside the form."
+      },
+      {
+        "name": "inputRef",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "A ref to access the hidden input element."
+      },
+      {
+        "name": "itemWidth",
+        "type": "\"content\" | \"equal\"",
+        "required": false,
+        "defaultValue": "equal",
+        "description": "Use equal-width options or size each option to its content."
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Identifies the field when a form is submitted."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: TValue, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Callback fired when the value changes."
+      },
+      {
+        "name": "options",
+        "type": "readonly SegmentedControlOption<TValue>[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Options with a unique string `value`, a `label` or `startIcon`, and optional `disabled`. Icon-only options require an `aria-label`."
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the user should be unable to select a different radio button in the group."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, RadioGroupState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the user must choose a value before submitting a form."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: RadioGroupState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "The controlled value of the radio item that should be currently selected.\n\nTo render an uncontrolled radio group, use the `defaultValue` prop instead."
+      }
+    ]
+  },
+  {
+    "name": "AnimatedExpandableContainer",
+    "entryPoint": "twenty-ui/primitives/layout",
+    "slug": "layout/animated-expandable-container",
+    "props": [
+      {
+        "name": "animationDurations",
+        "type": "AnimationDurations",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Default theme timing or separate opacity and size durations in seconds."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Content inside the expanding panel."
+      },
+      {
+        "name": "containAnimation",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Clips overflowing content during expansion and uses a column layout."
+      },
+      {
+        "name": "dimension",
+        "type": "\"height\" | \"width\"",
+        "required": false,
+        "defaultValue": "height",
+        "description": "Dimension animated when the panel opens and closes."
+      },
+      {
+        "name": "duration",
+        "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence."
+      },
+      {
+        "name": "initial",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Compatibility prop accepted by the type but not used by the current implementation."
+      },
+      {
+        "name": "isExpanded",
+        "type": "boolean",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled visibility of the panel. The application owns the trigger and state."
+      },
+      {
+        "name": "mode",
+        "type": "\"fit-content\" | \"scroll-height\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Compatibility prop accepted by the type but not used by the current implementation."
+      }
+    ]
+  },
+  {
+    "name": "HorizontalSeparator",
+    "entryPoint": "twenty-ui/primitives/layout",
+    "slug": "layout/horizontal-separator",
+    "props": [
+      {
+        "name": "color",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS line color. Defaults to the medium border color."
+      },
+      {
+        "name": "noMargin",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Removes the vertical margins."
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "required": false,
+        "defaultValue": "",
+        "description": "Optional label displayed between two lines."
+      },
+      {
+        "name": "visible",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Shows the dividing line. Setting it to false preserves margins and any text."
+      }
+    ]
+  },
+  {
+    "name": "ResizeHandle",
+    "entryPoint": "twenty-ui/primitives/layout",
+    "slug": "layout/resize-handle",
+    "props": [
+      {
+        "name": "axis",
+        "type": "\"x\" | \"y\"",
+        "required": false,
+        "defaultValue": "y",
+        "description": "Pointer movement axis: `y` for height or `x` for width."
+      },
+      {
+        "name": "defaultValue",
+        "type": "number | (readonly string[] & number)",
+        "required": false,
+        "defaultValue": "150",
+        "description": "Initial size when the handle owns its state."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables resizing and removes the handle from the tab order."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false,
+        "defaultValue": "500",
+        "description": "Maximum allowed size."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false,
+        "defaultValue": "50",
+        "description": "Minimum allowed size."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the bounded size after pointer or keyboard interaction."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": false,
+        "defaultValue": "10",
+        "description": "Keyboard arrow increment. Pointer movement uses the pixel delta."
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled size. Apply the value to the element being resized."
+      }
+    ]
+  },
+  {
+    "name": "TextDirectionProvider",
+    "entryPoint": "twenty-ui/primitives/layout",
+    "slug": "layout/text-direction-provider",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controls that receive the direction context."
+      },
+      {
+        "name": "direction",
+        "type": "\"ltr\" | \"rtl\"",
+        "required": true,
+        "defaultValue": null,
+        "description": "Reading direction used by directional interactions. Also set the matching HTML `dir` attribute on the content."
+      }
+    ]
+  },
+  {
+    "name": "ClickToActionLink",
+    "entryPoint": "twenty-ui/primitives/navigation",
+    "slug": "navigation/click-to-action-link",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Visible link text or content. Use a descriptive destination label."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the anchor."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL for native link navigation."
+      },
+      {
+        "name": "onClick",
+        "type": "MouseEventHandler<HTMLAnchorElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Click handler called when the link is activated."
+      },
+      {
+        "name": "rel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Relationship to the destination, such as `noopener noreferrer` for a new tab."
+      },
+      {
+        "name": "target",
+        "type": "HTMLAttributeAnchorTarget",
+        "required": false,
+        "defaultValue": null,
+        "description": "Browsing context in which to open the destination."
+      }
+    ]
+  },
+  {
+    "name": "OverflowingTextWithTooltip",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/overflowing-text-with-tooltip",
+    "props": [
+      {
+        "name": "alwaysShowTooltip",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows the tooltip even when the text is not truncated."
+      },
+      {
+        "name": "displayedMaxRows",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Maximum displayed rows. Omit for single-line truncation; use a positive integer for multiline text."
+      },
+      {
+        "name": "isFocusable",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a tab stop and opens the tooltip on focus or click."
+      },
+      {
+        "name": "isTooltipMultiline",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Preserves whitespace and line breaks in the tooltip."
+      },
+      {
+        "name": "size",
+        "type": "\"large\" | \"small\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Small inherited text sizing or the large fixed-height treatment."
+      },
+      {
+        "name": "text",
+        "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null | undefined",
+        "required": true,
+        "defaultValue": null,
+        "description": "Text or React content to truncate. Non-string React content requires `tooltipContent`."
+      },
+      {
+        "name": "tooltipContent",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Plain text displayed in the tooltip. Defaults to `text` when it is a nonempty string."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Hover delay in milliseconds."
+      },
+      {
+        "name": "tooltipPlace",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Preferred side of the tooltip."
+      }
+    ]
+  },
+  {
     "name": "LightIconButton",
     "entryPoint": "twenty-ui/components",
     "slug": "input/light-icon-button",
@@ -52,6 +703,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
       },
       {
         "name": "loading",
@@ -171,6 +829,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
       },
       {
         "name": "loading",
@@ -299,6 +964,13 @@
         "description": "Keyboard shortcut hints displayed on non-mobile screens."
       },
       {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
+      },
+      {
         "name": "loading",
         "type": "boolean",
         "required": false,
@@ -418,6 +1090,13 @@
         "description": "Keyboard shortcut hints displayed on non-mobile screens."
       },
       {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
+      },
+      {
         "name": "loading",
         "type": "boolean",
         "required": false,
@@ -528,6 +1207,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
       },
       {
         "name": "loading",
@@ -2705,6 +3391,125 @@
     ]
   },
   {
+    "name": "Card",
+    "entryPoint": "twenty-ui/primitives/surfaces",
+    "slug": "surfaces/card",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "backgroundColor",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS background color of the outer card. Child sections have their own backgrounds."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Card sections or other content."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Sets the card width to 100% of its container."
+          },
+          {
+            "name": "rounded",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Compatibility styling flag. Cards already use the same rounded corners when omitted."
+          }
+        ]
+      },
+      {
+        "name": "Header",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Header content. Supply a Heading when the title should be a semantic heading."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the header."
+          }
+        ]
+      },
+      {
+        "name": "Content",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content displayed in the padded body."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the body."
+          },
+          {
+            "name": "divider",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a bottom border."
+          },
+          {
+            "name": "hasHoverHighlight",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Changes the background on hover. Does not add an action."
+          },
+          {
+            "name": "isClickable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a pointer cursor. Does not add button semantics or keyboard interaction."
+          }
+        ]
+      },
+      {
+        "name": "Footer",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Footer content, such as actions or supporting text."
+          },
+          {
+            "name": "divider",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Shows the top border unless explicitly set to false."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "Dialog",
     "entryPoint": "twenty-ui/primitives/surfaces",
     "slug": "surfaces/dialog",
@@ -4868,6 +5673,13 @@
         "description": "CSS positioning method for the popup."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the popup element."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
         "required": false,
@@ -5107,6 +5919,13 @@
             "description": "Displays an arrow pointing to the trigger. Defaults to false."
           },
           {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content displayed inside the popup."
+          },
+          {
             "name": "className",
             "type": "string | ((state: TooltipPopupState) => string | undefined)",
             "required": false,
@@ -5142,6 +5961,13 @@
             "description": "Portal destination. Defaults to the current theme container."
           },
           {
+            "name": "content",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supplementary content displayed in the tooltip."
+          },
+          {
             "name": "disableAnchorTracking",
             "type": "boolean",
             "required": false,
@@ -5168,6 +5994,13 @@
             "required": false,
             "defaultValue": "absolute",
             "description": "CSS positioning method for the popup."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref forwarded to the popup element."
           },
           {
             "name": "render",
@@ -5209,6 +6042,13 @@
       {
         "name": "Content",
         "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Primary text displayed in the tooltip."
+          },
           {
             "name": "description",
             "type": "ReactNode",
@@ -6298,6 +7138,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "indicator",
+            "type": "\"check\" | \"checkbox\" | \"none\"",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -6385,6 +7232,84 @@
             "required": false,
             "defaultValue": null,
             "description": "The value of the input. Use when controlled."
+          }
+        ]
+      },
+      {
+        "name": "Header",
+        "props": [
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          }
+        ]
+      },
+      {
+        "name": "Title",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTitleState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTitleState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverTitleState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Close",
+        "props": [
+          {
+            "name": "aria-label",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverCloseState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverCloseState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverCloseState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
@@ -6659,6 +7584,13 @@
           {
             "name": "label",
             "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "scrollable",
+            "type": "boolean",
             "required": false,
             "defaultValue": null,
             "description": ""
@@ -6948,6 +7880,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Destination URL. Enables native link semantics instead of button semantics."
       },
       {
         "name": "render",

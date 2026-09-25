@@ -5,7 +5,7 @@ import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNa
 import { SettingsNavigationDrawerContent } from '@/navigation/components/SettingsNavigationDrawerContent';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export type AppNavigationDrawerProps = {
   className?: string;

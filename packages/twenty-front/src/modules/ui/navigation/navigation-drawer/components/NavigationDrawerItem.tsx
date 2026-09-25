@@ -8,8 +8,8 @@ import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/ho
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useMouseDownNavigation } from '@/ui/navigation/utils/hooks/useMouseDownNavigation';
-import { type TriggerEventType } from '@/ui/navigation/utils/types/trigger-event.type';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';

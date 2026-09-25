@@ -22,9 +22,11 @@ import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
 import { AgentEntity } from './entities/agent.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([AgentEntity, RoleEntity, RoleTargetEntity]),
     AiModelsModule,
     AiAgentRoleModule,

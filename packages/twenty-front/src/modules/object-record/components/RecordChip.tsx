@@ -5,7 +5,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
-import { type TriggerEventType } from '@/ui/navigation/utils/types/trigger-event.type';
+import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';

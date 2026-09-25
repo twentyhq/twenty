@@ -25,6 +25,7 @@ error and can allow additional known errors without requiring them to occur.
 | `twenty-ui-alert-dialog` | AlertDialog |
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
+| `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -52,6 +53,7 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Menu, Select | Opening fails on viewport data and/or missing `nativeEvent.pointerType`. |
 | Switch | Activation attempts to construct an unavailable `PointerEvent`. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because the SDK does not forward handlers added by `React.cloneElement`. `TooltipPreact` throws on hover because the sandbox lacks `Element.closest`. |
+| Responsive hooks | The sandbox has no `window.matchMedia`, so `useIsMobile` and `useIsTouchDevice` return `false` whatever the host viewport or input. The fixture asserts that fallback and must assert host-derived values once a media-query bridge lands. |
 
 The tooltip stories assert these known failures and must be updated to assert
 successful interactions when compatibility is fixed. The surfaces gallery checks

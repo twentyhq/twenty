@@ -15,7 +15,7 @@ import { SetupHeading } from './SetupHeading';
 import { Status } from '@ui/primitives/data-display/Status/Status';
 
 const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
-  <Card
+  <Card.Root
     className="permission-list"
     backgroundColor="var(--t-background-secondary)"
   >
@@ -76,7 +76,7 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
         </div>
       );
     })}
-  </Card>
+  </Card.Root>
 );
 
 export const Permissions = ({

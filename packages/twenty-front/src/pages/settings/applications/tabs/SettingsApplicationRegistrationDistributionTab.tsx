@@ -52,6 +52,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
         {isNpmSource && (
           <SettingsApplicationRegistrationShareLinkButtons
             shareLink={shareLink}
+            universalIdentifier={registration.universalIdentifier}
             isNpmSource
             withCopyButton
           />
@@ -82,6 +83,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
           />
           <SettingsApplicationRegistrationShareLinkButtons
             shareLink={shareLink}
+            universalIdentifier={registration.universalIdentifier}
             withCopyButton
           />
         </Section.Root>

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 
 import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`

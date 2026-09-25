@@ -78,6 +78,7 @@ export class ToolIndexResolver {
       userId: user?.id,
       userWorkspaceId,
       locale,
+      application,
     });
   }
 
@@ -107,6 +108,7 @@ export class ToolIndexResolver {
         rolePermissionConfig: { intersectionOf: roleIds },
         userId: user?.id,
         userWorkspaceId,
+        application,
       },
     });
 

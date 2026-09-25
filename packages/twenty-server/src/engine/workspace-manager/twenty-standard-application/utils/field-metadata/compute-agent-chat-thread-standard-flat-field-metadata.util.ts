@@ -5,6 +5,7 @@ import {
   MetadataWritability,
   RelationType,
 } from 'twenty-shared/types';
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   type CreateStandardFieldArgs,
@@ -513,6 +514,68 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isUIEditable: false,
         isNullable: true,
         targetObjectName: 'agentMessage',
+        targetFieldName: 'thread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  attachments: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'attachments',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+            .label,
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Attachments linked to the chat thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+          .icon,
+        isUIEditable: false,
+        isNullable: true,
+        isSystemSideEffect: true,
+        targetObjectName: 'attachment',
+        targetFieldName: 'targetAgentChatThread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  recordTargets: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'recordTargets',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Record Targets', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Records this thread is attached to',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconRelationOneToMany',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'agentChatThreadTarget',
         targetFieldName: 'thread',
         morphId: null,
         settings: {

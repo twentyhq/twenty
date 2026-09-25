@@ -3,7 +3,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertMetadataRestListResponse,
   assertRestApiErrorNotFoundResponse,
@@ -75,7 +75,7 @@ describe('View REST API', () => {
 
   describe('GET /metadata/views', () => {
     it('should return all views for workspace', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/views',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -85,7 +85,7 @@ describe('View REST API', () => {
     });
 
     it('should return views filtered by objectMetadataId', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/views?objectMetadataId=${testObjectMetadataId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -169,7 +169,7 @@ describe('View REST API', () => {
 
       testViewId = view.id;
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/views/${view.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -184,7 +184,7 @@ describe('View REST API', () => {
     });
 
     it('should return empty object for non-existent view', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/views/20202020-b7a4-4f8e-9c1d-2e3f4a5b6c7d`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -219,7 +219,7 @@ describe('View REST API', () => {
         mainGroupByFieldMetadataId: testSelectFieldMetadataId,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/views/${view.id}`,
         body: updateData,
@@ -243,7 +243,7 @@ describe('View REST API', () => {
         type: ViewType.KANBAN,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/views/20202020-b7a4-4f8e-9c1d-2e3f4a5b6c7d`,
         body: updateData,
@@ -270,7 +270,7 @@ describe('View REST API', () => {
 
       testViewId = view.id;
 
-      const deleteResponse = await makeRestAPIRequest({
+      const deleteResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/views/${view.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -280,7 +280,7 @@ describe('View REST API', () => {
       expect(deleteResponse.body.success).toBe(true);
       testViewId = undefined;
 
-      const getResponse = await makeRestAPIRequest({
+      const getResponse = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/views/${view.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -290,7 +290,7 @@ describe('View REST API', () => {
     });
 
     it('should return 404 error when deleting non-existent view', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/views/20202020-b7a4-4f8e-9c1d-2e3f4a5b6c7d`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

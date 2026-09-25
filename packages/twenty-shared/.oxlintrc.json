@@ -47,6 +47,8 @@
         "argsIgnorePattern": "^_"
       }
     ],
+    "twenty/no-miscased-acronym-in-identifier": "error",
+    "twenty/types-folder-filename": ["error", { "convention": "PascalCase" }],
     "twenty/enforce-module-boundaries": [
       "error",
       {

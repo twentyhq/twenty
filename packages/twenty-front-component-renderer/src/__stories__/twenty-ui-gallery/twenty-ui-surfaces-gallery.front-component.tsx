@@ -1,13 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  Tooltip,
-} from 'twenty-ui/primitives/surfaces';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
@@ -27,20 +21,20 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'Card',
-    node: <Card>Card body</Card>,
+    name: 'Card.Root',
+    node: <Card.Root>Card body</Card.Root>,
   },
   {
-    name: 'CardContent',
-    node: <CardContent>Card content</CardContent>,
+    name: 'Card.Content',
+    node: <Card.Content>Card content</Card.Content>,
   },
   {
-    name: 'CardFooter',
-    node: <CardFooter>Card footer</CardFooter>,
+    name: 'Card.Footer',
+    node: <Card.Footer>Card footer</Card.Footer>,
   },
   {
-    name: 'CardHeader',
-    node: <CardHeader>Card header</CardHeader>,
+    name: 'Card.Header',
+    node: <Card.Header>Card header</Card.Header>,
   },
   {
     name: 'OverflowingTextWithTooltip',

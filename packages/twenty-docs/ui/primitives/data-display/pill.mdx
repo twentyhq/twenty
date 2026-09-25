@@ -1,0 +1,37 @@
+---
+title: Pill
+description: Show a compact neutral label with an optional icon.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import PillReference from '/snippets/ui/generated/data-display/pill.mdx';
+
+`Pill` displays a short, non-interactive label. Use [Tag](/ui/primitives/data-display/tag) for colored categories or [Status](/ui/primitives/data-display/status) for a named state with an indicator.
+
+<StoryEmbed storyId="ui-data-display-pill--default" title="Pill example" />
+
+## Usage
+
+```tsx
+import { Pill } from 'twenty-ui/primitives/data-display';
+
+export const PreviewLabel = () => <Pill label="Preview" />;
+```
+
+## With an icon
+
+```tsx
+import { Pill } from 'twenty-ui/primitives/data-display';
+import { IconPaperclip } from 'twenty-ui/icon';
+
+export const AttachmentLabel = () => (
+  <Pill label="Attachment" Icon={IconPaperclip} />
+);
+```
+
+Pass the icon component to `Icon`, rather than a rendered element. Keep a visible label to explain its meaning. The component accepts `label`, `Icon`, and `className`; it does not forward click handlers, children, or native accessibility attributes. Put actions on a separate [Button](/ui/primitives/input/button).
+
+## Props
+
+<PillReference />
