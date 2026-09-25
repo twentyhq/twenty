@@ -30,7 +30,7 @@ export const SettingsTranslationsButton = ({
         setSettingsTranslationsSidePanelTarget(target);
         navigateSidePanel({
           page: SidePanelPages.SettingsMetadataTranslations,
-          pageTitle: t`Translations`,
+          pageTitle: target.label,
           pageIcon: IconLanguage,
           resetNavigationStack: true,
         });

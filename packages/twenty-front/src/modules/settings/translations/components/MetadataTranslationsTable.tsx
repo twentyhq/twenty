@@ -1,0 +1,91 @@
+import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
+import { MetadataTranslationsTableRow } from '@/settings/translations/components/MetadataTranslationsTableRow';
+import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMetadataTranslations';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { type LocaleOption } from '~/localization/hooks/useLocaleOptions';
+
+type MetadataTranslationsTableProps = {
+  columns: { property: string; label: string }[];
+  rowsByProperty: Map<string, Map<string, MetadataTranslationRow>>;
+  localeOptions: LocaleOption[];
+  onSaveTranslationRow: (
+    row: MetadataTranslationRow,
+    value: string | null,
+  ) => Promise<void>;
+};
+
+export const MetadataTranslationsTable = ({
+  columns,
+  rowsByProperty,
+  localeOptions,
+  onSaveTranslationRow,
+}: MetadataTranslationsTableProps) => {
+  const { t } = useLingui();
+  const gridTemplateColumns = `128px repeat(${columns.length}, minmax(0, 1fr)) 24px`;
+
+  const localeRows = localeOptions.flatMap(({ value: locale, label }) => {
+    const rows = columns.map(({ property }) =>
+      rowsByProperty.get(property)?.get(locale),
+    );
+
+    return rows.some(isDefined) ? [{ locale, label, rows }] : [];
+  });
+
+  return (
+    <Table>
+      <TableRow gridTemplateColumns={gridTemplateColumns}>
+        <TableHeader>{t`Language`}</TableHeader>
+        {columns.map(({ property, label }) => (
+          <TableHeader key={property}>{label}</TableHeader>
+        ))}
+        <TableHeader />
+      </TableRow>
+      <StyledSettingsDataModelTableBodyContainer>
+        <TableBody>
+          <TableRow gridTemplateColumns={gridTemplateColumns}>
+            <TableCell color={themeCssVariables.font.color.tertiary}>
+              {t`Source`}
+            </TableCell>
+            {columns.map(({ property }) => (
+              <TableCell
+                key={property}
+                color={themeCssVariables.font.color.primary}
+                overflow="hidden"
+              >
+                <OverflowingTextWithTooltip
+                  text={
+                    rowsByProperty.get(property)?.values().next().value
+                      ?.canonicalValue
+                  }
+                />
+              </TableCell>
+            ))}
+            <TableCell />
+          </TableRow>
+          {localeRows.map(({ locale, label, rows }) => (
+            <MetadataTranslationsTableRow
+              key={locale}
+              gridTemplateColumns={gridTemplateColumns}
+              localeLabel={label}
+              rows={rows}
+              onSaveTranslationRow={onSaveTranslationRow}
+            />
+          ))}
+          {localeRows.length === 0 && (
+            <TableCell color={themeCssVariables.font.color.tertiary}>
+              {t`No languages found`}
+            </TableCell>
+          )}
+        </TableBody>
+      </StyledSettingsDataModelTableBodyContainer>
+    </Table>
+  );
+};

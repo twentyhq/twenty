@@ -1,4 +1,4 @@
-import { MetadataTranslationValueCell } from '@/settings/translations/components/MetadataTranslationValueCell';
+import { MetadataTranslationsTable } from '@/settings/translations/components/MetadataTranslationsTable';
 import {
   type MetadataTranslationRow,
   useMetadataTranslations,
@@ -7,48 +7,29 @@ import {
   type SettingsTranslationsSidePanelTarget,
   settingsTranslationsSidePanelTargetState,
 } from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, Section } from 'twenty-ui/components';
-import { IconRestore } from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/components';
+import { IconSearch } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS = '112px 1fr 24px';
+const DESCRIPTION_PROPERTY = 'description';
 
 const StyledPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[6]};
+  gap: ${themeCssVariables.spacing[8]};
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledEntityLabel = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledExplanation = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledPropertySection = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledSearchInputContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const getMetadataTranslationsInput = (
@@ -60,11 +41,12 @@ const getMetadataTranslationsInput = (
 
 export const SidePanelSettingsMetadataTranslationsPage = () => {
   const { t } = useLingui();
+  const [searchTerm, setSearchTerm] = useState('');
   // Registry property keys are unique across metadata names, except
   // `description`, which reads the same on both.
-  const labelByProperty: Record<string, string> = {
-    labelSingular: t`Label (singular)`,
-    labelPlural: t`Label (plural)`,
+  const columnLabelByProperty: Record<string, string> = {
+    labelSingular: t`Singular`,
+    labelPlural: t`Plural`,
     label: t`Label`,
     description: t`Description`,
   };
@@ -91,69 +73,61 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
     rowsByProperty.set(row.property, localeRows);
   }
 
+  const toColumn = (property: string) => ({
+    property,
+    label: columnLabelByProperty[property] ?? property,
+  });
+  const labelColumns = [...rowsByProperty.keys()]
+    .filter((property) => property !== DESCRIPTION_PROPERTY)
+    .map(toColumn);
+  const descriptionColumns = rowsByProperty.has(DESCRIPTION_PROPERTY)
+    ? [toColumn(DESCRIPTION_PROPERTY)]
+    : [];
+
+  const normalizedSearchTerm = normalizeSearchText(searchTerm);
+  const filteredLocaleOptions = localeOptions.filter(
+    ({ label, searchKeywords }) =>
+      normalizeSearchText(`${label} ${searchKeywords}`).includes(
+        normalizedSearchTerm,
+      ),
+  );
+
   return (
     <StyledPageContainer>
-      <StyledHeader>
-        <StyledEntityLabel>
-          {settingsTranslationsSidePanelTarget.label}
-        </StyledEntityLabel>
-        <StyledExplanation>
-          {t`Languages without their own translation show the source text.`}
-        </StyledExplanation>
-      </StyledHeader>
-      {[...rowsByProperty.entries()].map(([property, localeRows]) => {
-        const canonicalValue = localeRows.values().next().value?.canonicalValue;
-
-        return (
-          <StyledPropertySection key={property}>
-            <Section.Header
-              title={labelByProperty[property] ?? property}
-              description={t`Source: ${canonicalValue}`}
+      {labelColumns.length > 0 && (
+        <Section.Root>
+          <Section.Header
+            title={t`Labels`}
+            description={t`Languages without a translation show the source text.`}
+          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="settings-metadata-translations-search"
+              LeftIcon={IconSearch}
+              placeholder={t`Search a language...`}
+              value={searchTerm}
+              onChange={setSearchTerm}
             />
-            <Table>
-              {localeOptions.map(({ value: locale, label: localeLabel }) => {
-                const row = localeRows.get(locale);
-
-                if (!isDefined(row)) {
-                  return null;
-                }
-
-                const isEdited =
-                  row.provenance === MetadataTranslationProvenance.WORKSPACE;
-
-                return (
-                  <TableRow
-                    key={`${property}:${locale}`}
-                    gridAutoColumns={TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS}
-                  >
-                    <TableCell color={themeCssVariables.font.color.primary}>
-                      {localeLabel}
-                    </TableCell>
-                    <TableCell>
-                      <MetadataTranslationValueCell
-                        row={row}
-                        onSave={(value) => saveTranslationRow(row, value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {isEdited && (
-                        <LightIconButton
-                          title={t`Reset to default`}
-                          emphasis="subtle"
-                          onClick={() => saveTranslationRow(row, null)}
-                          aria-label={t`Reset to default`}
-                        >
-                          <IconRestore />
-                        </LightIconButton>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </Table>
-          </StyledPropertySection>
-        );
-      })}
+          </StyledSearchInputContainer>
+          <MetadataTranslationsTable
+            columns={labelColumns}
+            rowsByProperty={rowsByProperty}
+            localeOptions={filteredLocaleOptions}
+            onSaveTranslationRow={saveTranslationRow}
+          />
+        </Section.Root>
+      )}
+      {descriptionColumns.length > 0 && (
+        <Section.Root>
+          <Section.Header title={t`Description`} />
+          <MetadataTranslationsTable
+            columns={descriptionColumns}
+            rowsByProperty={rowsByProperty}
+            localeOptions={filteredLocaleOptions}
+            onSaveTranslationRow={saveTranslationRow}
+          />
+        </Section.Root>
+      )}
     </StyledPageContainer>
   );
 };

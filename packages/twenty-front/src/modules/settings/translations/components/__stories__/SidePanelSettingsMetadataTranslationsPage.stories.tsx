@@ -90,9 +90,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // The section header carries the source text; rows are translations
-    // only, and the workspace-edited row exposes its reset button.
-    await canvas.findByText('Source: Companies');
+    await canvas.findByText('Labels');
+    await canvas.findByText('Source');
     await canvas.findByText('Entreprises');
     await canvas.findByTitle('Reset to default');
   },
