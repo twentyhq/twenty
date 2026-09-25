@@ -1,7 +1,7 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useState } from 'react';
+import { type ComponentProps, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Dropdown } from '../Dropdown';
@@ -11,8 +11,10 @@ const PEOPLE = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
 const SearchablePicker = ({
   multiple = false,
   onCreate,
+  enterSelects,
 }: {
   multiple?: boolean;
+  enterSelects?: ComponentProps<typeof Dropdown.Search>['enterSelects'];
   onCreate: () => void;
 }) => {
   const [search, setSearch] = useState('');
@@ -26,6 +28,7 @@ const SearchablePicker = ({
       <Dropdown.Trigger>Assignees</Dropdown.Trigger>
       <Dropdown.Content aria-label="Choose assignees">
         <Dropdown.Search
+          enterSelects={enterSelects}
           aria-label="Search people"
           value={search}
           onValueChange={setSearch}
@@ -59,6 +62,90 @@ const SearchablePicker = ({
 };
 
 describe('Dropdown picker', () => {
+  it.each([
+    { enterSelects: undefined, query: 'grace', shouldSelect: false },
+    { enterSelects: 'first-match', query: '', shouldSelect: true },
+    { enterSelects: 'first-match', query: 'grace', shouldSelect: true },
+    {
+      enterSelects: 'first-match-while-searching',
+      query: '',
+      shouldSelect: false,
+    },
+    {
+      enterSelects: 'first-match-while-searching',
+      query: 'grace',
+      shouldSelect: true,
+    },
+  ] as const)(
+    'handles Enter from search with $enterSelects and query "$query"',
+    async ({ enterSelects, query, shouldSelect }) => {
+      const user = userEvent.setup();
+      const onCreate = vi.fn();
+      render(
+        <SearchablePicker enterSelects={enterSelects} onCreate={onCreate} />,
+      );
+      await user.click(screen.getByRole('button', { name: 'Assignees' }));
+      const search = screen.getByRole('searchbox', { name: 'Search people' });
+      await waitFor(() => expect(search).toHaveFocus());
+      if (isNonEmptyString(query)) {
+        await user.type(search, query);
+      }
+      await user.keyboard('{Enter}');
+      expect(onCreate).toHaveBeenCalledTimes(shouldSelect ? 1 : 0);
+    },
+  );
+
+  it('selects the first enabled result', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <Dropdown.Root type="picker">
+        <Dropdown.Trigger>Fields</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Fields">
+          <Dropdown.Search
+            aria-label="Search fields"
+            enterSelects="first-match"
+          />
+          <Dropdown.OptionItem selected={false} disabled>
+            Disabled
+          </Dropdown.OptionItem>
+          <Dropdown.OptionItem selected={false} onSelect={onSelect}>
+            Name
+          </Dropdown.OptionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Fields' }));
+    await waitFor(() => expect(screen.getByRole('searchbox')).toHaveFocus());
+    await user.keyboard('{Enter}');
+    expect(onSelect).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  });
+
+  it('leaves an empty result list open when Enter selects the first match', async () => {
+    const user = userEvent.setup();
+    render(
+      <Dropdown.Root type="picker">
+        <Dropdown.Trigger>Fields</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Fields">
+          <Dropdown.Search
+            aria-label="Search fields"
+            enterSelects="first-match"
+          />
+          <Dropdown.Empty>No fields found</Dropdown.Empty>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Fields' }));
+    const search = screen.getByRole('searchbox');
+    await waitFor(() => expect(search).toHaveFocus());
+    await user.keyboard('{Enter}');
+    expect(screen.getByRole('dialog')).toBeVisible();
+    expect(search).toHaveFocus();
+  });
+
   it('filters caller-owned results and navigates mixed commands and options from search', async () => {
     const user = userEvent.setup();
 

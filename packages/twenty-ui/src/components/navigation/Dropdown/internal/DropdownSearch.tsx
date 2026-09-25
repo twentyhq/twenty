@@ -6,6 +6,7 @@ import { type DropdownSearchProps } from '../types/DropdownSearchProps';
 
 export const DropdownSearch = ({
   onValueChange,
+  enterSelects,
   className,
   ...props
 }: DropdownSearchProps) => (
@@ -15,6 +16,7 @@ export const DropdownSearch = ({
       autoComplete="off"
       {...props}
       data-dropdown-search=""
+      data-dropdown-enter-selects={enterSelects}
       className={mergeClassNames(styles.search, className)}
       onValueChange={(value) => onValueChange?.(value)}
     />

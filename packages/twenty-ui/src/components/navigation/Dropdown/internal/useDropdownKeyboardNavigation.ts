@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -69,6 +70,21 @@ export const useDropdownKeyboardNavigation = ({
     const items = getDropdownItems(content).filter(
       (item) => !isDefined(search) || !item.hasAttribute('data-dropdown-back'),
     );
+    const enterSelects = search?.dataset.dropdownEnterSelects;
+    const shouldSelectFirstMatch =
+      isSearch &&
+      event.key === 'Enter' &&
+      !event.nativeEvent.isComposing &&
+      (enterSelects === 'first-match' ||
+        (enterSelects === 'first-match-while-searching' &&
+          isNonEmptyString(search.value.trim())));
+
+    if (shouldSelectFirstMatch) {
+      event.preventDefault();
+      items[0]?.click();
+      return;
+    }
+
     const currentIndex = items.indexOf(target);
     const nextItem = getNextDropdownItem({
       key: event.key,

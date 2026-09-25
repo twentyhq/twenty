@@ -245,6 +245,7 @@ export const DOCUMENTED_COMPONENTS = [
       'ActionItem',
       'OptionItem',
       'Search',
+      'Header',
       'Page',
       'Back',
       'Submenu',

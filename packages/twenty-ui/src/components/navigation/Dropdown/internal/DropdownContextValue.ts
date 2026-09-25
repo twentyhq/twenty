@@ -26,4 +26,5 @@ export type DropdownContextValue = {
   goToPage: (page: { id: string; trigger: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;
+  registerOpenNestedRoot: () => () => void;
 };

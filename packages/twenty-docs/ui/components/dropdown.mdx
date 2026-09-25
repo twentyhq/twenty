@@ -34,6 +34,7 @@ The underlying [Menu](/ui/primitives/surfaces/menu), [Select](/ui/primitives/inp
 Dropdown.Root
 ├── Dropdown.Trigger
 └── Dropdown.Content
+    ├── Dropdown.Header
     ├── Dropdown.Search
     └── Dropdown.Section
         ├── Dropdown.ActionItem
@@ -62,6 +63,10 @@ export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
 ```
 
 Pass custom trigger elements through `render` so the trigger remains one interactive element. Custom components must forward the supplied props and ref. `ActionItem` also accepts `render` for links.
+
+## Headers
+
+`Header` displays a title with an optional leading action. Pass `action={{ icon: 'close', label: 'Close', onClick: handleClose }}` for a close button, or use `icon: 'back'` for a back button. The label names the action for assistive technology. The header calls your handler without changing dropdown state, so it can also be used outside a root. Use `Dropdown.Back` when navigating the root's page history.
 
 ## Search and selection
 
@@ -110,6 +115,8 @@ export const PersonPicker = () => {
   );
 };
 ```
+
+By default, Enter in `Search` does nothing until an arrow key moves focus to a result. Set `enterSelects="first-match"` to activate the first enabled result immediately, including with an empty query. Use `enterSelects="first-match-while-searching"` to enable this only for a nonblank query. Both options use the rendered result order, including action rows, and leave the popup open when no enabled results exist. Filtering remains caller-owned.
 
 Actions and single selection close by default. Set `multiple` on the root to keep option selection open. The application still owns the selected values. `closeOnClick` on actions and `closeOnSelect` on options override those defaults, including repeated actions or asynchronous progress. Use `disabled` to prevent activation while retaining the row's appearance.
 
@@ -165,6 +172,16 @@ Dropdown.Content
     └── Dropdown.Content
         └── Dropdown.ActionItem
 ```
+
+## Independent nested pickers
+
+Place another `Dropdown.Root` inside `Content` when a control opens its own picker, such as a sort direction selector. Selecting an inner option closes only that picker and restores focus to its trigger. Escape and outside presses dismiss one layer at a time. Use `Submenu` for commands that should close the entire menu tree when selected.
+
+<StoryEmbed
+  storyId="ui-components-dropdown--nested"
+  title="Sort picker with a nested direction picker"
+  height={420}
+/>
 
 ## Panels and controlled state
 

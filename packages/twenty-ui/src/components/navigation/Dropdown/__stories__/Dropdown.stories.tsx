@@ -6,6 +6,7 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
+import { DropdownNestedExample } from './DropdownNestedExample';
 import { DropdownPagesExample } from './DropdownPagesExample';
 import { DropdownPanelExample } from './DropdownPanelExample';
 import { DropdownPickerExample } from './DropdownPickerExample';
@@ -239,6 +240,52 @@ export const Panel: Story = {
     await userEvent.clear(name);
     await userEvent.type(name, 'My team');
     await userEvent.click(body.getByRole('button', { name: 'Save view' }));
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const Nested: Story = {
+  render: () => <DropdownNestedExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'Sort' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Ascending' }),
+    );
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Descending' }),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Sort direction' }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(
+      body.getByRole('dialog', { name: 'Sort fields' }),
+    ).toBeVisible();
+    const direction = body.getByRole('button', { name: 'Descending' });
+    await expect(direction).toHaveFocus();
+    await userEvent.click(direction);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(direction).toHaveFocus());
+    await waitFor(() => expect(body.getAllByRole('dialog')).toHaveLength(1));
+    await userEvent.click(direction);
+    await waitFor(() => expect(body.getAllByRole('dialog')).toHaveLength(2));
+    await userEvent.click(canvasElement);
+    await waitFor(() => expect(body.getAllByRole('dialog')).toHaveLength(1));
+    const search = body.getByRole('searchbox', { name: 'Search fields' });
+    await userEvent.type(search, 'Company');
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Sort' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Close sort' }),
+    );
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );

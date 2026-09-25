@@ -4,6 +4,7 @@ import { DropdownActionItem } from './internal/DropdownActionItem';
 import { DropdownBack } from './internal/DropdownBack';
 import { DropdownContent } from './internal/DropdownContent';
 import { DropdownEmpty } from './internal/DropdownEmpty';
+import { DropdownHeader } from './internal/DropdownHeader';
 import { DropdownLoading } from './internal/DropdownLoading';
 import { DropdownOptionItem } from './internal/DropdownOptionItem';
 import { DropdownPage } from './internal/DropdownPage';
@@ -26,6 +27,7 @@ export const Dropdown = {
   ActionItem: DropdownActionItem,
   OptionItem: DropdownOptionItem,
   Search: DropdownSearch,
+  Header: DropdownHeader,
   Page: DropdownPage,
   Back: DropdownBack,
   Submenu: DropdownSubmenu,

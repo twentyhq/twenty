@@ -6366,6 +6366,13 @@
             "description": "The default value of the input. Use when uncontrolled."
           },
           {
+            "name": "enterSelects",
+            "type": "\"first-match-while-searching\" | \"first-match\"",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
             "name": "onValueChange",
             "type": "((value: string) => void)",
             "required": false,
@@ -6392,6 +6399,18 @@
             "required": false,
             "defaultValue": null,
             "description": "The value of the input. Use when controlled."
+          }
+        ]
+      },
+      {
+        "name": "Header",
+        "props": [
+          {
+            "name": "action",
+            "type": "{ icon: \"close\" | \"back\"; label: string; onClick: () => void; }",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
           }
         ]
       },
