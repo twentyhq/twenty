@@ -25,6 +25,37 @@ describe('PromiseMemoizer', () => {
     memoizer = new PromiseMemoizer<string>(TTL_MS);
   });
 
+  it('deduplicates only pending work when resolved-value caching is disabled', async () => {
+    const inFlightMemoizer = new PromiseMemoizer<string>(0);
+    let finish = (_value: string) => {};
+    const pending = new Promise<string>((resolve) => {
+      finish = resolve;
+    });
+    const factory = jest
+      .fn()
+      .mockReturnValueOnce(pending)
+      .mockResolvedValue('new');
+    const first = inFlightMemoizer.memoizePromiseAndExecute(
+      'test-key',
+      factory,
+    );
+    const concurrent = inFlightMemoizer.memoizePromiseAndExecute(
+      'test-key',
+      factory,
+    );
+    finish('old');
+    await expect(Promise.all([first, concurrent])).resolves.toEqual([
+      'old',
+      'old',
+    ]);
+    expect(factory).toHaveBeenCalledTimes(1);
+
+    await expect(
+      inFlightMemoizer.memoizePromiseAndExecute('test-key', factory),
+    ).resolves.toBe('new');
+    expect(factory).toHaveBeenCalledTimes(2);
+  });
+
   describe('memoizePromiseAndExecute', () => {
     it('should execute factory and cache result', async () => {
       mockFactory.mockResolvedValue('test-value');

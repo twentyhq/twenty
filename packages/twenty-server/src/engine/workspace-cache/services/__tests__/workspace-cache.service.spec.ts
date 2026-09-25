@@ -14,8 +14,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 class ApiKeyRoleMapTestProvider extends WorkspaceCacheProvider<
   Record<string, string>
 > {
+  data: Record<string, string> = {};
+
   computeForCache(): Record<string, string> {
-    return {};
+    return this.data;
   }
 }
 
@@ -26,17 +28,14 @@ const buildCacheKey = (workspaceId: string, suffix: 'hash' | 'data') =>
   `apiKeyRoleMap:${workspaceId}:${suffix}`;
 
 describe('WorkspaceCacheService', () => {
-  const redisEntries = new Map<string, unknown>([
-    [buildCacheKey(WORKSPACE_1_ID, 'hash'), 'hash-1'],
-    [buildCacheKey(WORKSPACE_1_ID, 'data'), { 'api-key-1': 'role-1' }],
-    [buildCacheKey(WORKSPACE_2_ID, 'hash'), 'hash-2'],
-    [buildCacheKey(WORKSPACE_2_ID, 'data'), { 'api-key-2': 'role-2' }],
-  ]);
+  const redisEntries = new Map<string, unknown>();
 
   let cacheStorage: jest.Mocked<
     Pick<CacheStorageService, 'mget' | 'mset' | 'mdel' | 'setIfAbsent'>
   >;
   let service: WorkspaceCacheService;
+  let otherService: WorkspaceCacheService;
+  let provider: ApiKeyRoleMapTestProvider;
 
   const countDataFetches = (workspaceId: string) =>
     cacheStorage.mget.mock.calls.filter(([keys]) =>
@@ -45,18 +44,31 @@ describe('WorkspaceCacheService', () => {
 
   beforeEach(async () => {
     jest.useFakeTimers();
+    redisEntries.clear();
+    for (const [workspaceId, roleMap] of [
+      [WORKSPACE_1_ID, { 'api-key-1': 'role-1' }],
+      [WORKSPACE_2_ID, { 'api-key-2': 'role-2' }],
+    ] as const) {
+      redisEntries.set(buildCacheKey(workspaceId, 'hash'), workspaceId);
+      redisEntries.set(buildCacheKey(workspaceId, 'data'), roleMap);
+    }
 
     cacheStorage = {
       mget: jest.fn(async (keys: string[]) =>
         keys.map((key) => redisEntries.get(key)),
       ),
-      mset: jest.fn(),
-      mdel: jest.fn(),
+      mset: jest.fn(async (entries: Array<{ key: string; value: unknown }>) => {
+        for (const { key, value } of entries) redisEntries.set(key, value);
+      }),
+      mdel: jest.fn(async (keys: string[]) => {
+        for (const key of keys) redisEntries.delete(key);
+      }),
       setIfAbsent: jest.fn(),
     } as unknown as typeof cacheStorage;
 
+    provider = new ApiKeyRoleMapTestProvider();
     const discoveryService = {
-      getProviders: () => [{ instance: new ApiKeyRoleMapTestProvider() }],
+      getProviders: () => [{ instance: provider }],
     } as unknown as DiscoveryService;
     const cacheMetricsService = {
       start: jest.fn(),
@@ -71,21 +83,65 @@ describe('WorkspaceCacheService', () => {
       get: jest.fn().mockReturnValue(3600),
     } as unknown as TwentyConfigService;
 
-    service = new WorkspaceCacheService(
-      cacheStorage as unknown as CacheStorageService,
-      {} as DataSource,
-      discoveryService,
-      new Reflector(),
-      cacheMetricsService,
-      twentyConfigService,
-    );
+    const createService = () =>
+      new WorkspaceCacheService(
+        cacheStorage as unknown as CacheStorageService,
+        {} as DataSource,
+        discoveryService,
+        new Reflector(),
+        cacheMetricsService,
+        twentyConfigService,
+      );
 
+    service = createService();
+    otherService = createService();
     await service.onModuleInit();
+    await otherService.onModuleInit();
   });
 
   afterEach(() => {
     service.onModuleDestroy();
+    otherService.onModuleDestroy();
     jest.useRealTimers();
+  });
+
+  it('observes policy invalidated by another server after the local freshness window', async () => {
+    await service.getOrRecompute(WORKSPACE_1_ID, ['apiKeyRoleMap']);
+    await otherService.getOrRecompute(WORKSPACE_1_ID, ['apiKeyRoleMap']);
+    provider.data = { 'api-key-1': 'restricted-role' };
+
+    await otherService.invalidateAndRecompute(WORKSPACE_1_ID, [
+      'apiKeyRoleMap',
+    ]);
+    jest.setSystemTime(Date.now() + 101);
+
+    const { apiKeyRoleMap } = await service.getOrRecompute(WORKSPACE_1_ID, [
+      'apiKeyRoleMap',
+    ]);
+
+    expect(apiKeyRoleMap).toEqual({ 'api-key-1': 'restricted-role' });
+  });
+
+  it('retains the local freshness window and coalesces concurrent hash checks', async () => {
+    await service.getOrRecompute(WORKSPACE_1_ID, ['apiKeyRoleMap']);
+    cacheStorage.mget.mockClear();
+    await Promise.all(
+      Array.from({ length: 20 }, () =>
+        service.getOrRecompute(WORKSPACE_1_ID, ['apiKeyRoleMap']),
+      ),
+    );
+    expect(cacheStorage.mget).not.toHaveBeenCalled();
+
+    jest.setSystemTime(Date.now() + 101);
+    await Promise.all(
+      Array.from({ length: 20 }, () =>
+        service.getOrRecompute(WORKSPACE_1_ID, ['apiKeyRoleMap']),
+      ),
+    );
+    expect(cacheStorage.mget).toHaveBeenCalledTimes(1);
+    expect(cacheStorage.mget).toHaveBeenCalledWith([
+      buildCacheKey(WORKSPACE_1_ID, 'hash'),
+    ]);
   });
 
   describe('evictWorkspaceFromLocalCache', () => {

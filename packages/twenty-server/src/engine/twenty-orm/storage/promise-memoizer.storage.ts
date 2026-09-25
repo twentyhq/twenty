@@ -50,6 +50,7 @@ export class PromiseMemoizer<T> {
         const currentEntry = this.cache.get(cacheKey);
 
         if (
+          this.ttlMs > 0 &&
           value &&
           currentEntry?.state === 'pending' &&
           currentEntry.generation === generation
