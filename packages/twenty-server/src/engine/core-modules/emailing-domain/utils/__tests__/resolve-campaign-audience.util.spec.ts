@@ -21,6 +21,7 @@ describe('resolveCampaignAudience', () => {
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(['bob@example.com']),
       topicSuppressedEmails: new Set(['carol@example.com']),
+      trackingRefusedEmails: new Set(),
     });
 
     expect(sendableRecipients).toEqual([
@@ -34,8 +35,31 @@ describe('resolveCampaignAudience', () => {
       hardSuppressed: 0,
       globallyUnsubscribed: 1,
       topicUnsubscribed: 1,
+      trackingRefused: 0,
       sendable: 1,
     });
+  });
+
+  it('should keep a recipient who refused tracking in the audience and count them', () => {
+    const { sendableRecipients, audience } = resolveCampaignAudience({
+      rawRecipients: buildRawRecipients([
+        'alice@example.com',
+        'bob@example.com',
+      ]),
+      totalMemberCount: 2,
+      maxRecipients: 100,
+      hardSuppressedEmails: new Set(),
+      globallySuppressedEmails: new Set(),
+      topicSuppressedEmails: new Set(),
+      trackingRefusedEmails: new Set(['bob@example.com']),
+    });
+
+    expect(sendableRecipients.map((recipient) => recipient.email)).toEqual([
+      'alice@example.com',
+      'bob@example.com',
+    ]);
+    expect(audience.trackingRefused).toBe(1);
+    expect(audience.sendable).toBe(2);
   });
 
   it('should surface how many recipients were dropped for exceeding the cap', () => {
@@ -50,6 +74,7 @@ describe('resolveCampaignAudience', () => {
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(),
       topicSuppressedEmails: new Set(),
+      trackingRefusedEmails: new Set(),
     });
 
     expect(audience.overCap).toBe(1);
@@ -70,6 +95,7 @@ describe('resolveCampaignAudience', () => {
       hardSuppressedEmails: new Set(['a@example.com']),
       globallySuppressedEmails: new Set(),
       topicSuppressedEmails: new Set(),
+      trackingRefusedEmails: new Set(),
     });
 
     expect(sendableRecipients.map((recipient) => recipient.email)).toEqual([
@@ -90,6 +116,7 @@ describe('resolveCampaignAudience', () => {
       hardSuppressedEmails: new Set(['bounced@example.com']),
       globallySuppressedEmails: new Set(['optout@example.com']),
       topicSuppressedEmails: new Set(),
+      trackingRefusedEmails: new Set(),
     });
 
     expect(audience.hardSuppressed).toBe(1);
@@ -105,6 +132,7 @@ describe('resolveCampaignAudience', () => {
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(['dave@example.com']),
       topicSuppressedEmails: new Set(['dave@example.com']),
+      trackingRefusedEmails: new Set(),
     });
 
     expect(audience.globallyUnsubscribed).toBe(1);
@@ -120,6 +148,7 @@ describe('resolveCampaignAudience', () => {
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(),
       topicSuppressedEmails: new Set(),
+      trackingRefusedEmails: new Set(),
     });
 
     expect(audience.totalMembers).toBe(4);
@@ -134,6 +163,7 @@ describe('resolveCampaignAudience', () => {
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(),
       topicSuppressedEmails: new Set(),
+      trackingRefusedEmails: new Set(),
     });
 
     expect(sendableRecipients).toEqual([]);

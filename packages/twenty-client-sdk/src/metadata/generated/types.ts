@@ -6078,6 +6078,9 @@ export default {
             "topicUnsubscribed": [
                 30
             ],
+            "trackingRefused": [
+                30
+            ],
             "sendable": [
                 30
             ],

@@ -19,4 +19,10 @@ describe('getMessageSuppressionReasonBadge', () => {
       getMessageSuppressionReasonBadge(MessageSuppressionReason.BOUNCE),
     ).toEqual({ color: 'orange', label: 'Bounce' });
   });
+
+  it('should badge tracking opt-outs as blue', () => {
+    expect(
+      getMessageSuppressionReasonBadge(MessageSuppressionReason.TRACKING),
+    ).toEqual({ color: 'blue', label: 'Tracking off' });
+  });
 });

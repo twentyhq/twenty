@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
@@ -19,6 +20,7 @@ export class CampaignEngagementRecordingService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
+    private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
 
   async record(observation: CampaignEngagementObservation): Promise<void> {
@@ -33,6 +35,16 @@ export class CampaignEngagementRecordingService {
     );
 
     if (!isDefined(delivery)) {
+      return;
+    }
+
+    const isTrackingOptedOut =
+      await this.messageSuppressionService.isTrackingOptedOut({
+        workspaceId: observation.workspaceId,
+        emailAddress: delivery.recipientEmail,
+      });
+
+    if (isTrackingOptedOut) {
       return;
     }
 
