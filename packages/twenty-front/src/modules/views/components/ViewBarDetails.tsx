@@ -12,7 +12,7 @@ import { EditableSortChip } from '@/views/editable-chip/components/EditableSortC
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
-import { ViewBarMineFilterToggle } from '@/views/components/ViewBarMineFilterToggle';
+import { ViewBarMineFilterButton } from '@/views/components/ViewBarMineFilterButton';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
@@ -229,7 +229,7 @@ export const ViewBarDetails = ({
   return (
     <StyledBar>
       <StyledFilterContainer>
-        <ViewBarMineFilterToggle
+        <ViewBarMineFilterButton
           viewBarId={viewBarId}
           objectNameSingular={objectNameSingular}
         />

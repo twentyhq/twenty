@@ -785,6 +785,7 @@ type View {
   groupLoadLimit: Int
   calendarFieldMetadataId: UUID
   calendarEndFieldMetadataId: UUID
+  mineFilterFieldMetadataId: UUID
   workspaceId: UUID!
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
@@ -4474,6 +4475,7 @@ input CreateViewInput {
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
   calendarEndFieldMetadataId: UUID
+  mineFilterFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   visibility: ViewVisibility
 }
@@ -4496,6 +4498,7 @@ input UpdateViewInput {
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
   calendarEndFieldMetadataId: UUID
+  mineFilterFieldMetadataId: UUID
   visibility: ViewVisibility
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean

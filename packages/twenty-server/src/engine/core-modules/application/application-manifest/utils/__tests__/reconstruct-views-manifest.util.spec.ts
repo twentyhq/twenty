@@ -190,6 +190,7 @@ const buildFlatView = ({
   kanbanAggregateOperationFieldMetadataId: null,
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
+  mineFilterFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   overrides: null,
   viewFieldIds: [],

@@ -29,6 +29,7 @@ export const getMockFieldMetadataEntity = <
     workspace: {} as WorkspaceEntity,
     calendarViews: [],
     calendarEndViews: [],
+    mineFilterViews: [],
     mainGroupByFieldMetadataViews: [],
     viewFilters: [],
     viewFields: [],

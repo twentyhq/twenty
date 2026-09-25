@@ -10,15 +10,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { v4 } from 'uuid';
 
-type ViewBarMineFilterToggleProps = {
+type ViewBarMineFilterButtonProps = {
   viewBarId: string;
   objectNameSingular: string;
 };
 
-export const ViewBarMineFilterToggle = ({
+export const ViewBarMineFilterButton = ({
   viewBarId,
   objectNameSingular,
-}: ViewBarMineFilterToggleProps) => {
+}: ViewBarMineFilterButtonProps) => {
   const { currentView } = useGetCurrentViewOnly();
 
   const { objectMetadataItem } = useObjectMetadataItem({
