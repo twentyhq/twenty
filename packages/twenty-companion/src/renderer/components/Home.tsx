@@ -37,7 +37,7 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
       <Section.Header title={calendarTitle} />
       {meetings.length ? (
         <>
-          <Card
+          <Card.Root
             className="agenda-list"
             backgroundColor="var(--t-background-secondary)"
           >
@@ -78,7 +78,7 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
                 </div>
               </div>
             ))}
-          </Card>
+          </Card.Root>
           {meetings.length > 3 && (
             <div>
               <Button
@@ -95,7 +95,7 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
           )}
         </>
       ) : (
-        <Card backgroundColor="var(--t-background-secondary)">
+        <Card.Root backgroundColor="var(--t-background-secondary)">
           <SettingsCardContent
             icon={
               <IconCalendarEvent
@@ -127,7 +127,7 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
               </Button>
             )}
           </SettingsCardContent>
-        </Card>
+        </Card.Root>
       )}
     </section>
   );

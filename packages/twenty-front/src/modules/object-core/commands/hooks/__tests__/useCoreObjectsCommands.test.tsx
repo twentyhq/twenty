@@ -106,6 +106,7 @@ describe('useCoreObjectsCommands', () => {
   it('keeps core commands hidden with the flag off', () => {
     mockIsCoreEnabled.mockReturnValue(false);
     const { result } = renderCommands();
-    expect(result.current.coreObjectsCommandIds).toEqual([]);
+    expect(result.current.coreViewCommandIds).toEqual([]);
+    expect(result.current.coreSelectionCommandIds).toEqual([]);
   });
 });

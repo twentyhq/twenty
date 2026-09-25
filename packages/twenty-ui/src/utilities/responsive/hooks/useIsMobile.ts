@@ -1,5 +1,4 @@
-import { MOBILE_VIEWPORT } from '@ui/theme';
-import { useMediaQuery } from 'react-responsive';
+import { MOBILE_MEDIA_QUERY } from '@ui/utilities/responsive/constants/MobileMediaQuery';
+import { useMediaQuery } from '@ui/utilities/responsive/hooks/useMediaQuery';
 
-export const useIsMobile = () =>
-  useMediaQuery({ query: `(max-width: ${MOBILE_VIEWPORT}px)` });
+export const useIsMobile = () => useMediaQuery(MOBILE_MEDIA_QUERY);

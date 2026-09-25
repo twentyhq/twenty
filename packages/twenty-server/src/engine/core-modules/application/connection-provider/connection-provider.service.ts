@@ -19,8 +19,8 @@ export class ConnectionProviderService {
   constructor(
     @InjectWorkspaceScopedRepository(ConnectionProviderEntity)
     private readonly connectionProviderRepository: WorkspaceScopedRepository<ConnectionProviderEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly registrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
     private readonly secretEncryptionService: SecretEncryptionService,
@@ -31,9 +31,10 @@ export class ConnectionProviderService {
   ): Promise<{ clientId: string; clientSecret: string }> {
     assertOAuthProvider(provider);
 
-    const application = await this.applicationRepository.findOneBy({
-      id: provider.applicationId,
-    });
+    const application = await this.applicationRepository.findOneBy(
+      provider.workspaceId,
+      { id: provider.applicationId },
+    );
 
     if (!isDefined(application?.applicationRegistrationId)) {
       throw new ConnectionProviderException(
@@ -74,14 +75,21 @@ export class ConnectionProviderService {
   async areClientCredentialsConfigured(
     provider: ConnectionProviderEntity,
   ): Promise<boolean> {
-    const result = await this.areClientCredentialsConfiguredBatch([provider]);
+    const result = await this.areClientCredentialsConfiguredBatch({
+      providers: [provider],
+      workspaceId: provider.workspaceId,
+    });
 
     return result.get(provider.id) ?? false;
   }
 
-  async areClientCredentialsConfiguredBatch(
-    providers: ConnectionProviderEntity[],
-  ): Promise<Map<string, boolean>> {
+  async areClientCredentialsConfiguredBatch({
+    providers,
+    workspaceId,
+  }: {
+    providers: ConnectionProviderEntity[];
+    workspaceId: string;
+  }): Promise<Map<string, boolean>> {
     const result = new Map<string, boolean>();
 
     if (providers.length === 0) {
@@ -103,7 +111,7 @@ export class ConnectionProviderService {
     const applicationIds = [
       ...new Set(oauthProviders.map((p) => p.applicationId)),
     ];
-    const applications = await this.applicationRepository.find({
+    const applications = await this.applicationRepository.find(workspaceId, {
       where: { id: In(applicationIds) },
     });
     const registrationIdByApplicationId = new Map(

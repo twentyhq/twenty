@@ -31,7 +31,7 @@ import { FileUploadTargetService } from 'src/engine/core-modules/file/file-uploa
 import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
@@ -68,8 +68,8 @@ export class FileUploadService {
     private readonly fileUrlService: FileUrlService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FieldMetadataEntity)
@@ -388,12 +388,14 @@ export class FileUploadService {
         },
       );
 
-      const application = await this.applicationRepository.findOneOrFail({
-        where: {
-          id: fieldMetadata.applicationId,
-          workspaceId,
+      const application = await this.applicationRepository.findOneOrFail(
+        workspaceId,
+        {
+          where: {
+            id: fieldMetadata.applicationId,
+          },
         },
-      });
+      );
 
       return {
         applicationUniversalIdentifier: application.universalIdentifier,
@@ -415,8 +417,9 @@ export class FileUploadService {
     }
 
     const workspaceCustomApplication = await this.applicationRepository.findOne(
+      workspaceId,
       {
-        where: { id: workspace.workspaceCustomApplicationId, workspaceId },
+        where: { id: workspace.workspaceCustomApplicationId },
       },
     );
 
@@ -471,12 +474,14 @@ export class FileUploadService {
   }> {
     const [fileFolder] = file.path.split('/');
 
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: file.applicationId,
-        workspaceId,
+    const application = await this.applicationRepository.findOneOrFail(
+      workspaceId,
+      {
+        where: {
+          id: file.applicationId,
+        },
       },
-    });
+    );
 
     return {
       application,

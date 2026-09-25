@@ -40,6 +40,7 @@ import { WorkspaceSetupChatService } from './services/workspace-setup-chat.servi
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
+import { AgentChatThreadTargetService } from './services/agent-chat-thread-target.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
@@ -84,6 +85,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentChatService,
+    AgentChatThreadTargetService,
     AgentChatStreamingService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,
@@ -98,6 +100,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatSharingService,
     AgentChatService,
     AgentChatStreamingService,
+    AgentChatThreadTargetService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
   ],
 })

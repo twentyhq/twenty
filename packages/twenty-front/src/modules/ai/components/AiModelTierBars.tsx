@@ -1,3 +1,5 @@
+import { useRender } from '@base-ui/react/use-render';
+import { type ComponentProps } from 'react';
 import { styled } from '@linaria/react';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -23,18 +25,27 @@ const StyledButton = styled.button<{ disabled: boolean }>`
   }
 `;
 
-type AiModelTierBarsProps = {
+type AiModelTierBarsProps = ComponentProps<'button'> & {
   selectedTier: AiModelTier;
   label: string;
-  disabled?: boolean;
 };
 
 export const AiModelTierBars = ({
   selectedTier,
   label,
   disabled = false,
-}: AiModelTierBarsProps) => (
-  <StyledButton type="button" aria-label={label} disabled={disabled}>
-    <AiModelTierIndicator tier={selectedTier} />
-  </StyledButton>
-);
+  ref,
+  ...props
+}: AiModelTierBarsProps) =>
+  useRender({
+    defaultTagName: 'button',
+    render: <StyledButton disabled={disabled} />,
+    ref,
+    props: {
+      ...props,
+      type: 'button',
+      'aria-label': label,
+      disabled,
+      children: <AiModelTierIndicator tier={selectedTier} />,
+    },
+  });

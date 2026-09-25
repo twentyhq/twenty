@@ -6,8 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { custom, Issuer } from 'openid-client';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import {
   WorkspaceSsoIdentityProviderEntity,
   IdentityProviderType,
@@ -129,26 +131,55 @@ export class SsoService {
   async createSamlIdentityProvider(
     data: Pick<
       WorkspaceSsoIdentityProviderEntity,
-      'ssoURL' | 'certificate' | 'fingerprint' | 'id'
+      'ssoURL' | 'certificate' | 'fingerprint' | 'id' | 'name' | 'issuer'
     >,
     workspaceId: string,
   ) {
     await this.isSsoEnabled(workspaceId);
 
-    const identityProvider =
-      await this.workspaceSsoIdentityProviderRepository.save({
-        ...data,
-        type: IdentityProviderType.SAML,
-        workspaceId,
-      });
-
-    return {
-      id: identityProvider.id,
-      type: identityProvider.type,
-      name: identityProvider.name,
-      issuer: this.buildIssuerURL(identityProvider),
-      status: identityProvider.status,
+    const identityProvider = {
+      id: data.id,
+      name: data.name,
+      issuer: data.issuer,
+      ssoURL: data.ssoURL,
+      certificate: data.certificate,
+      fingerprint: data.fingerprint,
+      type: IdentityProviderType.SAML,
+      workspaceId,
     };
+
+    try {
+      const { generatedMaps } =
+        await this.workspaceSsoIdentityProviderRepository.insert(
+          identityProvider,
+        );
+
+      const { status } = generatedMaps[0] as Pick<
+        WorkspaceSsoIdentityProviderEntity,
+        'status'
+      >;
+
+      return {
+        id: identityProvider.id,
+        type: identityProvider.type,
+        name: identityProvider.name,
+        issuer: this.buildIssuerURL(identityProvider),
+        status,
+      };
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+      ) {
+        throw new SsoException(
+          'Identity provider already exists',
+          SsoExceptionCode.IDENTITY_PROVIDER_ALREADY_EXISTS,
+        );
+      }
+
+      throw error;
+    }
   }
 
   async findSsoIdentityProviderById(identityProviderId: string) {

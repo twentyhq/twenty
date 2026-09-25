@@ -8,6 +8,9 @@ import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
@@ -30,7 +33,7 @@ jest.mock('@/object-metadata/utils/getFieldMetadataItemById', () => ({
 }));
 
 const mockNavigateApp = jest.fn();
-const mockRequestAccessTokenRefresh = jest.fn();
+const mockRequestApplicationAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
 const mockNavigateSidePanel = jest.fn();
 const mockOpenRecordInSidePanel = jest.fn();
@@ -58,11 +61,15 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
 }));
 
-jest.mock('@/front-components/hooks/useRequestApplicationTokenRefresh', () => ({
-  useRequestApplicationTokenRefresh: () => ({
-    requestAccessTokenRefresh: mockRequestAccessTokenRefresh,
+jest.mock(
+  '@/front-components/hooks/useFrontComponentApplicationTokenPair',
+  () => ({
+    useFrontComponentApplicationTokenPair: () => ({
+      requestApplicationAccessTokenRefresh:
+        mockRequestApplicationAccessTokenRefresh,
+    }),
   }),
-}));
+);
 
 jest.mock(
   '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal',
@@ -189,13 +196,14 @@ const renderUseFrontComponentExecutionContext = (
   > & { colorScheme?: 'light' | 'dark'; applicationId?: string },
 ) =>
   renderHook(
-    () =>
+    (parameters) =>
       useFrontComponentExecutionContext({
         colorScheme: 'light',
         applicationId: APPLICATION_ID,
-        ...params,
+        ...parameters,
       }),
     {
+      initialProps: params,
       wrapper: ({ children }) => I18nProvider({ i18n, children }),
     },
   );
@@ -219,6 +227,13 @@ const createParentView = (parentViewObjectNameSingular: string) => ({
 });
 
 describe('useFrontComponentExecutionContext', () => {
+  beforeAll(() => {
+    setTestObjectMetadataItemsInMetadataStore(
+      getDefaultStore(),
+      getTestEnrichedObjectMetadataItemsMock(),
+    );
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
@@ -238,6 +253,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
+        selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
@@ -255,6 +271,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+        selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
@@ -297,6 +314,71 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(result.current.executionContext.colorScheme).toBe('dark');
+    });
+
+    it.each([
+      { objectNameSingular: 'company', selectedRecordIds: ['record-1'] },
+      {
+        objectNameSingular: 'person',
+        selectedRecordIds: ['record-1', 'record-2'],
+      },
+      { objectNameSingular: 'person', selectedRecordIds: [] },
+    ])(
+      'should expose only object identity for $objectNameSingular with $selectedRecordIds',
+      ({ objectNameSingular, selectedRecordIds }) => {
+        const objectMetadataItem =
+          getMockObjectMetadataItemOrThrow(objectNameSingular);
+
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+          objectNameSingular,
+          selectedRecordIds,
+        });
+
+        expect(result.current.executionContext.selectedObjectMetadata).toEqual({
+          id: objectMetadataItem.id,
+          nameSingular: objectMetadataItem.nameSingular,
+          namePlural: objectMetadataItem.namePlural,
+        });
+        expect(result.current.executionContext.selectedRecordIds).toEqual(
+          selectedRecordIds,
+        );
+      },
+    );
+
+    it('should update object metadata and clear it when context is absent or unresolved', () => {
+      const { result, rerender } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        objectNameSingular: 'company',
+        selectedRecordIds: ['record-1'],
+      });
+
+      expect(result.current.executionContext.selectedObjectMetadata?.id).toBe(
+        getMockObjectMetadataItemOrThrow('company').id,
+      );
+
+      rerender({
+        frontComponentId: FRONT_COMPONENT_ID,
+        objectNameSingular: 'person',
+        selectedRecordIds: ['record-2'],
+      });
+
+      expect(result.current.executionContext.selectedObjectMetadata).toEqual({
+        id: getMockObjectMetadataItemOrThrow('person').id,
+        nameSingular: 'person',
+        namePlural: 'people',
+      });
+
+      rerender({
+        frontComponentId: FRONT_COMPONENT_ID,
+        objectNameSingular: 'unknown',
+      });
+
+      expect(result.current.executionContext.selectedObjectMetadata).toBeNull();
+
+      rerender({ frontComponentId: FRONT_COMPONENT_ID });
+
+      expect(result.current.executionContext.selectedObjectMetadata).toBeNull();
     });
   });
 
@@ -749,6 +831,32 @@ describe('useFrontComponentExecutionContext', () => {
         recordContext: { recordId: 'lead-1', objectNameSingular: 'lead' },
       });
     });
+
+    it('should keep the object context when no record id is provided', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            pageIcon: 'IconBolt',
+            objectNameSingular: 'lead',
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-IconBolt',
+        resetNavigationStack: undefined,
+        recordContext: { objectNameSingular: 'lead', recordId: undefined },
+      });
+    });
   });
 
   describe('openCommandConfirmationModal', () => {
@@ -893,6 +1001,30 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockCloseSidePanelMenu).toHaveBeenCalled();
+    });
+  });
+
+  describe('requestAccessTokenRefresh', () => {
+    it('should refresh the access token of the front component application', async () => {
+      mockRequestApplicationAccessTokenRefresh.mockResolvedValue(
+        'renewed-access-token',
+      );
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      let accessToken: string | undefined;
+
+      await act(async () => {
+        accessToken =
+          await result.current.frontComponentHostCommunicationApi.requestAccessTokenRefresh();
+      });
+
+      expect(accessToken).toBe('renewed-access-token');
+      expect(mockRequestApplicationAccessTokenRefresh).toHaveBeenCalledWith(
+        APPLICATION_ID,
+      );
     });
   });
 

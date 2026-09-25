@@ -12,7 +12,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type MicrosoftPassportProfile } from 'src/engine/core-modules/auth/types/microsoft-passport-profile.type';
-import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
