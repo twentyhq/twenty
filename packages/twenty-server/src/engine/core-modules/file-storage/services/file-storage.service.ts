@@ -32,8 +32,8 @@ import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/v
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
-import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.type';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';

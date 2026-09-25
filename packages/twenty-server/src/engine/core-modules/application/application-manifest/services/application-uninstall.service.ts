@@ -16,6 +16,8 @@ import {
 } from 'src/engine/core-modules/application/application-manifest/utils/build-workspace-uninstall-hook-payload.util';
 import { isApplicationUninstallHookPending } from 'src/engine/core-modules/application/utils/is-application-uninstall-hook-pending.util';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 type ApplicationForUninstallHook = Pick<
   ApplicationEntity,
@@ -31,8 +33,13 @@ export class ApplicationUninstallService {
   private readonly logger = new Logger(ApplicationUninstallService.name);
 
   constructor(
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    // Sweeps every workspace with a pending uninstall request in one query,
+    // so it filters on In(workspaceIds) rather than one request workspace.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
@@ -58,9 +65,11 @@ export class ApplicationUninstallService {
           workspaceId,
           workspaceDeletedAt,
         });
-        await this.applicationRepository.update(application.id, {
-          uninstallHookCompletedForRequestedAt: workspaceDeletedAt,
-        });
+        await this.applicationRepository.update(
+          workspaceId,
+          { id: application.id },
+          { uninstallHookCompletedForRequestedAt: workspaceDeletedAt },
+        );
       } catch (error) {
         const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
 
@@ -108,7 +117,7 @@ export class ApplicationUninstallService {
       return new Set();
     }
 
-    const applications = await this.applicationRepository.find({
+    const applications = await this.unscopedApplicationRepository.find({
       select: [
         'workspaceId',
         'uninstallLogicFunctionId',

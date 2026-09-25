@@ -1,5 +1,5 @@
 import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blocklisted.util';
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 export const filterOutBlocklistedMessages = (
   messageChannelHandles: string[],

@@ -2,7 +2,7 @@ import {
   type ValidatableWorkflow,
   type ValidatableWorkflowStep,
   type WorkflowValidationIssueCode,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { buildWorkflowGraph } from '../build-workflow-graph.util';
 import { validateWorkflowVariableReferences } from '../validate-workflow-variable-references.util';
 
