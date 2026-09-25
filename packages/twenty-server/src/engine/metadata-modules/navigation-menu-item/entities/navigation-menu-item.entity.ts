@@ -19,6 +19,12 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
+@Index('IDX_NAVIGATION_MENU_ITEM_APPLICATION_ID', ['applicationId'])
+@Index(
+  'IDX_NAVIGATION_MENU_ITEM_TARGET_OBJECT_METADATA_ID',
+  ['targetObjectMetadataId'],
+  { where: '"targetObjectMetadataId" IS NOT NULL' },
+)
 @Index('IDX_NAVIGATION_MENU_ITEM_USER_WORKSPACE_ID_WORKSPACE_ID', [
   'userWorkspaceId',
   'workspaceId',

@@ -5448,6 +5448,11 @@ msgstr "编号"
 msgid "ID field cannot be searched"
 msgstr "无法搜索 ID 字段"
 
+#. js-lingui-id: TGM/Xy
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider already exists."
+msgstr "身份提供商已存在。"
+
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider not found."
@@ -9369,6 +9374,7 @@ msgstr "记录 ID"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Record not found."
 msgstr "未找到记录。"
 

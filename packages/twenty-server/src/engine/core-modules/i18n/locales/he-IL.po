@@ -5448,6 +5448,11 @@ msgstr "מזהה"
 msgid "ID field cannot be searched"
 msgstr "לא ניתן לחפש בשדה מזהה"
 
+#. js-lingui-id: TGM/Xy
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider already exists."
+msgstr "ספק הזהויות כבר קיים."
+
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider not found."
@@ -9369,6 +9374,7 @@ msgstr "מזהה רשומה"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Record not found."
 msgstr "רשומה לא נמצאה."
 

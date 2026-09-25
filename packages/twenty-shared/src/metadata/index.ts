@@ -21,14 +21,14 @@ export type { StandardObjectWithUniversalIdentifierName } from './constants/stan
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './constants/standard-object-universal-identifiers.constant';
 export { STANDARD_OBJECTS } from './constants/standard-object.constant';
 export { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from './constants/standard-page-layout-universal-identifiers.constant';
-export type { AllMetadataName } from './types/all-metadata-name.type';
+export type { AllMetadataName } from './types/AllMetadataName';
 export type {
   FailedMetadataValidationError,
   FailedMetadataValidation,
   MetadataValidationErrorResponse,
 } from './types/MetadataValidationError';
 export { WorkspaceMigrationV2ExceptionCode } from './types/MetadataValidationError';
-export type { SyncAction } from './types/sync-action.type';
+export type { SyncAction } from './types/SyncAction';
 export { addCustomSuffixIfIsReserved } from './utils/add-custom-suffix-if-reserved.util';
 export { computeMetadataNameFromLabel } from './utils/compute-metadata-name-from-label.util';
 export { computeMetadataNamesFromLabelsOrThrow } from './utils/compute-metadata-names-from-labels-or-throw.util';

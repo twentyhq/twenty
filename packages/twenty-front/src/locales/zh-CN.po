@@ -5857,7 +5857,7 @@ msgstr "计算空值"
 #. js-lingui-id: sLDQbp
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count false"
-msgstr "计数假"
+msgstr "计数否"
 
 #. js-lingui-id: DzRsDJ
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -5867,7 +5867,7 @@ msgstr "计算非空值"
 #. js-lingui-id: ft6dHY
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count true"
-msgstr "计算为真"
+msgstr "计算为是"
 
 #. js-lingui-id: 9FZBbf
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -9825,7 +9825,7 @@ msgstr "备用"
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 msgid "False"
-msgstr "假"
+msgstr "否"
 
 #. js-lingui-id: KziH2K
 #: src/modules/ai/utils/getAiModelTierLabel.ts
@@ -22223,7 +22223,7 @@ msgstr "通过 HTTP 请求触发该函数"
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 msgid "True"
-msgstr "真"
+msgstr "是"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx

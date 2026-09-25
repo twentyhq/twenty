@@ -59,4 +59,14 @@ describe('CommandMenuItem deletion should fail', () => {
       });
     },
   );
+
+  it('when the caller lacks the LAYOUTS permission', async () => {
+    const { errors } = await deleteCommandMenuItem({
+      expectToFail: true,
+      input: { id: faker.string.uuid() },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+  });
 });
