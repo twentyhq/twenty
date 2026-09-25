@@ -1,4 +1,7 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_FIELDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -9,6 +12,15 @@ type AgentHistorySchemaMaps = Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 >;
+
+// agentChatThreadTarget is provisioned by its own command, which owns both legs
+// of its relation to agentChatThread: `thread` on the target and
+// `recordTargets` on the thread. This migration does not create that object, so
+// emitting either leg here would fail validation.
+const FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE = new Set([
+  STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread.universalIdentifier,
+]);
 
 export const getAgentHistorySchemaAdditions = ({
   existing,
@@ -75,11 +87,14 @@ export const getAgentHistorySchemaAdditions = ({
     .filter(isDefined)
     .filter(
       (field) =>
-        objectIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
-        (isDefined(field.relationTargetObjectMetadataUniversalIdentifier) &&
-          objectIdentifiers.has(
-            field.relationTargetObjectMetadataUniversalIdentifier,
-          )),
+        (objectIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
+          (isDefined(field.relationTargetObjectMetadataUniversalIdentifier) &&
+            objectIdentifiers.has(
+              field.relationTargetObjectMetadataUniversalIdentifier,
+            ))) &&
+        !FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE.has(
+          field.universalIdentifier,
+        ),
     );
   const fields = historyFields.filter(
     (field) =>

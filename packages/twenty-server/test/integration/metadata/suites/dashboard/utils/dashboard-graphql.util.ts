@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
@@ -62,7 +62,7 @@ export const createTestDashboardWithGraphQL = async (data: {
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<CreateDashboardResponse>;
 
@@ -95,7 +95,7 @@ export const findDashboardWithGraphQL = async (
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<FindDashboardResponse>;
 
@@ -122,7 +122,7 @@ export const destroyDashboardWithGraphQL = async (
     },
   };
 
-  await makeGraphqlAPIRequest(operation);
+  await makeGraphqlApiRequest(operation);
 };
 
 export const createManyDashboardsWithGraphQL = async (
@@ -151,7 +151,7 @@ export const createManyDashboardsWithGraphQL = async (
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<CreateManyDashboardsResponse>;
 
@@ -184,7 +184,7 @@ export const deleteDashboardWithGraphQL = async (
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<DeleteDashboardResponse>;
 
@@ -217,7 +217,7 @@ export const deleteManyDashboardsWithGraphQL = async (filter: {
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<DeleteManyDashboardsResponse>;
 
@@ -250,7 +250,7 @@ export const restoreDashboardWithGraphQL = async (
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<RestoreDashboardResponse>;
 
@@ -283,7 +283,7 @@ export const restoreManyDashboardsWithGraphQL = async (filter: {
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<RestoreManyDashboardsResponse>;
 
@@ -316,7 +316,7 @@ export const destroyManyDashboardsWithGraphQL = async (filter: {
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<DestroyManyDashboardsResponse>;
 
@@ -353,7 +353,7 @@ export const findDeletedDashboardWithGraphQL = async (
     },
   };
 
-  const response = (await makeGraphqlAPIRequest(
+  const response = (await makeGraphqlApiRequest(
     operation,
   )) as GraphQLResponse<FindDashboardResponse>;
 

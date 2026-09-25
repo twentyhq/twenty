@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 const APPLICATION_TOKEN_TYPE_NAME = 'ApplicationTokenPair';
 
@@ -76,7 +76,7 @@ const findFieldsReturningAnApplicationToken = (types: IntrospectedType[]) =>
 
 describe('No GraphQL operation returns an application token', () => {
   it('returns an application token from the session-bound metadata fields only', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: TYPE_REACHABILITY_INTROSPECTION,
     });
 
@@ -88,7 +88,7 @@ describe('No GraphQL operation returns an application token', () => {
   });
 
   it('never returns an application token from the core schema', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: TYPE_REACHABILITY_INTROSPECTION,
     });
 
@@ -105,7 +105,7 @@ describe('No GraphQL operation returns an application token', () => {
   ])(
     'rejects generateApplicationToken called with %s',
     async (_callerName, token) => {
-      const response = await makeMetadataAPIRequest(
+      const response = await makeMetadataApiRequest(
         {
           query: gql`
             mutation GenerateApplicationToken($applicationId: UUID!) {

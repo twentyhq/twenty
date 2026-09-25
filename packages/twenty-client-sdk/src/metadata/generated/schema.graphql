@@ -3432,7 +3432,7 @@ type RecordExport {
   filename: String!
   progress: Int!
   errorMessage: String
-  downloadUrl: String
+  downloadPath: String
 }
 
 type AiChatUsage {

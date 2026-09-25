@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
@@ -7,7 +7,7 @@ import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 describe('messageFolderResolver (e2e)', () => {
   describe('myMessageFolders', () => {
     it('should return only the current user message folders', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageFolders {
             myMessageFolders {
@@ -32,7 +32,7 @@ describe('messageFolderResolver (e2e)', () => {
     });
 
     it('should filter by messageChannelId', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageFolders($messageChannelId: UUID) {
             myMessageFolders(messageChannelId: $messageChannelId) {
@@ -57,7 +57,7 @@ describe('messageFolderResolver (e2e)', () => {
     });
 
     it('should deny filtering by another user messageChannelId', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageFolders($messageChannelId: UUID) {
             myMessageFolders(messageChannelId: $messageChannelId) {
@@ -75,7 +75,7 @@ describe('messageFolderResolver (e2e)', () => {
     });
 
     it('should not expose hidden fields', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageFolders {
             myMessageFolders {
@@ -93,7 +93,7 @@ describe('messageFolderResolver (e2e)', () => {
 
   describe('updateMessageFolder', () => {
     it('should allow updating own folder isSynced', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation UpdateMessageFolder($input: UpdateMessageFolderInput!) {
             updateMessageFolder(input: $input) {
@@ -116,7 +116,7 @@ describe('messageFolderResolver (e2e)', () => {
     });
 
     it('should deny updating another user folder', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation UpdateMessageFolder($input: UpdateMessageFolderInput!) {
             updateMessageFolder(input: $input) {

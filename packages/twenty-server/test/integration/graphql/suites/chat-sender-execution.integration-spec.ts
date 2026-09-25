@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
@@ -60,7 +60,7 @@ describe('Persisted chat senders', () => {
         sender: { userWorkspaceId, applicationId: null },
       });
     }
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: parse(
         `query($threadId: UUID!) { chatMessages(threadId: $threadId) { id senderUserWorkspaceId } }`,
       ),
