@@ -29,7 +29,7 @@ export const MetadataTranslationsTable = ({
   onSaveTranslationRow,
 }: MetadataTranslationsTableProps) => {
   const { t } = useLingui();
-  const gridTemplateColumns = `128px repeat(${columns.length}, minmax(0, 1fr)) 24px`;
+  const gridTemplateColumns = `160px repeat(${columns.length}, minmax(0, 1fr)) 24px`;
 
   const localeRows = localeOptions.flatMap(({ value: locale, label }) => {
     const rows = columns.map(({ property }) =>

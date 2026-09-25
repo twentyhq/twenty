@@ -2,18 +2,14 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { within } from 'storybook/test';
 
 import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof SettingsTranslationsButton> = {
   title: 'Modules/Settings/Translations/SettingsTranslationsButton',
   component: SettingsTranslationsButton,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentWithRouterDecorator],
   args: {
-    target: {
-      metadataName: 'objectMetadata',
-      recordId: 'object-metadata-id',
-      label: 'Companies',
-    },
+    objectNamePlural: 'companies',
   },
 };
 

@@ -133,11 +133,7 @@ export const ObjectSettings = ({
             description={t`What each language displays for this object's labels`}
           />
           <SettingsTranslationsButton
-            target={{
-              metadataName: 'objectMetadata',
-              recordId: objectMetadataItem.id,
-              label: objectMetadataItem.labelPlural,
-            }}
+            objectNamePlural={objectMetadataItem.namePlural}
           />
         </Section.Root>
       </StyledFormSectionContainer>

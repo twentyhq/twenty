@@ -1,40 +1,36 @@
-import {
-  type SettingsTranslationsSidePanelTarget,
-  settingsTranslationsSidePanelTargetState,
-} from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { SidePanelPages } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconLanguage } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsTranslationsButtonProps = {
-  target: SettingsTranslationsSidePanelTarget;
+  objectNamePlural: string;
+  fieldName?: string;
 };
 
 export const SettingsTranslationsButton = ({
-  target,
+  objectNamePlural,
+  fieldName,
 }: SettingsTranslationsButtonProps) => {
   const { t } = useLingui();
-  const { navigateSidePanel } = useNavigateSidePanel();
-  const setSettingsTranslationsSidePanelTarget = useSetAtomState(
-    settingsTranslationsSidePanelTargetState,
-  );
+  const navigateSettings = useNavigateSettings();
 
   return (
     <Button
       startIcon={<IconLanguage />}
       size="sm"
-      onClick={() => {
-        setSettingsTranslationsSidePanelTarget(target);
-        navigateSidePanel({
-          page: SidePanelPages.SettingsMetadataTranslations,
-          pageTitle: target.label,
-          pageIcon: IconLanguage,
-          resetNavigationStack: true,
-        });
-      }}
+      onClick={() =>
+        isDefined(fieldName)
+          ? navigateSettings(SettingsPath.ObjectFieldTranslations, {
+              objectNamePlural,
+              fieldName,
+            })
+          : navigateSettings(SettingsPath.ObjectTranslations, {
+              objectNamePlural,
+            })
+      }
       variant="outline"
     >{t`Edit translations`}</Button>
   );

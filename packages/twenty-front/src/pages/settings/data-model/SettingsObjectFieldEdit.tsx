@@ -408,12 +408,8 @@ export const SettingsObjectFieldEdit = () => {
                 description={t`What each language displays for this field's labels`}
               />
               <SettingsTranslationsButton
-                target={{
-                  metadataName: 'fieldMetadata',
-                  recordId: fieldMetadataItem.id,
-                  objectMetadataId: objectMetadataItem.id,
-                  label: fieldMetadataItem.label,
-                }}
+                objectNamePlural={objectNamePlural}
+                fieldName={fieldMetadataItem.name}
               />
             </Section.Root>
 

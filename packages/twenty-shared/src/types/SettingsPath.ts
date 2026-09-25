@@ -24,6 +24,9 @@ export enum SettingsPath {
   ObjectNewFieldConfigure = 'objects/:objectNamePlural/new-field/configure',
   ObjectNewIndex = 'objects/:objectNamePlural/new-index',
   ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
+  // Field names are camelCase, so a hyphenated segment cannot shadow one
+  ObjectTranslations = 'objects/:objectNamePlural/object-translations',
+  ObjectFieldTranslations = 'objects/:objectNamePlural/:fieldName/translations',
   NewObject = 'objects/new',
   Layout = 'layout',
   WorkspaceMembersPage = 'members',

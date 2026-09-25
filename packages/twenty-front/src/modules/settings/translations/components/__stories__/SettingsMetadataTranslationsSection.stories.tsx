@@ -1,26 +1,11 @@
-import {
-  type Decorator,
-  type Meta,
-  type StoryObj,
-} from '@storybook/react-vite';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { within } from 'storybook/test';
 
-import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
-import { settingsTranslationsSidePanelTargetState } from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { SettingsMetadataTranslationsSection } from '@/settings/translations/components/SettingsMetadataTranslationsSection';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
-
-const TargetDecorator: Decorator = (Story) => {
-  jotaiStore.set(settingsTranslationsSidePanelTargetState.atom, {
-    metadataName: 'objectMetadata',
-    recordId: 'object-metadata-id',
-    label: 'Companies',
-  });
-  return <Story />;
-};
 
 const makeTranslationRow = ({
   locale,
@@ -42,16 +27,13 @@ const makeTranslationRow = ({
   provenance,
 });
 
-const meta: Meta<typeof SidePanelSettingsMetadataTranslationsPage> = {
-  title:
-    'Modules/Settings/Translations/SidePanelSettingsMetadataTranslationsPage',
-  component: SidePanelSettingsMetadataTranslationsPage,
-  decorators: [
-    TargetDecorator,
-    RootDecorator,
-    ComponentDecorator,
-    ToastDecorator,
-  ],
+const meta: Meta<typeof SettingsMetadataTranslationsSection> = {
+  title: 'Modules/Settings/Translations/SettingsMetadataTranslationsSection',
+  component: SettingsMetadataTranslationsSection,
+  decorators: [RootDecorator, ComponentDecorator, ToastDecorator],
+  args: {
+    input: { objectMetadataId: 'object-metadata-id' },
+  },
   parameters: {
     msw: {
       handlers: [
@@ -84,13 +66,13 @@ const meta: Meta<typeof SidePanelSettingsMetadataTranslationsPage> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SidePanelSettingsMetadataTranslationsPage>;
+type Story = StoryObj<typeof SettingsMetadataTranslationsSection>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Labels');
+    await canvas.findByText('Languages');
     await canvas.findByText('Source');
     await canvas.findByText('Entreprises');
     await canvas.findByTitle('Reset to default');
