@@ -53,9 +53,11 @@ export const workflowManifestSchema = z
         });
         return;
       }
-      if (visited.has(id)) return;
+      if (visited.has(id)) {
+        return;
+      }
       const step = stepsById.get(id);
-      if (!step) {
+      if (step === undefined) {
         context.addIssue({
           code: 'custom',
           message: `Workflow references missing step ${id}`,

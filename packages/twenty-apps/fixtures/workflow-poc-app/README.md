@@ -2,7 +2,7 @@
 
 This fixture requires the SDK and server from this branch and a development workspace with `IS_WORKFLOW_CORE_ENABLED` enabled. It creates one application-owned core workflow and one ACTIVE version, without workspace workflow/version mirrors. Normal editor operations are read-only; the workflow show page provides Run.
 
-From the repository root, build `twenty-shared` and `twenty-sdk` using the usual workspace build. Configure the local CLI connection (`twenty auth`) and run `twenty dev` from this fixture using the locally built CLI. Do not use the currently published SDK: it does not include defineWorkflow.
+From the repository root, build `twenty-shared` and `twenty-sdk` using the usual workspace build. Configure the local CLI connection (`twenty remote:add`) and run `twenty dev` from this fixture using the locally built CLI. Do not use the currently published SDK: it does not include defineWorkflow.
 
 1. Install/sync the fixture and open **Application greeting** in Workflows.
 2. Click Run; the Greet step returns `Before upgrade`.

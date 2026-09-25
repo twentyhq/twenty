@@ -1,3 +1,9 @@
+import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import {
   type WorkflowManifest,
   workflowManifestSchema,
@@ -14,7 +20,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 
-export const fromWorkflowManifestToCoreDefinitions = ({
+export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
   manifest,
   applicationUniversalIdentifier,
   existingWorkflow,
@@ -32,16 +38,39 @@ export const fromWorkflowManifestToCoreDefinitions = ({
   workflow: UniversalFlatWorkflow & { id: string };
   version: UniversalFlatWorkflowVersion & { id: string };
 } => {
-  const definition = workflowManifestSchema.parse(manifest);
-  if (existingWorkflow?.workspaceWorkflowId) {
-    throw new Error('Workspace workflows cannot be adopted by an application');
+  const parsed = workflowManifestSchema.safeParse(manifest);
+  if (!parsed.success) {
+    throw new ApplicationException(
+      `Invalid workflow definition: ${parsed.error.message}`,
+      ApplicationExceptionCode.INVALID_INPUT,
+      { userFriendlyMessage: msg`Invalid application workflow definition.` },
+    );
+  }
+  const definition = parsed.data;
+  if (isDefined(existingWorkflow?.workspaceWorkflowId)) {
+    throw new ApplicationException(
+      'Workspace workflows cannot be adopted by an application',
+      ApplicationExceptionCode.INVALID_INPUT,
+      {
+        userFriendlyMessage: msg`Workspace workflows cannot be adopted by an application.`,
+      },
+    );
   }
 
   const workflowId = existingWorkflow?.id ?? v4();
   const versionId = existingVersion?.id ?? v4();
 
-  if (existingVersion && existingVersion.coreWorkflowId !== workflowId) {
-    throw new Error('A workflow version cannot move to a different workflow');
+  if (
+    isDefined(existingVersion) &&
+    existingVersion.coreWorkflowId !== workflowId
+  ) {
+    throw new ApplicationException(
+      'A workflow version cannot move to a different workflow',
+      ApplicationExceptionCode.INVALID_INPUT,
+      {
+        userFriendlyMessage: msg`A workflow version cannot move to a different workflow.`,
+      },
+    );
   }
 
   const steps: WorkflowLogicFunctionAction[] = definition.version.steps.map(
@@ -49,9 +78,13 @@ export const fromWorkflowManifestToCoreDefinitions = ({
       const logicFunctionId = logicFunctionIdByUniversalIdentifier.get(
         step.logicFunctionUniversalIdentifier,
       );
-      if (!logicFunctionId) {
-        throw new Error(
+      if (!isDefined(logicFunctionId)) {
+        throw new ApplicationException(
           `Workflow ${definition.name}: missing application workflow action ${step.logicFunctionUniversalIdentifier}`,
+          ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`The workflow references a function that is not exposed as an action by this application.`,
+          },
         );
       }
       return {

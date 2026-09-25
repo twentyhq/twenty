@@ -28,7 +28,7 @@ const StyledBar = styled.div`
 `;
 
 type CoreObjectIdentifierBarProps = {
-  readonly?: boolean;
+  isReadOnly?: boolean;
   recordId: string;
   name: string | null | undefined;
   namePlaceholder: string;
@@ -40,7 +40,7 @@ export const CoreObjectIdentifierBar = ({
   name,
   namePlaceholder,
   onRename,
-  readonly = false,
+  isReadOnly = false,
 }: CoreObjectIdentifierBarProps) => {
   const [editedName, setEditedName] = useState<string>();
   const allowRequestsToTwentyIcons = useAtomStateValue(
@@ -52,7 +52,7 @@ export const CoreObjectIdentifierBar = ({
   );
 
   const saveName = async () => {
-    if (readonly || !isDefined(editedName)) {
+    if (isReadOnly || !isDefined(editedName)) {
       return;
     }
 
@@ -79,7 +79,7 @@ export const CoreObjectIdentifierBar = ({
           <TitleInput
             instanceId={`core-object-name-${recordId}`}
             sizeVariant="sm"
-            disabled={readonly}
+            disabled={isReadOnly}
             value={editedName ?? name ?? ''}
             placeholder={namePlaceholder}
             onChange={setEditedName}

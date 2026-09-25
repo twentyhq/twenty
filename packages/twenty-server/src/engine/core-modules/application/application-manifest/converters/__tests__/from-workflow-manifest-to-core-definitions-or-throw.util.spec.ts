@@ -1,6 +1,6 @@
 import { type WorkflowManifest } from 'twenty-shared/application';
 
-import { fromWorkflowManifestToCoreDefinitions } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions.util';
+import { fromWorkflowManifestToCoreDefinitionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions-or-throw.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
@@ -44,7 +44,7 @@ const options = {
 describe('application workflow definitions', () => {
   it('creates one active core version without workspace projections', () => {
     const { workflow, version } =
-      fromWorkflowManifestToCoreDefinitions(options);
+      fromWorkflowManifestToCoreDefinitionsOrThrow(options);
     expect(workflow.lastPublishedCoreWorkflowVersionId).toBe(version.id);
     expect(version.coreWorkflowId).toBe(workflow.id);
     expect(workflow.workspaceWorkflowId).toBeNull();
@@ -58,7 +58,7 @@ describe('application workflow definitions', () => {
   });
 
   it('updates the same version and keeps graph identity across updates', () => {
-    const before = fromWorkflowManifestToCoreDefinitions(options);
+    const before = fromWorkflowManifestToCoreDefinitionsOrThrow(options);
     const existingWorkflow: FlatWorkflow = {
       ...before.workflow,
       workspaceId: APPLICATION_ID,
@@ -71,7 +71,7 @@ describe('application workflow definitions', () => {
     };
     const changed = structuredClone(manifest);
     changed.version.steps[0].input.greeting = 'After';
-    const after = fromWorkflowManifestToCoreDefinitions({
+    const after = fromWorkflowManifestToCoreDefinitionsOrThrow({
       ...options,
       manifest: changed,
       existingWorkflow,
@@ -89,8 +89,8 @@ describe('application workflow definitions', () => {
   });
 
   it('resolves the same definition to different workspace function IDs', () => {
-    const first = fromWorkflowManifestToCoreDefinitions(options);
-    const second = fromWorkflowManifestToCoreDefinitions({
+    const first = fromWorkflowManifestToCoreDefinitionsOrThrow(options);
+    const second = fromWorkflowManifestToCoreDefinitionsOrThrow({
       ...options,
       logicFunctionIdByUniversalIdentifier: new Map([
         [FUNCTION_ID, '88888888-8888-4888-8888-888888888888'],
@@ -107,7 +107,7 @@ describe('application workflow definitions', () => {
 
   it('refuses missing or non-exposed application functions', () => {
     expect(() =>
-      fromWorkflowManifestToCoreDefinitions({
+      fromWorkflowManifestToCoreDefinitionsOrThrow({
         ...options,
         logicFunctionIdByUniversalIdentifier: new Map(),
       }),
@@ -118,7 +118,10 @@ describe('application workflow definitions', () => {
     const invalid = structuredClone(manifest);
     Object.assign(invalid.version.trigger, { type: 'WEBHOOK' });
     expect(() =>
-      fromWorkflowManifestToCoreDefinitions({ ...options, manifest: invalid }),
+      fromWorkflowManifestToCoreDefinitionsOrThrow({
+        ...options,
+        manifest: invalid,
+      }),
     ).toThrow();
   });
 });

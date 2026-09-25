@@ -212,6 +212,7 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        inferDeletionFromMissingEntities,
         isLogicFunctionPrebuiltModeEnabled:
           featureFlagsMap[
             FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED

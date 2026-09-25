@@ -1,5 +1,6 @@
+import { msg } from '@lingui/core/macro';
 import { v4 } from 'uuid';
-import { fromWorkflowManifestToCoreDefinitions } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions.util';
+import { fromWorkflowManifestToCoreDefinitionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions-or-throw.util';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -68,6 +69,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     ownerFlatApplication,
     fromAllFlatEntityMaps,
     isLogicFunctionPrebuiltModeEnabled,
+    inferDeletionFromMissingEntities = false,
     now,
     workspaceId,
   }: {
@@ -75,6 +77,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
     isLogicFunctionPrebuiltModeEnabled: boolean;
+    inferDeletionFromMissingEntities?: boolean;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
@@ -698,12 +701,17 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
     )) {
       if (
-        existing &&
+        inferDeletionFromMissingEntities &&
+        isDefined(existing) &&
         existing.workspaceWorkflowId === null &&
         !declaredWorkflowIds.has(existing.universalIdentifier)
       ) {
-        throw new Error(
+        throw new ApplicationException(
           'Removing application workflows is not supported by the defineWorkflow POC; existing runs may still reference them',
+          ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`Removing application workflows is not supported yet.`,
+          },
         );
       }
     }
@@ -713,17 +721,32 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       for (const logicFunction of Object.values(
         allUniversalFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
       )) {
-        if (!logicFunction) continue;
+        if (!isDefined(logicFunction)) {
+          continue;
+        }
         logicFunction.id =
           fromAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier[
             logicFunction.universalIdentifier
           ]?.id ?? v4();
-        if (logicFunction.workflowActionTriggerSettings) {
+        if (isDefined(logicFunction.workflowActionTriggerSettings)) {
           logicFunctionIdByUniversalIdentifier.set(
             logicFunction.universalIdentifier,
             logicFunction.id,
           );
         }
+      }
+      const versionIdentifiersByWorkflowId = new Map<string, Set<string>>();
+      for (const version of Object.values(
+        fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
+      )) {
+        if (!isDefined(version) || !isDefined(version.coreWorkflowId)) {
+          continue;
+        }
+        const identifiers =
+          versionIdentifiersByWorkflowId.get(version.coreWorkflowId) ??
+          new Set<string>();
+        identifiers.add(version.universalIdentifier);
+        versionIdentifiersByWorkflowId.set(version.coreWorkflowId, identifiers);
       }
       for (const workflowManifest of workflows) {
         const existingWorkflow =
@@ -734,29 +757,33 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
             workflowManifest.version.universalIdentifier
           ];
+        const existingVersionIdentifiers = isDefined(existingWorkflow)
+          ? versionIdentifiersByWorkflowId.get(existingWorkflow.id)
+          : undefined;
         if (
-          existingWorkflow &&
-          Object.values(
-            fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
-          ).some(
-            (version) =>
-              version?.coreWorkflowId === existingWorkflow.id &&
-              version.universalIdentifier !==
-                workflowManifest.version.universalIdentifier,
-          )
+          isDefined(existingVersionIdentifiers) &&
+          (existingVersionIdentifiers.size !== 1 ||
+            !existingVersionIdentifiers.has(
+              workflowManifest.version.universalIdentifier,
+            ))
         ) {
-          throw new Error(
+          throw new ApplicationException(
             'An application workflow must keep the same version universal identifier across updates',
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`Keep the same workflow version universal identifier when updating an application.`,
+            },
           );
         }
-        const { workflow, version } = fromWorkflowManifestToCoreDefinitions({
-          manifest: workflowManifest,
-          applicationUniversalIdentifier,
-          existingWorkflow,
-          existingVersion,
-          logicFunctionIdByUniversalIdentifier,
-          now,
-        });
+        const { workflow, version } =
+          fromWorkflowManifestToCoreDefinitionsOrThrow({
+            manifest: workflowManifest,
+            applicationUniversalIdentifier,
+            existingWorkflow,
+            existingVersion,
+            logicFunctionIdByUniversalIdentifier,
+            now,
+          });
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity: workflow,
           universalFlatEntityMapsToMutate:

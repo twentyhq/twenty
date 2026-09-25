@@ -1,0 +1,70 @@
+---
+title: Workflows
+description: Declare an application-owned core workflow with defineWorkflow.
+icon: "diagram-project"
+---
+
+<Warning>
+  This is an experimental development POC. It requires a compatible SDK and server with the core workflow feature flag enabled. It is not ready for production rollout.
+</Warning>
+
+`defineWorkflow` from `twenty-sdk/define` declares a workflow in the application's manifest. The POC supports manual triggers and logic-function steps. Declare each referenced logic function in the same app and expose it using `workflowActionTriggerSettings`.
+
+```ts src/workflows/greeting.workflow.ts
+import { defineWorkflow } from 'twenty-sdk/define';
+import { GREET_UNIVERSAL_IDENTIFIER } from '../logic-functions/greet.function';
+
+const GREET_STEP_ID = 'a90528b8-5a87-4cd8-8dc5-b93f7e864c15';
+
+export default defineWorkflow({
+  universalIdentifier: '96cfb613-dc0f-47c4-9410-8971ebc3c263',
+  name: 'Application greeting',
+  version: {
+    universalIdentifier: '0f1d0260-e781-4501-9d26-1e7f73585331',
+    trigger: {
+      universalIdentifier: '02720fe3-1977-4306-a9c3-66f7c99e3199',
+      type: 'MANUAL',
+      nextStepIds: [GREET_STEP_ID],
+    },
+    steps: [
+      {
+        universalIdentifier: GREET_STEP_ID,
+        name: 'Greet',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: GREET_UNIVERSAL_IDENTIFIER,
+        input: { greeting: 'Before upgrade' },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+```
+
+The imported `GREET_UNIVERSAL_IDENTIFIER` is the universal identifier of the app's greeting logic function. That function accepts `{ greeting: string }` and returns the greeting.
+
+| Field | Meaning |
+| --- | --- |
+| `universalIdentifier`, `name` | Stable workflow UUID and display name |
+| `version.universalIdentifier` | Stable UUID for the workflow's single version |
+| `version.trigger` | Universal identifier, `type: 'MANUAL'`, and starting step IDs |
+| `version.steps` | Nonempty list of logic-function steps |
+| Step `universalIdentifier`, `name`, `type` | Stable step UUID, display name, and `LOGIC_FUNCTION` |
+| Step `logicFunctionUniversalIdentifier` | UUID of an exposed workflow action declared by this app |
+| Step `input` | Input object passed to the referenced function |
+| `nextStepIds` | Step universal identifiers; use `[]` for a terminal step |
+
+Workflow, version, trigger and step UUIDs must be distinct. The graph must be acyclic, all destinations must exist, and every step must be reachable from the trigger. Runtime function IDs are resolved for the installing workspace, including functions created in the same synchronization.
+
+## Updates and runs
+
+Synchronization creates one ACTIVE version. Changing the source updates that same version without allocating another workflow or version ID. Keep both universal identifiers stable across releases.
+
+Existing runs retain the graph saved when they started, including their step inputs and edges. Function implementations are not pinned: a step executed after an upgrade uses the current function implementation. Keep functions needed by existing runs available.
+
+Installed app workflows are read-only in the normal workflow editor and APIs. Open the workflow show page and click Run to start a run. Change the app source and sync to update the definition.
+
+## POC boundaries
+
+Removing a workflow from a full manifest sync, replacing its version universal identifier, and adopting a workspace-owned workflow are rejected. Additive pre-install synchronization can omit existing workflows.
+
+Automated triggers, portable record/field references, command-menu registration, duplication, export/pull, uninstall safety, execution-dependency pinning, application execution permissions and production rollback support remain separate work. Existing workspace-owned workflow APIs and rollback mirrors retain their current lifecycle.

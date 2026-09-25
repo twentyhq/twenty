@@ -4,9 +4,19 @@ Use when the app needs to ship a manual workflow on install, or when a logic fun
 
 See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
-## Mental Model
+## Application-defined workflows (experimental)
 
-Twenty workflows are workspace records, not app entities — no `define*` primitive. Ship them via `definePostInstallLogicFunction` and the workspace API.
+`defineWorkflow` from `twenty-sdk/define` is a development POC for app-owned core workflows. Use it only with a compatible SDK/server and the core workflow flag enabled. It currently accepts a MANUAL trigger and LOGIC_FUNCTION steps whose functions are declared by the same app with `workflowActionTriggerSettings`.
+
+Declare `universalIdentifier`, `name`, and `version`. The version has its own stable `universalIdentifier`, a `trigger` with a universal identifier and `nextStepIds`, and `steps`. Each step declares its universal identifier, name, type, `logicFunctionUniversalIdentifier`, input object, and `nextStepIds` pointing to step universal identifiers. All steps must be reachable and the graph must be acyclic.
+
+Application sync installs one ACTIVE core version. Updates modify that same version and preserve workflow/version IDs. Existing runs retain their saved graph; referenced function implementations are current, not pinned to the old app release. App workflows are read-only through normal workflow APIs and the editor, with Run available on the show page. Do not seed or activate these definitions through install hooks.
+
+Workflow removal and version-ID replacement are rejected. Automated triggers, record/field-reference transpilation, export/pull, duplication, uninstall safety and application execution permissions are not implemented by this POC. Do not use this as production rollout guidance.
+
+## Existing workspace workflow API
+
+For existing workspaces using the workspace workflow APIs, workflows can still be seeded via `definePostInstallLogicFunction`. The remaining sections describe that older lifecycle, not `defineWorkflow` app definitions.
 
 A workflow is a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
 
