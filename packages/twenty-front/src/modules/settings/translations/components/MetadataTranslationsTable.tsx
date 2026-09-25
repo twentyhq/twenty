@@ -8,6 +8,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useLingui } from '@lingui/react/macro';
+import Skeleton from 'react-loading-skeleton';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type LocaleOption } from '~/localization/hooks/useLocaleOptions';
@@ -16,6 +17,7 @@ type MetadataTranslationsTableProps = {
   columns: { property: string; label: string }[];
   rowsByProperty: Map<string, Map<string, MetadataTranslationRow>>;
   localeOptions: LocaleOption[];
+  loading: boolean;
   onSaveTranslationRows: (
     rowValues: MetadataTranslationRowValue[],
   ) => Promise<void>;
@@ -25,6 +27,7 @@ export const MetadataTranslationsTable = ({
   columns,
   rowsByProperty,
   localeOptions,
+  loading,
   onSaveTranslationRows,
 }: MetadataTranslationsTableProps) => {
   const { t } = useLingui();
@@ -38,6 +41,8 @@ export const MetadataTranslationsTable = ({
     return rows.some(isDefined) ? [{ locale, label, rows }] : [];
   });
 
+  const showSkeleton = loading && rowsByProperty.size === 0;
+
   return (
     <Table>
       <TableRow gridTemplateColumns={gridTemplateColumns}>
@@ -49,16 +54,20 @@ export const MetadataTranslationsTable = ({
       </TableRow>
       <StyledSettingsDataModelTableBodyContainer>
         <TableBody>
-          {localeRows.map(({ locale, label, rows }) => (
-            <MetadataTranslationsTableRow
-              key={locale}
-              gridTemplateColumns={gridTemplateColumns}
-              localeLabel={label}
-              rows={rows}
-              onSaveTranslationRows={onSaveTranslationRows}
-            />
-          ))}
-          {!isNonEmptyArray(localeRows) && (
+          {showSkeleton
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton height={32} borderRadius={4} key={index} />
+              ))
+            : localeRows.map(({ locale, label, rows }) => (
+                <MetadataTranslationsTableRow
+                  key={locale}
+                  gridTemplateColumns={gridTemplateColumns}
+                  localeLabel={label}
+                  rows={rows}
+                  onSaveTranslationRows={onSaveTranslationRows}
+                />
+              ))}
+          {!showSkeleton && !isNonEmptyArray(localeRows) && (
             <TableCell color={themeCssVariables.font.color.tertiary}>
               {t`No languages found`}
             </TableCell>
