@@ -131,8 +131,8 @@ export const SettingsUnsubscribersList = () => {
   return (
     <StyledContainer>
       <SettingsTableListSection<MessageSuppression>
-        title={t`Unsubscribers`}
-        description={t`Email addresses that opted out of campaign emails or of click tracking`}
+        title={t`Opt-outs`}
+        description={t`Email addresses that opted out of campaign emails, a topic, or click tracking`}
         toolbar={
           <StyledToolbar>
             <StyledSearch>

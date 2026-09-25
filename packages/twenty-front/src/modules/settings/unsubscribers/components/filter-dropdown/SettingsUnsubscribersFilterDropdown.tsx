@@ -112,7 +112,7 @@ export const SettingsUnsubscribersFilterDropdown = ({
         <Button
           startIcon={<IconFilter />}
           size="md"
-          aria-label={t`Filter unsubscribers`}
+          aria-label={t`Filter opt-outs`}
           variant="outline"
         />
       }
