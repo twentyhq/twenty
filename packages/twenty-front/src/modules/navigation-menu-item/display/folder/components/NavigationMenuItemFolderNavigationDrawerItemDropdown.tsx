@@ -9,7 +9,7 @@ import {
 import { LightIconButton } from 'twenty-ui/components';
 
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
@@ -40,7 +40,9 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
       }
       dropdownPlacement="bottom-start"
       renderMenu={({ onClose, onAdd }) => (
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Large}
+        >
           <DropdownMenuItemsContainer>
             <ListItem
               startIcon={<IconEdit />}
@@ -62,7 +64,7 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
               color="danger"
             >{t`Remove from sidebar`}</ListItem>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       )}
     />
   );

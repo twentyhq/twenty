@@ -17,7 +17,7 @@ import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/ge
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -243,7 +243,7 @@ export const RecordDetailRelationRecordsListItem = ({
               </LightIconButton>
             }
             dropdownComponents={
-              <DropdownContent>
+              <LegacyDropdownContent>
                 <DropdownMenuItemsContainer>
                   <ListItem
                     startIcon={<IconUnlink />}
@@ -258,7 +258,7 @@ export const RecordDetailRelationRecordsListItem = ({
                       >{t`Delete`}</ListItem>
                     )}
                 </DropdownMenuItemsContainer>
-              </DropdownContent>
+              </LegacyDropdownContent>
             }
           />
         )}

@@ -15,7 +15,7 @@ import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjec
 import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
 import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -27,7 +27,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -233,7 +233,7 @@ export const SettingsMorphRelationMultiSelect = ({
             />
           }
           dropdownComponents={
-            <DropdownContent widthInPixels={dropDownMenuWidth}>
+            <LegacyDropdownContent widthInPixels={dropDownMenuWidth}>
               {!!withSearchInput && (
                 <DropdownMenuSearchInput
                   autoFocus
@@ -332,7 +332,7 @@ export const SettingsMorphRelationMultiSelect = ({
                   </ListItem>
                 </DropdownMenuItemsContainer>
               )}
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       )}

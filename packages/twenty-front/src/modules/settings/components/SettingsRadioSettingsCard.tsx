@@ -5,7 +5,7 @@ import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsRadioSettingsCardProps<Option extends { value: string }> = {
   name: string;

@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type AddCreditCardModalProps = {
   modalInstanceId: string;

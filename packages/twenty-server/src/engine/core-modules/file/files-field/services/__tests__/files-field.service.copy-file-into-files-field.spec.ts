@@ -16,7 +16,9 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
 
   let fileStorageService: jest.Mocked<FileStorageService>;
   let applicationRepository: jest.Mocked<Repository<ApplicationEntity>>;
-  let fieldMetadataRepository: jest.Mocked<Repository<FieldMetadataEntity>>;
+  let fieldMetadataRepository: jest.Mocked<
+    WorkspaceScopedRepository<FieldMetadataEntity>
+  >;
   let fileRepository: jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
 
   const buildService = () =>
@@ -57,7 +59,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
         applicationId: 'field-application-id',
         universalIdentifier: 'field-universal-identifier',
       }),
-    } as unknown as jest.Mocked<Repository<FieldMetadataEntity>>;
+    } as unknown as jest.Mocked<WorkspaceScopedRepository<FieldMetadataEntity>>;
 
     fileRepository = {
       findOne: jest.fn().mockResolvedValue(null),

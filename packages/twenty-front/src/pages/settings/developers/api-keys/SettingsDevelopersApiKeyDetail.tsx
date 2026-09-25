@@ -23,7 +23,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   AssignRoleToApiKeyDocument,
   CreateApiKeyDocument,

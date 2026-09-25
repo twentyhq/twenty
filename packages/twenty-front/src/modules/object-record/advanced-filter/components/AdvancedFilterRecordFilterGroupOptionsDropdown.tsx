@@ -5,7 +5,7 @@ import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-fi
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
@@ -53,7 +53,7 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
         </IconButton>
       }
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             <ListItem
               onClick={handleRemove}
@@ -61,7 +61,7 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
               color="danger"
             >{t`Remove rule group`}</ListItem>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownOffset={{ y: 2, x: 0 }}
       dropdownPlacement="bottom-start"

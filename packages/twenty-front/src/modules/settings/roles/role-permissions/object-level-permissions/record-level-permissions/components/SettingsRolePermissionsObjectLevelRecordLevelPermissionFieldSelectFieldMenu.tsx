@@ -20,7 +20,7 @@ import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dr
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -158,7 +158,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     );
 
     return (
-      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+      <LegacyDropdownContent
+        widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+      >
         <AdvancedFilterFieldSelectSearchInput />
         <SelectableList
           focusId={advancedFilterFieldSelectDropdownId}
@@ -183,6 +185,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
             ))}
           </DropdownMenuItemsContainer>
         </SelectableList>
-      </DropdownContent>
+      </LegacyDropdownContent>
     );
   };

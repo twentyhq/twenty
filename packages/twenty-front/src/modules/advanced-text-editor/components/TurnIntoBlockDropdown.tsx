@@ -2,15 +2,15 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMenuItem = styled.button`
   align-items: center;
@@ -44,7 +44,7 @@ type TurnIntoBlockDropdownProps = {
 export const TurnIntoBlockDropdown = ({
   editor,
 }: TurnIntoBlockDropdownProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const instanceId = useId();
   const dropdownId = `turn-into-block-dropdown-${instanceId}`;
   const { toggleDropdown } = useToggleDropdown();
@@ -57,7 +57,7 @@ export const TurnIntoBlockDropdown = ({
   return (
     <Dropdown
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             {options.map(({ id, title, icon, onClick }) => (
               <ListItem
@@ -74,7 +74,7 @@ export const TurnIntoBlockDropdown = ({
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownId={dropdownId}
       clickableComponent={

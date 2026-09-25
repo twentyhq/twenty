@@ -10,7 +10,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { ColorSchemePicker, Section } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 
 const StyledInterfaceControls = styled.div`
