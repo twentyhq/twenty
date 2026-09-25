@@ -10,10 +10,7 @@ export type WorkspaceTransactionScope = {
   getRepository: <T extends ObjectLiteral = ObjectRecord>(
     objectMetadataName: string,
     rolePermissionConfig?: RolePermissionConfig,
-    repositoryOptions?: {
-      shouldSkipEventEmission?: boolean;
-      shouldBypassValidationRules?: boolean;
-    },
+    repositoryOptions?: { shouldSkipEventEmission?: boolean },
   ) => WorkspaceRepository<T>;
   executeRawQuery: (
     sql: string,

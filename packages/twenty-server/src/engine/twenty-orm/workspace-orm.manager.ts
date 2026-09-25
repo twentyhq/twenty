@@ -42,7 +42,6 @@ export class WorkspaceOrmManager {
     repositoryOptions?: {
       useReplica?: boolean;
       shouldSkipEventEmission?: boolean;
-      shouldBypassValidationRules?: boolean;
     },
   ): WorkspaceRepository<T>;
 
@@ -52,7 +51,6 @@ export class WorkspaceOrmManager {
     repositoryOptions?: {
       useReplica?: boolean;
       shouldSkipEventEmission?: boolean;
-      shouldBypassValidationRules?: boolean;
     },
   ): WorkspaceRepository<T>;
 
@@ -62,7 +60,6 @@ export class WorkspaceOrmManager {
     repositoryOptions?: {
       useReplica?: boolean;
       shouldSkipEventEmission?: boolean;
-      shouldBypassValidationRules?: boolean;
     },
   ): WorkspaceRepository<T> {
     const objectMetadataName = this.resolveObjectMetadataName(
@@ -74,8 +71,6 @@ export class WorkspaceOrmManager {
       .getRepository<T>(objectMetadataName, permissionOptions, {
         shouldSkipEventEmission:
           repositoryOptions?.shouldSkipEventEmission ?? false,
-        shouldBypassValidationRules:
-          repositoryOptions?.shouldBypassValidationRules ?? false,
       });
   }
 

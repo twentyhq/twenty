@@ -18,19 +18,19 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/create-validation-rule.input';
+import { ValidationRuleGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/validation-rule/filters/validation-rule-graphql-api-exception.filter';
 import { UpdateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/update-validation-rule.input';
 import { ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
-import { ValidationRuleGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/validation-rule/interceptors/validation-rule-graphql-api-exception.interceptor';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard)
-@UseInterceptors(
-  WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  ValidationRuleGraphqlApiExceptionInterceptor,
-)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ValidationRuleDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(
+  ValidationRuleGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 @UsePipes(ResolverValidationPipe)
 export class ValidationRuleResolver {
   constructor(private readonly validationRuleService: ValidationRuleService) {}

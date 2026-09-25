@@ -146,7 +146,6 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   // whose rows no subscriber cares about (campaign materialisation, backfills):
   // webhooks, workflow triggers and timeline activities will NOT fire.
   shouldSkipEventEmission: boolean;
-  shouldBypassValidationRules: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -1458,10 +1457,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private getActiveValidationRules(): ObjectValidationRule[] {
-    if (this.options.shouldBypassValidationRules) {
-      return [];
-    }
-
     return (this.options.flatObjectMetadata.validationRules ?? []).filter(
       (validationRule) => validationRule.isActive,
     );

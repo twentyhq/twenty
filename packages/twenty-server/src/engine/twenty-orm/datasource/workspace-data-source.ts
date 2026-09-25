@@ -60,10 +60,7 @@ export class WorkspaceDataSource {
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
-    repositoryOptions?: {
-      shouldSkipEventEmission?: boolean;
-      shouldBypassValidationRules?: boolean;
-    },
+    repositoryOptions?: { shouldSkipEventEmission?: boolean },
   ): WorkspaceRepository<T> {
     return this.buildRepository<T>({
       nameSingular,
@@ -71,8 +68,6 @@ export class WorkspaceDataSource {
       executor: new PoolQueryExecutor({ pool: this.pool }),
       shouldSkipEventEmission:
         repositoryOptions?.shouldSkipEventEmission ?? false,
-      shouldBypassValidationRules:
-        repositoryOptions?.shouldBypassValidationRules ?? false,
     });
   }
 
@@ -113,10 +108,7 @@ export class WorkspaceDataSource {
         getRepository: <T extends ObjectLiteral = ObjectRecord>(
           nameSingular: string,
           rolePermissionConfig?: RolePermissionConfig,
-          repositoryOptions?: {
-            shouldSkipEventEmission?: boolean;
-            shouldBypassValidationRules?: boolean;
-          },
+          repositoryOptions?: { shouldSkipEventEmission?: boolean },
         ) =>
           this.buildRepository<T>({
             nameSingular,
@@ -125,8 +117,6 @@ export class WorkspaceDataSource {
             isTransactional: true,
             shouldSkipEventEmission:
               repositoryOptions?.shouldSkipEventEmission ?? false,
-            shouldBypassValidationRules:
-              repositoryOptions?.shouldBypassValidationRules ?? false,
             internalContext: transactionalInternalContext,
           }),
         executeRawQuery: (sql, parameters = []) =>
@@ -164,7 +154,6 @@ export class WorkspaceDataSource {
     executor,
     isTransactional = false,
     shouldSkipEventEmission = false,
-    shouldBypassValidationRules = false,
     internalContext = this.internalContext,
   }: {
     nameSingular: string;
@@ -172,7 +161,6 @@ export class WorkspaceDataSource {
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
-    shouldBypassValidationRules?: boolean;
     internalContext?: WorkspaceInternalContext;
   }): WorkspaceRepository<T> {
     const objectMetadataId =
@@ -191,7 +179,6 @@ export class WorkspaceDataSource {
       executor,
       isTransactional,
       shouldSkipEventEmission,
-      shouldBypassValidationRules,
       internalContext,
     });
   }
@@ -204,7 +191,6 @@ export class WorkspaceDataSource {
     executor,
     isTransactional = false,
     shouldSkipEventEmission = false,
-    shouldBypassValidationRules = false,
     internalContext = this.internalContext,
   }: {
     objectMetadataId: string;
@@ -212,7 +198,6 @@ export class WorkspaceDataSource {
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
-    shouldBypassValidationRules?: boolean;
     internalContext?: WorkspaceInternalContext;
   }): WorkspaceRepository<T> {
     const flatObjectMetadata =
@@ -233,7 +218,6 @@ export class WorkspaceDataSource {
       objectRecordsPermissions,
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
-      shouldBypassValidationRules,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
         this.getTableShape(targetObjectMetadataId),
       flatObjectMetadataByObjectMetadataId: (targetObjectMetadataId) =>
@@ -249,7 +233,6 @@ export class WorkspaceDataSource {
           executor,
           isTransactional,
           shouldSkipEventEmission,
-          shouldBypassValidationRules,
           internalContext,
         }),
       isTransactional,
@@ -259,7 +242,7 @@ export class WorkspaceDataSource {
             transactionScope.getRepository<T>(
               flatObjectMetadata.nameSingular,
               rolePermissionConfig,
-              { shouldSkipEventEmission, shouldBypassValidationRules },
+              { shouldSkipEventEmission },
             ),
           ),
         ),
