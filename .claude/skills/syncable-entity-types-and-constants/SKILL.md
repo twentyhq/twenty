@@ -172,7 +172,7 @@ export type FlatDeleteMyEntityAction = {
 
 ### 6a. AllFlatEntityTypesByMetadataName
 
-**File**: `src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name.ts`
+**File**: `src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name.type.ts`
 
 ```typescript
 export type AllFlatEntityTypesByMetadataName = {

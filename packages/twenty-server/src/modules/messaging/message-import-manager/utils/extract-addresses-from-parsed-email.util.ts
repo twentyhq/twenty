@@ -1,6 +1,6 @@
 import { type Address } from 'postal-mime';
 
-import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address.type';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 export const extractAddressesFromParsedEmail = (

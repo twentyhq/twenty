@@ -12,13 +12,19 @@ jest.mock(
 );
 
 jest.mock('@/front-components/components/FrontComponentRenderer', () => ({
-  FrontComponentRenderer: () => <div>Application timeline component</div>,
+  FrontComponentRenderer: ({
+    objectNameSingular,
+  }: {
+    objectNameSingular?: string;
+  }) => <div>Application timeline component for {objectNameSingular}</div>,
 }));
 
-const mainObjectMetadataItem = {} as EnrichedObjectMetadataItem;
+const mainObjectMetadataItem = {
+  nameSingular: 'company',
+} as EnrichedObjectMetadataItem;
 
 describe('EventRowDynamicComponent', () => {
-  it('mounts the front component only after the row is expanded', async () => {
+  it('mounts the front component for the main object only after the row is expanded', async () => {
     const user = userEvent.setup();
 
     render(
@@ -41,13 +47,13 @@ describe('EventRowDynamicComponent', () => {
 
     expect(screen.getByText('Native timeline row')).toBeInTheDocument();
     expect(
-      screen.queryByText('Application timeline component'),
+      screen.queryByText('Application timeline component for company'),
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Expand details' }));
 
     expect(
-      await screen.findByText('Application timeline component'),
+      await screen.findByText('Application timeline component for company'),
     ).toBeInTheDocument();
   });
 

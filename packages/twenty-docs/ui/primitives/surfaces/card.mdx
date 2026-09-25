@@ -1,0 +1,126 @@
+---
+title: Card
+description: Group related information inside a bordered surface.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import CardReference from '/snippets/ui/generated/surfaces/card.mdx';
+
+`Card` groups four presentational parts under one named export. Compose `Card.Root`, `Card.Header`, `Card.Content`, and `Card.Footer` to separate a title, body, and supporting actions. The parts do not manage selection, focus, or application state. The application owns the behavior of any controls placed inside them.
+
+## Anatomy
+
+```text
+Card.Root (outer surface)
+├── Card.Header (optional)
+├── Card.Content (optional, repeatable)
+└── Card.Footer (optional)
+```
+
+Import `Card` from `twenty-ui/primitives/surfaces`. `Card.Root` supplies the outer border and clipping, but creates no sections internally. No part requires another part or a particular section order. The sections also work independently, without `Card.Root` or context.
+
+Each part renders a `div` and accepts native div attributes, `className`, and `style`. No part adds heading, button, or HTML `footer` semantics automatically.
+
+<StoryEmbed storyId="ui-surfaces-card--default" title="Card example" />
+
+## Usage
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
+
+type ImportSummaryProps = { onReview: () => void };
+
+export const ImportSummary = ({ onReview }: ImportSummaryProps) => {
+  const titleId = useId();
+
+  return (
+    <Card.Root fullWidth role="region" aria-labelledby={titleId}>
+      <Card.Header>
+        <Heading id={titleId} level={2}>
+          Import summary
+        </Heading>
+      </Card.Header>
+      <Card.Content>
+        <Text>24 records are ready to import.</Text>
+      </Card.Content>
+      <Card.Footer>
+        <Button onClick={onReview}>Review records</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
+};
+```
+
+Use [Heading](/ui/primitives/typography/heading) at the level required by the surrounding page. Put actions in [Button](/ui/primitives/input/button) or a native link so keyboard and assistive-technology users can activate them.
+
+## Appearance and dividers
+
+`Card.Root` has a transparent background by default. `fullWidth` fills its container, and `backgroundColor` changes the outer background. Child sections have their own backgrounds. `rounded` currently uses the same corner radius as the default card.
+
+`Card.Header` has a primary background, padding, and a bottom border. `Card.Content` has a secondary background and padding; its optional `divider` adds a bottom border. `Card.Footer` has a primary background, padding, and a top border unless `divider={false}`. Avoid adding two borders at the same section boundary.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSections = () => (
+  <Card.Root>
+    <Card.Content divider>
+      <Text>24 records are ready to import.</Text>
+    </Card.Content>
+    <Card.Content divider>
+      <Text>3 records need review.</Text>
+    </Card.Content>
+    <Card.Footer divider={false}>
+      <Text>Last checked just now.</Text>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+`Card.Content` supports `isClickable` for a pointer cursor and `hasHoverHighlight` for a hover background. These flags only change appearance. They do not add button semantics, keyboard activation, or a click handler.
+
+## Independent parts and custom wrappers
+
+A section can be used without the outer surface. Wrappers can derive their props from the corresponding part and spread them to preserve native attributes, event handlers, classes, and styles. Card parts retain their existing props without `ref` support; a wrapper that needs a DOM ref can attach it to a host element it owns.
+
+```tsx
+import { type ComponentProps } from 'react';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SummaryContentProps = ComponentProps<typeof Card.Content>;
+
+const SummaryContent = ({ children, ...props }: SummaryContentProps) => (
+  <Card.Content {...props}>{children}</Card.Content>
+);
+
+export const StandaloneSummary = () => (
+  <SummaryContent aria-label="Import summary" style={{ maxWidth: 360 }}>
+    <Text>24 records are ready to import.</Text>
+  </SummaryContent>
+);
+```
+
+## Migration
+
+Replace the four separate imports with `import { Card } from 'twenty-ui/primitives/surfaces'`. The root package and `twenty-ui/primitives` also export the same `Card` object.
+
+| Previous API                  | Compound API                       |
+| ----------------------------- | ---------------------------------- |
+| `Card` as a component         | `Card.Root`                        |
+| `CardHeader`                  | `Card.Header`                      |
+| `CardContent`                 | `Card.Content`                     |
+| `CardFooter`                  | `Card.Footer`                      |
+| `ComponentProps<typeof Card>` | `ComponentProps<typeof Card.Root>` |
+| `styled(Card)`                | `styled(Card.Root)`                |
+
+Apply the same member names to JSX tags, styled wrappers, and prop types. Standalone part exports are removed without compatibility aliases. Existing props, styling defaults, and independent section use remain unchanged.
+
+## Props
+
+<CardReference />

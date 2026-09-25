@@ -2,7 +2,7 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import {
   type FindRecordsOutputSchema,
   type RecordOutputSchemaV2,
-} from '../../types/output-schema.type';
+} from '../../types/OutputSchema';
 import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 const searchVariableThroughFindRecordsOutputSchema = ({

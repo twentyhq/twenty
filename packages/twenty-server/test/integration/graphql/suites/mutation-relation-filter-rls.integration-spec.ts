@@ -1,4 +1,4 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   type CompanyNameRlsRoleSetup,
   cleanupCompanyNameRlsRole,
@@ -35,7 +35,7 @@ describe('mutations filtered on a relation respect row-level permission predicat
   });
 
   it('does not update records linked to a hidden related record', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       updateManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -51,7 +51,7 @@ describe('mutations filtered on a relation respect row-level permission predicat
   });
 
   it('updates records linked to a visible related record', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       updateManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',

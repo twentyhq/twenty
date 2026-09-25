@@ -1,4 +1,4 @@
-import { type AgentResponseFormat } from '@/ai/types/agent-response-format.type';
+import { type AgentResponseFormat } from '@/ai/types/AgentResponseFormat';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type AgentManifest = SyncableEntityOptions & {

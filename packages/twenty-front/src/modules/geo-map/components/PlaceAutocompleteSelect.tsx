@@ -1,4 +1,4 @@
-import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
+import { type PlaceAutocompleteResult } from '@/geo-map/types/PlaceApi';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';

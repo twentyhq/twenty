@@ -25,6 +25,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case AiExceptionCode.AGENT_NOT_FOUND:
       case AiExceptionCode.THREAD_NOT_FOUND:
+      case AiExceptionCode.RECORD_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
