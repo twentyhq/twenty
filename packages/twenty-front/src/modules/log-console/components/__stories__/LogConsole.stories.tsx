@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
-import { useEffect } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { expect, screen, userEvent, within } from 'storybook/test';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -21,6 +21,8 @@ import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZone
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -77,10 +79,10 @@ const StyledPageWithLogConsole = styled.div`
   position: relative;
 `;
 
-const PageWithLogConsole = () => (
+const PageWithLogConsole = ({ children }: { children: ReactNode }) => (
   <StyledPageWithSidePanel>
     <StyledPageWithLogConsole>
-      <SettingsObjects />
+      {children}
       <LogConsole />
     </StyledPageWithLogConsole>
     <SidePanelForDesktop />
@@ -90,7 +92,11 @@ const PageWithLogConsole = () => (
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Modules/LogConsole/LogConsole',
   component: LogConsole,
-  render: () => <PageWithLogConsole />,
+  render: () => (
+    <PageWithLogConsole>
+      <SettingsObjects />
+    </PageWithLogConsole>
+  ),
   decorators: [
     (Story) => {
       useEffect(() => {
@@ -536,9 +542,30 @@ export const Resized: Story = {
 };
 
 export const FullScreen: Story = {
+  render: () => (
+    <PageWithLogConsole>
+      <PageCardHeader
+        title="Companies"
+        actionButton={<SidePanelToggleButton />}
+      />
+    </PageWithLogConsole>
+  ),
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     jotaiStore.set(isLogConsoleFullScreenState.atom, true);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByRole('button', { name: 'Command Menu' });
+    const closeButton = await canvas.findByRole('button', { name: 'Close' });
+    const { x, y, width, height } = closeButton.getBoundingClientRect();
+
+    expect(
+      closeButton.contains(
+        document.elementFromPoint(x + width / 2, y + height / 2),
+      ),
+    ).toBe(true);
   },
 };
 

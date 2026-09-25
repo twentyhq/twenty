@@ -53,8 +53,6 @@ const LOG_CONSOLE_BAR_HEIGHT = 48;
 
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
 
-const LOG_CONSOLE_BAR_ACTIONS_WIDTH = themeCssVariables.spacing[22];
-
 const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
 const StyledContainer = styled.div<{ isFullScreen: boolean }>`
@@ -75,18 +73,15 @@ const StyledContainer = styled.div<{ isFullScreen: boolean }>`
 const StyledTabList = styled(TabList)`
   && {
     height: ${LOG_CONSOLE_BAR_HEIGHT}px;
-    padding-left: ${LOG_CONSOLE_BAR_ACTIONS_WIDTH};
+    padding-left: ${themeCssVariables.spacing[2]};
     padding-top: ${RESIZE_EDGE_WIDTH_PX}px;
   }
 `;
 
 const StyledBarActions = styled.div`
-  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  justify-content: flex-end;
   padding-right: ${themeCssVariables.spacing[2]};
-  width: ${LOG_CONSOLE_BAR_ACTIONS_WIDTH};
 `;
 
 const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
@@ -296,7 +291,6 @@ export const LogConsole = () => {
           aria-label={t`Log sources`}
           tabs={tabs}
           behaveAsLinks={false}
-          centerTabs
           componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
           onClickTab={openLogConsole}
           onChangeTab={changeSource}
