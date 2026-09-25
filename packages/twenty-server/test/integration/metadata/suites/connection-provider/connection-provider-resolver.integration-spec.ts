@@ -3,7 +3,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -69,7 +69,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
   it('returns the provider with type read from the entity and oauth.scopes from oauthConfig', async () => {
     const applicationId = await findApplicationDbId(TEST_APP_ID);
 
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query ApplicationConnectionProviders($applicationId: UUID!) {
           applicationConnectionProviders(applicationId: $applicationId) {
@@ -136,7 +136,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
 
     const applicationId = await findApplicationDbId(TEST_APP_ID);
 
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query ApplicationConnectionProviders($applicationId: UUID!) {
           applicationConnectionProviders(applicationId: $applicationId) {
@@ -169,7 +169,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
 
     const applicationId = await findApplicationDbId(TEST_APP_ID);
 
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query ApplicationConnectionProviders($applicationId: UUID!) {
           applicationConnectionProviders(applicationId: $applicationId) {

@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
@@ -70,7 +70,7 @@ describe('messageSuppressionResolver (integration)', () => {
   });
 
   const createSuppression = async (emailAddress: string) => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: CREATE_MESSAGE_SUPPRESSION,
       variables: { input: { emailAddress } },
     });
@@ -112,7 +112,7 @@ describe('messageSuppressionResolver (integration)', () => {
       unsubscribeTopicId: null,
     });
 
-    const listResponse = await makeMetadataAPIRequest({
+    const listResponse = await makeMetadataApiRequest({
       query: MESSAGE_SUPPRESSIONS,
       variables: { input: { searchTerm: emailAddress, limit: 30, offset: 0 } },
     });
@@ -135,7 +135,7 @@ describe('messageSuppressionResolver (integration)', () => {
     const createResponse = await createSuppression(emailAddress);
     const suppressionId = createResponse.body.data.createMessageSuppression.id;
 
-    const deleteResponse = await makeMetadataAPIRequest({
+    const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_MESSAGE_SUPPRESSION,
       variables: { id: suppressionId },
     });
@@ -143,7 +143,7 @@ describe('messageSuppressionResolver (integration)', () => {
     expect(deleteResponse.body.errors).toBeUndefined();
     expect(deleteResponse.body.data.deleteMessageSuppression).toBe(true);
 
-    const listResponse = await makeMetadataAPIRequest({
+    const listResponse = await makeMetadataApiRequest({
       query: MESSAGE_SUPPRESSIONS,
       variables: { input: { searchTerm: emailAddress, limit: 30, offset: 0 } },
     });
@@ -156,7 +156,7 @@ describe('messageSuppressionResolver (integration)', () => {
       `bounced-${v4()}@example.com`,
     );
 
-    const deleteResponse = await makeMetadataAPIRequest({
+    const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_MESSAGE_SUPPRESSION,
       variables: { id: suppressionId },
     });
@@ -168,7 +168,7 @@ describe('messageSuppressionResolver (integration)', () => {
   });
 
   it('should fail when the suppression does not exist', async () => {
-    const deleteResponse = await makeMetadataAPIRequest({
+    const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_MESSAGE_SUPPRESSION,
       variables: { id: v4() },
     });

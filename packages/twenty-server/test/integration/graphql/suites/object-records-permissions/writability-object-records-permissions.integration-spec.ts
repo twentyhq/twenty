@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -107,7 +107,7 @@ describe('writabilityObjectRecordsPermissions', () => {
 
     recordId = randomUUID();
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: OBJECT_SINGULAR,
         gqlFields: RECORD_GQL_FIELDS,
@@ -142,7 +142,7 @@ describe('writabilityObjectRecordsPermissions', () => {
     });
 
     it('should refuse record creation even for an admin', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -155,7 +155,7 @@ describe('writabilityObjectRecordsPermissions', () => {
     });
 
     it('should refuse record update even for an admin', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -169,7 +169,7 @@ describe('writabilityObjectRecordsPermissions', () => {
     });
 
     it('should keep records readable', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -198,7 +198,7 @@ describe('writabilityObjectRecordsPermissions', () => {
     });
 
     it('should refuse writes to the protected field', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -212,7 +212,7 @@ describe('writabilityObjectRecordsPermissions', () => {
     });
 
     it('should allow writes to other fields of the same object', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -228,7 +228,7 @@ describe('writabilityObjectRecordsPermissions', () => {
 
   describe('OPEN writability', () => {
     it('should keep record writes working as before', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,

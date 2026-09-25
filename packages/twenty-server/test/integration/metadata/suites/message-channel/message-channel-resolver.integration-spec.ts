@@ -1,6 +1,6 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
@@ -8,7 +8,7 @@ import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-
 describe('messageChannelResolver (e2e)', () => {
   describe('myMessageChannels', () => {
     it('should return only the current user message channels', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageChannels {
             myMessageChannels {
@@ -33,7 +33,7 @@ describe('messageChannelResolver (e2e)', () => {
     });
 
     it('should filter by connectedAccountId', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageChannels($connectedAccountId: UUID) {
             myMessageChannels(connectedAccountId: $connectedAccountId) {
@@ -58,7 +58,7 @@ describe('messageChannelResolver (e2e)', () => {
     });
 
     it('should deny filtering by another user connectedAccountId', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageChannels($connectedAccountId: UUID) {
             myMessageChannels(connectedAccountId: $connectedAccountId) {
@@ -82,7 +82,7 @@ describe('messageChannelResolver (e2e)', () => {
       );
 
       try {
-        const response = await makeMetadataAPIRequestWithMemberRole({
+        const response = await makeMetadataApiRequestWithMemberRole({
           query: gql`
             query MyMessageChannels {
               myMessageChannels {
@@ -111,7 +111,7 @@ describe('messageChannelResolver (e2e)', () => {
     });
 
     it('should not return syncCursor', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyMessageChannels {
             myMessageChannels {
@@ -129,7 +129,7 @@ describe('messageChannelResolver (e2e)', () => {
 
   describe('updateMessageChannel', () => {
     it('should allow updating own channel settings', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
             updateMessageChannel(input: $input) {
@@ -154,7 +154,7 @@ describe('messageChannelResolver (e2e)', () => {
     });
 
     it('should deny updating another user channel', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
             updateMessageChannel(input: $input) {
@@ -176,7 +176,7 @@ describe('messageChannelResolver (e2e)', () => {
 
     it('should not queue a group emails cleanup on a group channel', async () => {
       try {
-        const response = await makeMetadataAPIRequest({
+        const response = await makeMetadataApiRequest({
           query: gql`
             mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
               updateMessageChannel(input: $input) {
@@ -213,7 +213,7 @@ describe('messageChannelResolver (e2e)', () => {
     });
 
     it('should deny a member updating a workspace-shared group channel', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
+      const response = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
             updateMessageChannel(input: $input) {

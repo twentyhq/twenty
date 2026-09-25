@@ -4,7 +4,7 @@ import {
   TEST_PERSON_2_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { FieldActorSource } from 'twenty-shared/types';
 
@@ -13,7 +13,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 describe('Core REST API Create Many endpoint', () => {
   beforeEach(async () => {
     await deleteAllRecords('person');
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/companies',
       body: {
@@ -35,7 +35,7 @@ describe('Core REST API Create Many endpoint', () => {
       },
     ];
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people`,
       body: requestBody,
@@ -71,7 +71,7 @@ describe('Core REST API Create Many endpoint', () => {
       },
     ];
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people`,
       body: requestBody,
@@ -98,7 +98,7 @@ describe('Core REST API Create Many endpoint', () => {
       },
     ];
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people`,
       body: requestBody,
@@ -134,7 +134,7 @@ describe('Core REST API Create Many endpoint', () => {
       },
     ];
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people?depth=0`,
       body: requestBody,
@@ -162,7 +162,7 @@ describe('Core REST API Create Many endpoint', () => {
       },
     ];
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people?depth=1`,
       body: requestBody,
@@ -190,7 +190,7 @@ describe('Core REST API Create Many endpoint', () => {
       },
     ];
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people?depth=2`,
       body: requestBody,
@@ -207,13 +207,13 @@ describe('Core REST API Create Many endpoint', () => {
       },
     ];
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people`,
       body: requestBody,
     });
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/batch/people`,
       body: requestBody,

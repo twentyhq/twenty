@@ -1,6 +1,6 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   createTestDashboardWithGraphQL,
   destroyDashboardWithGraphQL,
@@ -11,7 +11,7 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   type EachTestingContext,
@@ -168,14 +168,14 @@ describe('Dashboard duplication should follow the caller role', () => {
     async ({ permissions }) => {
       await setMemberDashboardPermissions(permissions);
 
-      const response = await makeMetadataAPIRequestWithMemberRole(
+      const response = await makeMetadataApiRequestWithMemberRole(
         duplicateOneDashboardQueryFactory({ input: { id: DASHBOARD_ID } }),
       );
 
       expect(response.body.data?.duplicateDashboard ?? null).toBeNull();
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
 
-      const copies = await makeGraphqlAPIRequest(
+      const copies = await makeGraphqlApiRequest(
         findManyOperationFactory({
           objectMetadataSingularName: 'dashboard',
           objectMetadataPluralName: 'dashboards',

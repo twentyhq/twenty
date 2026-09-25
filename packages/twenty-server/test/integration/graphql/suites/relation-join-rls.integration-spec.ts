@@ -1,5 +1,5 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   type CompanyNameRlsRoleSetup,
   cleanupCompanyNameRlsRole,
@@ -41,7 +41,7 @@ describe('relation-filter and order-by respect row-level permission predicates',
   });
 
   it('does not match a relation filter targeting a hidden related record', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -56,7 +56,7 @@ describe('relation-filter and order-by respect row-level permission predicates',
   });
 
   it('matches a relation filter targeting a visible related record', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -76,7 +76,7 @@ describe('relation-filter and order-by respect row-level permission predicates',
   });
 
   it('sorts records linked to a hidden related record as null when ordering by that relation', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
