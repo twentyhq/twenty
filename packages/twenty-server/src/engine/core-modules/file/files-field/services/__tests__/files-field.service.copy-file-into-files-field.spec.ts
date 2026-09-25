@@ -5,7 +5,7 @@ import { type FileStorageService } from 'src/engine/core-modules/file-storage/se
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 

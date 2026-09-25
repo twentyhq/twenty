@@ -12,7 +12,7 @@ import {
   AllMetadataEventName,
   AllMetadataEventType,
   MetadataEvent,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 
 type EmitMetadataEventsArgs = {
   metadataEvents: MetadataEvent[];

@@ -126,7 +126,7 @@ import {
   type UniversalCreateAgentAction,
   type UniversalDeleteAgentAction,
   type UniversalUpdateAgentAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action.type';
 import {
   type FlatCreateCommandMenuItemAction,
   type FlatDeleteCommandMenuItemAction,
@@ -166,7 +166,7 @@ import {
   type UniversalCreateFieldAction,
   type UniversalDeleteFieldAction,
   type UniversalUpdateFieldAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import {
   type FlatCreateFrontComponentAction,
   type FlatDeleteFrontComponentAction,
@@ -182,7 +182,7 @@ import {
   type UniversalCreateIndexAction,
   type UniversalDeleteIndexAction,
   type UniversalUpdateIndexAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action.type';
 import {
   type FlatCreateLogicFunctionAction,
   type FlatDeleteLogicFunctionAction,
@@ -214,7 +214,7 @@ import {
   type UniversalCreateObjectAction,
   type UniversalDeleteObjectAction,
   type UniversalUpdateObjectAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action.type';
 import {
   type FlatCreatePageLayoutTabAction,
   type FlatDeletePageLayoutTabAction,

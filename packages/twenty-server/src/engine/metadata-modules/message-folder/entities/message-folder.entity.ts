@@ -14,7 +14,7 @@ import {
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 registerEnumType(MessageFolderPendingSyncAction, {
   name: 'MessageFolderPendingSyncAction',
