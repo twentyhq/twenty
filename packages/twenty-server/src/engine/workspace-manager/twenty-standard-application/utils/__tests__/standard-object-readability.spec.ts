@@ -22,6 +22,7 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.targetPerson,
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
+  agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
 } as const;
 
 describe('Standard object readability', () => {
@@ -89,6 +90,23 @@ describe('Standard object readability', () => {
       readability: MetadataReadability.SYSTEM,
       writability: MetadataWritability.SYSTEM,
     });
+  });
+
+  // A link inheriting from its record, as noteTarget does, would tell everyone
+  // who can read the record which private conversations are filed under it.
+  it('resolves its thread as the only parent of an agentChatThreadTarget', () => {
+    expect(
+      resolveParents('agentChatThreadTarget').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'threadId', parentNameSingular: 'agentChatThread' },
+    ]);
   });
 
   it.each(inheritedObjectNames)(
