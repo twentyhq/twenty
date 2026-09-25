@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { type ReactNode, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { type ReactNode } from 'react';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   overflow: hidden;
@@ -16,7 +16,7 @@ type NavigationMenuItemEntranceProps = {
 export const NavigationMenuItemEntrance = ({
   children,
 }: NavigationMenuItemEntranceProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
 
   return (

@@ -9,14 +9,14 @@ import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-sto
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { createPath } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export const useSidePanelContextChips = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const iconSizeSm = theme.icon.size.sm;
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,

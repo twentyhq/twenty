@@ -11,7 +11,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSectionHeader = styled.div`
   align-items: center;

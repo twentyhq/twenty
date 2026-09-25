@@ -12,7 +12,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { Heading } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';
 import {
   AdminPanelHealthServiceStatus,

@@ -20,6 +20,7 @@ const buildLimit = (
   meter: 'bytes',
   limitValue: 500,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 

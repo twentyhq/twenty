@@ -10,7 +10,7 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type EventRelationFieldDiffValuesProps = {
   fieldDiff: { before: unknown; after: unknown };

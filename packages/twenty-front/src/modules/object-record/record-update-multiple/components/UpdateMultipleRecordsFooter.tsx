@@ -4,7 +4,7 @@ import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectReco
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Key } from 'ts-key-enum';
 import { IconBoxMultiple } from 'twenty-ui/icon';

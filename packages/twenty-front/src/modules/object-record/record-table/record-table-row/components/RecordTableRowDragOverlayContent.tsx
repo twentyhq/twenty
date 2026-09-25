@@ -2,7 +2,7 @@ import { type Draggable } from '@dnd-kit/dom';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/HorizontalScrollBoxShadowCSS';
 import {

@@ -11,7 +11,7 @@ import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconRestore, IconTimelineEvent } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
 
 type SettingsApplicationTimelineActivityTypeSettingsTabProps = {

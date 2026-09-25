@@ -4,7 +4,7 @@ import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRec
 import { type SearchRecord } from '~/generated/graphql';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -51,7 +51,9 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
   return (
     <>
       <ToastOnQueryErrorEffect error={error} />
-      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+      <LegacyDropdownContent
+        widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+      >
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={handleSearchFilterChange}
@@ -68,7 +70,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
             onSelect={onSelect}
           />
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     </>
   );
 };

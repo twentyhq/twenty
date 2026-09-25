@@ -11,6 +11,7 @@ import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles'
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
+import { SettingsSecurityIframeOrigins } from '@/settings/security/components/SettingsSecurityIframeOrigins';
 import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
@@ -22,7 +23,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
@@ -175,6 +176,7 @@ export const SettingsSecuritySettings = () => {
           </StyledContainer>
         </Section.Root>
         <SettingsRoleDefaultRole roles={roles} />
+        <SettingsSecurityIframeOrigins />
         {shouldShowBypassSection && (
           <Section.Root>
             <StyledContainer>

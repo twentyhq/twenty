@@ -6,7 +6,7 @@ import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { type Draggable } from '@dnd-kit/abstract';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledWidgetSlot = styled.div<{
   isInEditMode: boolean;

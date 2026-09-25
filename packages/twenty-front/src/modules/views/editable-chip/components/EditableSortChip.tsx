@@ -5,7 +5,7 @@ import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemove
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -97,7 +97,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
         />
       }
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             <ListItem
               onClick={() => handleDirectionSelect(ViewSortDirection.ASC)}
@@ -131,7 +131,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"

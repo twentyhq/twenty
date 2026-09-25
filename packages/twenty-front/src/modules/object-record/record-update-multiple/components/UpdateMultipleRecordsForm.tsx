@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSectionContainer = styled.div`
   > * {

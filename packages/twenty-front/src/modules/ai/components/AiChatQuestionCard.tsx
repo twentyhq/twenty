@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
+import { type KeyboardEvent, useMemo, useState } from 'react';
 import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton } from 'twenty-ui/components';
@@ -21,7 +21,7 @@ import {
   IconSquareNumber9,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
@@ -202,7 +202,7 @@ export const AiChatQuestionCard = ({
   pendingQuestion,
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { messageId, toolCallId, questions } = pendingQuestion;
 
   const [currentIndex, setCurrentIndex] = useState(0);

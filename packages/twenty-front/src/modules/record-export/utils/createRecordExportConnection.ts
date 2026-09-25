@@ -64,8 +64,15 @@ export const createRecordExportConnection = () => {
               }
               onProgress?.(recordExport.progress);
               if (isDefined(recordExport.downloadUrl)) {
+                const { pathname, search } = new URL(
+                  recordExport.downloadUrl,
+                  REACT_APP_SERVER_BASE_URL,
+                );
+                const downloadUrl = new URL(REACT_APP_SERVER_BASE_URL);
+                downloadUrl.pathname = pathname;
+                downloadUrl.search = search;
                 const link = document.createElement('a');
-                link.href = recordExport.downloadUrl;
+                link.href = downloadUrl.toString();
                 link.download = recordExport.filename;
                 document.body.appendChild(link);
                 link.click();

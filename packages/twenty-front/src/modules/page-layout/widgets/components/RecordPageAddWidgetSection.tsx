@@ -15,7 +15,7 @@ import {
   IconNotes,
   IconPlus,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;

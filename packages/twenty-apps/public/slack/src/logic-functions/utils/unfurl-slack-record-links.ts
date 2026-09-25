@@ -75,6 +75,7 @@ export const unfurlSlackRecordLinks = async (
   const workspaceMemberId = await resolveSlackRunAsWorkspaceMemberId({
     client,
     slackClient,
+    slackConnectionId: slackClientResult.connectionId,
     identity,
   });
 

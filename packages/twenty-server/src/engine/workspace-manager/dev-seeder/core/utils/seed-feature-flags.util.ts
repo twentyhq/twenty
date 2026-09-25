@@ -8,7 +8,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
   [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: true,
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
-  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: false,
+  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true,
   [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: false,
   [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: true,

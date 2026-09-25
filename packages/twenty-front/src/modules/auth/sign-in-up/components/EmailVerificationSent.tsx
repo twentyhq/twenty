@@ -13,7 +13,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { t } from '@lingui/core/macro';
 import { MainButton } from 'twenty-ui/components';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;

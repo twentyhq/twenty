@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { formatBytes, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import {
   IconAlertTriangle,
@@ -10,9 +10,8 @@ import {
   IconMail,
   IconPaperclip,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { formatBytes } from '@/workflow/workflow-steps/workflow-actions/utils/formatBytes';
 import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {
   StyledBadgeGroup,

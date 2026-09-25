@@ -6,7 +6,7 @@ import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconCheck } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 

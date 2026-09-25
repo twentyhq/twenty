@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconTransform } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIndicatorContainer = styled.div`
   align-items: center;
@@ -17,7 +16,7 @@ const StyledIconTextContainer = styled.div`
 `;
 
 export const AiChatCompactionIndicator = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledIndicatorContainer>

@@ -10,4 +10,8 @@ export const findEnforceableLimits = <TLimit extends FlatUsageLimit>({
 }): TLimit[] =>
   isIntraWorkspaceLimitEntitled
     ? limits
-    : limits.filter((limit) => !isIntraWorkspaceScoped(limit.spenderType));
+    : limits.filter(
+        (limit) =>
+          !isIntraWorkspaceScoped(limit.spenderType) ||
+          limit.isInstanceOverride,
+      );

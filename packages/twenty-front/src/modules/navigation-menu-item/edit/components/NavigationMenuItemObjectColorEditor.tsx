@@ -6,7 +6,7 @@ import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectCol
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -79,7 +79,7 @@ export const NavigationMenuItemObjectColorEditor = ({
               </StyledIconButton>
             }
             dropdownComponents={
-              <DropdownContent>
+              <LegacyDropdownContent>
                 <ThemeColorPickerMenu
                   selectedColor={getObjectColorWithFallback(object)}
                   onSelectColor={(color) => {
@@ -98,7 +98,7 @@ export const NavigationMenuItemObjectColorEditor = ({
                     closeDropdown(dropdownId);
                   }}
                 />
-              </DropdownContent>
+              </LegacyDropdownContent>
             }
           />
         ),

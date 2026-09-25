@@ -99,5 +99,30 @@
 
     "jsx-a11y/no-static-element-interactions": "warn",
     "jsx-a11y/no-autofocus": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/theme/*.ts",
+        "src/theme/*.tsx",
+        "src/theme/constants/**/*.ts",
+        "src/theme/internal/**/*.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react",
+                "allowImportNames": ["default"],
+                "allowTypeImports": true,
+                "message": "twenty-ui/theme must load under the react-server condition, where React has no createContext or hooks. Import React as a default and call its APIs, such as React.useState, at render time."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

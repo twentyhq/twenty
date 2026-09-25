@@ -28,7 +28,7 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledShowMoreButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};

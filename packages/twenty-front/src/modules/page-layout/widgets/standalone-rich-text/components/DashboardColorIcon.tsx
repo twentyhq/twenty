@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 const StyledColorIcon = styled.div<{
   textColorValue: string;
   backgroundColorValue: string;
@@ -28,7 +27,7 @@ export const DashboardColorIcon = ({
   textColor,
   backgroundColor,
 }: DashboardColorIconProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const getThemeColorForTextColor = (color: BlockNoteColor): string => {
     if (color === 'default') {

@@ -18,7 +18,7 @@ import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/Us
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -80,7 +80,7 @@ export const SettingsBillingLimitsFilterDropdown = ({
   );
 
   const renderUsageContent = () => (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {renderBackHeader(t`Usage`)}
       <DropdownMenuItemsContainer>
         <ListItem
@@ -109,11 +109,11 @@ export const SettingsBillingLimitsFilterDropdown = ({
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 
   const renderSpenderContent = () => (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {renderBackHeader(t`Spender`)}
       <DropdownMenuItemsContainer>
         <ListItem
@@ -146,11 +146,11 @@ export const SettingsBillingLimitsFilterDropdown = ({
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 
   const renderMenuContent = () => (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuItemsContainer>
         <ListItem
           startIcon={<IconCoins />}
@@ -188,7 +188,7 @@ export const SettingsBillingLimitsFilterDropdown = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 
   const renderContent = () => {

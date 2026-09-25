@@ -7,7 +7,7 @@ import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconBuildingSkyscraper, IconPlus } from 'twenty-ui/icon';
 
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const PREVIEW_ROW_HEIGHT = 32;
 
