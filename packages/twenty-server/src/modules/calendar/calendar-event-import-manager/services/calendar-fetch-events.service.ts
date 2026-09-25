@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
+import { isDefined } from 'twenty-shared/utils';
 import { Any, Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -62,39 +63,11 @@ export class CalendarFetchEventsService {
             );
 
           if (calendarEventIdsToDelete.length > 0) {
-            const calendarChannelEventAssociationRepository =
-              this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-                'calendarChannelEventAssociation',
-                { shouldBypassPermissionChecks: true },
-              );
-
-            for (const calendarEventIdsToDeleteChunk of chunk(
-              calendarEventIdsToDelete,
-              RECORD_DELETE_BATCH_SIZE,
-            )) {
-              const associationsToDelete =
-                await calendarChannelEventAssociationRepository.find({
-                  where: {
-                    eventExternalId: Any(calendarEventIdsToDeleteChunk),
-                    calendarChannelId: calendarChannel.id,
-                  },
-                  select: { calendarEventId: true },
-                });
-
-              await calendarChannelEventAssociationRepository.delete({
-                eventExternalId: Any(calendarEventIdsToDeleteChunk),
-                calendarChannelId: calendarChannel.id,
-              });
-
-              await this.calendarEventCleanerService.deleteOrphanedCalendarEvents(
-                {
-                  calendarEventIds: associationsToDelete.map(
-                    ({ calendarEventId }) => calendarEventId,
-                  ),
-                  workspaceId,
-                },
-              );
-            }
+            await this.deleteCancelledEventAssociations({
+              calendarChannelId: calendarChannel.id,
+              cancelledEventExternalIds: calendarEventIdsToDelete,
+              workspaceId,
+            });
           }
 
           if (calendarEventIds.length > 0) {
@@ -135,5 +108,60 @@ export class CalendarFetchEventsService {
       authContext,
       { lite: true },
     );
+  }
+
+  private async deleteCancelledEventAssociations({
+    calendarChannelId,
+    cancelledEventExternalIds,
+    workspaceId,
+  }: {
+    calendarChannelId: string;
+    cancelledEventExternalIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const calendarChannelEventAssociationRepository =
+      this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    for (const cancelledEventExternalIdsChunk of chunk(
+      cancelledEventExternalIds,
+      RECORD_DELETE_BATCH_SIZE,
+    )) {
+      for (;;) {
+        const associationsToDelete =
+          await calendarChannelEventAssociationRepository.find({
+            where: {
+              eventExternalId: Any(cancelledEventExternalIdsChunk),
+              calendarChannelId,
+            },
+            select: { id: true, calendarEventId: true, deletedAt: true },
+            take: RECORD_DELETE_BATCH_SIZE,
+            // Soft-deleted associations of cancelled events are deleted too
+            withDeleted: true,
+          });
+
+        if (associationsToDelete.length === 0) {
+          break;
+        }
+
+        await calendarChannelEventAssociationRepository.delete(
+          associationsToDelete.map(({ id }) => id),
+        );
+
+        await this.calendarEventCleanerService.deleteOrphanedCalendarEvents({
+          // Only deleting a live association can orphan its event
+          calendarEventIds: associationsToDelete
+            .filter(({ deletedAt }) => !isDefined(deletedAt))
+            .map(({ calendarEventId }) => calendarEventId),
+          workspaceId,
+        });
+
+        if (associationsToDelete.length < RECORD_DELETE_BATCH_SIZE) {
+          break;
+        }
+      }
+    }
   }
 }

@@ -189,6 +189,50 @@ describe('CalendarFetchEventsService', () => {
     );
   });
 
+  it('should keep each deletion within RECORD_DELETE_BATCH_SIZE when cancelled events have several associations', async () => {
+    const cancelledEventExternalIds = buildEventExternalIds(
+      RECORD_DELETE_BATCH_SIZE,
+    );
+    const liveAssociations = cancelledEventExternalIds.map((eventExternalId) =>
+      buildAssociation({ eventExternalId }),
+    );
+    const trashedDuplicateAssociations = cancelledEventExternalIds.map(
+      (eventExternalId) => ({
+        ...buildAssociation({
+          eventExternalId,
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        }),
+        id: `trashed-duplicate:${eventExternalId}`,
+        calendarEventId: `trashed-event-of-${eventExternalId}`,
+      }),
+    );
+
+    setUp({
+      calendarEventIdsToDelete: cancelledEventExternalIds,
+      associations: [...liveAssociations, ...trashedDuplicateAssociations],
+    });
+
+    await fetchCalendarEvents();
+
+    const deletedIdsByCall = associationTable.getDeletedIdsByCall();
+
+    expect(deletedIdsByCall.map((deletedIds) => deletedIds.length)).toEqual([
+      RECORD_DELETE_BATCH_SIZE,
+      RECORD_DELETE_BATCH_SIZE,
+    ]);
+    expect(deletedIdsByCall.flat().sort()).toEqual(
+      getIds([...liveAssociations, ...trashedDuplicateAssociations]),
+    );
+    expect(associationTable.getRecords()).toHaveLength(0);
+    expect(
+      deleteOrphanedCalendarEvents.mock.calls
+        .flatMap(([{ calendarEventIds }]) => calendarEventIds)
+        .sort(),
+    ).toEqual(
+      liveAssociations.map(({ calendarEventId }) => calendarEventId).sort(),
+    );
+  });
+
   it('should not delete anything when the provider reports no cancelled event', async () => {
     const associations = buildEventExternalIds(5, 'active').map(
       (eventExternalId) => buildAssociation({ eventExternalId }),
