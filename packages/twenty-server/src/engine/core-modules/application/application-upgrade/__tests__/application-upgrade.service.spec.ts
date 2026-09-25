@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
@@ -20,6 +21,8 @@ const APPLICATION_REGISTRATION_ID = '20202020-0000-0000-0000-000000000001';
 const OUTDATED_WORKSPACE_ID = '20202020-0000-0000-0000-000000000002';
 const UP_TO_DATE_WORKSPACE_ID = '20202020-0000-0000-0000-000000000003';
 const NON_PROVISIONED_WORKSPACE_ID = '20202020-0000-0000-0000-000000000004';
+const BEHIND_SERVER_VERSION_WORKSPACE_ID =
+  '20202020-0000-0000-0000-100000000000';
 const TARGET_VERSION = '2.0.0';
 
 const appRegistration = {
@@ -55,6 +58,9 @@ describe('ApplicationUpgradeService', () => {
   const applicationRepository = { find: jest.fn(), findOne: jest.fn() };
   const applicationInstallService = { installApplication: jest.fn() };
   const workspaceVersionService = { getProvisionedWorkspaceIds: jest.fn() };
+  const applicationVersionValidationService = {
+    validateWorkspaceCompatibility: jest.fn(),
+  };
   const applicationUpgradeQueueService = { bulkAdd: jest.fn() };
 
   beforeEach(async () => {
@@ -71,6 +77,16 @@ describe('ApplicationUpgradeService', () => {
         jobs.map((_job, index) => `job-${index}`),
     );
     applicationInstallService.installApplication.mockResolvedValue(true);
+    applicationVersionValidationService.validateWorkspaceCompatibility.mockImplementation(
+      async ({ workspaceId }: { workspaceId: string }) =>
+        workspaceId === BEHIND_SERVER_VERSION_WORKSPACE_ID
+          ? {
+              compatible: false,
+              reason: 'WORKSPACE_INCOMPATIBLE',
+              message: 'behind',
+            }
+          : { compatible: true },
+    );
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -90,6 +106,10 @@ describe('ApplicationUpgradeService', () => {
         {
           provide: ApplicationInstallService,
           useValue: applicationInstallService,
+        },
+        {
+          provide: ApplicationVersionValidationService,
+          useValue: applicationVersionValidationService,
         },
         {
           provide: WorkspaceVersionService,
@@ -129,6 +149,43 @@ describe('ApplicationUpgradeService', () => {
 
       expect(jobIds).toEqual(['job-0']);
       expect(applicationUpgradeQueueService.bulkAdd).toHaveBeenCalledTimes(1);
+      expect(applicationUpgradeQueueService.bulkAdd).toHaveBeenCalledWith(
+        UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
+        [
+          {
+            data: {
+              applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+              workspaceId: OUTDATED_WORKSPACE_ID,
+              onlyAutoUpgrade: true,
+            },
+          },
+        ],
+        UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
+      );
+    });
+
+    it('does not enqueue a workspace that has not finished the server upgrade the target version requires', async () => {
+      workspaceVersionService.getProvisionedWorkspaceIds.mockResolvedValue([
+        OUTDATED_WORKSPACE_ID,
+        BEHIND_SERVER_VERSION_WORKSPACE_ID,
+      ]);
+      applicationRepository.find.mockResolvedValue([
+        buildApplication({
+          workspaceId: OUTDATED_WORKSPACE_ID,
+          version: '1.0.0',
+        }),
+        buildApplication({
+          workspaceId: BEHIND_SERVER_VERSION_WORKSPACE_ID,
+          version: '1.0.0',
+        }),
+      ]);
+
+      const jobIds = await service.enqueueApplicationUpgrades({
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+        onlyAutoUpgrade: true,
+      });
+
+      expect(jobIds).toEqual(['job-0']);
       expect(applicationUpgradeQueueService.bulkAdd).toHaveBeenCalledWith(
         UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
         [
