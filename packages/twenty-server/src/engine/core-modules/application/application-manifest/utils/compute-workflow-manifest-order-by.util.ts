@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DEFAULT_VISIBLE_ADDRESS_SUBFIELDS } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
@@ -48,9 +48,9 @@ export const computeWorkflowManifestOrderBy = ({
   }
   if (field.type === FieldMetadataType.ADDRESS) {
     const enabled =
-      field.settings &&
+      isDefined(field.settings) &&
       'subFields' in field.settings &&
-      field.settings.subFields?.length
+      isNonEmptyArray(field.settings.subFields)
         ? field.settings.subFields
         : DEFAULT_VISIBLE_ADDRESS_SUBFIELDS;
     const requested = enabled.find((name) => name === subFieldName);
