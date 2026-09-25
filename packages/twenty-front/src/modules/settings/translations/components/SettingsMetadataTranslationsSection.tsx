@@ -37,7 +37,7 @@ export const SettingsMetadataTranslationsSection = ({
     label: t`Label`,
     description: t`Description`,
   };
-  const { metadataTranslations, saveTranslationRow } =
+  const { metadataTranslations, saveTranslationRows } =
     useMetadataTranslations(input);
   const localeOptions = useLocaleOptions();
 
@@ -87,7 +87,7 @@ export const SettingsMetadataTranslationsSection = ({
         columns={columns}
         rowsByProperty={rowsByProperty}
         localeOptions={filteredLocaleOptions}
-        onSaveTranslationRow={saveTranslationRow}
+        onSaveTranslationRows={saveTranslationRows}
       />
     </Section.Root>
   );

@@ -1,5 +1,6 @@
 import { MetadataTranslationValueCell } from '@/settings/translations/components/MetadataTranslationValueCell';
 import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMetadataTranslations';
+import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useLingui } from '@lingui/react/macro';
@@ -14,9 +15,8 @@ type MetadataTranslationsTableRowProps = {
   gridTemplateColumns: string;
   localeLabel: string;
   rows: (MetadataTranslationRow | undefined)[];
-  onSaveTranslationRow: (
-    row: MetadataTranslationRow,
-    value: string | null,
+  onSaveTranslationRows: (
+    rowValues: MetadataTranslationRowValue[],
   ) => Promise<void>;
 };
 
@@ -24,7 +24,7 @@ export const MetadataTranslationsTableRow = ({
   gridTemplateColumns,
   localeLabel,
   rows,
-  onSaveTranslationRow,
+  onSaveTranslationRows,
 }: MetadataTranslationsTableRowProps) => {
   const { t } = useLingui();
   const editedRows = rows.filter(
@@ -32,11 +32,8 @@ export const MetadataTranslationsTableRow = ({
       row?.provenance === MetadataTranslationProvenance.WORKSPACE,
   );
 
-  const resetEditedRows = async () => {
-    for (const row of editedRows) {
-      await onSaveTranslationRow(row, null);
-    }
-  };
+  const resetEditedRows = () =>
+    onSaveTranslationRows(editedRows.map((row) => ({ row, value: null })));
 
   return (
     <TableRow gridTemplateColumns={gridTemplateColumns}>
@@ -48,7 +45,7 @@ export const MetadataTranslationsTableRow = ({
           {isDefined(row) && (
             <MetadataTranslationValueCell
               row={row}
-              onSave={(value) => onSaveTranslationRow(row, value)}
+              onSave={(value) => onSaveTranslationRows([{ row, value }])}
             />
           )}
         </TableCell>

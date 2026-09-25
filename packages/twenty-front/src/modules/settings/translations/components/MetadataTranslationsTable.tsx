@@ -1,6 +1,7 @@
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { MetadataTranslationsTableRow } from '@/settings/translations/components/MetadataTranslationsTableRow';
 import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMetadataTranslations';
+import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -16,9 +17,8 @@ type MetadataTranslationsTableProps = {
   columns: { property: string; label: string }[];
   rowsByProperty: Map<string, Map<string, MetadataTranslationRow>>;
   localeOptions: LocaleOption[];
-  onSaveTranslationRow: (
-    row: MetadataTranslationRow,
-    value: string | null,
+  onSaveTranslationRows: (
+    rowValues: MetadataTranslationRowValue[],
   ) => Promise<void>;
 };
 
@@ -26,7 +26,7 @@ export const MetadataTranslationsTable = ({
   columns,
   rowsByProperty,
   localeOptions,
-  onSaveTranslationRow,
+  onSaveTranslationRows,
 }: MetadataTranslationsTableProps) => {
   const { t } = useLingui();
   const gridTemplateColumns = `160px repeat(${columns.length}, minmax(0, 1fr)) 24px`;
@@ -76,7 +76,7 @@ export const MetadataTranslationsTable = ({
               gridTemplateColumns={gridTemplateColumns}
               localeLabel={label}
               rows={rows}
-              onSaveTranslationRow={onSaveTranslationRow}
+              onSaveTranslationRows={onSaveTranslationRows}
             />
           ))}
           {localeRows.length === 0 && (
