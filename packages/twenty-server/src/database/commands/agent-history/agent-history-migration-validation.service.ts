@@ -7,11 +7,6 @@ import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
 import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
-import {
-  buildUserWorkspaceIdFromWorkspaceMemberIdSql,
-  buildWorkspaceMemberIdFromUserWorkspaceIdSql,
-} from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-chat-thread-owner-sql.util';
-import { getAgentChatThreadOwnerColumn } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-column.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -66,11 +61,6 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    const workspaceOwnerColumn = await getAgentChatThreadOwnerColumn({
-      manager: runner,
-      workspaceId,
-      storage: 'workspace',
-    });
     for (const table of AGENT_HISTORY_TABLES) {
       const coreColumns = await getAgentHistoryMigrationColumns({
         runner,
@@ -84,33 +74,16 @@ export class AgentHistoryMigrationValidationService {
         )
         .join(', ');
       const targetColumns = table.columns
-        .map((column) => {
-          const targetColumn = escapeIdentifier(
-            getAgentHistoryColumn({
-              tableName: table.name,
-              storage: 'workspace',
-              columnName: column,
-              workspaceOwnerColumn,
-            }),
-          );
-          const value =
-            table.name === 'agentChatThread' &&
-            column === 'userWorkspaceId' &&
-            workspaceOwnerColumn === 'workspaceMemberId'
-              ? buildUserWorkspaceIdFromWorkspaceMemberIdSql({
-                  workspaceId,
-                  workspaceMemberIdSql: `workspace_row.${targetColumn}`,
-                  workspaceIdSql: '$1::uuid',
-                })
-              : targetColumn;
-          return `${value} AS ${escapeIdentifier(column)}`;
-        })
+        .map(
+          (column) =>
+            `${escapeIdentifier(getAgentHistoryColumn({ tableName: table.name, storage: 'workspace', columnName: column }))} AS ${escapeIdentifier(column)}`,
+        )
         .join(', ');
       const [{ mismatch }]: { mismatch: boolean }[] = await runner.query(
         `
         SELECT EXISTS (
           SELECT 1 FROM (SELECT ${columns} FROM core.${escapeIdentifier(table.name)} WHERE "workspaceId" = $1) source
-          FULL JOIN (SELECT ${targetColumns} FROM ${getAgentHistoryTable({ workspaceId, storage: 'workspace', name: table.name })} workspace_row) target USING (id)
+          FULL JOIN (SELECT ${targetColumns} FROM ${getAgentHistoryTable({ workspaceId, storage: 'workspace', name: table.name })}) target USING (id)
           WHERE to_jsonb(source) IS DISTINCT FROM to_jsonb(target)
         ) AS mismatch`,
         [workspaceId],
@@ -130,11 +103,6 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    const workspaceOwnerColumn = await getAgentChatThreadOwnerColumn({
-      manager: runner,
-      workspaceId,
-      storage: 'workspace',
-    });
     for (const table of AGENT_HISTORY_TABLES) {
       const rows: { column_name: string }[] = await runner.query(
         'SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2',
@@ -166,7 +134,6 @@ export class AgentHistoryMigrationValidationService {
                 tableName: table.name,
                 storage: 'workspace',
                 columnName: column,
-                workspaceOwnerColumn,
               }),
             ),
         )
@@ -212,41 +179,8 @@ export class AgentHistoryMigrationValidationService {
       );
     }
 
-    const workspaceOwnerColumn = await getAgentChatThreadOwnerColumn({
-      manager: runner,
-      workspaceId,
-      storage: 'workspace',
-    });
-    if (workspaceOwnerColumn === 'workspaceMemberId') {
-      // Member-owned threads must map to a membership in core and back.
-      const ownerSql =
-        storage === 'core'
-          ? buildWorkspaceMemberIdFromUserWorkspaceIdSql({
-              workspaceId,
-              userWorkspaceIdSql: 'thread."userWorkspaceId"',
-            })
-          : buildUserWorkspaceIdFromWorkspaceMemberIdSql({
-              workspaceId,
-              workspaceMemberIdSql: 'thread."workspaceMemberId"',
-              workspaceIdSql: '$1::uuid',
-            });
-      const [{ unowned }]: { unowned: boolean }[] = await runner.query(
-        `SELECT EXISTS (
-          SELECT 1 FROM ${getAgentHistoryTable({ workspaceId, storage, name: 'agentChatThread' })} thread
-          WHERE ${ownerSql} IS NULL ${storage === 'core' ? 'AND thread."workspaceId" = $1' : ''}
-        ) AS unowned`,
-        [workspaceId],
-      );
-      if (unowned) {
-        throw new Error(
-          'A chat thread owner has no matching workspace member and membership',
-        );
-      }
-    }
     for (const [child, column, parent] of [
-      ...(storage === 'core' || workspaceOwnerColumn === 'userWorkspaceId'
-        ? [['agentChatThread', 'userWorkspaceId', 'userWorkspace']]
-        : []),
+      ['agentChatThread', 'userWorkspaceId', 'userWorkspace'],
       ['agentMessagePart', 'fileId', 'file'],
     ]) {
       const [{ invalid }] = await runner.query(

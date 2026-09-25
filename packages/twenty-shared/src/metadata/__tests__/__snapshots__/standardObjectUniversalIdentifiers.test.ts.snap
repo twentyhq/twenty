@@ -64,11 +64,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "updatedAt": {
         "universalIdentifier": "d6db0ef9-8f0f-5a8c-b218-2837154c29fe",
       },
+      "userWorkspaceId": {
+        "universalIdentifier": "bf830886-b6dc-46e9-a229-eecbb0e66032",
+      },
       "workspaceMember": {
         "universalIdentifier": "6f3ed3b5-0642-4a2a-9558-98376adb60f4",
       },
     },
     "indexes": {
+      "ownerIndex": {
+        "universalIdentifier": "c97a4c97-266b-490a-a4d6-76274f5de429",
+      },
       "workspaceMemberIndex": {
         "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",
       },

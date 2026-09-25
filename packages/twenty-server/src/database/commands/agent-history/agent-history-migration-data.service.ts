@@ -7,11 +7,6 @@ import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
 import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
-import {
-  buildUserWorkspaceIdFromWorkspaceMemberIdSql,
-  buildWorkspaceMemberIdFromUserWorkspaceIdSql,
-} from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-chat-thread-owner-sql.util';
-import { getAgentChatThreadOwnerColumn } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-column.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type Storage = AgentHistoryStorageState['storage'];
@@ -59,21 +54,12 @@ export class AgentHistoryMigrationDataService {
     batchSize: number;
   }): Promise<string[]> {
     const columns = await getAgentHistoryMigrationColumns({ runner, table });
-    const workspaceOwnerColumn = await getAgentChatThreadOwnerColumn({
-      manager: runner,
-      workspaceId,
-      storage: 'workspace',
-    });
-    const isMemberOwned =
-      table.name === 'agentChatThread' &&
-      workspaceOwnerColumn === 'workspaceMemberId';
     const targetColumns = [
       ...columns.map((column) =>
         getAgentHistoryColumn({
           tableName: table.name,
           storage: target,
           columnName: column,
-          workspaceOwnerColumn,
         }),
       ),
       ...(target === 'core' ? ['workspaceId'] : []),
@@ -84,23 +70,8 @@ export class AgentHistoryMigrationDataService {
           tableName: table.name,
           storage: source,
           columnName: column,
-          workspaceOwnerColumn,
         }),
       );
-      if (isMemberOwned && column === 'userWorkspaceId') {
-        const owner =
-          target === 'workspace'
-            ? buildWorkspaceMemberIdFromUserWorkspaceIdSql({
-                workspaceId,
-                userWorkspaceIdSql: `batch.${quoted}`,
-              })
-            : buildUserWorkspaceIdFromWorkspaceMemberIdSql({
-                workspaceId,
-                workspaceMemberIdSql: `batch.${quoted}`,
-                workspaceIdSql: '$1::uuid',
-              });
-        return `${owner} AS ${escapeIdentifier(column)}`;
-      }
       if (
         target === 'core' &&
         table.name === 'agentMessage' &&

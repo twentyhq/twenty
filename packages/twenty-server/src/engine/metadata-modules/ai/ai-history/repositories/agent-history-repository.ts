@@ -9,15 +9,6 @@ import { mapAgentHistoryOrderToWorkspace } from 'src/engine/metadata-modules/ai/
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
 import {
-  type AgentChatThreadOwnerFields,
-  getAgentChatThreadOwnerFields,
-} from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-fields.util';
-import { isUndefinedColumnError } from 'src/engine/metadata-modules/ai/ai-history/utils/is-undefined-column-error.util';
-import { hydrateAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-chat-thread-owners.util';
-import { mapAgentChatThreadOwnerSelectToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-select-to-workspace.util';
-import { mapAgentChatThreadOwnerValuesToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-values-to-workspace.util';
-import { mapAgentChatThreadOwnerWhereToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-where-to-workspace.util';
-import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -31,7 +22,6 @@ import {
   type ObjectLiteral,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -60,28 +50,7 @@ export class AgentHistoryRepository<
     >,
   ) {}
 
-  private async run<TResult>(
-    workspaceId: string,
-    core: (repository: WorkspaceScopedRepository<TRecord>) => Promise<TResult>,
-    workspace: (
-      repository: WorkspaceRepository<TRecord>,
-      context: AgentHistoryStorageContext,
-    ) => Promise<TResult>,
-  ): Promise<TResult> {
-    try {
-      return await this.runInWorkspaceContext(workspaceId, core, workspace);
-    } catch (error) {
-      // Metadata loaded before waiting on the 2.43 owner upgrade lock can still
-      // describe the dropped userWorkspaceId column. The failed statement wrote
-      // nothing, so retry once with freshly loaded metadata.
-      if (this.name === 'agentChatThread' && isUndefinedColumnError(error)) {
-        return this.runInWorkspaceContext(workspaceId, core, workspace);
-      }
-      throw error;
-    }
-  }
-
-  private runInWorkspaceContext<TResult>(
+  private run<TResult>(
     workspaceId: string,
     core: (repository: WorkspaceScopedRepository<TRecord>) => Promise<TResult>,
     workspace: (
@@ -118,65 +87,6 @@ export class AgentHistoryRepository<
     );
   }
 
-  private getOwnerFields(): AgentChatThreadOwnerFields | null {
-    return this.name === 'agentChatThread'
-      ? getAgentChatThreadOwnerFields()
-      : null;
-  }
-
-  private async mapWorkspaceWhere(
-    workspaceId: string,
-    where: FindManyOptions<TRecord>['where'],
-    context: AgentHistoryStorageContext,
-  ): Promise<WorkspaceFindOptions['where'] | null> {
-    const mapped = mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where);
-    const ownerFields = this.getOwnerFields();
-
-    return isDefined(ownerFields)
-      ? mapAgentChatThreadOwnerWhereToWorkspace({
-          where: mapped,
-          manager: context.manager,
-          workspaceId,
-          ownerFields,
-        })
-      : mapped;
-  }
-
-  private async mapWorkspaceValues(
-    workspaceId: string,
-    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
-    context: AgentHistoryStorageContext,
-  ): Promise<ObjectLiteral | ObjectLiteral[]> {
-    const mapped = mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values);
-    const ownerFields = this.getOwnerFields();
-
-    return isDefined(ownerFields)
-      ? mapAgentChatThreadOwnerValuesToWorkspace({
-          values: mapped,
-          manager: context.manager,
-          workspaceId,
-          ownerFields,
-        })
-      : mapped;
-  }
-
-  private async hydrateWorkspaceOwners(
-    workspaceId: string,
-    records: ObjectLiteral[],
-    context: AgentHistoryStorageContext,
-  ): Promise<void> {
-    const ownerFields = this.getOwnerFields();
-
-    if (isDefined(ownerFields)) {
-      await hydrateAgentChatThreadOwners({
-        records,
-        manager: context.manager,
-        workspaceId,
-        ownerFields,
-      });
-    }
-  }
-
   async find(
     workspaceId: string,
     options?: FindManyOptions<TRecord>,
@@ -188,26 +98,14 @@ export class AgentHistoryRepository<
         const relations = normalizeFindOptionsRelations(
           (options?.relations ?? {}) as WorkspaceFindOptions['relations'] & {},
         );
-        const where = await this.mapWorkspaceWhere(
-          workspaceId,
-          options?.where,
-          context,
-        );
-        if (where === null) {
-          return [];
-        }
-        const select = mapAgentHistorySelectToWorkspace(
-          this.name,
-          options?.select,
-        );
-        const ownerFields = this.getOwnerFields();
         const records = await repository.find({
           ...options,
-          select: isDefined(ownerFields)
-            ? mapAgentChatThreadOwnerSelectToWorkspace({ select, ownerFields })
-            : select,
+          select: mapAgentHistorySelectToWorkspace(this.name, options?.select),
           order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
-          where,
+          where: mapAgentHistoryWhereToWorkspace<TRecord>(
+            this.name,
+            options?.where,
+          ),
           withDeleted: true,
           relations: removeAgentHistoryFileRelations(relations),
         } as WorkspaceFindOptions);
@@ -218,7 +116,6 @@ export class AgentHistoryRepository<
             objectName: this.name,
           }),
         );
-        await this.hydrateWorkspaceOwners(workspaceId, normalized, context);
         if (JSON.stringify(relations).includes('"file"')) {
           await hydrateAgentHistoryFiles({
             records: normalized,
@@ -271,22 +168,16 @@ export class AgentHistoryRepository<
     return this.run(
       workspaceId,
       (repository) => repository.count(workspaceId, options),
-      async (repository, context) => {
-        const where = await this.mapWorkspaceWhere(
-          workspaceId,
-          options?.where,
-          context,
-        );
-        if (where === null) {
-          return 0;
-        }
-        return repository.count({
+      (repository) =>
+        repository.count({
           ...options,
           order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
-          where,
+          where: mapAgentHistoryWhereToWorkspace<TRecord>(
+            this.name,
+            options?.where,
+          ),
           withDeleted: true,
-        } as WorkspaceFindOptions);
-      },
+        } as WorkspaceFindOptions),
     );
   }
 
@@ -297,44 +188,22 @@ export class AgentHistoryRepository<
     return this.run(
       workspaceId,
       (repository) => repository.existsBy(workspaceId, where),
-      async (repository, context) => {
-        const mappedWhere = await this.mapWorkspaceWhere(
-          workspaceId,
-          where,
-          context,
-        );
-        if (mappedWhere === null) {
-          return false;
-        }
-        return repository.exists({ where: mappedWhere, withDeleted: true });
-      },
+      (repository) =>
+        repository.exists({
+          where: mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where),
+          withDeleted: true,
+        }),
     );
   }
 
   private async prepareWorkspaceInsert(
-    workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
     context: AgentHistoryStorageContext,
   ): Promise<ObjectLiteral | ObjectLiteral[]> {
-    if (
-      this.name === 'agentChatThread' &&
-      ((Array.isArray(values) ? values : [values]) as ObjectLiteral[]).some(
-        (value) => !isNonEmptyString(value.userWorkspaceId),
-      )
-    ) {
-      throw new AgentHistoryStorageException(
-        'INVALID_CRITERIA',
-        'Chat threads require an owner',
-      );
-    }
-    const mapped = await this.mapWorkspaceValues(workspaceId, values, context);
+    const mapped = mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values);
 
     return this.name === 'agentMessage'
-      ? prepareAgentMessageSenderValues({
-          values: mapped,
-          context,
-          workspaceId,
-        })
+      ? prepareAgentMessageSenderValues(mapped, context)
       : mapped;
   }
 
@@ -346,9 +215,7 @@ export class AgentHistoryRepository<
       workspaceId,
       (repository) => repository.insert(workspaceId, values),
       async (repository, context) =>
-        repository.insert(
-          await this.prepareWorkspaceInsert(workspaceId, values, context),
-        ),
+        repository.insert(await this.prepareWorkspaceInsert(values, context)),
     );
   }
 
@@ -361,15 +228,13 @@ export class AgentHistoryRepository<
       (repository) => repository.insertAndReturnOne(workspaceId, values),
       async (repository, context) => {
         const result = await repository.insert(
-          await this.prepareWorkspaceInsert(workspaceId, values, context),
+          await this.prepareWorkspaceInsert(values, context),
         );
-        const record = normalizeAgentHistoryRecord({
+        return normalizeAgentHistoryRecord({
           record: result.raw[0],
           workspaceId,
           objectName: this.name,
-        });
-        await this.hydrateWorkspaceOwners(workspaceId, [record], context);
-        return record as TRecord;
+        }) as TRecord;
       },
     );
   }
@@ -382,27 +247,15 @@ export class AgentHistoryRepository<
     return this.run(
       workspaceId,
       (repository) => repository.update(workspaceId, where, values),
-      async (repository, context) => {
-        const mappedWhere = await this.mapWorkspaceWhere(
-          workspaceId,
-          where,
-          context,
-        );
-        if (mappedWhere === null) {
-          return { affected: 0, generatedMaps: [], raw: [] };
-        }
+      async (repository) => {
         const result = await repository
           .createQueryBuilder()
           .withDeleted()
-          .where((mappedWhere ?? {}) as ObjectLiteral)
-          .update()
-          .set(
-            (await this.mapWorkspaceValues(
-              workspaceId,
-              values,
-              context,
-            )) as ObjectLiteral,
+          .where(
+            mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {},
           )
+          .update()
+          .set(mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values))
           .returning(['id'])
           .execute();
         return {
@@ -418,19 +271,13 @@ export class AgentHistoryRepository<
     return this.run(
       workspaceId,
       (repository) => repository.delete(workspaceId, where),
-      async (repository, context) => {
-        const mappedWhere = await this.mapWorkspaceWhere(
-          workspaceId,
-          where,
-          context,
-        );
-        if (mappedWhere === null) {
-          return { affected: 0, generatedMaps: [], raw: [] };
-        }
+      async (repository) => {
         const result = await repository
           .createQueryBuilder()
           .withDeleted()
-          .where((mappedWhere ?? {}) as ObjectLiteral)
+          .where(
+            mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {},
+          )
           .delete()
           .returning(['id'])
           .execute();
@@ -465,11 +312,7 @@ export class AgentHistoryRepository<
           ],
         );
         return repository.upsert(
-          (await this.mapWorkspaceValues(
-            workspaceId,
-            values,
-            context,
-          )) as ObjectLiteral,
+          mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
           conflictPaths,
         );
       },

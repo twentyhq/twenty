@@ -138,53 +138,6 @@ describe('getAgentHistorySchemaAdditions', () => {
     );
   });
 
-  it('adds both sides of the thread owner relation', () => {
-    const additions = getAgentHistorySchemaAdditions({
-      existing: {
-        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-        flatIndexMaps: createEmptyFlatEntityMaps(),
-      },
-      standard: createStandardMetadata(),
-    });
-    const fieldIdentifiers = additions.fields.map(
-      (field) => field.universalIdentifier,
-    );
-
-    expect(fieldIdentifiers).toContain(
-      STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
-        .universalIdentifier,
-    );
-    expect(fieldIdentifiers).toContain(
-      STANDARD_OBJECTS.workspaceMember.fields.agentChatThreads
-        .universalIdentifier,
-    );
-  });
-
-  it('keeps the workspace member side of the thread owner relation standard', () => {
-    const standard = createStandardMetadata();
-    const additions = getAgentHistorySchemaAdditions({
-      existing: {
-        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-        flatIndexMaps: createEmptyFlatEntityMaps(),
-      },
-      standard,
-    });
-    const inverseIdentifier =
-      STANDARD_OBJECTS.workspaceMember.fields.agentChatThreads
-        .universalIdentifier;
-
-    expect(
-      additions.fields.find(
-        (field) => field.universalIdentifier === inverseIdentifier,
-      )?.writability,
-    ).toBe(
-      standard.flatFieldMetadataMaps.byUniversalIdentifier[inverseIdentifier]
-        ?.writability,
-    );
-  });
-
   it('adds nothing when all history metadata already exists', () => {
     const standard = createStandardMetadata();
     expect(

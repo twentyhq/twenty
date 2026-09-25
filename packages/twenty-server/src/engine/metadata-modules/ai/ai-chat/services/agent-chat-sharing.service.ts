@@ -29,8 +29,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { buildWorkspaceMemberIdFromUserWorkspaceIdSql } from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-chat-thread-owner-sql.util';
-import { getAgentChatThreadOwnerColumns } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-columns.util';
 
 const MAX_CHAT_THREADS = 1000;
 
@@ -180,6 +178,9 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
+    const writesWorkspaceMember = await this.hasWorkspaceMemberOwnerField(
+      args.workspaceId,
+    );
     if (objectMetadata.readability !== MetadataReadability.SYSTEM) {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
@@ -196,48 +197,26 @@ export class AgentChatSharingService {
     return this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table, storage }) => {
-        const ownerColumns =
+        const extraColumn =
           storage === 'core'
-            ? {
-                hasUserWorkspaceIdColumn: true,
-                hasWorkspaceMemberIdColumn: false,
-              }
-            : await getAgentChatThreadOwnerColumns({
-                manager,
-                workspaceId: args.workspaceId,
-              });
-        // Both columns exist only while the 2.43 upgrade runs; fill both so the
-        // legacy column stays complete until it is dropped.
-        const ownerColumnsSql = [
-          ...(ownerColumns.hasUserWorkspaceIdColumn
-            ? ['"userWorkspaceId"']
-            : []),
-          ...(ownerColumns.hasWorkspaceMemberIdColumn
-            ? ['"workspaceMemberId"']
-            : []),
-        ];
-        const ownerValuesSql = [
-          ...(ownerColumns.hasUserWorkspaceIdColumn ? ['$3::uuid'] : []),
-          ...(ownerColumns.hasWorkspaceMemberIdColumn
-            ? [
-                buildWorkspaceMemberIdFromUserWorkspaceIdSql({
-                  workspaceId: args.workspaceId,
-                  userWorkspaceIdSql: '$3::uuid',
-                }),
-              ]
-            : []),
-        ];
+            ? { name: 'workspaceId', value: args.workspaceId }
+            : writesWorkspaceMember
+              ? {
+                  name: 'workspaceMemberId',
+                  value: authContext.workspaceMemberId,
+                }
+              : undefined;
         const records = await manager.query<AgentChatThreadEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, ${ownerColumnsSql.join(', ')}${storage === 'core' ? ', "workspaceId"' : ''})
-         VALUES ($1, $2, ${ownerValuesSql.join(', ')}${storage === 'core' ? ', $4' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId"${isDefined(extraColumn) ? `, "${extraColumn.name}"` : ''})
+         VALUES ($1, $2, $3${isDefined(extraColumn) ? ', $4' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
             args.userWorkspaceId,
-            ...(storage === 'core' ? [args.workspaceId] : []),
+            ...(isDefined(extraColumn) ? [extraColumn.value] : []),
           ],
         );
-        const record = { ...records[0], userWorkspaceId: args.userWorkspaceId };
+        const record = records[0];
         await this.recordShareStorageService.deleteByRecordIdsInTransaction({
           workspaceId: args.workspaceId,
           objectMetadataId: objectMetadata.id,
@@ -308,14 +287,11 @@ export class AgentChatSharingService {
         }
         return storage === 'core'
           ? record
-          : ({
-              ...normalizeAgentHistoryRecord({
-                record,
-                workspaceId: args.workspaceId,
-                objectName: 'agentChatThread',
-              }),
-              userWorkspaceId: thread.userWorkspaceId,
-            } as AgentChatThreadEntity);
+          : (normalizeAgentHistoryRecord({
+              record,
+              workspaceId: args.workspaceId,
+              objectName: 'agentChatThread',
+            }) as AgentChatThreadEntity);
       },
     });
   }
@@ -412,6 +388,25 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     return authContext;
+  }
+
+  // TRANSITION(2.43 -> 2.44): workspaces gain the workspaceMember owner when
+  // the 2.43 link-chat-threads-to-workspace-members command reaches them, and
+  // this server can run before it does. Remove with the owner cleanup tracked
+  // in twentyhq/core-team-issues#2925.
+  private async hasWorkspaceMemberOwnerField(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
+          .universalIdentifier
+      ],
+    );
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {

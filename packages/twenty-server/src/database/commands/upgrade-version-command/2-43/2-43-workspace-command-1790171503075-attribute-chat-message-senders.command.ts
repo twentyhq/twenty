@@ -5,8 +5,6 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
-import { buildUserWorkspaceIdFromWorkspaceMemberIdSql } from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-chat-thread-owner-sql.util';
-import { getAgentChatThreadOwnerColumn } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-column.util';
 
 @RegisteredWorkspaceCommand('2.43.0', 1790171503075)
 @Command({
@@ -37,30 +35,14 @@ export class AttributeChatMessageSendersCommand extends ProvisionedWorkspaceComm
     await this.storage.run(
       args.workspaceId,
       async ({ manager, table, storage }) => {
-        // Workspaces provisioned by the 2.42 move already own threads by member.
-        const ownerColumn = await getAgentChatThreadOwnerColumn({
-          manager,
-          workspaceId: args.workspaceId,
-          storage,
-        });
-        const ownerUserWorkspaceIdSql =
-          ownerColumn === 'workspaceMemberId'
-            ? buildUserWorkspaceIdFromWorkspaceMemberIdSql({
-                workspaceId: args.workspaceId,
-                workspaceMemberIdSql: 'thread."workspaceMemberId"',
-                workspaceIdSql: '$1::uuid',
-              })
-            : 'thread."userWorkspaceId"';
         await manager.query(
           `UPDATE ${table('agentMessage')} message
-         SET "senderUserWorkspaceId" = ${ownerUserWorkspaceIdSql}
+         SET "senderUserWorkspaceId" = thread."userWorkspaceId"
          FROM ${table('agentChatThread')} thread
          WHERE message."threadId" = thread.id AND message.role = 'user'
            AND message."senderUserWorkspaceId" IS NULL
            ${storage === 'core' ? 'AND message."workspaceId" = $1 AND thread."workspaceId" = $1' : ''}`,
-          storage === 'core' || ownerColumn === 'workspaceMemberId'
-            ? [args.workspaceId]
-            : [],
+          storage === 'core' ? [args.workspaceId] : [],
         );
       },
     );

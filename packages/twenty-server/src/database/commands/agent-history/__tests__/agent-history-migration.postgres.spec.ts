@@ -33,7 +33,6 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { deleteAgentChatThreadsOfOwner } from 'src/engine/metadata-modules/ai/ai-history/utils/delete-agent-chat-threads-of-owner.util';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { DataSource, IsNull, type Repository } from 'typeorm';
 import { Pool } from 'pg';
@@ -53,8 +52,6 @@ const OWNER_ID = '20202020-2222-4222-8222-222222222222';
 const THREAD_ID = '20202020-3333-4333-8333-333333333333';
 const TURN_ID = '20202020-4444-4444-8444-444444444444';
 const MESSAGE_ID = '20202020-5555-4555-8555-555555555555';
-const USER_ID = '20202020-6666-4666-8666-666666666666';
-const MEMBER_ID = '20202020-7777-4777-8777-777777777777';
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
 (DATABASE_URL ? describe : describe.skip)(
@@ -274,18 +271,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         await senderRunner.release();
       }
       await dataSource.query(
-        'CREATE TABLE core."userWorkspace" (id uuid PRIMARY KEY, "workspaceId" uuid, "userId" uuid, "deletedAt" timestamptz); CREATE TABLE core.file (id uuid PRIMARY KEY, "workspaceId" uuid)',
+        'CREATE TABLE core."userWorkspace" (id uuid PRIMARY KEY, "workspaceId" uuid, "userId" uuid); CREATE TABLE core.file (id uuid PRIMARY KEY, "workspaceId" uuid)',
       );
       await dataSource.query(
-        'INSERT INTO core."userWorkspace" (id, "workspaceId", "userId") VALUES ($1, $2, $3)',
-        [OWNER_ID, WORKSPACE_ID, USER_ID],
-      );
-      await dataSource.query(
-        `CREATE TABLE "${SCHEMA}"."workspaceMember" (id uuid PRIMARY KEY, "userId" uuid, "deletedAt" timestamptz)`,
-      );
-      await dataSource.query(
-        `INSERT INTO "${SCHEMA}"."workspaceMember" (id, "userId") VALUES ($1, $2)`,
-        [MEMBER_ID, USER_ID],
+        'INSERT INTO core."userWorkspace" (id, "workspaceId") VALUES ($1, $2)',
+        [OWNER_ID, WORKSPACE_ID],
       );
       await dataSource.query(
         'CREATE UNIQUE INDEX global_state_key ON core."keyValuePair" (key) WHERE "workspaceId" IS NULL AND "userId" IS NULL AND "applicationId" IS NULL',
@@ -359,7 +349,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ['agentMessage', 'turnId', 'agentTurn'],
           ['agentMessagePart', 'messageId', 'agentMessage'],
           ['agentTurnEvaluation', 'turnId', 'agentTurn'],
-          ['agentChatThread', 'workspaceMemberId', 'workspaceMember'],
         ]) {
           await runner.query(
             `ALTER TABLE "${SCHEMA}"."${child}" ADD FOREIGN KEY ("${column}") REFERENCES "${SCHEMA}"."${parent}" (id) ON DELETE CASCADE`,
@@ -949,216 +938,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         [SCHEMA],
       );
       expect(constraints).toEqual([]);
-    });
-
-    it('stores workspace thread owners as members and exposes their membership', async () => {
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      expect(
-        await dataSource.query(
-          `SELECT "workspaceMemberId" FROM "${SCHEMA}"."agentChatThread"`,
-        ),
-      ).toEqual([{ workspaceMemberId: MEMBER_ID }]);
-      await expect(
-        threads.findOneOrFail(WORKSPACE_ID, {
-          where: { id: THREAD_ID, userWorkspaceId: OWNER_ID },
-        }),
-      ).resolves.toMatchObject({
-        userWorkspaceId: OWNER_ID,
-        workspaceMemberId: MEMBER_ID,
-      });
-      const created = await threads.insertAndReturnOne(WORKSPACE_ID, {
-        userWorkspaceId: OWNER_ID,
-        title: 'Member chat',
-      });
-      expect(created.userWorkspaceId).toBe(OWNER_ID);
-      expect(
-        (
-          await threads.find(WORKSPACE_ID, {
-            where: { userWorkspaceId: OWNER_ID },
-          })
-        ).map((thread) => thread.id),
-      ).toEqual(expect.arrayContaining([THREAD_ID, created.id]));
-      expect(
-        await threads.find(WORKSPACE_ID, {
-          where: { userWorkspaceId: TURN_ID },
-        }),
-      ).toEqual([]);
-      expect(
-        await threads.count(WORKSPACE_ID, {
-          where: { userWorkspaceId: TURN_ID },
-        }),
-      ).toBe(0);
-      await expect(
-        threads.insert(WORKSPACE_ID, { userWorkspaceId: TURN_ID }),
-      ).rejects.toThrow('not a member of this workspace');
-      await expect(
-        threads.insert(WORKSPACE_ID, { title: 'Ownerless' }),
-      ).rejects.toThrow('Chat threads require an owner');
-      await dataSource.query(
-        `DELETE FROM "${SCHEMA}"."workspaceMember" WHERE id = $1`,
-        [MEMBER_ID],
-      );
-      expect(
-        await dataSource.query(`SELECT id FROM "${SCHEMA}"."agentChatThread"`),
-      ).toEqual([]);
-    });
-
-    it('deletes a removed member threads after the membership is gone', async () => {
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      await dataSource.query(`DELETE FROM core."userWorkspace" WHERE id = $1`, [
-        OWNER_ID,
-      ]);
-      await dataSource.query(
-        `UPDATE "${SCHEMA}"."workspaceMember" SET "deletedAt" = now()`,
-      );
-      await deleteAgentChatThreadsOfOwner({
-        agentChatThreadRepository: threads,
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OWNER_ID,
-        workspaceMemberId: MEMBER_ID,
-      });
-      expect(
-        await dataSource.query(`SELECT id FROM "${SCHEMA}"."agentChatThread"`),
-      ).toEqual([]);
-    });
-
-    // Recreates a workspace moved by 2.42 before threads were member-owned.
-    const restoreLegacyThreadOwner = async () => {
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD COLUMN "userWorkspaceId" uuid`,
-      );
-      await dataSource.query(
-        `UPDATE "${SCHEMA}"."agentChatThread" SET "userWorkspaceId" = $1, "workspaceMemberId" = NULL`,
-        [OWNER_ID],
-      );
-      const legacyMetadata = structuredClone(metadata);
-      const threadObject =
-        legacyMetadata.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier
-        ]!;
-      const template =
-        legacyMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.fields.pendingQuestionMessageId
-            .universalIdentifier
-        ]!;
-      const legacyField = {
-        ...template,
-        id: '20202020-9999-4999-8999-999999999999',
-        name: 'userWorkspaceId',
-        universalIdentifier: 'bf830886-b6dc-46e9-a229-eecbb0e66032',
-      };
-      legacyMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
-        legacyField.universalIdentifier
-      ] = legacyField;
-      legacyMetadata.flatFieldMetadataMaps.universalIdentifierById[
-        legacyField.id
-      ] = legacyField.universalIdentifier;
-      threadObject.fieldIds = [...threadObject.fieldIds, legacyField.id];
-      return legacyMetadata;
-    };
-
-    it('keeps membership ownership authoritative until the legacy column is dropped', async () => {
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      const legacyMetadata = await restoreLegacyThreadOwner();
-      const legacyThreads = new AgentHistoryRepository(
-        'agentChatThread',
-        AgentChatThreadEntity,
-        storage,
-        createOrm(legacyMetadata),
-      );
-      await expect(
-        legacyThreads.findOneOrFail(WORKSPACE_ID, {
-          where: { id: THREAD_ID, userWorkspaceId: OWNER_ID },
-        }),
-      ).resolves.toMatchObject({ userWorkspaceId: OWNER_ID });
-      const created = await legacyThreads.insertAndReturnOne(WORKSPACE_ID, {
-        userWorkspaceId: OWNER_ID,
-      });
-      expect(
-        await dataSource.query(
-          `SELECT "userWorkspaceId", "workspaceMemberId" FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
-          [created.id],
-        ),
-      ).toEqual([{ userWorkspaceId: OWNER_ID, workspaceMemberId: MEMBER_ID }]);
-      expect(
-        (
-          await legacyThreads.find(WORKSPACE_ID, {
-            where: { userWorkspaceId: OWNER_ID },
-          })
-        ).map((thread) => thread.id),
-      ).toEqual(expect.arrayContaining([THREAD_ID, created.id]));
-    });
-
-    it('retries with fresh metadata when the legacy owner column is dropped during a wait', async () => {
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      const legacyMetadata = await restoreLegacyThreadOwner();
-      let currentMetadata = legacyMetadata;
-      let activeOrm = createOrm(currentMetadata);
-      const upgradingThreads = new AgentHistoryRepository(
-        'agentChatThread',
-        AgentChatThreadEntity,
-        storage,
-        {
-          executeInWorkspaceContext: (work) => {
-            activeOrm = createOrm(currentMetadata);
-            return activeOrm.executeInWorkspaceContext(async () => work());
-          },
-          getRepository: (...args) => activeOrm.getRepository(...args),
-        },
-      );
-      const upgradeLock = dataSource.createQueryRunner();
-      await upgradeLock.connect();
-      await upgradeLock.startTransaction();
-      try {
-        await upgradeLock.query(
-          'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-          [`${AGENT_HISTORY_STORAGE_KEY}:${WORKSPACE_ID}`],
-        );
-        const read = upgradingThreads.findOneOrFail(WORKSPACE_ID, {
-          where: { id: THREAD_ID, userWorkspaceId: OWNER_ID },
-        });
-        let waiting = false;
-        for (let attempt = 0; attempt < 100 && !waiting; attempt++) {
-          const [{ count }] = await dataSource.query(
-            `SELECT count(*)::int AS count FROM pg_locks WHERE locktype = 'advisory' AND NOT granted`,
-          );
-          waiting = count > 0;
-          if (!waiting) {
-            await new Promise((resolve) => setTimeout(resolve, 20));
-          }
-        }
-        expect(waiting).toBe(true);
-        await dataSource.query(
-          `UPDATE "${SCHEMA}"."agentChatThread" SET "workspaceMemberId" = $1`,
-          [MEMBER_ID],
-        );
-        await dataSource.query(
-          `ALTER TABLE "${SCHEMA}"."agentChatThread" DROP COLUMN "userWorkspaceId"`,
-        );
-        currentMetadata = metadata;
-        await upgradeLock.commitTransaction();
-        await expect(read).resolves.toMatchObject({
-          id: THREAD_ID,
-          userWorkspaceId: OWNER_ID,
-        });
-      } finally {
-        if (upgradeLock.isTransactionActive) {
-          await upgradeLock.rollbackTransaction();
-        }
-        await upgradeLock.release();
-      }
     });
 
     it('rejects cross-workspace membership before changing the route', async () => {

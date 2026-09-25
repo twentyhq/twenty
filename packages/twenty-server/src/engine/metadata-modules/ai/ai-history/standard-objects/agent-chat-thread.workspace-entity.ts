@@ -9,10 +9,11 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   messages: EntityRelation<AgentMessageWorkspaceEntity[]>;
   turns: EntityRelation<AgentTurnWorkspaceEntity[]>;
-  workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
 
   archivedAt: string | null;
+  userWorkspaceId: string | null;
   workspaceMemberId: string | null;
   title: string | null;
   totalInputTokens: number;

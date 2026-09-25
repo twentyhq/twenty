@@ -6,8 +6,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { isNonEmptyString } from '@sniptt/guards';
-import { resolveAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/resolve-agent-chat-thread-owners.util';
 
 export const lockAgentChatThread = async ({
   context: { manager, table, storage },
@@ -36,26 +34,11 @@ export const lockAgentChatThread = async ({
   if (records.length !== 1) {
     throw new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND);
   }
-  if (storage === 'core') {
-    return records[0];
-  }
-  const thread = normalizeAgentHistoryRecord({
-    record: records[0],
-    workspaceId,
-    objectName: 'agentChatThread',
-  });
-  if (!('userWorkspaceId' in thread)) {
-    const userWorkspaceIdByWorkspaceMemberId =
-      await resolveAgentChatThreadOwners({
-        manager,
+  return storage === 'core'
+    ? records[0]
+    : (normalizeAgentHistoryRecord({
+        record: records[0],
         workspaceId,
-        from: 'workspaceMemberId',
-        ids: isNonEmptyString(thread.workspaceMemberId)
-          ? [thread.workspaceMemberId]
-          : [],
-      });
-    thread.userWorkspaceId =
-      userWorkspaceIdByWorkspaceMemberId.get(thread.workspaceMemberId) ?? null;
-  }
-  return thread as AgentChatThreadEntity;
+        objectName: 'agentChatThread',
+      }) as AgentChatThreadEntity);
 };
