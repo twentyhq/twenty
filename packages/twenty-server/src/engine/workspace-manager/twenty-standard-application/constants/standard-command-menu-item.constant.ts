@@ -1513,4 +1513,23 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.DUPLICATE_MESSAGE_LIST,
     hotKeys: null,
   },
+  openLogConsole: {
+    universalIdentifier: '1900ad6d-5bd2-4e90-ae84-4803eb497cbd',
+    label: i18nLabel(
+      msg({ message: `Open Logs Console`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconHistory',
+    isPinned: false,
+    position: 73,
+    shortLabel: i18nLabel(
+      msg({ message: `Logs`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_LOGS_SETTINGS_SECTION_ENABLED and permissionFlags.SECURITY',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.OPEN_LOG_CONSOLE,
+    hotKeys: null,
+  },
 } as const;

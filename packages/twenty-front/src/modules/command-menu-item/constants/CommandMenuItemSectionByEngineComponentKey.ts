@@ -77,6 +77,8 @@ export const COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY = {
   [EngineComponentKey.GO_TO_WORKFLOWS]: 'GO_TO',
   [EngineComponentKey.GO_TO_RUNS]: 'GO_TO',
 
+  [EngineComponentKey.OPEN_LOG_CONSOLE]: 'WORKSPACE',
+
   [EngineComponentKey.SEARCH_RECORDS_FALLBACK]: 'FALLBACK',
 } as const satisfies Record<
   Exclude<EngineComponentKey, (typeof AMBIGUOUS_ENGINE_COMPONENT_KEYS)[number]>,

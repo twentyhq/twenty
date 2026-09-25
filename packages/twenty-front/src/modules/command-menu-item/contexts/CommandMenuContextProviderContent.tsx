@@ -15,6 +15,7 @@ import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/util
 import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
 import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
+import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import {
   currentPageLayoutIdState,
   PageLayoutIdContext,
@@ -81,6 +82,7 @@ export const CommandMenuContextProviderContent = ({
     hasGlobalRecordCreationCommandTemplate;
   const isLayoutCustomizationAllowedOnCurrentPage =
     useIsLayoutCustomizationAllowedOnCurrentPage();
+  const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const pageLayoutIdFromContext = useContext(PageLayoutIdContext);
@@ -125,6 +127,11 @@ export const CommandMenuContextProviderContent = ({
           isLayoutCustomizationAllowedOnCurrentPage,
       )
       .filter(
+        (item) =>
+          item.engineComponentKey !== EngineComponentKey.OPEN_LOG_CONSOLE ||
+          isLogConsoleAllowed,
+      )
+      .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
@@ -162,6 +169,7 @@ export const CommandMenuContextProviderContent = ({
     effectivePageLayoutId,
     isInPreviewMode,
     isLayoutCustomizationAllowedOnCurrentPage,
+    isLogConsoleAllowed,
     isCoreWorkflowIndex,
   ]);
 
