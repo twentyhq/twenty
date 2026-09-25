@@ -11,4 +11,7 @@ export class AiChatUsageDTO {
 
   @Field(() => Date, { nullable: true })
   periodEnd: Date | null;
+
+  @Field(() => Boolean)
+  isUsageLimit: boolean;
 }

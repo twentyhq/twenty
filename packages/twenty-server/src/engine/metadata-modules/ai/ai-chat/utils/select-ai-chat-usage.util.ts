@@ -26,6 +26,7 @@ export const selectAiChatUsage = ({
       limitValue: limit.limitValue,
       consumedValue: consumption?.consumedValue ?? null,
       periodEnd: consumption?.periodEnd ?? null,
+      isUsageLimit: true,
     };
   });
 
@@ -36,9 +37,9 @@ export const selectAiChatUsage = ({
   }
 
   const knownUsages = usages.flatMap(
-    ({ limitValue, consumedValue, periodEnd }) =>
+    ({ limitValue, consumedValue, periodEnd, isUsageLimit }) =>
       isDefined(consumedValue)
-        ? [{ limitValue, consumedValue, periodEnd }]
+        ? [{ limitValue, consumedValue, periodEnd, isUsageLimit }]
         : [],
   );
 

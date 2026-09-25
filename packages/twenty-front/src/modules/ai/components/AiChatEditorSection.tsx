@@ -14,6 +14,7 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
+import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
@@ -27,6 +28,7 @@ import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
+import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -150,6 +152,9 @@ const EditableAiChatEditorSection = () => {
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
+  const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
+  const shouldShowUsageLimitBanner =
+    !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
 
@@ -180,6 +185,7 @@ const EditableAiChatEditorSection = () => {
           />
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
+        {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
         {isDefined(pendingQuestion) ? (
           <AiChatQuestionCard pendingQuestion={pendingQuestion} />
         ) : (

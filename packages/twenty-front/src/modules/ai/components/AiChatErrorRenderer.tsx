@@ -1,7 +1,6 @@
-import { t } from '@lingui/core/macro';
-
 import { AiChatApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNotConfiguredMessage';
 import { AiChatErrorMessage } from '@/ai/components/AiChatErrorMessage';
+import { AiChatQuotaLimitExhaustedMessage } from '@/ai/components/AiChatQuotaLimitExhaustedMessage';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { getAiChatQuotaExhaustedKind } from '@/ai/utils/getAiChatQuotaExhaustedKind';
@@ -37,12 +36,7 @@ export const AiChatErrorRenderer = ({
 
   // The quota is checked before persistence, so a retry repeats the same refusal
   if (getAiChatQuotaExhaustedKind(error) === 'limit') {
-    return (
-      <AiChatErrorMessage
-        error={error}
-        hint={t`Ask a workspace admin to raise the limit.`}
-      />
-    );
+    return <AiChatQuotaLimitExhaustedMessage error={error} />;
   }
 
   return <AiChatErrorMessage error={error} onRetry={onRetry} />;
