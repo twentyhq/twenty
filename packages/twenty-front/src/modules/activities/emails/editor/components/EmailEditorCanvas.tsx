@@ -1,6 +1,7 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
-import { AdvancedTextEditorBlockHandleArea } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandleArea';
+import { AdvancedTextEditorBlockHandle } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandle';
 import { useOpenEmailBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel';
+import { useOpenEmailBlockStyleInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockStyleInSidePanel';
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { styled } from '@linaria/react';
@@ -28,7 +29,9 @@ const StyledCanvasPage = styled.div`
 
   .tiptap {
     color: inherit;
-    padding: 0;
+    margin-left: calc(-1 * ${themeCssVariables.spacing[10]});
+    padding: 0 0 0 ${themeCssVariables.spacing[10]};
+    width: calc(100% + ${themeCssVariables.spacing[10]});
   }
 `;
 
@@ -45,29 +48,13 @@ export const EmailEditorCanvas = ({
   const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
   const { openEmailBlockSettingsInSidePanel } =
     useOpenEmailBlockSettingsInSidePanel();
+  const { openEmailBlockStyleInSidePanel } =
+    useOpenEmailBlockStyleInSidePanel();
 
-  const canvasPage = (
-    <StyledCanvasPage
-      style={{
-        backgroundColor: canvasTheme.bodyBackground || undefined,
-        border:
-          canvasTheme.borderWidth !== '' && canvasTheme.borderWidth !== '0px'
-            ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
-            : undefined,
-        borderRadius: canvasTheme.cornerRadius,
-        color: canvasTheme.textColor,
-        padding: canvasTheme.padding,
-        textAlign: canvasTheme.textAlign,
-        width: canvasTheme.width,
-      }}
-    >
-      <AdvancedTextEditor
-        editor={editor}
-        readonly={readonly}
-        minHeight={minHeight}
-      />
-    </StyledCanvasPage>
-  );
+  const openBlockStyle = () => {
+    openEmailBlockSettingsInSidePanel();
+    openEmailBlockStyleInSidePanel();
+  };
 
   return (
     <StyledCanvasBackdrop
@@ -76,16 +63,30 @@ export const EmailEditorCanvas = ({
         padding: canvasTheme.pagePadding,
       }}
     >
-      {readonly === true ? (
-        canvasPage
-      ) : (
-        <AdvancedTextEditorBlockHandleArea
+      <StyledCanvasPage
+        style={{
+          backgroundColor: canvasTheme.bodyBackground || undefined,
+          border:
+            canvasTheme.borderWidth !== '' && canvasTheme.borderWidth !== '0px'
+              ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
+              : undefined,
+          borderRadius: canvasTheme.cornerRadius,
+          color: canvasTheme.textColor,
+          padding: canvasTheme.padding,
+          textAlign: canvasTheme.textAlign,
+          width: canvasTheme.width,
+        }}
+      >
+        <AdvancedTextEditor
           editor={editor}
-          onOpenBlockSettings={openEmailBlockSettingsInSidePanel}
-        >
-          {canvasPage}
-        </AdvancedTextEditorBlockHandleArea>
-      )}
+          readonly={readonly}
+          minHeight={minHeight}
+        />
+        <AdvancedTextEditorBlockHandle
+          editor={editor}
+          onOpenBlockSettings={openBlockStyle}
+        />
+      </StyledCanvasPage>
     </StyledCanvasBackdrop>
   );
 };

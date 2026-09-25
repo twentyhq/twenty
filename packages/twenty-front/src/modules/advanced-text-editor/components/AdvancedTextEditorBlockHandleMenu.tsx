@@ -4,8 +4,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { type Node as ProseMirrorNode } from '@tiptap/pm/model';
-import { type PointerEvent as ReactPointerEvent, useId } from 'react';
+import { useId } from 'react';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import {
@@ -19,7 +18,6 @@ import {
 type AdvancedTextEditorBlockHandleMenuProps = {
   editor: Editor;
   blockPos: number;
-  onPointerDown: (event: ReactPointerEvent<HTMLElement>) => void;
   onOpenChange: (isOpen: boolean) => void;
   onOpenBlockSettings?: () => void;
 };
@@ -27,7 +25,6 @@ type AdvancedTextEditorBlockHandleMenuProps = {
 export const AdvancedTextEditorBlockHandleMenu = ({
   editor,
   blockPos,
-  onPointerDown,
   onOpenChange,
   onOpenBlockSettings,
 }: AdvancedTextEditorBlockHandleMenuProps) => {
@@ -35,39 +32,26 @@ export const AdvancedTextEditorBlockHandleMenu = ({
   const instanceId = useId();
   const blockNode = editor.state.doc.nodeAt(blockPos);
 
+  if (!isDefined(blockNode)) {
+    return null;
+  }
+
+  const blockEnd = blockPos + blockNode.nodeSize;
   const hasBlockSettings =
     isDefined(onOpenBlockSettings) &&
-    isDefined(blockNode) &&
     isAdvancedTextEditorBlockNodeType(blockNode.type.name);
 
-  const runOnBlock = (action: (node: ProseMirrorNode) => void) => {
-    const node = editor.state.doc.nodeAt(blockPos);
-
-    if (isDefined(node)) {
-      action(node);
-    }
-  };
-
   const handleAddBlock = () =>
-    runOnBlock((node) => {
-      const insertionPos = blockPos + node.nodeSize;
-
-      editor
-        .chain()
-        .insertContentAt(insertionPos, { type: TIPTAP_NODE_TYPES.PARAGRAPH })
-        .setTextSelection(insertionPos + 1)
-        .insertContent('/')
-        .focus(null, { scrollIntoView: false })
-        .run();
-    });
+    editor
+      .chain()
+      .insertContentAt(blockEnd, { type: TIPTAP_NODE_TYPES.PARAGRAPH })
+      .setTextSelection(blockEnd + 1)
+      .insertContent('/')
+      .focus(null, { scrollIntoView: false })
+      .run();
 
   const handleDuplicate = () =>
-    runOnBlock((node) => {
-      editor
-        .chain()
-        .insertContentAt(blockPos + node.nodeSize, node.toJSON())
-        .run();
-    });
+    editor.chain().insertContentAt(blockEnd, blockNode.toJSON()).run();
 
   const handleOpenBlockSettings = () => {
     editor.chain().setNodeSelection(blockPos).run();
@@ -75,15 +59,7 @@ export const AdvancedTextEditorBlockHandleMenu = ({
   };
 
   const handleDelete = () =>
-    runOnBlock((node) => {
-      editor
-        .chain()
-        .command(({ tr }) => {
-          tr.delete(blockPos, blockPos + node.nodeSize);
-          return true;
-        })
-        .run();
-    });
+    editor.chain().deleteRange({ from: blockPos, to: blockEnd }).run();
 
   return (
     <DropdownRoot
@@ -92,7 +68,6 @@ export const AdvancedTextEditorBlockHandleMenu = ({
       onOpenChange={onOpenChange}
     >
       <Dropdown.Trigger
-        onPointerDown={onPointerDown}
         render={
           <LightIconButton
             size="sm"

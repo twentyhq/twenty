@@ -10,6 +10,7 @@ import { ColumnsNode } from '@/advanced-text-editor/extensions/blocks/ColumnsNod
 import { DividerNode } from '@/advanced-text-editor/extensions/blocks/DividerNode';
 import { HtmlNode } from '@/advanced-text-editor/extensions/blocks/HtmlNode';
 import { SectionNode } from '@/advanced-text-editor/extensions/blocks/SectionNode';
+import { TextBlockStyle } from '@/advanced-text-editor/extensions/blocks/TextBlockStyle';
 import {
   type AdvancedTextEditorBlockDefinition,
   type AdvancedTextEditorBlockNodeType,
@@ -21,11 +22,45 @@ import {
   IconClick,
   IconCode,
   IconColumns,
+  IconH1,
   IconMinus,
   IconPhoto,
+  IconPilcrow,
 } from 'twenty-ui/icon';
 
 export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
+  [TIPTAP_NODE_TYPES.PARAGRAPH]: {
+    label: msg`Text`,
+    icon: IconPilcrow,
+    extension: TextBlockStyle,
+    insertionRecipes: [],
+    settingsFields: [
+      ...getAdvancedTextEditorTypographySettings(),
+      {
+        label: msg`Padding`,
+        kind: 'style',
+        property: 'padding',
+        input: 'box',
+        placeholder: '0',
+      },
+    ],
+  },
+  [TIPTAP_NODE_TYPES.HEADING]: {
+    label: msg`Heading`,
+    icon: IconH1,
+    extension: null,
+    insertionRecipes: [],
+    settingsFields: [
+      ...getAdvancedTextEditorTypographySettings(),
+      {
+        label: msg`Padding`,
+        kind: 'style',
+        property: 'padding',
+        input: 'box',
+        placeholder: '0',
+      },
+    ],
+  },
   [TIPTAP_NODE_TYPES.SECTION]: {
     label: msg`Section`,
     icon: IconBox,

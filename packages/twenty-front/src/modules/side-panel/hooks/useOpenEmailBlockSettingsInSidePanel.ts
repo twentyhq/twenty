@@ -15,6 +15,7 @@ export const useOpenEmailBlockSettingsInSidePanel = () => {
       pageTitle: t`Design`,
       pageIcon: IconAdjustments,
       pageId: v4(),
+      resetNavigationStack: true,
     });
   }, [navigateSidePanelMenu]);
 

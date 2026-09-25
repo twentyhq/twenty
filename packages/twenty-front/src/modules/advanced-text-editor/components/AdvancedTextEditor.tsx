@@ -22,7 +22,18 @@ const StyledEditorContainer = styled.div<{
     flex-grow: 1;
     height: 100%;
     min-height: ${({ minHeight }) => minHeight}px;
+    position: relative;
     width: 100%;
+  }
+
+  .drop-cursor {
+    background-color: ${themeCssVariables.color.blue};
+    border-radius: ${themeCssVariables.border.radius.pill};
+    transition-duration: calc(
+      ${themeCssVariables.animation.duration.fast} * 1s
+    );
+    transition-property: left, top, width, height;
+    transition-timing-function: ease-out;
   }
 
   .tiptap {
@@ -79,12 +90,12 @@ const StyledEditorContainer = styled.div<{
       border-radius: ${themeCssVariables.border.radius.sm};
       box-sizing: border-box;
       margin-bottom: ${themeCssVariables.spacing[2]};
-    }
+      outline: 1px dashed transparent;
+      outline-offset: 2px;
 
-    .block-drag-source {
-      opacity: 0.4;
-      transition: opacity
-        calc(${themeCssVariables.animation.duration.fast} * 1s) ease-out;
+      &:hover {
+        outline-color: ${themeCssVariables.border.color.medium};
+      }
     }
 
     .block-columns {

@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
+import { useEffect } from 'react';
 import {
   TIPTAP_NODE_TYPES,
   isDefined,
@@ -16,13 +17,13 @@ import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorSt
 import { type AdvancedTextEditorBlockSetting } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { getBlockStyle } from '@/advanced-text-editor/utils/getBlockStyle';
-import { EmailBlockInsertList } from '@/side-panel/pages/email-block-settings/components/EmailBlockInsertList';
 import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
 import {
   EmailBoxSidesInput,
   type CssBoxSides,
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
 import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -71,12 +72,20 @@ const BOX_FIELD_SIDE_PROPERTIES: Record<
 
 const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const { i18n, t } = useLingui();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const target = useLiveEditorState(editor, (currentEditor) =>
     getBlockSelectionTarget(currentEditor),
   );
+  const hasTarget = isDefined(target);
+
+  useEffect(() => {
+    if (!hasTarget) {
+      goBackFromSidePanel();
+    }
+  }, [hasTarget, goBackFromSidePanel]);
 
   if (!isDefined(target)) {
-    return <EmailBlockInsertList editor={editor} />;
+    return null;
   }
 
   const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];
@@ -84,9 +93,21 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const styles = getBlockStyle(target.attrs.style);
   const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
 
+  const inheritsCanvasTypography = (property: string) => {
+    switch (target.nodeType) {
+      case TIPTAP_NODE_TYPES.SECTION:
+      case TIPTAP_NODE_TYPES.PARAGRAPH:
+        return true;
+      case TIPTAP_NODE_TYPES.HEADING:
+        return property !== 'fontSize';
+      default:
+        return false;
+    }
+  };
+
   const displayedStyleValue = (property: string) =>
     styles[property] ??
-    (target.nodeType === TIPTAP_NODE_TYPES.SECTION
+    (inheritsCanvasTypography(property)
       ? getEffectiveSectionStyleValue(property, canvasTheme)
       : '');
 

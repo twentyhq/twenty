@@ -6,6 +6,7 @@ import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versi
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
+import { SidePanelEmailDesignPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailDesignPage';
 import { SidePanelEmailPageStylePage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailPageStylePage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
@@ -96,7 +97,8 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.SendCampaign, <SidePanelSendCampaignPage />],
   [SidePanelPages.RecordCreationForm, <SidePanelRecordCreationFormPage />],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
-  [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
+  [SidePanelPages.EmailBlockSettings, <SidePanelEmailDesignPage />],
+  [SidePanelPages.EmailBlockStyle, <SidePanelEmailBlockSettingsPage />],
   [SidePanelPages.EmailPageStyle, <SidePanelEmailPageStylePage />],
   [
     SidePanelPages.SettingsMetadataTranslations,
