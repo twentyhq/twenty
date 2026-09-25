@@ -268,10 +268,13 @@ export class ApplicationService {
     return application;
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ApplicationEntity | null> {
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne(workspaceId, {
       where: { id },
     });
