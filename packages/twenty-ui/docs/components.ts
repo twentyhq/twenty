@@ -1,6 +1,10 @@
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
+import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
+import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
+import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
+import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
@@ -144,6 +148,19 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
+    name: 'Card',
+    source: 'primitives/surfaces/Card/Card.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/card',
+    partPropDescriptions: {
+      Root: CARD_PROP_DESCRIPTIONS,
+      Header: CARD_HEADER_PROP_DESCRIPTIONS,
+      Content: CARD_CONTENT_PROP_DESCRIPTIONS,
+      Footer: CARD_FOOTER_PROP_DESCRIPTIONS,
+    },
+    partPropDefaults: { Footer: { divider: 'true' } },
+  },
+  {
     name: 'Dialog',
     source: 'primitives/surfaces/Dialog/Dialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
@@ -245,6 +262,9 @@ export const DOCUMENTED_COMPONENTS = [
       'ActionItem',
       'OptionItem',
       'Search',
+      'Header',
+      'Title',
+      'Close',
       'Page',
       'Back',
       'Submenu',

@@ -23,7 +23,7 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import {
   type FlatCreateFieldAction,
   type UniversalCreateFieldAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { fromUniversalFlatFieldMetadataToFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-flat-field-metadata.util';
 import {
   WorkspaceMigrationActionRunnerContext,

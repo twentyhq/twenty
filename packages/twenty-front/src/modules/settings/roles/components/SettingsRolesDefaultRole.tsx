@@ -75,7 +75,7 @@ export const SettingsRoleDefaultRole = ({
         title={t`Default Role`}
         description={t`Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted`}
       />
-      <Card rounded>
+      <Card.Root rounded>
         <SettingsOptionCardContentSelect
           Icon={IconUserPin}
           title={t`Default Role`}
@@ -92,7 +92,7 @@ export const SettingsRoleDefaultRole = ({
             }
           />
         </SettingsOptionCardContentSelect>
-      </Card>
+      </Card.Root>
     </Section.Root>
   );
 };

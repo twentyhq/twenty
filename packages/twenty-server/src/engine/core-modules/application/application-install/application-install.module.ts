@@ -23,6 +23,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationLifecycleJobService,
     ApplicationUninstallRunnerService,
     InstallApplicationCommand,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [ApplicationInstallService, ApplicationUninstallRunnerService],
 })

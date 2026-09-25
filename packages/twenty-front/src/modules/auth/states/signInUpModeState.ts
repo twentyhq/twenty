@@ -1,4 +1,4 @@
-import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const signInUpModeState = createAtomState<SignInUpMode>({

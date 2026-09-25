@@ -7,6 +7,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
 type StandardTargetObjectName =
+  | 'agentChatThreadTarget'
   | 'calendarEventTarget'
   | 'messageThreadTarget'
   | 'noteTarget'

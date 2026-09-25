@@ -15,6 +15,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
@@ -25,8 +27,8 @@ export class ApplicationKeyValueService {
   constructor(
     @InjectRepository(KeyValuePairEntity)
     private readonly keyValuePairRepository: Repository<KeyValuePairEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
@@ -226,12 +228,14 @@ export class ApplicationKeyValueService {
       return application.id;
     }
 
-    const ownerInstall = await this.applicationRepository.findOne({
-      where: {
-        applicationRegistrationId: registration.id,
-        workspaceId: registration.ownerWorkspaceId,
+    const ownerInstall = await this.applicationRepository.findOne(
+      registration.ownerWorkspaceId,
+      {
+        where: {
+          applicationRegistrationId: registration.id,
+        },
       },
-    });
+    );
 
     if (!isDefined(ownerInstall)) {
       throw new ApplicationException(

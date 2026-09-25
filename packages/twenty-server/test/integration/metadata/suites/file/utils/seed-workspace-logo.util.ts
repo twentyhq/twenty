@@ -1,4 +1,5 @@
 import { uploadWorkspaceLogoWithDirectUpload } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 

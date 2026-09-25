@@ -9,7 +9,7 @@ import { type PreallocatedIdByUniversalIdentifierByMetadataName } from 'src/engi
 import {
   type AllFlatWorkspaceMigrationAction,
   type AllUniversalWorkspaceMigrationAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 
 export type WorkspaceMigrationActionRunnerArgs<
   TUniversalAction extends AllUniversalWorkspaceMigrationAction,

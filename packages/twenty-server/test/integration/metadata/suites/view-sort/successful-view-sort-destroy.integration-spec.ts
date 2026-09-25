@@ -7,9 +7,11 @@ import { destroyOneViewSort } from 'test/integration/metadata/suites/view-sort/u
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
-
-import { ViewSortDirection } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ViewSortDirection,
+  ViewType,
+} from 'twenty-shared/types';
 
 describe('View Sort deletion should succeed', () => {
   let testObjectMetadataId: string;

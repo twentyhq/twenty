@@ -33,8 +33,12 @@ test('Create Kanban View from Industry Select Field', async ({ page }) => {
   await page.getByRole('textbox').fill('By industry');
   await page.getByRole('button', { name: 'Table', exact: true }).click();
   await page.getByText('Kanban').click();
-  await page.locator('[aria-controls="view-picker-kanban-field-options"]').click();
-  await page.getByRole('option', { name: industryLabel }).click();
+  await page
+    .getByText('Stages', { exact: true })
+    .locator('xpath=..')
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: industryLabel }).click();
   await page.getByRole('button', { name: 'Create new view' }).click();
   await expect(page.getByText('Food')).toBeVisible({ timeout: 30000 });
   await expect(page.getByText('Tech')).toBeVisible();

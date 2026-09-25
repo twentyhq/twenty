@@ -6,7 +6,7 @@ import {
 import {
   type GroupByDateField,
   type GroupByRegularField,
-} from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+} from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getGroupByExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-expression.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 

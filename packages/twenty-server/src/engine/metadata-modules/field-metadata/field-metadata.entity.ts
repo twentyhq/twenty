@@ -47,6 +47,7 @@ import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/
 // This entity is used as a reference test case for type utilities in:
 // Modifying relations or properties may require updating type test expectations for Typecheck to pass.
 @Entity('fieldMetadata')
+@Index('IDX_FIELD_METADATA_APPLICATION_ID', ['applicationId'])
 @Check(
   'CHK_FIELD_METADATA_MORPH_RELATION_REQUIRES_MORPH_ID',
   `("type" != 'MORPH_RELATION') OR ("type" = 'MORPH_RELATION' AND "morphId" IS NOT NULL)`,
@@ -66,7 +67,6 @@ import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/
   'objectMetadataId',
   'workspaceId',
 ])
-@Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
   TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
 >
@@ -84,7 +84,6 @@ export class FieldMetadataEntity<
     nullable: false,
   })
   @JoinColumn({ name: 'objectMetadataId' })
-  @Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
   object: Relation<ObjectMetadataEntity>;
 
   @Column({

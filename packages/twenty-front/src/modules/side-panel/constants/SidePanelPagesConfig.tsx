@@ -3,7 +3,6 @@ import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/compo
 import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
 import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionPage';
 import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
-import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
@@ -96,10 +95,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.RecordCreationForm, <SidePanelRecordCreationFormPage />],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
-  [
-    SidePanelPages.SettingsMetadataTranslations,
-    <SidePanelSettingsMetadataTranslationsPage />,
-  ],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
