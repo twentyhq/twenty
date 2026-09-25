@@ -53,6 +53,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'jobTitle', type: FieldMetadataType.TEXT },
   ],
   recordShare: [],
+  shortLink: [],
   task: [
     { name: 'title', type: FieldMetadataType.TEXT },
     { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT },
