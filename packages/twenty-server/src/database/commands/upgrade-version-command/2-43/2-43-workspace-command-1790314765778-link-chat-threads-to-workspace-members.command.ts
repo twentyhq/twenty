@@ -1,6 +1,5 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
@@ -12,14 +11,10 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-const LEGACY_USER_WORKSPACE_ID_FIELD_UNIVERSAL_IDENTIFIER =
-  'bf830886-b6dc-46e9-a229-eecbb0e66032';
-
 // Expand step of the chat thread owner move. The legacy userWorkspaceId column
-// stays, now optional, so servers that still read it keep working; the contract
+// stays untouched so servers that still read it keep working; the contract
 // step removes it (twentyhq/core-team-issues#2925).
 @RegisteredWorkspaceCommand('2.43.0', 1790314765778)
 @Command({
@@ -32,7 +27,6 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly schema: AgentHistorySchemaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly migrations: WorkspaceMigrationValidateBuildAndRunService,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);
@@ -70,42 +64,6 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
       );
 
       return;
-    }
-
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-    const legacyField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        LEGACY_USER_WORKSPACE_ID_FIELD_UNIVERSAL_IDENTIFIER
-      ];
-
-    if (!isDefined(legacyField)) {
-      return;
-    }
-
-    if (!legacyField.isNullable) {
-      const result =
-        await this.migrations.validateBuildAndRunLegacyWorkspaceMigration({
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          allFlatEntityOperationByMetadataName: {
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [{ ...legacyField, isNullable: true }],
-            },
-          },
-        });
-
-      if (result.status === 'fail') {
-        throw new Error(
-          `Could not make chat thread userWorkspaceId optional for ${workspaceId}: ${JSON.stringify(result)}`,
-        );
-      }
     }
 
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));

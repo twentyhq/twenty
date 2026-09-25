@@ -64,7 +64,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         icon: 'IconId',
         isSystem: true,
         isUIEditable: false,
-        isNullable: true,
+        isNullable: false,
       },
     }),
     writability: MetadataWritability.SYSTEM,

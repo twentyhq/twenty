@@ -197,15 +197,15 @@ export class AgentChatSharingService {
     return this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table, storage }) => {
-        const extraColumn =
-          storage === 'core'
-            ? { name: 'workspaceId', value: args.workspaceId }
-            : writesWorkspaceMember
-              ? {
-                  name: 'workspaceMemberId',
-                  value: authContext.workspaceMemberId,
-                }
-              : undefined;
+        let extraColumn: { name: string; value: string } | undefined;
+        if (storage === 'core') {
+          extraColumn = { name: 'workspaceId', value: args.workspaceId };
+        } else if (writesWorkspaceMember) {
+          extraColumn = {
+            name: 'workspaceMemberId',
+            value: authContext.workspaceMemberId,
+          };
+        }
         const records = await manager.query<AgentChatThreadEntity[]>(
           `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId"${isDefined(extraColumn) ? `, "${extraColumn.name}"` : ''})
          VALUES ($1, $2, $3${isDefined(extraColumn) ? ', $4' : ''}) RETURNING *`,
