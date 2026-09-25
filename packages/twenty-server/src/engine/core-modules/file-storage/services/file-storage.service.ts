@@ -190,7 +190,6 @@ export class FileStorageService {
     });
   }
 
-  // Legacy storage copies wrote files without a file row.
   private async createFileRowFromStorageOrThrow({
     resourceIdentifier,
     filePath,
@@ -951,18 +950,21 @@ export class FileStorageService {
       this.resolveApplicationIdOrThrow(to),
     ]);
 
-    const sourceFile =
-      (await this.findFileByPath({
+    let sourceFile: Pick<FileEntity, 'mimeType' | 'size' | 'settings'> | null =
+      await this.findFileByPath({
         fileRepository: this.fileRepository,
         workspaceId: from.workspaceId,
         filePath,
         applicationId: sourceApplicationId,
-      })) ??
-      (await this.createFileRowFromStorageOrThrow({
+      });
+
+    if (!isDefined(sourceFile)) {
+      sourceFile = await this.createFileRowFromStorageOrThrow({
         resourceIdentifier: from,
         filePath,
         applicationId: sourceApplicationId,
-      }));
+      });
+    }
 
     return this.copyFile({
       from,
