@@ -11,7 +11,7 @@ import {
   putFileToUploadTarget,
 } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { settings } from 'src/engine/constants/settings';
@@ -23,7 +23,7 @@ const MINIMAL_PDF = Buffer.from(
 );
 
 const completeWorkspaceLogoUpload = async (fileId: string) => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: completeWorkspaceLogoUploadMutation,
     variables: { fileId },
   });
@@ -113,7 +113,7 @@ describe('Core picture direct upload should fail', () => {
   }, 30000);
 
   it('should refuse to bind a file reserved outside the core picture folder', async () => {
-    const createResponse = await makeMetadataAPIRequest({
+    const createResponse = await makeMetadataApiRequest({
       query: createFileUploadMutation,
       variables: {
         filename: 'logo.png',
@@ -164,7 +164,7 @@ describe('Core picture direct upload should fail', () => {
 
     expect(putResponse.status).toBe(204);
 
-    const completeResponse = await makeMetadataAPIRequest({
+    const completeResponse = await makeMetadataApiRequest({
       query: completeFileUploadMutation,
       variables: { fileId: uploadTarget.fileId },
     });
@@ -204,7 +204,7 @@ describe('Core picture direct upload should fail', () => {
   }, 30000);
 
   it('should refuse to reserve a picture larger than the core picture size limit', async () => {
-    const createResponse = await makeMetadataAPIRequest({
+    const createResponse = await makeMetadataApiRequest({
       query: createFileUploadMutation,
       variables: {
         filename: 'logo.png',

@@ -7,7 +7,7 @@ import {
   waitForWorkflowCompletion,
   type WorkflowRunStatusType,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -33,7 +33,7 @@ export const runWebhookTriggeredActionStep = async ({
   stepType: 'SEND_EMAIL' | 'DRAFT_EMAIL';
   input: Record<string, unknown>;
 }): Promise<WebhookTriggeredActionStepRun> => {
-  const createWorkflowResponse = await makeGraphqlAPIRequest({
+  const createWorkflowResponse = await makeGraphqlApiRequest({
     query: gql`
       mutation CreateWorkflow($name: String!) {
         createWorkflow(data: { name: $name }) {
@@ -51,7 +51,7 @@ export const runWebhookTriggeredActionStep = async ({
   let workflowRunId: string | undefined;
 
   try {
-    const workflowVersionsResponse = await makeGraphqlAPIRequest({
+    const workflowVersionsResponse = await makeGraphqlApiRequest({
       query: gql`
         query FindDraftWorkflowVersion($workflowId: UUID!) {
           workflowVersions(
@@ -91,7 +91,7 @@ export const runWebhookTriggeredActionStep = async ({
       },
     });
 
-    const createStepResponse = await makeGraphqlAPIRequest({
+    const createStepResponse = await makeGraphqlApiRequest({
       query: gql`
         mutation CreateWorkflowVersionStep(
           $input: CreateWorkflowVersionStepInput!
@@ -113,7 +113,7 @@ export const runWebhookTriggeredActionStep = async ({
 
     expect(createStepResponse.body.errors).toBeUndefined();
 
-    const stepsResponse = await makeGraphqlAPIRequest({
+    const stepsResponse = await makeGraphqlApiRequest({
       query: gql`
         query FindWorkflowVersionSteps($workflowVersionId: UUID!) {
           workflowVersion(filter: { id: { eq: $workflowVersionId } }) {
@@ -134,7 +134,7 @@ export const runWebhookTriggeredActionStep = async ({
 
     expect(step).toBeDefined();
 
-    const updateStepResponse = await makeGraphqlAPIRequest({
+    const updateStepResponse = await makeGraphqlApiRequest({
       query: gql`
         mutation UpdateWorkflowVersionStep(
           $input: UpdateWorkflowVersionStepInput!
@@ -160,7 +160,7 @@ export const runWebhookTriggeredActionStep = async ({
 
     expect(updateStepResponse.body.errors).toBeUndefined();
 
-    const activateResponse = await makeGraphqlAPIRequest({
+    const activateResponse = await makeGraphqlApiRequest({
       query: gql`
         mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
           activateWorkflowVersion(workflowVersionId: $workflowVersionId)
@@ -193,7 +193,7 @@ export const runWebhookTriggeredActionStep = async ({
       await destroyWorkflowRun(workflowRunId);
     }
 
-    await makeGraphqlAPIRequest({
+    await makeGraphqlApiRequest({
       query: gql`
         mutation DestroyWorkflow($id: ID!) {
           destroyWorkflow(id: $id) {

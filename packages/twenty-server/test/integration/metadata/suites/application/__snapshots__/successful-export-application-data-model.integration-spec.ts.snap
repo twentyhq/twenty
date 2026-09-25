@@ -4,6 +4,30 @@ exports[`Application export - data model exports the whole application as a stab
 {
   "deterministicUnnamed": [
     {
+      "metadataName": "fieldMetadata",
+      "reason": null,
+      "status": "ENGINE_DERIVED",
+      "universalIdentifier": "224da30e-4e3f-5680-9c49-44fd6a5c74a3",
+    },
+    {
+      "metadataName": "fieldMetadata",
+      "reason": null,
+      "status": "ENGINE_DERIVED",
+      "universalIdentifier": "4ddb7897-eb4a-5a81-b659-513d50f337b4",
+    },
+    {
+      "metadataName": "fieldMetadata",
+      "reason": null,
+      "status": "ENGINE_DERIVED",
+      "universalIdentifier": "78a0a1b9-7eda-544b-82a6-a2e7c6e49abc",
+    },
+    {
+      "metadataName": "fieldMetadata",
+      "reason": null,
+      "status": "ENGINE_DERIVED",
+      "universalIdentifier": "e9ecaa5c-d86b-52d9-810d-dac1049941a3",
+    },
+    {
       "metadataName": "rolePermissionFlag",
       "reason": null,
       "status": "EXPORTED",
@@ -793,7 +817,7 @@ exports[`Application export - data model exports the whole application as a stab
     },
   ],
   "randomlyIdentifiedByKindAndStatus": {
-    "index ENGINE_DERIVED": 8,
+    "index ENGINE_DERIVED": 10,
   },
 }
 `;

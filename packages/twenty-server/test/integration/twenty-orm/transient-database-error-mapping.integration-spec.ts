@@ -14,8 +14,9 @@ const authContext = buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID);
 const runInTransaction = (
   work: (transactionScope: WorkspaceTransactionScope) => Promise<unknown>,
 ): Promise<unknown> => {
-  const workspaceOrmManager =
-    getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
+  const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
+    'WorkspaceOrmManager',
+  );
 
   return workspaceOrmManager.executeInWorkspaceContext(
     async () => workspaceOrmManager.runInWorkspaceTransaction(work),

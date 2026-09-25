@@ -5,11 +5,11 @@ import request from 'supertest';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -46,7 +46,7 @@ describe('REST depth=1 with a restricted relation field', () => {
     companyId = randomUUID();
     personId = randomUUID();
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id name',
@@ -54,7 +54,7 @@ describe('REST depth=1 with a restricted relation field', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id',
@@ -62,7 +62,7 @@ describe('REST depth=1 with a restricted relation field', () => {
       }),
     );
 
-    const objectMetadataResponse = await makeMetadataAPIRequest({
+    const objectMetadataResponse = await makeMetadataApiRequest({
       query: gql`
         query {
           objects(paging: { first: 1000 }) {
@@ -82,7 +82,7 @@ describe('REST depth=1 with a restricted relation field', () => {
         edge.node.nameSingular === 'company',
     ).node.id;
 
-    const fieldMetadataResponse = await makeMetadataAPIRequest({
+    const fieldMetadataResponse = await makeMetadataApiRequest({
       query: gql`
         query {
           fields(paging: { first: 1000 }) {
@@ -153,7 +153,7 @@ describe('REST depth=1 with a restricted relation field', () => {
       ],
     });
 
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/companies/${companyId}?depth=1`,
       bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -166,7 +166,7 @@ describe('REST depth=1 with a restricted relation field', () => {
   });
 
   it('should include related records when the relation field is not restricted', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/companies/${companyId}?depth=1`,
       bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,

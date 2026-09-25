@@ -37,6 +37,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "pendingQuestionMessageId": {
         "universalIdentifier": "51a9b421-7d90-4a59-9712-036ea9721e65",
       },
+      "recordTargets": {
+        "universalIdentifier": "5b37eceb-2992-4d27-9897-14af3e3ce9b2",
+      },
       "title": {
         "universalIdentifier": "9283c05e-127c-46ec-82e9-6424a7c0a2f1",
       },
@@ -80,6 +83,64 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+  },
+  "agentChatThreadTarget": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "0b3d45a4-422d-54fd-96bd-0d0aede26d4a",
+      },
+      "deletedAt": {
+        "universalIdentifier": "ba7caf18-b6cd-5227-ae8b-38bd4775f874",
+      },
+      "id": {
+        "universalIdentifier": "3fa2b4a3-bd88-50cb-954b-db72480f7290",
+      },
+      "targetCompany": {
+        "universalIdentifier": "b06cb6c7-6dc1-5b79-a2fc-c6abab6c1969",
+      },
+      "targetOpportunity": {
+        "universalIdentifier": "590349b5-e21b-5087-82ee-923a005c46d2",
+      },
+      "targetPerson": {
+        "universalIdentifier": "39252ea1-0323-5839-a43a-237422d75784",
+      },
+      "thread": {
+        "universalIdentifier": "54664c16-3c3d-4d5e-904c-59e1b3707cfb",
+      },
+      "updatedAt": {
+        "universalIdentifier": "dcad8174-0f81-546e-8a27-576ed432fbcd",
+      },
+    },
+    "indexes": {
+      "companyIdIndex": {
+        "universalIdentifier": "ab45593a-3614-41c8-aab1-20aa91f1095c",
+      },
+      "opportunityIdIndex": {
+        "universalIdentifier": "b68e2031-73c6-4bc4-b062-5f795539e452",
+      },
+      "personIdIndex": {
+        "universalIdentifier": "fe9c48d0-5b2a-4a51-bd47-f9205ea0c09d",
+      },
+      "threadCompanyUniqueIndex": {
+        "universalIdentifier": "d9067628-fd16-4843-955b-5fd47fea52a9",
+      },
+      "threadIdIndex": {
+        "universalIdentifier": "19291d2c-15ab-43a0-91f7-1694b34813dd",
+      },
+      "threadOpportunityUniqueIndex": {
+        "universalIdentifier": "1b9bec10-2788-40be-9435-44937b9f7018",
+      },
+      "threadPersonUniqueIndex": {
+        "universalIdentifier": "5a12050f-4de2-4076-aecc-959b863e14b2",
+      },
+    },
+    "morphIds": {
+      "targetMorphId": {
+        "morphId": "2c4cc537-39a2-4df9-81a1-dda26eb19658",
+      },
+    },
+    "universalIdentifier": "9f2a5bf4-3a57-4e61-b561-eaf5a5b86973",
+    "views": {},
   },
   "agentMessage": {
     "fields": {
@@ -1210,6 +1271,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "address": {
         "universalIdentifier": "20202020-c5ce-4adc-b7b6-9c0979fc55e7",
+      },
+      "agentChatThreadTargets": {
+        "universalIdentifier": "cfd6b104-69a2-5048-8e4d-e9fd52a1adc1",
       },
       "annualRevenue": {
         "universalIdentifier": "60f533b7-2166-4071-a767-ceb0286822fd",
@@ -2571,6 +2635,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "opportunity": {
     "fields": {
+      "agentChatThreadTargets": {
+        "universalIdentifier": "33677c4d-eca9-5560-8e07-b0fae616e5fb",
+      },
       "amount": {
         "universalIdentifier": "20202020-583e-4642-8533-db761d5fa82f",
       },
@@ -2776,6 +2843,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "person": {
     "fields": {
+      "agentChatThreadTargets": {
+        "universalIdentifier": "9d3f43e7-65bc-54c5-b4a1-bc0d92426b3a",
+      },
       "attachments": {
         "universalIdentifier": "54dd92e1-67bf-5381-86f3-c747976dcdaf",
       },

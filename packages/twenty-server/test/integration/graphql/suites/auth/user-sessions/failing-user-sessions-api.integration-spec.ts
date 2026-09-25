@@ -1,4 +1,4 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -31,7 +31,9 @@ describe('failing user sessions API (integration)', () => {
 
     const sessionRow = await getCoreRepository<UserSessionEntity>(
       UserSessionEntity,
-    ).findOneBy({ tokenHash: hashUserSessionToken(sessionCookie.sessionToken) });
+    ).findOneBy({
+      tokenHash: hashUserSessionToken(sessionCookie.sessionToken),
+    });
 
     if (!sessionRow) {
       throw new Error('Expected a persisted session row');
@@ -51,7 +53,7 @@ describe('failing user sessions API (integration)', () => {
 
   it("should refuse to revoke another user's session", async () => {
     // Default token authenticates Jane, a different seeded user than Tim.
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       revokeUserSessionQueryFactory({ userSessionId: timSessionId }),
     ).expect(200);
 
