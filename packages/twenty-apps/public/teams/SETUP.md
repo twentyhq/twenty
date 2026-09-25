@@ -46,9 +46,9 @@ does not enable them.
 
 1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, rebuild
    and deploy the app, then enable transcripts in the Microsoft Teams settings.
-2. Schedule a Teams meeting with the connected account, join it, start
-   transcription, speak, and end the meeting. Microsoft publishes the transcript
-   a few minutes later.
+2. Schedule a Teams meeting with the connected account, join it at its
+   scheduled time, start transcription, speak, and end the meeting. Microsoft
+   publishes the transcript a few minutes later.
 3. Ask the Twenty AI assistant to list your Teams transcripts, or add the
    **List My Teams Transcripts** action to a workflow. The result carries one
    entry per transcript with the meeting subject, the Graph meeting ID, and the
@@ -93,5 +93,6 @@ workspace. Public apps use the monorepo CI workflows.
   connection and the workspace has no shared one.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
-- Empty result: verify that transcription was started, Microsoft has finished
-  processing it, and the connected account organized the scheduled meeting.
+- Empty result: verify that transcription was started during the scheduled
+  meeting time, give or take 15 minutes, Microsoft has finished processing it,
+  and the connected account organized the meeting.

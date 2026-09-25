@@ -13,7 +13,7 @@ export const resolveTeamsCalendarPageUrlOrThrow = ({
     startDateTime: window.startDateTime,
     endDateTime: window.endDateTime,
     $select:
-      'isOrganizer,isCancelled,isOnlineMeeting,onlineMeetingProvider,onlineMeeting',
+      'isOrganizer,isCancelled,isOnlineMeeting,onlineMeetingProvider,onlineMeeting,start,end',
     $top: String(TEAMS_CALENDAR_PAGE_SIZE),
   });
   const url = resolveGraphUrlOrThrow(nextPageUrl ?? `me/calendarView?${query}`);
