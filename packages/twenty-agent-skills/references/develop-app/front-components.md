@@ -48,6 +48,9 @@ Prefer Twenty UI icons from `twenty-ui/icon` when one exists. Use inline SVG onl
 For record-page components, read selection from front component context:
 
 - Use `useSelectedRecordIds()` for single, bulk, or empty selection; derive one id only when the array length is 1.
+- Use `useSelectedObjectMetadata()` from `twenty-sdk/front-component` to identify the object for a record-page widget, a front component opened in the side panel with record context, or an object-scoped command. It returns `{ id, nameSingular, namePlural }` or `null`. The `id` is the workspace's object-metadata UUID, and the names are metadata names such as `person` and `people`, not display labels.
+
+Object metadata belongs to the front component's own context, so a side panel can expose a different object from the main page. It can be available even when no records are selected and updates when that context changes. The hook returns `null` when no object context is supplied, when the object cannot be resolved, or when an older host does not provide object metadata. Use it to select object-specific templates or configuration without searching every object for a record ID.
 
 Use the generated or core Twenty client for reads and writes. Keep loading, empty, error, disabled, and saving states explicit so runtime failures are visible and recoverable.
 
