@@ -11,6 +11,8 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { createManyViewFieldGroupsQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-many-view-field-groups-query-factory.util';
+import { createViewFieldGroupQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-view-field-group-query-factory.util';
 import { createViewGroupQueryFactory } from 'test/integration/metadata/suites/view-group/utils/create-view-group-query-factory.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { createViewQueryFactory } from 'test/integration/metadata/suites/view/utils/create-view-query-factory.util';
@@ -242,6 +244,45 @@ describe('application principal view access (integration)', () => {
         deniedApplication.applicationUniversalIdentifier,
     });
   }, 120000);
+
+  it('allows field group creation for an application with VIEWS permission', async () => {
+    const response = await makeMetadataAPIRequest(
+      createViewFieldGroupQueryFactory({
+        input: { viewId: groupedViewId, name: 'Allowed group' },
+      }),
+      authorizedApplication.accessToken,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.createViewFieldGroup.id).toBeDefined();
+  });
+
+  it('denies field group creation for an application without VIEWS permission', async () => {
+    const response = await makeMetadataAPIRequest(
+      createViewFieldGroupQueryFactory({
+        input: { viewId: groupedViewId, name: 'Denied group' },
+      }),
+      deniedApplication.accessToken,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(response.body.data?.createViewFieldGroup).toBeFalsy();
+  });
+
+  it('checks every view in a batch, including one after a missing view', async () => {
+    const response = await makeMetadataAPIRequest(
+      createManyViewFieldGroupsQueryFactory({
+        inputs: [
+          { viewId: crypto.randomUUID(), name: 'Missing view' },
+          { viewId: groupedViewId, name: 'Forbidden view' },
+        ],
+      }),
+      deniedApplication.accessToken,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(response.body.data?.createManyViewFieldGroups).toBeFalsy();
+  });
 
   describe('an application whose role grants the VIEWS permission', () => {
     it('creates a view', async () => {

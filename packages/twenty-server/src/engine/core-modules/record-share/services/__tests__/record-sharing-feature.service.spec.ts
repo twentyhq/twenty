@@ -16,10 +16,12 @@ const setup = async ({
   readability = MetadataReadability.SYSTEM,
   flag = true,
   entitled = false,
+  chatDropdownFlag,
 }: {
   readability?: MetadataReadability;
   flag?: boolean;
   entitled?: boolean;
+  chatDropdownFlag?: boolean;
 } = {}) => {
   const provider = new TestEntitlementProvider();
   provider.hasRecordSharingEntitlement.mockResolvedValue(entitled);
@@ -41,7 +43,10 @@ const setup = async ({
                 },
               },
             },
-            featureFlagsMap: { IS_RECORD_SHARING_ENABLED: flag },
+            featureFlagsMap: {
+              IS_RECORD_SHARING_ENABLED: flag,
+              IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: chatDropdownFlag,
+            },
             billingEntitlements: {},
           }),
         },
@@ -53,6 +58,21 @@ const setup = async ({
 };
 
 describe('record-sharing rollout entitlement compatibility', () => {
+  it.each([undefined, false, true])(
+    'keeps backend sharing and activated permissions independent of the chat dropdown flag (%s)',
+    async (chatDropdownFlag) => {
+      const { module, service } = await setup({
+        readability: MetadataReadability.PRIVATE,
+        chatDropdownFlag,
+      });
+
+      expect(await service.isRecordSharingEnabled('workspace')).toBe(true);
+      expect(await service.isLegacyRecordAccessOpen('workspace')).toBe(false);
+
+      await module.close();
+    },
+  );
+
   it('honors an effective self-hosted entitlement even with an empty billing cache', async () => {
     const { module, provider, service } = await setup({ entitled: true });
     expect(await service.isLegacyRecordAccessOpen('workspace')).toBe(false);
