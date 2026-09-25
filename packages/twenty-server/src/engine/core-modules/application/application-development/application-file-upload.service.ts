@@ -127,8 +127,16 @@ export class ApplicationFileUploadService {
       applicationUniversalIdentifier,
     });
 
-    const files = await this.fileRepository.find(workspaceId, {
+    const applicationFiles = await this.fileRepository.find(workspaceId, {
       where: { id: In(fileIds), applicationId: application.id },
+    });
+
+    const files = applicationFiles.filter((file) => {
+      const [fileFolder] = file.path.split('/');
+
+      return ALLOWED_APPLICATION_FILE_FOLDERS.some(
+        (allowedFileFolder) => allowedFileFolder === fileFolder,
+      );
     });
 
     const result: CompleteApplicationFileUploadsResultDTO = {

@@ -11,9 +11,11 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { buildFileUploadPrincipalFromAuthContext } from 'src/engine/core-modules/file/file-upload/utils/build-file-upload-principal-from-auth-context.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import {
   FilesFieldException,
@@ -21,8 +23,10 @@ import {
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
+import { findFilesFieldMetadataOrThrow } from 'src/engine/core-modules/file/utils/find-files-field-metadata-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -37,6 +41,7 @@ export class FilesFieldService {
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async uploadFile({
@@ -45,12 +50,14 @@ export class FilesFieldService {
     workspaceId,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier,
+    authContext,
   }: {
     file: Buffer;
     filename: string;
     workspaceId: string;
     fieldMetadataId?: string;
     fieldMetadataUniversalIdentifier?: string;
+    authContext?: WorkspaceAuthContext;
   }): Promise<FileWithSignedUrlDTO> {
     if (!fieldMetadataId && !fieldMetadataUniversalIdentifier) {
       throw new FilesFieldException(
@@ -62,6 +69,21 @@ export class FilesFieldService {
       );
     }
 
+    const fieldMetadata = await findFilesFieldMetadataOrThrow({
+      fieldMetadataRepository: this.fieldMetadataRepository,
+      workspaceId,
+      fieldMetadataId,
+      fieldMetadataUniversalIdentifier,
+    });
+
+    if (isDefined(authContext)) {
+      await this.permissionsService.assertApplicationCanUpdateFieldOrThrow({
+        workspaceId,
+        authContext,
+        fieldMetadataId: fieldMetadata.id,
+      });
+    }
+
     const { ext } = await extractFileInfoOrThrow({
       file,
       filename,
@@ -69,19 +91,6 @@ export class FilesFieldService {
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
-
-    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
-      workspaceId,
-      {
-        select: ['applicationId', 'universalIdentifier'],
-        where: {
-          ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
-          ...(fieldMetadataUniversalIdentifier
-            ? { universalIdentifier: fieldMetadataUniversalIdentifier }
-            : {}),
-        },
-      },
-    );
 
     const application = await this.applicationRepository.findOneOrFail({
       where: {
@@ -100,6 +109,9 @@ export class FilesFieldService {
       settings: {
         isTemporaryFile: true,
         toDelete: false,
+        uploadPrincipal: isDefined(authContext)
+          ? buildFileUploadPrincipalFromAuthContext(authContext)
+          : undefined,
       },
     });
 

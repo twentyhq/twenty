@@ -4,6 +4,7 @@ import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { type AppLocale } from 'twenty-shared/translations';
 import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { CustomError } from 'twenty-shared/utils';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -45,7 +46,10 @@ const mockUnmountEngineCommand = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboardWithoutSuccessToast = jest.fn();
-const mockDirectUploadFile = jest.fn();
+const mockUploadFileToFilesField = jest.fn();
+const mockUseFrontComponentFileUpload = jest.fn().mockReturnValue({
+  uploadFileToFilesField: mockUploadFileToFilesField,
+});
 const mockSetRecordPageActiveTabId = jest.fn();
 const mockStorageSet = jest.fn();
 const mockStorageDelete = jest.fn();
@@ -157,10 +161,9 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   }),
 }));
 
-jest.mock('@/file/hooks/useDirectFileUpload', () => ({
-  useDirectFileUpload: () => ({
-    uploadFile: mockDirectUploadFile,
-  }),
+jest.mock('@/front-components/hooks/useFrontComponentFileUpload', () => ({
+  useFrontComponentFileUpload: (params: unknown) =>
+    mockUseFrontComponentFileUpload(params),
 }));
 
 jest.mock('twenty-front-component-renderer', () => ({
@@ -950,11 +953,11 @@ describe('useFrontComponentExecutionContext', () => {
     beforeEach(() => {
       // clearAllMocks keeps implementations; drop resolved/rejected values
       // so these tests stay order-independent.
-      mockDirectUploadFile.mockReset();
+      mockUploadFileToFilesField.mockReset();
     });
 
     it('should upload a blob into a FILES field and return the stored file', async () => {
-      mockDirectUploadFile.mockResolvedValue({
+      mockUploadFileToFilesField.mockResolvedValue({
         id: 'file-1',
         path: 'files-field/file-1.webm',
         url: 'https://example.com/files/file-1.webm',
@@ -971,7 +974,7 @@ describe('useFrontComponentExecutionContext', () => {
           { fieldMetadataId: 'files-field-id', fileName: 'note.webm' },
         );
 
-      expect(mockDirectUploadFile).toHaveBeenCalledWith(
+      expect(mockUploadFileToFilesField).toHaveBeenCalledWith(
         expect.any(File),
         expect.objectContaining({ fieldMetadataId: 'files-field-id' }),
       );
@@ -986,8 +989,36 @@ describe('useFrontComponentExecutionContext', () => {
         },
       });
 
-      const [uploadedFile] = mockDirectUploadFile.mock.calls[0];
+      const [uploadedFile] = mockUploadFileToFilesField.mock.calls[0];
       expect(uploadedFile.name).toBe('note.webm');
+    });
+
+    it('should upload with the application identity of this front component rather than the user session', async () => {
+      mockUploadFileToFilesField.mockResolvedValue({
+        id: 'file-3',
+        path: 'files-field/file-3.webm',
+        url: 'https://example.com/files/file-3.webm',
+        size: 14,
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'files-field-id' },
+        );
+
+      expect(mockUseFrontComponentFileUpload).toHaveBeenCalledWith({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+      expect(mockUploadFileToFilesField).toHaveBeenCalledWith(
+        expect.any(File),
+        { fieldMetadataId: 'files-field-id' },
+      );
+      expect(uploadResult).toMatchObject({ status: 'uploaded' });
     });
 
     it('should reject non-FILES fields without uploading', async () => {
@@ -1005,7 +1036,7 @@ describe('useFrontComponentExecutionContext', () => {
         status: 'failed',
         reason: 'invalid-params',
       });
-      expect(mockDirectUploadFile).not.toHaveBeenCalled();
+      expect(mockUploadFileToFilesField).not.toHaveBeenCalled();
     });
 
     it('should reject malformed arguments without uploading', async () => {
@@ -1041,11 +1072,11 @@ describe('useFrontComponentExecutionContext', () => {
         status: 'failed',
         reason: 'invalid-params',
       });
-      expect(mockDirectUploadFile).not.toHaveBeenCalled();
+      expect(mockUploadFileToFilesField).not.toHaveBeenCalled();
     });
 
     it('should strip path separators from the file name and fall back when empty', async () => {
-      mockDirectUploadFile.mockResolvedValue({
+      mockUploadFileToFilesField.mockResolvedValue({
         id: 'file-2',
         path: 'files-field/file-2.webm',
         url: 'https://example.com/files/file-2.webm',
@@ -1061,7 +1092,7 @@ describe('useFrontComponentExecutionContext', () => {
         { fieldMetadataId: 'files-field-id', fileName: '../../etc/passwd' },
       );
 
-      const [traversalFile] = mockDirectUploadFile.mock.calls[0];
+      const [traversalFile] = mockUploadFileToFilesField.mock.calls[0];
       expect(traversalFile.name).toBe('....etcpasswd');
 
       await result.current.frontComponentHostCommunicationApi.uploadFile(
@@ -1069,12 +1100,12 @@ describe('useFrontComponentExecutionContext', () => {
         { fieldMetadataId: 'files-field-id', fileName: '///' },
       );
 
-      const [fallbackFile] = mockDirectUploadFile.mock.calls[1];
+      const [fallbackFile] = mockUploadFileToFilesField.mock.calls[1];
       expect(fallbackFile.name).toMatch(/^upload-.*\.webm$/);
     });
 
     it('should report upload failures as upload-failed', async () => {
-      mockDirectUploadFile.mockRejectedValue(new Error('network down'));
+      mockUploadFileToFilesField.mockRejectedValue(new Error('network down'));
 
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
@@ -1089,6 +1120,27 @@ describe('useFrontComponentExecutionContext', () => {
       expect(uploadResult).toEqual({
         status: 'failed',
         reason: 'upload-failed',
+      });
+    });
+
+    it('should report an upload the server refused as permission-denied', async () => {
+      mockUploadFileToFilesField.mockRejectedValue(
+        new CustomError('User does not have permission.', 'FORBIDDEN'),
+      );
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'files-field-id' },
+        );
+
+      expect(uploadResult).toEqual({
+        status: 'failed',
+        reason: 'permission-denied',
       });
     });
   });

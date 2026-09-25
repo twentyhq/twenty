@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { settings } from 'src/engine/constants/settings';
 import { FileUploadException } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
@@ -41,12 +42,21 @@ export class CreateFileUploadTool implements Tool {
 
     const { filename, size } = parseResult.data;
 
+    if (!isDefined(context.authContext)) {
+      return {
+        success: false,
+        message: 'Failed to create file upload',
+        error: 'Uploading a file requires an authenticated caller',
+      };
+    }
+
     try {
       const uploadTarget = await this.fileUploadService.createFileUpload({
         workspaceId: context.workspaceId,
         filename,
         size,
         fileFolder: FileFolder.AgentChat,
+        authContext: context.authContext,
       });
 
       this.logger.log(

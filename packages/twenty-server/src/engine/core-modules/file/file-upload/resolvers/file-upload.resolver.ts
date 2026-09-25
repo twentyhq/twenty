@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
@@ -58,6 +59,7 @@ export class FileUploadResolver {
       fileFolder,
       fieldMetadataId,
       fieldMetadataUniversalIdentifier,
+      authContext: getWorkspaceAuthContext(),
     });
   }
 
@@ -72,6 +74,7 @@ export class FileUploadResolver {
     return await this.fileUploadService.completeFileUpload({
       workspaceId,
       fileId,
+      authContext: getWorkspaceAuthContext(),
     });
   }
 }

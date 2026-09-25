@@ -7,6 +7,7 @@ import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('FilesFieldService.copyFileIntoFilesField', () => {
@@ -28,6 +29,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       fieldMetadataRepository,
       fileRepository,
       {} as FileUrlService,
+      {} as PermissionsService,
     );
 
   const buildChatFile = (overrides: Partial<FileEntity> = {}) =>

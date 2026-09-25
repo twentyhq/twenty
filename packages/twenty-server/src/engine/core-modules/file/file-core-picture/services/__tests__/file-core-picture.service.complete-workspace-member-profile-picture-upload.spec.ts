@@ -1,9 +1,15 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadExceptionCode } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 
 describe('FileCorePictureService.completeWorkspaceMemberProfilePictureUpload', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
   const pictureFileId = '20202020-0000-4000-8000-000000000002';
+  const authContext = {
+    type: 'user',
+    workspace: { id: workspaceId },
+    userWorkspaceId: '20202020-0000-4000-8000-000000000003',
+  } as unknown as WorkspaceAuthContext;
 
   const buildService = ({
     isTemporaryFileUnderLock,
@@ -60,6 +66,7 @@ describe('FileCorePictureService.completeWorkspaceMemberProfilePictureUpload', (
       service.completeWorkspaceMemberProfilePictureUpload({
         workspaceId,
         fileId: pictureFileId,
+        authContext,
       }),
     ).resolves.toMatchObject({ id: pictureFileId });
 
@@ -79,6 +86,7 @@ describe('FileCorePictureService.completeWorkspaceMemberProfilePictureUpload', (
       service.completeWorkspaceMemberProfilePictureUpload({
         workspaceId,
         fileId: pictureFileId,
+        authContext,
       }),
     ).rejects.toMatchObject({ code: FileUploadExceptionCode.BAD_REQUEST });
 

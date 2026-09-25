@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { FileUploadException } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { CompleteFileUploadToolInputZodSchema } from 'src/engine/core-modules/tool/tools/file-upload-tool/file-upload-tool.schema';
@@ -7,6 +9,7 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 @Injectable()
 export class CompleteFileUploadTool implements Tool {
@@ -39,10 +42,19 @@ export class CompleteFileUploadTool implements Tool {
 
     const { fileId } = parseResult.data;
 
+    if (!isDefined(context.authContext)) {
+      return {
+        success: false,
+        message: 'Failed to complete file upload',
+        error: 'Completing a file upload requires an authenticated caller',
+      };
+    }
+
     try {
       const completedFile = await this.fileUploadService.completeFileUpload({
         workspaceId: context.workspaceId,
         fileId,
+        authContext: context.authContext,
       });
 
       this.logger.log(
@@ -60,7 +72,10 @@ export class CompleteFileUploadTool implements Tool {
         },
       };
     } catch (error) {
-      if (error instanceof FileUploadException) {
+      if (
+        error instanceof FileUploadException ||
+        error instanceof PermissionsException
+      ) {
         return {
           success: false,
           message: 'Failed to complete file upload',

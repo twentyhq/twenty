@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { frontComponentApplicationAccessTokenRefreshComponentState } from '@/front-components/states/frontComponentApplicationAccessTokenRefreshComponentState';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import {
@@ -45,7 +46,12 @@ export const useRequestApplicationTokenRefresh = ({
     frontComponentId,
   );
 
-  const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
+  const applicationAccessTokenRefreshAtom = useAtomComponentStateCallbackState(
+    frontComponentApplicationAccessTokenRefreshComponentState,
+    frontComponentId,
+  );
+
+  const renewApplicationAccessToken = useCallback(async (): Promise<string> => {
     const refetchFrontComponentForNewTokenPair = async (): Promise<string> => {
       const result = await apolloClient.query<
         FindOneFrontComponentQuery,
@@ -112,6 +118,24 @@ export const useRequestApplicationTokenRefresh = ({
       throw error;
     }
   }, [apolloClient, applicationTokenPairAtom, frontComponentId, store]);
+
+  const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
+    const inFlightAccessTokenRefresh = store.get(
+      applicationAccessTokenRefreshAtom,
+    );
+
+    if (isDefined(inFlightAccessTokenRefresh)) {
+      return inFlightAccessTokenRefresh;
+    }
+
+    const accessTokenRefresh = renewApplicationAccessToken().finally(() => {
+      store.set(applicationAccessTokenRefreshAtom, null);
+    });
+
+    store.set(applicationAccessTokenRefreshAtom, accessTokenRefresh);
+
+    return accessTokenRefresh;
+  }, [applicationAccessTokenRefreshAtom, renewApplicationAccessToken, store]);
 
   return { requestAccessTokenRefresh };
 };

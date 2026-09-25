@@ -10,6 +10,7 @@ import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { settings } from 'src/engine/constants/settings';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
@@ -101,6 +102,7 @@ export class FileCorePictureResolver {
     return this.fileCorePictureService.completeWorkspaceLogoUpload({
       workspaceId,
       fileId,
+      authContext: getWorkspaceAuthContext(),
     });
   }
 
@@ -115,6 +117,7 @@ export class FileCorePictureResolver {
       {
         workspaceId,
         fileId,
+        authContext: getWorkspaceAuthContext(),
       },
     );
   }

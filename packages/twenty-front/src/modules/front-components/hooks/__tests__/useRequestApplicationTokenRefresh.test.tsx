@@ -18,11 +18,16 @@ jest.mock('@apollo/client/react', () => ({
 }));
 
 const tokenPairAtom = atom<ApplicationTokenPair | null>(null);
+const accessTokenRefreshAtom = atom<Promise<string> | null>(null);
 
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState',
   () => ({
-    useAtomComponentStateCallbackState: () => tokenPairAtom,
+    useAtomComponentStateCallbackState: (componentState: { key: string }) =>
+      componentState.key ===
+      'frontComponentApplicationAccessTokenRefreshComponentState'
+        ? accessTokenRefreshAtom
+        : tokenPairAtom,
   }),
 );
 
@@ -114,6 +119,76 @@ describe('useRequestApplicationTokenRefresh', () => {
         },
       }),
     );
+  });
+
+  it('should share one renewal between concurrent refresh requests', async () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    store.set(tokenPairAtom, buildTokenPair('old-access', 'old-refresh'));
+
+    mockMutate.mockResolvedValue({
+      data: {
+        renewApplicationToken: buildTokenPair(
+          'new-access-token',
+          'new-refresh-token',
+        ),
+      },
+    });
+
+    const { result } = renderHook(
+      () =>
+        useRequestApplicationTokenRefresh({
+          frontComponentId: FRONT_COMPONENT_ID,
+        }),
+      { wrapper },
+    );
+
+    let accessTokens: string[] = [];
+
+    await act(async () => {
+      accessTokens = await Promise.all([
+        result.current.requestAccessTokenRefresh(),
+        result.current.requestAccessTokenRefresh(),
+      ]);
+    });
+
+    expect(accessTokens).toEqual(['new-access-token', 'new-access-token']);
+    expect(mockMutate).toHaveBeenCalledTimes(1);
+  });
+
+  it('should renew again once the previous renewal has settled', async () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    store.set(tokenPairAtom, buildTokenPair('old-access', 'old-refresh'));
+
+    mockMutate.mockResolvedValue({
+      data: {
+        renewApplicationToken: buildTokenPair(
+          'new-access-token',
+          'new-refresh-token',
+        ),
+      },
+    });
+
+    const { result } = renderHook(
+      () =>
+        useRequestApplicationTokenRefresh({
+          frontComponentId: FRONT_COMPONENT_ID,
+        }),
+      { wrapper },
+    );
+
+    await act(async () => {
+      await result.current.requestAccessTokenRefresh();
+    });
+
+    await act(async () => {
+      await result.current.requestAccessTokenRefresh();
+    });
+
+    expect(mockMutate).toHaveBeenCalledTimes(2);
   });
 
   it('should fallback to refetching front component when refresh token is expired', async () => {

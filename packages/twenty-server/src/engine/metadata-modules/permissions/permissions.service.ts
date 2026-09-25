@@ -15,6 +15,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getAuthContextApplicationId } from 'src/engine/core-modules/auth/utils/get-auth-context-application-id.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
@@ -25,6 +27,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { assertAuthContextCanUpdateFieldOrThrow } from 'src/engine/metadata-modules/permissions/utils/assert-auth-context-can-update-field-or-throw.util';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -267,6 +270,44 @@ export class PermissionsService {
         userFriendlyMessage: msg`Authentication is required to access this feature. Please sign in and try again.`,
       },
     );
+  }
+
+  public async assertApplicationCanUpdateFieldOrThrow({
+    workspaceId,
+    authContext,
+    fieldMetadataId,
+  }: {
+    workspaceId: string;
+    authContext: WorkspaceAuthContext;
+    fieldMetadataId: string;
+  }): Promise<void> {
+    if (!isDefined(getAuthContextApplicationId(authContext))) {
+      return;
+    }
+
+    const {
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+    ]);
+
+    assertAuthContextCanUpdateFieldOrThrow({
+      authContext,
+      fieldMetadataId,
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+    });
   }
 
   // Naming an application that no longer exists is not the same as declaring

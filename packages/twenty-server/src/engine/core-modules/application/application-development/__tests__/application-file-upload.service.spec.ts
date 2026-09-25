@@ -350,6 +350,36 @@ describe('ApplicationFileUploadService', () => {
         },
       ]);
     });
+
+    it('should not complete a pending upload outside the application file folders', async () => {
+      fileRepository.find.mockResolvedValueOnce([
+        {
+          ...file,
+          id: 'files-field-file-id',
+          path: `${FileFolder.FilesField}/field-universal-identifier/document.pdf`,
+        },
+      ]);
+      fileUploadCompletionService.completeUploadsBatch.mockResolvedValueOnce(
+        [],
+      );
+
+      const result = await service.completeApplicationFileUploads({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        fileIds: ['files-field-file-id'],
+      });
+
+      expect(result.files).toEqual([]);
+      expect(result.errors).toEqual([
+        {
+          fileId: 'files-field-file-id',
+          message: expect.stringContaining('No pending upload found'),
+        },
+      ]);
+      expect(
+        fileUploadCompletionService.completeUploadsBatch,
+      ).toHaveBeenCalledWith([]);
+    });
   });
 
   describe('registration ownership', () => {

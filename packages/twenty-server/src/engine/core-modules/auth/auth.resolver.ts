@@ -692,19 +692,20 @@ export class AuthResolver {
     @Args({ name: 'size', type: () => Number })
     size: number,
   ): Promise<FileUploadTargetDTO> {
-    const workspace =
-      await this.fileCorePictureService.getPendingWorkspaceForLogoUploadOrThrow(
+    const authContext =
+      await this.fileCorePictureService.buildPendingWorkspaceLogoUploadAuthContextOrThrow(
         {
-          userId: currentUser.id,
+          user: currentUser,
           workspaceId,
         },
       );
 
     return this.fileUploadService.createFileUpload({
-      workspaceId: workspace.id,
+      workspaceId: authContext.workspace.id,
       filename,
       size,
       fileFolder: FileFolder.CorePicture,
+      authContext,
     });
   }
 
@@ -717,17 +718,18 @@ export class AuthResolver {
     @Args({ name: 'fileId', type: () => String })
     fileId: string,
   ): Promise<FileWithSignedUrlDTO> {
-    const workspace =
-      await this.fileCorePictureService.getPendingWorkspaceForLogoUploadOrThrow(
+    const authContext =
+      await this.fileCorePictureService.buildPendingWorkspaceLogoUploadAuthContextOrThrow(
         {
-          userId: currentUser.id,
+          user: currentUser,
           workspaceId,
         },
       );
 
     return this.fileCorePictureService.completeWorkspaceLogoUpload({
-      workspaceId: workspace.id,
+      workspaceId: authContext.workspace.id,
       fileId,
+      authContext,
     });
   }
 

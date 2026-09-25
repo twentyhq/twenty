@@ -147,8 +147,8 @@ See [Roles](/developers/extend/apps/config/roles) for finer-grained permissions.
 A rendered text field is useful, but users want a real document. Let's generate a
 **PDF** and store it on the record as a downloadable file.
 
-First, give the `document` object a `FILES` field to hold the PDF. Apps upload
-into their **own** files fields, so this field is what routes the upload:
+First, give the `document` object a `FILES` field to hold the PDF. Uploads target
+a files field, so this field is what routes the upload:
 
 ```ts filename="src/objects/document.object.ts"
 {
@@ -189,8 +189,8 @@ embedding a Unicode font.
 </Note>
 
 Then upload it and store the reference on the record. `uploadFile` sends the
-bytes straight to file storage and attaches them to your app-owned files field;
-the returned `id` is what you save:
+bytes straight to file storage for the `file` field; the returned `id` is what
+you save:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -224,11 +224,12 @@ The generated document now carries a downloadable PDF:
 </Frame>
 
 <Note>
-`uploadFile` only targets **app-owned** files fields (so uploads always require an
-app that owns the field, plus the `UPLOAD_FILE` role flag). That's why the PDF
-lands on the record's own `file` field — the same pattern the
+`uploadFile` needs the `UPLOAD_FILE` role flag plus update access to the object
+that owns the target files field, the same access the app needs to attach the file
+to a record. The default role above grants both, so the PDF can land on the
+record's own `file` field. The
 [call-recorder app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/call-recorder)
-uses for recordings.
+uploads recordings the same way.
 </Note>
 
 **After this step:** each generated document has a real, downloadable PDF. But
