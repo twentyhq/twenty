@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { getJobs } from 'twenty-sdk/logic-function';
@@ -88,6 +88,91 @@ const workspaceGraphql = async (
   }
 
   return payload.data;
+};
+
+const metadataGraphql = async <TData>(
+  query: string,
+  variables: Record<string, unknown>,
+): Promise<TData> => {
+  const response = await fetch(`${process.env.TWENTY_API_URL}/metadata`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+  const payload = (await response.json()) as {
+    data: TData;
+    errors?: unknown[];
+  };
+
+  if (!isUndefined(payload.errors)) {
+    throw new Error(
+      `Metadata GraphQL request failed: ${JSON.stringify(payload.errors)}`,
+    );
+  }
+
+  return payload.data;
+};
+
+const fetchApplicationAccessToken = async (): Promise<string> => {
+  const {
+    findApplicationRegistrationByUniversalIdentifier: applicationRegistration,
+  } = await metadataGraphql<{
+    findApplicationRegistrationByUniversalIdentifier: {
+      id: string;
+      oAuthClientId: string;
+    } | null;
+  }>(
+    `query FindApplicationRegistration($universalIdentifier: String!) {
+      findApplicationRegistrationByUniversalIdentifier(
+        universalIdentifier: $universalIdentifier
+      ) {
+        id
+        oAuthClientId
+      }
+    }`,
+    { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+  );
+
+  if (isNull(applicationRegistration)) {
+    throw new Error('Call recorder is not registered');
+  }
+
+  const {
+    rotateApplicationRegistrationClientSecret: { clientSecret },
+  } = await metadataGraphql<{
+    rotateApplicationRegistrationClientSecret: { clientSecret: string };
+  }>(
+    `mutation RotateApplicationRegistrationClientSecret($id: String!) {
+      rotateApplicationRegistrationClientSecret(id: $id) {
+        clientSecret
+      }
+    }`,
+    { id: applicationRegistration.id },
+  );
+  const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      grant_type: 'client_credentials',
+      client_id: applicationRegistration.oAuthClientId,
+      client_secret: clientSecret,
+    }),
+  });
+  const tokenResponse = (await response.json()) as {
+    access_token?: string;
+    error_description?: string;
+  };
+
+  if (!response.ok || isUndefined(tokenResponse.access_token)) {
+    throw new Error(
+      `Client credentials exchange failed: ${tokenResponse.error_description ?? response.statusText}`,
+    );
+  }
+
+  return tokenResponse.access_token;
 };
 
 type CalendarEventFixture = {
@@ -717,28 +802,7 @@ describe('call recorder app lifecycle (integration)', () => {
     workspaceId = readWorkspaceIdFromApiKey();
     availableCalendarEventFixtures =
       await discoverVisibleCalendarEventFixtures();
-
-    const metadataClient = new MetadataApiClient();
-    const { findManyApplications } = await metadataClient.query({
-      findManyApplications: { id: true, universalIdentifier: true },
-    });
-    const application = findManyApplications.find(
-      ({ universalIdentifier }) =>
-        universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
-    );
-
-    if (isUndefined(application)) {
-      throw new Error('Call recorder is not installed');
-    }
-
-    const { generateApplicationToken } = await metadataClient.mutation({
-      generateApplicationToken: {
-        __args: { applicationId: application.id },
-        applicationAccessToken: { token: true },
-      },
-    });
-    applicationAccessToken =
-      generateApplicationToken.applicationAccessToken.token;
+    applicationAccessToken = await fetchApplicationAccessToken();
   });
 
   beforeEach(() => {
