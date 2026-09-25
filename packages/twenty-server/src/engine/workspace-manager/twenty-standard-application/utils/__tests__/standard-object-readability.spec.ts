@@ -22,6 +22,7 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.targetPerson,
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
+  agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
 } as const;
 
 describe('Standard object readability', () => {
@@ -91,6 +92,23 @@ describe('Standard object readability', () => {
     });
   });
 
+  // A link inheriting from its record, as noteTarget does, would tell everyone
+  // who can read the record which private conversations are filed under it.
+  it('resolves its thread as the only parent of an agentChatThreadTarget', () => {
+    expect(
+      resolveParents('agentChatThreadTarget').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'threadId', parentNameSingular: 'agentChatThread' },
+    ]);
+  });
+
   it.each(inheritedObjectNames)(
     'declares %s INHERITED from its parent field',
     (objectName) => {
@@ -111,6 +129,7 @@ describe('Standard object readability', () => {
 
     expect(parentJoinColumnNames).toEqual(
       [
+        'targetAgentChatThreadId',
         'targetCompanyId',
         'targetDashboardId',
         'targetNoteId',
@@ -120,6 +139,24 @@ describe('Standard object readability', () => {
         'targetWorkflowId',
       ].sort(),
     );
+  });
+
+  it('resolves the agent chat thread as the parent of a chat attachment', () => {
+    expect(
+      resolveParents('attachment').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+              parentReadability: parent.parentFlatObjectMetadata.readability,
+            }
+          : parent.kind,
+      ),
+    ).toContainEqual({
+      joinColumnName: 'targetAgentChatThreadId',
+      parentNameSingular: 'agentChatThread',
+      parentReadability: MetadataReadability.PRIVATE,
+    });
   });
 
   it('resolves every target of a noteTarget as its parent, not the note', () => {

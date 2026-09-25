@@ -10,7 +10,7 @@ type GraphqlOperation = {
 
 // Hits the admin GraphQL schema (/admin-panel) with a guest user that lacks the
 // SECURITY permission flag, so it can assert the resolver-level guards reject it.
-export const makeAdminPanelAPIRequestWithGuestRole = (
+export const makeAdminPanelApiRequestWithGuestRole = (
   graphqlOperation: GraphqlOperation,
 ) => {
   const client = request(`http://localhost:${APP_PORT}`);

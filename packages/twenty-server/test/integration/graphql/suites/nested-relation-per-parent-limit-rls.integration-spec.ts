@@ -1,7 +1,7 @@
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   type CompanyNameRlsRoleSetup,
   VISIBLE_COMPANY_NAME_TOKEN,
@@ -46,7 +46,7 @@ describe('nested relation per-parent limit respects row-level permission predica
       value: VISIBLE_JOB_TITLE_TOKEN,
     });
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -55,7 +55,7 @@ describe('nested relation per-parent limit respects row-level permission predica
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -77,7 +77,7 @@ describe('nested relation per-parent limit respects row-level permission predica
   });
 
   afterAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -90,7 +90,7 @@ describe('nested relation per-parent limit respects row-level permission predica
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -103,7 +103,7 @@ describe('nested relation per-parent limit respects row-level permission predica
   });
 
   it('does not let hidden related records consume the per-parent limit', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',

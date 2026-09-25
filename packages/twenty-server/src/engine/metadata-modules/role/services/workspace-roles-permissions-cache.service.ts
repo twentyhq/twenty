@@ -205,6 +205,22 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           }
         }
 
+        if (
+          universalIdentifier ===
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier
+        ) {
+          const hasAiPermission =
+            role.canAccessAllTools ||
+            this.hasPermissionFlag(
+              roleRolePermissionFlags,
+              PermissionFlagType.AI,
+            );
+          canRead = canRead && hasAiPermission;
+          canUpdate = canUpdate && hasAiPermission;
+          canSoftDelete = canSoftDelete && hasAiPermission;
+          canDestroy = canDestroy && hasAiPermission;
+        }
+
         objectRecordsPermissions[objectMetadataId] = {
           canReadObjectRecords: canRead,
           canUpdateObjectRecords: canUpdate,
@@ -236,17 +252,23 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     permissionFlagType: PermissionFlagType,
   ): boolean {
     const hasPermissionFromRole = role.canUpdateAllSettings;
+    return (
+      hasPermissionFromRole ||
+      this.hasPermissionFlag(rolePermissionFlags, permissionFlagType)
+    );
+  }
+
+  private hasPermissionFlag(
+    rolePermissionFlags: RolePermissionFlagEntity[],
+    permissionFlagType: PermissionFlagType,
+  ): boolean {
     const permissionFlagUniversalIdentifier =
       SystemPermissionFlag[permissionFlagType];
-    const hasPermissionFromSettingPermissions = isDefined(
-      rolePermissionFlags.find(
-        (rolePermissionFlag) =>
-          this.getRolePermissionFlagUniversalIdentifier(rolePermissionFlag) ===
-          permissionFlagUniversalIdentifier,
-      ),
+    return rolePermissionFlags.some(
+      (flag) =>
+        this.getRolePermissionFlagUniversalIdentifier(flag) ===
+        permissionFlagUniversalIdentifier,
     );
-
-    return hasPermissionFromRole || hasPermissionFromSettingPermissions;
   }
 
   private getRolePermissionFlagUniversalIdentifier(

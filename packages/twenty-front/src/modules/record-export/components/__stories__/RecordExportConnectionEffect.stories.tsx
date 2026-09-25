@@ -62,7 +62,7 @@ const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
               id: 'export',
               filename: 'person.csv',
               progress,
-              downloadUrl:
+              downloadPath:
                 progress === 100
                   ? '/file/record-export/export?token=token'
                   : null,
@@ -114,7 +114,7 @@ export const AutomaticDownload: Story = {
       });
       expect(download.mock.instances[0]).toHaveAttribute(
         'href',
-        '/file/record-export/export?token=token',
+        `${REACT_APP_SERVER_BASE_URL}/file/record-export/export?token=token`,
       );
       await waitFor(() =>
         expect(canvas.getByRole('button', { name: 'Export' })).toBeEnabled(),

@@ -1,3 +1,4 @@
+import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
@@ -28,7 +29,7 @@ import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCente
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -144,7 +145,7 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-export const AiChatEditorSection = () => {
+const EditableAiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
@@ -212,4 +213,25 @@ export const AiChatEditorSection = () => {
       />
     </>
   );
+};
+
+export const AiChatEditorSection = () => {
+  const { t } = useLingui();
+  const isMobile = useIsMobile();
+  const access = useCurrentAiChatThreadAccess();
+  if (access !== 'writer') {
+    return (
+      <StyledInputArea isMobile={isMobile}>
+        <div role="status">
+          {access === 'loading'
+            ? t`Loading conversation…`
+            : access === 'unavailable'
+              ? t`This conversation is no longer available.`
+              : t`View only — You can read this conversation.`}
+        </div>
+        <AiChatStandaloneError />
+      </StyledInputArea>
+    );
+  }
+  return <EditableAiChatEditorSection />;
 };

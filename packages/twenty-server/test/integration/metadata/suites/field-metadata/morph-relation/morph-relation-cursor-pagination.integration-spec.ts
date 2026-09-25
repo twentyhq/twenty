@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -96,7 +96,7 @@ describe('morph relation cursor pagination', () => {
       label: 'Owner',
     });
 
-    await makeGraphqlAPIRequestWithApiKey(
+    await makeGraphqlApiRequestWithApiKey(
       createManyOperationFactory({
         objectMetadataSingularName: 'morphCursorPerson',
         objectMetadataPluralName: 'morphCursorPeople',
@@ -108,7 +108,7 @@ describe('morph relation cursor pagination', () => {
       }),
     ).expect(200);
 
-    await makeGraphqlAPIRequestWithApiKey(
+    await makeGraphqlApiRequestWithApiKey(
       createManyOperationFactory({
         objectMetadataSingularName: 'morphCursorCompany',
         objectMetadataPluralName: 'morphCursorCompanies',
@@ -120,7 +120,7 @@ describe('morph relation cursor pagination', () => {
       }),
     ).expect(200);
 
-    await makeGraphqlAPIRequestWithApiKey(
+    await makeGraphqlApiRequestWithApiKey(
       createManyOperationFactory({
         objectMetadataSingularName: 'morphCursorParent',
         objectMetadataPluralName: 'morphCursorParents',
@@ -175,7 +175,7 @@ describe('morph relation cursor pagination', () => {
           errors?: unknown;
           data: { morphCursorParents: MorphParentConnection };
         };
-      } = await makeGraphqlAPIRequestWithApiKey(
+      } = await makeGraphqlApiRequestWithApiKey(
         findManyOperationFactory({
           objectMetadataSingularName: 'morphCursorParent',
           objectMetadataPluralName: 'morphCursorParents',
