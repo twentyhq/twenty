@@ -1,7 +1,5 @@
 import { Scope } from '@nestjs/common';
 
-
-
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';

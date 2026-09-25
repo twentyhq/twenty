@@ -1,7 +1,5 @@
 import { Scope } from '@nestjs/common';
 
-
-
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
