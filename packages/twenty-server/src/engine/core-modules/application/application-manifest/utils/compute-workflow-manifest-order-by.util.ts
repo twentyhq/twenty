@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { DEFAULT_VISIBLE_ADDRESS_SUBFIELDS } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
@@ -28,7 +29,7 @@ export const computeWorkflowManifestOrderBy = ({
     const label = references.fieldByUniversalIdentifier?.get(
       target?.labelIdentifierFieldMetadataUniversalIdentifier ?? '',
     );
-    if (!label || label.type === FieldMetadataType.RELATION) {
+    if (!isDefined(label) || label.type === FieldMetadataType.RELATION) {
       return [{ [`${field.name}Id`]: order }];
     }
     return computeWorkflowManifestOrderBy({
@@ -70,7 +71,9 @@ export const computeWorkflowManifestOrderBy = ({
   const compositeSubField = compositeSubFields[field.type];
   return [
     {
-      [field.name]: compositeSubField ? { [compositeSubField]: order } : order,
+      [field.name]: isDefined(compositeSubField)
+        ? { [compositeSubField]: order }
+        : order,
     },
   ];
 };
