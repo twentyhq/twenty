@@ -2,12 +2,31 @@
 import { ClickHouseLogLevel, createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
   override: true,
 });
 
+const ALLOWED_NODE_ENVIRONMENTS: string[] = [
+  NodeEnvironment.DEVELOPMENT,
+  NodeEnvironment.TEST,
+];
+
 async function truncateClickHouseTables() {
+  const nodeEnvironment = process.env.NODE_ENV;
+
+  if (
+    !nodeEnvironment ||
+    !ALLOWED_NODE_ENVIRONMENTS.includes(nodeEnvironment)
+  ) {
+    console.error(
+      `Refusing to truncate ClickHouse tables with NODE_ENV=${nodeEnvironment}, only allowed in development or test.`,
+    );
+    process.exit(1);
+  }
+
   const clickHouseUrl = process.env.CLICKHOUSE_URL;
 
   if (!clickHouseUrl) {
