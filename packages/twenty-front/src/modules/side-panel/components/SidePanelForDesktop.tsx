@@ -26,6 +26,7 @@ import {
   type AnimationEvent,
   type TransitionEvent,
   useCallback,
+  useEffect,
   useState,
 } from 'react';
 import { getLocaleTextDirection } from 'twenty-shared/translations';
@@ -35,8 +36,15 @@ const StyledSidePanelWrapper = styled.div<{ isOpen: boolean }>`
   background: ${themeCssVariables.background.primary};
   flex-shrink: 0;
   min-width: 0;
+  overflow: hidden;
   position: relative;
+  transition: width calc(${themeCssVariables.animation.duration.normal} * 1s);
   width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
+
+  &[data-resizing='true'],
+  &[data-shrink-from-full-width='true'] {
+    transition: none;
+  }
 
   @keyframes sidePanelShrinkFromFullWidth {
     from {
@@ -64,10 +72,12 @@ const StyledSidePanel = styled.aside<{
   overflow: hidden;
   position: absolute;
   top: 0;
-  transform: ${({ isOpen }) => (isOpen ? 'none' : 'translateX(100%)')};
+  --tw-side-panel-closed-x: 100%;
+  transform: ${({ isOpen }) =>
+    isOpen ? 'none' : 'translateX(var(--tw-side-panel-closed-x))'};
 
   &:dir(rtl) {
-    transform: ${({ isOpen }) => (isOpen ? 'none' : 'translateX(-100%)')};
+    --tw-side-panel-closed-x: -100%;
   }
   transition: transform
     calc(${themeCssVariables.animation.duration.normal} * 1s);
@@ -103,6 +113,23 @@ export const SidePanelForDesktop = () => {
     useState(isSidePanelOpened);
   const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] =
     useState(false);
+  const [isResizingSidePanel, setIsResizingSidePanel] = useState(false);
+
+  useEffect(() => {
+    if (!isResizingSidePanel) {
+      return;
+    }
+
+    const handlePointerUp = () => {
+      setIsResizingSidePanel(false);
+    };
+
+    window.addEventListener('pointerup', handlePointerUp);
+
+    return () => {
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [isResizingSidePanel]);
 
   const handleContinueChatFromFullWidth = useCallback(() => {
     if (shouldReduceMotion === true) {
@@ -170,6 +197,7 @@ export const SidePanelForDesktop = () => {
   );
 
   const handleResizeStart = useCallback(() => {
+    setIsResizingSidePanel(true);
     setTableWidthResizeIsActive(false);
   }, [setTableWidthResizeIsActive]);
 
@@ -198,6 +226,7 @@ export const SidePanelForDesktop = () => {
       <StyledSidePanelWrapper
         isOpen={isSidePanelOpened}
         onAnimationEnd={handleAnimationEnd}
+        data-resizing={isResizingSidePanel}
         data-shrink-from-full-width={isShrinkingFromFullWidth}
         data-side-panel=""
         data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
