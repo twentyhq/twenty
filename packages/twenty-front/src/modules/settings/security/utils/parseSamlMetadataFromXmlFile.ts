@@ -95,7 +95,7 @@ export const parseSamlMetadataFromXmlFile = (
       throw new Error('X509Certificate is missing or empty');
 
     const singleSignOnServices = getAllByPrefixAndKey(
-      IDPSSODescriptor,
+      idpSsoDescriptor,
       'SingleSignOnService',
     ).map((service) => ({
       binding: service.getAttribute('Binding'),
