@@ -13,7 +13,7 @@ import {
   type DpaResolveContext,
   type ResolvedDpa,
   type ResolvedDpaBlock,
-} from 'src/engine/core-modules/dpa/types/dpa.types';
+} from 'src/engine/core-modules/dpa/types/dpa.type';
 import { type SubprocessorList } from 'src/engine/core-modules/dpa/types/subprocessor.type';
 
 const MERGE_FIELD_PATTERN = /\{\{([A-Z_]+)\}\}/g;

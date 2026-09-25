@@ -673,13 +673,13 @@ msgstr "Chuỗi trò chuyện của tác nhân"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent chat thread target"
-msgstr ""
+msgstr "Mục tiêu luồng trò chuyện của tác nhân."
 
 #. js-lingui-id: vQUuTU
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat thread targets"
-msgstr ""
+msgstr "Các mục tiêu luồng trò chuyện của tác nhân."
 
 #. js-lingui-id: d9XlI/
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1261,13 +1261,13 @@ msgstr "đã đính kèm một tập tin"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
-msgstr ""
+msgstr "Được đính kèm vào"
 
 #. js-lingui-id: a/olsN
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Attached to"
-msgstr ""
+msgstr "Được đính kèm vào"
 
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1335,7 +1335,7 @@ msgstr "Tập tin đính kèm"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the chat thread"
-msgstr ""
+msgstr "Tập tin đính kèm liên kết với luồng trò chuyện"
 
 #. js-lingui-id: 4hKZBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -2351,19 +2351,19 @@ msgstr "Cuộc trò chuyện"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the company"
-msgstr ""
+msgstr "Các cuộc trò chuyện gắn với công ty"
 
 #. js-lingui-id: rRV3D2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the contact"
-msgstr ""
+msgstr "Các cuộc trò chuyện gắn với liên hệ"
 
 #. js-lingui-id: ro3F4h
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
-msgstr ""
+msgstr "Các cuộc trò chuyện gắn với cơ hội"
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3406,7 +3406,7 @@ msgstr "Đã từ chối"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Attachment Layout"
-msgstr ""
+msgstr "Bố cục tập tin đính kèm mặc định"
 
 #. js-lingui-id: RbQaAF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -5447,6 +5447,11 @@ msgstr "ID"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "ID field cannot be searched"
 msgstr "Không thể tìm kiếm trường ID"
+
+#. js-lingui-id: TGM/Xy
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider already exists."
+msgstr ""
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -9354,7 +9359,7 @@ msgstr "Người nhận"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Record an agent chat thread is attached to"
-msgstr ""
+msgstr "Bản ghi mà luồng trò chuyện của tác nhân được đính kèm vào"
 
 #. js-lingui-id: EESfI5
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9405,7 +9410,7 @@ msgstr "Không tìm thấy Widget bảng bản ghi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Record Targets"
-msgstr ""
+msgstr "Bản ghi đích"
 
 #. js-lingui-id: BwOej2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -9413,7 +9418,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Record the chat is attached to"
-msgstr ""
+msgstr "Bản ghi mà cuộc trò chuyện được đính kèm vào"
 
 #. js-lingui-id: tsYhp1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9443,7 +9448,7 @@ msgstr "Tóm tắt bản ghi âm"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
-msgstr ""
+msgstr "Các bản ghi mà luồng này được đính kèm vào"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts

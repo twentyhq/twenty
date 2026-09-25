@@ -135,6 +135,9 @@ const innerServerStart = async (
   const volumeStorage = isTest
     ? 'twenty-app-dev-test-storage'
     : 'twenty-app-dev-storage';
+  const volumeClickHouse = isTest
+    ? 'twenty-app-dev-test-clickhouse'
+    : 'twenty-app-dev-clickhouse';
 
   if (checkDockerRunning() && containerExists(containerName)) {
     const currentImage = getContainerImageTag(containerName);
@@ -261,6 +264,8 @@ const innerServerStart = async (
         `SERVER_URL=http://localhost:${port}`,
         '-v',
         `${volumeData}:/data/postgres`,
+        '-v',
+        `${volumeClickHouse}:/data/clickhouse`,
         '-v',
         `${volumeStorage}:/app/packages/twenty-server/.local-storage`,
         image,

@@ -12,7 +12,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { CALDAV_UNVERSIONED_RESOURCE } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/constants/caldav-unversioned-resource.constant';
-import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
+import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor.type';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
 import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
 import { isEventCalendar } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-calendar.util';
@@ -24,7 +24,7 @@ import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-ev
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
 import { resolveCalDavResourceVersion } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/resolve-caldav-resource-version.util';
 import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 type CalendarSyncResult = {
   calendarUrl: string;

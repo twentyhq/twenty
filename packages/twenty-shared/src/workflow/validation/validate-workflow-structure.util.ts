@@ -4,7 +4,7 @@ import {
   type ValidatableWorkflowStep,
   type WorkflowValidationIssue,
   type WorkflowValidationResult,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { buildWorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { validateWorkflowGraph } from '@/workflow/validation/utils/validate-workflow-graph.util';
 import { validateWorkflowStepParams } from '@/workflow/validation/utils/validate-workflow-step-params.util';

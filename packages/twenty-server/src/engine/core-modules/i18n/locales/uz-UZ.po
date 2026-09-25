@@ -673,13 +673,13 @@ msgstr "Agent suhbat mavzusi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent chat thread target"
-msgstr ""
+msgstr "Agent suhbat zanjiri maqsadi"
 
 #. js-lingui-id: vQUuTU
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat thread targets"
-msgstr ""
+msgstr "Agent suhbat zanjiri maqsadlari"
 
 #. js-lingui-id: d9XlI/
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1261,13 +1261,13 @@ msgstr "fayl biriktirdi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
-msgstr ""
+msgstr "Biriktirilgan"
 
 #. js-lingui-id: a/olsN
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Attached to"
-msgstr ""
+msgstr "Biriktirilgan"
 
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1335,7 +1335,7 @@ msgstr "Ilova qilingan fayllar"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the chat thread"
-msgstr ""
+msgstr "Suhbat zanjiriga bog‘langan ilova qilingan fayllar"
 
 #. js-lingui-id: 4hKZBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -2351,19 +2351,19 @@ msgstr "Chatlar"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the company"
-msgstr ""
+msgstr "Kompaniya bilan bogʻlangan suhbatlar"
 
 #. js-lingui-id: rRV3D2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the contact"
-msgstr ""
+msgstr "Kontakt bilan bogʻlangan suhbatlar"
 
 #. js-lingui-id: ro3F4h
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
-msgstr ""
+msgstr "Imkoniyat bilan bogʻlangan suhbatlar"
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3406,7 +3406,7 @@ msgstr "Rad etilgan"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Attachment Layout"
-msgstr ""
+msgstr "Sukut bo‘yicha ilova qilingan fayllar maketi"
 
 #. js-lingui-id: RbQaAF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -5447,6 +5447,11 @@ msgstr "ID"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "ID field cannot be searched"
 msgstr "ID maydonida qidirib bo‘lmaydi"
+
+#. js-lingui-id: TGM/Xy
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider already exists."
+msgstr ""
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -9354,7 +9359,7 @@ msgstr "Qabul qiluvchilar"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Record an agent chat thread is attached to"
-msgstr ""
+msgstr "Agent suhbat zanjiri biriktirilgan yozuv"
 
 #. js-lingui-id: EESfI5
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9405,7 +9410,7 @@ msgstr "Yozuvlar jadvali vidjeti topilmadi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Record Targets"
-msgstr ""
+msgstr "Yozuv maqsadlari"
 
 #. js-lingui-id: BwOej2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -9413,7 +9418,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Record the chat is attached to"
-msgstr ""
+msgstr "Suhbat biriktirilgan yozuv"
 
 #. js-lingui-id: tsYhp1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9443,7 +9448,7 @@ msgstr "Yozuvning qisqacha mazmuni"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
-msgstr ""
+msgstr "Ushbu zanjir biriktirilgan yozuvlar"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
