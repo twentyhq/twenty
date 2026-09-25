@@ -227,6 +227,14 @@ export class MessagingWebhookSubscriptionService {
       return;
     }
 
+    if (
+      !this.webhookSubscriptionDriverFactory.isProviderSupported(
+        connectedAccount.provider,
+      )
+    ) {
+      return;
+    }
+
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
       connectedAccount.provider,
     );
@@ -281,6 +289,13 @@ export class MessagingWebhookSubscriptionService {
       return;
     }
 
+    if (
+      messageChannel.webhookSubscriptionStatus !==
+      WebhookSubscriptionStatus.ACTIVE
+    ) {
+      return;
+    }
+
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: {
         id: messageChannel.connectedAccountId,
@@ -292,12 +307,25 @@ export class MessagingWebhookSubscriptionService {
       return;
     }
 
+    if (
+      !this.webhookSubscriptionDriverFactory.isProviderSupported(
+        connectedAccount.provider,
+      )
+    ) {
+      return;
+    }
+
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
       connectedAccount.provider,
     );
 
     try {
       await driver.deleteSubscription(this.toContext(messageChannel));
+
+      await this.webhookSubscriptionStatusService.markAsExpired(
+        WebhookSubscriptionChannelType.MESSAGING,
+        messageChannelId,
+      );
 
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeleted,
@@ -337,11 +365,6 @@ export class MessagingWebhookSubscriptionService {
     }
 
     await this.deleteSubscription(messageChannelId, workspaceId);
-
-    await this.webhookSubscriptionStatusService.markAsExpired(
-      WebhookSubscriptionChannelType.MESSAGING,
-      messageChannelId,
-    );
   }
 
   private buildMetricAttributes(provider: string) {

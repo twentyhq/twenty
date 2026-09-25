@@ -1,5 +1,5 @@
+import { LinkType } from '@/ui/field/display/components/SocialLink/LinkType';
 import { checkUrlType } from '~/utils/checkUrlType';
-import { LinkType } from 'twenty-ui/primitives/navigation';
 
 describe('checkUrlType', () => {
   it('should detect LinkedIn urls', () => {

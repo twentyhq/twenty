@@ -1,22 +1,19 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  AnimatedCheckmark,
   AvatarGroup,
-  AvatarOrIcon,
-  Checkmark,
-  ColorSample,
   CommandBlock,
-  LinkChip,
   NotificationCounter,
-  Pill,
-  StyledTintedIconTileContainer,
   TintedIconTile,
+} from 'twenty-ui/components';
+import { IconStar } from 'twenty-ui/icon';
+import {
   Avatar,
   Chip,
+  ColorSample,
+  Pill,
   Status,
   Tag,
 } from 'twenty-ui/primitives/data-display';
-import { IconStar } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -25,10 +22,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'AnimatedCheckmark',
-    node: <AnimatedCheckmark isAnimating size={28} />,
-  },
   {
     name: 'Avatar',
     node: <Avatar name="John Doe" size="md" shape="circle" />,
@@ -45,14 +38,6 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'AvatarOrIcon',
-    node: <AvatarOrIcon name="Jane" Icon={IconStar} />,
-  },
-  {
-    name: 'Checkmark',
-    node: <Checkmark />,
-  },
-  {
     name: 'Chip',
     node: <Chip>Chip label</Chip>,
   },
@@ -63,13 +48,6 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   {
     name: 'CommandBlock',
     node: <CommandBlock commands={['npm install', 'npm run start']} />,
-  },
-  // KNOWN ISSUE (TDD): LinkChip renders a react-router Link and crashes
-  // because the sandbox provides no router context. Expected fix: SDK-injected
-  // Router whose navigator bridges to the host navigate API.
-  {
-    name: 'LinkChip',
-    node: <LinkChip to="/example">Link chip</LinkChip>,
   },
   {
     name: 'NotificationCounter',
@@ -82,14 +60,6 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   {
     name: 'Status',
     node: <Status color="green">Active</Status>,
-  },
-  {
-    name: 'StyledTintedIconTileContainer',
-    node: (
-      <StyledTintedIconTileContainer $dimension="32px">
-        <IconStar size={16} />
-      </StyledTintedIconTileContainer>
-    ),
   },
   {
     name: 'Tag',

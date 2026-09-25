@@ -95,6 +95,6 @@ If the user still wants the local Docker path and Docker is missing, share this 
 
 Only proceed to these when the user explicitly asks:
 
-- Use `develop-app` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, or front component registrations.
+- Use `develop-app` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, front component registrations, or settings menu items.
 - Use `../../references/design/front-component-ui.md` when the user wants to design or improve the UI of a Twenty front component.
 - When the user later makes changes to app entities, use `yarn twenty apply` to sync those changes. See the `manage-app` skill for sync workflow.

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { IconDotsVertical } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
+import { IconDotsVertical } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledActions = styled.div`

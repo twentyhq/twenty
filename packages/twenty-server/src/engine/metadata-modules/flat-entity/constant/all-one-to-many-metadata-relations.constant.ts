@@ -303,6 +303,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   connectionProvider: {},
   searchFieldMetadata: {},
   timelineActivityType: {},
+  settingsMenuItem: {},
   workflow: {},
   workflowVersion: {},
 } as const satisfies OneToManyMetadataRelationsProperties;

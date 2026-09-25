@@ -3,7 +3,7 @@ import { isErrorLike } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { type ToastOptions } from 'twenty-ui/primitives/feedback';
+import { type ToastOptions } from 'twenty-ui/components';
 
 import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-record-from-apollo-error.util';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';

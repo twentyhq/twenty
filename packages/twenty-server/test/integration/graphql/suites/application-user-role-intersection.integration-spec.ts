@@ -8,7 +8,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -159,13 +159,11 @@ describe('An application acting for a user is bound by both roles', () => {
 
     // Minted with the admin token, so it carries that admin's userId and
     // userWorkspaceId alongside the applicationId.
-    const { data } = await generateApplicationToken({
+    const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId,
-      expectToFail: false,
     });
 
-    applicationAccessToken =
-      data.generateApplicationToken.applicationAccessToken.token;
+    applicationAccessToken = tokenPair.applicationAccessToken.token;
   }, 120000);
 
   afterAll(async () => {

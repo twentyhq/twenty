@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
+import { TintedIconTile } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { useTheme } from 'twenty-ui/theme-constants';
 

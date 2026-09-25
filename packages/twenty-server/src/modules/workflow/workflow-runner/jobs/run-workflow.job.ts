@@ -14,6 +14,7 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
+import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
@@ -259,7 +260,22 @@ export class RunWorkflowJob {
     const hasStepsToExecute =
       isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0;
 
-    if (!hasStepsToSkipOrFailSafely && !hasStepsToExecute) {
+    const steps = workflowRun.state?.flow?.steps ?? [];
+
+    const hasNoMoreStepsToRun =
+      !hasStepsToSkipOrFailSafely && !hasStepsToExecute;
+
+    if (
+      hasNoMoreStepsToRun &&
+      workflowShouldKeepRunning({
+        stepInfos: workflowRun.state?.stepInfos ?? {},
+        steps,
+      })
+    ) {
+      return;
+    }
+
+    if (hasNoMoreStepsToRun) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -268,8 +284,6 @@ export class RunWorkflowJob {
 
       return;
     }
-
-    const steps = workflowRun.state?.flow?.steps ?? [];
 
     if (hasStepsToSkipOrFailSafely) {
       await this.workflowExecutorWorkspaceService.skipAndFailSafelyStepsThenContinue(

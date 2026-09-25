@@ -477,6 +477,7 @@ export class RecordExportWorkspaceService {
       !(await this.permissionsService.userHasWorkspaceSettingPermission({
         workspaceId: authContext.workspace.id,
         userWorkspaceId: authContext.userWorkspaceId,
+        applicationId: undefined,
         setting: PermissionFlagType.EXPORT_CSV,
       }))
     ) {

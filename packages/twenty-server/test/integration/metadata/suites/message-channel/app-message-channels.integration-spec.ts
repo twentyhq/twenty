@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
@@ -351,22 +351,19 @@ describe('app message channels API (e2e)', () => {
     // Minted with the admin token, so it carries that admin's userWorkspaceId
     // alongside the owning applicationId — the shape an app gets when a member
     // triggered the run, rather than a cron.
-    const { data } = await generateApplicationToken({
+    const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId: owningApplicationDbId,
-      expectToFail: false,
     });
 
-    owningApplicationToken =
-      data.generateApplicationToken.applicationAccessToken.token;
+    owningApplicationToken = tokenPair.applicationAccessToken.token;
 
-    const { data: otherApplicationTokenData } = await generateApplicationToken({
-      applicationId: otherApplicationDbId,
-      expectToFail: false,
-    });
+    const otherApplicationTokenPair =
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: otherApplicationDbId,
+      });
 
     otherApplicationToken =
-      otherApplicationTokenData.generateApplicationToken.applicationAccessToken
-        .token;
+      otherApplicationTokenPair.applicationAccessToken.token;
 
     ownConnectionId = uuidv4();
     otherAppConnectionId = uuidv4();

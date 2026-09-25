@@ -16,6 +16,22 @@ describe('API key role assignment permission', () => {
   let adminRoleId: string;
   let originalMemberRoleId: string;
   let apiKeyId: string;
+  let applicationRegistrationId: string;
+
+  const rotateClientSecretAs = (token?: string) =>
+    makeMetadataAPIRequest(
+      {
+        query: gql`
+          mutation RotateSecret($id: String!) {
+            rotateApplicationRegistrationClientSecret(id: $id) {
+              clientSecret
+            }
+          }
+        `,
+        variables: { id: applicationRegistrationId },
+      },
+      token,
+    );
 
   const createApiKeyAsJony = (roleId: string) =>
     makeMetadataApiRequest(
@@ -97,6 +113,25 @@ describe('API key role assignment permission', () => {
 
     apiKeyId = createApiKeyResponse.body.data.createApiKey.id;
 
+    const createRegistrationResponse = await makeMetadataAPIRequest({
+      query: gql`
+        mutation CreateApplicationRegistration(
+          $input: CreateApplicationRegistrationInput!
+        ) {
+          createApplicationRegistration(input: $input) {
+            applicationRegistration {
+              id
+            }
+          }
+        }
+      `,
+      variables: { input: { name: 'Rotation escalation target' } },
+    });
+
+    applicationRegistrationId =
+      createRegistrationResponse.body.data.createApplicationRegistration
+        .applicationRegistration.id;
+
     await updateWorkspaceMemberRole({
       input: {
         roleId: customRoleId,
@@ -117,6 +152,12 @@ describe('API key role assignment permission', () => {
 
     await testDataSource
       .query('DELETE FROM core."apiKey" WHERE id = $1', [apiKeyId])
+      .catch(() => {});
+
+    await testDataSource
+      .query('DELETE FROM core."applicationRegistration" WHERE id = $1', [
+        applicationRegistrationId,
+      ])
       .catch(() => {});
 
     await client
@@ -148,5 +189,27 @@ describe('API key role assignment permission', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  // A rotated secret is redeemable at /oauth/token for the application's own
+  // role, so rotating binds that role to the caller just as creating an API
+  // key does.
+  it('denies rotating an application registration client secret when the caller lacks ROLES permission', async () => {
+    const response = await rotateClientSecretAs(APPLE_JONY_MEMBER_ACCESS_TOKEN);
+
+    expect(
+      response.body.data?.rotateApplicationRegistrationClientSecret ?? null,
+    ).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('allows rotating an application registration client secret with ROLES permission', async () => {
+    const response = await rotateClientSecretAs();
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.rotateApplicationRegistrationClientSecret.clientSecret,
+    ).toEqual(expect.any(String));
   });
 });

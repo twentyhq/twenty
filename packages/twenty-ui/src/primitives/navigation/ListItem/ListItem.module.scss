@@ -129,6 +129,7 @@
     opacity: 0;
   }
 
+  .root[data-actions-visibility='always'] .actions,
   .root:hover .actions,
   .root:focus-within .actions {
     opacity: 1;

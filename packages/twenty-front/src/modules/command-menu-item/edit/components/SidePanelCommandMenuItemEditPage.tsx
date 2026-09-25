@@ -5,6 +5,7 @@ import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hook
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -12,23 +13,25 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { ContextStorePageType } from 'twenty-shared/types';
 import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
+import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
+import {
+  LightIconButton,
+  MenuItem,
+  MenuItemDraggable,
+} from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconPin,
   IconPinnedOff,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
-import { LightIconButton } from 'twenty-ui/components';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';

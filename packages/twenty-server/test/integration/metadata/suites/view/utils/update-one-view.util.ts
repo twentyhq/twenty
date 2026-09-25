@@ -12,11 +12,13 @@ export const updateOneView = async ({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: {
   viewId: string;
   input: UpdateViewInput;
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   updateView: ViewDTO;
 }> => {
@@ -26,7 +28,7 @@ export const updateOneView = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

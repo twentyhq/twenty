@@ -12,7 +12,7 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { v4 } from 'uuid';
 import {
   type Agent,

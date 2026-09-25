@@ -144,7 +144,10 @@
   },
   "overrides": [
     {
-      "files": ["src/modules/ui/input/components/NavigationButton.tsx"],
+      "files": [
+        "src/modules/ui/input/components/NavigationButton.tsx",
+        "src/modules/ui/navigation/link/components/LinkChip/LinkChip.tsx"
+      ],
       "rules": {
         "react/jsx-props-no-spreading": "off"
       }

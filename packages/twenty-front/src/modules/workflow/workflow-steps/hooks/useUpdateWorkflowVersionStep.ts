@@ -19,7 +19,7 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 import { useMutation } from '@apollo/client/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   UpdateCoreWorkflowVersionStepDocument,
   type UpdateWorkflowVersionStepInput,

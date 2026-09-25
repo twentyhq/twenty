@@ -303,11 +303,13 @@ export const buildRecordFromImportedStructuredRow = ({
             );
 
             recordToBuild[field.name] = {
+              ...compositeData,
               primaryPhoneNumber: parsedNumber,
               primaryPhoneCallingCode: `+${parsedCountryCallingCode}`,
             };
           } catch {
             recordToBuild[field.name] = {
+              ...compositeData,
               primaryPhoneNumber,
               primaryPhoneCallingCode:
                 stripSimpleQuotesFromString(

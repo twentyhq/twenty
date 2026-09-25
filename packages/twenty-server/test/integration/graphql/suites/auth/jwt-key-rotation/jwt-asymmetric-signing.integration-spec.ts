@@ -12,7 +12,7 @@ import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
 
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
@@ -278,16 +278,11 @@ describe('JWT Asymmetric Signing - seeded-workspace tokens (integration)', () =>
     expect(data?.findManyApplications).toBeDefined();
   });
 
-  it('signs new APPLICATION_ACCESS + APPLICATION_REFRESH tokens with ES256 + kid via generateApplicationToken', async () => {
-    const { data, errors } = await generateApplicationToken({
-      applicationId: seededApplicationId,
-      expectToFail: false,
-    });
-
-    expect(errors).toBeUndefined();
-
+  it('signs new APPLICATION_ACCESS + APPLICATION_REFRESH tokens with ES256 + kid', async () => {
     const { applicationAccessToken, applicationRefreshToken } =
-      data.generateApplicationToken;
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: seededApplicationId,
+      });
 
     const decodedAccess = decodeJwtCompleteOrThrow(
       applicationAccessToken.token,
@@ -311,16 +306,13 @@ describe('JWT Asymmetric Signing - seeded-workspace tokens (integration)', () =>
   });
 
   it('round-trips a new ES256 APPLICATION_REFRESH token through renewApplicationToken', async () => {
-    const { data } = await generateApplicationToken({
-      applicationId: seededApplicationId,
-      expectToFail: false,
-    });
+    const { applicationRefreshToken } =
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: seededApplicationId,
+      });
 
     const { data: renewedData } = await renewApplicationToken({
-      input: {
-        applicationRefreshToken:
-          data.generateApplicationToken.applicationRefreshToken.token,
-      },
+      input: { applicationRefreshToken: applicationRefreshToken.token },
       expectToFail: false,
     });
 
