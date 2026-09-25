@@ -14,6 +14,7 @@ import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/ut
 import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw.util';
 import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts.util';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page.util';
+import { resolveTeamsCalendarPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-page-url-or-throw.util';
 import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw.util';
 import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message.util';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
@@ -77,14 +78,16 @@ export const teamsListOrganizerTranscriptsHandler = async (
   }
 
   try {
-    const window = resolveTeamsMeetingWindowOrThrow(parameters);
-    const connection = await getTeamsConnectionForRequestOrThrow(context);
-    const page = await listTeamsCalendarPage({
-      accessToken: connection.accessToken,
-      window,
+    const calendarPageUrl = resolveTeamsCalendarPageUrlOrThrow({
+      window: resolveTeamsMeetingWindowOrThrow(parameters),
       ...(isNonEmptyString(parameters.nextPageUrl)
         ? { nextPageUrl: parameters.nextPageUrl }
         : {}),
+    });
+    const connection = await getTeamsConnectionForRequestOrThrow(context);
+    const page = await listTeamsCalendarPage({
+      accessToken: connection.accessToken,
+      url: calendarPageUrl,
     });
     const transcripts: ListedTranscript[] = [];
 
