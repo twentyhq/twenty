@@ -16,6 +16,7 @@ export const groupCommandMenuItemsBySection = (
     CREATE_RECORD: [],
     WORKSPACE: [],
     GO_TO: [],
+    DEVELOPER: [],
     FALLBACK: [],
   };
 

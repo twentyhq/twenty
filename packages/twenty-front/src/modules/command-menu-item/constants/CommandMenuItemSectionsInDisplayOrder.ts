@@ -8,4 +8,5 @@ export const COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER = [
   'CREATE_RECORD',
   'WORKSPACE',
   'GO_TO',
+  'DEVELOPER',
 ] as const satisfies readonly CommandMenuItemSection[];

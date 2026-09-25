@@ -31,6 +31,7 @@ import {
   IconArrowUpRight,
   IconBox,
   IconCheckbox,
+  IconCommand,
   IconLifebuoy,
   IconPlus,
   IconSearch,
@@ -50,6 +51,7 @@ const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
   CREATE_RECORD: IconPlus,
   WORKSPACE: IconApps,
   GO_TO: IconArrowUpRight,
+  DEVELOPER: IconCommand,
   FALLBACK: IconLifebuoy,
 };
 
@@ -129,6 +131,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         return t`Workspace`;
       case 'GO_TO':
         return t`Go to`;
+      case 'DEVELOPER':
+        return t`Developer`;
       case 'FALLBACK':
         return t`Fallback`;
     }
@@ -149,6 +153,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     }
   };
 
+  const getSectionAppActions = (section: CommandMenuItemSection) =>
+    appActions.filter((item) => item.section === section);
+
   const getSectionExtraItemIds = (section: CommandMenuItemSection) => {
     if (section === 'CURRENT_VIEW') {
       return coreViewCommandIds;
@@ -158,11 +165,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       return coreSelectionCommandIds;
     }
 
-    if (section === 'WORKSPACE') {
-      return appActions.map((item) => item.id);
-    }
-
-    return [];
+    return getSectionAppActions(section).map((item) => item.id);
   };
 
   const hasNoMatchingItems =
@@ -221,28 +224,27 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
             {(section === 'CURRENT_VIEW' || section === 'SELECTION') && (
               <CoreObjectsCommands section={section} />
             )}
-            {section === 'WORKSPACE' &&
-              appActions.map((item) => {
-                const handleClick = () => {
-                  item.onClick();
-                  closeSidePanelMenu();
-                };
+            {getSectionAppActions(section).map((item) => {
+              const handleClick = () => {
+                item.onClick();
+                closeSidePanelMenu();
+              };
 
-                return (
-                  <SelectableListItem
-                    key={item.id}
-                    itemId={item.id}
-                    onEnter={handleClick}
-                  >
-                    <CommandMenuItem
-                      id={item.id}
-                      label={item.label}
-                      Icon={item.Icon}
-                      onClick={handleClick}
-                    />
-                  </SelectableListItem>
-                );
-              })}
+              return (
+                <SelectableListItem
+                  key={item.id}
+                  itemId={item.id}
+                  onEnter={handleClick}
+                >
+                  <CommandMenuItem
+                    id={item.id}
+                    label={item.label}
+                    Icon={item.Icon}
+                    onClick={handleClick}
+                  />
+                </SelectableListItem>
+              );
+            })}
           </CommandMenuItemSectionGroup>
         );
       })}

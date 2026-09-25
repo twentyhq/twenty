@@ -1,20 +1,19 @@
-import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
-import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
-import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
 import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
   flex-shrink: 0;
@@ -35,24 +34,11 @@ export const SettingsNavigationDrawerContent = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
-  const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
-    isAdvancedModeEnabledState,
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const { setAdvancedMode } = useSetAdvancedMode();
+  const isLogsSettingsSectionEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
   );
-  const setLogConsoleDisplayMode = useSetAtomState(logConsoleDisplayModeState);
-  const setIsLogConsoleFullScreen = useSetAtomState(
-    isLogConsoleFullScreenState,
-  );
-  const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
-
-  const handleAdvancedModeChange = (isEnabled: boolean) => {
-    setIsAdvancedModeEnabled(isEnabled);
-
-    if (isEnabled) {
-      setLogConsoleSelectedLog(null);
-      setLogConsoleDisplayMode('open');
-      setIsLogConsoleFullScreen(false);
-    }
-  };
 
   return (
     <>
@@ -65,8 +51,10 @@ export const SettingsNavigationDrawerContent = () => {
           <AdvancedSettingsSwitch
             className={advancedSettingsSwitchClassName}
             isAdvancedModeEnabled={isAdvancedModeEnabled}
-            setIsAdvancedModeEnabled={handleAdvancedModeChange}
-            label={t`Advanced`}
+            setIsAdvancedModeEnabled={setAdvancedMode}
+            label={
+              isLogsSettingsSectionEnabled ? t`Developer mode` : t`Advanced`
+            }
             isCompact={!isNavigationDrawerExpanded}
           />
         </NavigationDrawerSection>
