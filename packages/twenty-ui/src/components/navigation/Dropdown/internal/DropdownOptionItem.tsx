@@ -10,6 +10,7 @@ import { useDropdownItemFocus } from './useDropdownItemFocus';
 
 export const DropdownOptionItem = ({
   selected,
+  indicator,
   onSelect,
   closeOnSelect,
   color,
@@ -69,7 +70,7 @@ export const DropdownOptionItem = ({
           render={render ?? <button type="button" />}
           disabled={disabled}
           selected={selected}
-          indicator={multiple ? 'checkbox' : 'check'}
+          indicator={indicator ?? (multiple ? 'checkbox' : 'check')}
           color={color}
           startIcon={startIcon}
           endIcon={endIcon}
