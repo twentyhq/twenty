@@ -423,6 +423,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
+    toggleMineFilterFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'toggleMineFilterFieldMetadataUniversalIdentifier',
+      isOverridable: true,
+    },
     visibility: {
       toCompare: true,
       toStringify: false,

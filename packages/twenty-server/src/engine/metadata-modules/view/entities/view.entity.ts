@@ -29,6 +29,7 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/add-view-kanban-column-width-upgrade-command-name.constant';
 import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-22/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
 import { ADD_VIEW_GROUP_LOAD_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-view-group-load-limit-upgrade-command-name.constant';
+import { ADD_TOGGLE_MINE_FILTER_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-43/add-toggle-mine-filter-field-metadata-id-to-view-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -54,6 +55,7 @@ export type ViewOverrides = {
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: SerializedRelation | null;
   calendarEndFieldMetadataId?: SerializedRelation | null;
+  toggleMineFilterFieldMetadataId?: SerializedRelation | null;
   visibility?: ViewVisibility;
   mainGroupByFieldMetadataId?: SerializedRelation | null;
   shouldHideEmptyGroups?: boolean;
@@ -70,6 +72,9 @@ export type ViewOverrides = {
 @Index('IDX_VIEW_VISIBILITY', ['visibility'])
 @Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])
 @Index('IDX_VIEW_CALENDAR_END_FIELD_METADATA', ['calendarEndFieldMetadataId'])
+@Index('IDX_VIEW_TOGGLE_MINE_FILTER_FIELD_METADATA', [
+  'toggleMineFilterFieldMetadataId',
+])
 @Index('IDX_VIEW_KANBAN_FIELD_METADATA', [
   'kanbanAggregateOperationFieldMetadataId',
 ])
@@ -196,6 +201,24 @@ export class ViewEntity
   )
   @JoinColumn({ name: 'calendarEndFieldMetadataId' })
   calendarEndFieldMetadata: Relation<FieldMetadataEntity> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_TOGGLE_MINE_FILTER_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  toggleMineFilterFieldMetadataId: string | null;
+
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.toggleMineFilterViews,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'toggleMineFilterFieldMetadataId' })
+  toggleMineFilterFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   mainGroupByFieldMetadataId: string | null;

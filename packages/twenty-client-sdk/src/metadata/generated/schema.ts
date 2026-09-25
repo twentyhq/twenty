@@ -546,6 +546,7 @@ export interface View {
     groupLoadLimit?: Scalars['Int']
     calendarFieldMetadataId?: Scalars['UUID']
     calendarEndFieldMetadataId?: Scalars['UUID']
+    toggleMineFilterFieldMetadataId?: Scalars['UUID']
     workspaceId: Scalars['UUID']
     anyFieldFilterValue?: Scalars['String']
     calendarLayout?: ViewCalendarLayout
@@ -4309,6 +4310,7 @@ export interface ViewGenqlSelection{
     groupLoadLimit?: boolean | number
     calendarFieldMetadataId?: boolean | number
     calendarEndFieldMetadataId?: boolean | number
+    toggleMineFilterFieldMetadataId?: boolean | number
     workspaceId?: boolean | number
     anyFieldFilterValue?: boolean | number
     calendarLayout?: boolean | number
@@ -7723,11 +7725,11 @@ id: Scalars['UUID']}
 
 export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),groupLoadLimit?: (Scalars['Int'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),toggleMineFilterFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),groupLoadLimit?: (Scalars['Int'] | null)}
+openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),toggleMineFilterFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),groupLoadLimit?: (Scalars['Int'] | null)}
 
 export interface UpsertViewWidgetInput {
 /** The id of the view widget (page layout widget). */

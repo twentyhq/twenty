@@ -34,8 +34,8 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "workflowVersion",
   "permissionFlag",
   "view",
-  "fieldMetadata",
   "role",
+  "fieldMetadata",
   "objectMetadata",
 ]
 `;

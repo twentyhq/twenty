@@ -144,6 +144,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "toggleMineFilterViewUniversalIdentifiers": [],
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -184,6 +185,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "toggleMineFilterViewUniversalIdentifiers": [],
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -226,6 +228,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "toggleMineFilterViewUniversalIdentifiers": [],
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -266,6 +269,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "toggleMineFilterViewUniversalIdentifiers": [],
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
