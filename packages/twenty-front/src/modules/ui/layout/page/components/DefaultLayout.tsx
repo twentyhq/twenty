@@ -18,7 +18,9 @@ const StyledLayout = styled.div`
   display: flex;
   flex-direction: column;
   height: calc(100dvh / var(--t-zoom, 1));
-  overflow: hidden;
+  // Clip instead of hide: a hidden overflow can still be scrolled by
+  // scrollIntoView, which shifts the whole app while the side panel slides in.
+  overflow: clip;
   position: relative;
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
   scrollbar-width: 4px;
