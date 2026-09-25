@@ -419,13 +419,11 @@ export class AuthResolver {
     @Args('origin') origin: string,
     @Context() context: { req: Request },
   ): Promise<AuthTokens> {
-    const {
-      sub: email,
-      authProvider,
-      workspaceId,
-    } = await this.loginTokenService.verifyLoginToken(
+    const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
       twoFactorAuthenticationVerificationInput.loginToken,
     );
+
+    const { sub: email, authProvider, workspaceId } = loginTokenPayload;
 
     const workspace = await this.validateWorkspaceAccess(origin, workspaceId);
 
@@ -437,6 +435,8 @@ export class AuthResolver {
       workspace.id,
       TwoFactorAuthenticationStrategy.TOTP,
     );
+
+    await this.loginTokenService.consumeLoginToken(loginTokenPayload);
 
     const authTokens = await this.authService.verify(
       email,
@@ -861,7 +861,7 @@ export class AuthResolver {
   private async validateAndDecodeLoginToken(
     loginToken: string,
   ): Promise<LoginTokenJwtPayload> {
-    return await this.loginTokenService.verifyLoginToken(loginToken);
+    return await this.loginTokenService.verifyAndConsumeLoginToken(loginToken);
   }
 
   private async validateWorkspaceAccess(
