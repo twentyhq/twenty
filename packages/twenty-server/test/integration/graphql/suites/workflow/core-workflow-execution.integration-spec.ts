@@ -1700,7 +1700,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const latestVersionId = randomUUID();
     await global.testDataSource.query(
       `INSERT INTO core."workflowVersion" (id, "workspaceId", "applicationId", "universalIdentifier", "coreWorkflowId", "workflowId", status, triggers, steps)
-       SELECT $2, "workspaceId", "applicationId", $2, "coreWorkflowId", NULL, 'ACTIVE', triggers, '[]'::jsonb FROM core."workflowVersion" WHERE id = $1`,
+       SELECT $2, "workspaceId", "applicationId", $2, "coreWorkflowId", NULL, 'DEACTIVATED', triggers, '[]'::jsonb FROM core."workflowVersion" WHERE id = $1`,
       [fixture.coreWorkflowVersionId, latestVersionId],
     );
     await global.testDataSource.query(
