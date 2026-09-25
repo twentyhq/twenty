@@ -2,20 +2,18 @@
 import { ClickHouseLogLevel, createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+// Read before dotenv overrides it, so an explicit NODE_ENV=production from the caller is not masked by .env
+const callerNodeEnvironment = process.env.NODE_ENV;
 
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
   override: true,
 });
 
-const ALLOWED_NODE_ENVIRONMENTS: string[] = [
-  NodeEnvironment.DEVELOPMENT,
-  NodeEnvironment.TEST,
-];
+const ALLOWED_NODE_ENVIRONMENTS = ['development', 'test'];
 
 async function truncateClickHouseTables() {
-  const nodeEnvironment = process.env.NODE_ENV;
+  const nodeEnvironment = callerNodeEnvironment ?? process.env.NODE_ENV;
 
   if (
     !nodeEnvironment ||
