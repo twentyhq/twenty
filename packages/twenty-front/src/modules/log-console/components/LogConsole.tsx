@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSyncExternalStore } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconButton, useToast } from 'twenty-ui/components';
 import {
   IconChevronDown,
@@ -18,6 +19,7 @@ import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouse
 import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
 import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
+import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
@@ -78,6 +80,8 @@ const StyledBarActions = styled.div`
 `;
 
 const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
+  container-name: log-console-body;
+  container-type: inline-size;
   display: flex;
   flex: ${({ isFullScreen }) => (isFullScreen ? '1' : 'none')};
   height: var(
@@ -87,12 +91,17 @@ const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
   min-height: ${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px;
 `;
 
-const StyledActiveSource = styled.div`
+const StyledActiveSource = styled.div<{ isDetailPanelOpen: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+
+  @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
+    display: ${({ isDetailPanelOpen }) =>
+      isDetailPanelOpen ? 'none' : 'flex'};
+  }
 `;
 
 const subscribeToWindowResize = (onWindowResize: () => void) => {
@@ -126,7 +135,9 @@ export const LogConsole = () => {
     logConsoleHeightState,
   );
   const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
-  const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
+  const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
+    logConsoleSelectedLogState,
+  );
   const windowHeight = useSyncExternalStore(
     subscribeToWindowResize,
     getWindowHeight,
@@ -190,10 +201,6 @@ export const LogConsole = () => {
     }
   };
 
-  const closeSelectedLog = () => {
-    setLogConsoleSelectedLog(null);
-  };
-
   const handleResizeStart = (height: number) => {
     if (height > 0) {
       openLogConsole();
@@ -206,7 +213,6 @@ export const LogConsole = () => {
     );
 
     if (height === 0) {
-      closeSelectedLog();
       setLogConsoleDisplayMode('collapsed');
       return;
     }
@@ -216,7 +222,6 @@ export const LogConsole = () => {
   };
 
   const toggleLogConsoleOpen = () => {
-    closeSelectedLog();
     setLogConsoleDisplayMode(isOpen ? 'collapsed' : 'open');
     setIsLogConsoleFullScreen(false);
   };
@@ -224,6 +229,10 @@ export const LogConsole = () => {
   const toggleLogConsoleFullScreen = () => {
     setLogConsoleDisplayMode('open');
     setIsLogConsoleFullScreen(!isFullScreen);
+  };
+
+  const closeSelectedLog = () => {
+    setLogConsoleSelectedLog(null);
   };
 
   const changeSource = (sourceId: string) => {
@@ -323,7 +332,11 @@ export const LogConsole = () => {
             bodyHeight={logConsoleBodyHeight}
             isFullScreen={isFullScreen}
           >
-            <StyledActiveSource>{renderActiveSource()}</StyledActiveSource>
+            <StyledActiveSource
+              isDetailPanelOpen={isDefined(logConsoleSelectedLog)}
+            >
+              {renderActiveSource()}
+            </StyledActiveSource>
             <LogConsoleDetailPanel />
           </StyledBody>
         )}

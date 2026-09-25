@@ -18,6 +18,7 @@ import { type JsonValue } from 'type-fest';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
+import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
@@ -27,6 +28,7 @@ import {
   SettingsTableCard,
   type TableItem,
 } from '@/settings/components/SettingsTableCard';
+import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -54,6 +56,11 @@ const StyledPanel = styled.aside`
   flex-direction: column;
   flex-shrink: 0;
   width: 400px;
+
+  @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
+    border-left: none;
+    width: 100%;
+  }
 `;
 
 const StyledTopBar = styled.div`
@@ -63,7 +70,7 @@ const StyledTopBar = styled.div`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
-  min-height: ${themeCssVariables.spacing[10]};
+  min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
@@ -85,7 +92,6 @@ const StyledTitle = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[2]};
   overflow-wrap: anywhere;
