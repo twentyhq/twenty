@@ -21,7 +21,6 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
-import { buildQuotaDefaultActiveValueKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-active-value-key.util';
 import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter-key.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -980,13 +979,8 @@ describe('UsageLimitQuotaService', () => {
         spenders: {},
       });
 
-    const mockActiveValueThenRemaining = (
-      activeValue: number | undefined,
-      remaining: number | undefined,
-    ) =>
-      cacheStorage.mget
-        .mockResolvedValueOnce([activeValue])
-        .mockResolvedValue([remaining]);
+    const mockRemaining = (remaining: number | undefined) =>
+      cacheStorage.mget.mockResolvedValue([remaining]);
 
     const buildEmailLimit = (overrides: Partial<FlatUsageLimit>) =>
       buildLimit({
@@ -997,25 +991,12 @@ describe('UsageLimitQuotaService', () => {
         ...overrides,
       });
 
-    const EMAIL_DEFAULT_SCOPE = {
-      workspaceId: 'workspace-1',
-      resourceType: UsageResourceType.EMAIL,
-      operationType: UsageOperationType.EMAIL_SEND,
-      spenderType: 'workspace' as const,
-      meter: 'quantity' as const,
-      periodUnit: 'day' as const,
-      periodStart: DAY_PERIOD.periodStart,
-    };
-
-    const buildDefaultCounterKey = (limitValue: number) =>
-      buildQuotaDefaultCounterKey({ ...EMAIL_DEFAULT_SCOPE, limitValue });
-
     beforeEach(() => {
       periodByUnit.day = DAY_PERIOD;
     });
 
     it('caps a workspace that stores no limit of its own', async () => {
-      mockActiveValueThenRemaining(1_000, 0);
+      mockRemaining(0);
 
       await expect(findEmailExhaustedScope()).resolves.toMatchObject({
         exhaustedKind: 'limit',
@@ -1027,7 +1008,7 @@ describe('UsageLimitQuotaService', () => {
     });
 
     it('warms the default counter against the configured limit value', async () => {
-      mockActiveValueThenRemaining(1_000, undefined);
+      mockRemaining(undefined);
       usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
         {
           operationType: UsageOperationType.EMAIL_SEND,
@@ -1055,23 +1036,6 @@ describe('UsageLimitQuotaService', () => {
         isDefault: false,
         limitValue: 50,
       });
-    });
-
-    it('drops a counter left behind by an earlier value of the config', async () => {
-      mockActiveValueThenRemaining(500, 600);
-
-      await findEmailExhaustedScope();
-
-      expect(cacheStorage.mdel).toHaveBeenCalledWith([
-        buildDefaultCounterKey(1_000),
-        buildDefaultCounterKey(500),
-      ]);
-      expect(cacheStorage.mset).toHaveBeenCalledWith([
-        expect.objectContaining({
-          key: buildQuotaDefaultActiveValueKey(EMAIL_DEFAULT_SCOPE),
-          value: 1_000,
-        }),
-      ]);
     });
   });
 });

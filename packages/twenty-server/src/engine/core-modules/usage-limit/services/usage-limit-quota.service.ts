@@ -37,12 +37,8 @@ import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
-import { buildQuotaDefaultActiveValueEntries } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-active-value-entries.util';
-import { buildQuotaDefaultActiveValueKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-active-value-key.util';
-import { buildQuotaDefaultKeyScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-key-scope.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
-import { buildSupersededQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-superseded-quota-default-counter-keys.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
@@ -412,11 +408,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
         return [];
       }
 
-      await this.retireSupersededDefaultCounters({
-        workspaceId: args.workspaceId,
-        counters,
-      });
-
       const remainings = await this.readRemainings({
         workspaceId: args.workspaceId,
         counters,
@@ -448,11 +439,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
       if (counters.length === 0) {
         return [];
       }
-
-      await this.retireSupersededDefaultCounters({
-        workspaceId: args.workspaceId,
-        counters,
-      });
 
       // The consume script only debits keys that exist: warm cold counters
       // first so a consume-only caller (workflow, logic function) is metered
@@ -570,57 +556,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
         amount: cost.creditsUsedMicro,
         attributes,
       });
-    }
-  }
-
-  private async retireSupersededDefaultCounters({
-    workspaceId,
-    counters,
-  }: {
-    workspaceId: string;
-    counters: QuotaCounter[];
-  }): Promise<void> {
-    const defaultCounters = counters.filter(
-      (counter): counter is LimitQuotaCounter =>
-        counter.kind === 'limit' && counter.isDefault,
-    );
-
-    if (defaultCounters.length === 0) {
-      return;
-    }
-
-    const now = Date.now();
-
-    const activeValueKeys = defaultCounters.map((counter) =>
-      buildQuotaDefaultActiveValueKey(
-        buildQuotaDefaultKeyScope({ workspaceId, counter }),
-      ),
-    );
-
-    const activeValues = await this.cacheStorage.mget<number>(activeValueKeys);
-
-    const supersededCounterKeys = buildSupersededQuotaDefaultCounterKeys({
-      workspaceId,
-      defaultCounters,
-      activeValues,
-    });
-
-    if (supersededCounterKeys.length > 0) {
-      await this.delUnderWarmLock({
-        workspaceId,
-        keys: supersededCounterKeys,
-      });
-    }
-
-    const activeValueEntries = buildQuotaDefaultActiveValueEntries({
-      defaultCounters,
-      activeValueKeys,
-      activeValues,
-      now,
-    });
-
-    if (activeValueEntries.length > 0) {
-      await this.cacheStorage.mset(activeValueEntries);
     }
   }
 
