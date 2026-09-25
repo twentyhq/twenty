@@ -75,6 +75,8 @@ describe('createRecordExportConnection', () => {
     'https://workspace.example.test',
     'https://custom-domain.example.test',
     'http://localhost:3000',
+    'https://workspace.example.test/twenty',
+    'http://localhost:3000/apps/twenty',
   ])('downloads through the authenticated API at %s', async (serverBaseUrl) => {
     mockServerBaseUrl = serverBaseUrl;
     const click = jest
@@ -101,6 +103,43 @@ describe('createRecordExportConnection', () => {
     );
     expect(click.mock.instances[0]).toHaveAttribute('download', 'person.csv');
   });
+
+  it.each([
+    'https://api.example.test/file/record-export/export',
+    'https://api.example.test/twenty/file/record-export/export',
+    'https://api.example.test/canonical/file/record-export/export',
+    '/file/record-export/export',
+    '/twenty/file/record-export/export',
+    'file/record-export/export',
+  ])(
+    'preserves the API base path when downloading %s',
+    async (downloadPath) => {
+      mockServerBaseUrl = 'https://workspace.example.test/twenty/';
+      const click = jest
+        .spyOn(HTMLAnchorElement.prototype, 'click')
+        .mockImplementation(() => {});
+      const finished = createRecordExportConnection().exportRecords({ input });
+
+      expect(createClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: 'https://workspace.example.test/twenty/metadata',
+          credentials: 'include',
+        }),
+      );
+      update({
+        progress: 100,
+        downloadUrl: `${downloadPath}?token=signed%2Btoken%2Fvalue%3D&expires=123`,
+      });
+
+      await expect(finished).resolves.toBeUndefined();
+      expect(click).toHaveBeenCalledTimes(1);
+      expect(click.mock.instances[0]).toHaveAttribute(
+        'href',
+        'https://workspace.example.test/twenty/file/record-export/export?token=signed%2Btoken%2Fvalue%3D&expires=123',
+      );
+      expect(click.mock.instances[0]).toHaveAttribute('download', 'person.csv');
+    },
+  );
 
   it('surfaces the server failure and closes the connection', async () => {
     const finished = createRecordExportConnection().exportRecords({ input });
