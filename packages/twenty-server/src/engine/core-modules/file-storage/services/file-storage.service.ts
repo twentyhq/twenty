@@ -6,7 +6,7 @@ import { type Readable } from 'stream';
 import { v4 } from 'uuid';
 
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type FindOptionsWhere,
   Like,
@@ -236,7 +236,7 @@ export class FileStorageService {
       .returning('id')
       .execute();
 
-    if (insertResult.raw.length > 0) {
+    if (isNonEmptyArray(insertResult.raw)) {
       await this.applyStorageStockDelta({
         workspaceId: resourceIdentifier.workspaceId,
         applicationId,
@@ -982,7 +982,7 @@ export class FileStorageService {
     });
   }
 
-  async copy({
+  private async copy({
     from,
     to,
   }: {
