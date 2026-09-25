@@ -126,6 +126,26 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
+  async updateAndReturn(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+    partialEntity: QueryDeepPartialEntity<T>,
+  ): Promise<T[]> {
+    this.assertWorkspaceId(workspaceId);
+
+    const { raw } = await this.repository
+      .createQueryBuilder()
+      .update()
+      .set(partialEntity)
+      .where(this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria))
+      .returning('*')
+      .execute();
+
+    return ((raw ?? []) as Record<string, unknown>[]).map((row) =>
+      this.repository.create(this.hydrateRawRow(row)),
+    );
+  }
+
   increment(
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
@@ -186,7 +206,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // DELETE ... RETURNING hands back raw driver output, which skips the
+  // UPDATE/DELETE ... RETURNING hand back raw driver output, which skips the
   // hydration a find would do, so column transformers have to be applied by
   // hand: a bigint column would otherwise read back as a string.
   private hydrateRawRow(row: Record<string, unknown>): DeepPartial<T> {

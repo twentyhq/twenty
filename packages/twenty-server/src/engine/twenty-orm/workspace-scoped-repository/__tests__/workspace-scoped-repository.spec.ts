@@ -58,6 +58,10 @@ describe('WorkspaceScopedRepository', () => {
       ['exists', () => scoped.exists(undefined as never)],
       ['existsBy', () => scoped.existsBy(undefined as never, {})],
       ['update', () => scoped.update(undefined as never, {}, {})],
+      [
+        'updateAndReturn',
+        () => scoped.updateAndReturn(undefined as never, {}, {}),
+      ],
       ['increment', () => scoped.increment(undefined as never, {}, 'count', 1)],
       ['decrement', () => scoped.decrement(undefined as never, {}, 'count', 1)],
       ['delete', () => scoped.delete(undefined as never, {})],
@@ -269,6 +273,73 @@ describe('WorkspaceScopedRepository', () => {
       ).toThrow(/do not include `workspaceId`/);
 
       expect(repository.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateAndReturn', () => {
+    const mockUpdateBuilder = (
+      repo: jest.Mocked<Repository<FakeEntity>>,
+      raw: unknown[],
+    ) => {
+      const builder = {
+        update: jest.fn().mockReturnThis(),
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockReturnThis(),
+        execute: jest.fn().mockResolvedValue({ raw }),
+      };
+
+      (repo.createQueryBuilder as jest.Mock).mockReturnValue(builder);
+      Object.assign(repo, {
+        metadata: {
+          columns: [
+            { propertyName: 'id', databaseName: 'id' },
+            { propertyName: 'status', databaseName: 'status' },
+          ],
+        },
+        manager: {
+          connection: {
+            driver: { prepareHydratedValue: (value: unknown) => value },
+          },
+        },
+      });
+      (repo.create as jest.Mock).mockImplementation((row) => row);
+
+      return builder;
+    };
+
+    it('merges workspaceId into the criteria and returns the updated rows', async () => {
+      const builder = mockUpdateBuilder(repository, [
+        { id: 'a', status: 'completed' },
+      ]);
+
+      const result = await scoped.updateAndReturn(
+        WORKSPACE_ID,
+        { id: 'a' },
+        { status: 'completed' },
+      );
+
+      expect(builder.set).toHaveBeenCalledWith({ status: 'completed' });
+      expect(builder.where).toHaveBeenCalledWith({
+        id: 'a',
+        workspaceId: WORKSPACE_ID,
+      });
+      expect(builder.returning).toHaveBeenCalledWith('*');
+      expect(result).toEqual([{ id: 'a', status: 'completed' }]);
+    });
+
+    it('rejects a caller-supplied workspaceId in the criteria', async () => {
+      const builder = mockUpdateBuilder(repository, []);
+
+      await expect(
+        scoped.updateAndReturn(
+          WORKSPACE_ID,
+          { id: 'a', workspaceId: OTHER_WORKSPACE_ID } as never,
+          { status: 'completed' },
+        ),
+      ).rejects.toThrow(/do not include `workspaceId`/);
+
+      expect(builder.execute).not.toHaveBeenCalled();
     });
   });
 
