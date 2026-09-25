@@ -12,7 +12,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { LogConsole } from '@/log-console/components/LogConsole';
-import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
@@ -171,10 +170,7 @@ const meta: Meta<PageDecoratorArgs> = {
     );
     jotaiStore.set(isAdvancedModeEnabledState.atom, true);
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
-    jotaiStore.set(
-      logConsoleHeightState.atom,
-      LOG_CONSOLE_HEIGHT_CONSTRAINTS.default,
-    );
+    jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
   },
   parameters: {

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSyncExternalStore } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, useToast } from 'twenty-ui/components';
+import { IconButton, LightIconButton, useToast } from 'twenty-ui/components';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -31,11 +31,14 @@ import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelec
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
+import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
-import { RESIZE_EDGE_WIDTH_PX } from '@/ui/layout/resizable-panel/constants/ResizeEdgeWidthPx';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
+import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -44,16 +47,20 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
-const LOG_CONSOLE_BAR_HEIGHT = 48;
-
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
 
 const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
 const StyledContainer = styled.div<{ isFullScreen: boolean }>`
+  ${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}: ${({ isFullScreen }) =>
+    isFullScreen ? `${APP_HEADER_HEIGHT}px` : TAB_LIST_HEIGHT};
+
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
-  border-top: 1px solid ${themeCssVariables.border.color.medium};
+  border-top: ${({ isFullScreen }) =>
+    isFullScreen
+      ? 'none'
+      : `1px solid ${themeCssVariables.border.color.medium}`};
   display: flex;
   flex-direction: column;
   inset: 0;
@@ -67,16 +74,20 @@ const StyledContainer = styled.div<{ isFullScreen: boolean }>`
 
 const StyledTabList = styled(TabList)`
   && {
-    height: ${LOG_CONSOLE_BAR_HEIGHT}px;
+    background-color: ${themeCssVariables.background.secondary};
+    height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE});
     padding-left: ${themeCssVariables.spacing[2]};
-    padding-top: ${RESIZE_EDGE_WIDTH_PX}px;
+  }
+
+  &&::after {
+    background-color: ${themeCssVariables.border.color.medium};
   }
 `;
 
 const StyledBarActions = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
@@ -113,6 +124,14 @@ const subscribeToWindowResize = (onWindowResize: () => void) => {
 
 const getWindowHeight = () => window.innerHeight;
 
+const StyledUpgradeCardContainer = styled.div`
+  box-sizing: border-box;
+  margin: auto;
+  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
+  padding: 0 ${themeCssVariables.spacing[8]};
+  width: 100%;
+`;
+
 export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -144,16 +163,14 @@ export const LogConsole = () => {
     getWindowHeight,
   );
 
+  const appHeight = windowHeight / getUiZoom();
   const logConsoleResizeConstraints = {
-    ...LOG_CONSOLE_HEIGHT_CONSTRAINTS,
     min: 0,
-    max:
-      windowHeight / getUiZoom() -
-      LOG_CONSOLE_BAR_HEIGHT -
-      LOG_CONSOLE_MIN_PAGE_HEIGHT,
+    max: appHeight - APP_HEADER_HEIGHT - LOG_CONSOLE_MIN_PAGE_HEIGHT,
+    default: appHeight / 2,
   };
   const logConsoleBodyHeight = Math.min(
-    logConsoleHeight,
+    logConsoleHeight ?? logConsoleResizeConstraints.default,
     logConsoleResizeConstraints.max,
   );
 
@@ -275,11 +292,13 @@ export const LogConsole = () => {
 
     if (isSourceLocked(activeSource)) {
       return (
-        <SettingsEnterpriseFeatureGateCard
-          title={t`Upgrade to access audit logs`}
-          description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
-          buttonTitle={t`Upgrade`}
-        />
+        <StyledUpgradeCardContainer>
+          <SettingsEnterpriseFeatureGateCard
+            title={t`Upgrade to access audit logs`}
+            description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
+            buttonTitle={t`Upgrade`}
+          />
+        </StyledUpgradeCardContainer>
       );
     }
 
@@ -298,27 +317,25 @@ export const LogConsole = () => {
           onChangeTab={changeSource}
           rightComponent={
             <StyledBarActions>
-              <IconButton
-                size="sm"
-                variant="ghost"
+              <LightIconButton
+                emphasis="subtle"
                 tooltip={openOrCollapseLabel}
                 aria-label={openOrCollapseLabel}
                 onClick={toggleLogConsoleOpen}
               >
                 {isOpen ? <IconChevronDown /> : <IconChevronUp />}
-              </IconButton>
-              <IconButton
-                size="sm"
-                variant="ghost"
+              </LightIconButton>
+              <LightIconButton
+                emphasis="subtle"
                 tooltip={fullScreenLabel}
                 aria-label={fullScreenLabel}
                 onClick={toggleLogConsoleFullScreen}
               >
                 {isFullScreen ? <IconMinimize /> : <IconMaximize />}
-              </IconButton>
+              </LightIconButton>
               <IconButton
                 size="sm"
-                variant="ghost"
+                variant="outline"
                 tooltip={closeLabel}
                 aria-label={closeLabel}
                 onClick={closeLogConsole}

@@ -1,4 +1,6 @@
+import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
@@ -37,12 +39,18 @@ export const SettingsNavigationDrawerContent = () => {
     isAdvancedModeEnabledState,
   );
   const setLogConsoleDisplayMode = useSetAtomState(logConsoleDisplayModeState);
+  const setIsLogConsoleFullScreen = useSetAtomState(
+    isLogConsoleFullScreenState,
+  );
+  const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
 
   const handleAdvancedModeChange = (isEnabled: boolean) => {
     setIsAdvancedModeEnabled(isEnabled);
 
     if (isEnabled) {
-      setLogConsoleDisplayMode('collapsed');
+      setLogConsoleSelectedLog(null);
+      setLogConsoleDisplayMode('open');
+      setIsLogConsoleFullScreen(false);
     }
   };
 
