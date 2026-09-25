@@ -6,6 +6,7 @@ import {
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RECORD_DELETE_BATCH_SIZE } from 'src/engine/twenty-orm/constants/record-delete-batch-size.constant';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { DeleteWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run/command/delete-workflow-runs.command';
 
@@ -46,6 +47,7 @@ describe('DeleteWorkflowRunsCommand', () => {
   >;
   let loggerLogSpy: jest.SpyInstance;
   let loggerErrorSpy: jest.SpyInstance;
+  let runInWorkspaceTransaction: jest.Mock;
 
   const setWorkflowRuns = (
     workflowRunsByWorkspaceId: Record<string, InMemoryRecord[]>,
@@ -74,6 +76,14 @@ describe('DeleteWorkflowRunsCommand', () => {
   beforeEach(() => {
     let currentWorkspaceId: string | undefined;
 
+    runInWorkspaceTransaction = jest.fn(
+      (work: (transactionScope: WorkspaceTransactionScope) => unknown) =>
+        work({
+          getRepository: () =>
+            getWorkflowRunTable(currentWorkspaceId as string).repository,
+        } as unknown as WorkspaceTransactionScope),
+    );
+
     const workspaceOrmManager = {
       executeInWorkspaceContext: jest.fn(
         async (
@@ -92,6 +102,7 @@ describe('DeleteWorkflowRunsCommand', () => {
       getRepository: jest.fn(
         () => getWorkflowRunTable(currentWorkspaceId as string).repository,
       ),
+      runInWorkspaceTransaction,
     };
 
     command = new DeleteWorkflowRunsCommand(
@@ -152,6 +163,7 @@ describe('DeleteWorkflowRunsCommand', () => {
       RECORD_DELETE_BATCH_SIZE,
       503,
     ]);
+    expect(runInWorkspaceTransaction).toHaveBeenCalledTimes(3);
     expect(getIds(deletedIdsByCall.flat().map((id) => ({ id })))).toEqual(
       getIds([...oldWorkflowRuns, ...oldSoftDeletedWorkflowRuns]),
     );

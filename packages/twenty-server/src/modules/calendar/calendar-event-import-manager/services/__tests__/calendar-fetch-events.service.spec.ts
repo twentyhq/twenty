@@ -8,6 +8,7 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { RECORD_DELETE_BATCH_SIZE } from 'src/engine/twenty-orm/constants/record-delete-batch-size.constant';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import {
@@ -58,6 +59,7 @@ describe('CalendarFetchEventsService', () => {
   let deleteOrphanedCalendarEvents: jest.Mock;
   let handleDriverException: jest.Mock;
   let updateCalendarChannel: jest.Mock;
+  let runInWorkspaceTransaction: jest.Mock;
 
   const setUp = ({
     calendarEventIdsToDelete,
@@ -82,6 +84,12 @@ describe('CalendarFetchEventsService', () => {
     );
 
   beforeEach(() => {
+    runInWorkspaceTransaction = jest.fn(
+      (work: (transactionScope: WorkspaceTransactionScope) => unknown) =>
+        work({
+          getRepository: () => associationTable.repository,
+        } as unknown as WorkspaceTransactionScope),
+    );
     getCalendarEvents = jest.fn();
     deleteOrphanedCalendarEvents = jest.fn();
     handleDriverException = jest.fn();
@@ -94,6 +102,7 @@ describe('CalendarFetchEventsService', () => {
           callback(),
         ),
         getRepository: jest.fn(() => associationTable.repository),
+        runInWorkspaceTransaction,
       } as unknown as WorkspaceOrmManager,
       {
         update: updateCalendarChannel,
@@ -174,6 +183,14 @@ describe('CalendarFetchEventsService', () => {
         ([{ calendarEventIds }]) => calendarEventIds.length,
       ),
     ).toEqual([RECORD_DELETE_BATCH_SIZE, RECORD_DELETE_BATCH_SIZE, 200]);
+    // Each full chunk takes one more read to confirm it is exhausted
+    expect(runInWorkspaceTransaction).toHaveBeenCalledTimes(5);
+    deleteOrphanedCalendarEvents.mock.invocationCallOrder.forEach(
+      (orphanCleanupOrder, batchIndex) =>
+        expect(orphanCleanupOrder).toBeGreaterThan(
+          runInWorkspaceTransaction.mock.invocationCallOrder[batchIndex],
+        ),
+    );
     expect(
       deleteOrphanedCalendarEvents.mock.calls
         .flatMap(([{ calendarEventIds }]) => calendarEventIds)

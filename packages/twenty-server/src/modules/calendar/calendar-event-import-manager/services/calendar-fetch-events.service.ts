@@ -119,37 +119,48 @@ export class CalendarFetchEventsService {
     cancelledEventExternalIds: string[];
     workspaceId: string;
   }): Promise<void> {
-    const calendarChannelEventAssociationRepository =
-      this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-        'calendarChannelEventAssociation',
-        { shouldBypassPermissionChecks: true },
-      );
-
     for (const cancelledEventExternalIdsChunk of chunk(
       cancelledEventExternalIds,
       RECORD_DELETE_BATCH_SIZE,
     )) {
       for (;;) {
         const associationsToDelete =
-          await calendarChannelEventAssociationRepository.find({
-            where: {
-              eventExternalId: Any(cancelledEventExternalIdsChunk),
-              calendarChannelId,
+          await this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              const calendarChannelEventAssociationRepository =
+                transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+                  'calendarChannelEventAssociation',
+                  { shouldBypassPermissionChecks: true },
+                );
+
+              const associations =
+                await calendarChannelEventAssociationRepository.find({
+                  where: {
+                    eventExternalId: Any(cancelledEventExternalIdsChunk),
+                    calendarChannelId,
+                  },
+                  select: { id: true, calendarEventId: true, deletedAt: true },
+                  take: RECORD_DELETE_BATCH_SIZE,
+                  // Soft-deleted associations of cancelled events are deleted too
+                  withDeleted: true,
+                });
+
+              if (associations.length > 0) {
+                await calendarChannelEventAssociationRepository.delete(
+                  associations.map(({ id }) => id),
+                );
+              }
+
+              return associations;
             },
-            select: { id: true, calendarEventId: true, deletedAt: true },
-            take: RECORD_DELETE_BATCH_SIZE,
-            // Soft-deleted associations of cancelled events are deleted too
-            withDeleted: true,
-          });
+          );
 
         if (associationsToDelete.length === 0) {
           break;
         }
 
-        await calendarChannelEventAssociationRepository.delete(
-          associationsToDelete.map(({ id }) => id),
-        );
-
+        // The cleaner runs its own transaction, so it only sees this batch
+        // once it is committed
         await this.calendarEventCleanerService.deleteOrphanedCalendarEvents({
           // Only deleting a live association can orphan its event
           calendarEventIds: associationsToDelete

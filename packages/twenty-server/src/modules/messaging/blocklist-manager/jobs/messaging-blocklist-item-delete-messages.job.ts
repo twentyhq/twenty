@@ -175,18 +175,6 @@ export class BlocklistItemDeleteMessagesJob {
     messageChannels: MessageChannelEntity[];
     handles: string[];
   }): Promise<void> {
-    const messageChannelMessageAssociationRepository =
-      this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        'messageChannelMessageAssociation',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const messageParticipantRepository =
-      this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
-        'messageParticipant',
-        { shouldBypassPermissionChecks: true },
-      );
-
     for (const messageChannel of messageChannels) {
       const messageChannelHandles = [
         messageChannel.handle,
@@ -209,53 +197,69 @@ export class BlocklistItemDeleteMessagesJob {
 
       let lastParticipantId: string | undefined;
 
-      for (;;) {
-        const participantCursorCondition = isDefined(lastParticipantId)
-          ? { id: MoreThan(lastParticipantId) }
-          : {};
-
-        const matchingParticipants = await messageParticipantRepository.find({
-          where: handleConditions.map((handleCondition) => ({
-            ...handleCondition,
-            ...participantCursorCondition,
-          })),
-          select: { id: true, messageId: true },
-          order: { id: 'ASC' },
-          take: RECORD_DELETE_BATCH_SIZE,
-        });
-
-        const messageIds = [
-          ...new Set(
-            matchingParticipants.map((participant) => participant.messageId),
-          ),
-        ];
-
-        // A channel has at most one live association per message, so this
-        // never returns more than RECORD_DELETE_BATCH_SIZE associations
-        const messageChannelMessageAssociationsToDelete =
-          messageIds.length > 0
-            ? await messageChannelMessageAssociationRepository.find({
-                where: {
-                  messageChannelId: messageChannel.id,
-                  messageId: In(messageIds),
-                },
-                select: { id: true },
-              })
-            : [];
-
-        if (messageChannelMessageAssociationsToDelete.length > 0) {
-          await messageChannelMessageAssociationRepository.delete(
-            messageChannelMessageAssociationsToDelete.map(({ id }) => id),
-          );
-        }
-
-        if (matchingParticipants.length < RECORD_DELETE_BATCH_SIZE) {
-          break;
-        }
-
+      do {
         lastParticipantId =
-          matchingParticipants[matchingParticipants.length - 1].id;
-      }
+          await this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              const messageParticipantRepository =
+                transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
+                  'messageParticipant',
+                  { shouldBypassPermissionChecks: true },
+                );
+              const messageChannelMessageAssociationRepository =
+                transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+                  'messageChannelMessageAssociation',
+                  { shouldBypassPermissionChecks: true },
+                );
+
+              const participantCursorCondition = isDefined(lastParticipantId)
+                ? { id: MoreThan(lastParticipantId) }
+                : {};
+
+              const matchingParticipants =
+                await messageParticipantRepository.find({
+                  where: handleConditions.map((handleCondition) => ({
+                    ...handleCondition,
+                    ...participantCursorCondition,
+                  })),
+                  select: { id: true, messageId: true },
+                  order: { id: 'ASC' },
+                  take: RECORD_DELETE_BATCH_SIZE,
+                });
+
+              const messageIds = [
+                ...new Set(
+                  matchingParticipants.map(
+                    (participant) => participant.messageId,
+                  ),
+                ),
+              ];
+
+              // A channel has at most one live association per message, so
+              // this never returns more than RECORD_DELETE_BATCH_SIZE rows
+              const messageChannelMessageAssociationsToDelete =
+                messageIds.length > 0
+                  ? await messageChannelMessageAssociationRepository.find({
+                      where: {
+                        messageChannelId: messageChannel.id,
+                        messageId: In(messageIds),
+                      },
+                      select: { id: true },
+                    })
+                  : [];
+
+              if (messageChannelMessageAssociationsToDelete.length > 0) {
+                await messageChannelMessageAssociationRepository.delete(
+                  messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+                );
+              }
+
+              return matchingParticipants.length < RECORD_DELETE_BATCH_SIZE
+                ? undefined
+                : matchingParticipants[matchingParticipants.length - 1].id;
+            },
+          );
+      } while (isDefined(lastParticipantId));
     }
   }
 }

@@ -6,6 +6,7 @@ import { In, MoreThan } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -148,36 +149,41 @@ export class MessagingMessageCleanerService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-                'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
-              );
+        let deletedAssociationCount: number;
 
-            for (;;) {
-              const associations =
-                await messageChannelMessageAssociationRepository.find({
-                  where: { messageChannelId },
-                  take: ORPHAN_CLEANUP_PAGE_SIZE,
-                  select: { id: true },
-                });
+        do {
+          deletedAssociationCount =
+            await this.workspaceOrmManager.runInWorkspaceTransaction(
+              async (transactionScope) => {
+                const messageChannelMessageAssociationRepository =
+                  transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+                    'messageChannelMessageAssociation',
+                    { shouldBypassPermissionChecks: true },
+                  );
 
-              if (associations.length === 0) {
-                break;
-              }
+                const associations =
+                  await messageChannelMessageAssociationRepository.find({
+                    where: { messageChannelId },
+                    take: ORPHAN_CLEANUP_PAGE_SIZE,
+                    select: { id: true },
+                  });
 
-              const ids = associations.map(({ id }) => id);
+                if (associations.length === 0) {
+                  return 0;
+                }
 
-              this.logger.log(
-                `WorkspaceId: ${workspaceId} Deleting ${ids.length} message channel message associations for channel ${messageChannelId}`,
-              );
+                const ids = associations.map(({ id }) => id);
 
-              await messageChannelMessageAssociationRepository.delete(ids);
-            }
-          },
-        );
+                this.logger.log(
+                  `WorkspaceId: ${workspaceId} Deleting ${ids.length} message channel message associations for channel ${messageChannelId}`,
+                );
+
+                await messageChannelMessageAssociationRepository.delete(ids);
+
+                return ids.length;
+              },
+            );
+        } while (deletedAssociationCount > 0);
       },
       authContext,
       { lite: true },
@@ -189,94 +195,120 @@ export class MessagingMessageCleanerService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            const messageThreadRepository =
-              transactionScope.getRepository<MessageThreadWorkspaceEntity>(
-                'messageThread',
-                { shouldBypassPermissionChecks: true },
-              );
-            const messageRepository =
-              transactionScope.getRepository<MessageWorkspaceEntity>(
-                'message',
-                { shouldBypassPermissionChecks: true },
-              );
-            const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-                'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
-              );
+        await this.deleteOrphansByKeyset((transactionScope, cursor) =>
+          this.deleteOrphanMessagesOfNextPage(transactionScope, cursor),
+        );
 
-            await this.deleteOrphansByKeyset(
-              async (cursor) => {
-                const page = await messageRepository.find({
-                  where: isDefined(cursor) ? { id: MoreThan(cursor) } : {},
-                  order: { id: 'ASC' },
-                  take: ORPHAN_CLEANUP_PAGE_SIZE,
-                  select: { id: true },
-                });
-
-                return page.map(({ id }) => id);
-              },
-              async (ids) => {
-                const messagesToDelete = await messageRepository.find({
-                  where: { id: In(ids) },
-                  select: { messageThreadId: true },
-                });
-                const candidateThreadIds = [
-                  ...new Set(
-                    messagesToDelete
-                      .map(({ messageThreadId }) => messageThreadId)
-                      .filter(isDefined),
-                  ),
-                ];
-
-                await messageRepository.delete(ids);
-
-                const survivingThreadIds = await this.findReferencedThreadIds(
-                  messageRepository,
-                  candidateThreadIds,
-                );
-
-                await this.participantTargetReconciliationService.reconcileMessageThreadTargets(
-                  {
-                    messageThreadIds: survivingThreadIds,
-                    transactionScope,
-                  },
-                );
-              },
-              (pageIds) =>
-                this.filterOrphans(pageIds, (ids) =>
-                  this.findReferencedMessageIds(
-                    messageChannelMessageAssociationRepository,
-                    ids,
-                  ),
-                ),
-            );
-
-            await this.deleteOrphansByKeyset(
-              async (cursor) => {
-                const page = await messageThreadRepository.find({
-                  where: isDefined(cursor) ? { id: MoreThan(cursor) } : {},
-                  order: { id: 'ASC' },
-                  take: ORPHAN_CLEANUP_PAGE_SIZE,
-                  select: { id: true },
-                });
-
-                return page.map(({ id }) => id);
-              },
-              (ids) => messageThreadRepository.delete(ids),
-              (pageIds) =>
-                this.filterOrphans(pageIds, (ids) =>
-                  this.findReferencedThreadIds(messageRepository, ids),
-                ),
-            );
-          },
+        await this.deleteOrphansByKeyset((transactionScope, cursor) =>
+          this.deleteOrphanThreadsOfNextPage(transactionScope, cursor),
         );
       },
       authContext,
       { lite: true },
     );
+  }
+
+  private async deleteOrphanMessagesOfNextPage(
+    transactionScope: WorkspaceTransactionScope,
+    cursor: string | undefined,
+  ): Promise<string | undefined> {
+    const messageRepository =
+      transactionScope.getRepository<MessageWorkspaceEntity>('message', {
+        shouldBypassPermissionChecks: true,
+      });
+    const messageChannelMessageAssociationRepository =
+      transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        'messageChannelMessageAssociation',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const page = await messageRepository.find({
+      where: isDefined(cursor) ? { id: MoreThan(cursor) } : {},
+      order: { id: 'ASC' },
+      take: ORPHAN_CLEANUP_PAGE_SIZE,
+      select: { id: true },
+    });
+
+    if (page.length === 0) {
+      return undefined;
+    }
+
+    const pageIds = page.map(({ id }) => id);
+
+    const orphanMessageIds = await this.filterOrphans(pageIds, (ids) =>
+      this.findReferencedMessageIds(
+        messageChannelMessageAssociationRepository,
+        ids,
+      ),
+    );
+
+    if (orphanMessageIds.length > 0) {
+      const messagesToDelete = await messageRepository.find({
+        where: { id: In(orphanMessageIds) },
+        select: { messageThreadId: true },
+      });
+      const candidateThreadIds = [
+        ...new Set(
+          messagesToDelete
+            .map(({ messageThreadId }) => messageThreadId)
+            .filter(isDefined),
+        ),
+      ];
+
+      await messageRepository.delete(orphanMessageIds);
+
+      const survivingThreadIds = await this.findReferencedThreadIds(
+        messageRepository,
+        candidateThreadIds,
+      );
+
+      await this.participantTargetReconciliationService.reconcileMessageThreadTargets(
+        {
+          messageThreadIds: survivingThreadIds,
+          transactionScope,
+        },
+      );
+    }
+
+    return pageIds[pageIds.length - 1];
+  }
+
+  private async deleteOrphanThreadsOfNextPage(
+    transactionScope: WorkspaceTransactionScope,
+    cursor: string | undefined,
+  ): Promise<string | undefined> {
+    const messageThreadRepository =
+      transactionScope.getRepository<MessageThreadWorkspaceEntity>(
+        'messageThread',
+        { shouldBypassPermissionChecks: true },
+      );
+    const messageRepository =
+      transactionScope.getRepository<MessageWorkspaceEntity>('message', {
+        shouldBypassPermissionChecks: true,
+      });
+
+    const page = await messageThreadRepository.find({
+      where: isDefined(cursor) ? { id: MoreThan(cursor) } : {},
+      order: { id: 'ASC' },
+      take: ORPHAN_CLEANUP_PAGE_SIZE,
+      select: { id: true },
+    });
+
+    if (page.length === 0) {
+      return undefined;
+    }
+
+    const pageIds = page.map(({ id }) => id);
+
+    const orphanThreadIds = await this.filterOrphans(pageIds, (ids) =>
+      this.findReferencedThreadIds(messageRepository, ids),
+    );
+
+    if (orphanThreadIds.length > 0) {
+      await messageThreadRepository.delete(orphanThreadIds);
+    }
+
+    return pageIds[pageIds.length - 1];
   }
 
   private async findReferencedMessageIds(
@@ -325,26 +357,17 @@ export class MessagingMessageCleanerService {
   }
 
   private async deleteOrphansByKeyset(
-    fetchPageIds: (cursor: string | undefined) => Promise<string[]>,
-    deleteByIds: (ids: string[]) => Promise<unknown>,
-    findOrphanIds: (pageIds: string[]) => Promise<string[]>,
+    deleteOrphansOfNextPage: (
+      transactionScope: WorkspaceTransactionScope,
+      cursor: string | undefined,
+    ) => Promise<string | undefined>,
   ): Promise<void> {
     let cursor: string | undefined;
 
-    for (;;) {
-      const pageIds = await fetchPageIds(cursor);
-
-      if (pageIds.length === 0) {
-        break;
-      }
-
-      cursor = pageIds[pageIds.length - 1];
-
-      const orphanIds = await findOrphanIds(pageIds);
-
-      if (orphanIds.length > 0) {
-        await deleteByIds(orphanIds);
-      }
-    }
+    do {
+      cursor = await this.workspaceOrmManager.runInWorkspaceTransaction(
+        (transactionScope) => deleteOrphansOfNextPage(transactionScope, cursor),
+      );
+    } while (isDefined(cursor));
   }
 }

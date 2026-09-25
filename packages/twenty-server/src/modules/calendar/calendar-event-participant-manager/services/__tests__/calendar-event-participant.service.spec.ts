@@ -4,9 +4,9 @@ import {
 } from 'test/utils/create-in-memory-workspace-repository.util';
 
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { RECORD_DELETE_BATCH_SIZE } from 'src/engine/twenty-orm/constants/record-delete-batch-size.constant';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE } from 'src/modules/calendar/calendar-event-participant-manager/constants/calendar-event-participant-chunk-size';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
@@ -22,8 +22,8 @@ const getIds = (records: InMemoryRecord[]) =>
   records.map(({ id }) => id).sort();
 
 describe('CalendarEventParticipantService', () => {
-  describe('writeCalendarEventParticipants', () => {
-    const writeParticipants = async ({
+  describe('deleteCalendarEventParticipants', () => {
+    const deleteParticipants = async ({
       participants,
       participantIdsToDelete,
     }: {
@@ -31,61 +31,58 @@ describe('CalendarEventParticipantService', () => {
       participantIdsToDelete: string[];
     }) => {
       const participantTable = createInMemoryWorkspaceRepository(participants);
+      const runInWorkspaceTransaction = jest.fn(
+        (work: (transactionScope: WorkspaceTransactionScope) => unknown) =>
+          work({
+            getRepository: jest.fn(() => participantTable.repository),
+          } as unknown as WorkspaceTransactionScope),
+      );
 
       const service = new CalendarEventParticipantService(
-        {} as WorkspaceOrmManager,
+        { runInWorkspaceTransaction } as unknown as WorkspaceOrmManager,
         {} as MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
         {} as MessageQueueService,
       );
 
-      await service.writeCalendarEventParticipants({
-        operations: {
-          participantIdsToDelete,
-          participantsToUpdate: [],
-          participantsToInsert: [],
-        },
-        transactionScope: {
-          getRepository: jest.fn(() => participantTable.repository),
-        } as unknown as WorkspaceTransactionScope,
-      });
+      await service.deleteCalendarEventParticipants(participantIdsToDelete);
 
-      return participantTable;
+      return { participantTable, runInWorkspaceTransaction };
     };
 
-    it('should delete removed participants in chunks of CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE', async () => {
+    it('should delete removed participants in batches of at most RECORD_DELETE_BATCH_SIZE, one transaction per batch', async () => {
       const removedParticipants = buildParticipants(
-        2 * CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE + 50,
+        2 * RECORD_DELETE_BATCH_SIZE + 50,
         'removed',
       );
       const keptParticipants = buildParticipants(5, 'kept');
 
-      const participantTable = await writeParticipants({
-        participants: [...keptParticipants, ...removedParticipants],
-        participantIdsToDelete: removedParticipants.map(({ id }) => id),
-      });
+      const { participantTable, runInWorkspaceTransaction } =
+        await deleteParticipants({
+          participants: [...keptParticipants, ...removedParticipants],
+          participantIdsToDelete: removedParticipants.map(({ id }) => id),
+        });
 
       expect(
         participantTable
           .getDeletedIdsByCall()
           .map((deletedIds) => deletedIds.length),
-      ).toEqual([
-        CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE,
-        CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE,
-        50,
-      ]);
+      ).toEqual([RECORD_DELETE_BATCH_SIZE, RECORD_DELETE_BATCH_SIZE, 50]);
+      expect(runInWorkspaceTransaction).toHaveBeenCalledTimes(3);
       expect(getIds(participantTable.getRecords())).toEqual(
         getIds(keptParticipants),
       );
     });
 
-    it('should not delete anything when no participant was removed', async () => {
+    it('should not open a transaction when no participant was removed', async () => {
       const participants = buildParticipants(5, 'kept');
 
-      const participantTable = await writeParticipants({
-        participants,
-        participantIdsToDelete: [],
-      });
+      const { participantTable, runInWorkspaceTransaction } =
+        await deleteParticipants({
+          participants,
+          participantIdsToDelete: [],
+        });
 
+      expect(runInWorkspaceTransaction).not.toHaveBeenCalled();
       expect(participantTable.repository.delete).not.toHaveBeenCalled();
       expect(getIds(participantTable.getRecords())).toEqual(
         getIds(participants),

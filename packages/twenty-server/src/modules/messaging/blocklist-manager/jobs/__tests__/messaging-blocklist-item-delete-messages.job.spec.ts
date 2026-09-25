@@ -11,6 +11,7 @@ import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { RECORD_DELETE_BATCH_SIZE } from 'src/engine/twenty-orm/constants/record-delete-batch-size.constant';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
   BlocklistItemDeleteMessagesJob,
@@ -109,6 +110,7 @@ const getIds = (records: InMemoryRecord[]) =>
 describe('BlocklistItemDeleteMessagesJob', () => {
   let job: BlocklistItemDeleteMessagesJob;
   let cleanOrphanMessagesAndThreads: jest.Mock;
+  let runInWorkspaceTransaction: jest.Mock;
   let workspaceTables: Record<
     string,
     Record<string, ReturnType<typeof createInMemoryWorkspaceRepository>>
@@ -151,6 +153,15 @@ describe('BlocklistItemDeleteMessagesJob', () => {
   beforeEach(() => {
     let currentWorkspaceId: string | undefined;
 
+    runInWorkspaceTransaction = jest.fn(
+      (work: (transactionScope: WorkspaceTransactionScope) => unknown) =>
+        work({
+          getRepository: (objectName: string) =>
+            workspaceTables[currentWorkspaceId as string][objectName]
+              .repository,
+        } as unknown as WorkspaceTransactionScope),
+    );
+
     const workspaceOrmManager = {
       executeInWorkspaceContext: jest.fn(
         async (
@@ -170,6 +181,7 @@ describe('BlocklistItemDeleteMessagesJob', () => {
         (objectName: string) =>
           workspaceTables[currentWorkspaceId as string][objectName].repository,
       ),
+      runInWorkspaceTransaction,
     };
 
     const messageChannelRepository = {
@@ -446,6 +458,7 @@ describe('BlocklistItemDeleteMessagesJob', () => {
     expect(deletedIds.sort()).toEqual(
       getIds(buildAssociationsForAllChannels(matchingMessageIds)),
     );
+    expect(runInWorkspaceTransaction).toHaveBeenCalledTimes(6);
     expect(getIds(associationTable.getRecords())).toEqual(
       getIds(unrelatedAssociations),
     );
