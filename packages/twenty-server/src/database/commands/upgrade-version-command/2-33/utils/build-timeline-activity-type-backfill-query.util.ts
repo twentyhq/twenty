@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   buildTimelineActivityTypeResolver,
   type TimelineActivityTypeResolutionMaps,
-} from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
+} from 'src/database/commands/upgrade-version-command/2-33/utils/resolve-timeline-activity-type-id.util';
 
 // The legacy name held `<object>.<databaseAction>` for a record's own events and
 // `linked-<object>.<databaseAction>` for events about a linked record. A junction
@@ -30,8 +30,14 @@ const SELF_ACTION_BY_DATABASE_ACTION: Record<string, TimelineActivityAction> = {
 // events through their own listeners, which is why only the first two carry the
 // `linked-` prefix.
 const LEGACY_JUNCTION_OBJECTS = [
-  { legacyName: 'note', universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier },
-  { legacyName: 'task', universalIdentifier: STANDARD_OBJECTS.task.universalIdentifier },
+  {
+    legacyName: 'note',
+    universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
+  },
+  {
+    legacyName: 'task',
+    universalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
+  },
 ] as const;
 
 const LEGACY_PARTICIPANT_NAMES = [
