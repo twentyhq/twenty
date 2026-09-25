@@ -4,9 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { Readable } from 'stream';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
-  formatValueForCSV,
+  formatRecordExportHeader,
+  formatRecordExportRow,
   isDefined,
-  sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -31,7 +31,6 @@ import {
   type RecordExport,
   type RecordExportProgress,
 } from 'src/engine/core-modules/record-export/types/record-export.type';
-import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -200,14 +199,7 @@ export class GenerateRecordExportJob {
     signal: AbortSignal;
     updateProgress: MessageQueueJobProgressContext['updateProgress'];
   }): AsyncGenerator<string> {
-    const header =
-      '\uFEFF' +
-      context.columns
-        .map((column) =>
-          formatValueForCSV(sanitizeValueForCSVExport(column.label)),
-        )
-        .join(',') +
-      '\n';
+    const header = formatRecordExportHeader(context.columns);
     progress.size += Buffer.byteLength(header);
     yield header;
     let after: string | undefined;

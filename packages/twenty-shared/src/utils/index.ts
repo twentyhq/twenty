@@ -30,6 +30,9 @@ export { evaluateConditionalAvailabilityExpression } from './command-menu-items/
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { buildRecordExportColumns } from './csv/buildRecordExportColumns';
+export { formatRecordExportHeader } from './csv/formatRecordExportHeader';
+export { formatRecordExportRow } from './csv/formatRecordExportRow';
 export { formatValueForCSV } from './csv/formatValueForCSV';
 export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';
 export {

@@ -1,12 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { RelationType } from '@/types/RelationType';
 
-import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { buildRecordExportColumns } from '@/utils/csv/buildRecordExportColumns';
 
-const fieldDefaults = {
-  objectMetadataId: 'person',
-  universalIdentifier: 'field',
-};
 const idColumn = { fieldName: 'id', label: 'Id', type: FieldMetadataType.UUID };
 
 describe('buildRecordExportColumns', () => {
@@ -14,18 +10,16 @@ describe('buildRecordExportColumns', () => {
     expect(buildRecordExportColumns([])).toEqual([idColumn]);
     expect(
       buildRecordExportColumns([
-        getFlatFieldMetadataMock({
-          ...fieldDefaults,
+        {
           type: FieldMetadataType.TEXT,
           name: 'city',
           label: 'City',
-        }),
-        getFlatFieldMetadataMock({
-          ...fieldDefaults,
+        },
+        {
           type: FieldMetadataType.UUID,
           name: 'id',
           label: 'Record Id',
-        }),
+        },
       ]),
     ).toEqual([
       idColumn,
@@ -36,18 +30,16 @@ describe('buildRecordExportColumns', () => {
   it('expands composite fields in display order and preserves their label', () => {
     expect(
       buildRecordExportColumns([
-        getFlatFieldMetadataMock({
-          ...fieldDefaults,
+        {
           type: FieldMetadataType.FULL_NAME,
           name: 'name',
           label: 'Nom',
-        }),
-        getFlatFieldMetadataMock({
-          ...fieldDefaults,
+        },
+        {
           type: FieldMetadataType.CURRENCY,
           name: 'salary',
           label: 'Salary',
-        }),
+        },
       ]),
     ).toEqual([
       idColumn,
@@ -83,20 +75,18 @@ describe('buildRecordExportColumns', () => {
     (type) => {
       expect(
         buildRecordExportColumns([
-          getFlatFieldMetadataMock({
-            ...fieldDefaults,
+          {
             type,
             name: 'company',
             label: 'Company',
-            settings: { relationType: RelationType.MANY_TO_ONE },
-          }),
-          getFlatFieldMetadataMock({
-            ...fieldDefaults,
+            relationType: RelationType.MANY_TO_ONE,
+          },
+          {
             type,
             name: 'opportunities',
             label: 'Opportunities',
-            settings: { relationType: RelationType.ONE_TO_MANY },
-          }),
+            relationType: RelationType.ONE_TO_MANY,
+          },
         ]),
       ).toEqual([
         idColumn,

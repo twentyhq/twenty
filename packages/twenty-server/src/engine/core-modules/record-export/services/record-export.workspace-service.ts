@@ -14,8 +14,12 @@ import { setTimeout } from 'node:timers/promises';
 import { type Readable } from 'stream';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  FieldMetadataType,
+  FileFolder,
+  type RecordExportColumn,
+} from 'twenty-shared/types';
+import { buildRecordExportColumns, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
@@ -49,11 +53,9 @@ import {
 import { UPDATE_RECORD_EXPORT_LEASE_SCRIPT } from 'src/engine/core-modules/record-export/constants/update-record-export-lease-script.constant';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
-import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
-import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -61,6 +63,7 @@ import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-us
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -579,7 +582,18 @@ export class RecordExportWorkspaceService {
     if (fields.some((field) => !field.isActive)) {
       throw new BadRequestException(t`An export field is no longer available.`);
     }
-    const columns = buildRecordExportColumns(fields);
+    const columns = buildRecordExportColumns(
+      fields.map((field) => ({
+        name: field.name,
+        label: field.label,
+        type: field.type,
+        relationType:
+          isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
+          isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION)
+            ? field.settings.relationType
+            : undefined,
+      })),
+    );
     const node: CommonSelectedFields = {};
 
     for (const column of columns) {
