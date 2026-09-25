@@ -14,6 +14,7 @@ import {
   type MissingSystemRelationIndex,
   type SystemRelationHolderNameSingular,
 } from 'src/database/commands/upgrade-version-command/2-42/utils/build-missing-system-relation-indexes.util';
+import { findFieldlessIndexesNamedLikeMissingIndexes } from 'src/database/commands/upgrade-version-command/2-42/utils/find-fieldless-indexes-named-like-missing-indexes.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -114,7 +115,19 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       }),
     }));
 
+    const fieldlessIndexesToDelete =
+      findFieldlessIndexesNamedLikeMissingIndexes({
+        flatIndexMaps,
+        missingIndexes,
+      });
+
     if (isDryRun) {
+      for (const { name } of fieldlessIndexesToDelete) {
+        this.logger.log(
+          `[DRY RUN] Would delete index metadata ${name} that has no fields for workspace ${workspaceId}`,
+        );
+      }
+
       for (const { missingIndex, tableName } of indexesToCreate) {
         this.logger.log(
           `[DRY RUN] Would create index ${missingIndex.universalFlatIndexMetadata.name} on ${tableName}(${missingIndex.joinColumnName}) for workspace ${workspaceId}`,
@@ -160,6 +173,25 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       if (isQueryRunnerConnected) {
         await queryRunner.release();
       }
+    }
+
+    if (fieldlessIndexesToDelete.length > 0) {
+      await dataSource.query(
+        `DELETE FROM core."indexMetadata" im
+         WHERE im."workspaceId" = $1 AND im.id = ANY($2::uuid[])
+           AND NOT EXISTS (
+             SELECT 1 FROM core."indexFieldMetadata" ifm WHERE ifm."indexMetadataId" = im.id
+           )`,
+        [workspaceId, fieldlessIndexesToDelete.map(({ id }) => id)],
+      );
+
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatIndexMaps',
+      ]);
+
+      this.logger.log(
+        `Deleted ${fieldlessIndexesToDelete.length} index metadata row(s) that have no fields for workspace ${workspaceId}`,
+      );
     }
 
     const missingIndexesByApplicationUniversalIdentifier = new Map<
