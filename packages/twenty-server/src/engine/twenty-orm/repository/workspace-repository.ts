@@ -1384,13 +1384,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return !this.options.shouldBypassPermissionChecks;
   }
 
-  private hasInheritingRecordLinks(): boolean {
-    return (
-      this.shouldValidateInheritedParents() &&
-      this.resolveInheritingRecordLinks().length > 0
-    );
-  }
-
   private async validateParentRecordsAreWritableOrThrow({
     parent,
     records,
@@ -1516,16 +1509,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
 
-    const recordsBefore =
-      kind === 'delete'
-        ? [
-            await eventSelectQueryBuilder.getOne<ObjectRecord>({
-              noFormatting: true,
-            }),
-          ].filter(isDefined)
-        : await eventSelectQueryBuilder.getMany<ObjectRecord>({
-            noFormatting: true,
-          });
+    const recordsBefore = await eventSelectQueryBuilder.getMany<ObjectRecord>({
+      noFormatting: true,
+    });
 
     if (kind === 'update' && recordsBefore.length > QUERY_MAX_RECORDS) {
       throw new TwentyOrmException(
@@ -1579,23 +1565,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    // The delete snapshot keeps a single row for the event while every deleted
-    // row may be one some record inherits through
-    const recordsBeforeInheritanceCheck =
-      kind === 'delete' && this.hasInheritingRecordLinks()
-        ? await eventSelectQueryBuilder.getMany<ObjectRecord>({
-            noFormatting: true,
-          })
-        : recordsBefore;
-
     await this.validateInheritedParentsAreWritableOrThrow({
       writtenRecords: isDefined(setColumns) ? [setColumns] : [],
       affectedRecords: isDefined(setColumns)
-        ? recordsBeforeInheritanceCheck.flatMap((record) => [
+        ? recordsBefore.flatMap((record) => [
             record,
             { ...record, ...setColumns },
           ])
-        : recordsBeforeInheritanceCheck,
+        : recordsBefore,
     });
 
     const inheritedReadabilityChildRecordsByRecordId =

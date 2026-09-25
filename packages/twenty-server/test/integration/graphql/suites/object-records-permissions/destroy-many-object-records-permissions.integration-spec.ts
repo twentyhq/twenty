@@ -6,10 +6,17 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 describe('destroyManyObjectRecordsPermissions', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
   it('should throw a permission error when user does not have permission (guest role)', async () => {
     const graphqlOperation = destroyManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -33,6 +40,12 @@ describe('destroyManyObjectRecordsPermissions', () => {
   });
 
   it('should destroy multiple object records when user has permission (admin role)', async () => {
+    const workspaceEventEmitter =
+      getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter');
+    const emitEventSpy = jest.spyOn(
+      workspaceEventEmitter,
+      'emitDatabaseBatchEvent',
+    );
     const personId1 = randomUUID();
     const personId2 = randomUUID();
 
@@ -50,7 +63,10 @@ describe('destroyManyObjectRecordsPermissions', () => {
       ],
     });
 
-    await makeGraphqlAPIRequest(createGraphqlOperation);
+    const createResponse = await makeGraphqlAPIRequest(createGraphqlOperation);
+
+    expect(createResponse.body.errors).toBeUndefined();
+    emitEventSpy.mockClear();
 
     const graphqlOperation = destroyManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -65,6 +81,7 @@ describe('destroyManyObjectRecordsPermissions', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
+    expect(response.body.errors).toBeUndefined();
     expect(response.body.data).toBeDefined();
     expect(response.body.data.destroyPeople).toBeDefined();
     expect(response.body.data.destroyPeople).toHaveLength(2);
@@ -73,6 +90,29 @@ describe('destroyManyObjectRecordsPermissions', () => {
         expect.objectContaining({ id: personId1 }),
         expect.objectContaining({ id: personId2 }),
       ]),
+    );
+    expect(emitEventSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        objectMetadataNameSingular: 'person',
+        action: DatabaseEventAction.DESTROYED,
+        events: expect.arrayContaining([
+          expect.objectContaining({ recordId: personId1 }),
+          expect.objectContaining({ recordId: personId2 }),
+        ]),
+      }),
+    );
+
+    emitEventSpy.mockClear();
+
+    const repeatResponse = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(repeatResponse.body.errors).toBeUndefined();
+    expect(repeatResponse.body.data.destroyPeople).toEqual([]);
+    expect(emitEventSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        objectMetadataNameSingular: 'person',
+        action: DatabaseEventAction.DESTROYED,
+      }),
     );
   });
 });
