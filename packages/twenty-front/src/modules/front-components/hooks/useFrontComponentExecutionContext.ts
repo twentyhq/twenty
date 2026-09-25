@@ -119,6 +119,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  objectNameSingular,
   timelineActivityId,
   toolCall,
   colorScheme,
@@ -127,6 +128,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   colorScheme: 'light' | 'dark';
@@ -419,11 +421,23 @@ export const useFrontComponentExecutionContext = ({
       });
     };
 
+  const selectedObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === objectNameSingular,
+  );
+
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    selectedObjectMetadata: isDefined(selectedObjectMetadataItem)
+      ? {
+          id: selectedObjectMetadataItem.id,
+          nameSingular: selectedObjectMetadataItem.nameSingular,
+          namePlural: selectedObjectMetadataItem.namePlural,
+        }
+      : null,
     timelineActivityId: timelineActivityId ?? null,
     toolCall,
     colorScheme,

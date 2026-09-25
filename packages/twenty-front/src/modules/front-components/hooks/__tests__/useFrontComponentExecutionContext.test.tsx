@@ -12,8 +12,18 @@ import { useFrontComponentExecutionContext } from '@/front-components/hooks/useF
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [
-      { nameSingular: 'workflow', openRecordIn: 'RECORD_PAGE' },
-      { nameSingular: 'lead', openRecordIn: 'USER_CHOICE' },
+      {
+        id: 'workflow-object-id',
+        nameSingular: 'workflow',
+        namePlural: 'workflows',
+        openRecordIn: 'RECORD_PAGE',
+      },
+      {
+        id: 'lead-object-id',
+        nameSingular: 'lead',
+        namePlural: 'leads',
+        openRecordIn: 'USER_CHOICE',
+      },
     ],
   }),
 }));
@@ -189,13 +199,14 @@ const renderUseFrontComponentExecutionContext = (
   > & { colorScheme?: 'light' | 'dark'; applicationId?: string },
 ) =>
   renderHook(
-    () =>
+    (parameters) =>
       useFrontComponentExecutionContext({
         colorScheme: 'light',
         applicationId: APPLICATION_ID,
-        ...params,
+        ...parameters,
       }),
     {
+      initialProps: params,
       wrapper: ({ children }) => I18nProvider({ i18n, children }),
     },
   );
@@ -238,6 +249,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
+        selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
@@ -255,6 +267,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+        selectedObjectMetadata: null,
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
@@ -297,6 +310,68 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(result.current.executionContext.colorScheme).toBe('dark');
+    });
+
+    it.each([
+      { objectNameSingular: 'workflow', selectedRecordIds: ['record-1'] },
+      {
+        objectNameSingular: 'lead',
+        selectedRecordIds: ['record-1', 'record-2'],
+      },
+      { objectNameSingular: 'lead', selectedRecordIds: [] },
+    ])(
+      'should expose only object identity for $objectNameSingular with $selectedRecordIds',
+      ({ objectNameSingular, selectedRecordIds }) => {
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+          objectNameSingular,
+          selectedRecordIds,
+        });
+
+        expect(result.current.executionContext.selectedObjectMetadata).toEqual({
+          id: `${objectNameSingular}-object-id`,
+          nameSingular: objectNameSingular,
+          namePlural: `${objectNameSingular}s`,
+        });
+        expect(result.current.executionContext.selectedRecordIds).toEqual(
+          selectedRecordIds,
+        );
+      },
+    );
+
+    it('should update object metadata and clear it when context is absent or unresolved', () => {
+      const { result, rerender } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        objectNameSingular: 'workflow',
+        selectedRecordIds: ['record-1'],
+      });
+
+      expect(result.current.executionContext.selectedObjectMetadata?.id).toBe(
+        'workflow-object-id',
+      );
+
+      rerender({
+        frontComponentId: FRONT_COMPONENT_ID,
+        objectNameSingular: 'lead',
+        selectedRecordIds: ['record-2'],
+      });
+
+      expect(result.current.executionContext.selectedObjectMetadata).toEqual({
+        id: 'lead-object-id',
+        nameSingular: 'lead',
+        namePlural: 'leads',
+      });
+
+      rerender({
+        frontComponentId: FRONT_COMPONENT_ID,
+        objectNameSingular: 'unknown',
+      });
+
+      expect(result.current.executionContext.selectedObjectMetadata).toBeNull();
+
+      rerender({ frontComponentId: FRONT_COMPONENT_ID });
+
+      expect(result.current.executionContext.selectedObjectMetadata).toBeNull();
     });
   });
 
