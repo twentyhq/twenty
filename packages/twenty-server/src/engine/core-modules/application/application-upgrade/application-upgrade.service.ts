@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -34,6 +35,7 @@ export class ApplicationUpgradeService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
@@ -54,6 +56,7 @@ export class ApplicationUpgradeService {
     targetVersion: string | null;
     applicationsToUpgrade: ApplicationEntity[];
     skippedNonProvisionedWorkspaceIds: string[];
+    skippedIncompatibleWorkspaceIds: string[];
   }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -67,6 +70,7 @@ export class ApplicationUpgradeService {
         targetVersion: null,
         applicationsToUpgrade: [],
         skippedNonProvisionedWorkspaceIds: [],
+        skippedIncompatibleWorkspaceIds: [],
       };
     }
 
@@ -98,15 +102,40 @@ export class ApplicationUpgradeService {
       )
       .map((application) => application.workspaceId);
 
+    const requiredServerVersion =
+      appRegistration.manifest?.application.requiredServerVersionRange ??
+      undefined;
+
+    const compatibleApplications: ApplicationEntity[] = [];
+    const skippedIncompatibleWorkspaceIds: string[] = [];
+
+    for (const application of provisionedApplications) {
+      const validation =
+        await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+          { requiredServerVersion, workspaceId: application.workspaceId },
+        );
+
+      if (
+        !validation.compatible &&
+        validation.reason === 'WORKSPACE_INCOMPATIBLE'
+      ) {
+        skippedIncompatibleWorkspaceIds.push(application.workspaceId);
+        continue;
+      }
+
+      compatibleApplications.push(application);
+    }
+
     const applicationsToUpgrade = isDefined(workspaceCountLimit)
-      ? provisionedApplications.slice(0, workspaceCountLimit)
-      : provisionedApplications;
+      ? compatibleApplications.slice(0, workspaceCountLimit)
+      : compatibleApplications;
 
     return {
       appRegistration,
       targetVersion,
       applicationsToUpgrade,
       skippedNonProvisionedWorkspaceIds,
+      skippedIncompatibleWorkspaceIds,
     };
   }
 
@@ -155,14 +184,24 @@ export class ApplicationUpgradeService {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
   }): Promise<string[]> {
-    const { appRegistration, targetVersion, applicationsToUpgrade } =
-      await this.findApplicationsToUpgrade({
-        applicationRegistrationId,
-        onlyAutoUpgrade,
-      });
+    const {
+      appRegistration,
+      targetVersion,
+      applicationsToUpgrade,
+      skippedIncompatibleWorkspaceIds,
+    } = await this.findApplicationsToUpgrade({
+      applicationRegistrationId,
+      onlyAutoUpgrade,
+    });
 
     if (!isDefined(targetVersion)) {
       return [];
+    }
+
+    if (skippedIncompatibleWorkspaceIds.length > 0) {
+      this.logger.log(
+        `Skipping ${skippedIncompatibleWorkspaceIds.length} workspace(s) that have not finished the server upgrade ${appRegistration.universalIdentifier}@${targetVersion} requires`,
+      );
     }
 
     const jobIds = await this.enqueueWorkspaceApplicationUpgrades({
