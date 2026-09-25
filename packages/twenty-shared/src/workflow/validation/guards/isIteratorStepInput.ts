@@ -4,7 +4,7 @@ import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
   type IteratorStepInput,
   type ValidatableWorkflowStep,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 
 export const isIteratorStepInput = (
   step: ValidatableWorkflowStep,

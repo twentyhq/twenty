@@ -1,4 +1,5 @@
 import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
+import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -29,9 +30,32 @@ const buildLimit = (overrides: Partial<FlatQuotaLimit>): FlatQuotaLimit => ({
   ...overrides,
 });
 
-const buildCounters = ({ limits }: { limits: FlatQuotaLimit[] }) =>
+const buildDefault = (
+  overrides: Partial<QuotaLimitDefault> = {},
+): QuotaLimitDefault => ({
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  limitKind: 'quota',
+  spenderType: 'workspace',
+  spenderId: '',
+  meter: 'creditsUsedMicro',
+  periodUnit: 'month',
+  periodCount: 1,
+  isOverridable: true,
+  limitValue: 5_000,
+  ...overrides,
+});
+
+const buildCounters = ({
+  limits = [],
+  quotaLimitDefaults = [],
+}: {
+  limits?: FlatQuotaLimit[];
+  quotaLimitDefaults?: QuotaLimitDefault[];
+}) =>
   buildQuotaCounters({
     limits,
+    quotaLimitDefaults,
     usageSpenders: { userWorkspaceId: 'user-1' },
     workspaceId: 'workspace-1',
     operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -47,6 +71,7 @@ describe('buildQuotaCounters', () => {
     expect(counters).toEqual([
       {
         kind: 'limit',
+        isDefault: false,
         key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
         limitValue: 1_000_000,
         meter: 'creditsUsedMicro',
@@ -131,5 +156,110 @@ describe('buildQuotaCounters', () => {
     });
 
     expect(counters).toEqual([]);
+  });
+
+  it('caps the workspace with the default when no limit is stored', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [buildDefault()],
+    });
+
+    expect(counters).toEqual([
+      {
+        kind: 'limit',
+        isDefault: true,
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}:default:5000`,
+        limitValue: 5_000,
+        meter: 'creditsUsedMicro',
+        resourceType: UsageResourceType.AI,
+        periodUnit: 'month',
+        periodStart: MONTH_PERIOD.periodStart,
+        periodEnd: MONTH_PERIOD.periodEnd,
+        spenderType: 'workspace',
+        spenderId: null,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+      },
+    ]);
+  });
+
+  it.each([500, 50_000])(
+    'overrides the default with a workspace limit of %i',
+    (limitValue) => {
+      const counters = buildCounters({
+        limits: [buildLimit({ limitValue })],
+        quotaLimitDefaults: [buildDefault()],
+      });
+
+      expect(counters).toEqual([
+        expect.objectContaining({ isDefault: false, limitValue }),
+      ]);
+    },
+  );
+
+  it('keeps a non-overridable default alongside a stored limit', () => {
+    const counters = buildCounters({
+      limits: [buildLimit({})],
+      quotaLimitDefaults: [buildDefault({ isOverridable: false })],
+    });
+
+    expect(counters.map((counter) => counter.isDefault)).toEqual([false, true]);
+    expect(new Set(counters.map((counter) => counter.key)).size).toBe(2);
+  });
+
+  it.each([
+    { spenderType: 'userWorkspace' as const, spenderId: 'user-1' },
+    { meter: 'quantity' as const },
+  ])('preserves the default for a different scope: %j', (overrides) => {
+    const counters = buildCounters({
+      limits: [buildLimit(overrides)],
+      quotaLimitDefaults: [buildDefault()],
+    });
+
+    expect(counters.map((counter) => counter.isDefault)).toEqual([false, true]);
+  });
+
+  it('skips a default whose period was not resolved', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [buildDefault({ periodUnit: 'day' })],
+    });
+
+    expect(counters).toEqual([]);
+  });
+
+  it('ignores a default for a spender type absent from the call', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [buildDefault({ spenderType: 'apiKey' })],
+    });
+
+    expect(counters).toEqual([]);
+  });
+
+  it('preserves the default against a row scoped to every operation', () => {
+    const counters = buildCounters({
+      limits: [buildLimit({ operationType: UsageOperationType.ALL })],
+      quotaLimitDefaults: [buildDefault()],
+    });
+
+    expect(counters.map((counter) => counter.isDefault)).toEqual([true, false]);
+  });
+
+  it('ignores a default declared on another operation', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [
+        buildDefault({ operationType: UsageOperationType.WEB_SEARCH }),
+      ],
+    });
+
+    expect(counters).toEqual([]);
+  });
+
+  it('overrides the default whatever period the stored limit spans', () => {
+    const counters = buildCounters({
+      limits: [buildLimit({ periodUnit: 'week' })],
+      quotaLimitDefaults: [buildDefault()],
+    });
+
+    expect(counters).toEqual([
+      expect.objectContaining({ isDefault: false, periodUnit: 'week' }),
+    ]);
   });
 });

@@ -1,4 +1,4 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteViewFilterGroupQueryFactory } from 'test/integration/metadata/suites/view-filter-group/utils/delete-view-filter-group-query-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
@@ -15,7 +15,7 @@ export const deleteOneViewFilterGroup = async ({
 }> => {
   const graphqlOperation = deleteViewFilterGroupQueryFactory({ id });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

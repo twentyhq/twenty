@@ -30,6 +30,10 @@ export enum AppTokenType {
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
+@Index('IDX_APP_TOKEN_USER_ID', ['userId'], { where: '"userId" IS NOT NULL' })
+@Index('IDX_APP_TOKEN_WORKSPACE_ID', ['workspaceId'], {
+  where: '"workspaceId" IS NOT NULL',
+})
 @Index('IDX_APP_TOKEN_TYPE_VALUE_SSO_EXCHANGE_UNIQUE', ['type', 'value'], {
   unique: true,
   where: `"type" = 'SSO_EXCHANGE_TOKEN' AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,

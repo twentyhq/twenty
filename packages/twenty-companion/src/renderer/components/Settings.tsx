@@ -63,7 +63,7 @@ const SettingsToggle = ({
 export const Settings = ({ state, isPending, command }: ActionProps) => (
   <section className="settings-page">
     <Section.Header title={i18n._('General')} />
-    <Card
+    <Card.Root
       className="settings-group"
       backgroundColor="var(--t-background-secondary)"
     >
@@ -127,9 +127,9 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
           'Show time until your next meeting beside the tray icon.',
         )}
       />
-    </Card>
+    </Card.Root>
     <Section.Header title={i18n._('Meetings')} className="section" />
-    <Card
+    <Card.Root
       className="settings-group"
       backgroundColor="var(--t-background-secondary)"
     >
@@ -238,9 +238,9 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
           />
         </SettingsCardContent>
       </button>
-    </Card>
+    </Card.Root>
     <Section.Header title={i18n._('Workspace')} className="section" />
-    <Card
+    <Card.Root
       className="settings-group"
       backgroundColor="var(--t-background-secondary)"
     >
@@ -279,6 +279,6 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
           {i18n._('Disconnect')}
         </Button>
       </SettingsCardContent>
-    </Card>
+    </Card.Root>
   </section>
 );

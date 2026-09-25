@@ -4,7 +4,7 @@ import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-field
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { VISIBLE_COMPANY_NAME_TOKEN } from 'test/integration/graphql/utils/setup-company-name-rls-role.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -39,7 +39,7 @@ export const setupRlsCompanyRelationRecords = async ({
     { id: records.visibleCompanyId, name: records.visibleCompanyName },
     { id: records.hiddenCompanyId, name: records.hiddenCompanyName },
   ]) {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -59,7 +59,7 @@ export const setupRlsCompanyRelationRecords = async ({
     },
     { id: records.personWithoutCompanyId, companyId: undefined },
   ]) {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
@@ -89,7 +89,7 @@ export const cleanupRlsCompanyRelationRecords = async (
   ];
 
   for (const recordId of peopleIds) {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id',
@@ -99,7 +99,7 @@ export const cleanupRlsCompanyRelationRecords = async (
   }
 
   for (const recordId of [records.visibleCompanyId, records.hiddenCompanyId]) {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id',

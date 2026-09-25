@@ -1,6 +1,6 @@
 import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/constants/test-object-gql-fields.constant';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 
 export const testGqlSuccessfulScenario = async (
   objectMetadataSingularName: string,
@@ -23,7 +23,7 @@ export const testGqlSuccessfulScenario = async (
     filter,
   });
 
-  const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+  const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
   const records: Record<string, any>[] = response.body.data[
     objectMetadataPluralName

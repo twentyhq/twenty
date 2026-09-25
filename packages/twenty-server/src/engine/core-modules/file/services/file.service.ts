@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like, Repository } from 'typeorm';
+import { Like } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -20,7 +19,7 @@ import {
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { resolveByteRange } from 'src/engine/core-modules/file/utils/resolve-byte-range.utils';
@@ -40,8 +39,8 @@ export class FileService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
   async getFilePresignedUrlOrStreamByPath({
@@ -55,10 +54,9 @@ export class FileService {
     filepath: string;
     fileFolder: FileFolder;
   }): Promise<FileResponse | null> {
-    const application = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne(workspaceId, {
       where: {
         id: applicationId,
-        workspaceId,
       },
     });
 
@@ -113,10 +111,9 @@ export class FileService {
       return null;
     }
 
-    const application = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne(workspaceId, {
       where: {
         id: file.applicationId,
-        workspaceId,
       },
     });
 
@@ -170,12 +167,14 @@ export class FileService {
       return null;
     }
 
-    const application = await this.applicationRepository.findOne({
-      where: {
-        id: file.applicationId,
-        workspaceId: params.workspaceId,
+    const application = await this.applicationRepository.findOne(
+      params.workspaceId,
+      {
+        where: {
+          id: file.applicationId,
+        },
       },
-    });
+    );
 
     if (application === null) {
       this.logger.warn(
@@ -306,10 +305,9 @@ export class FileService {
       return null;
     }
 
-    const application = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne(workspaceId, {
       where: {
         id: file.applicationId,
-        workspaceId,
       },
     });
 

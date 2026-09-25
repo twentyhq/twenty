@@ -4,7 +4,7 @@ import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
   type IfElseStepInput,
   type ValidatableWorkflowStep,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 
 export const isIfElseStepInput = (
   step: ValidatableWorkflowStep,

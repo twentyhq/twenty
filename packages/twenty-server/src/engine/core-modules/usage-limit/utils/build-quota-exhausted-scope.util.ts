@@ -28,6 +28,7 @@ export const buildQuotaExhaustedScope = ({
       periodCount: 1,
       periodUnit: counter.periodUnit,
       retryAfterMs,
+      isDefault: counter.isDefault,
     };
   }
 
