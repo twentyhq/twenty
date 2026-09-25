@@ -1,11 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
 import { Any, Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { RECORD_DELETE_BATCH_SIZE } from 'src/engine/twenty-orm/constants/record-delete-batch-size.constant';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
@@ -66,28 +68,33 @@ export class CalendarFetchEventsService {
                 { shouldBypassPermissionChecks: true },
               );
 
-            const associationsToDelete =
-              await calendarChannelEventAssociationRepository.find({
-                where: {
-                  eventExternalId: Any(calendarEventIdsToDelete),
-                  calendarChannelId: calendarChannel.id,
-                },
-                select: { calendarEventId: true },
+            for (const calendarEventIdsToDeleteChunk of chunk(
+              calendarEventIdsToDelete,
+              RECORD_DELETE_BATCH_SIZE,
+            )) {
+              const associationsToDelete =
+                await calendarChannelEventAssociationRepository.find({
+                  where: {
+                    eventExternalId: Any(calendarEventIdsToDeleteChunk),
+                    calendarChannelId: calendarChannel.id,
+                  },
+                  select: { calendarEventId: true },
+                });
+
+              await calendarChannelEventAssociationRepository.delete({
+                eventExternalId: Any(calendarEventIdsToDeleteChunk),
+                calendarChannelId: calendarChannel.id,
               });
 
-            await calendarChannelEventAssociationRepository.delete({
-              eventExternalId: Any(calendarEventIdsToDelete),
-              calendarChannelId: calendarChannel.id,
-            });
-
-            await this.calendarEventCleanerService.deleteOrphanedCalendarEvents(
-              {
-                calendarEventIds: associationsToDelete.map(
-                  ({ calendarEventId }) => calendarEventId,
-                ),
-                workspaceId,
-              },
-            );
+              await this.calendarEventCleanerService.deleteOrphanedCalendarEvents(
+                {
+                  calendarEventIds: associationsToDelete.map(
+                    ({ calendarEventId }) => calendarEventId,
+                  ),
+                  workspaceId,
+                },
+              );
+            }
           }
 
           if (calendarEventIds.length > 0) {

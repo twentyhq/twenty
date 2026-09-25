@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
-import { And, Any, ILike, In, Not, Or, Repository } from 'typeorm';
+import { And, Any, ILike, In, MoreThan, Not, Or, Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -11,6 +11,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { RECORD_DELETE_BATCH_SIZE } from 'src/engine/twenty-orm/constants/record-delete-batch-size.constant';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -206,36 +207,55 @@ export class BlocklistItemDeleteMessagesJob {
           : { handle, role: In(BLOCKLISTED_PARTICIPANT_ROLES) };
       });
 
-      const matchingParticipants = await messageParticipantRepository.find({
-        where: handleConditions,
-        select: { messageId: true },
-      });
+      let lastParticipantId: string | undefined;
 
-      const messageIds = [
-        ...new Set(
-          matchingParticipants.map((participant) => participant.messageId),
-        ),
-      ];
+      for (;;) {
+        const participantCursorCondition = isDefined(lastParticipantId)
+          ? { id: MoreThan(lastParticipantId) }
+          : {};
 
-      if (messageIds.length === 0) {
-        continue;
-      }
-
-      const messageChannelMessageAssociationsToDelete =
-        await messageChannelMessageAssociationRepository.find({
-          where: {
-            messageChannelId: messageChannel.id,
-            messageId: In(messageIds),
-          },
+        const matchingParticipants = await messageParticipantRepository.find({
+          where: handleConditions.map((handleCondition) => ({
+            ...handleCondition,
+            ...participantCursorCondition,
+          })),
+          select: { id: true, messageId: true },
+          order: { id: 'ASC' },
+          take: RECORD_DELETE_BATCH_SIZE,
         });
 
-      if (messageChannelMessageAssociationsToDelete.length === 0) {
-        continue;
-      }
+        const messageIds = [
+          ...new Set(
+            matchingParticipants.map((participant) => participant.messageId),
+          ),
+        ];
 
-      await messageChannelMessageAssociationRepository.delete(
-        messageChannelMessageAssociationsToDelete.map(({ id }) => id),
-      );
+        // A channel has at most one live association per message, so this
+        // never returns more than RECORD_DELETE_BATCH_SIZE associations
+        const messageChannelMessageAssociationsToDelete =
+          messageIds.length > 0
+            ? await messageChannelMessageAssociationRepository.find({
+                where: {
+                  messageChannelId: messageChannel.id,
+                  messageId: In(messageIds),
+                },
+                select: { id: true },
+              })
+            : [];
+
+        if (messageChannelMessageAssociationsToDelete.length > 0) {
+          await messageChannelMessageAssociationRepository.delete(
+            messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+          );
+        }
+
+        if (matchingParticipants.length < RECORD_DELETE_BATCH_SIZE) {
+          break;
+        }
+
+        lastParticipantId =
+          matchingParticipants[matchingParticipants.length - 1].id;
+      }
     }
   }
 }

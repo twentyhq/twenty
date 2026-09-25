@@ -59,9 +59,12 @@ export class CalendarEventParticipantService {
         { shouldBypassPermissionChecks: true },
       );
 
-    if (operations.participantIdsToDelete.length > 0) {
+    for (const participantIdsChunk of chunk(
+      operations.participantIdsToDelete,
+      CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE,
+    )) {
       await calendarEventParticipantRepository.delete({
-        id: Any(operations.participantIdsToDelete),
+        id: Any(participantIdsChunk),
       });
     }
 

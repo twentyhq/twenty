@@ -1,0 +1,1 @@
+export const RECORD_DELETE_BATCH_SIZE = 1_000;
