@@ -13,6 +13,7 @@ import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
+import { hasCallRecordingUpdateFieldChanges } from 'src/logic-functions/domain/has-call-recording-update-field-changes.util';
 import {
   createCallRecording,
   type ScheduledCallRecordingFields,
@@ -30,6 +31,21 @@ import { resolveCallRecordingTitle } from 'src/logic-functions/domain/resolve-ca
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
+type CallRecorderMeetingPolicyResolution = {
+  meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
+  calendarEventsById: Map<string, CalendarEventRecord>;
+};
+
+type CanceledMeetingReconciliation = {
+  reconciliationResult: CallRecorderReconciliationResult;
+  calendarEventIdsToClearRecordingOn: string[];
+};
+
+type ActiveMeetingReconciliation = {
+  reconciliationResult: CallRecorderReconciliationResult;
+  calendarEventIdsToMarkRecordingOn: string[];
+};
+
 export const reconcileCallRecorderForCalendarEventIds = async ({
   client,
   calendarEventIds,
@@ -41,7 +57,7 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
 }): Promise<CallRecorderReconciliationResult[]> => {
-  const meetingPolicyResults =
+  const { meetingPolicyResults, calendarEventsById } =
     await resolveCallRecorderPolicyResultsForMeetings({
       client,
       calendarEventIds,
@@ -52,6 +68,7 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
   return reconcileCallRecorderForMeetingOccurrences({
     client,
     meetingPolicyResults,
+    calendarEventsById,
     removedOccurrences,
   });
 };
@@ -66,7 +83,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
   calendarEventIds: string[];
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
-}): Promise<CallRecorderPolicyResultForMeeting[]> => {
+}): Promise<CallRecorderMeetingPolicyResolution> => {
   const changedCalendarEvents = await fetchCalendarEventsByIds(
     client,
     getUniqueSortedIds(calendarEventIds),
@@ -96,7 +113,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
   }
 
   if (affectedMeetingKeys.size === 0) {
-    return [];
+    return { meetingPolicyResults: [], calendarEventsById: new Map() };
   }
 
   const occurrenceSiblingEvents = await fetchCalendarEventsByStartsAtValues(
@@ -156,151 +173,302 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     });
   }
 
-  return meetingPolicyResults;
+  return {
+    meetingPolicyResults,
+    calendarEventsById: new Map(
+      [...occurrenceSiblingEvents, ...changedCalendarEvents].map(
+        (calendarEvent) => [calendarEvent.id, calendarEvent],
+      ),
+    ),
+  };
 };
 
 const reconcileCallRecorderForMeetingOccurrences = async ({
   client,
   meetingPolicyResults,
+  calendarEventsById,
   removedOccurrences = [],
 }: {
   client: CoreApiClient;
   meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
+  calendarEventsById: Map<string, CalendarEventRecord>;
   removedOccurrences?: RemovedCallRecorderOccurrence[];
 }): Promise<CallRecorderReconciliationResult[]> => {
   const removedCalendarEventIdsByMeetingKey =
     buildRemovedCalendarEventIdsByMeetingKey(removedOccurrences);
-  const reconciliationResults: CallRecorderReconciliationResult[] = [];
-  const orderedMeetingPolicyResults = [
-    ...meetingPolicyResults.filter(
+  const callRecordingsByCalendarEventId = groupCallRecordingsByCalendarEventId(
+    await findCallRecordingsByCalendarEventIds(
+      client,
+      getUniqueSortedIds([
+        ...meetingPolicyResults.flatMap(
+          (meetingPolicyResult) => meetingPolicyResult.calendarEventIds,
+        ),
+        ...removedOccurrences.map(
+          (removedOccurrence) => removedOccurrence.calendarEventId,
+        ),
+      ]),
+    ),
+  );
+  const canceledMeetingReconciliations = await reconcileCanceledMeetings({
+    client,
+    meetingPolicyResults: meetingPolicyResults.filter(
       (meetingPolicyResult) => !meetingPolicyResult.shouldRequestBot,
     ),
-    ...meetingPolicyResults.filter(
+    removedCalendarEventIdsByMeetingKey,
+    callRecordingsByCalendarEventId,
+  });
+
+  await clearCanceledMeetingsRecordingOn(
+    client,
+    canceledMeetingReconciliations.flatMap(
+      (canceledMeetingReconciliation) =>
+        canceledMeetingReconciliation.calendarEventIdsToClearRecordingOn,
+    ),
+  );
+
+  const activeMeetingReconciliations = await reconcileActiveMeetings({
+    client,
+    meetingPolicyResults: meetingPolicyResults.filter(
       (meetingPolicyResult) => meetingPolicyResult.shouldRequestBot,
     ),
-  ];
+    calendarEventsById,
+    removedCalendarEventIdsByMeetingKey,
+    callRecordingsByCalendarEventId,
+  });
 
-  for (const meetingPolicyResult of orderedMeetingPolicyResults) {
-    const removedCalendarEventIds =
-      removedCalendarEventIdsByMeetingKey.get(
-        meetingPolicyResult.realMeetingKey,
-      ) ?? [];
+  await markActiveMeetingsRecordingOn(
+    client,
+    activeMeetingReconciliations.flatMap(
+      (activeMeetingReconciliation) =>
+        activeMeetingReconciliation.calendarEventIdsToMarkRecordingOn,
+    ),
+  );
+
+  return [
+    ...canceledMeetingReconciliations,
+    ...activeMeetingReconciliations,
+  ].map((meetingReconciliation) => meetingReconciliation.reconciliationResult);
+};
+
+const reconcileCanceledMeetings = async ({
+  client,
+  meetingPolicyResults,
+  removedCalendarEventIdsByMeetingKey,
+  callRecordingsByCalendarEventId,
+}: {
+  client: CoreApiClient;
+  meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
+  removedCalendarEventIdsByMeetingKey: Map<string, string[]>;
+  callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
+}): Promise<CanceledMeetingReconciliation[]> => {
+  const callRecordingIdsCanceledInBatch = new Set<string>();
+  const canceledMeetingReconciliations: CanceledMeetingReconciliation[] = [];
+
+  for (const meetingPolicyResult of meetingPolicyResults) {
+    const meetingCallRecordings = collectCanceledMeetingCallRecordings({
+      calendarEventIds: [
+        ...meetingPolicyResult.calendarEventIds,
+        ...(removedCalendarEventIdsByMeetingKey.get(
+          meetingPolicyResult.realMeetingKey,
+        ) ?? []),
+      ],
+      callRecordingsByCalendarEventId,
+      callRecordingIdsCanceledInBatch,
+    });
+    const cancellableCallRecordings = meetingCallRecordings.filter(
+      isCancellableCallRecording,
+    );
+
+    for (const cancellableCallRecording of cancellableCallRecordings) {
+      callRecordingIdsCanceledInBatch.add(cancellableCallRecording.id);
+    }
 
     try {
-      reconciliationResults.push(
-        meetingPolicyResult.shouldRequestBot
-          ? await reconcileActiveMeeting({
-              client,
-              meetingPolicyResult,
-              removedCalendarEventIds,
-            })
-          : await reconcileCanceledMeeting({
-              client,
-              meetingPolicyResult,
-              removedCalendarEventIds,
-            }),
+      canceledMeetingReconciliations.push(
+        await reconcileCanceledMeeting({
+          client,
+          meetingPolicyResult,
+          meetingCallRecordings,
+          cancellableCallRecordings,
+        }),
       );
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-
-      console.error(
-        `[call-recorder] reconciliation failed for meeting ${meetingPolicyResult.realMeetingKey}: ${errorMessage}`,
-      );
-      reconciliationResults.push({
-        action: 'FAILED',
-        realMeetingKey: meetingPolicyResult.realMeetingKey,
-        errorMessage,
+      canceledMeetingReconciliations.push({
+        reconciliationResult: buildFailedResult(
+          meetingPolicyResult.realMeetingKey,
+          error,
+        ),
+        calendarEventIdsToClearRecordingOn: [],
       });
     }
   }
 
-  return reconciliationResults;
+  return canceledMeetingReconciliations;
+};
+
+const reconcileActiveMeetings = async ({
+  client,
+  meetingPolicyResults,
+  calendarEventsById,
+  removedCalendarEventIdsByMeetingKey,
+  callRecordingsByCalendarEventId,
+}: {
+  client: CoreApiClient;
+  meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
+  calendarEventsById: Map<string, CalendarEventRecord>;
+  removedCalendarEventIdsByMeetingKey: Map<string, string[]>;
+  callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
+}): Promise<ActiveMeetingReconciliation[]> => {
+  const policyManagedCallRecordingsById = new Map(
+    (
+      await findCallRecordingsByIds(
+        client,
+        meetingPolicyResults.map((meetingPolicyResult) =>
+          computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
+        ),
+      )
+    ).map((callRecording) => [callRecording.id, callRecording]),
+  );
+  const activeMeetingReconciliations: ActiveMeetingReconciliation[] = [];
+
+  for (const meetingPolicyResult of meetingPolicyResults) {
+    try {
+      activeMeetingReconciliations.push(
+        await reconcileActiveMeeting({
+          client,
+          meetingPolicyResult,
+          calendarEventsById,
+          policyManagedCallRecordingsById,
+          meetingCallRecordings: collectCallRecordingsForCalendarEventIds({
+            calendarEventIds: [
+              ...meetingPolicyResult.calendarEventIds,
+              ...meetingPolicyResult.requestingCalendarEventIds,
+              ...(removedCalendarEventIdsByMeetingKey.get(
+                meetingPolicyResult.realMeetingKey,
+              ) ?? []),
+            ],
+            callRecordingsByCalendarEventId,
+          }),
+        }),
+      );
+    } catch (error) {
+      activeMeetingReconciliations.push({
+        reconciliationResult: buildFailedResult(
+          meetingPolicyResult.realMeetingKey,
+          error,
+        ),
+        calendarEventIdsToMarkRecordingOn: [],
+      });
+    }
+  }
+
+  return activeMeetingReconciliations;
 };
 
 const reconcileActiveMeeting = async ({
   client,
   meetingPolicyResult,
-  removedCalendarEventIds,
+  calendarEventsById,
+  policyManagedCallRecordingsById,
+  meetingCallRecordings,
 }: {
   client: CoreApiClient;
   meetingPolicyResult: CallRecorderPolicyResultForMeeting;
-  removedCalendarEventIds: string[];
-}): Promise<CallRecorderReconciliationResult> => {
+  calendarEventsById: Map<string, CalendarEventRecord>;
+  policyManagedCallRecordingsById: Map<string, CallRecordingRecord>;
+  meetingCallRecordings: CallRecordingRecord[];
+}): Promise<ActiveMeetingReconciliation> => {
   const representativeCalendarEventId = getUniqueSortedIds(
     meetingPolicyResult.requestingCalendarEventIds,
   )[0];
 
   if (isUndefined(representativeCalendarEventId)) {
-    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
+    return {
+      reconciliationResult: buildSkippedResult(
+        meetingPolicyResult.realMeetingKey,
+      ),
+      calendarEventIdsToMarkRecordingOn: [],
+    };
   }
 
-  const representativeCalendarEvent = (
-    await fetchCalendarEventsByIds(client, [representativeCalendarEventId])
-  )[0];
+  const representativeCalendarEvent = calendarEventsById.get(
+    representativeCalendarEventId,
+  );
 
   if (isUndefined(representativeCalendarEvent)) {
-    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
+    return {
+      reconciliationResult: buildSkippedResult(
+        meetingPolicyResult.realMeetingKey,
+      ),
+      calendarEventIdsToMarkRecordingOn: [],
+    };
   }
 
   const callRecordingId = computeCallRecordingIdForMeeting(
     meetingPolicyResult.realMeetingKey,
   );
-  const existingCallRecording = (
-    await findCallRecordingsByIds(client, [callRecordingId])
-  )[0];
+  const existingCallRecording =
+    policyManagedCallRecordingsById.get(callRecordingId);
 
   if (!isUndefined(existingCallRecording)) {
-    const reconciliationResult = await updatePolicyManagedCallRecording({
-      client,
-      existingCallRecording,
-      representativeCalendarEvent,
-      realMeetingKey: meetingPolicyResult.realMeetingKey,
-    });
-
-    await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
-
-    return reconciliationResult;
-  }
-
-  const manualOpenCallRecording = await findManualOpenCallRecording({
-    client,
-    meetingPolicyResult,
-    removedCalendarEventIds,
-  });
-
-  if (!isUndefined(manualOpenCallRecording)) {
     return {
-      action: 'SKIPPED',
-      realMeetingKey: meetingPolicyResult.realMeetingKey,
-      callRecordingId: manualOpenCallRecording.id,
+      reconciliationResult: await updatePolicyManagedCallRecording({
+        client,
+        existingCallRecording,
+        representativeCalendarEvent,
+        realMeetingKey: meetingPolicyResult.realMeetingKey,
+      }),
+      calendarEventIdsToMarkRecordingOn:
+        getCalendarEventIdsToMarkRecordingOn(meetingPolicyResult),
     };
   }
 
-  const reconciliationResult = await createPolicyManagedCallRecording({
-    client,
-    callRecordingId,
-    representativeCalendarEvent,
-    realMeetingKey: meetingPolicyResult.realMeetingKey,
-  });
+  const manualOpenCallRecording = findManualOpenCallRecording(
+    meetingCallRecordings,
+  );
 
-  await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
+  if (!isUndefined(manualOpenCallRecording)) {
+    return {
+      reconciliationResult: {
+        action: 'SKIPPED',
+        realMeetingKey: meetingPolicyResult.realMeetingKey,
+        callRecordingId: manualOpenCallRecording.id,
+      },
+      calendarEventIdsToMarkRecordingOn: [],
+    };
+  }
 
-  return reconciliationResult;
+  return {
+    reconciliationResult: await createPolicyManagedCallRecording({
+      client,
+      callRecordingId,
+      representativeCalendarEvent,
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
+    }),
+    calendarEventIdsToMarkRecordingOn:
+      getCalendarEventIdsToMarkRecordingOn(meetingPolicyResult),
+  };
 };
 
-const markRequestingCalendarEventsRecordingOn = async (
-  client: CoreApiClient,
+const getCalendarEventIdsToMarkRecordingOn = (
   meetingPolicyResult: CallRecorderPolicyResultForMeeting,
+): string[] =>
+  meetingPolicyResult.requestingCalendarEventIds.filter(
+    (calendarEventId) =>
+      !meetingPolicyResult.calendarEventIdsWithRecordingOn.includes(
+        calendarEventId,
+      ),
+  );
+
+const markActiveMeetingsRecordingOn = async (
+  client: CoreApiClient,
+  calendarEventIds: string[],
 ): Promise<void> => {
   try {
-    await markCalendarEventsRecordingOn(
-      client,
-      meetingPolicyResult.requestingCalendarEventIds,
-    );
+    await markCalendarEventsRecordingOn(client, calendarEventIds);
   } catch (error) {
     console.warn(
-      `[call-recorder] failed to mark the calendar events of meeting ${meetingPolicyResult.realMeetingKey} as recording on: ${
+      `[call-recorder] failed to mark ${calendarEventIds.length} calendar events as recording on: ${
         error instanceof Error ? error.message : String(error)
       }`,
     );
@@ -318,13 +486,23 @@ const updatePolicyManagedCallRecording = async ({
   representativeCalendarEvent: CalendarEventRecord;
   realMeetingKey: string;
 }): Promise<CallRecorderReconciliationResult> => {
-  await updateCallRecording(client, {
-    id: existingCallRecording.id,
-    data: buildPolicyManagedCallRecordingUpdateFields({
-      existingCallRecording,
-      calendarEvent: representativeCalendarEvent,
-    }),
+  const updateFields = buildPolicyManagedCallRecordingUpdateFields({
+    existingCallRecording,
+    calendarEvent: representativeCalendarEvent,
   });
+
+  if (
+    hasCallRecordingUpdateFieldChanges({
+      callRecording: existingCallRecording,
+      updateFields,
+    })
+  ) {
+    await updateCallRecording(client, {
+      id: existingCallRecording.id,
+      data: updateFields,
+    });
+  }
+
   await rescheduleCallRecordingBot(client, {
     callRecording: existingCallRecording,
     calendarEvent: representativeCalendarEvent,
@@ -401,26 +579,10 @@ const createPolicyManagedCallRecording = async ({
   };
 };
 
-const findManualOpenCallRecording = async ({
-  client,
-  meetingPolicyResult,
-  removedCalendarEventIds,
-}: {
-  client: CoreApiClient;
-  meetingPolicyResult: CallRecorderPolicyResultForMeeting;
-  removedCalendarEventIds: string[];
-}): Promise<CallRecordingRecord | undefined> => {
-  const calendarEventIds = getUniqueSortedIds([
-    ...meetingPolicyResult.calendarEventIds,
-    ...meetingPolicyResult.requestingCalendarEventIds,
-    ...removedCalendarEventIds,
-  ]);
-  const callRecordings = await findCallRecordingsByCalendarEventIds(
-    client,
-    calendarEventIds,
-  );
-
-  return [...callRecordings]
+const findManualOpenCallRecording = (
+  meetingCallRecordings: CallRecordingRecord[],
+): CallRecordingRecord | undefined =>
+  [...meetingCallRecordings]
     .sort((firstCallRecording, secondCallRecording) =>
       firstCallRecording.id.localeCompare(secondCallRecording.id),
     )
@@ -429,32 +591,18 @@ const findManualOpenCallRecording = async ({
         callRecording.status !== CallRecordingStatus.COMPLETED &&
         isUndefined(callRecording.recordingRequestStatus),
     );
-};
 
 const reconcileCanceledMeeting = async ({
   client,
   meetingPolicyResult,
-  removedCalendarEventIds,
+  meetingCallRecordings,
+  cancellableCallRecordings,
 }: {
   client: CoreApiClient;
   meetingPolicyResult: CallRecorderPolicyResultForMeeting;
-  removedCalendarEventIds: string[];
-}): Promise<CallRecorderReconciliationResult> => {
-  const calendarEventIds = getUniqueSortedIds([
-    ...meetingPolicyResult.calendarEventIds,
-    ...removedCalendarEventIds,
-  ]);
-  const meetingCallRecordings = await findCallRecordingsByCalendarEventIds(
-    client,
-    calendarEventIds,
-  );
-  const cancellableCallRecordings = meetingCallRecordings.filter(
-    (callRecording) =>
-      callRecording.status === CallRecordingStatus.SCHEDULED &&
-      callRecording.recordingRequestStatus ===
-        CallRecordingRequestStatus.REQUESTED,
-  );
-
+  meetingCallRecordings: CallRecordingRecord[];
+  cancellableCallRecordings: CallRecordingRecord[];
+}): Promise<CanceledMeetingReconciliation> => {
   for (const callRecording of cancellableCallRecordings) {
     await cancelCallRecordingRequest({
       client,
@@ -465,56 +613,60 @@ const reconcileCanceledMeeting = async ({
   const cancellableCallRecordingIds = new Set(
     cancellableCallRecordings.map((callRecording) => callRecording.id),
   );
-
-  await clearRecordingOnForMeeting({
-    client,
-    meetingPolicyResult,
-    remainingCallRecordings: meetingCallRecordings.filter(
-      (callRecording) => !cancellableCallRecordingIds.has(callRecording.id),
-    ),
-  });
+  const calendarEventIdsToClearRecordingOn =
+    getCalendarEventIdsToClearRecordingOn({
+      meetingPolicyResult,
+      remainingCallRecordings: meetingCallRecordings.filter(
+        (callRecording) => !cancellableCallRecordingIds.has(callRecording.id),
+      ),
+    });
 
   if (cancellableCallRecordings.length === 0) {
-    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
+    return {
+      reconciliationResult: buildSkippedResult(
+        meetingPolicyResult.realMeetingKey,
+      ),
+      calendarEventIdsToClearRecordingOn,
+    };
   }
 
   return {
-    action: 'CANCELED',
-    realMeetingKey: meetingPolicyResult.realMeetingKey,
-    callRecordingId: cancellableCallRecordings[0].id,
+    reconciliationResult: {
+      action: 'CANCELED',
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
+      callRecordingId: cancellableCallRecordings[0].id,
+    },
+    calendarEventIdsToClearRecordingOn,
   };
 };
 
-const clearRecordingOnForMeeting = async ({
-  client,
+const getCalendarEventIdsToClearRecordingOn = ({
   meetingPolicyResult,
   remainingCallRecordings,
 }: {
-  client: CoreApiClient;
   meetingPolicyResult: CallRecorderPolicyResultForMeeting;
   remainingCallRecordings: CallRecordingRecord[];
-}): Promise<void> => {
+}): string[] => {
   const hasCallRecordingOutsideThisCancellation = remainingCallRecordings.some(
     (callRecording) =>
       callRecording.recordingRequestStatus !==
       CallRecordingRequestStatus.CANCELED,
   );
 
-  if (
-    meetingPolicyResult.calendarEventIdsWithRecordingOn.length === 0 ||
-    hasCallRecordingOutsideThisCancellation
-  ) {
-    return;
-  }
+  return hasCallRecordingOutsideThisCancellation
+    ? []
+    : meetingPolicyResult.calendarEventIdsWithRecordingOn;
+};
 
+const clearCanceledMeetingsRecordingOn = async (
+  client: CoreApiClient,
+  calendarEventIds: string[],
+): Promise<void> => {
   try {
-    await clearCalendarEventsRecordingOn(
-      client,
-      meetingPolicyResult.calendarEventIdsWithRecordingOn,
-    );
+    await clearCalendarEventsRecordingOn(client, calendarEventIds);
   } catch (error) {
     console.warn(
-      `[call-recorder] failed to clear the recording preference of meeting ${meetingPolicyResult.realMeetingKey}: ${
+      `[call-recorder] failed to clear the recording preference of ${calendarEventIds.length} calendar events: ${
         error instanceof Error ? error.message : String(error)
       }`,
     );
@@ -574,6 +726,85 @@ const buildRemovedCalendarEventIdsByMeetingKey = (
   }
 
   return calendarEventIdsByMeetingKey;
+};
+
+const groupCallRecordingsByCalendarEventId = (
+  callRecordings: CallRecordingRecord[],
+): Map<string, CallRecordingRecord[]> => {
+  const callRecordingsByCalendarEventId = new Map<
+    string,
+    CallRecordingRecord[]
+  >();
+
+  for (const callRecording of callRecordings) {
+    if (isUndefined(callRecording.calendarEventId)) {
+      continue;
+    }
+
+    callRecordingsByCalendarEventId.set(callRecording.calendarEventId, [
+      ...(callRecordingsByCalendarEventId.get(callRecording.calendarEventId) ??
+        []),
+      callRecording,
+    ]);
+  }
+
+  return callRecordingsByCalendarEventId;
+};
+
+const collectCallRecordingsForCalendarEventIds = ({
+  calendarEventIds,
+  callRecordingsByCalendarEventId,
+}: {
+  calendarEventIds: string[];
+  callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
+}): CallRecordingRecord[] =>
+  getUniqueSortedIds(calendarEventIds).flatMap(
+    (calendarEventId) =>
+      callRecordingsByCalendarEventId.get(calendarEventId) ?? [],
+  );
+
+const collectCanceledMeetingCallRecordings = ({
+  calendarEventIds,
+  callRecordingsByCalendarEventId,
+  callRecordingIdsCanceledInBatch,
+}: {
+  calendarEventIds: string[];
+  callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
+  callRecordingIdsCanceledInBatch: Set<string>;
+}): CallRecordingRecord[] =>
+  collectCallRecordingsForCalendarEventIds({
+    calendarEventIds,
+    callRecordingsByCalendarEventId,
+  }).map((callRecording) =>
+    callRecordingIdsCanceledInBatch.has(callRecording.id)
+      ? {
+          ...callRecording,
+          recordingRequestStatus: CallRecordingRequestStatus.CANCELED,
+        }
+      : callRecording,
+  );
+
+const isCancellableCallRecording = (
+  callRecording: CallRecordingRecord,
+): boolean =>
+  callRecording.status === CallRecordingStatus.SCHEDULED &&
+  callRecording.recordingRequestStatus === CallRecordingRequestStatus.REQUESTED;
+
+const buildFailedResult = (
+  realMeetingKey: string,
+  error: unknown,
+): CallRecorderReconciliationResult => {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  console.error(
+    `[call-recorder] reconciliation failed for meeting ${realMeetingKey}: ${errorMessage}`,
+  );
+
+  return {
+    action: 'FAILED',
+    realMeetingKey,
+    errorMessage,
+  };
 };
 
 const buildSkippedResult = (
