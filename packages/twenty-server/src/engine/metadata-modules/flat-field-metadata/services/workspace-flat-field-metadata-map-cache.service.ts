@@ -46,6 +46,7 @@ const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
       'kanbanAggregateOperationFieldMetadataId',
       'calendarFieldMetadataId',
       'calendarEndFieldMetadataId',
+      'toggleMineFilterFieldMetadataId',
       'mainGroupByFieldMetadataId',
     ],
   },
@@ -132,6 +133,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
           calendarEndViews:
             views.byCalendarEndFieldMetadataId.get(fieldMetadataEntity.id) ||
             [],
+          toggleMineFilterViews:
+            views.byToggleMineFilterFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) || [],
           mainGroupByFieldMetadataViews:
             views.byMainGroupByFieldMetadataId.get(fieldMetadataEntity.id) ||
             [],

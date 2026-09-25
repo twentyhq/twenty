@@ -1540,6 +1540,9 @@ export default {
             "calendarEndFieldMetadataId": [
                 3
             ],
+            "toggleMineFilterFieldMetadataId": [
+                3
+            ],
             "workspaceId": [
                 3
             ],
@@ -11697,6 +11700,9 @@ export default {
             "calendarEndFieldMetadataId": [
                 3
             ],
+            "toggleMineFilterFieldMetadataId": [
+                3
+            ],
             "mainGroupByFieldMetadataId": [
                 3
             ],
@@ -11745,6 +11751,9 @@ export default {
                 3
             ],
             "calendarEndFieldMetadataId": [
+                3
+            ],
+            "toggleMineFilterFieldMetadataId": [
                 3
             ],
             "visibility": [

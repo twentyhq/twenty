@@ -157,6 +157,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     calendarEndViewUniversalIdentifiers: [],
+    toggleMineFilterViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
