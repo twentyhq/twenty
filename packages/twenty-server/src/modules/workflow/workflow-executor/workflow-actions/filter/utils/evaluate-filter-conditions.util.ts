@@ -13,6 +13,7 @@ import {
   type ViewFilterOperandDeprecated,
 } from 'twenty-shared/types';
 import {
+  convertJsonValueToPostgresJsonbText,
   convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated,
   isDefined,
   isMatchingMultiSelectFilter,
@@ -69,12 +70,13 @@ function evaluateFilter(
     case 'LINKS':
     case 'ARRAY':
     case 'array':
-    case 'RAW_JSON':
       return evaluateTextAndArrayFilter(
         filterWithConvertedOperand,
         filter.type,
         filter.compositeFieldSubFieldName,
       );
+    case 'RAW_JSON':
+      return evaluateRawJsonFilter(filterWithConvertedOperand);
     case 'SELECT':
       return evaluateSelectFilter(filterWithConvertedOperand);
     case 'BOOLEAN':
@@ -198,6 +200,45 @@ function evaluateTextAndArrayFilter(
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for this filter type`,
+      );
+  }
+}
+
+// Variables can resolve a JSON field to its stringified form
+function parseRawJsonOperand(value: unknown): unknown {
+  if (!isString(value)) {
+    return value;
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
+  const jsonValue = parseRawJsonOperand(filter.leftOperand);
+  const isEmpty = !isDefined(jsonValue) || jsonValue === '';
+
+  const containsSearchValue = () =>
+    !isEmpty &&
+    convertJsonValueToPostgresJsonbText(jsonValue)
+      .toLowerCase()
+      .includes(String(filter.rightOperand ?? '').toLowerCase());
+
+  switch (filter.operand) {
+    case ViewFilterOperand.CONTAINS:
+      return containsSearchValue();
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
+      return !containsSearchValue();
+    case ViewFilterOperand.IS_EMPTY:
+      return isEmpty;
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return !isEmpty;
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for raw JSON filter`,
       );
   }
 }
