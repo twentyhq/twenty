@@ -24,6 +24,8 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
       name: 'My workflow',
       statuses: [CoreWorkflowStatus.ACTIVE],
       lastPublishedVersionId: 'published-version-id',
+      visibility: WorkflowVisibility.WORKSPACE,
+      canChangeVisibility: true,
       createdAt: '2026-09-01T00:00:00.000Z',
       updatedAt: '2026-09-14T00:00:00.000Z',
       deletedAt: null,

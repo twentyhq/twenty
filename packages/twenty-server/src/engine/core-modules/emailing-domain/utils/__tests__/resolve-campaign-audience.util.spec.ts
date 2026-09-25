@@ -17,7 +17,6 @@ describe('resolveCampaignAudience', () => {
         'carol@example.com',
       ]),
       totalMemberCount: 5,
-      maxRecipients: 100,
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(['bob@example.com']),
       topicSuppressedEmails: new Set(['carol@example.com']),
@@ -30,53 +29,11 @@ describe('resolveCampaignAudience', () => {
       totalMembers: 5,
       withoutEmail: 1,
       duplicateEmails: 1,
-      overCap: 0,
       hardSuppressed: 0,
       globallyUnsubscribed: 1,
       topicUnsubscribed: 1,
       sendable: 1,
     });
-  });
-
-  it('should surface how many recipients were dropped for exceeding the cap', () => {
-    const { sendableRecipients, audience } = resolveCampaignAudience({
-      rawRecipients: buildRawRecipients([
-        'a@example.com',
-        'b@example.com',
-        'c@example.com',
-      ]),
-      totalMemberCount: 3,
-      maxRecipients: 2,
-      hardSuppressedEmails: new Set(),
-      globallySuppressedEmails: new Set(),
-      topicSuppressedEmails: new Set(),
-    });
-
-    expect(audience.overCap).toBe(1);
-    expect(audience.sendable).toBe(2);
-    expect(sendableRecipients).toHaveLength(2);
-  });
-
-  it('should fill the cap with eligible recipients instead of letting suppressed ones consume slots', () => {
-    const { sendableRecipients, audience } = resolveCampaignAudience({
-      rawRecipients: buildRawRecipients([
-        'a@example.com',
-        'b@example.com',
-        'c@example.com',
-        'd@example.com',
-      ]),
-      totalMemberCount: 4,
-      maxRecipients: 2,
-      hardSuppressedEmails: new Set(['a@example.com']),
-      globallySuppressedEmails: new Set(),
-      topicSuppressedEmails: new Set(),
-    });
-
-    expect(sendableRecipients.map((recipient) => recipient.email)).toEqual([
-      'b@example.com',
-      'c@example.com',
-    ]);
-    expect(audience.overCap).toBe(1);
   });
 
   it('should report a bounced recipient as hard suppressed rather than unsubscribed', () => {
@@ -86,7 +43,6 @@ describe('resolveCampaignAudience', () => {
         'optout@example.com',
       ]),
       totalMemberCount: 2,
-      maxRecipients: 100,
       hardSuppressedEmails: new Set(['bounced@example.com']),
       globallySuppressedEmails: new Set(['optout@example.com']),
       topicSuppressedEmails: new Set(),
@@ -101,7 +57,6 @@ describe('resolveCampaignAudience', () => {
     const { audience } = resolveCampaignAudience({
       rawRecipients: buildRawRecipients(['dave@example.com']),
       totalMemberCount: 1,
-      maxRecipients: 100,
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(['dave@example.com']),
       topicSuppressedEmails: new Set(['dave@example.com']),
@@ -116,7 +71,6 @@ describe('resolveCampaignAudience', () => {
     const { audience } = resolveCampaignAudience({
       rawRecipients: buildRawRecipients(['visible@example.com']),
       totalMemberCount: 4,
-      maxRecipients: 100,
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(),
       topicSuppressedEmails: new Set(),
@@ -130,7 +84,6 @@ describe('resolveCampaignAudience', () => {
     const { sendableRecipients, audience } = resolveCampaignAudience({
       rawRecipients: [],
       totalMemberCount: 0,
-      maxRecipients: 100,
       hardSuppressedEmails: new Set(),
       globallySuppressedEmails: new Set(),
       topicSuppressedEmails: new Set(),

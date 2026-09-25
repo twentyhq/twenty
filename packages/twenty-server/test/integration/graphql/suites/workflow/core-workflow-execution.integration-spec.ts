@@ -1652,16 +1652,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
   });
 
-  it('rejects an unmapped pending run without partially updating its ids', async () => {
+  it('leaves a pending run without a workspace version untouched', async () => {
     const id = randomUUID();
     try {
       await global.testDataSource.query(
         `INSERT INTO "${schema}"."workflowRun" (id, name, status, position, state) VALUES ($1, 'B-Async unmapped', 'RUNNING', 0, '{}')`,
         [id],
       );
-      await expect(backfill()).rejects.toThrow(
-        'Pending workflow runs have no valid core mapping',
-      );
+      await backfill();
       expect((await getRun(id)).coreWorkflowId).toBeNull();
     } finally {
       await global.testDataSource.query(

@@ -75,7 +75,11 @@ export function useDirectExecution(
           'This query cannot be executed as a single request. Please split it into separate queries.',
         );
 
-        return endResponse(Response.json({ errors: [error.toJSON()] }));
+        const result = { errors: [error.toJSON()] };
+
+        config.directExecutionService.recordOperationMetrics(result);
+
+        return endResponse(Response.json(result));
       }
 
       if (hasCoreFields) {
@@ -103,6 +107,8 @@ export function useDirectExecution(
       if (isNull(result)) {
         return;
       }
+
+      config.directExecutionService.recordOperationMetrics(result);
 
       return endResponse(Response.json(result));
     },

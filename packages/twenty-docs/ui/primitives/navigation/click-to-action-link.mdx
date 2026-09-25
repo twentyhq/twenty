@@ -1,0 +1,51 @@
+---
+title: ClickToActionLink
+description: Render a text link for navigation to a destination.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ClickToActionLinkReference from '/snippets/ui/generated/navigation/click-to-action-link.mdx';
+
+`ClickToActionLink` renders a styled native anchor. Use a meaningful `href` and descriptive visible text. For an action that changes application state without navigation, use [Button](/ui/primitives/input/button).
+
+<StoryEmbed
+  storyId="ui-navigation-clicktoactionlink--default"
+  title="ClickToActionLink example"
+/>
+
+## Usage
+
+```tsx
+import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+
+export const ImportHelpLink = () => (
+  <ClickToActionLink href="https://docs.twenty.com/">
+    Read the Twenty documentation
+  </ClickToActionLink>
+);
+```
+
+## Open a new tab
+
+```tsx
+import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+
+export const ExternalHelpLink = () => (
+  <ClickToActionLink
+    href="https://docs.twenty.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Read the documentation (opens in a new tab)
+  </ClickToActionLink>
+);
+```
+
+With an `href`, the native anchor provides keyboard focus and Enter activation. `onClick` can observe or intercept activation; routing and state belong to the host application.
+
+Although its TypeScript type accepts anchor attributes, the current implementation forwards only `children`, `className`, `href`, `onClick`, `target`, and `rel`. Other attributes and refs are not forwarded. Use visible link text as the accessible name.
+
+## Props
+
+<ClickToActionLinkReference />

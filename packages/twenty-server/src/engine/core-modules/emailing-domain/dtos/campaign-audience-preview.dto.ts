@@ -12,9 +12,6 @@ export class CampaignAudiencePreviewDTO {
   duplicateEmails: number;
 
   @Field(() => Int)
-  overCap: number;
-
-  @Field(() => Int)
   hardSuppressed: number;
 
   @Field(() => Int)

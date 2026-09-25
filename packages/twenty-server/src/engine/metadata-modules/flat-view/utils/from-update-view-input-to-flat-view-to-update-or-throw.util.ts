@@ -195,6 +195,11 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
   }
 
+  const effectiveExistingFlatView = resolveEffectiveFlatEntity({
+    metadataName: 'view',
+    flatEntity: existingFlatViewToUpdate,
+  });
+
   const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
     metadataName: 'view',
     flatEntity: { ...mergedRecord, overrides },
@@ -202,7 +207,7 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
 
   const { flatViewGroupsToDelete, flatViewGroupsToCreate } =
     handleFlatViewUpdateSideEffect({
-      fromFlatView: existingFlatViewToUpdate,
+      fromFlatView: effectiveExistingFlatView,
       toFlatView: effectiveFlatViewToUpdate,
       flatViewGroupMaps: flatViewGroupMaps,
       flatFieldMetadataMaps: flatFieldMetadataMaps,

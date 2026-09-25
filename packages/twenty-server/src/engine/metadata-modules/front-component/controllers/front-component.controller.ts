@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Logger,
-  Param,
   Res,
   UseFilters,
   UseGuards,
@@ -13,6 +12,7 @@ import { pipeline } from 'stream/promises';
 import { Response } from 'express';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
 
+import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -21,6 +21,7 @@ import { PRESIGNED_URL_NO_STORE_CACHE_CONTROL } from 'src/engine/core-modules/fi
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -40,6 +41,7 @@ import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/works
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
+  ApplicationRestApiExceptionFilter,
   FrontComponentRestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
   WorkspaceMigrationRunnerRestApiExceptionFilter,
@@ -53,7 +55,11 @@ export class FrontComponentController {
   @UseGuards(NoPermissionGuard)
   async getBuiltJs(
     @Res() res: Response,
-    @Param('frontComponentId') frontComponentId: string,
+    @ApplicationTargetParam('frontComponentId', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'frontComponent',
+    })
+    frontComponentId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     const fileResponse = await this.frontComponentService
