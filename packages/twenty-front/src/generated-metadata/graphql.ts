@@ -6307,6 +6307,7 @@ export type Subscription = {
 
 
 export type SubscriptionEventLogsLiveArgs = {
+  fieldFilters?: InputMaybe<Array<EventLogFieldFilterInput>>;
   table: EventLogTable;
 };
 

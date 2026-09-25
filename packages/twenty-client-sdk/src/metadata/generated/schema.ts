@@ -8131,7 +8131,7 @@ export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable} })
+    eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable, fieldFilters?: (EventLogFieldFilterInput[] | null)} })
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     __typename?: boolean | number
     __scalar?: boolean | number

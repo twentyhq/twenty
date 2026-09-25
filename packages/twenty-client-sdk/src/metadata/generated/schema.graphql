@@ -5706,7 +5706,7 @@ type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
-  eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  eventLogsLive(table: EventLogTable!, fieldFilters: [EventLogFieldFilterInput!]): [EventLogRecord!]
   exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 

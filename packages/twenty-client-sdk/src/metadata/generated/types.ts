@@ -14467,6 +14467,10 @@ export default {
                     "table": [
                         431,
                         "EventLogTable!"
+                    ],
+                    "fieldFilters": [
+                        434,
+                        "[EventLogFieldFilterInput!]"
                     ]
                 }
             ],

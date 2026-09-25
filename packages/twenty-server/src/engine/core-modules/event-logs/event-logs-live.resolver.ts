@@ -23,13 +23,21 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 
 import { EventLogsService } from './event-logs.service';
 
+import { EventLogFieldFilterInput } from './dtos/event-log-field-filter.input';
 import { EventLogRecord } from './dtos/event-log-result.dto';
 import { getClickHouseTableName } from './registry/event-log-registry';
+import { isEventLogRowMatchingFieldFilters } from './utils/is-event-log-row-matching-field-filters.util';
 import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
+import { validateEventLogFieldFilterOrThrow } from './utils/validate-event-log-field-filter-or-throw.util';
 
 type WorkspaceEventLivePayload = {
   table: string;
   rows: Record<string, unknown>[];
+};
+
+type EventLogsLiveVariables = {
+  table: EventLogTable;
+  fieldFilters?: EventLogFieldFilterInput[];
 };
 
 @MetadataResolver()
@@ -56,18 +64,43 @@ export class EventLogsLiveResolver {
     nullable: true,
     filter: (
       payload: WorkspaceEventLivePayload,
-      variables: { table: EventLogTable },
-    ) => getClickHouseTableName(variables.table) === payload.table,
+      variables: EventLogsLiveVariables,
+    ) =>
+      getClickHouseTableName(variables.table) === payload.table &&
+      payload.rows.some((row) =>
+        isEventLogRowMatchingFieldFilters({
+          row,
+          fieldFilters: variables.fieldFilters ?? [],
+        }),
+      ),
     resolve: (
       payload: WorkspaceEventLivePayload,
-      variables: { table: EventLogTable },
-    ) => normalizeEventLogRecords(payload.rows, variables.table),
+      variables: EventLogsLiveVariables,
+    ) =>
+      normalizeEventLogRecords(
+        payload.rows.filter((row) =>
+          isEventLogRowMatchingFieldFilters({
+            row,
+            fieldFilters: variables.fieldFilters ?? [],
+          }),
+        ),
+        variables.table,
+      ),
   })
   async eventLogsLive(
     @Args('table', { type: () => EventLogTable }) table: EventLogTable,
+    @Args('fieldFilters', {
+      type: () => [EventLogFieldFilterInput],
+      nullable: true,
+    })
+    fieldFilters: EventLogFieldFilterInput[] | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     await this.eventLogsService.validateAccess(workspace.id, table);
+
+    fieldFilters?.forEach((fieldFilter) =>
+      validateEventLogFieldFilterOrThrow({ fieldFilter, table }),
+    );
 
     const clickHouseTable = getClickHouseTableName(table);
 
