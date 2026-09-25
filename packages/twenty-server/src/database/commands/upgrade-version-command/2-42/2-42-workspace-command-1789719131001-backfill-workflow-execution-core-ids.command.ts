@@ -85,7 +85,8 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          FROM "${schema}"."workflow" w
          JOIN core."workflow" cw
            ON cw.id = w."coreWorkflowId" AND cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = w.id
-         WHERE cv."workspaceId" = $1 AND cv."coreWorkflowId" IS NULL AND cv."workflowId" = w.id`,
+         WHERE cv."workspaceId" = $1 AND cv."coreWorkflowId" IS NULL AND cv."workflowId" = w.id
+           AND w."deletedAt" IS NULL`,
         [workspaceId],
       );
 
