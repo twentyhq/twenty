@@ -4,6 +4,7 @@
 
 ### Breaking Changes
 
+- Removed the unused `useScreenSize` export. `useIsMobile` and `useIsTouchDevice` remain available from `twenty-ui/utilities` and now subscribe to native `matchMedia` changes. Both return `false` during server rendering, initial hydration, and when `matchMedia` is unavailable. `react-responsive` context overrides no longer affect these hooks; use `overrideMediaQueryMatches` from `twenty-ui/testing` to force a result in stories.
 - All theme exports now live in `twenty-ui/theme`. The `twenty-ui/theme-constants` entry, `ThemeContext`, `ThemeScopeContext`, and `ThemeContextType` are removed. Read values with `useTheme`, `useThemeColorScheme`, and `useThemeContainer`; configure them with `ThemeProvider`. The top-level theme stylesheet URLs and token values are unchanged.
 - Worker apps retain provider-less CSS-variable values. Apps that supplied a context value can pass `THEME_LIGHT` or `THEME_DARK` directly through `ThemeProvider`'s `theme` prop. The in-repo call-recorder, companion, fireflies, Granola, Slack, and Teams apps import `twenty-ui/theme-constants` and must move those imports to `twenty-ui/theme` when they upgrade; call-recorder and Granola must also replace their `ThemeContext` providers with the `theme` prop. Their current pinned UI versions expose neither, so each app needs a coordinated source and dependency upgrade.
 - `twenty-ui/testing` no longer exports `RouterDecorator`, `ComponentWithRouterDecorator`, `RouteParams`, `isRouteParams`, or `computeLocation`. Use application-owned router decorators when routing is needed, or `ComponentDecorator` for router-free stories. React Router is no longer a peer dependency.
@@ -15,3 +16,7 @@
 - `SegmentedControl` is a radio group. Use `aria-label` or `aria-labelledby` (one is required), `value` or `defaultValue`, and `onValueChange(value, eventDetails)` in place of `ariaLabel`, `value`, and `onChange(value)`. Options take `startIcon` and `'aria-label'` in place of `Icon` and `ariaLabel`. `role` and `width` are removed: use `Tabs` for tab lists and `className` or `style` to size the control. Arrow keys select the next option, Enter no longer selects, and choosing the selected option again no longer calls `onValueChange`.
 
 Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when upgrading Twenty apps.
+
+### Added
+
+- `twenty-ui/utilities` exports `useMediaQuery`, `MOBILE_MEDIA_QUERY`, and `TOUCH_DEVICE_MEDIA_QUERY`. `twenty-ui/testing` exports `overrideMediaQueryMatches`.

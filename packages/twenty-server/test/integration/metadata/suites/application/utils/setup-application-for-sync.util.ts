@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const setupApplicationForSync = async ({
   applicationUniversalIdentifier,
@@ -18,7 +18,7 @@ export const setupApplicationForSync = async ({
 }) => {
   jest.useRealTimers();
 
-  const registrationResponse = await makeMetadataAPIRequest(
+  const registrationResponse = await makeMetadataApiRequest(
     {
       query: gql`
         mutation CreateApplicationRegistration(
@@ -46,7 +46,7 @@ export const setupApplicationForSync = async ({
     );
   }
 
-  const developmentApplicationResponse = await makeMetadataAPIRequest(
+  const developmentApplicationResponse = await makeMetadataApiRequest(
     {
       query: gql`
         mutation CreateDevelopmentApplication(

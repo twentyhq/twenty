@@ -2,7 +2,7 @@ import { type Response } from 'supertest';
 import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 
@@ -12,16 +12,16 @@ type RequestHeaders = {
 };
 
 // Supertest requests dispatch lazily, so Origin and Cookie can be set on the
-// request makeMetadataAPIRequest already built. The explicit null token keeps
+// request makeMetadataApiRequest already built. The explicit null token keeps
 // these requests off Bearer authentication, which would bypass both the
 // cookie auth path and the CSRF middleware; undefined would fall back to the
 // util's default admin token.
 export const postMetadataOperationWithHeaders = (
-  graphqlOperation: Parameters<typeof makeMetadataAPIRequest>[0],
+  graphqlOperation: Parameters<typeof makeMetadataApiRequest>[0],
   { originHeader, cookieHeader }: RequestHeaders,
   expectedStatus = 200,
 ) => {
-  const graphqlRequest = makeMetadataAPIRequest(graphqlOperation, null);
+  const graphqlRequest = makeMetadataApiRequest(graphqlOperation, null);
 
   if (originHeader !== undefined) {
     graphqlRequest.set('Origin', originHeader);
@@ -104,7 +104,12 @@ export const extractSessionCookie = (
   response: Response,
   cookieName?: string,
 ):
-  | { rawCookie: string; cookieName: string; cookieHeader: string; sessionToken: string }
+  | {
+      rawCookie: string;
+      cookieName: string;
+      cookieHeader: string;
+      sessionToken: string;
+    }
   | undefined => {
   const candidateNames =
     cookieName === undefined ? SESSION_COOKIE_NAMES : [cookieName];
