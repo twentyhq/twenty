@@ -59,6 +59,8 @@ const StyledPanel = styled.aside`
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
     border-left: none;
+    inset: 0;
+    position: absolute;
     width: 100%;
   }
 `;

@@ -89,6 +89,7 @@ const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
     ${({ bodyHeight }) => bodyHeight}px
   );
   min-height: ${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px;
+  position: relative;
 `;
 
 const StyledActiveSource = styled.div<{ isDetailPanelOpen: boolean }>`
@@ -99,8 +100,8 @@ const StyledActiveSource = styled.div<{ isDetailPanelOpen: boolean }>`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
-    display: ${({ isDetailPanelOpen }) =>
-      isDetailPanelOpen ? 'none' : 'flex'};
+    visibility: ${({ isDetailPanelOpen }) =>
+      isDetailPanelOpen ? 'hidden' : 'visible'};
   }
 `;
 
