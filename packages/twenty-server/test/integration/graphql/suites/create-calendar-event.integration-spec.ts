@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 const NON_EXISTENT_CONNECTED_ACCOUNT_ID =
   '00000000-0000-4000-8000-000000000000';
@@ -22,7 +22,7 @@ const CREATE_CALENDAR_EVENT_MUTATION = gql`
 // for an account that does not exist.
 describe('createCalendarEvent (metadata API) (e2e)', () => {
   it('fails closed with a structured error when the connected account does not exist', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: CREATE_CALENDAR_EVENT_MUTATION,
       variables: {
         input: {

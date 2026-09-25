@@ -669,6 +669,18 @@ msgctxt "objectMetadata.labelSingular"
 msgid "Agent chat thread"
 msgstr "Нит ћаскања агента"
 
+#. js-lingui-id: leA1JY
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Agent chat thread target"
+msgstr "Циљ нити ћаскања агента"
+
+#. js-lingui-id: vQUuTU
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Agent chat thread targets"
+msgstr "Циљеви нити ћаскања агента"
+
 #. js-lingui-id: d9XlI/
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -1237,6 +1249,26 @@ msgctxt "timelineActivityType.label"
 msgid "attached a file"
 msgstr "је приложио датотеку"
 
+#. js-lingui-id: 6Rq6c5
+#: src/engine/metadata-modules/object-metadata/utils/compute-system-morph-target-field-label.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Attached to"
+msgstr "Приложено уз"
+
+#. js-lingui-id: a/olsN
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
+msgctxt "pageLayoutWidget.title"
+msgid "Attached to"
+msgstr "Приложено уз"
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -1281,6 +1313,7 @@ msgstr "Позиција записа прилога"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Attachment target"
 msgstr "Циљ прилога"
@@ -1297,6 +1330,12 @@ msgstr "Прилози"
 msgctxt "objectMetadata.labelPlural"
 msgid "Attachments"
 msgstr "Прилози"
+
+#. js-lingui-id: TgpFGf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Attachments linked to the chat thread"
+msgstr "Прилози повезани са нити ћаскања"
 
 #. js-lingui-id: 4hKZBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1561,13 +1600,13 @@ msgstr "Бум"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Bounced At"
-msgstr ""
+msgstr "Одбијено у"
 
 #. js-lingui-id: Ju2edC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Bounced At"
-msgstr ""
+msgstr "Одбијено у"
 
 #. js-lingui-id: MUk11c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -1979,31 +2018,31 @@ msgstr "Кампања"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Campaign deliveries"
-msgstr ""
+msgstr "Испоруке кампање"
 
 #. js-lingui-id: 9CLy+1
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Campaign delivery"
-msgstr ""
+msgstr "Испорука кампање"
 
 #. js-lingui-id: TXz220
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Campaign delivery"
-msgstr ""
+msgstr "Испорука кампање"
 
 #. js-lingui-id: rghNQY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Campaign ID"
-msgstr ""
+msgstr "ID кампање"
 
 #. js-lingui-id: fSWDKd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Campaign ID"
-msgstr ""
+msgstr "ID кампање"
 
 #. js-lingui-id: BeCo7/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -2302,6 +2341,30 @@ msgstr "Нит ћаскања није пронађена."
 msgid "Chat thread title cannot be empty."
 msgstr "Наслов теме ћаскања не може бити празан."
 
+#. js-lingui-id: 9P+QyJ
+#: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
+msgctxt "fieldMetadata.label"
+msgid "Chats"
+msgstr "Ћаскања"
+
+#. js-lingui-id: NJ9eLU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Chats tied to the company"
+msgstr "Ћаскања везана за компанију"
+
+#. js-lingui-id: rRV3D2
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Chats tied to the contact"
+msgstr "Ћаскања везана за контакт"
+
+#. js-lingui-id: ro3F4h
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Chats tied to the opportunity"
+msgstr "Ћаскања везана за прилику"
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -2338,25 +2401,25 @@ msgstr "Откривена кружна зависност у хијерархи
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Claim Expires At"
-msgstr ""
+msgstr "Преузимање истиче у"
 
 #. js-lingui-id: bj3jul
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Claim Expires At"
-msgstr ""
+msgstr "Преузимање истиче у"
 
 #. js-lingui-id: H+dfXj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Claim Token"
-msgstr ""
+msgstr "Токен за преузимање"
 
 #. js-lingui-id: S8cDJf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Claim Token"
-msgstr ""
+msgstr "Токен за преузимање"
 
 #. js-lingui-id: fDGNL3
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -2455,7 +2518,7 @@ msgstr "Компаније"
 
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -2487,13 +2550,13 @@ msgstr "Позиција записа о компанији"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Complained At"
-msgstr ""
+msgstr "Пријављено као нежељена пошта у"
 
 #. js-lingui-id: 9bCz2D
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Complained At"
-msgstr ""
+msgstr "Пријављено као нежељена пошта у"
 
 #. js-lingui-id: UdSbpW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -2955,6 +3018,7 @@ msgstr "Креирајте приказ"
 
 #. js-lingui-id: 4lG6GV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -2967,6 +3031,7 @@ msgstr "Креирано у"
 
 #. js-lingui-id: ZA1xqP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -3169,7 +3234,6 @@ msgid "Customer"
 msgstr "Купац"
 
 #. js-lingui-id: gmoxtb
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Dashboard"
@@ -3337,6 +3401,12 @@ msgstr "Децембар"
 msgctxt "fieldMetadata.label"
 msgid "Declined"
 msgstr "Одбијено"
+
+#. js-lingui-id: dFxNmp
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Attachment Layout"
+msgstr "Подразумевани распоред прилога"
 
 #. js-lingui-id: RbQaAF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -3558,6 +3628,7 @@ msgstr "Обрисано у"
 
 #. js-lingui-id: l+MMBR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -3570,6 +3641,7 @@ msgstr "Обрисано у"
 
 #. js-lingui-id: Lu8j/6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -3584,13 +3656,13 @@ msgstr "Обрисано у"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Delivered At"
-msgstr ""
+msgstr "Испоручено у"
 
 #. js-lingui-id: LswjjG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered At"
-msgstr ""
+msgstr "Испоручено у"
 
 #. js-lingui-id: bMSh++
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3827,13 +3899,13 @@ msgstr "Имејл"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Email Address"
-msgstr ""
+msgstr "Имејл адреса"
 
 #. js-lingui-id: NH74YE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Email Address"
-msgstr ""
+msgstr "Имејл адреса"
 
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
@@ -4381,13 +4453,13 @@ msgstr "Није успело уметање или ажурирање запи�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Failure Reason"
-msgstr ""
+msgstr "Разлог неуспеха"
 
 #. js-lingui-id: vFgy1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Failure Reason"
-msgstr ""
+msgstr "Разлог неуспеха"
 
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -5288,6 +5360,7 @@ msgstr "iCal идентификатор"
 #. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -5330,6 +5403,7 @@ msgstr "ИД"
 #. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -5373,6 +5447,11 @@ msgstr "ИД"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "ID field cannot be searched"
 msgstr "Поље ID се не може претраживати"
+
+#. js-lingui-id: TGM/Xy
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider already exists."
+msgstr "Добављач идентитета већ постоји."
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -7226,19 +7305,19 @@ msgstr "Позиција записа поруке"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Message suppression"
-msgstr ""
+msgstr "Блокирање порука"
 
 #. js-lingui-id: mIsdys
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message suppression"
-msgstr ""
+msgstr "Блокирање порука"
 
 #. js-lingui-id: 7KgWx1
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message suppressions"
-msgstr ""
+msgstr "Блокирања порука"
 
 #. js-lingui-id: IyZnrr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -7764,7 +7843,6 @@ msgid "Not started"
 msgstr "Није започето"
 
 #. js-lingui-id: O2bgDc
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8163,6 +8241,11 @@ msgstr "Само заказана кампања или кампања у ток
 msgid "Only administrators can impersonate users with admin privileges."
 msgstr "Само администратори могу да се представљају као корисници са администраторским привилегијама."
 
+#. js-lingui-id: ApQ2Kw
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Only an operator can replace an instance default."
+msgstr "Само оператер може да замени подразумевану вредност инстанце."
+
 #. js-lingui-id: JzXn58
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Only applications published to npm can be claimed this way."
@@ -8264,7 +8347,7 @@ msgstr "Прилике у власништву члана радног прос�
 
 #. js-lingui-id: JpA/cO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8793,7 +8876,7 @@ msgstr "Лице"
 
 #. js-lingui-id: F8wyAu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -8814,13 +8897,13 @@ msgstr "Лице"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Person ID"
-msgstr ""
+msgstr "ID лица"
 
 #. js-lingui-id: Ojc/oN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Person ID"
-msgstr ""
+msgstr "ID лица"
 
 #. js-lingui-id: qAQDfe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -9013,6 +9096,12 @@ msgctxt "fieldMetadata.label"
 msgid "Presentation"
 msgstr "Презентација"
 
+#. js-lingui-id: pqO8TV
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
+msgctxt "pageLayoutWidget.title"
+msgid "Preview"
+msgstr "Преглед"
+
 #. js-lingui-id: ysRzX6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9110,13 +9199,13 @@ msgstr "Дати број телефона није валидан {number}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Event ID"
-msgstr ""
+msgstr "ID догађаја добављача"
 
 #. js-lingui-id: g/4oFF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Event ID"
-msgstr ""
+msgstr "ID догађаја добављача"
 
 #. js-lingui-id: XRbtVv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -9134,13 +9223,13 @@ msgstr "Провајдер је извршен"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Message ID"
-msgstr ""
+msgstr "ID поруке добављача"
 
 #. js-lingui-id: bJgvow
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Message ID"
-msgstr ""
+msgstr "ID поруке добављача"
 
 #. js-lingui-id: ApKRV5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -9216,13 +9305,13 @@ msgstr "Читање и писање"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reason"
-msgstr ""
+msgstr "Разлог"
 
 #. js-lingui-id: QHL400
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reason"
-msgstr ""
+msgstr "Разлог"
 
 #. js-lingui-id: UkccBI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -9246,13 +9335,13 @@ msgstr "Примљено у"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Recipient Email"
-msgstr ""
+msgstr "Е-пошта примаоца"
 
 #. js-lingui-id: jtaUxI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Recipient Email"
-msgstr ""
+msgstr "Е-пошта примаоца"
 
 #. js-lingui-id: ND12UB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9265,6 +9354,12 @@ msgstr "Примаоци"
 msgctxt "pageLayoutWidget.title"
 msgid "Recipients"
 msgstr "Примаоци"
+
+#. js-lingui-id: Ba9XCy
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Record an agent chat thread is attached to"
+msgstr "Запис уз који је приложена нит ћаскања агента"
 
 #. js-lingui-id: EESfI5
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9279,6 +9374,7 @@ msgstr "Идентификатор записа"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Record not found."
 msgstr "Запис није пронађен."
 
@@ -9311,6 +9407,20 @@ msgstr "Виџет табеле записа нема придружени пр�
 msgid "Record table widget not found"
 msgstr "Виџет табеле записа није пронађен"
 
+#. js-lingui-id: IJawMp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Record Targets"
+msgstr "Циљни записи"
+
+#. js-lingui-id: BwOej2
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Record the chat is attached to"
+msgstr "Запис уз који је приложено ћаскање"
+
 #. js-lingui-id: tsYhp1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9334,6 +9444,12 @@ msgstr "Статус захтева за снимање"
 msgctxt "fieldMetadata.description"
 msgid "Recording summary"
 msgstr "Сажетак снимања"
+
+#. js-lingui-id: BlbWk5
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Records this thread is attached to"
+msgstr "Записи уз које је приложена ова нит"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -9375,13 +9491,13 @@ msgstr "Регистровано у другом радном простору."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Rejected At"
-msgstr ""
+msgstr "Одбијено у"
 
 #. js-lingui-id: d3PF7k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Rejected At"
-msgstr ""
+msgstr "Одбијено у"
 
 #. js-lingui-id: 2dNwZB
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9487,13 +9603,13 @@ msgstr "је уклонио прилог"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Rendering Failed At"
-msgstr ""
+msgstr "Генерисање није успело у"
 
 #. js-lingui-id: L9MGVo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Rendering Failed At"
-msgstr ""
+msgstr "Генерисање није успело у"
 
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10252,13 +10368,13 @@ msgstr "Послато у"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sent At"
-msgstr ""
+msgstr "Послато у"
 
 #. js-lingui-id: Ac1/Xj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sent At"
-msgstr ""
+msgstr "Послато у"
 
 #. js-lingui-id: M8jvbm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10433,13 +10549,13 @@ msgstr "Вештина са именом \"{name}\" већ постоји"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Skip Reason"
-msgstr ""
+msgstr "Разлог прескакања"
 
 #. js-lingui-id: OgTx4x
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skip Reason"
-msgstr ""
+msgstr "Разлог прескакања"
 
 #. js-lingui-id: 9KFM/B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10492,13 +10608,13 @@ msgstr "Нешто је пошло наопако. Покушајте понов
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source"
-msgstr ""
+msgstr "Извор"
 
 #. js-lingui-id: H7M9xQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source"
-msgstr ""
+msgstr "Извор"
 
 #. js-lingui-id: SoRH5/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -10990,7 +11106,6 @@ msgid "Target view not found"
 msgstr "Циљни приказ није пронађен"
 
 #. js-lingui-id: g6X4T4
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12105,6 +12220,11 @@ msgstr "Оваква врста додељеног кредита не може 
 msgid "This limit cannot be saved."
 msgstr "Ово ограничење није могуће сачувати."
 
+#. js-lingui-id: 1MfZ0Y
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "This limit changed while you were editing it. Reload and try again."
+msgstr "Ово ограничење се променило док сте га уређивали. Поново учитајте страницу и покушајте поново."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -12422,6 +12542,7 @@ msgid "This workspace's upgrade state could not be determined. Please try again 
 msgstr "Стање надоградње овог простора за рад није могло да се утврди. Покушајте поново када се надоградња простора за рад заврши."
 
 #. js-lingui-id: P3L/tZ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12429,6 +12550,7 @@ msgid "Thread"
 msgstr "Нит"
 
 #. js-lingui-id: KJ4+gp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12832,6 +12954,13 @@ msgctxt "fieldMetadata.label"
 msgid "Transcript"
 msgstr "Транскрипт"
 
+#. js-lingui-id: N1IXk3
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-calendar-event-page-layout.config.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-call-recording-page-layout.config.ts
+msgctxt "pageLayoutTab.title"
+msgid "Transcript"
+msgstr "Транскрипт"
+
 #. js-lingui-id: TX9XHL
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
@@ -13002,13 +13131,13 @@ msgstr "ID теме за одјаву"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Unsubscribe Topic ID"
-msgstr ""
+msgstr "ID теме за одјаву"
 
 #. js-lingui-id: z2qMOH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unsubscribe Topic ID"
-msgstr ""
+msgstr "ID теме за одјаву"
 
 #. js-lingui-id: Md/2jb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
@@ -13107,6 +13236,7 @@ msgstr "ажурирао/ла повезани задатак"
 
 #. js-lingui-id: zYS9b3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -13119,6 +13249,7 @@ msgstr "Ажурирано"
 
 #. js-lingui-id: LuWQ3A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
@@ -14006,7 +14137,6 @@ msgid "Work"
 msgstr "Посао"
 
 #. js-lingui-id: y8IlfM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

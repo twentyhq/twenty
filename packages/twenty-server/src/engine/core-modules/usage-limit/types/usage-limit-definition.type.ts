@@ -1,3 +1,4 @@
+import { type QuotaLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/quota-limit-default-definition.type';
 import { type QuotaMeter } from 'src/engine/core-modules/usage-limit/types/quota-meter.type';
 import { type SpeedLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/speed-limit-default-definition.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
@@ -12,10 +13,11 @@ type SpeedLimitDefinition<TResourceType extends UsageResourceType> = {
   defaults: SpeedLimitDefaultDefinition<TResourceType>[];
 };
 
-type QuotaLimitDefinition = {
+type QuotaLimitDefinition<TResourceType extends UsageResourceType> = {
   allowedOperationTypes: UsageOperationType[];
   allowedSpenderTypes: SpenderType[];
   allowedMeters: QuotaMeter[];
+  defaults: QuotaLimitDefaultDefinition<TResourceType>[];
 };
 
 type StockLimitDefinition<TResourceType extends UsageResourceType> = {
@@ -29,7 +31,7 @@ export type UsageLimitDefinitions<
   TResourceType extends UsageResourceType = UsageResourceType,
 > = {
   speed?: SpeedLimitDefinition<TResourceType>;
-  quota?: QuotaLimitDefinition;
+  quota?: QuotaLimitDefinition<TResourceType>;
   stock?: StockLimitDefinition<TResourceType>;
 };
 

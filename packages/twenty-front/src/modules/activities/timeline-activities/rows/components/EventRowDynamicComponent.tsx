@@ -88,6 +88,7 @@ export const EventRowDynamicComponent = ({
               <FrontComponentRenderer
                 frontComponentId={renderer.frontComponentId}
                 timelineActivityId={event.id}
+                objectNameSingular={mainObjectMetadataItem.nameSingular}
               />
             )}
           </Suspense>
