@@ -1,7 +1,15 @@
 import { UseGuards, UseFilters } from '@nestjs/common';
-import { Args, ArgsType, Field, Int, Query } from '@nestjs/graphql';
+import {
+  Args,
+  ArgsType,
+  Field,
+  GraphQLISODateTime,
+  Int,
+  Query,
+} from '@nestjs/graphql';
 
-import { Max } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsOptional, Max } from 'class-validator';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -32,6 +40,18 @@ class GetTimelineCalendarEventsFromObjectRecordArgs {
   @Field(() => Int)
   @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
   pageSize: number;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  startsAtFrom?: Date;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  startsAtBefore?: Date;
 }
 
 @ArgsType()
@@ -94,6 +114,8 @@ export class TimelineCalendarEventResolver {
       recordId,
       page,
       pageSize,
+      startsAtFrom,
+      startsAtBefore,
     }: GetTimelineCalendarEventsFromObjectRecordArgs,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -105,6 +127,8 @@ export class TimelineCalendarEventResolver {
       workspaceId: workspace.id,
       page,
       pageSize,
+      startsAtFrom,
+      startsAtBefore,
     });
   }
 

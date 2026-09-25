@@ -4,7 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import omit from 'lodash.omit';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Any, In, type Repository } from 'typeorm';
+import {
+  And,
+  Any,
+  In,
+  LessThan,
+  MoreThanOrEqual,
+  type FindOperator,
+  type Repository,
+} from 'typeorm';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
@@ -45,6 +53,8 @@ export class TimelineCalendarEventService {
     page = 1,
     pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     targetFilter,
+    startsAtFrom,
+    startsAtBefore,
   }: {
     currentWorkspaceMemberId: string;
     personIds: string[];
@@ -52,6 +62,8 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
     targetFilter?: TargetFilter;
+    startsAtFrom?: Date;
+    startsAtBefore?: Date;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -72,17 +84,25 @@ export class TimelineCalendarEventService {
           { shouldBypassPermissionChecks: true },
         );
 
-      const where = isDefined(targetFilter)
-        ? {
-            calendarEventTargets: {
-              [targetFilter.fieldName]: targetFilter.recordId,
-            },
-          }
-        : {
-            calendarEventParticipants: {
-              personId: Any(personIds),
-            },
-          };
+      const startsAtCondition = this.buildStartsAtCondition({
+        startsAtFrom,
+        startsAtBefore,
+      });
+
+      const where = {
+        ...(isDefined(startsAtCondition) && { startsAt: startsAtCondition }),
+        ...(isDefined(targetFilter)
+          ? {
+              calendarEventTargets: {
+                [targetFilter.fieldName]: targetFilter.recordId,
+              },
+            }
+          : {
+              calendarEventParticipants: {
+                personId: Any(personIds),
+              },
+            }),
+      };
 
       const totalNumberOfCalendarEvents = await calendarEventRepository.count({
         where,
@@ -343,6 +363,8 @@ export class TimelineCalendarEventService {
     workspaceId,
     page = 1,
     pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+    startsAtFrom,
+    startsAtBefore,
   }: {
     currentWorkspaceMemberId: string;
     objectNameSingular: string;
@@ -350,6 +372,8 @@ export class TimelineCalendarEventService {
     workspaceId: string;
     page: number;
     pageSize: number;
+    startsAtFrom?: Date;
+    startsAtBefore?: Date;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const personIds = await this.relatedPersonIdsService.getRelatedPersonIds({
       workspaceId,
@@ -377,7 +401,28 @@ export class TimelineCalendarEventService {
       workspaceId,
       page,
       pageSize,
+      startsAtFrom,
+      startsAtBefore,
       ...(isDefined(targetFilter) && { targetFilter }),
     });
+  }
+
+  private buildStartsAtCondition({
+    startsAtFrom,
+    startsAtBefore,
+  }: {
+    startsAtFrom?: Date;
+    startsAtBefore?: Date;
+  }): FindOperator<string> | undefined {
+    const conditions = [
+      ...(isDefined(startsAtFrom)
+        ? [MoreThanOrEqual(startsAtFrom.toISOString())]
+        : []),
+      ...(isDefined(startsAtBefore)
+        ? [LessThan(startsAtBefore.toISOString())]
+        : []),
+    ];
+
+    return conditions.length > 0 ? And(...conditions) : undefined;
   }
 }

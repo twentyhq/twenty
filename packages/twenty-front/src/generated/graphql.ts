@@ -760,6 +760,8 @@ export type QueryGetTimelineCalendarEventsFromObjectRecordArgs = {
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   recordId: Scalars['UUID']['input'];
+  startsAtBefore?: InputMaybe<Scalars['DateTime']['input']>;
+  startsAtFrom?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 

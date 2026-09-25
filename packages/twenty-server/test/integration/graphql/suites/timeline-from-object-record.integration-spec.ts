@@ -54,6 +54,32 @@ const GET_TIMELINE_CALENDAR_EVENTS = gql`
   }
 `;
 
+const GET_TIMELINE_CALENDAR_EVENTS_IN_DATE_RANGE = gql`
+  query GetTimelineCalendarEventsFromObjectRecordInDateRange(
+    $objectNameSingular: String!
+    $recordId: UUID!
+    $page: Int!
+    $pageSize: Int!
+    $startsAtFrom: DateTime
+    $startsAtBefore: DateTime
+  ) {
+    getTimelineCalendarEventsFromObjectRecord(
+      objectNameSingular: $objectNameSingular
+      recordId: $recordId
+      page: $page
+      pageSize: $pageSize
+      startsAtFrom: $startsAtFrom
+      startsAtBefore: $startsAtBefore
+    ) {
+      totalNumberOfCalendarEvents
+      timelineCalendarEvents {
+        id
+        startsAt
+      }
+    }
+  }
+`;
+
 const THREADS_SELECTION = 'totalNumberOfThreads timelineThreads { id }';
 const CALENDAR_SELECTION =
   'totalNumberOfCalendarEvents timelineCalendarEvents { id }';
@@ -494,6 +520,174 @@ describe('timeline from object record resolvers (integration)', () => {
       expect(pageIds).toEqual([...expectedIds].sort());
     },
   );
+
+  describe('with a startsAt range', () => {
+    const requestInRange = ({
+      objectNameSingular,
+      recordId,
+      range,
+    }: {
+      objectNameSingular: string;
+      recordId: string;
+      range: { startsAtFrom?: string; startsAtBefore?: string };
+    }) =>
+      makeGraphqlApiRequest({
+        query: GET_TIMELINE_CALENDAR_EVENTS_IN_DATE_RANGE,
+        variables: {
+          objectNameSingular,
+          recordId,
+          page: 1,
+          pageSize: PAGE_SIZE,
+          ...range,
+        },
+      });
+
+    const getTotalAndIds = (
+      response: Awaited<ReturnType<typeof requestInRange>>,
+    ) => {
+      expect(response.body.errors).toBeUndefined();
+
+      const result =
+        response.body.data.getTimelineCalendarEventsFromObjectRecord;
+
+      return {
+        total: result.totalNumberOfCalendarEvents,
+        ids: result.timelineCalendarEvents
+          .map(({ id }: { id: string }) => id)
+          .sort(),
+      };
+    };
+
+    const getStartsAtById = async (
+      objectNameSingular: string,
+      recordId: string,
+    ) => {
+      const response = await requestInRange({
+        objectNameSingular,
+        recordId,
+        range: {},
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      return new Map<string, string>(
+        response.body.data.getTimelineCalendarEventsFromObjectRecord.timelineCalendarEvents.map(
+          ({ id, startsAt }: { id: string; startsAt: string }) => [
+            id,
+            startsAt,
+          ],
+        ),
+      );
+    };
+
+    const addOneMillisecond = (isoDate: string) =>
+      new Date(Date.parse(isoDate) + 1).toISOString();
+
+    it('should include startsAtFrom and exclude startsAtBefore for target-backed events', async () => {
+      const startsAtById = await getStartsAtById(
+        'company',
+        TIMELINE_MANUAL_COMPANY_ID,
+      );
+      const firstStartsAt = startsAtById.get(TIMELINE_CALENDAR_EVENT_ID);
+      const secondStartsAt = startsAtById.get(
+        TIMELINE_SECOND_CALENDAR_EVENT_ID,
+      );
+
+      if (!firstStartsAt || !secondStartsAt) {
+        throw new Error('Expected both target-backed events to be returned');
+      }
+
+      const requestManualCompanyInRange = (range: {
+        startsAtFrom?: string;
+        startsAtBefore?: string;
+      }) =>
+        requestInRange({
+          objectNameSingular: 'company',
+          recordId: TIMELINE_MANUAL_COMPANY_ID,
+          range,
+        });
+
+      const [fromSecond, beforeSecond, bothBounds, emptyRange] =
+        await Promise.all([
+          requestManualCompanyInRange({ startsAtFrom: secondStartsAt }),
+          requestManualCompanyInRange({ startsAtBefore: secondStartsAt }),
+          requestManualCompanyInRange({
+            startsAtFrom: firstStartsAt,
+            startsAtBefore: addOneMillisecond(secondStartsAt),
+          }),
+          requestManualCompanyInRange({
+            startsAtFrom: firstStartsAt,
+            startsAtBefore: firstStartsAt,
+          }),
+        ]);
+
+      expect(getTotalAndIds(fromSecond)).toEqual({
+        total: 1,
+        ids: [TIMELINE_SECOND_CALENDAR_EVENT_ID],
+      });
+      expect(getTotalAndIds(beforeSecond)).toEqual({
+        total: 1,
+        ids: [TIMELINE_CALENDAR_EVENT_ID],
+      });
+      expect(getTotalAndIds(bothBounds)).toEqual({
+        total: 2,
+        ids: [
+          TIMELINE_CALENDAR_EVENT_ID,
+          TIMELINE_SECOND_CALENDAR_EVENT_ID,
+        ].sort(),
+      });
+      expect(getTotalAndIds(emptyRange)).toEqual({ total: 0, ids: [] });
+    });
+
+    it('should apply the range to participant-derived events', async () => {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+
+      try {
+        const startsAtById = await getStartsAtById(
+          'person',
+          TIMELINE_PERSON_ID,
+        );
+        const eventStartsAt = startsAtById.get(TIMELINE_CALENDAR_EVENT_ID);
+
+        if (!eventStartsAt) {
+          throw new Error('Expected the participant event to be returned');
+        }
+
+        const [including, excluding] = await Promise.all([
+          requestInRange({
+            objectNameSingular: 'person',
+            recordId: TIMELINE_PERSON_ID,
+            range: {
+              startsAtFrom: eventStartsAt,
+              startsAtBefore: addOneMillisecond(eventStartsAt),
+            },
+          }),
+          requestInRange({
+            objectNameSingular: 'person',
+            recordId: TIMELINE_PERSON_ID,
+            range: { startsAtFrom: addOneMillisecond(eventStartsAt) },
+          }),
+        ]);
+
+        expect(getTotalAndIds(including).ids).toContain(
+          TIMELINE_CALENDAR_EVENT_ID,
+        );
+        expect(getTotalAndIds(excluding).ids).not.toContain(
+          TIMELINE_CALENDAR_EVENT_ID,
+        );
+      } finally {
+        await updateFeatureFlag({
+          featureFlag: FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED,
+          value: true,
+          expectToFail: false,
+        });
+      }
+    });
+  });
 
   it('should exclude soft-deleted target tombstones', async () => {
     for (const [objectMetadataSingularName, recordId] of [
