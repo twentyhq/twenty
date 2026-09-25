@@ -16,7 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton, Section } from 'twenty-ui/components';
 import { IconRestore } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 

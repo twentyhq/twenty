@@ -14,6 +14,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('FileUploadService.createFileUpload', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
@@ -38,7 +39,9 @@ describe('FileUploadService.createFileUpload', () => {
   let fileStorageService: jest.Mocked<FileStorageService>;
   let fileUploadTargetService: jest.Mocked<FileUploadTargetService>;
   let applicationRepository: jest.Mocked<Repository<ApplicationEntity>>;
-  let fieldMetadataRepository: jest.Mocked<Repository<FieldMetadataEntity>>;
+  let fieldMetadataRepository: jest.Mocked<
+    WorkspaceScopedRepository<FieldMetadataEntity>
+  >;
   let permissionsService: jest.Mocked<PermissionsService>;
 
   const buildFilesFieldMetadata = (
@@ -105,7 +108,7 @@ describe('FileUploadService.createFileUpload', () => {
 
     fieldMetadataRepository = {
       findOne: jest.fn().mockResolvedValue(buildFilesFieldMetadata()),
-    } as unknown as jest.Mocked<Repository<FieldMetadataEntity>>;
+    } as unknown as jest.Mocked<WorkspaceScopedRepository<FieldMetadataEntity>>;
 
     permissionsService = {
       assertApplicationCanUpdateFieldOrThrow: jest

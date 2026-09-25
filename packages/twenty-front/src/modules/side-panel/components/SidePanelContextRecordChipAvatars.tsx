@@ -4,18 +4,18 @@ import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+const StyledIconWrapper = styled.div<{
+  withIconBackground?: boolean;
+  borderColor: string;
+}>`
   align-items: center;
   background: ${({ withIconBackground }) =>
     withIconBackground ? themeCssVariables.background.primary : 'unset'};
   border: 1px solid
-    ${({ withIconBackground }) =>
-      withIconBackground
-        ? themeCssVariables.border.color.medium
-        : 'transparent'};
+    ${({ withIconBackground, borderColor }) =>
+      withIconBackground ? borderColor : 'transparent'};
   &:not(:first-of-type) {
     margin-left: -${themeCssVariables.spacing[1]};
   }
@@ -27,11 +27,13 @@ const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
 export const SidePanelContextRecordChipAvatars = ({
   objectMetadataItem,
   record,
+  borderColor = themeCssVariables.border.color.medium,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   record: ObjectRecord;
+  borderColor?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { recordChipData } = useRecordChipData({
     objectNameSingular: objectMetadataItem.nameSingular,
     record,
@@ -42,6 +44,7 @@ export const SidePanelContextRecordChipAvatars = ({
   return (
     <StyledIconWrapper
       withIconBackground={recordChipData.avatarShape !== 'circle'}
+      borderColor={borderColor}
     >
       {Icon ? (
         <Icon color={IconColor} size={theme.icon.size.sm} />

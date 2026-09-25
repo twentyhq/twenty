@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 import styles from './AnimatedIconCrossfade.module.scss';
 

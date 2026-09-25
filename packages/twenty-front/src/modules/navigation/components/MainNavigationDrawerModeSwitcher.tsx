@@ -2,9 +2,8 @@ import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigat
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useContext } from 'react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
@@ -113,7 +112,7 @@ const StyledModeLabel = motion.create(StyledModeLabelBase);
 
 export const MainNavigationDrawerModeSwitcher = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,

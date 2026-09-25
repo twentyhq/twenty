@@ -795,7 +795,7 @@ These entry points do not require `monaco-editor`.
 | `twenty-ui/primitives/surfaces` | Cards, dialogs, menus, popovers, and tooltips |
 | `twenty-ui/primitives/typography` | Text and headings |
 | `twenty-ui/icon` | `Icon*` components (e.g. `IconCheck`) |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables` |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables` |
 
 Use [`Dropdown`](/ui/components/dropdown) for action menus, option pickers, and form panels.
 
@@ -838,7 +838,7 @@ Twenty UI components automatically match the workspace's light and dark theme â€
 To use the same design tokens in your own inline styles, call the `useTheme()` hook. It returns Twenty's theme tokens (spacing, colors, radii, fonts) wired to the active theme, with no `ThemeProvider` setup needed in your component:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

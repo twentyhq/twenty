@@ -6,7 +6,7 @@ import {
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { IconCheck, IconX } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledFeatureCell = styled.div<{
   hasTopBorder?: boolean;

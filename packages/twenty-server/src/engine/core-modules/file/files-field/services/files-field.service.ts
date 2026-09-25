@@ -36,8 +36,8 @@ export class FilesFieldService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
@@ -156,10 +156,13 @@ export class FilesFieldService {
       );
     }
 
-    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
-      select: ['applicationId', 'universalIdentifier'],
-      where: { id: fieldMetadataId, workspaceId },
-    });
+    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
+      workspaceId,
+      {
+        select: ['applicationId', 'universalIdentifier'],
+        where: { id: fieldMetadataId },
+      },
+    );
 
     const [sourceApplication, destinationApplication] = await Promise.all([
       this.applicationRepository.findOneOrFail({

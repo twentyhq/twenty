@@ -19,7 +19,7 @@ const build = () => {
     findOneOrFail: jest.fn().mockResolvedValue({ userWorkspaceId: 'owner' }),
   };
   const chat = {
-    getThreadById: jest
+    getWritableThread: jest
       .fn()
       .mockResolvedValue({ id: threadId, deletedAt: null }),
   };
@@ -76,7 +76,7 @@ describe('Chat execution sender', () => {
   it('executes as the saved sender rather than the thread owner', async () => {
     const { service, chat } = build();
     await expect(service.authorizeJob(job)).resolves.toMatchObject({ sender });
-    expect(chat.getThreadById).toHaveBeenCalledWith({
+    expect(chat.getWritableThread).toHaveBeenCalledWith({
       workspaceId,
       threadId,
       userWorkspaceId: 'sender',
@@ -87,7 +87,7 @@ describe('Chat execution sender', () => {
     await expect(
       service.authorizeJob({ ...job, userWorkspaceId: 'owner' }),
     ).rejects.toMatchObject({ code: 'MESSAGE_NOT_FOUND' });
-    expect(chat.getThreadById).not.toHaveBeenCalled();
+    expect(chat.getWritableThread).not.toHaveBeenCalled();
   });
   it('rejects a mismatched turn', async () => {
     const { service } = build();
@@ -158,7 +158,7 @@ describe('Chat execution sender', () => {
   });
   it('checks the current thread permission before execution', async () => {
     const { service, chat } = build();
-    chat.getThreadById.mockRejectedValue(new Error('Access revoked'));
+    chat.getWritableThread.mockRejectedValue(new Error('Access revoked'));
     await expect(service.authorizeJob(job)).rejects.toThrow('Access revoked');
   });
   it('denies revoked AI permission', async () => {
@@ -170,7 +170,7 @@ describe('Chat execution sender', () => {
   });
   it('denies archived threads', async () => {
     const { service, chat } = build();
-    chat.getThreadById.mockResolvedValue({
+    chat.getWritableThread.mockResolvedValue({
       id: threadId,
       deletedAt: new Date(),
     } as never);

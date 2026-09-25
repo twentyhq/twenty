@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import {

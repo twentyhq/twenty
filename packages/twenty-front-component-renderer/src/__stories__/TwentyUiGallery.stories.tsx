@@ -1,3 +1,6 @@
+import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
+import { inputPreactTest } from '@/__stories__/twenty-ui-gallery/utils/inputPreactTest';
+import { inputReactTest } from '@/__stories__/twenty-ui-gallery/utils/inputReactTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
 import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
@@ -32,9 +35,6 @@ import {
   codeEditorTest,
   displayHelpersTest,
   galleryRenderTest,
-  inputPreactTest,
-  inputReactTest,
-  themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
   alertDialogTest,

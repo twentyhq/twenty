@@ -2,11 +2,11 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 const StyledContainer = styled.div`
   display: flex;
@@ -105,7 +105,7 @@ export const ImageInput = ({
   className,
 }: ImageInputProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();

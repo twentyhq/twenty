@@ -1,5 +1,4 @@
-import { type ThemeColor } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { type ThemeColor, themeCssVariables } from '@ui/theme';
 
 import styles from './Loader.module.scss';
 

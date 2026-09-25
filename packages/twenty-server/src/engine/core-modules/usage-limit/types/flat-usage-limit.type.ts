@@ -17,4 +17,5 @@ export type FlatUsageLimit = {
   meter: UsageMeter;
   limitValue: number;
   burstValue: number | null;
+  isInstanceOverride: boolean;
 };

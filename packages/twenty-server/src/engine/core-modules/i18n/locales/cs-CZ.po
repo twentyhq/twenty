@@ -295,7 +295,7 @@ msgstr "Členství osoby v seznamu"
 #. js-lingui-id: T6Bc2D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 msgid "A previous data model change is still being applied in the background. Please try again in a moment."
-msgstr ""
+msgstr "Předchozí změna datového modelu se stále provádí na pozadí. Zkuste to prosím za chvíli znovu."
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -522,7 +522,7 @@ msgstr "Úroveň přístupu"
 #. js-lingui-id: epu0XK
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Access permissions have changed. Please create a new export."
-msgstr ""
+msgstr "Přístupová oprávnění se změnila. Vytvořte prosím nový export."
 
 #. js-lingui-id: Bk+qoW
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -586,13 +586,13 @@ msgstr "Aktivní"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Active Stream ID"
-msgstr ""
+msgstr "ID aktivního streamu"
 
 #. js-lingui-id: XY2Wtf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Active Stream ID"
-msgstr ""
+msgstr "ID aktivního streamu"
 
 #. js-lingui-id: 4LperZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -626,7 +626,7 @@ msgstr "Přidejte alespoň jedno pole k aktualizaci."
 #. js-lingui-id: bnZ/Qx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Add at least one output field to the JSON response format"
-msgstr ""
+msgstr "Přidejte do formátu odpovědi JSON alespoň jedno výstupní pole"
 
 #. js-lingui-id: mwzvkz
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -661,19 +661,19 @@ msgstr "Administrátorská role nenalezena."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent chat thread"
-msgstr ""
+msgstr "Vlákno chatu agenta"
 
 #. js-lingui-id: 05II48
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent chat thread"
-msgstr ""
+msgstr "Vlákno chatu agenta"
 
 #. js-lingui-id: d9XlI/
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat threads"
-msgstr ""
+msgstr "Vlákna chatu agenta"
 
 #. js-lingui-id: kmAKx+
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -685,50 +685,50 @@ msgstr "Spuštění agenta selhalo."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent ID"
-msgstr ""
+msgstr "ID agenta"
 
 #. js-lingui-id: s5/Bnr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Agent ID"
-msgstr ""
+msgstr "ID agenta"
 
 #. js-lingui-id: iCdJYt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent message"
-msgstr ""
+msgstr "Zpráva agenta"
 
 #. js-lingui-id: kqoj9j
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent message"
-msgstr ""
+msgstr "Zpráva agenta"
 
 #. js-lingui-id: EQKoWJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent message part"
-msgstr ""
+msgstr "Část zprávy agenta"
 
 #. js-lingui-id: EFIY30
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent message part"
-msgstr ""
+msgstr "Část zprávy agenta"
 
 #. js-lingui-id: CMkxK7
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent message parts"
-msgstr ""
+msgstr "Části zprávy agenta"
 
 #. js-lingui-id: JV9atg
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent messages"
-msgstr ""
+msgstr "Zprávy agenta"
 
 #. js-lingui-id: mDXkHu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
@@ -746,43 +746,43 @@ msgstr "Agent nenalezen."
 #. js-lingui-id: n7bUoP
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
-msgstr ""
+msgstr "Provedení kroku agenta selhalo."
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent turn"
-msgstr ""
+msgstr "Tah agenta"
 
 #. js-lingui-id: LmIK+X
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn"
-msgstr ""
+msgstr "Tah agenta"
 
 #. js-lingui-id: mCEPno
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent turn evaluation"
-msgstr ""
+msgstr "Vyhodnocení tahu agenta"
 
 #. js-lingui-id: 8TxJ/S
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn evaluation"
-msgstr ""
+msgstr "Vyhodnocení tahu agenta"
 
 #. js-lingui-id: 8JwBHf
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent turn evaluations"
-msgstr ""
+msgstr "Vyhodnocení tahů agenta"
 
 #. js-lingui-id: Tdydg8
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent turns"
-msgstr ""
+msgstr "Tahy agenta"
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util.ts
@@ -824,7 +824,7 @@ msgstr "AI"
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
-msgstr ""
+msgstr "Záznam historie AI nenalezen."
 
 #. js-lingui-id: AtTsau
 #: src/engine/metadata-modules/view/constants/index-view-name.constant.ts
@@ -840,7 +840,7 @@ msgstr "Všichni příjemci jsou pro tuto e-mailovou doménu potlačeni."
 #. js-lingui-id: rvV1hH
 #: src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
 msgid "Already registered in this workspace."
-msgstr ""
+msgstr "Již zaregistrováno v tomto pracovním prostoru."
 
 #. js-lingui-id: hbJg5A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -901,12 +901,12 @@ msgstr "Došlo k chybě."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export field is no longer available."
-msgstr ""
+msgstr "Pole exportu již není k dispozici."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
-msgstr ""
+msgstr "V tomto pracovním prostoru již běží export. Počkejte prosím na jeho dokončení."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1003,19 +1003,19 @@ msgstr "Jiná aplikace v tomto pracovním prostoru již zaregistrovala příznak
 #. placeholder {0}: flatSettingsMenuItem.position
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses position {0}"
-msgstr ""
+msgstr "Jiná položka nabídky nastavení již používá pozici {0}"
 
 #. js-lingui-id: euy9O0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses position {nextPosition}"
-msgstr ""
+msgstr "Jiná položka nabídky nastavení již používá pozici {nextPosition}"
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this position."
-msgstr ""
+msgstr "Jiná položka nabídky nastavení této aplikace již používá tuto pozici."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1188,13 +1188,13 @@ msgstr "Archivováno"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Archived At"
-msgstr ""
+msgstr "Archivováno dne"
 
 #. js-lingui-id: Lr3M0U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Archived At"
-msgstr ""
+msgstr "Archivováno dne"
 
 #. js-lingui-id: ITCVsf
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1380,7 +1380,7 @@ msgstr "Je vyžadováno ověření přístupu k této funkci. Přihlaste se a zk
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
 msgid "Authentication is required to perform this action"
-msgstr ""
+msgstr "K provedení této akce je vyžadováno ověření totožnosti"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
@@ -1556,6 +1556,18 @@ msgstr "Obsah musí být objektem pro widget \"{widgetTitle}\""
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
 msgstr "Bum!"
+
+#. js-lingui-id: 5Xcd0y
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Bounced At"
+msgstr ""
+
+#. js-lingui-id: Ju2edC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Bounced At"
+msgstr ""
 
 #. js-lingui-id: MUk11c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -1963,6 +1975,36 @@ msgctxt "objectMetadata.labelSingular"
 msgid "Campaign"
 msgstr "Kampaň"
 
+#. js-lingui-id: oYHwJH
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Campaign deliveries"
+msgstr ""
+
+#. js-lingui-id: 9CLy+1
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Campaign delivery"
+msgstr ""
+
+#. js-lingui-id: TXz220
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Campaign delivery"
+msgstr ""
+
+#. js-lingui-id: rghNQY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Campaign ID"
+msgstr ""
+
+#. js-lingui-id: fSWDKd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Campaign ID"
+msgstr ""
+
 #. js-lingui-id: BeCo7/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -2292,6 +2334,30 @@ msgstr "V hierarchii položek navigačního menu byla zjištěna kruhová závis
 msgid "Circular dependency detected in view filter group hierarchy"
 msgstr "V hierarchii skupin filtrů zobrazení byla zjištěna kruhová závislost"
 
+#. js-lingui-id: NdOL9Z
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Claim Expires At"
+msgstr ""
+
+#. js-lingui-id: bj3jul
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Claim Expires At"
+msgstr ""
+
+#. js-lingui-id: H+dfXj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Claim Token"
+msgstr ""
+
+#. js-lingui-id: S8cDJf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Claim Token"
+msgstr ""
+
 #. js-lingui-id: fDGNL3
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
@@ -2367,13 +2433,13 @@ msgstr "Čárky a tečka"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Comment"
-msgstr ""
+msgstr "Komentář"
 
 #. js-lingui-id: 3lgJNW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Comment"
-msgstr ""
+msgstr "Komentář"
 
 #. js-lingui-id: snetsR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -2416,6 +2482,18 @@ msgstr "Společnost"
 msgctxt "fieldMetadata.description"
 msgid "Company record position"
 msgstr "Pozice záznamu společnosti"
+
+#. js-lingui-id: ORLytm
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Complained At"
+msgstr ""
+
+#. js-lingui-id: 9bCz2D
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Complained At"
+msgstr ""
 
 #. js-lingui-id: UdSbpW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -2710,13 +2788,13 @@ msgstr "Obsah obsahuje adresu URL s nebezpečným protokolem."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Context Window Tokens"
-msgstr ""
+msgstr "Tokeny kontextového okna"
 
 #. js-lingui-id: PN+oDC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Context Window Tokens"
-msgstr ""
+msgstr "Tokeny kontextového okna"
 
 #. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -2727,13 +2805,13 @@ msgstr "Na poli vazby byly zjištěny protichůdné úrovně přístupu."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conversation Size"
-msgstr ""
+msgstr "Velikost konverzace"
 
 #. js-lingui-id: Gi4NBy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
-msgstr ""
+msgstr "Velikost konverzace"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -2839,13 +2917,13 @@ msgstr "Vytvořit"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Create"
-msgstr ""
+msgstr "Vytvořit"
 
 #. js-lingui-id: bRKUIg
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create {objectLabelSingular}"
-msgstr ""
+msgstr "Vytvořit {objectLabelSingular}"
 
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -2856,7 +2934,7 @@ msgstr "Vytvořit událost v kalendáři"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create Campaign"
-msgstr ""
+msgstr "Vytvořit kampaň"
 
 #. js-lingui-id: AIGOKT
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -2881,9 +2959,11 @@ msgstr "Vytvořit zobrazení"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Created At"
-msgstr ""
+msgstr "Vytvořeno dne"
 
 #. js-lingui-id: ZA1xqP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -2891,9 +2971,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Created At"
-msgstr ""
+msgstr "Vytvořeno dne"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3320,7 +3402,7 @@ msgstr "Výchozí rozvržení složky zprávy u přiřazení zprávy kanálu zpr
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Message Layout"
-msgstr ""
+msgstr "Výchozí rozvržení zprávy"
 
 #. js-lingui-id: jmaSDc
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -3480,9 +3562,11 @@ msgstr "Smazáno dne"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Deleted At"
-msgstr ""
+msgstr "Smazáno dne"
 
 #. js-lingui-id: Lu8j/6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -3490,8 +3574,22 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deleted At"
+msgstr "Smazáno dne"
+
+#. js-lingui-id: wm2sD+
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Delivered At"
+msgstr ""
+
+#. js-lingui-id: LswjjG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Delivered At"
 msgstr ""
 
 #. js-lingui-id: bMSh++
@@ -3617,7 +3715,7 @@ msgstr "Koncept"
 #. js-lingui-id: qOjRRW
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
-msgstr ""
+msgstr "Vytvoření konceptu selhalo, zkuste to prosím znovu"
 
 #. js-lingui-id: 43Mh2+
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -3724,6 +3822,18 @@ msgstr "E-mail"
 msgctxt "pageLayoutWidget.title"
 msgid "Email"
 msgstr "E-mail"
+
+#. js-lingui-id: VwGMv8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Email Address"
+msgstr ""
+
+#. js-lingui-id: NH74YE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Email Address"
+msgstr ""
 
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
@@ -3940,37 +4050,37 @@ msgstr "Chyba"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error Details"
-msgstr ""
+msgstr "Podrobnosti chyby"
 
 #. js-lingui-id: vDV0oc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error Details"
-msgstr ""
+msgstr "Podrobnosti chyby"
 
 #. js-lingui-id: MO6hxC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error Message"
-msgstr ""
+msgstr "Chybová zpráva"
 
 #. js-lingui-id: z/ADSK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error Message"
-msgstr ""
+msgstr "Chybová zpráva"
 
 #. js-lingui-id: dFBOz1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Evaluations"
-msgstr ""
+msgstr "Vyhodnocení"
 
 #. js-lingui-id: e8MefK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Evaluations"
-msgstr ""
+msgstr "Vyhodnocení"
 
 #. js-lingui-id: ++Dmjj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4123,7 +4233,7 @@ msgstr "Exportovat {objectLabel}"
 #. js-lingui-id: YBwCnL
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Export not found."
-msgstr ""
+msgstr "Export nenalezen."
 
 #. js-lingui-id: xvfw7w
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4266,6 +4376,18 @@ msgstr "Nepodařilo se aktualizovat záznam."
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to upsert record."
 msgstr "Nepodařilo se vložit nebo aktualizovat záznam."
+
+#. js-lingui-id: mvb5Gn
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Failure Reason"
+msgstr ""
+
+#. js-lingui-id: vFgy1G
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Failure Reason"
+msgstr ""
 
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -4623,25 +4745,25 @@ msgstr "Kategorie souboru"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "File Filename"
-msgstr ""
+msgstr "Název souboru"
 
 #. js-lingui-id: K7OlYw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "File Filename"
-msgstr ""
+msgstr "Název souboru"
 
 #. js-lingui-id: vgJ2Zz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "File ID"
-msgstr ""
+msgstr "ID souboru"
 
 #. js-lingui-id: 84M/VT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "File ID"
-msgstr ""
+msgstr "ID souboru"
 
 #. js-lingui-id: OR7oBd
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
@@ -4791,12 +4913,12 @@ msgstr "Adresa odesílatele"
 #. placeholder {0}: flatSettingsMenuItem.frontComponentUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Front component \"{0}\" not found"
-msgstr ""
+msgstr "Frontendová komponenta \"{0}\" nenalezena"
 
 #. js-lingui-id: 10M75d
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Front component \"{updatedFrontComponentUniversalIdentifier}\" not found"
-msgstr ""
+msgstr "Frontendová komponenta \"{updatedFrontComponentUniversalIdentifier}\" nenalezena"
 
 #. js-lingui-id: Wed+Kp
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -5176,6 +5298,7 @@ msgstr "Identifikátor iCal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5185,6 +5308,7 @@ msgstr "Identifikátor iCal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -5216,6 +5340,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5225,6 +5350,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -5433,7 +5559,7 @@ msgstr "Neplatná CAPTCHA. Zkuste to prosím znovu."
 #. js-lingui-id: 5CSWB5
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Invalid classification request."
-msgstr ""
+msgstr "Neplatný požadavek na klasifikaci."
 
 #. js-lingui-id: lyfeGa
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -5755,7 +5881,7 @@ msgstr "Neplatný vstup objektu."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Invalid or expired export download link."
-msgstr ""
+msgstr "Neplatný nebo expirovaný odkaz ke stažení exportu."
 
 #. js-lingui-id: t4AABW
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -5898,7 +6024,7 @@ msgstr "Neplatný typ nastavení v cron spouštěči"
 #. js-lingui-id: TwpiII
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 msgid "Invalid settings menu item input."
-msgstr ""
+msgstr "Neplatný vstup položky nabídky nastavení."
 
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
@@ -6219,13 +6345,13 @@ msgstr "Je celodenní"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Is Hidden"
-msgstr ""
+msgstr "Je skryté"
 
 #. js-lingui-id: q42yQK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Is Hidden"
-msgstr ""
+msgstr "Je skryté"
 
 #. js-lingui-id: fenRdq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6471,13 +6597,13 @@ msgstr "ID poslední publikované verze"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Last Stream Error"
-msgstr ""
+msgstr "Poslední chyba streamu"
 
 #. js-lingui-id: 9/jQvG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last Stream Error"
-msgstr ""
+msgstr "Poslední chyba streamu"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -7096,6 +7222,24 @@ msgctxt "fieldMetadata.description"
 msgid "Message record position"
 msgstr "Pozice záznamu zprávy"
 
+#. js-lingui-id: E09MF5
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Message suppression"
+msgstr ""
+
+#. js-lingui-id: mIsdys
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Message suppression"
+msgstr ""
+
+#. js-lingui-id: 7KgWx1
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Message suppressions"
+msgstr ""
+
 #. js-lingui-id: IyZnrr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -7205,7 +7349,7 @@ msgstr "MessageList"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Messages"
-msgstr ""
+msgstr "Zprávy"
 
 #. js-lingui-id: KocG+N
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -7492,7 +7636,7 @@ msgstr "Ne"
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
-msgstr ""
+msgstr "Není nakonfigurován žádný klasifikační model."
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8047,12 +8191,12 @@ msgstr "Na každé kartě je povolen pouze jeden widget s plnou výškou"
 #. js-lingui-id: xdu/vz
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only one workflow version identifier may be provided"
-msgstr ""
+msgstr "Lze zadat pouze jeden identifikátor verze pracovního postupu"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
-msgstr ""
+msgstr "Pouze osoba, která tento pracovní postup vytvořila, může změnit, kdo jej uvidí"
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8258,13 +8402,13 @@ msgstr "Pro pole s výčtem možností jsou vyžadovány možnosti"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Order Index"
-msgstr ""
+msgstr "Pořadový index"
 
 #. js-lingui-id: /dzBSj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Order Index"
-msgstr ""
+msgstr "Pořadový index"
 
 #. js-lingui-id: r4t1DT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -8450,13 +8594,13 @@ msgstr "Účastníci"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Parts"
-msgstr ""
+msgstr "Části"
 
 #. js-lingui-id: eDJpwf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Parts"
-msgstr ""
+msgstr "Části"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -8487,13 +8631,13 @@ msgstr "Payload musí obsahovat cestu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Pending Question Message ID"
-msgstr ""
+msgstr "ID zprávy s čekající otázkou"
 
 #. js-lingui-id: 9j/qct
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Pending Question Message ID"
-msgstr ""
+msgstr "ID zprávy s čekající otázkou"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8665,6 +8809,18 @@ msgstr "Osoba"
 msgctxt "objectMetadata.labelSingular"
 msgid "Person"
 msgstr "Osoba"
+
+#. js-lingui-id: PDXnH6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Person ID"
+msgstr ""
+
+#. js-lingui-id: Ojc/oN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Person ID"
+msgstr ""
 
 #. js-lingui-id: qAQDfe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -8899,13 +9055,13 @@ msgstr "Typ subjektu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Processed At"
-msgstr ""
+msgstr "Zpracováno dne"
 
 #. js-lingui-id: 8fgev4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Processed At"
-msgstr ""
+msgstr "Zpracováno dne"
 
 #. js-lingui-id: cTz6/1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8950,29 +9106,53 @@ msgstr "Poskytnutý kód země a volající kód si odporují"
 msgid "Provided phone number is invalid {number}"
 msgstr "Poskytnuté telefonní číslo je neplatné {number}"
 
+#. js-lingui-id: NZ0bSR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Provider Event ID"
+msgstr ""
+
+#. js-lingui-id: g/4oFF
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Provider Event ID"
+msgstr ""
+
 #. js-lingui-id: XRbtVv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Executed"
-msgstr ""
+msgstr "Poskytovatel proveden"
 
 #. js-lingui-id: +Y6AEU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Executed"
+msgstr "Poskytovatel proveden"
+
+#. js-lingui-id: 9pFDVh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Provider Message ID"
+msgstr ""
+
+#. js-lingui-id: bJgvow
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Provider Message ID"
 msgstr ""
 
 #. js-lingui-id: ApKRV5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Metadata"
-msgstr ""
+msgstr "Metadata poskytovatele"
 
 #. js-lingui-id: 3/Bns9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Metadata"
-msgstr ""
+msgstr "Metadata poskytovatele"
 
 #. js-lingui-id: OL88cI
 #: src/engine/core-modules/public-domain/public-domain.service.ts
@@ -9032,23 +9212,47 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "Čtení a zápis"
 
+#. js-lingui-id: xrwkkT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Reason"
+msgstr ""
+
+#. js-lingui-id: QHL400
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Reason"
+msgstr ""
+
 #. js-lingui-id: UkccBI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reasoning Content"
-msgstr ""
+msgstr "Obsah úvah"
 
 #. js-lingui-id: wmpjJK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reasoning Content"
-msgstr ""
+msgstr "Obsah úvah"
 
 #. js-lingui-id: KX0Su8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Received At"
 msgstr "Přijato"
+
+#. js-lingui-id: qiBYnd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Recipient Email"
+msgstr ""
+
+#. js-lingui-id: jtaUxI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Recipient Email"
+msgstr ""
 
 #. js-lingui-id: ND12UB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9165,6 +9369,18 @@ msgstr "Obnovovací token nenalezen."
 #. js-lingui-id: wTTHfI
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Registered by another workspace."
+msgstr "Zaregistrováno jiným pracovním prostorem."
+
+#. js-lingui-id: iIm98l
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Rejected At"
+msgstr ""
+
+#. js-lingui-id: d3PF7k
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rejected At"
 msgstr ""
 
 #. js-lingui-id: 2dNwZB
@@ -9267,6 +9483,18 @@ msgctxt "timelineActivityType.label"
 msgid "removed an attachment"
 msgstr "odebral(a) přílohu"
 
+#. js-lingui-id: rwpwIw
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Rendering Failed At"
+msgstr ""
+
+#. js-lingui-id: L9MGVo
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rendering Failed At"
+msgstr ""
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9360,7 +9588,7 @@ msgstr "Formát odpovědi typu \"json\" musí obsahovat schéma"
 #. js-lingui-id: dnvRft
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include output fields"
-msgstr ""
+msgstr "Formát odpovědi typu \"json\" musí obsahovat výstupní pole"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -9726,13 +9954,13 @@ msgstr "Rozsah"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Score"
-msgstr ""
+msgstr "Skóre"
 
 #. js-lingui-id: F2sVun
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Score"
-msgstr ""
+msgstr "Skóre"
 
 #. js-lingui-id: SiXwZL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -9967,25 +10195,25 @@ msgstr "Adresa odesílatele kampaně"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sender application ID"
-msgstr ""
+msgstr "ID aplikace odesílatele"
 
 #. js-lingui-id: QiMOFe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sender application ID"
-msgstr ""
+msgstr "ID aplikace odesílatele"
 
 #. js-lingui-id: kfnrYJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sender workspace membership ID"
-msgstr ""
+msgstr "ID členství odesílatele v pracovním prostoru"
 
 #. js-lingui-id: YDV32g
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sender workspace membership ID"
-msgstr ""
+msgstr "ID členství odesílatele v pracovním prostoru"
 
 #. js-lingui-id: ZYK68w
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9996,12 +10224,12 @@ msgstr "Odesílání"
 #. js-lingui-id: dfJbDe
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Sending campaigns is available once your workspace is on a paid plan and has been billed."
-msgstr ""
+msgstr "Odesílání kampaní je k dispozici, jakmile má váš pracovní prostor placený tarif a je vyúčtován."
 
 #. js-lingui-id: Ott/+t
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Sending from an email group is available once your workspace is on a paid plan and has been billed."
-msgstr ""
+msgstr "Odesílání ze skupiny e-mailů je k dispozici, jakmile má váš pracovní prostor placený tarif a je vyúčtován."
 
 #. js-lingui-id: CTcVpP
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -10019,6 +10247,18 @@ msgstr "Odesláno"
 msgctxt "fieldMetadata.label"
 msgid "Sent at"
 msgstr "Odesláno v"
+
+#. js-lingui-id: qgum12
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Sent At"
+msgstr ""
+
+#. js-lingui-id: Ac1/Xj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Sent At"
+msgstr ""
 
 #. js-lingui-id: M8jvbm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10089,42 +10329,42 @@ msgstr "Nastavení"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item not found"
-msgstr ""
+msgstr "Položka nabídky nastavení nenalezena"
 
 #. js-lingui-id: RjOapv
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item not found."
-msgstr ""
+msgstr "Položka nabídky nastavení nenalezena."
 
 #. js-lingui-id: DoDX+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item position must be a number"
-msgstr ""
+msgstr "Pozice položky nabídky nastavení musí být číslo"
 
 #. js-lingui-id: zyqiex
 #. placeholder {0}: flatSettingsMenuItem.scope
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item scope \"{0}\" is invalid"
-msgstr ""
+msgstr "Rozsah položky nabídky nastavení \"{0}\" je neplatný"
 
 #. js-lingui-id: 2BWkt4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item scope \"{nextScope}\" is invalid"
-msgstr ""
+msgstr "Rozsah položky nabídky nastavení \"{nextScope}\" je neplatný"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title \"{0}\" is reserved"
-msgstr ""
+msgstr "Název položky nabídky nastavení \"{0}\" je rezervován"
 
 #. js-lingui-id: llnmro
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title \"{updatedTitle}\" is reserved"
-msgstr ""
+msgstr "Název položky nabídky nastavení \"{updatedTitle}\" je rezervován"
 
 #. js-lingui-id: TxuvW3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -10132,7 +10372,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
-msgstr ""
+msgstr "Název položky nabídky nastavení je povinný"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -10159,7 +10399,7 @@ msgstr "shareWith uvádí stejný subjekt více než jednou"
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Sign in to export records."
-msgstr ""
+msgstr "Chcete-li exportovat záznamy, přihlaste se."
 
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -10188,6 +10428,18 @@ msgstr "Dovednost nebyla nalezena."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "Skill with name \"{name}\" already exists"
 msgstr "Dovednost s názvem \"{name}\" již existuje"
+
+#. js-lingui-id: M49+N5
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Skip Reason"
+msgstr ""
+
+#. js-lingui-id: OgTx4x
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Skip Reason"
+msgstr ""
 
 #. js-lingui-id: 9KFM/B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10236,6 +10488,18 @@ msgstr "Při spouštění instalace aplikace se něco pokazilo. Zkuste to prosí
 msgid "Something went wrong. Please try again."
 msgstr "Něco se pokazilo. Zkuste to prosím znovu."
 
+#. js-lingui-id: N47B7j
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Source"
+msgstr ""
+
+#. js-lingui-id: H7M9xQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Source"
+msgstr ""
+
 #. js-lingui-id: SoRH5/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10263,49 +10527,49 @@ msgstr "Zdrojová cesta ke komponentě je neplatná"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Filename"
-msgstr ""
+msgstr "Název souboru zdrojového dokumentu"
 
 #. js-lingui-id: N0mz5F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Filename"
-msgstr ""
+msgstr "Název souboru zdrojového dokumentu"
 
 #. js-lingui-id: K5eDSi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Media Type"
-msgstr ""
+msgstr "Typ média zdrojového dokumentu"
 
 #. js-lingui-id: t0U3qf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Media Type"
-msgstr ""
+msgstr "Typ média zdrojového dokumentu"
 
 #. js-lingui-id: d6uYtO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Source ID"
-msgstr ""
+msgstr "ID zdroje zdrojového dokumentu"
 
 #. js-lingui-id: ZxgXEV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Source ID"
-msgstr ""
+msgstr "ID zdroje zdrojového dokumentu"
 
 #. js-lingui-id: 5cu4d7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Title"
-msgstr ""
+msgstr "Název zdrojového dokumentu"
 
 #. js-lingui-id: cVO6/z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
-msgstr ""
+msgstr "Název zdrojového dokumentu"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -10328,37 +10592,37 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL Source ID"
-msgstr ""
+msgstr "ID zdroje zdrojové adresy URL"
 
 #. js-lingui-id: j9l+zA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL Source ID"
-msgstr ""
+msgstr "ID zdroje zdrojové adresy URL"
 
 #. js-lingui-id: XqRRm3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL Title"
-msgstr ""
+msgstr "Název zdrojové adresy URL"
 
 #. js-lingui-id: AlMHVf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL Title"
-msgstr ""
+msgstr "Název zdrojové adresy URL"
 
 #. js-lingui-id: k0DblP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL URL"
-msgstr ""
+msgstr "Adresa URL zdrojové adresy URL"
 
 #. js-lingui-id: eS+U4K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL URL"
-msgstr ""
+msgstr "Adresa URL zdrojové adresy URL"
 
 #. js-lingui-id: Qc2uwm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10435,12 +10699,14 @@ msgstr "Zahájeno v"
 
 #. js-lingui-id: j0P/LV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "State"
-msgstr ""
+msgstr "Stav"
 
 #. js-lingui-id: WlLRwh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "State"
@@ -10462,7 +10728,7 @@ msgstr "Statistiky"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Status"
-msgstr ""
+msgstr "Stav"
 
 #. js-lingui-id: a1tUtz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10665,12 +10931,12 @@ msgstr "Karta pro duplikaci widgetu nenalezena."
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
-msgstr ""
+msgstr "Nahrání tarballu nenalezeno."
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target object metadata not found"
-msgstr ""
+msgstr "Metadata cílového objektu nenalezena"
 
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -10680,7 +10946,7 @@ msgstr "Metadata cílového objektu nebyla nalezena pro {connectFieldName}"
 #. js-lingui-id: Pu+2aC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target object not found"
-msgstr ""
+msgstr "Cílový objekt nenalezen"
 
 #. js-lingui-id: iVwZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -10721,7 +10987,7 @@ msgstr "Cílová adresa URL je vyžadována"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target view not found"
-msgstr ""
+msgstr "Cílové zobrazení nenalezeno"
 
 #. js-lingui-id: g6X4T4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -10923,13 +11189,13 @@ msgstr "Text"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Text Content"
-msgstr ""
+msgstr "Textový obsah"
 
 #. js-lingui-id: yv2Pj4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Text Content"
-msgstr ""
+msgstr "Textový obsah"
 
 #. js-lingui-id: gaHTjP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11115,29 +11381,29 @@ msgstr "Vykonavatel pracovního postupu"
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 #: src/engine/core-modules/record-export/record-export.exception.ts
 msgid "The export failed. Please try again or export fewer records."
-msgstr ""
+msgstr "Export selhal. Zkuste to prosím znovu nebo exportujte méně záznamů."
 
 #. js-lingui-id: 6jK2nv
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 msgid "The export file is too large. Please export fewer records."
-msgstr ""
+msgstr "Soubor exportu je příliš velký. Exportujte prosím méně záznamů."
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "The export requester is no longer a workspace member."
-msgstr ""
+msgstr "Žadatel o export již není členem pracovního prostoru."
 
 #. js-lingui-id: ym+qL/
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 msgid "The export took too long. Please try exporting fewer records."
-msgstr ""
+msgstr "Export trval příliš dlouho. Zkuste exportovat méně záznamů."
 
 #. js-lingui-id: qc958u
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "The export was interrupted. Please try again."
-msgstr ""
+msgstr "Export byl přerušen. Zkuste to prosím znovu."
 
 #. js-lingui-id: o6DGfJ
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -11184,7 +11450,7 @@ msgstr "Nahrávání souboru nebylo dokončeno. Zkuste prosím nahrávání znov
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "The front component this settings menu item renders was not found."
-msgstr ""
+msgstr "Frontendová komponenta, kterou tato položka nabídky nastavení vykresluje, nebyla nalezena."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11376,7 +11642,7 @@ msgstr "APP_VERSION serveru není platná verze podle semver. Samohostované ins
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "The settings menu item position must be a number."
-msgstr ""
+msgstr "Pozice položky nabídky nastavení musí být číslo."
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -11563,7 +11829,7 @@ msgstr "Tuto adresu nelze odstranit ze seznamu potlačených adres."
 #. js-lingui-id: GAvcvY
 #: src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util.ts
 msgid "This agent has no output fields. Add at least one output field to its response format."
-msgstr ""
+msgstr "Tento agent nemá žádná výstupní pole. Přidejte do jeho formátu odpovědi alespoň jedno výstupní pole."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -11624,7 +11890,7 @@ msgstr "Tato aplikace se odinstalovává. Před její opětovnou instalací poč
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
-msgstr ""
+msgstr "Tuto kampaň nelze odeslat, dokud je předplatné pracovního prostoru neaktivní."
 
 #. js-lingui-id: SRnMG0
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -11634,7 +11900,7 @@ msgstr "Tuto kampaň nelze odeslat. Může jí chybět odesílatel, předmět ne
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
-msgstr ""
+msgstr "Tato kampaň je zastavena limitem využití e-mailů nastaveným pro tento pracovní prostor. Zvyšte limit nebo odešlete kampaň menšímu seznamu."
 
 #. js-lingui-id: F0NM9B
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -11655,12 +11921,12 @@ msgstr "Obsah e-mailu této kampaně je neplatný."
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 msgid "This change would corrupt the workflow, it was not saved"
-msgstr ""
+msgstr "Tato změna by poškodila pracovní postup, proto nebyla uložena"
 
 #. js-lingui-id: ACvsQ/
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This claim was started in another browser or has already been used. Start the claim again from this browser."
-msgstr ""
+msgstr "Toto uplatnění bylo zahájeno v jiném prohlížeči nebo již bylo použito. Zahajte uplatnění znovu z tohoto prohlížeče."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -11730,12 +11996,12 @@ msgstr "Tento cíl hodnocení nebyl nalezen."
 #. js-lingui-id: jBNDRQ
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "This export belongs to another session. Please create a new export."
-msgstr ""
+msgstr "Tento export patří do jiné relace. Vytvořte prosím nový export."
 
 #. js-lingui-id: UYBB6k
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "This export download has already started or expired."
-msgstr ""
+msgstr "Stahování tohoto exportu již začalo nebo vypršela jeho platnost."
 
 #. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
@@ -11796,7 +12062,7 @@ msgstr "Tento soubor již byl nahrán."
 #. js-lingui-id: rjEWeV
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file must be completed with its dedicated mutation."
-msgstr ""
+msgstr "Tento soubor musí být dokončen pomocí své vyhrazené mutace."
 
 #. js-lingui-id: VGePIR
 #: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
@@ -11847,7 +12113,7 @@ msgstr "Tato metoda není povolena."
 #. js-lingui-id: qr2BW+
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This model cannot answer one of the questions asked."
-msgstr ""
+msgstr "Tento model nedokáže odpovědět na jednu z položených otázek."
 
 #. js-lingui-id: +AQIHh
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -12009,14 +12275,14 @@ msgstr "Tento klíč serveru je již přiřazen jinému pracovnímu prostoru."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item scope is not supported."
-msgstr ""
+msgstr "Tento rozsah položky nabídky nastavení není podporován."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item title is reserved."
-msgstr ""
+msgstr "Tento název položky nabídky nastavení je rezervován."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -12056,7 +12322,7 @@ msgstr "Platnost tohoto nahrávání vypršela před jeho potvrzením. Nahrajte 
 #. js-lingui-id: LKTt57
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This upload is already being completed. Please wait for it to finish."
-msgstr ""
+msgstr "Toto nahrávání se již dokončuje. Počkejte prosím na jeho dokončení."
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -12081,37 +12347,37 @@ msgstr "Tato verze aplikace je již v tomto pracovním prostoru nainstalována."
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "This workflow already exists"
-msgstr ""
+msgstr "Tento pracovní postup již existuje"
 
 #. js-lingui-id: fUlJ/P
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
-msgstr ""
+msgstr "Tento pracovní postup již existuje."
 
 #. js-lingui-id: cqZK9Z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "This workflow version already exists"
-msgstr ""
+msgstr "Tato verze pracovního postupu již existuje"
 
 #. js-lingui-id: GJdteg
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow version already exists."
-msgstr ""
+msgstr "Tato verze pracovního postupu již existuje."
 
 #. js-lingui-id: xnwLD7
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version cannot be saved. {reasons}"
-msgstr ""
+msgstr "Tuto verzi pracovního postupu nelze uložit. {reasons}"
 
 #. js-lingui-id: 6sZZJ8
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow version is not attached to a workflow."
-msgstr ""
+msgstr "Tato verze pracovního postupu není připojena k pracovnímu postupu."
 
 #. js-lingui-id: bZ0qih
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated. {reasons}"
-msgstr ""
+msgstr "Tato verze pracovního postupu není připravena k aktivaci. {reasons}"
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -12127,13 +12393,13 @@ msgstr "Tento pracovní prostor nemá žádné aktivní předplatné."
 #. js-lingui-id: CHG0Iz
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its record limit."
-msgstr ""
+msgstr "Tento pracovní prostor dosáhl limitu záznamů."
 
 #. js-lingui-id: ffJ+LQ
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its storage limit."
-msgstr ""
+msgstr "Tento pracovní prostor dosáhl limitu úložiště."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -12143,7 +12409,7 @@ msgstr "Tento pracovní prostor je pozastaven."
 #. js-lingui-id: ZSp7x/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "This workspace is suspended. Choose a plan to reactivate it."
-msgstr ""
+msgstr "Tento pracovní prostor je pozastaven. Vyberte tarif pro jeho opětovnou aktivaci."
 
 #. js-lingui-id: L7DDtt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -12160,14 +12426,14 @@ msgstr "Stav aktualizace tohoto pracovního prostoru nebylo možné určit. Zkus
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Thread"
-msgstr ""
+msgstr "Vlákno"
 
 #. js-lingui-id: KJ4+gp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Thread"
-msgstr ""
+msgstr "Vlákno"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -12444,121 +12710,121 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Call ID"
-msgstr ""
+msgstr "ID volání nástroje"
 
 #. js-lingui-id: cZVMnI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Call ID"
-msgstr ""
+msgstr "ID volání nástroje"
 
 #. js-lingui-id: pns0OM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Input"
-msgstr ""
+msgstr "Vstup nástroje"
 
 #. js-lingui-id: Ko+3AZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Input"
-msgstr ""
+msgstr "Vstup nástroje"
 
 #. js-lingui-id: LdSoAE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Name"
-msgstr ""
+msgstr "Název nástroje"
 
 #. js-lingui-id: 9SWflq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Name"
-msgstr ""
+msgstr "Název nástroje"
 
 #. js-lingui-id: K02ZIV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Output"
-msgstr ""
+msgstr "Výstup nástroje"
 
 #. js-lingui-id: tTJAE4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Output"
-msgstr ""
+msgstr "Výstup nástroje"
 
 #. js-lingui-id: on9AUZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Cache Creation Tokens"
-msgstr ""
+msgstr "Celkový počet tokenů vytvoření mezipaměti"
 
 #. js-lingui-id: iMvfZu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Cache Creation Tokens"
-msgstr ""
+msgstr "Celkový počet tokenů vytvoření mezipaměti"
 
 #. js-lingui-id: wnDiV2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Cache Read Tokens"
-msgstr ""
+msgstr "Celkový počet tokenů čtení z mezipaměti"
 
 #. js-lingui-id: Z+48gD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Cache Read Tokens"
-msgstr ""
+msgstr "Celkový počet tokenů čtení z mezipaměti"
 
 #. js-lingui-id: oSHmRh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Input Credits"
-msgstr ""
+msgstr "Celkový počet vstupních kreditů"
 
 #. js-lingui-id: 0WCK4i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Input Credits"
-msgstr ""
+msgstr "Celkový počet vstupních kreditů"
 
 #. js-lingui-id: j6jCen
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Input Tokens"
-msgstr ""
+msgstr "Celkový počet vstupních tokenů"
 
 #. js-lingui-id: vcK9+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Input Tokens"
-msgstr ""
+msgstr "Celkový počet vstupních tokenů"
 
 #. js-lingui-id: Z3IqtP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Output Credits"
-msgstr ""
+msgstr "Celkový počet výstupních kreditů"
 
 #. js-lingui-id: jjlMIT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Output Credits"
-msgstr ""
+msgstr "Celkový počet výstupních kreditů"
 
 #. js-lingui-id: qc0WyQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Output Tokens"
-msgstr ""
+msgstr "Celkový počet výstupních tokenů"
 
 #. js-lingui-id: ej4Lb8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Output Tokens"
-msgstr ""
+msgstr "Celkový počet výstupních tokenů"
 
 #. js-lingui-id: 4nPpGt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -12607,26 +12873,26 @@ msgstr "Úterý"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turn"
-msgstr ""
+msgstr "Tah"
 
 #. js-lingui-id: VM2Yjp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turn"
-msgstr ""
+msgstr "Tah"
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turns"
-msgstr ""
+msgstr "Tahy"
 
 #. js-lingui-id: HOvM2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turns"
-msgstr ""
+msgstr "Tahy"
 
 #. js-lingui-id: T+yZIr
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -12652,13 +12918,13 @@ msgstr "Je vyžadováno ověření v rámci dvoufaktorového ověřování."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #. js-lingui-id: qGjy2F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -12668,7 +12934,7 @@ msgstr "Aktualizované pole není polymorfní relací ani běžnou relací"
 #. js-lingui-id: y1AZAF
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
-msgstr ""
+msgstr "Nelze získat přístup k historii AI. Zkuste to prosím znovu."
 
 #. js-lingui-id: SpmRxi
 #: src/engine/core-modules/application/application.exception.ts
@@ -12732,6 +12998,18 @@ msgctxt "fieldMetadata.label"
 msgid "Unsubscribe topic id"
 msgstr "ID tématu odhlášení odběru"
 
+#. js-lingui-id: 93kbO/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Unsubscribe Topic ID"
+msgstr ""
+
+#. js-lingui-id: z2qMOH
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Unsubscribe Topic ID"
+msgstr ""
+
 #. js-lingui-id: Md/2jb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Unsupported composite column type."
@@ -12760,7 +13038,7 @@ msgstr "Nepodporovaný typ metadat pole."
 #. js-lingui-id: Q6yno9
 #: src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util.ts
 msgid "Unsupported groupLoadLimit {groupLoadLimit}, expected one of {allowedGroupLoadLimits}"
-msgstr ""
+msgstr "Nepodporovaný groupLoadLimit {groupLoadLimit}, očekává se jedna z hodnot {allowedGroupLoadLimits}"
 
 #. js-lingui-id: s+1Ldg
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
@@ -12833,9 +13111,11 @@ msgstr "aktualizoval(a) související úkol"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Updated At"
-msgstr ""
+msgstr "Aktualizováno dne"
 
 #. js-lingui-id: LuWQ3A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -12843,9 +13123,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Updated At"
-msgstr ""
+msgstr "Aktualizováno dne"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -13003,13 +13285,13 @@ msgstr "Uživatel nebyl vytvořen s e-mailem/heslem"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "User Workspace ID"
-msgstr ""
+msgstr "ID pracovního prostoru uživatele"
 
 #. js-lingui-id: UBndQ2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "User Workspace ID"
-msgstr ""
+msgstr "ID pracovního prostoru uživatele"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13748,7 +14030,7 @@ msgstr "Pracovní postup"
 #. js-lingui-id: YlNDUu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "Workflow already exists"
-msgstr ""
+msgstr "Pracovní postup již existuje"
 
 #. js-lingui-id: BwauV3
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -13772,7 +14054,7 @@ msgstr "Automatizované spouštěče pracovního postupu spojené s pracovním p
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
-msgstr ""
+msgstr "Duplikace pracovního postupu selhala, zkuste to prosím znovu"
 
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -13782,7 +14064,7 @@ msgstr "Hrana pracovního postupu nenalezena."
 #. js-lingui-id: QWttrw
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 msgid "Workflow is not correctly linked to its mirror"
-msgstr ""
+msgstr "Pracovní postup není správně propojen se svým zrcadlem"
 
 #. js-lingui-id: Dpef1i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -13798,7 +14080,7 @@ msgstr "Pracovní postup spojený s během."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "Workflow not found"
-msgstr ""
+msgstr "Pracovní postup nebyl nalezen"
 
 #. js-lingui-id: R67jts
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -13926,7 +14208,7 @@ msgstr "Verze pracovního postupu"
 #. js-lingui-id: DGFeSW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "Workflow version already exists"
-msgstr ""
+msgstr "Verze pracovního postupu již existuje"
 
 #. js-lingui-id: PFXHn0
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
@@ -13934,7 +14216,7 @@ msgstr ""
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Workflow version changed, please reload and retry"
-msgstr ""
+msgstr "Verze pracovního postupu se změnila, znovu načtěte stránku a opakujte akci"
 
 #. js-lingui-id: n4/IOE
 #: src/modules/workflow/common/utils/assert-workflow-version-has-steps.ts
@@ -13950,29 +14232,29 @@ msgstr "Verze pracovního postupu neobsahuje spouštěč"
 #. js-lingui-id: NeW3NT
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version is missing from the request"
-msgstr ""
+msgstr "V požadavku chybí verze pracovního postupu"
 
 #. js-lingui-id: my+JB0
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 msgid "Workflow version is not a draft"
-msgstr ""
+msgstr "Verze pracovního postupu není koncept"
 
 #. js-lingui-id: Lg0DD+
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util.ts
 msgid "Workflow version is not correctly linked to its mirror"
-msgstr ""
+msgstr "Verze pracovního postupu není správně propojena se svým zrcadlem"
 
 #. js-lingui-id: Xh9+qo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version is not correctly linked to its workflow"
-msgstr ""
+msgstr "Verze pracovního postupu není správně propojena se svým pracovním postupem"
 
 #. js-lingui-id: S+fmLx
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow version is not correctly linked, please retry later"
-msgstr ""
+msgstr "Verze pracovního postupu není správně propojena, zkuste to prosím později"
 
 #. js-lingui-id: bqFL4g
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
@@ -14012,12 +14294,12 @@ msgstr "Verze pracovního postupu nesmí být nastavena pro tento typ položky"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "Workflow version not found"
-msgstr ""
+msgstr "Verze pracovního postupu nenalezena"
 
 #. js-lingui-id: KxlvVE
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Workflow version not found."
-msgstr ""
+msgstr "Verze pracovního postupu nenalezena."
 
 #. js-lingui-id: XoKTtx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -14028,7 +14310,7 @@ msgstr "Pozice verze pracovního postupu"
 #. js-lingui-id: 7dQ4Kg
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version to copy not found"
-msgstr ""
+msgstr "Verze pracovního postupu ke kopírování nenalezena"
 
 #. js-lingui-id: lrTHGl
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14368,7 +14650,7 @@ msgstr "Nemáte oprávnění provést tuto akci."
 #. js-lingui-id: f0N+mi
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "You can allow up to {MAX_ALLOWED_IFRAME_ORIGINS} origins."
-msgstr ""
+msgstr "Můžete povolit až {MAX_ALLOWED_IFRAME_ORIGINS} původů."
 
 #. js-lingui-id: TRUO3G
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -14486,7 +14768,7 @@ msgstr "Nemáte oprávnění odstraňovat položky navigační nabídky na úrov
 #. js-lingui-id: TUrV+a
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "You do not have permission to export records."
-msgstr ""
+msgstr "Nemáte oprávnění k exportu záznamů."
 
 #. js-lingui-id: +wZ6RO
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts

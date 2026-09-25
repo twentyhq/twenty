@@ -1,13 +1,13 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
 
 import {
   FileUploadException,
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export const findFilesFieldMetadataOrThrow = async ({
   fieldMetadataRepository,
@@ -15,19 +15,18 @@ export const findFilesFieldMetadataOrThrow = async ({
   fieldMetadataId,
   fieldMetadataUniversalIdentifier,
 }: {
-  fieldMetadataRepository: Repository<FieldMetadataEntity>;
+  fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>;
   workspaceId: string;
   fieldMetadataId?: string;
   fieldMetadataUniversalIdentifier?: string;
 }): Promise<FieldMetadataEntity> => {
-  const fieldMetadata = await fieldMetadataRepository.findOne({
+  const fieldMetadata = await fieldMetadataRepository.findOne(workspaceId, {
     select: ['id', 'applicationId', 'universalIdentifier', 'type'],
     where: {
       ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
       ...(fieldMetadataUniversalIdentifier
         ? { universalIdentifier: fieldMetadataUniversalIdentifier }
         : {}),
-      workspaceId,
     },
   });
 

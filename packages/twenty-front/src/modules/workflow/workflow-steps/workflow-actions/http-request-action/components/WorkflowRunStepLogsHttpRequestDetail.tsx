@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { formatBytes, isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import {
   IconAlertTriangle,
@@ -10,10 +10,9 @@ import {
   IconClock,
   IconWorld,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
-import { formatBytes } from '@/workflow/workflow-steps/workflow-actions/utils/formatBytes';
 import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {
   StyledBadgeGroup,

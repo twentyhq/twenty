@@ -6,7 +6,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { billingState } from '@/client-config/states/billingState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';

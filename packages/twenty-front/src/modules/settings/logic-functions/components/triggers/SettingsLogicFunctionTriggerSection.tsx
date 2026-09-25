@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { Section } from 'twenty-ui/components';
 import { Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled.div`
   align-items: center;

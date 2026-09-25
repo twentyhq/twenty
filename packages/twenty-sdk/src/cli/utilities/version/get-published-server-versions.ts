@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 
-import { ensureDir } from '@/cli/utilities/file/fs-utils';
+import { ensurePrivateDir } from '@/cli/utilities/file/fs-utils';
 import { compareSemver } from '@/cli/utilities/version/compare-semver';
 import { parseSemver } from '@/cli/utilities/version/parse-semver';
 import { type PublishedServerVersion } from '@/cli/utilities/version/published-server-version';
@@ -51,7 +51,7 @@ const writeCache = async (
   versions: PublishedServerVersion[],
 ): Promise<void> => {
   try {
-    await ensureDir(path.dirname(CACHE_FILE));
+    await ensurePrivateDir(path.dirname(CACHE_FILE));
     await writeFile(
       CACHE_FILE,
       JSON.stringify({

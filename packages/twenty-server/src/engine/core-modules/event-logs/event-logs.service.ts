@@ -93,6 +93,13 @@ export class EventLogsService {
       LIMIT {limit:Int32}
     `;
 
+    const recordsAtLastTimestampQuery = `
+      SELECT *
+      FROM ${tableName}
+      WHERE ${filterWhereClause} AND "timestamp" = {lastRecordTimestamp:DateTime64(3)}
+      LIMIT {maxLimit:Int32}
+    `;
+
     params.limit = limit + 1;
 
     const [records, countResult] = await Promise.all([
@@ -102,12 +109,37 @@ export class EventLogsService {
 
     const totalCount = countResult[0]?.totalCount ?? 0;
     const hasNextPage = records.length > limit;
+    const lastRecordTimestamp = records[limit - 1]?.timestamp;
+    const hasMoreRecordsAtLastTimestamp =
+      hasNextPage && records[limit].timestamp === lastRecordTimestamp;
 
-    if (hasNextPage) {
-      records.pop();
+    let pageRecords = records.slice(0, limit);
+
+    if (hasMoreRecordsAtLastTimestamp) {
+      params.lastRecordTimestamp = lastRecordTimestamp;
+      params.maxLimit = MAX_LIMIT;
+
+      const recordsAtLastTimestamp = await this.clickHouseService.select<
+        Record<string, unknown>
+      >(recordsAtLastTimestampQuery, params);
+      const pageRecordsAtLastTimestamp = pageRecords.filter(
+        (record) => record.timestamp === lastRecordTimestamp,
+      );
+
+      if (recordsAtLastTimestamp.length >= pageRecordsAtLastTimestamp.length) {
+        pageRecords = [
+          ...pageRecords.filter(
+            (record) => record.timestamp !== lastRecordTimestamp,
+          ),
+          ...recordsAtLastTimestamp,
+        ];
+      }
     }
 
-    const normalizedRecords = normalizeEventLogRecords(records, input.table);
+    const normalizedRecords = normalizeEventLogRecords(
+      pageRecords,
+      input.table,
+    );
     const lastRecord = normalizedRecords[normalizedRecords.length - 1];
     const endCursor =
       hasNextPage && lastRecord

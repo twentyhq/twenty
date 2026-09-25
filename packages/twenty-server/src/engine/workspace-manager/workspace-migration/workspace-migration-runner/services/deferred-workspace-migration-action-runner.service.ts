@@ -25,7 +25,7 @@ import {
   DeferredWorkspaceMigrationActionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
 import { type RunDeferredWorkspaceMigrationActionsJobData } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-migration-actions.job';
-import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { DeferredWorkspaceMigrationActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/deferred-workspace-migration-action-handler-registry.service';
 import {
   type DeferredWorkspaceMigrationAction,
   type PersistedDeferredWorkspaceMigrationAction,
@@ -46,7 +46,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
+    private readonly deferredWorkspaceMigrationActionHandlerRegistry: DeferredWorkspaceMigrationActionHandlerRegistryService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -69,10 +69,10 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     await queryRunner.manager
       .getRepository(DeferredWorkspaceMigrationActionEntity)
       .save(
-        deferredActions.map(({ actionHandlerKey, payload }, position) => ({
+        deferredActions.map(({ name, payload }, position) => ({
           workspaceId,
           applicationUniversalIdentifier,
-          actionHandlerKey,
+          name,
           payload,
           position,
           runByVersion: this.twentyConfigService.get('APP_VERSION') ?? null,
@@ -187,19 +187,19 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     try {
       for (const deferredAction of deferredActions) {
         try {
-          await this.workspaceMigrationRunnerActionHandlerRegistry.executeDeferredActionHandler(
-            {
-              deferredAction,
+          await this.deferredWorkspaceMigrationActionHandlerRegistry
+            .getHandler(deferredAction.name)
+            .execute({
               workspaceId,
               applicationUniversalIdentifier,
+              payload: deferredAction.payload,
               allFlatEntityMaps,
               attempt: 1,
               queryRunner,
-            },
-          );
+            });
         } catch (error) {
           this.logger.warn(
-            `Deferred action ${deferredAction.actionHandlerKey} failed for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+            `Deferred action ${deferredAction.name} failed for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       }
@@ -213,17 +213,15 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     deferredActions,
   }: {
     workspaceId: string;
-    deferredActions: Pick<
-      PersistedDeferredWorkspaceMigrationAction,
-      'actionHandlerKey'
-    >[];
+    deferredActions: Pick<PersistedDeferredWorkspaceMigrationAction, 'name'>[];
   }): Promise<AllFlatEntityMaps> {
     const metadataNames = [
       ...new Set(
-        deferredActions.map(({ actionHandlerKey }) =>
-          this.workspaceMigrationRunnerActionHandlerRegistry.getDeferredActionMetadataName(
-            actionHandlerKey,
-          ),
+        deferredActions.flatMap(
+          ({ name }) =>
+            this.deferredWorkspaceMigrationActionHandlerRegistry.getHandler(
+              name,
+            ).metadataNamesToLoad,
         ),
       ),
     ];
@@ -267,17 +265,17 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     try {
       await queryRunner.connect();
 
-      await this.workspaceMigrationRunnerActionHandlerRegistry.executeDeferredActionHandler(
-        {
-          deferredAction: pendingAction,
+      await this.deferredWorkspaceMigrationActionHandlerRegistry
+        .getHandler(pendingAction.name)
+        .execute({
           workspaceId,
           applicationUniversalIdentifier:
             pendingAction.applicationUniversalIdentifier,
+          payload: pendingAction.payload,
           allFlatEntityMaps,
           attempt,
           queryRunner,
-        },
-      );
+        });
 
       await this.deferredWorkspaceMigrationActionRepository.delete(
         workspaceId,
@@ -290,7 +288,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       });
 
       this.logger.log(
-        `Deferred action ${pendingAction.actionHandlerKey} ${id} completed for workspace ${workspaceId} in ${(performance.now() - executionStart).toFixed(0)}ms`,
+        `Deferred action ${pendingAction.name} ${id} completed for workspace ${workspaceId} in ${(performance.now() - executionStart).toFixed(0)}ms`,
       );
 
       return true;
@@ -313,7 +311,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       );
 
       this.logger.error(
-        `Deferred action ${pendingAction.actionHandlerKey} ${id} failed for workspace ${workspaceId} (attempt ${attempt}/${DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS})`,
+        `Deferred action ${pendingAction.name} ${id} failed for workspace ${workspaceId} (attempt ${attempt}/${DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS})`,
         error instanceof Error ? error.stack : undefined,
       );
 

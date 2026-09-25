@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 

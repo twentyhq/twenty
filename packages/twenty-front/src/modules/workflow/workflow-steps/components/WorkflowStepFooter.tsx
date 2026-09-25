@@ -1,20 +1,15 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SidePanelOptionsDropdown } from '@/side-panel/components/SidePanelOptionsDropdown';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
-import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
-import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -32,7 +27,6 @@ export const WorkflowStepFooter = ({
   const dropdownId = useId();
   const { t } = useLingui();
   const { duplicateStep } = useDuplicateStep();
-  const { closeDropdown } = useCloseDropdown();
   const workflowId = useSidePanelWorkflowIdOrThrow();
   const {
     openWorkflowEditStepTypeInSidePanel,
@@ -51,55 +45,34 @@ export const WorkflowStepFooter = ({
   const hasViewAgentOption = isDefined(agentId);
   const hasViewRoleOption = isDefined(workflowAiAgentActionAgent?.roleId);
 
-  const selectableItemIdArray = [
-    WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode,
-    ...(stepId !== TRIGGER_STEP_ID
-      ? [
-          WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode,
-          WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings,
-        ]
-      : []),
-    ...(hasViewAgentOption ? ['view-agent'] : []),
-    ...(hasViewRoleOption ? ['view-role'] : []),
-    ...(!shouldPinDeleteButton
-      ? [WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode]
-      : []),
-  ];
-
   const handleChangeNodeType = () => {
-    closeDropdown(dropdownId);
-
     if (stepId === TRIGGER_STEP_ID) {
       openWorkflowTriggerTypeInSidePanel(workflowId);
-    } else {
-      openWorkflowEditStepTypeInSidePanel(workflowId);
+      return;
     }
+
+    openWorkflowEditStepTypeInSidePanel(workflowId);
   };
 
   const handleDuplicateNode = () => {
-    closeDropdown(dropdownId);
     duplicateStep({ stepId });
   };
 
   const handleDeleteNode = () => {
-    closeDropdown(dropdownId);
     deleteStep(stepId);
   };
 
   const handleNodeSettings = () => {
-    closeDropdown(dropdownId);
     openWorkflowStepSettingsInSidePanel({ workflowId, stepId });
   };
 
   const handleViewAgent = () => {
-    closeDropdown(dropdownId);
     if (isDefined(agentId)) {
       navigateSettings(SettingsPath.AiAgentDetail, { agentId });
     }
   };
 
   const handleViewRole = () => {
-    closeDropdown(dropdownId);
     if (isDefined(workflowAiAgentActionAgent?.roleId)) {
       navigateSettings(SettingsPath.RoleDetail, {
         roleId: workflowAiAgentActionAgent.roleId,
@@ -107,18 +80,9 @@ export const WorkflowStepFooter = ({
     }
   };
 
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const OptionsDropdown = (
-    <OptionsDropdownMenu
-      dropdownId={dropdownId}
-      selectableItemIdArray={selectableItemIdArray}
-    >
+    <SidePanelOptionsDropdown dropdownId={dropdownId}>
       <WorkflowStepOptionsMenuItems
-        selectedItemId={selectedItemId}
         changeNodeText={t`Change node type`}
         onChangeNode={handleChangeNodeType}
         onDuplicateNode={
@@ -127,40 +91,31 @@ export const WorkflowStepFooter = ({
         onDeleteNode={!shouldPinDeleteButton ? handleDeleteNode : undefined}
       >
         {stepId !== TRIGGER_STEP_ID ? (
-          <SelectableListItem
-            itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings}
-            onEnter={handleNodeSettings}
+          <Dropdown.ActionItem
+            onClick={handleNodeSettings}
+            startIcon={<IconSettings />}
           >
-            <ListItem
-              focused={
-                selectedItemId ===
-                WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings
-              }
-              onClick={handleNodeSettings}
-              startIcon={<IconSettings />}
-            >{t`Node settings`}</ListItem>
-          </SelectableListItem>
+            {t`Node settings`}
+          </Dropdown.ActionItem>
         ) : null}
         {hasViewAgentOption ? (
-          <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
-            <ListItem
-              focused={selectedItemId === 'view-agent'}
-              onClick={handleViewAgent}
-              startIcon={<IconLego />}
-            >{t`View Agent`}</ListItem>
-          </SelectableListItem>
+          <Dropdown.ActionItem
+            onClick={handleViewAgent}
+            startIcon={<IconLego />}
+          >
+            {t`View Agent`}
+          </Dropdown.ActionItem>
         ) : null}
         {hasViewRoleOption ? (
-          <SelectableListItem itemId="view-role" onEnter={handleViewRole}>
-            <ListItem
-              focused={selectedItemId === 'view-role'}
-              onClick={handleViewRole}
-              startIcon={<IconUsers />}
-            >{t`View Role`}</ListItem>
-          </SelectableListItem>
+          <Dropdown.ActionItem
+            onClick={handleViewRole}
+            startIcon={<IconUsers />}
+          >
+            {t`View Role`}
+          </Dropdown.ActionItem>
         ) : null}
       </WorkflowStepOptionsMenuItems>
-    </OptionsDropdownMenu>
+    </SidePanelOptionsDropdown>
   );
 
   const deleteButton = (

@@ -295,7 +295,7 @@ msgstr "사람이 목록에 속해 있는 멤버십입니다."
 #. js-lingui-id: T6Bc2D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 msgid "A previous data model change is still being applied in the background. Please try again in a moment."
-msgstr ""
+msgstr "이전 데이터 모델 변경 사항이 백그라운드에서 아직 적용 중입니다. 잠시 후 다시 시도해 주세요."
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -522,7 +522,7 @@ msgstr "접근 수준"
 #. js-lingui-id: epu0XK
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Access permissions have changed. Please create a new export."
-msgstr ""
+msgstr "액세스 권한이 변경되었습니다. 새 내보내기를 만드세요."
 
 #. js-lingui-id: Bk+qoW
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -586,13 +586,13 @@ msgstr "활성"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Active Stream ID"
-msgstr ""
+msgstr "활성 스트림 ID"
 
 #. js-lingui-id: XY2Wtf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Active Stream ID"
-msgstr ""
+msgstr "활성 스트림 ID"
 
 #. js-lingui-id: 4LperZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -626,7 +626,7 @@ msgstr "업데이트할 필드를 최소 한 개 이상 추가하세요."
 #. js-lingui-id: bnZ/Qx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Add at least one output field to the JSON response format"
-msgstr ""
+msgstr "JSON 응답 형식에 출력 필드를 하나 이상 추가하세요"
 
 #. js-lingui-id: mwzvkz
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -661,19 +661,19 @@ msgstr "관리자 역할을 찾을 수 없음."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent chat thread"
-msgstr ""
+msgstr "에이전트 채팅 스레드"
 
 #. js-lingui-id: 05II48
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent chat thread"
-msgstr ""
+msgstr "에이전트 채팅 스레드"
 
 #. js-lingui-id: d9XlI/
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat threads"
-msgstr ""
+msgstr "에이전트 채팅 스레드"
 
 #. js-lingui-id: kmAKx+
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -685,50 +685,50 @@ msgstr "에이전트 실행 실패."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent ID"
-msgstr ""
+msgstr "에이전트 ID"
 
 #. js-lingui-id: s5/Bnr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Agent ID"
-msgstr ""
+msgstr "에이전트 ID"
 
 #. js-lingui-id: iCdJYt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent message"
-msgstr ""
+msgstr "에이전트 메시지"
 
 #. js-lingui-id: kqoj9j
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent message"
-msgstr ""
+msgstr "에이전트 메시지"
 
 #. js-lingui-id: EQKoWJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent message part"
-msgstr ""
+msgstr "에이전트 메시지 부분"
 
 #. js-lingui-id: EFIY30
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent message part"
-msgstr ""
+msgstr "에이전트 메시지 부분"
 
 #. js-lingui-id: CMkxK7
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent message parts"
-msgstr ""
+msgstr "에이전트 메시지 부분"
 
 #. js-lingui-id: JV9atg
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent messages"
-msgstr ""
+msgstr "에이전트 메시지"
 
 #. js-lingui-id: mDXkHu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
@@ -746,43 +746,43 @@ msgstr "에이전트를 찾을 수 없습니다."
 #. js-lingui-id: n7bUoP
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
-msgstr ""
+msgstr "에이전트 단계 실행에 실패했습니다."
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent turn"
-msgstr ""
+msgstr "에이전트 턴"
 
 #. js-lingui-id: LmIK+X
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn"
-msgstr ""
+msgstr "에이전트 턴"
 
 #. js-lingui-id: mCEPno
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent turn evaluation"
-msgstr ""
+msgstr "에이전트 턴 평가"
 
 #. js-lingui-id: 8TxJ/S
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn evaluation"
-msgstr ""
+msgstr "에이전트 턴 평가"
 
 #. js-lingui-id: 8JwBHf
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent turn evaluations"
-msgstr ""
+msgstr "에이전트 턴 평가"
 
 #. js-lingui-id: Tdydg8
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent turns"
-msgstr ""
+msgstr "에이전트 턴"
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util.ts
@@ -824,7 +824,7 @@ msgstr "AI"
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
-msgstr ""
+msgstr "AI 기록 레코드를 찾을 수 없습니다."
 
 #. js-lingui-id: AtTsau
 #: src/engine/metadata-modules/view/constants/index-view-name.constant.ts
@@ -840,7 +840,7 @@ msgstr "이 이메일 도메인에 대해 모든 수신자가 차단되었습니
 #. js-lingui-id: rvV1hH
 #: src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
 msgid "Already registered in this workspace."
-msgstr ""
+msgstr "이미 이 작업공간에 등록되어 있습니다."
 
 #. js-lingui-id: hbJg5A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -901,12 +901,12 @@ msgstr "오류가 발생했습니다."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export field is no longer available."
-msgstr ""
+msgstr "내보내기 필드를 더 이상 사용할 수 없습니다."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
-msgstr ""
+msgstr "이 작업공간에서 이미 내보내기가 실행 중입니다. 완료될 때까지 기다려 주세요."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1003,19 +1003,19 @@ msgstr "이 워크스페이스의 다른 애플리케이션에서 이미 이 키
 #. placeholder {0}: flatSettingsMenuItem.position
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses position {0}"
-msgstr ""
+msgstr "다른 설정 메뉴 항목이 이미 위치 {0}을(를) 사용하고 있습니다"
 
 #. js-lingui-id: euy9O0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses position {nextPosition}"
-msgstr ""
+msgstr "다른 설정 메뉴 항목이 이미 위치 {nextPosition}을(를) 사용하고 있습니다"
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this position."
-msgstr ""
+msgstr "이 애플리케이션의 다른 설정 메뉴 항목이 이미 이 위치를 사용하고 있습니다."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1188,13 +1188,13 @@ msgstr "보관됨"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Archived At"
-msgstr ""
+msgstr "보관된 날짜"
 
 #. js-lingui-id: Lr3M0U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Archived At"
-msgstr ""
+msgstr "보관된 날짜"
 
 #. js-lingui-id: ITCVsf
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1380,7 +1380,7 @@ msgstr "이 기능에 접근하려면 인증이 필요합니다. 로그인 후 �
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
 msgid "Authentication is required to perform this action"
-msgstr ""
+msgstr "이 작업을 수행하려면 인증이 필요합니다"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
@@ -1556,6 +1556,18 @@ msgstr "위젯 \"{widgetTitle}\"의 본문은 객체여야 합니다"
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
 msgstr "쾅"
+
+#. js-lingui-id: 5Xcd0y
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Bounced At"
+msgstr ""
+
+#. js-lingui-id: Ju2edC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Bounced At"
+msgstr ""
 
 #. js-lingui-id: MUk11c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -1963,6 +1975,36 @@ msgctxt "objectMetadata.labelSingular"
 msgid "Campaign"
 msgstr "캠페인"
 
+#. js-lingui-id: oYHwJH
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Campaign deliveries"
+msgstr ""
+
+#. js-lingui-id: 9CLy+1
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Campaign delivery"
+msgstr ""
+
+#. js-lingui-id: TXz220
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Campaign delivery"
+msgstr ""
+
+#. js-lingui-id: rghNQY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Campaign ID"
+msgstr ""
+
+#. js-lingui-id: fSWDKd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Campaign ID"
+msgstr ""
+
 #. js-lingui-id: BeCo7/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -2292,6 +2334,30 @@ msgstr "내비게이션 메뉴 항목 계층에서 순환 의존성이 감지되
 msgid "Circular dependency detected in view filter group hierarchy"
 msgstr "뷰 필터 그룹 계층에서 순환 의존성이 감지되었습니다"
 
+#. js-lingui-id: NdOL9Z
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Claim Expires At"
+msgstr ""
+
+#. js-lingui-id: bj3jul
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Claim Expires At"
+msgstr ""
+
+#. js-lingui-id: H+dfXj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Claim Token"
+msgstr ""
+
+#. js-lingui-id: S8cDJf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Claim Token"
+msgstr ""
+
 #. js-lingui-id: fDGNL3
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
@@ -2367,13 +2433,13 @@ msgstr "쉼표와 마침표"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Comment"
-msgstr ""
+msgstr "댓글"
 
 #. js-lingui-id: 3lgJNW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Comment"
-msgstr ""
+msgstr "댓글"
 
 #. js-lingui-id: snetsR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -2416,6 +2482,18 @@ msgstr "회사"
 msgctxt "fieldMetadata.description"
 msgid "Company record position"
 msgstr "회사 레코드 위치"
+
+#. js-lingui-id: ORLytm
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Complained At"
+msgstr ""
+
+#. js-lingui-id: 9bCz2D
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Complained At"
+msgstr ""
 
 #. js-lingui-id: UdSbpW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -2710,13 +2788,13 @@ msgstr "콘텐츠에 위험한 프로토콜을 사용하는 URL이 포함되어 
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Context Window Tokens"
-msgstr ""
+msgstr "컨텍스트 윈도우 토큰"
 
 #. js-lingui-id: PN+oDC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Context Window Tokens"
-msgstr ""
+msgstr "컨텍스트 윈도우 토큰"
 
 #. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -2727,13 +2805,13 @@ msgstr "관련 필드에서 상충되는 필드 권한이 감지되었습니다.
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conversation Size"
-msgstr ""
+msgstr "대화 크기"
 
 #. js-lingui-id: Gi4NBy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
-msgstr ""
+msgstr "대화 크기"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -2839,13 +2917,13 @@ msgstr "생성"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Create"
-msgstr ""
+msgstr "생성"
 
 #. js-lingui-id: bRKUIg
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create {objectLabelSingular}"
-msgstr ""
+msgstr "{objectLabelSingular} 생성"
 
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -2856,7 +2934,7 @@ msgstr "캘린더 이벤트 생성"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create Campaign"
-msgstr ""
+msgstr "캠페인 만들기"
 
 #. js-lingui-id: AIGOKT
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -2881,9 +2959,11 @@ msgstr "보기 생성"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Created At"
-msgstr ""
+msgstr "생성된 날짜"
 
 #. js-lingui-id: ZA1xqP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -2891,9 +2971,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Created At"
-msgstr ""
+msgstr "생성된 날짜"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3320,7 +3402,7 @@ msgstr "기본 메시지 채널 메시지 연결 메시지 폴더 레이아웃"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Message Layout"
-msgstr ""
+msgstr "기본 메시지 레이아웃"
 
 #. js-lingui-id: jmaSDc
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -3480,9 +3562,11 @@ msgstr "삭제된 날짜"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Deleted At"
-msgstr ""
+msgstr "삭제된 날짜"
 
 #. js-lingui-id: Lu8j/6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -3490,8 +3574,22 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deleted At"
+msgstr "삭제된 날짜"
+
+#. js-lingui-id: wm2sD+
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Delivered At"
+msgstr ""
+
+#. js-lingui-id: LswjjG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Delivered At"
 msgstr ""
 
 #. js-lingui-id: bMSh++
@@ -3617,7 +3715,7 @@ msgstr "초안"
 #. js-lingui-id: qOjRRW
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
-msgstr ""
+msgstr "초안 생성에 실패했습니다. 다시 시도해 주세요"
 
 #. js-lingui-id: 43Mh2+
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -3724,6 +3822,18 @@ msgstr "이메일"
 msgctxt "pageLayoutWidget.title"
 msgid "Email"
 msgstr "이메일"
+
+#. js-lingui-id: VwGMv8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Email Address"
+msgstr ""
+
+#. js-lingui-id: NH74YE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Email Address"
+msgstr ""
 
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
@@ -3940,37 +4050,37 @@ msgstr "오류"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error Details"
-msgstr ""
+msgstr "오류 세부 정보"
 
 #. js-lingui-id: vDV0oc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error Details"
-msgstr ""
+msgstr "오류 세부 정보"
 
 #. js-lingui-id: MO6hxC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error Message"
-msgstr ""
+msgstr "오류 메시지"
 
 #. js-lingui-id: z/ADSK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error Message"
-msgstr ""
+msgstr "오류 메시지"
 
 #. js-lingui-id: dFBOz1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Evaluations"
-msgstr ""
+msgstr "평가"
 
 #. js-lingui-id: e8MefK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Evaluations"
-msgstr ""
+msgstr "평가"
 
 #. js-lingui-id: ++Dmjj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4123,7 +4233,7 @@ msgstr "{objectLabel} 내보내기"
 #. js-lingui-id: YBwCnL
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Export not found."
-msgstr ""
+msgstr "내보내기를 찾을 수 없습니다."
 
 #. js-lingui-id: xvfw7w
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4266,6 +4376,18 @@ msgstr "레코드 업데이트 실패."
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to upsert record."
 msgstr "레코드 업서트 실패."
+
+#. js-lingui-id: mvb5Gn
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Failure Reason"
+msgstr ""
+
+#. js-lingui-id: vFgy1G
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Failure Reason"
+msgstr ""
 
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -4623,25 +4745,25 @@ msgstr "파일 분류"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "File Filename"
-msgstr ""
+msgstr "파일 파일명"
 
 #. js-lingui-id: K7OlYw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "File Filename"
-msgstr ""
+msgstr "파일 파일명"
 
 #. js-lingui-id: vgJ2Zz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "File ID"
-msgstr ""
+msgstr "파일 ID"
 
 #. js-lingui-id: 84M/VT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "File ID"
-msgstr ""
+msgstr "파일 ID"
 
 #. js-lingui-id: OR7oBd
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
@@ -4791,12 +4913,12 @@ msgstr "보낸 사람 주소"
 #. placeholder {0}: flatSettingsMenuItem.frontComponentUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Front component \"{0}\" not found"
-msgstr ""
+msgstr "프런트 컴포넌트 \"{0}\"을(를) 찾을 수 없습니다"
 
 #. js-lingui-id: 10M75d
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Front component \"{updatedFrontComponentUniversalIdentifier}\" not found"
-msgstr ""
+msgstr "프런트 컴포넌트 \"{updatedFrontComponentUniversalIdentifier}\"을(를) 찾을 수 없습니다"
 
 #. js-lingui-id: Wed+Kp
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -5176,6 +5298,7 @@ msgstr "iCal UID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5185,6 +5308,7 @@ msgstr "iCal UID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -5216,6 +5340,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5225,6 +5350,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -5433,7 +5559,7 @@ msgstr "잘못된 캡차입니다. 다시 시도해 주세요."
 #. js-lingui-id: 5CSWB5
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Invalid classification request."
-msgstr ""
+msgstr "잘못된 분류 요청입니다."
 
 #. js-lingui-id: lyfeGa
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -5755,7 +5881,7 @@ msgstr "잘못된 객체 입력입니다."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Invalid or expired export download link."
-msgstr ""
+msgstr "유효하지 않거나 만료된 내보내기 다운로드 링크입니다."
 
 #. js-lingui-id: t4AABW
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -5898,7 +6024,7 @@ msgstr "크론 트리거에 제공된 설정 유형이 유효하지 않습니다
 #. js-lingui-id: TwpiII
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 msgid "Invalid settings menu item input."
-msgstr ""
+msgstr "설정 메뉴 항목 입력이 유효하지 않습니다."
 
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
@@ -6219,13 +6345,13 @@ msgstr "하루 종일 여부"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Is Hidden"
-msgstr ""
+msgstr "숨김 여부"
 
 #. js-lingui-id: q42yQK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Is Hidden"
-msgstr ""
+msgstr "숨김 여부"
 
 #. js-lingui-id: fenRdq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6471,13 +6597,13 @@ msgstr "마지막으로 게시된 버전 ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Last Stream Error"
-msgstr ""
+msgstr "마지막 스트림 오류"
 
 #. js-lingui-id: 9/jQvG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last Stream Error"
-msgstr ""
+msgstr "마지막 스트림 오류"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -7096,6 +7222,24 @@ msgctxt "fieldMetadata.description"
 msgid "Message record position"
 msgstr "메시지 레코드 위치"
 
+#. js-lingui-id: E09MF5
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Message suppression"
+msgstr ""
+
+#. js-lingui-id: mIsdys
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Message suppression"
+msgstr ""
+
+#. js-lingui-id: 7KgWx1
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Message suppressions"
+msgstr ""
+
 #. js-lingui-id: IyZnrr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -7205,7 +7349,7 @@ msgstr "MessageList"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Messages"
-msgstr ""
+msgstr "메시지"
 
 #. js-lingui-id: KocG+N
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -7492,7 +7636,7 @@ msgstr "아니요"
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
-msgstr ""
+msgstr "분류 모델이 구성되지 않았습니다."
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8047,12 +8191,12 @@ msgstr "탭당 전체 높이 위젯은 하나만 허용됩니다"
 #. js-lingui-id: xdu/vz
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only one workflow version identifier may be provided"
-msgstr ""
+msgstr "워크플로우 버전 식별자는 하나만 제공할 수 있습니다"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
-msgstr ""
+msgstr "이 워크플로우를 만든 사용자만 표시 대상을 변경할 수 있습니다"
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8258,13 +8402,13 @@ msgstr "열거형 필드에 옵션이 필요합니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Order Index"
-msgstr ""
+msgstr "순서 인덱스"
 
 #. js-lingui-id: /dzBSj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Order Index"
-msgstr ""
+msgstr "순서 인덱스"
 
 #. js-lingui-id: r4t1DT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -8450,13 +8594,13 @@ msgstr "참가자"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Parts"
-msgstr ""
+msgstr "부분"
 
 #. js-lingui-id: eDJpwf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Parts"
-msgstr ""
+msgstr "부분"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -8487,13 +8631,13 @@ msgstr "Payload에는 path가 포함되어야 합니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Pending Question Message ID"
-msgstr ""
+msgstr "대기 중인 질문 메시지 ID"
 
 #. js-lingui-id: 9j/qct
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Pending Question Message ID"
-msgstr ""
+msgstr "대기 중인 질문 메시지 ID"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8665,6 +8809,18 @@ msgstr "사람"
 msgctxt "objectMetadata.labelSingular"
 msgid "Person"
 msgstr "사람"
+
+#. js-lingui-id: PDXnH6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Person ID"
+msgstr ""
+
+#. js-lingui-id: Ojc/oN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Person ID"
+msgstr ""
 
 #. js-lingui-id: qAQDfe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -8899,13 +9055,13 @@ msgstr "주체 유형"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Processed At"
-msgstr ""
+msgstr "처리된 날짜"
 
 #. js-lingui-id: 8fgev4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Processed At"
-msgstr ""
+msgstr "처리된 날짜"
 
 #. js-lingui-id: cTz6/1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8950,29 +9106,53 @@ msgstr "제공된 국가 코드와 전화 코드가 충돌합니다"
 msgid "Provided phone number is invalid {number}"
 msgstr "제공된 전화 번호가 유효하지 않습니다 {number}"
 
+#. js-lingui-id: NZ0bSR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Provider Event ID"
+msgstr ""
+
+#. js-lingui-id: g/4oFF
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Provider Event ID"
+msgstr ""
+
 #. js-lingui-id: XRbtVv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Executed"
-msgstr ""
+msgstr "공급자 실행됨"
 
 #. js-lingui-id: +Y6AEU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Executed"
+msgstr "공급자 실행됨"
+
+#. js-lingui-id: 9pFDVh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Provider Message ID"
+msgstr ""
+
+#. js-lingui-id: bJgvow
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Provider Message ID"
 msgstr ""
 
 #. js-lingui-id: ApKRV5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Metadata"
-msgstr ""
+msgstr "공급자 메타데이터"
 
 #. js-lingui-id: 3/Bns9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Metadata"
-msgstr ""
+msgstr "공급자 메타데이터"
 
 #. js-lingui-id: OL88cI
 #: src/engine/core-modules/public-domain/public-domain.service.ts
@@ -9032,23 +9212,47 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "읽기 및 쓰기"
 
+#. js-lingui-id: xrwkkT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Reason"
+msgstr ""
+
+#. js-lingui-id: QHL400
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Reason"
+msgstr ""
+
 #. js-lingui-id: UkccBI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reasoning Content"
-msgstr ""
+msgstr "추론 콘텐츠"
 
 #. js-lingui-id: wmpjJK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reasoning Content"
-msgstr ""
+msgstr "추론 콘텐츠"
 
 #. js-lingui-id: KX0Su8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Received At"
 msgstr "수신 시간"
+
+#. js-lingui-id: qiBYnd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Recipient Email"
+msgstr ""
+
+#. js-lingui-id: jtaUxI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Recipient Email"
+msgstr ""
 
 #. js-lingui-id: ND12UB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9165,6 +9369,18 @@ msgstr "리프레시 토큰을 찾을 수 없음."
 #. js-lingui-id: wTTHfI
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Registered by another workspace."
+msgstr "다른 작업공간에서 등록되었습니다."
+
+#. js-lingui-id: iIm98l
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Rejected At"
+msgstr ""
+
+#. js-lingui-id: d3PF7k
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rejected At"
 msgstr ""
 
 #. js-lingui-id: 2dNwZB
@@ -9267,6 +9483,18 @@ msgctxt "timelineActivityType.label"
 msgid "removed an attachment"
 msgstr "첨부 파일을 삭제했습니다."
 
+#. js-lingui-id: rwpwIw
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Rendering Failed At"
+msgstr ""
+
+#. js-lingui-id: L9MGVo
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rendering Failed At"
+msgstr ""
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9360,7 +9588,7 @@ msgstr "유형이 \"json\"인 응답 형식에는 스키마가 포함되어야 �
 #. js-lingui-id: dnvRft
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include output fields"
-msgstr ""
+msgstr "유형이 \"json\"인 응답 형식에는 출력 필드가 포함되어야 합니다"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -9726,13 +9954,13 @@ msgstr "범위"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Score"
-msgstr ""
+msgstr "점수"
 
 #. js-lingui-id: F2sVun
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Score"
-msgstr ""
+msgstr "점수"
 
 #. js-lingui-id: SiXwZL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -9967,25 +10195,25 @@ msgstr "캠페인 발송자 주소"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sender application ID"
-msgstr ""
+msgstr "보낸 애플리케이션 ID"
 
 #. js-lingui-id: QiMOFe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sender application ID"
-msgstr ""
+msgstr "보낸 애플리케이션 ID"
 
 #. js-lingui-id: kfnrYJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sender workspace membership ID"
-msgstr ""
+msgstr "보낸 작업공간 멤버십 ID"
 
 #. js-lingui-id: YDV32g
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sender workspace membership ID"
-msgstr ""
+msgstr "보낸 작업공간 멤버십 ID"
 
 #. js-lingui-id: ZYK68w
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9996,12 +10224,12 @@ msgstr "전송 중"
 #. js-lingui-id: dfJbDe
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Sending campaigns is available once your workspace is on a paid plan and has been billed."
-msgstr ""
+msgstr "작업공간이 유료 요금제에 가입하고 청구가 완료되면 캠페인을 보낼 수 있습니다."
 
 #. js-lingui-id: Ott/+t
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Sending from an email group is available once your workspace is on a paid plan and has been billed."
-msgstr ""
+msgstr "작업공간이 유료 요금제에 가입하고 청구가 완료되면 이메일 그룹에서 보낼 수 있습니다."
 
 #. js-lingui-id: CTcVpP
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -10019,6 +10247,18 @@ msgstr "보냄"
 msgctxt "fieldMetadata.label"
 msgid "Sent at"
 msgstr "전송 시각"
+
+#. js-lingui-id: qgum12
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Sent At"
+msgstr ""
+
+#. js-lingui-id: Ac1/Xj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Sent At"
+msgstr ""
 
 #. js-lingui-id: M8jvbm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10089,42 +10329,42 @@ msgstr "설정"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item not found"
-msgstr ""
+msgstr "설정 메뉴 항목을 찾을 수 없음"
 
 #. js-lingui-id: RjOapv
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item not found."
-msgstr ""
+msgstr "설정 메뉴 항목을 찾을 수 없습니다."
 
 #. js-lingui-id: DoDX+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item position must be a number"
-msgstr ""
+msgstr "설정 메뉴 항목 위치는 숫자여야 합니다"
 
 #. js-lingui-id: zyqiex
 #. placeholder {0}: flatSettingsMenuItem.scope
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item scope \"{0}\" is invalid"
-msgstr ""
+msgstr "설정 메뉴 항목 범위 \"{0}\"은(는) 유효하지 않습니다"
 
 #. js-lingui-id: 2BWkt4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item scope \"{nextScope}\" is invalid"
-msgstr ""
+msgstr "설정 메뉴 항목 범위 \"{nextScope}\"은(는) 유효하지 않습니다"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title \"{0}\" is reserved"
-msgstr ""
+msgstr "설정 메뉴 항목 제목 \"{0}\"은(는) 예약되어 있습니다"
 
 #. js-lingui-id: llnmro
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title \"{updatedTitle}\" is reserved"
-msgstr ""
+msgstr "설정 메뉴 항목 제목 \"{updatedTitle}\"은(는) 예약되어 있습니다"
 
 #. js-lingui-id: TxuvW3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -10132,7 +10372,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
-msgstr ""
+msgstr "설정 메뉴 항목 제목이 필요합니다"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -10159,7 +10399,7 @@ msgstr "shareWith에서 동일한 주체를 두 번 이상 지정했습니다"
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Sign in to export records."
-msgstr ""
+msgstr "레코드를 내보내려면 로그인하세요."
 
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -10188,6 +10428,18 @@ msgstr "스킬을 찾을 수 없음."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "Skill with name \"{name}\" already exists"
 msgstr "이름이 \\\"{name}\\\"인 스킬이 이미 존재합니다"
+
+#. js-lingui-id: M49+N5
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Skip Reason"
+msgstr ""
+
+#. js-lingui-id: OgTx4x
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Skip Reason"
+msgstr ""
 
 #. js-lingui-id: 9KFM/B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10236,6 +10488,18 @@ msgstr "앱 설치를 시작하는 동안 문제가 발생했습니다. 다시 �
 msgid "Something went wrong. Please try again."
 msgstr "문제가 발생했습니다. 다시 시도해 주세요."
 
+#. js-lingui-id: N47B7j
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Source"
+msgstr ""
+
+#. js-lingui-id: H7M9xQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Source"
+msgstr ""
+
 #. js-lingui-id: SoRH5/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10263,49 +10527,49 @@ msgstr "소스 컴포넌트 경로가 올바르지 않습니다"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Filename"
-msgstr ""
+msgstr "소스 문서 파일명"
 
 #. js-lingui-id: N0mz5F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Filename"
-msgstr ""
+msgstr "소스 문서 파일명"
 
 #. js-lingui-id: K5eDSi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Media Type"
-msgstr ""
+msgstr "소스 문서 미디어 유형"
 
 #. js-lingui-id: t0U3qf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Media Type"
-msgstr ""
+msgstr "소스 문서 미디어 유형"
 
 #. js-lingui-id: d6uYtO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Source ID"
-msgstr ""
+msgstr "소스 문서 소스 ID"
 
 #. js-lingui-id: ZxgXEV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Source ID"
-msgstr ""
+msgstr "소스 문서 소스 ID"
 
 #. js-lingui-id: 5cu4d7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Title"
-msgstr ""
+msgstr "소스 문서 제목"
 
 #. js-lingui-id: cVO6/z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
-msgstr ""
+msgstr "소스 문서 제목"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -10328,37 +10592,37 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL Source ID"
-msgstr ""
+msgstr "소스 URL 소스 ID"
 
 #. js-lingui-id: j9l+zA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL Source ID"
-msgstr ""
+msgstr "소스 URL 소스 ID"
 
 #. js-lingui-id: XqRRm3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL Title"
-msgstr ""
+msgstr "소스 URL 제목"
 
 #. js-lingui-id: AlMHVf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL Title"
-msgstr ""
+msgstr "소스 URL 제목"
 
 #. js-lingui-id: k0DblP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL URL"
-msgstr ""
+msgstr "소스 URL URL"
 
 #. js-lingui-id: eS+U4K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL URL"
-msgstr ""
+msgstr "소스 URL URL"
 
 #. js-lingui-id: Qc2uwm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10435,12 +10699,14 @@ msgstr "시작 시각"
 
 #. js-lingui-id: j0P/LV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "State"
-msgstr ""
+msgstr "상태"
 
 #. js-lingui-id: WlLRwh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "State"
@@ -10462,7 +10728,7 @@ msgstr "통계"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Status"
-msgstr ""
+msgstr "상태"
 
 #. js-lingui-id: a1tUtz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10665,12 +10931,12 @@ msgstr "위젯 복제를 위한 탭을 찾을 수 없음."
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
-msgstr ""
+msgstr "Tarball 업로드를 찾을 수 없습니다."
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target object metadata not found"
-msgstr ""
+msgstr "대상 객체 메타데이터를 찾을 수 없음"
 
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -10680,7 +10946,7 @@ msgstr "표적 객체 메타데이터를 {connectFieldName}에 대해 찾을 수
 #. js-lingui-id: Pu+2aC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target object not found"
-msgstr ""
+msgstr "대상 객체를 찾을 수 없음"
 
 #. js-lingui-id: iVwZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -10721,7 +10987,7 @@ msgstr "대상 URL이 필요합니다"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target view not found"
-msgstr ""
+msgstr "대상 뷰를 찾을 수 없음"
 
 #. js-lingui-id: g6X4T4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -10923,13 +11189,13 @@ msgstr "텍스트"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Text Content"
-msgstr ""
+msgstr "텍스트 콘텐츠"
 
 #. js-lingui-id: yv2Pj4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Text Content"
-msgstr ""
+msgstr "텍스트 콘텐츠"
 
 #. js-lingui-id: gaHTjP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11115,29 +11381,29 @@ msgstr "워크플로 실행자"
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 #: src/engine/core-modules/record-export/record-export.exception.ts
 msgid "The export failed. Please try again or export fewer records."
-msgstr ""
+msgstr "내보내기에 실패했습니다. 다시 시도하거나 더 적은 레코드를 내보내세요."
 
 #. js-lingui-id: 6jK2nv
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 msgid "The export file is too large. Please export fewer records."
-msgstr ""
+msgstr "내보내기 파일이 너무 큽니다. 더 적은 레코드를 내보내세요."
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "The export requester is no longer a workspace member."
-msgstr ""
+msgstr "내보내기 요청자가 더 이상 작업공간 멤버가 아닙니다."
 
 #. js-lingui-id: ym+qL/
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 msgid "The export took too long. Please try exporting fewer records."
-msgstr ""
+msgstr "내보내기에 너무 오래 걸렸습니다. 더 적은 레코드를 내보내 보세요."
 
 #. js-lingui-id: qc958u
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "The export was interrupted. Please try again."
-msgstr ""
+msgstr "내보내기가 중단되었습니다. 다시 시도해 주세요."
 
 #. js-lingui-id: o6DGfJ
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -11184,7 +11450,7 @@ msgstr "파일 업로드가 완료되지 않았습니다. 다시 업로드해 �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "The front component this settings menu item renders was not found."
-msgstr ""
+msgstr "이 설정 메뉴 항목이 렌더링하는 프런트 컴포넌트를 찾을 수 없습니다."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11376,7 +11642,7 @@ msgstr "서버의 APP_VERSION이 유효한 semver 버전이 아닙니다. 자체
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "The settings menu item position must be a number."
-msgstr ""
+msgstr "설정 메뉴 항목 위치는 숫자여야 합니다."
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -11563,7 +11829,7 @@ msgstr "이 주소는 수신 거부 목록에서 제거할 수 없습니다."
 #. js-lingui-id: GAvcvY
 #: src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util.ts
 msgid "This agent has no output fields. Add at least one output field to its response format."
-msgstr ""
+msgstr "이 에이전트에는 출력 필드가 없습니다. 응답 형식에 출력 필드를 하나 이상 추가하세요."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -11624,7 +11890,7 @@ msgstr "이 애플리케이션을 제거하고 있습니다. 다시 설치하기
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
-msgstr ""
+msgstr "작업공간 구독이 비활성 상태인 동안에는 이 캠페인을 보낼 수 없습니다."
 
 #. js-lingui-id: SRnMG0
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -11634,7 +11900,7 @@ msgstr "이 캠페인은 발송할 수 없습니다. 발신자, 제목 또는 �
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
-msgstr ""
+msgstr "이 캠페인은 이 작업공간에 설정된 이메일 사용 한도로 인해 중지되었습니다. 한도를 늘리거나 더 작은 목록으로 보내세요."
 
 #. js-lingui-id: F0NM9B
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -11655,12 +11921,12 @@ msgstr "이 캠페인의 이메일 콘텐츠가 유효하지 않습니다."
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 msgid "This change would corrupt the workflow, it was not saved"
-msgstr ""
+msgstr "이 변경으로 인해 워크플로우가 손상될 수 있으므로 저장되지 않았습니다"
 
 #. js-lingui-id: ACvsQ/
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This claim was started in another browser or has already been used. Start the claim again from this browser."
-msgstr ""
+msgstr "이 클레임은 다른 브라우저에서 시작되었거나 이미 사용되었습니다. 이 브라우저에서 다시 클레임을 시작하세요."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -11730,12 +11996,12 @@ msgstr "해당 평가 대상을 찾을 수 없습니다."
 #. js-lingui-id: jBNDRQ
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "This export belongs to another session. Please create a new export."
-msgstr ""
+msgstr "이 내보내기는 다른 세션에 속합니다. 새 내보내기를 만드세요."
 
 #. js-lingui-id: UYBB6k
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "This export download has already started or expired."
-msgstr ""
+msgstr "이 내보내기 다운로드는 이미 시작되었거나 만료되었습니다."
 
 #. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
@@ -11796,7 +12062,7 @@ msgstr "이 파일은 이미 업로드되었습니다."
 #. js-lingui-id: rjEWeV
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file must be completed with its dedicated mutation."
-msgstr ""
+msgstr "이 파일은 전용 mutation으로 완료해야 합니다."
 
 #. js-lingui-id: VGePIR
 #: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
@@ -11847,7 +12113,7 @@ msgstr "이 메서드는 허용되지 않습니다."
 #. js-lingui-id: qr2BW+
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This model cannot answer one of the questions asked."
-msgstr ""
+msgstr "이 모델은 질문 중 하나에 답변할 수 없습니다."
 
 #. js-lingui-id: +AQIHh
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -12009,14 +12275,14 @@ msgstr "이 서버 키는 이미 다른 워크스페이스에 의해 클레임�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item scope is not supported."
-msgstr ""
+msgstr "이 설정 메뉴 항목 범위는 지원되지 않습니다."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item title is reserved."
-msgstr ""
+msgstr "이 설정 메뉴 항목 제목은 예약되어 있습니다."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -12056,7 +12322,7 @@ msgstr "확인되기 전에 이 업로드가 만료되었습니다. 파일을 �
 #. js-lingui-id: LKTt57
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This upload is already being completed. Please wait for it to finish."
-msgstr ""
+msgstr "이 업로드는 이미 완료 처리 중입니다. 완료될 때까지 기다려 주세요."
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -12081,37 +12347,37 @@ msgstr "이 애플리케이션의 해당 버전은 이 워크스페이스에 이
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "This workflow already exists"
-msgstr ""
+msgstr "이 워크플로우는 이미 존재합니다"
 
 #. js-lingui-id: fUlJ/P
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
-msgstr ""
+msgstr "이 워크플로우는 이미 존재합니다."
 
 #. js-lingui-id: cqZK9Z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "This workflow version already exists"
-msgstr ""
+msgstr "이 워크플로우 버전은 이미 존재합니다"
 
 #. js-lingui-id: GJdteg
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow version already exists."
-msgstr ""
+msgstr "이 워크플로우 버전은 이미 존재합니다."
 
 #. js-lingui-id: xnwLD7
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version cannot be saved. {reasons}"
-msgstr ""
+msgstr "이 워크플로우 버전은 저장할 수 없습니다. {reasons}"
 
 #. js-lingui-id: 6sZZJ8
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow version is not attached to a workflow."
-msgstr ""
+msgstr "이 워크플로우 버전은 워크플로우에 연결되어 있지 않습니다."
 
 #. js-lingui-id: bZ0qih
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated. {reasons}"
-msgstr ""
+msgstr "이 워크플로우 버전은 활성화할 준비가 되지 않았습니다. {reasons}"
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -12127,13 +12393,13 @@ msgstr "이 워크스페이스에는 활성 구독이 없습니다."
 #. js-lingui-id: CHG0Iz
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its record limit."
-msgstr ""
+msgstr "이 작업공간이 레코드 한도에 도달했습니다."
 
 #. js-lingui-id: ffJ+LQ
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its storage limit."
-msgstr ""
+msgstr "이 작업공간이 저장소 한도에 도달했습니다."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -12143,7 +12409,7 @@ msgstr "이 워크스페이스는 일시 중지되었습니다."
 #. js-lingui-id: ZSp7x/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "This workspace is suspended. Choose a plan to reactivate it."
-msgstr ""
+msgstr "이 작업공간은 일시 중지되었습니다. 다시 활성화하려면 요금제를 선택하세요."
 
 #. js-lingui-id: L7DDtt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -12160,14 +12426,14 @@ msgstr "이 워크스페이스의 업그레이드 상태를 확인할 수 없습
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Thread"
-msgstr ""
+msgstr "스레드"
 
 #. js-lingui-id: KJ4+gp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Thread"
-msgstr ""
+msgstr "스레드"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -12444,121 +12710,121 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Call ID"
-msgstr ""
+msgstr "도구 호출 ID"
 
 #. js-lingui-id: cZVMnI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Call ID"
-msgstr ""
+msgstr "도구 호출 ID"
 
 #. js-lingui-id: pns0OM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Input"
-msgstr ""
+msgstr "도구 입력"
 
 #. js-lingui-id: Ko+3AZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Input"
-msgstr ""
+msgstr "도구 입력"
 
 #. js-lingui-id: LdSoAE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Name"
-msgstr ""
+msgstr "도구 이름"
 
 #. js-lingui-id: 9SWflq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Name"
-msgstr ""
+msgstr "도구 이름"
 
 #. js-lingui-id: K02ZIV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Output"
-msgstr ""
+msgstr "도구 출력"
 
 #. js-lingui-id: tTJAE4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Output"
-msgstr ""
+msgstr "도구 출력"
 
 #. js-lingui-id: on9AUZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Cache Creation Tokens"
-msgstr ""
+msgstr "총 캐시 생성 토큰"
 
 #. js-lingui-id: iMvfZu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Cache Creation Tokens"
-msgstr ""
+msgstr "총 캐시 생성 토큰"
 
 #. js-lingui-id: wnDiV2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Cache Read Tokens"
-msgstr ""
+msgstr "총 캐시 읽기 토큰"
 
 #. js-lingui-id: Z+48gD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Cache Read Tokens"
-msgstr ""
+msgstr "총 캐시 읽기 토큰"
 
 #. js-lingui-id: oSHmRh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Input Credits"
-msgstr ""
+msgstr "총 입력 크레딧"
 
 #. js-lingui-id: 0WCK4i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Input Credits"
-msgstr ""
+msgstr "총 입력 크레딧"
 
 #. js-lingui-id: j6jCen
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Input Tokens"
-msgstr ""
+msgstr "총 입력 토큰"
 
 #. js-lingui-id: vcK9+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Input Tokens"
-msgstr ""
+msgstr "총 입력 토큰"
 
 #. js-lingui-id: Z3IqtP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Output Credits"
-msgstr ""
+msgstr "총 출력 크레딧"
 
 #. js-lingui-id: jjlMIT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Output Credits"
-msgstr ""
+msgstr "총 출력 크레딧"
 
 #. js-lingui-id: qc0WyQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Output Tokens"
-msgstr ""
+msgstr "총 출력 토큰"
 
 #. js-lingui-id: ej4Lb8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Output Tokens"
-msgstr ""
+msgstr "총 출력 토큰"
 
 #. js-lingui-id: 4nPpGt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -12607,26 +12873,26 @@ msgstr "화요일"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turn"
-msgstr ""
+msgstr "턴"
 
 #. js-lingui-id: VM2Yjp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turn"
-msgstr ""
+msgstr "턴"
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turns"
-msgstr ""
+msgstr "턴"
 
 #. js-lingui-id: HOvM2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turns"
-msgstr ""
+msgstr "턴"
 
 #. js-lingui-id: T+yZIr
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -12652,13 +12918,13 @@ msgstr "이중 인증 검증이 필요합니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Type"
-msgstr ""
+msgstr "유형"
 
 #. js-lingui-id: qGjy2F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Type"
-msgstr ""
+msgstr "유형"
 
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -12668,7 +12934,7 @@ msgstr "업데이트된 필드는 다형 관계(morph relation)도 일반 관계
 #. js-lingui-id: y1AZAF
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
-msgstr ""
+msgstr "AI 기록에 액세스할 수 없습니다. 다시 시도해 주세요."
 
 #. js-lingui-id: SpmRxi
 #: src/engine/core-modules/application/application.exception.ts
@@ -12732,6 +12998,18 @@ msgctxt "fieldMetadata.label"
 msgid "Unsubscribe topic id"
 msgstr "수신 거부 주제 ID"
 
+#. js-lingui-id: 93kbO/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Unsubscribe Topic ID"
+msgstr ""
+
+#. js-lingui-id: z2qMOH
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Unsubscribe Topic ID"
+msgstr ""
+
 #. js-lingui-id: Md/2jb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Unsupported composite column type."
@@ -12760,7 +13038,7 @@ msgstr "지원되지 않는 필드 메타데이터 유형."
 #. js-lingui-id: Q6yno9
 #: src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util.ts
 msgid "Unsupported groupLoadLimit {groupLoadLimit}, expected one of {allowedGroupLoadLimits}"
-msgstr ""
+msgstr "지원되지 않는 groupLoadLimit {groupLoadLimit}입니다. {allowedGroupLoadLimits} 중 하나여야 합니다"
 
 #. js-lingui-id: s+1Ldg
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
@@ -12833,9 +13111,11 @@ msgstr "관련 작업을 업데이트했습니다"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Updated At"
-msgstr ""
+msgstr "업데이트된 날짜"
 
 #. js-lingui-id: LuWQ3A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -12843,9 +13123,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Updated At"
-msgstr ""
+msgstr "업데이트된 날짜"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -13003,13 +13285,13 @@ msgstr "사용자는 이메일/비밀번호로 생성되지 않았습니다"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "User Workspace ID"
-msgstr ""
+msgstr "사용자 작업공간 ID"
 
 #. js-lingui-id: UBndQ2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "User Workspace ID"
-msgstr ""
+msgstr "사용자 작업공간 ID"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13748,7 +14030,7 @@ msgstr "워크플로우"
 #. js-lingui-id: YlNDUu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "Workflow already exists"
-msgstr ""
+msgstr "워크플로우가 이미 존재합니다"
 
 #. js-lingui-id: BwauV3
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -13772,7 +14054,7 @@ msgstr "워크플로우에 연결된 자동화된 트리거."
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
-msgstr ""
+msgstr "워크플로우 복제에 실패했습니다. 다시 시도해 주세요"
 
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -13782,7 +14064,7 @@ msgstr "워크플로우 엣지를 찾을 수 없음."
 #. js-lingui-id: QWttrw
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 msgid "Workflow is not correctly linked to its mirror"
-msgstr ""
+msgstr "워크플로우가 미러에 올바르게 연결되어 있지 않습니다"
 
 #. js-lingui-id: Dpef1i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -13798,7 +14080,7 @@ msgstr "실행에 연결된 워크플로우."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "Workflow not found"
-msgstr ""
+msgstr "워크플로우를 찾을 수 없습니다"
 
 #. js-lingui-id: R67jts
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -13926,7 +14208,7 @@ msgstr "워크플로우 버전"
 #. js-lingui-id: DGFeSW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "Workflow version already exists"
-msgstr ""
+msgstr "워크플로우 버전이 이미 존재합니다"
 
 #. js-lingui-id: PFXHn0
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
@@ -13934,7 +14216,7 @@ msgstr ""
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Workflow version changed, please reload and retry"
-msgstr ""
+msgstr "워크플로우 버전이 변경되었습니다. 새로고침한 후 다시 시도해 주세요"
 
 #. js-lingui-id: n4/IOE
 #: src/modules/workflow/common/utils/assert-workflow-version-has-steps.ts
@@ -13950,29 +14232,29 @@ msgstr "워크플로우 버전에 트리거가 포함되어 있지 않습니다"
 #. js-lingui-id: NeW3NT
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version is missing from the request"
-msgstr ""
+msgstr "요청에 워크플로우 버전이 없습니다"
 
 #. js-lingui-id: my+JB0
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 msgid "Workflow version is not a draft"
-msgstr ""
+msgstr "워크플로우 버전이 초안이 아닙니다"
 
 #. js-lingui-id: Lg0DD+
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util.ts
 msgid "Workflow version is not correctly linked to its mirror"
-msgstr ""
+msgstr "워크플로우 버전이 미러에 올바르게 연결되어 있지 않습니다"
 
 #. js-lingui-id: Xh9+qo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version is not correctly linked to its workflow"
-msgstr ""
+msgstr "워크플로우 버전이 워크플로우에 올바르게 연결되어 있지 않습니다"
 
 #. js-lingui-id: S+fmLx
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow version is not correctly linked, please retry later"
-msgstr ""
+msgstr "워크플로우 버전이 올바르게 연결되어 있지 않습니다. 나중에 다시 시도해 주세요"
 
 #. js-lingui-id: bqFL4g
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
@@ -14012,12 +14294,12 @@ msgstr "이 항목 유형에는 워크플로 버전을 설정하면 안 됩니�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "Workflow version not found"
-msgstr ""
+msgstr "워크플로우 버전을 찾을 수 없음"
 
 #. js-lingui-id: KxlvVE
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Workflow version not found."
-msgstr ""
+msgstr "워크플로우 버전을 찾을 수 없음."
 
 #. js-lingui-id: XoKTtx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -14028,7 +14310,7 @@ msgstr "워크플로우 버전 위치"
 #. js-lingui-id: 7dQ4Kg
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version to copy not found"
-msgstr ""
+msgstr "복사할 워크플로우 버전을 찾을 수 없음"
 
 #. js-lingui-id: lrTHGl
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14368,7 +14650,7 @@ msgstr "이 작업을 수행할 권한이 없습니다."
 #. js-lingui-id: f0N+mi
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "You can allow up to {MAX_ALLOWED_IFRAME_ORIGINS} origins."
-msgstr ""
+msgstr "최대 {MAX_ALLOWED_IFRAME_ORIGINS}개의 origin을 허용할 수 있습니다."
 
 #. js-lingui-id: TRUO3G
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -14486,7 +14768,7 @@ msgstr "작업 공간 수준의 내비게이션 메뉴 항목을 삭제할 권�
 #. js-lingui-id: TUrV+a
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "You do not have permission to export records."
-msgstr ""
+msgstr "레코드를 내보낼 권한이 없습니다."
 
 #. js-lingui-id: +wZ6RO
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
