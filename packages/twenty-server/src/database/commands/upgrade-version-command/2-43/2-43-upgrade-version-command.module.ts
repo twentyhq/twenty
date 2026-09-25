@@ -13,6 +13,8 @@ import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-
 import { BackfillLogicFunctionFileRowsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790262034322-backfill-logic-function-file-rows.command';
 import { RepairInitialCompanyTargetsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790339692474-repair-initial-company-targets.command';
 import { ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790317893308-provision-agent-chat-thread-target.command';
+import { BackfillOAuthOnlyApplicationSourceTypeCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790352791059-backfill-oauth-only-application-source-type.command';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -28,7 +30,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     AgentHistoryMigrationModule,
     AgentHistoryModule,
-    TypeOrmModule.forFeature([FieldMetadataEntity, FileEntity]),
+    TypeOrmModule.forFeature([
+      ApplicationEntity,
+      FieldMetadataEntity,
+      FileEntity,
+    ]),
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     BillingModule,
@@ -46,6 +52,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SyncAttachmentRecordPageCommand,
     RelabelAttachmentTargetFieldsCommand,
     ProvisionAgentChatThreadTargetCommand,
+    BackfillOAuthOnlyApplicationSourceTypeCommand,
+    provideWorkspaceScopedRepository(ApplicationEntity),
     provideWorkspaceScopedRepository(FieldMetadataEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],

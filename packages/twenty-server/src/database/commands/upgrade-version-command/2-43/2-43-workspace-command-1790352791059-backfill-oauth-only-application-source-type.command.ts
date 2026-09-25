@@ -7,15 +7,17 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-// Backfill: OAuth logins created the application row with the default
-// `local` source type before it was copied from the registration. Idempotent.
+// OAuth logins created the application row with the default `local` source
+// type before it was copied from the registration.
+@RegisteredWorkspaceCommand('2.43.0', 1790352791059)
 @Command({
-  name: 'application:backfill-oauth-only-source-type',
+  name: 'upgrade:2-43:backfill-oauth-only-application-source-type',
   description:
-    'Set the source type of applications created by an OAuth login to `oauth-only`, like their registration. Idempotent.',
+    'Set the source type of applications created by an OAuth login to `oauth-only`, like their registration',
 })
 export class BackfillOAuthOnlyApplicationSourceTypeCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -27,7 +29,16 @@ export class BackfillOAuthOnlyApplicationSourceTypeCommand extends ProvisionedWo
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.up(args);
+  }
+
+  async down(_args: RunOnWorkspaceArgs): Promise<void> {
+    // `local` was only the column default for these rows, and OAuth logins
+    // already write `oauth-only`, so earlier versions expect this value too.
+  }
+
+  async up({
     workspaceId,
     options,
     index,

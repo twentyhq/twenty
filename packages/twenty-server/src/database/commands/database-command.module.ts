@@ -2,7 +2,6 @@ import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BackfillOAuthOnlyApplicationSourceTypeCommand } from 'src/database/commands/backfill-oauth-only-application-source-type.command';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
@@ -20,7 +19,6 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
@@ -68,7 +66,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
   imports: [
     AgentHistoryMigrationModule,
     UpgradeVersionCommandModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity, ApplicationEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
@@ -126,9 +124,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
-    BackfillOAuthOnlyApplicationSourceTypeCommand,
     provideWorkspaceScopedRepository(RoleEntity),
-    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
 })
 export class DatabaseCommandModule {}
