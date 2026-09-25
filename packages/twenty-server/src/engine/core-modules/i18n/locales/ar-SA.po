@@ -6962,6 +6962,18 @@ msgstr "الدالة المنطقية غير موجودة."
 msgid "Logic function with same universal identifier already exists"
 msgstr "الدالة المنطقية بنفس المعرّف العالمي موجودة بالفعل"
 
+#. js-lingui-id: 07Jk6f
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Make Private"
+msgstr "جعله خاصًا"
+
+#. js-lingui-id: OT90yl
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Make Workflow Private"
+msgstr "جعل سير العمل خاصًا"
+
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10489,6 +10501,18 @@ msgstr "عنوان عنصر قائمة الإعدادات \"{updatedTitle}\" م�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "عنوان عنصر قائمة الإعدادات مطلوب"
+
+#. js-lingui-id: mPgP26
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Share with Workspace"
+msgstr "المشاركة مع مساحة العمل"
+
+#. js-lingui-id: tVHa8m
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Share Workflow with Workspace"
+msgstr "مشاركة سير العمل مع مساحة العمل"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
