@@ -75,7 +75,6 @@ export class LoginTokenService {
     return {
       token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
-        jwtid: jwtPayload.jti,
       }),
       expiresAt,
     };

@@ -1,5 +1,6 @@
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { LoginTokenService } from './login-token.service';
 
@@ -44,18 +45,16 @@ describe('LoginTokenService', () => {
     const result = await service.generateLoginToken(
       'test@example.com',
       'workspace-id',
-      'PASSWORD' as never,
+      AuthProviderEnum.Password,
     );
 
     expect(result.token).toBe('signed-token');
     expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledTimes(1);
 
-    const [payload, options] =
-      jwtWrapperService.signAsyncOrThrow.mock.calls[0];
+    const [payload] = jwtWrapperService.signAsyncOrThrow.mock.calls[0];
 
     expect(payload.jti).toBeDefined();
     expect(typeof payload.jti).toBe('string');
-    expect(options.jwtid).toBe(payload.jti);
   });
 
   it('rejects a login token without an authentication provider', async () => {
@@ -78,7 +77,7 @@ describe('LoginTokenService', () => {
       type: JwtTokenTypeEnum.LOGIN,
       sub: 'test@example.com',
       workspaceId: 'workspace-id',
-      authProvider: 'PASSWORD',
+      authProvider: AuthProviderEnum.Password,
     });
 
     await expect(service.verifyLoginToken('login-token')).rejects.toMatchObject(
@@ -96,7 +95,7 @@ describe('LoginTokenService', () => {
         type: JwtTokenTypeEnum.LOGIN,
         sub: 'test@example.com',
         workspaceId: 'workspace-id',
-        authProvider: 'PASSWORD' as never,
+        authProvider: AuthProviderEnum.Password,
         jti: 'jti-1',
         exp: Math.floor(Date.now() / 1000) + 900,
       }),
@@ -111,7 +110,7 @@ describe('LoginTokenService', () => {
         type: JwtTokenTypeEnum.LOGIN,
         sub: 'test@example.com',
         workspaceId: 'workspace-id',
-        authProvider: 'PASSWORD' as never,
+        authProvider: AuthProviderEnum.Password,
         jti: 'jti-1',
         exp: Math.floor(Date.now() / 1000) + 900,
       }),
