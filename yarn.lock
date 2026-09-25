@@ -50754,6 +50754,7 @@ __metadata:
     "@yarnpkg/types": "npm:^4.0.0"
     concurrently: "npm:^8.2.2"
     http-server: "npm:^14.1.1"
+    knip: "npm:^6.37.0"
     nx: "npm:22.7.8"
     oxfmt: "npm:0.50.0"
     tsx: "npm:^4.17.0"
