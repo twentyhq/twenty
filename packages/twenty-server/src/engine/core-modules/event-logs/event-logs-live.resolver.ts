@@ -1,8 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
+import { isString } from '@sniptt/guards';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { EventLogTable } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -10,7 +12,10 @@ import { EventLogsGraphqlApiExceptionFilter } from 'src/engine/core-modules/even
 import { ForbiddenExceptionGraphqlFilter } from 'src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -66,6 +71,8 @@ export class EventLogsLiveResolver {
   async eventLogsLive(
     @Args('table', { type: () => EventLogTable }) table: EventLogTable,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
     await this.eventLogsService.validateAccess(workspace.id, table);
 
@@ -76,10 +83,30 @@ export class EventLogsLiveResolver {
       clickHouseTable,
     );
 
-    const iterator = await this.subscriptionService.subscribe({
-      channel: SubscriptionChannel.WORKSPACE_EVENTS_CHANNEL,
-      workspaceId: workspace.id,
-    });
+    const iterator =
+      await this.subscriptionService.subscribe<WorkspaceEventLivePayload>({
+        channel: SubscriptionChannel.WORKSPACE_EVENTS_CHANNEL,
+        workspaceId: workspace.id,
+        mapPayload: (payload) => {
+          if (
+            payload.table !==
+            getClickHouseTableName(EventLogTable.APPLICATION_LOG)
+          ) {
+            return payload;
+          }
+
+          const rows = payload.rows.filter((row) =>
+            canCallerReachApplication({
+              callingApplication,
+              applicationId: isString(row.applicationId)
+                ? row.applicationId
+                : undefined,
+            }),
+          );
+
+          return isNonEmptyArray(rows) ? { ...payload, rows } : undefined;
+        },
+      });
 
     return wrapAsyncIteratorWithLifecycle(() => iterator, {
       onHeartbeat: async () => {

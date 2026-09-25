@@ -76,8 +76,10 @@ export const CurrencySearchAndKeyboard: Story = {
     await userEvent.clear(search);
     await userEvent.type(search, 'euro');
     const euro = await body.findByRole('button', { name: /Euro \(EUR\)/ });
-    await userEvent.keyboard('{ArrowDown}{ArrowDown}');
-    await expect(euro).toHaveFocus();
+    expect(
+      body.queryByRole('button', { pressed: true }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(euro).toHaveAttribute('data-highlighted'));
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -102,9 +104,14 @@ export const PhoneSearchAndSelection: Story = {
       await body.findByRole('searchbox', { name: 'Search' }),
       'france',
     );
-    await userEvent.click(
-      await body.findByRole('button', { name: /France \(\+33\)/ }),
-    );
+    const france = await body.findByRole('button', {
+      name: /France \(\+33\)/,
+    });
+    expect(
+      body.queryByRole('button', { pressed: true }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(france).toHaveAttribute('data-highlighted'));
+    await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );

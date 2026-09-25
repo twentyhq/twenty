@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -21,6 +22,8 @@ registerEnumType(MessageFolderPendingSyncAction, {
 });
 
 @Entity({ name: 'messageFolder', schema: 'core' })
+@Index('IDX_MESSAGE_FOLDER_MESSAGE_CHANNEL_ID', ['messageChannelId'])
+@Index('IDX_MESSAGE_FOLDER_WORKSPACE_ID', ['workspaceId'])
 export class MessageFolderEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

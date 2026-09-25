@@ -1,0 +1,383 @@
+import { ServiceUnavailableException } from '@nestjs/common';
+
+import { AGENT_CHAT_THREAD_TARGET_FLAT_ENTITY_MAPS_MOCK } from 'src/engine/metadata-modules/ai/ai-chat/__mocks__/agent-chat-thread-target-flat-entity-maps.mock';
+import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+
+// The record check resolves the caller's role out of the ORM workspace context,
+// which is AsyncLocalStorage the unit under test never enters. jest.mock is
+// hoisted, so the ids are inlined rather than read from the constants below.
+jest.mock(
+  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
+  () => ({
+    getWorkspaceContext: () => ({
+      authContext: { type: 'user', userWorkspaceId: 'owner' },
+      userWorkspaceRoleMap: {
+        owner: '20202020-0000-4000-8000-000000000009',
+      },
+      apiKeyRoleMap: {},
+    }),
+  }),
+);
+
+const ROLE_ID = '20202020-0000-4000-8000-000000000009';
+
+const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
+const THREAD_ID = '20202020-0000-4000-8000-000000000002';
+const RECORD_ID = '20202020-0000-4000-8000-000000000004';
+const TRASHED_RECORD_ID = '20202020-0000-4000-8000-000000000005';
+const UNREADABLE_RECORD_ID = '20202020-0000-4000-8000-000000000008';
+const OWNER_ID = 'owner';
+const OTHER_MEMBER_ID = 'other-member';
+
+const args = {
+  workspaceId: WORKSPACE_ID,
+  userWorkspaceId: OWNER_ID,
+  threadId: THREAD_ID,
+  objectNameSingular: 'company',
+  recordId: RECORD_ID,
+};
+
+const buildService = () => {
+  // Conversations the caller can edit; the sharing service reports any other
+  // as not found.
+  const editableThreadIdsByMember = new Map([[OWNER_ID, [THREAD_ID]]]);
+
+  const agentChatSharingService = {
+    getThreadWithAccess: jest
+      .fn()
+      .mockImplementation(async ({ threadId, userWorkspaceId }) => {
+        if (
+          !(editableThreadIdsByMember.get(userWorkspaceId) ?? []).includes(
+            threadId,
+          )
+        ) {
+          throw new AiException(
+            'Thread not found',
+            AiExceptionCode.THREAD_NOT_FOUND,
+          );
+        }
+
+        return { id: threadId };
+      }),
+  };
+
+  const targetRepository = {
+    existsBy: jest.fn().mockResolvedValue(false),
+    insert: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  // Records the caller is allowed to read. A record outside their grants is
+  // indistinguishable from one that does not exist, and one in the trash is
+  // found only when the lookup includes deleted records.
+  const readableRecordIds = new Set([RECORD_ID]);
+  const trashedRecordIds = new Set([TRASHED_RECORD_ID]);
+
+  const recordRepository = {
+    findOne: jest
+      .fn()
+      .mockImplementation(async ({ where, withDeleted }) =>
+        readableRecordIds.has(where.id) ||
+        (withDeleted === true && trashedRecordIds.has(where.id))
+          ? { id: where.id }
+          : null,
+      ),
+  };
+
+  const agentHistoryStorageService = {
+    run: jest
+      .fn()
+      .mockImplementation(
+        (_workspaceId: string, work: (context: unknown) => Promise<unknown>) =>
+          work({}),
+      ),
+  };
+
+  const workspaceOrmManager = {
+    executeInWorkspaceContext: jest
+      .fn()
+      .mockImplementation((work: () => Promise<unknown>) => work()),
+    getRepository: jest
+      .fn()
+      .mockImplementation((objectMetadataName: string) =>
+        objectMetadataName === 'agentChatThreadTarget'
+          ? targetRepository
+          : recordRepository,
+      ),
+  };
+
+  const workspaceCacheService = {
+    getOrRecompute: jest
+      .fn()
+      .mockResolvedValue(AGENT_CHAT_THREAD_TARGET_FLAT_ENTITY_MAPS_MOCK),
+  };
+
+  return {
+    service: new AgentChatThreadTargetService(
+      agentChatSharingService as never,
+      agentHistoryStorageService as never,
+      workspaceOrmManager as never,
+      workspaceCacheService as never,
+    ),
+    targetRepository,
+    agentChatSharingService,
+    recordRepository,
+    workspaceOrmManager,
+    agentHistoryStorageService,
+  };
+};
+
+describe('Attaching a conversation to a record', () => {
+  it('stores the link on the leg of the record object', async () => {
+    const { service, targetRepository } = buildService();
+
+    await service.attachThreadToRecord(args);
+
+    expect(targetRepository.insert).toHaveBeenCalledWith(
+      { threadId: THREAD_ID, targetCompanyId: RECORD_ID },
+      { onConflictDoNothing: true },
+    );
+  });
+
+  // Custom legs carry no unique index, so a second attach must not add a row.
+  it('keeps a single link when the conversation is already attached', async () => {
+    const { service, targetRepository } = buildService();
+
+    targetRepository.existsBy.mockResolvedValueOnce(true);
+
+    await service.attachThreadToRecord(args);
+
+    expect(targetRepository.existsBy).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      targetCompanyId: RECORD_ID,
+    });
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  it('refuses to attach a conversation the member cannot edit', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.attachThreadToRecord({
+        ...args,
+        userWorkspaceId: OTHER_MEMBER_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  // Filing a conversation under a record changes it, as renaming it does.
+  it('asks for edit access to the conversation', async () => {
+    const { service, agentChatSharingService } = buildService();
+
+    await service.attachThreadToRecord(args);
+
+    expect(agentChatSharingService.getThreadWithAccess).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: OWNER_ID,
+      threadId: THREAD_ID,
+      operationType: 'update',
+    });
+  });
+
+  it('rejects an object name the workspace does not have', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.attachThreadToRecord({ ...args, objectNameSingular: 'unicorn' }),
+    ).rejects.toMatchObject({ code: 'INVALID_AGENT_INPUT' });
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  it('rejects an object the target has no leg for', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.attachThreadToRecord({ ...args, objectNameSingular: 'task' }),
+    ).rejects.toMatchObject({
+      code: 'INVALID_AGENT_INPUT',
+      message: 'Conversations cannot be attached to task records',
+    });
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  it('refuses while the workspace history still routes to core', async () => {
+    const { service, targetRepository, agentHistoryStorageService } =
+      buildService();
+
+    agentHistoryStorageService.run.mockRejectedValueOnce(
+      new ServiceUnavailableException(
+        'AI history is unavailable until this workspace finishes upgrading.',
+      ),
+    );
+
+    await expect(service.attachThreadToRecord(args)).rejects.toBeInstanceOf(
+      ServiceUnavailableException,
+    );
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  it('removes only the link it was asked to remove', async () => {
+    const { service, targetRepository } = buildService();
+
+    await service.detachThreadFromRecord(args);
+
+    expect(targetRepository.delete).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      targetCompanyId: RECORD_ID,
+    });
+  });
+});
+
+// A record in the trash keeps its links, and its page still shows them.
+describe('Conversations of a record in the trash', () => {
+  it('lists them', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.resolveAuthorizedRecordOrThrow({
+        workspaceId: WORKSPACE_ID,
+        objectNameSingular: 'company',
+        recordId: TRASHED_RECORD_ID,
+      }),
+    ).resolves.toBe('targetCompanyId');
+  });
+
+  it('detaches one', async () => {
+    const { service, targetRepository } = buildService();
+
+    await service.detachThreadFromRecord({
+      ...args,
+      recordId: TRASHED_RECORD_ID,
+    });
+
+    expect(targetRepository.delete).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      targetCompanyId: TRASHED_RECORD_ID,
+    });
+  });
+
+  it('files no new one', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.attachThreadToRecord({ ...args, recordId: TRASHED_RECORD_ID }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+});
+
+describe('Resolving the record a conversation list is scoped to', () => {
+  it('returns the join column of the record object leg once the record is readable', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.resolveAuthorizedRecordOrThrow({
+        workspaceId: WORKSPACE_ID,
+        objectNameSingular: 'company',
+        recordId: RECORD_ID,
+      }),
+    ).resolves.toBe('targetCompanyId');
+  });
+
+  it('rejects an unknown object', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.resolveAuthorizedRecordOrThrow({
+        workspaceId: WORKSPACE_ID,
+        objectNameSingular: 'unknownObject',
+        recordId: RECORD_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'INVALID_AGENT_INPUT' });
+  });
+});
+
+describe('Authorizing the record a conversation is attached to', () => {
+  it('refuses to attach to a record the member cannot read', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.attachThreadToRecord({
+        ...args,
+        recordId: UNREADABLE_RECORD_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  it('refuses to detach from a record the member cannot read', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.detachThreadFromRecord({
+        ...args,
+        recordId: UNREADABLE_RECORD_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+
+    expect(targetRepository.delete).not.toHaveBeenCalled();
+  });
+
+  it('refuses to resolve a record the member cannot read', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.resolveAuthorizedRecordOrThrow({
+        workspaceId: WORKSPACE_ID,
+        objectNameSingular: 'company',
+        recordId: UNREADABLE_RECORD_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+  });
+
+  it('reads the record through the caller permissions, not the system context', async () => {
+    const { service, recordRepository, workspaceOrmManager } = buildService();
+
+    await service.attachThreadToRecord(args);
+
+    // Asserting the findOne arguments proves nothing about permissions: the
+    // repository has to be built for the caller's role. With no config the ORM
+    // resolves an empty permission map and denies every object, and a bypass
+    // would let a member link a conversation to a record they cannot see.
+    expect(workspaceOrmManager.getRepository).toHaveBeenCalledWith('company', {
+      intersectionOf: [ROLE_ID],
+    });
+    expect(recordRepository.findOne).toHaveBeenCalledWith({
+      where: { id: RECORD_ID },
+      select: { id: true },
+      withDeleted: false,
+    });
+  });
+
+  it('treats a permission denial as a record that does not exist', async () => {
+    const { service, recordRepository } = buildService();
+
+    recordRepository.findOne.mockRejectedValueOnce(
+      new PermissionsException(
+        'denied',
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      ),
+    );
+
+    // Surfacing the denial would both leak that the record exists and reach the
+    // caller as an untyped 500 rather than the not-found the API promises.
+    await expect(service.attachThreadToRecord(args)).rejects.toMatchObject({
+      code: 'RECORD_NOT_FOUND',
+    });
+  });
+});

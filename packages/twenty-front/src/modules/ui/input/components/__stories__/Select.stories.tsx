@@ -138,11 +138,26 @@ export const SearchWithPinnedDisabledAndAction: Story = {
     expect(args.callToActionButton?.onClick).toHaveBeenCalledTimes(1);
     expect(popup).toBeVisible();
     const search = within(popup).getByRole('searchbox', { name: 'Search' });
+    await userEvent.type(search, 'default');
+    await waitFor(() =>
+      expect(
+        within(popup).getByRole('button', { name: 'Use default' }),
+      ).toHaveAttribute('data-highlighted'),
+    );
+    await userEvent.clear(search);
     await userEvent.type(search, 'pastry');
     expect(
       within(popup).queryByRole('button', { name: 'Option C' }),
     ).not.toBeInTheDocument();
-    await userEvent.keyboard('{ArrowDown}{ArrowDown}{Enter}');
+    expect(
+      within(popup).queryByRole('button', { name: 'Use default' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        within(popup).getByRole('button', { name: 'Éclair' }),
+      ).toHaveAttribute('data-highlighted'),
+    );
+    await userEvent.keyboard('{Enter}');
     expect(args.onChange).toHaveBeenCalledWith('a');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
@@ -169,6 +184,20 @@ export const KeyboardStartsAtSelection: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const SingleTabStopAndLabelledPopup: Story = {
+  args: { label: 'Status' },
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    await userEvent.tab();
+    await expect(trigger).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(
+      await body.findByRole('dialog', { name: 'Status' }),
+    ).toBeVisible();
   },
 };
 
