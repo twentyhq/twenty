@@ -212,6 +212,7 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        existingAllFlatEntityMaps,
         inferDeletionFromMissingEntities,
         isLogicFunctionPrebuiltModeEnabled:
           featureFlagsMap[

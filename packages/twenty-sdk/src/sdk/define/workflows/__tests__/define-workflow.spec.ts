@@ -62,3 +62,86 @@ describe('defineWorkflow POC', () => {
     },
   );
 });
+
+const BRANCH_ID = '77777777-7777-4777-8777-777777777777';
+const BODY_ID = '88888888-8888-4888-8888-888888888888';
+const FIRST_STEP_ID = workflow.version.steps[0].universalIdentifier;
+
+const branchingWorkflow = (type: 'IF_ELSE' | 'ITERATOR'): WorkflowManifest => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: [
+      ...(type === 'IF_ELSE'
+        ? [
+            {
+              universalIdentifier: FIRST_STEP_ID,
+              name: 'Choose',
+              type: 'IF_ELSE' as const,
+              nextStepIds: [],
+              input: {
+                stepFilters: [],
+                stepFilterGroups: [],
+                branches: [
+                  { id: 'first', nextStepIds: [BRANCH_ID] },
+                  { id: 'otherwise', nextStepIds: [BODY_ID] },
+                ],
+              },
+            },
+          ]
+        : [
+            {
+              universalIdentifier: FIRST_STEP_ID,
+              name: 'Repeat',
+              type: 'ITERATOR' as const,
+              nextStepIds: [BRANCH_ID],
+              input: { items: ['one', 'two'], initialLoopStepIds: [BODY_ID] },
+            },
+          ]),
+      {
+        universalIdentifier: BRANCH_ID,
+        name: 'After',
+        type: 'EMPTY',
+        input: {},
+        nextStepIds: [],
+      },
+      {
+        universalIdentifier: BODY_ID,
+        name: 'Inside',
+        type: 'EMPTY',
+        input: {},
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+
+describe('defineWorkflow action graphs', () => {
+  it.each(['IF_ELSE', 'ITERATOR'] as const)(
+    'accepts steps reachable only through %s edges',
+    (type) => {
+      expect(defineWorkflow(branchingWorkflow(type)).success).toBe(true);
+    },
+  );
+
+  it.each(['IF_ELSE', 'ITERATOR'] as const)(
+    'rejects missing and cyclic %s edges',
+    (type) => {
+      const missing = branchingWorkflow(type);
+      missing.version.steps.pop();
+      expect(defineWorkflow(missing).success).toBe(false);
+      const cyclic = branchingWorkflow(type);
+      cyclic.version.steps[2].nextStepIds = [FIRST_STEP_ID];
+      expect(defineWorkflow(cyclic).success).toBe(false);
+    },
+  );
+
+  it('validates each action input instead of accepting arbitrary configuration', () => {
+    const invalid = structuredClone(workflow);
+    Object.assign(invalid.version.steps[0], {
+      type: 'HTTP_REQUEST',
+      input: { method: 'BOGUS' },
+    });
+    expect(defineWorkflow(invalid).success).toBe(false);
+  });
+});

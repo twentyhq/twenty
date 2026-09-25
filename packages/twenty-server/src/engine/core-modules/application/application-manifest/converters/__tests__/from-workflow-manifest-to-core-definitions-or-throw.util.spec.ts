@@ -70,7 +70,10 @@ describe('application workflow definitions', () => {
       applicationId: APPLICATION_ID,
     };
     const changed = structuredClone(manifest);
-    changed.version.steps[0].input.greeting = 'After';
+    const changedStep = changed.version.steps[0];
+    if (changedStep.type !== 'LOGIC_FUNCTION')
+      throw new Error('Expected a function step');
+    changedStep.input.greeting = 'After';
     const after = fromWorkflowManifestToCoreDefinitionsOrThrow({
       ...options,
       manifest: changed,

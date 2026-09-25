@@ -1,5 +1,5 @@
+import { computeWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-references.util';
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 import { fromWorkflowManifestToCoreDefinitionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions-or-throw.util';
 import { Injectable } from '@nestjs/common';
 
@@ -68,6 +68,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps = fromAllFlatEntityMaps,
     isLogicFunctionPrebuiltModeEnabled,
     inferDeletionFromMissingEntities = false,
     now,
@@ -76,6 +77,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    existingAllFlatEntityMaps?: AllFlatEntityMaps;
     isLogicFunctionPrebuiltModeEnabled: boolean;
     inferDeletionFromMissingEntities?: boolean;
     now: string;
@@ -717,24 +719,12 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     if (workflows.length > 0) {
-      const logicFunctionIdByUniversalIdentifier = new Map<string, string>();
-      for (const logicFunction of Object.values(
-        allUniversalFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
-      )) {
-        if (!isDefined(logicFunction)) {
-          continue;
-        }
-        logicFunction.id =
-          fromAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier[
-            logicFunction.universalIdentifier
-          ]?.id ?? v4();
-        if (isDefined(logicFunction.workflowActionTriggerSettings)) {
-          logicFunctionIdByUniversalIdentifier.set(
-            logicFunction.universalIdentifier,
-            logicFunction.id,
-          );
-        }
-      }
+      const references = computeWorkflowManifestReferences({
+        fromAllFlatEntityMaps,
+        toAllUniversalFlatEntityMaps: allUniversalFlatEntityMaps,
+        existingAllFlatEntityMaps,
+        ownerApplicationId: ownerFlatApplication.id,
+      });
       const versionIdentifiersByWorkflowId = new Map<string, Set<string>>();
       for (const version of Object.values(
         fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
@@ -781,7 +771,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             applicationUniversalIdentifier,
             existingWorkflow,
             existingVersion,
-            logicFunctionIdByUniversalIdentifier,
+            ...references,
             now,
           });
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({

@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { type Manifest } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -18,6 +19,8 @@ const ROLE_ID = randomUUID();
 const WORKFLOW_ID = randomUUID();
 const VERSION_ID = randomUUID();
 const STEP_ID = randomUUID();
+const RECORD_STEP_ID = randomUUID();
+const DELAY_STEP_ID = randomUUID();
 const FUNCTION_ID = randomUUID();
 const WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
@@ -54,6 +57,24 @@ const MANIFEST: Manifest = buildBaseManifest({
               type: 'LOGIC_FUNCTION',
               logicFunctionUniversalIdentifier: FUNCTION_ID,
               input: { greeting: 'Before' },
+              nextStepIds: [RECORD_STEP_ID],
+            },
+            {
+              universalIdentifier: RECORD_STEP_ID,
+              name: 'Create company',
+              type: 'CREATE_RECORD',
+              input: {
+                objectUniversalIdentifier:
+                  STANDARD_OBJECTS.company.universalIdentifier,
+                objectRecord: { name: 'Workflow test company' },
+              },
+              nextStepIds: [DELAY_STEP_ID],
+            },
+            {
+              universalIdentifier: DELAY_STEP_ID,
+              name: 'Wait',
+              type: 'DELAY',
+              input: { delayType: 'DURATION', duration: { seconds: 1 } },
               nextStepIds: [],
             },
           ],
@@ -128,6 +149,14 @@ describe('application-owned core workflows', () => {
       logicFunctionId: installed.functionId,
       logicFunctionInput: { greeting: 'Before' },
     });
+    expect(installed.steps[1].settings.input).toEqual({
+      objectName: 'company',
+      objectRecord: { name: 'Workflow test company' },
+    });
+    expect(installed.steps[2].settings.input).toEqual({
+      delayType: 'DURATION',
+      duration: { seconds: 1 },
+    });
     const oldRunId = await runVersion(installed.versionId);
     const oldRun = await findRun(oldRunId);
     expect(oldRun.coreWorkflowId).toBe(installed.workflowId);
@@ -177,7 +206,10 @@ describe('application-owned core workflows', () => {
     expect(JSON.stringify(deletion.body.errors)).toContain('read-only');
 
     const changed = structuredClone(MANIFEST);
-    changed.workflows![0].version.steps[0].input.greeting = 'After';
+    const changedStep = changed.workflows![0].version.steps[0];
+    if (changedStep.type !== 'LOGIC_FUNCTION')
+      throw new Error('Expected a function step');
+    changedStep.input.greeting = 'After';
     const upgrade = await syncApplication({ manifest: changed });
     expect(upgrade.errors).toBeUndefined();
     const updatedDefinitions = await findDefinitions();

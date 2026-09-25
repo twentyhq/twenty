@@ -6,13 +6,13 @@ See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 ## Application-defined workflows (experimental)
 
-`defineWorkflow` from `twenty-sdk/define` is a development POC for app-owned core workflows. Use it only with a compatible SDK/server and the core workflow flag enabled. It currently accepts a MANUAL trigger and LOGIC_FUNCTION steps whose functions are declared by the same app with `workflowActionTriggerSettings`.
+`defineWorkflow` from `twenty-sdk/define` is a development POC for app-owned core workflows. Use it only with a compatible SDK/server and the core workflow flag enabled. It accepts a MANUAL trigger and all existing workflow action types. `LOGIC_FUNCTION` steps reference app-declared functions exposed with `workflowActionTriggerSettings`; `CODE` steps can reference any app-declared function. Both use a top-level `logicFunctionUniversalIdentifier`.
 
-Declare `universalIdentifier`, `name`, and `version`. The version has its own stable `universalIdentifier`, a `trigger` with a universal identifier and `nextStepIds`, and `steps`. Each step declares its universal identifier, name, type, `logicFunctionUniversalIdentifier`, input object, and `nextStepIds` pointing to step universal identifiers. All steps must be reachable and the graph must be acyclic.
+Declare `universalIdentifier`, `name`, and `version`. The version has its own stable `universalIdentifier`, a `trigger` with a universal identifier and `nextStepIds`, and `steps`. Each step declares its universal identifier, name, type, typed input, and `nextStepIds` pointing to step universal identifiers. Record actions use `input.objectUniversalIdentifier`; record values use API field names. Filter and sort metadata references use `fieldMetadataUniversalIdentifier`. Agent steps use `input.agentUniversalIdentifier`. Record-picker form fields use `settings.objectUniversalIdentifier`. For `IF_ELSE`, branch `nextStepIds` identify branch entries; for `ITERATOR`, `input.initialLoopStepIds` identifies the body and the step's `nextStepIds` identifies what follows the loop. Connected-account IDs and record IDs are runtime inputs, not metadata universal identifiers. All steps must be reachable and the graph must be acyclic.
 
 Application sync installs one ACTIVE core version. Updates modify that same version and preserve workflow/version IDs. Existing runs retain their saved graph; referenced function implementations are current, not pinned to the old app release. App workflows are read-only through normal workflow APIs and the editor, with Run available on the show page. Do not seed or activate these definitions through install hooks.
 
-Workflow removal and version-ID replacement are rejected. Automated triggers, record/field-reference transpilation, export/pull, duplication, uninstall safety and application execution permissions are not implemented by this POC. Do not use this as production rollout guidance.
+Workflow removal and version-ID replacement are rejected. Automated triggers, export/pull, duplication, uninstall safety and application execution permissions are not implemented by this POC. Do not use this as production rollout guidance.
 
 ## Existing workspace workflow API
 

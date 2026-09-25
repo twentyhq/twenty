@@ -2,14 +2,10 @@ import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-const workflowStepManifestSchema = z.strictObject({
-  universalIdentifier: z.uuid(),
-  name: z.string().min(1),
-  type: z.literal('LOGIC_FUNCTION'),
-  logicFunctionUniversalIdentifier: z.uuid(),
-  input: z.record(z.string(), z.unknown()),
-  nextStepIds: z.array(z.uuid()),
-});
+import { workflowStepManifestSchema } from '@/application/workflowStepManifestType';
+import { getStepOutgoingStepIds } from '@/workflow/validation/utils/get-step-outgoing-step-ids.util';
+import { buildWorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
+import { validateWorkflowGraph } from '@/workflow/validation/utils/validate-workflow-graph.util';
 
 export const workflowManifestSchema = z
   .strictObject({
@@ -42,6 +38,22 @@ export const workflowManifestSchema = z
       });
     }
 
+    const validatableWorkflow = {
+      trigger,
+      steps: steps.map((step) => ({
+        ...step,
+        id: step.universalIdentifier,
+        settings: { input: step.input },
+      })),
+    };
+    for (const issue of validateWorkflowGraph({
+      workflow: validatableWorkflow,
+      graph: buildWorkflowGraph(validatableWorkflow),
+    })) {
+      if (issue.severity === 'error')
+        context.addIssue({ code: 'custom', message: issue.message });
+    }
+
     const stepsById = new Map(
       steps.map((step) => [step.universalIdentifier, step]),
     );
@@ -67,7 +79,11 @@ export const workflowManifestSchema = z
         return;
       }
       visiting.add(id);
-      step.nextStepIds.forEach(visit);
+      getStepOutgoingStepIds({
+        ...step,
+        id: step.universalIdentifier,
+        settings: { input: step.input },
+      }).forEach(visit);
       visiting.delete(id);
       visited.add(id);
     };
@@ -80,4 +96,4 @@ export const workflowManifestSchema = z
     }
   });
 
-export type WorkflowManifest = z.infer<typeof workflowManifestSchema>;
+export type WorkflowManifest = z.input<typeof workflowManifestSchema>;
