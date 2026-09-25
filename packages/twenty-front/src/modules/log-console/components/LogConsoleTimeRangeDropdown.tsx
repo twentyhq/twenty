@@ -294,15 +294,11 @@ export const LogConsoleTimeRangeDropdown = ({
   return (
     <Dropdown
       dropdownId={LOG_CONSOLE_TIME_RANGE_DROPDOWN_ID}
-      dropdownPlacement="bottom-start"
+      dropdownPlacement="bottom-end"
       dropdownOffset={{ y: 8 }}
       onClose={() => setCustomRange(null)}
       clickableComponent={
-        <Button
-          size="sm"
-          startIcon={<IconCalendarEvent />}
-          endIcon={<IconChevronDown />}
-        >
+        <Button startIcon={<IconCalendarEvent />} endIcon={<IconChevronDown />}>
           {getTimeRangeLabel(timeRange)}
         </Button>
       }

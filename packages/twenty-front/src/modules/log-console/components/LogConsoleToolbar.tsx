@@ -1,14 +1,15 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/components';
+import { IconButton, LightButton } from 'twenty-ui/components';
 import {
   type IconComponent,
   IconChevronLeft,
-  IconPlus,
+  IconDotsVertical,
+  IconFilter,
   IconX,
 } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -35,12 +36,17 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { EventLogFilterOperand } from '~/generated-metadata/graphql';
 
-const ADD_FILTER_DROPDOWN_ID = 'log-console-add-filter';
+const LOG_CONSOLE_MENU_DROPDOWN_ID = 'log-console-menu';
+
+const LOG_CONSOLE_SEARCH_FOCUS_ID = 'log-console-search';
 
 const FILTER_CHIPS_SCROLL_WRAPPER_ID = 'log-console-filter-chips';
 
@@ -54,10 +60,33 @@ const VIEW_FILTER_OPERAND_BY_EVENT_LOG_FILTER_OPERAND: Record<
   [EventLogFilterOperand.IS_NOT]: ViewFilterOperand.IS_NOT,
 };
 
-const StyledFilterBar = styled.div`
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[5]};
+`;
+
+const StyledToolbar = styled.div`
   align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledSearch = styled.div`
+  flex: 1;
+`;
+
+const StyledActions = styled.div`
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledFilterChips = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
 `;
 
@@ -66,19 +95,28 @@ const StyledChips = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-type LogConsoleFilterBarProps = {
+type LogConsoleToolbarProps = {
   filterFields: LogConsoleFilterField[];
   filters: LogConsoleFilter[];
   onFiltersChange: (filters: LogConsoleFilter[]) => void;
+  search: ReactNode;
+  logsAction: { label: string; Icon: IconComponent; onClick: () => void };
+  children: ReactNode;
 };
 
-export const LogConsoleFilterBar = ({
+export const LogConsoleToolbar = ({
   filterFields,
   filters,
   onFiltersChange,
-}: LogConsoleFilterBarProps) => {
+  search,
+  logsAction,
+  children,
+}: LogConsoleToolbarProps) => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -89,8 +127,7 @@ export const LogConsoleFilterBar = ({
     string | null
   >(null);
   const [searchInput, setSearchInput] = useState('');
-  const [filterBarElement, setFilterBarElement] =
-    useState<HTMLDivElement | null>(null);
+  const [isFilterSubmenuOpen, setIsFilterSubmenuOpen] = useState(false);
 
   const selectedFilterField = filterFields.find(
     (filterField) => filterField.id === selectedFilterFieldId,
@@ -163,6 +200,11 @@ export const LogConsoleFilterBar = ({
         filters.filter((filter) => isNonEmptyArray(filter.values)),
       );
     }
+  };
+
+  const resetMenu = () => {
+    resetFilterDropdown();
+    setIsFilterSubmenuOpen(false);
   };
 
   const getChipLabelValue = (
@@ -282,8 +324,8 @@ export const LogConsoleFilterBar = ({
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent
-              onClick={() => closeDropdown(ADD_FILTER_DROPDOWN_ID)}
-              Icon={IconX}
+              onClick={resetMenu}
+              Icon={IconChevronLeft}
             />
           }
         >
@@ -356,44 +398,109 @@ export const LogConsoleFilterBar = ({
     );
   };
 
+  const pushSearchFocusItem = () =>
+    pushFocusItemToFocusStack({
+      focusId: LOG_CONSOLE_SEARCH_FOCUS_ID,
+      component: {
+        type: FocusComponentType.TEXT_INPUT,
+        instanceId: LOG_CONSOLE_SEARCH_FOCUS_ID,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+
+  const removeSearchFocusItem = () =>
+    removeFocusItemFromFocusStackById({
+      focusId: LOG_CONSOLE_SEARCH_FOCUS_ID,
+    });
+
+  const runLogsAction = () => {
+    closeDropdown(LOG_CONSOLE_MENU_DROPDOWN_ID);
+    logsAction.onClick();
+  };
+
+  const renderMenu = () => {
+    if (isDefined(selectedFilterField)) {
+      return renderValuePicker({
+        filterField: selectedFilterField,
+        dropdownId: LOG_CONSOLE_MENU_DROPDOWN_ID,
+        HeaderIcon: IconChevronLeft,
+        onHeaderClick: resetFilterDropdown,
+      });
+    }
+
+    if (isFilterSubmenuOpen) {
+      return renderFieldList();
+    }
+
+    return (
+      <LegacyDropdownContent>
+        <DropdownMenuItemsContainer>
+          <ListItem
+            startIcon={<IconFilter />}
+            hasSubmenu
+            onClick={() => setIsFilterSubmenuOpen(true)}
+          >
+            {t`Filter`}
+          </ListItem>
+          <ListItem startIcon={<logsAction.Icon />} onClick={runLogsAction}>
+            {logsAction.label}
+          </ListItem>
+        </DropdownMenuItemsContainer>
+      </LegacyDropdownContent>
+    );
+  };
+
   return (
-    <StyledFilterBar ref={setFilterBarElement}>
-      {isNonEmptyArray(filterFieldsWithChip) && (
-        <ScrollWrapper
-          componentInstanceId={FILTER_CHIPS_SCROLL_WRAPPER_ID}
-          defaultEnableYScroll={false}
+    <StyledContainer>
+      <StyledToolbar>
+        <StyledSearch
+          onFocus={pushSearchFocusItem}
+          onBlur={removeSearchFocusItem}
         >
-          <StyledChips>{filterFieldsWithChip.map(renderChip)}</StyledChips>
-        </ScrollWrapper>
-      )}
-      <Dropdown
-        dropdownId={ADD_FILTER_DROPDOWN_ID}
-        dropdownPlacement="bottom-start"
-        dropdownOffset={{ y: 8 }}
-        positionReference={filterBarElement}
-        onOpen={() => setSearchInput('')}
-        onClose={resetFilterDropdown}
-        clickableComponent={
-          <LightButton emphasis="subtle" startIcon={<IconPlus />}>
-            {t`Add filter`}
-          </LightButton>
-        }
-        dropdownComponents={
-          isDefined(selectedFilterField)
-            ? renderValuePicker({
-                filterField: selectedFilterField,
-                dropdownId: ADD_FILTER_DROPDOWN_ID,
-                HeaderIcon: IconChevronLeft,
-                onHeaderClick: resetFilterDropdown,
-              })
-            : renderFieldList()
-        }
-      />
+          {search}
+        </StyledSearch>
+        <StyledActions>
+          {isNonEmptyArray(filterFields) ? (
+            <Dropdown
+              dropdownId={LOG_CONSOLE_MENU_DROPDOWN_ID}
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ y: 8 }}
+              onOpen={() => setSearchInput('')}
+              onClose={resetMenu}
+              clickableComponent={
+                <IconButton aria-label={t`More options`}>
+                  <IconDotsVertical />
+                </IconButton>
+              }
+              dropdownComponents={renderMenu()}
+            />
+          ) : (
+            <IconButton
+              tooltip={logsAction.label}
+              aria-label={logsAction.label}
+              onClick={logsAction.onClick}
+            >
+              <logsAction.Icon />
+            </IconButton>
+          )}
+          {children}
+        </StyledActions>
+      </StyledToolbar>
       {isNonEmptyArray(filterFieldsWithChip) && (
-        <LightButton emphasis="subtle" onClick={() => onFiltersChange([])}>
-          {t`Reset`}
-        </LightButton>
+        <StyledFilterChips>
+          <ScrollWrapper
+            componentInstanceId={FILTER_CHIPS_SCROLL_WRAPPER_ID}
+            defaultEnableYScroll={false}
+          >
+            <StyledChips>{filterFieldsWithChip.map(renderChip)}</StyledChips>
+          </ScrollWrapper>
+          <LightButton emphasis="subtle" onClick={() => onFiltersChange([])}>
+            {t`Reset`}
+          </LightButton>
+        </StyledFilterChips>
       )}
-    </StyledFilterBar>
+    </StyledContainer>
   );
 };

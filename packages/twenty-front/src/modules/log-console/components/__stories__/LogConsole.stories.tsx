@@ -17,6 +17,7 @@ import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFu
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
+import { logConsoleSearchState } from '@/log-console/states/logConsoleSearchState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -172,6 +173,7 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
+    jotaiStore.set(logConsoleSearchState.atom, '');
   },
   parameters: {
     layout: 'fullscreen',
@@ -187,17 +189,23 @@ const meta: Meta<PageDecoratorArgs> = {
         metadataGraphql.query<EventLogsQuery, EventLogsQueryVariables>(
           getOperationName(GET_EVENT_LOGS) ?? '',
           ({ variables }) => {
+            const search = variables.input.filters?.search?.toLowerCase() ?? '';
+
             const records = (
               mockedEventLogRecordsByTable[variables.input.table] ?? []
-            ).filter((record) =>
-              (variables.input.filters?.fieldFilters ?? []).every(
-                ({ field, operand, values }) =>
-                  values.includes(
-                    record[field as keyof EventLogRecord] ??
-                      record.properties?.[field],
-                  ) ===
-                  (operand === EventLogFilterOperand.IS),
-              ),
+            ).filter(
+              (record) =>
+                (variables.input.filters?.fieldFilters ?? []).every(
+                  ({ field, operand, values }) =>
+                    values.includes(
+                      record[field as keyof EventLogRecord] ??
+                        record.properties?.[field],
+                    ) ===
+                    (operand === EventLogFilterOperand.IS),
+                ) &&
+                [record.event, record.properties?.message].some((text) =>
+                  text?.toLowerCase().includes(search),
+                ),
             );
 
             return HttpResponse.json({
@@ -285,7 +293,6 @@ export const SecurityOpen: Story = {
     );
 
     expect(await canvas.findAllByText('Support team')).toHaveLength(3);
-    await canvas.findByText('6 events');
   },
 };
 
@@ -347,10 +354,14 @@ export const AppLogsLive: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('8 logs', {}, { timeout: 5000 });
+    await canvas.findByText(
+      'Received 9 invoices from Stripe',
+      {},
+      { timeout: 5000 },
+    );
 
     expect([...eventLogsLiveSubscriptions.values()]).toEqual([
-      { table: EventLogTable.APPLICATION_LOG, fieldFilters: [] },
+      { table: EventLogTable.APPLICATION_LOG, fieldFilters: [], search: '' },
     ]);
 
     emitEventLogsLive([firstLiveApplicationLog]);
@@ -364,7 +375,6 @@ export const AppLogsLive: Story = {
         ),
       ),
     ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
-    await canvas.findByText(/^9 logs/);
 
     await userEvent.click(canvas.getByRole('button', { name: 'Pause' }));
     emitEventLogsLive([secondLiveApplicationLog]);
@@ -373,12 +383,10 @@ export const AppLogsLive: Story = {
     expect(
       canvas.queryByText('Lead score for Lena Park: 64'),
     ).not.toBeInTheDocument();
-    expect(canvas.getByText(/^9 logs/)).toBeVisible();
 
     await userEvent.click(canvas.getByRole('button', { name: 'Resume' }));
 
     await canvas.findByText('Lead score for Lena Park: 64');
-    await canvas.findByText(/^10 logs/);
   },
 };
 
@@ -405,8 +413,13 @@ export const Clear: Story = {
         ?.textContent;
     };
 
-    await canvas.findByText('8 logs', {}, { timeout: 5000 });
-    await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
+    await canvas.findByText(
+      'Received 9 invoices from Stripe',
+      {},
+      { timeout: 5000 },
+    );
+    await userEvent.click(canvas.getByLabelText('More options'));
+    await userEvent.click(await screen.findByText('Clear'));
 
     expect(getTextUnderHeader()).toBe('');
 
@@ -549,7 +562,11 @@ export const LevelFilter: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('4 logs', {}, { timeout: 5000 });
+    await canvas.findByText(
+      'Sync failed: 9 of 9 invoices could not be mapped',
+      {},
+      { timeout: 5000 },
+    );
 
     expect(
       canvas.queryByText('Received 9 invoices from Stripe'),
@@ -557,7 +574,7 @@ export const LevelFilter: Story = {
   },
 };
 
-export const AddFilterMenu: Story = {
+export const FilterMenu: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   },
@@ -567,12 +584,42 @@ export const AddFilterMenu: Story = {
     await userEvent.click(
       await canvas.findByRole('tab', { name: 'App logs' }, { timeout: 5000 }),
     );
-    await userEvent.click(await canvas.findByText('Add filter'));
+    await userEvent.click(await canvas.findByLabelText('More options'));
+    await userEvent.click(await screen.findByText('Filter'));
     await userEvent.click(await screen.findByRole('option', { name: 'Level' }));
 
     expect(
       await screen.findByRole('option', { name: 'Warning' }),
     ).toHaveAttribute('aria-selected', 'false');
+  },
+};
+
+export const Search: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-logs',
+    );
+    jotaiStore.set(logConsoleSearchState.atom, 'stripe');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Received 9 invoices from Stripe',
+      {},
+      { timeout: 5000 },
+    );
+
+    expect(canvas.getByPlaceholderText('Search logs')).toHaveValue('stripe');
+    expect(
+      canvas.queryByText(
+        'Missing job title for Omar Aziz, using default title score (20)',
+      ),
+    ).not.toBeInTheDocument();
   },
 };
 

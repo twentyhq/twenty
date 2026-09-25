@@ -1,4 +1,4 @@
-import { msg, plural, t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -59,11 +59,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       { label: msg`Record ID`, getId: (entry) => entry.recordId },
       { label: msg`User ID`, getId: (entry) => entry.userId },
     ],
-    getCountLabel: ({ count, formattedCount }) =>
-      plural(count, {
-        one: `${formattedCount} change`,
-        other: `${formattedCount} changes`,
-      }),
+    searchPlaceholder: msg`Search changes`,
     renderDetailTitle: (entry) => {
       const action = LOG_CONSOLE_RECORD_ACTIONS[entry.event];
 
@@ -120,11 +116,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     requiresAuditLogs: true,
     columns: LOG_CONSOLE_SECURITY_COLUMNS,
     idFields: [{ label: msg`User ID`, getId: (entry) => entry.userId }],
-    getCountLabel: ({ count, formattedCount }) =>
-      plural(count, {
-        one: `${formattedCount} event`,
-        other: `${formattedCount} events`,
-      }),
+    searchPlaceholder: msg`Search events`,
     getSeverity: (entry) => getLogConsoleSecurityEvent(entry)?.severity,
     renderDetailTitle: LOG_CONSOLE_SECURITY_EVENT_COLUMN.renderCell,
   },
@@ -150,11 +142,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         getId: (entry) => entry.properties?.applicationId,
       },
     ],
-    getCountLabel: ({ count, formattedCount }) =>
-      plural(count, {
-        one: `${formattedCount} log`,
-        other: `${formattedCount} logs`,
-      }),
+    searchPlaceholder: msg`Search logs`,
     getSeverity: (entry) =>
       LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
   },
@@ -191,11 +179,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       { label: msg`Endpoint URL`, getId: (entry) => entry.properties?.url },
       { label: msg`Webhook ID`, getId: (entry) => entry.properties?.webhookId },
     ],
-    getCountLabel: ({ count, formattedCount }) =>
-      plural(count, {
-        one: `${formattedCount} delivery`,
-        other: `${formattedCount} deliveries`,
-      }),
+    searchPlaceholder: msg`Search deliveries`,
     getSeverity: (entry) =>
       entry.properties?.success === true ? undefined : 'error',
     renderDetailTitle: (entry) => {
@@ -235,11 +219,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         getId: (entry) => entry.properties?.sessionId,
       },
     ],
-    getCountLabel: ({ count, formattedCount }) =>
-      plural(count, {
-        one: `${formattedCount} page view`,
-        other: `${formattedCount} page views`,
-      }),
+    searchPlaceholder: msg`Search page views`,
     renderDetailTitle: (entry) => entry.properties?.pathname,
   },
   {
@@ -252,11 +232,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     idFields: [
       { label: msg`User workspace ID`, getId: (entry) => entry.userId },
     ],
-    getCountLabel: ({ count, formattedCount }) =>
-      plural(count, {
-        one: `${formattedCount} usage event`,
-        other: `${formattedCount} usage events`,
-      }),
     renderDetailTitle: LOG_CONSOLE_USAGE_OPERATION_COLUMN.renderCell,
   },
 ];

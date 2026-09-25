@@ -27,6 +27,7 @@ import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFu
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
+import { logConsoleSearchState } from '@/log-console/states/logConsoleSearchState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -155,6 +156,7 @@ export const LogConsole = () => {
     logConsoleHeightState,
   );
   const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
+  const setLogConsoleSearch = useSetAtomState(logConsoleSearchState);
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
   );
@@ -265,6 +267,7 @@ export const LogConsole = () => {
         ),
       ),
     );
+    setLogConsoleSearch('');
   };
 
   const closeLogConsole = () => {

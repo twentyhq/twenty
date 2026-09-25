@@ -1,29 +1,24 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton, SearchInput } from 'twenty-ui/components';
 import {
   IconEraser,
   IconPlayerPause,
   IconPlayerPlay,
   IconRefresh,
 } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { useDebouncedCallback } from 'use-debounce';
 
-import { DATE_FORMAT_WITHOUT_YEAR } from '@/localization/constants/DateFormatWithoutYear';
-import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/format-preferences/getWorkspaceDateFormatFromDateFormat';
-import { LogConsoleFilterBar } from '@/log-console/components/LogConsoleFilterBar';
 import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
 import { LogConsoleTimeRangeDropdown } from '@/log-console/components/LogConsoleTimeRangeDropdown';
+import { LogConsoleToolbar } from '@/log-console/components/LogConsoleToolbar';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { useLogConsoleRetention } from '@/log-console/hooks/useLogConsoleRetention';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
+import { logConsoleSearchState } from '@/log-console/states/logConsoleSearchState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { type LogConsoleFilter } from '@/log-console/types/LogConsoleFilter';
@@ -37,15 +32,12 @@ import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogs
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 const RECORDS_PER_PAGE = 100;
 
-const getLaterDate = (date: string, otherDate: string) =>
-  new Date(otherDate).getTime() > new Date(date).getTime() ? otherDate : date;
+const SEARCH_DEBOUNCE_IN_MILLISECONDS = 300;
 
 const sortNewestFirst = (eventLogRecords: EventLogRecord[]) =>
   eventLogRecords.toSorted(sortByProperty('timestamp')).toReversed();
@@ -57,34 +49,13 @@ const StyledResults = styled.div`
   min-height: 0;
 `;
 
-const StyledToolbar = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[8]};
-`;
-
-const StyledSummary = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  display: grid;
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: max-content minmax(0, auto) max-content;
-  justify-content: end;
-`;
-
 type LogConsoleResultsProps = {
   source: LogConsoleSource;
 };
 
 export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const { t } = useLingui();
-  const { formatNumber } = useNumberFormat();
   const timeZone = useLogConsoleTimeZone();
-  const { dateFormat, timeFormat } = useDateTimeFormat();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { retentionInDays } = useLogConsoleRetention(source);
 
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
@@ -96,6 +67,10 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const [logConsoleFilters, setLogConsoleFilters] = useAtomState(
     logConsoleFiltersState,
   );
+  const [logConsoleSearch, setLogConsoleSearch] = useAtomState(
+    logConsoleSearchState,
+  );
+  const [searchInput, setSearchInput] = useState(logConsoleSearch);
   const [refreshedAt, setRefreshedAt] = useState(() =>
     new Date().toISOString(),
   );
@@ -116,13 +91,17 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     filters: logConsoleFilters,
   });
 
+  const search = isDefined(source.searchPlaceholder)
+    ? logConsoleSearch
+    : undefined;
+
   const getDateRange = (now: string) =>
     getLogConsoleTimeRangeBounds({ timeRange, now, timeZone });
 
   const getEventLogsInput = (now: string) => ({
     table: source.table,
     first: RECORDS_PER_PAGE,
-    filters: { dateRange: getDateRange(now), fieldFilters },
+    filters: { dateRange: getDateRange(now), fieldFilters, search },
   });
 
   const dateRange = getDateRange(refreshedAt);
@@ -130,12 +109,14 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const isLive = !isDefined(dateRange.end);
   const isPaused = isDefined(pausedLiveRecords);
 
-  const { records, totalCount, loading, error, loadMore, refetch } =
-    useEventLogs(getEventLogsInput(refreshedAt));
+  const { records, loading, error, loadMore, refetch } = useEventLogs(
+    getEventLogsInput(refreshedAt),
+  );
 
   const { liveRecords, clearLiveRecords } = useEventLogsLiveStream({
     table: source.table,
     fieldFilters,
+    search,
     enabled: isLive,
   });
 
@@ -198,43 +179,27 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     setLogConsoleFilters(filters);
   };
 
+  const applySearch = useDebouncedCallback((trimmedSearch: string) => {
+    if (trimmedSearch !== logConsoleSearch) {
+      restartLogs(new Date().toISOString());
+      setLogConsoleSearch(trimmedSearch);
+    }
+  }, SEARCH_DEBOUNCE_IN_MILLISECONDS);
+
+  const changeSearchInput = (value: string) => {
+    setSearchInput(value);
+    applySearch(value.trim());
+  };
+
   const openLog = (entry: EventLogRecord) => {
     setLogConsoleSelectedLog({ source, entry });
   };
 
-  const formatRangeDate = (date: string, format: string) =>
-    formatInTimeZone(date, timeZone, format, { locale: localeCatalog });
+  const isStreaming = isLive && !isDefined(error);
 
-  const formatRangeBound = (date: string) => {
-    const boundDateFormat =
-      formatRangeDate(date, 'yyyy') === formatRangeDate(refreshedAt, 'yyyy')
-        ? DATE_FORMAT_WITHOUT_YEAR[
-            getWorkspaceDateFormatFromDateFormat(dateFormat)
-          ]
-        : dateFormat;
-
-    return formatRangeDate(date, `${boundDateFormat}, ${timeFormat}`);
-  };
-
-  const rangeEnd =
-    dateRange.end ??
-    [
-      refreshedAt,
-      ...displayedLiveRecords.map(({ timestamp }) => timestamp),
-    ].reduce(getLaterDate);
-
-  const displayedCount = totalCount + displayedLiveRecords.length;
-
-  const countLabel = source.getCountLabel({
-    count: displayedCount,
-    formattedCount: formatNumber(displayedCount),
-  });
-
-  const summaryRange = `· ${formatRangeBound(dateRange.start)} – ${formatRangeBound(rangeEnd)}`;
-
-  const summaryTimeZone = formatRangeDate(rangeEnd, 'zzz');
-
-  const isInitialLoading = loading && displayedEntryCount === 0;
+  const logsAction = isStreaming
+    ? { label: t`Clear`, Icon: IconEraser, onClick: clearLogs }
+    : { label: t`Refresh`, Icon: IconRefresh, onClick: refreshLogs };
 
   const pauseLabel = isPaused ? t`Resume` : t`Pause`;
 
@@ -269,65 +234,36 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   return (
     <StyledResults>
-      <StyledToolbar>
+      <LogConsoleToolbar
+        filterFields={source.filterFields ?? []}
+        filters={logConsoleFilters}
+        onFiltersChange={changeFilters}
+        search={
+          isDefined(source.searchPlaceholder) && (
+            <SearchInput
+              placeholder={t(source.searchPlaceholder)}
+              value={searchInput}
+              onChange={changeSearchInput}
+            />
+          )
+        }
+        logsAction={logsAction}
+      >
+        {isStreaming && (
+          <IconButton
+            tooltip={pauseLabel}
+            aria-label={pauseLabel}
+            onClick={togglePause}
+          >
+            {isPaused ? <IconPlayerPlay /> : <IconPlayerPause />}
+          </IconButton>
+        )}
         <LogConsoleTimeRangeDropdown
           source={source}
           timeRange={timeRange}
           onTimeRangeChange={changeTimeRange}
         />
-        {isDefined(source.filterFields) && (
-          <LogConsoleFilterBar
-            filterFields={source.filterFields}
-            filters={logConsoleFilters}
-            onFiltersChange={changeFilters}
-          />
-        )}
-        <StyledSummary>
-          {!isInitialLoading && !isDefined(error) && (
-            <>
-              <span>{countLabel}</span>
-              <OverflowingTextWithTooltip
-                text={summaryRange}
-                tooltipContent={`${countLabel} ${summaryRange} ${summaryTimeZone}`}
-              />
-              <span>{summaryTimeZone}</span>
-            </>
-          )}
-        </StyledSummary>
-        {isLive && !isDefined(error) ? (
-          <>
-            <IconButton
-              size="sm"
-              variant="ghost"
-              tooltip={pauseLabel}
-              aria-label={pauseLabel}
-              onClick={togglePause}
-            >
-              {isPaused ? <IconPlayerPlay /> : <IconPlayerPause />}
-            </IconButton>
-            <IconButton
-              size="sm"
-              variant="ghost"
-              tooltip={t`Clear`}
-              aria-label={t`Clear`}
-              onClick={clearLogs}
-            >
-              <IconEraser />
-            </IconButton>
-          </>
-        ) : (
-          <IconButton
-            size="sm"
-            variant="ghost"
-            tooltip={t`Refresh`}
-            aria-label={t`Refresh`}
-            loading={loading}
-            onClick={refreshLogs}
-          >
-            <IconRefresh />
-          </IconButton>
-        )}
-      </StyledToolbar>
+      </LogConsoleToolbar>
       {renderLogs()}
     </StyledResults>
   );
