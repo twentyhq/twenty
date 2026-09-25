@@ -3,11 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import {
-  CalendarChannelSyncStage,
-  CalendarChannelVisibility,
-} from 'twenty-shared/types';
-
-import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
 } from 'src/engine/metadata-modules/calendar-channel/calendar-channel.exception';
@@ -19,7 +14,6 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class CalendarChannelMetadataService {
@@ -143,21 +137,6 @@ export class CalendarChannelMetadataService {
     }
 
     return calendarChannel;
-  }
-
-  async create(
-    data: Partial<CalendarChannelEntity> & {
-      workspaceId: string;
-      handle: string;
-      connectedAccountId: string;
-      visibility: CalendarChannelVisibility;
-      syncStage: CalendarChannelSyncStage;
-    },
-  ): Promise<CalendarChannelDTO> {
-    return this.repository.insertAndReturnOne(
-      data.workspaceId,
-      data as QueryDeepPartialEntity<CalendarChannelEntity>,
-    );
   }
 
   async update({
