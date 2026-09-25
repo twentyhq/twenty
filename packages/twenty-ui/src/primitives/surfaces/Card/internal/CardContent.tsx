@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 
-import styles from './CardContent.module.scss';
+import styles from '../CardContent.module.scss';
 
 type CardContentProps = {
   children?: ReactNode;

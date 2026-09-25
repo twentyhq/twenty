@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { type ComponentPropsWithoutRef } from 'react';
 
-import styles from './CardFooter.module.scss';
+import styles from '../CardFooter.module.scss';
 
 type CardFooterProps = ComponentPropsWithoutRef<'div'> & {
   divider?: boolean;
