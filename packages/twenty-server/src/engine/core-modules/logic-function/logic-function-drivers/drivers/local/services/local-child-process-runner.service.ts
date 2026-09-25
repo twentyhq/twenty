@@ -3,11 +3,16 @@ import { spawn } from 'node:child_process';
 import { join } from 'path';
 
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
+
+type RunnerResultMessage =
+  | { ok: true; result?: unknown }
+  | { ok: false; errorType?: string; error: string; stack?: string };
 
 export class LocalChildProcessRunnerService {
   // Symlinks everything from the deps layer except twenty-client-sdk,
@@ -111,7 +116,7 @@ export class LocalChildProcessRunnerService {
                 // Wait for the async IPC flush before exiting, otherwise results
                 // larger than the OS pipe buffer are dropped before delivery.
                 if (process.send) {
-                  process.send({ ok: true, result: out }, () => process.exit(0));
+                  process.send({ ok: true, result: out }, () => process.stdout.write('', () => process.exit(0)));
                 } else {
                   process.exit(0);
                 }
@@ -122,7 +127,7 @@ export class LocalChildProcessRunnerService {
                     errorType: error instanceof Error ? error.name : 'Error',
                     error: error instanceof Error ? error.message : String(error),
                     stack: error?.stack,
-                  }, () => process.exit(1));
+                  }, () => process.stdout.write('', () => process.exit(1)));
                 } else {
                   process.exit(1);
                 }
@@ -145,7 +150,7 @@ export class LocalChildProcessRunnerService {
               errorType: error instanceof Error ? error.name : 'Error',
               error: error instanceof Error ? error.message : errorMessage,
               stack: error?.stack,
-            }, () => process.exit(1));
+            }, () => process.stdout.write('', () => process.exit(1)));
           } else {
             process.stdout.write(errorMessage, () => process.exit(1));
           }
@@ -188,48 +193,13 @@ export class LocalChildProcessRunnerService {
       let stdout = '';
       let stderr = '';
       let settled = false;
+      let runnerResultMessage: RunnerResultMessage | undefined;
 
       child.stdout?.on('data', (d) => (stdout += String(d)));
       child.stderr?.on('data', (d) => (stderr += String(d)));
 
-      child.on(
-        'message',
-        (
-          msg:
-            | {
-                ok: true;
-                result?: unknown;
-                stdout?: string;
-                stderr?: string;
-              }
-            | {
-                ok: false;
-                errorType?: string;
-                error: string;
-                stack?: string;
-                stdout?: string;
-                stderr?: string;
-              },
-        ) => {
-          if (settled) return;
-          settled = true;
-          resolve({ ...msg, stdout, stderr });
-        },
-      );
-
-      child.on('exit', (code) => {
-        if (settled) return;
-        settled = true;
-        if (code === 0) {
-          resolve({ ok: true, stdout, stderr });
-        } else {
-          resolve({
-            ok: false,
-            error: `Exited with code ${code}`,
-            stdout,
-            stderr,
-          });
-        }
+      child.on('message', (message: RunnerResultMessage) => {
+        runnerResultMessage = message;
       });
 
       const t = setTimeout(() => {
@@ -246,7 +216,23 @@ export class LocalChildProcessRunnerService {
 
       child.send?.({ type: 'run', payload, context });
 
-      child.on('close', () => clearTimeout(t));
+      child.on('close', (code) => {
+        clearTimeout(t);
+        if (settled) return;
+        settled = true;
+        if (isDefined(runnerResultMessage)) {
+          resolve({ ...runnerResultMessage, stdout, stderr });
+        } else if (code === 0) {
+          resolve({ ok: true, stdout, stderr });
+        } else {
+          resolve({
+            ok: false,
+            error: `Exited with code ${code}`,
+            stdout,
+            stderr,
+          });
+        }
+      });
     });
   }
 }

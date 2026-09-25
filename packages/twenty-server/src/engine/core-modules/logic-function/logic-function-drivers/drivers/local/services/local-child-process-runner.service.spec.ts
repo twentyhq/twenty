@@ -89,4 +89,24 @@ describe('LocalChildProcessRunnerService', () => {
       'INFO',
     ]);
   });
+
+  it('keeps the last log record and the returned value after a large output', async () => {
+    const { result, stdout } = await runLogicFunction(
+      `export const main = async () => {
+        for (let index = 0; index < 1_500; index++) {
+          console.log(index + ' ' + 'x'.repeat(100));
+        }
+        console.error('last');
+        return { answer: 42 };
+      };`,
+    );
+
+    const parsedLogLines = parseApplicationLogLines(stdout);
+
+    expect(parsedLogLines[parsedLogLines.length - 1]).toMatchObject({
+      level: 'ERROR',
+      message: 'last',
+    });
+    expect(result).toEqual({ answer: 42 });
+  });
 });
