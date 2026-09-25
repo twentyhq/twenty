@@ -5448,6 +5448,11 @@ msgstr "Azonosító"
 msgid "ID field cannot be searched"
 msgstr "Az ID mezőben nem lehet keresni"
 
+#. js-lingui-id: TGM/Xy
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider already exists."
+msgstr ""
+
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider not found."
