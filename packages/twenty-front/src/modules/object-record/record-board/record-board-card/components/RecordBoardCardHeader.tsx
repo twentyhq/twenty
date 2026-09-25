@@ -31,11 +31,11 @@ const StyledCompactIconContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  margin-left: ${themeCssVariables.spacing[1]};
+  margin-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCheckboxContainer = styled.div`
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 const StyledRecordChipContainer = styled.div`

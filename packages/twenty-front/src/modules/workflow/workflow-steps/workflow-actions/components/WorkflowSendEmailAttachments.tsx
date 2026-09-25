@@ -49,8 +49,8 @@ const StyledUploadArea = styled.div<{ hasFiles: boolean; hasPicker: boolean }>`
   justify-content: center;
   min-height: ${({ hasFiles }) => (hasFiles ? 'auto' : '24px')};
   padding-bottom: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[1]};
 
   &:hover {

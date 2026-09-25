@@ -111,11 +111,11 @@ const StyledItem = styled.button<StyledItemProps>`
     indentationLevel === 2 ? '2px' : '0'};
   min-width: 0;
   padding-bottom: ${themeCssVariables.spacing[1]};
-  padding-left: ${({ isNavigationDrawerExpanded }) =>
+  padding-inline-start: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded
       ? themeCssVariables.spacing[1]
       : `calc(${themeCssVariables.spacing[2]} - 1px)`};
-  padding-right: ${({ hasRightOptions, isNavigationDrawerExpanded }) =>
+  padding-inline-end: ${({ hasRightOptions, isNavigationDrawerExpanded }) =>
     hasRightOptions && isNavigationDrawerExpanded
       ? themeCssVariables.spacing['0.5']
       : themeCssVariables.spacing[1]};
@@ -201,7 +201,7 @@ const StyledIcon = styled.div`
   flex-grow: 0;
   flex-shrink: 0;
   justify-content: center;
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -220,7 +220,7 @@ const StyledRightOptionsVisbility = styled.div`
   height: 1px;
   opacity: 0;
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   position: absolute;
   transition: opacity 150ms;
   white-space: nowrap;

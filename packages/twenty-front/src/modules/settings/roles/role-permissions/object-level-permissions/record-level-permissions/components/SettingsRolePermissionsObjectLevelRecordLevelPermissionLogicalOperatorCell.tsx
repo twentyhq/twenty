@@ -19,7 +19,7 @@ const StyledText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   height: ${themeCssVariables.spacing[8]};
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContainer = styled.div`

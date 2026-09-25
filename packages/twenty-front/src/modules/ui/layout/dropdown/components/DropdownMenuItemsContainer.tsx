@@ -49,8 +49,8 @@ const StyledInternalContainer = styled.div`
 
   > [data-dropdown-menu-section-label],
   > [data-dropdown-menu-separator] {
-    margin-left: calc(0px - var(--dropdown-menu-items-padding));
-    margin-right: calc(0px - var(--dropdown-menu-items-padding));
+    margin-inline-start: calc(0px - var(--dropdown-menu-items-padding));
+    margin-inline-end: calc(0px - var(--dropdown-menu-items-padding));
     width: calc(
       100% + var(--dropdown-menu-items-padding) +
         var(--dropdown-menu-items-padding)

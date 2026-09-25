@@ -32,6 +32,16 @@ html.light {
   color-scheme: light;
 }
 
+html[lang='fa-IR'],
+html[lang='fa-IR'].light,
+html[lang='fa-IR'].dark {
+  --t-font-family: Vazirmatn, Inter, sans-serif;
+}
+
+html[lang='fa-IR'] body {
+  font-family: Vazirmatn, Inter, sans-serif;
+}
+
 /* Phones get a slightly larger base, mirroring native apps. 1.0769… is 14/13,
    precomputed because media queries cannot read custom properties. */
 @media (max-width: 768px) {

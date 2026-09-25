@@ -16,7 +16,7 @@ const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding-left: ${({ isPageLayoutInEditMode }) =>
+  padding-inline-start: ${({ isPageLayoutInEditMode }) =>
     isPageLayoutInEditMode ? themeCssVariables.spacing[5] : 0};
   width: 100%;
 `;

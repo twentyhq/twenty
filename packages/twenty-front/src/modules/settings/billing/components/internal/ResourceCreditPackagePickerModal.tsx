@@ -149,7 +149,7 @@ const StyledPackageSummaryValue = styled.div`
 
 const StyledMutedText = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
-  margin-left: ${themeCssVariables.spacing[1]};
+  margin-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAmountWithUnit = styled.span`

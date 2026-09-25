@@ -20,8 +20,8 @@ const StyledDraggableContainer = styled.div<{
 }>`
   cursor: ${({ isDragDisabled }) => (isDragDisabled ? 'default' : 'grab')};
   position: relative;
-  scroll-margin-left: 8px;
-  scroll-margin-right: 8px;
+  scroll-margin-inline-start: 8px;
+  scroll-margin-inline-end: 8px;
   scroll-margin-top: 40px;
 `;
 

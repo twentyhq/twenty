@@ -23,7 +23,7 @@ const StyledFullScreenOverlay = styled.div`
 `;
 
 const StyledFullScreenHeaderContainer = styled.div`
-  padding-left: ${themeCssVariables.spacing[3]};
+  padding-inline-start: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledFullScreenContent = styled.div`

@@ -17,14 +17,14 @@ const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
   margin-top: auto;
   padding-bottom: ${({ isMobile }) =>
     isMobile ? MOBILE_NAVIGATION_BAR_CLEARANCE : '0'};
-  padding-left: ${({ isMobile }) =>
+  padding-inline-start: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
-  padding-right: ${({ isMobile }) =>
+  padding-inline-end: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
 `;
 
 const advancedSettingsSwitchClassName = css`
-  padding-right: 0;
+  padding-inline-end: 0;
 `;
 
 export const SettingsNavigationDrawerContent = () => {

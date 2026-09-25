@@ -40,8 +40,8 @@ const StyledSettingsHeader = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: 1fr 24px;
   padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[3]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[3]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitleContainer = styled.div`

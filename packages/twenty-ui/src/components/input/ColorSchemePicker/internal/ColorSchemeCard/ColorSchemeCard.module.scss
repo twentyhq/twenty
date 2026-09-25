@@ -11,7 +11,7 @@
   width: 100%;
   height: 80px;
   padding-top: var(--t-spacing-6);
-  padding-left: var(--t-spacing-6);
+  padding-inline-start: var(--t-spacing-6);
   border: 1px solid var(--color-scheme-card-border-color);
   border-radius: var(--t-border-radius-md);
   background: var(--color-scheme-card-background);
@@ -25,7 +25,7 @@
   box-sizing: border-box;
   height: 56px;
   padding-top: var(--t-spacing-2);
-  padding-left: var(--t-spacing-2);
+  padding-inline-start: var(--t-spacing-2);
   border-top: 1px solid var(--color-scheme-card-border-color);
   border-left: 1px solid var(--color-scheme-card-border-color);
   border-radius: var(--t-border-radius-md) 0px 0px 0px;

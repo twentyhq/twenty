@@ -20,7 +20,7 @@ const StyledText = styled.div`
 
 const StyledNumber = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
-  margin-right: ${themeCssVariables.spacing[1]};
+  margin-inline-end: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledContainer = styled.div`

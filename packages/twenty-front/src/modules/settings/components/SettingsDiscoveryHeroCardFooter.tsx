@@ -62,7 +62,7 @@ const StyledDescription = styled.div`
 
 const StyledActionContainer = styled.div`
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 type SettingsDiscoveryHeroCardFooterProps = {

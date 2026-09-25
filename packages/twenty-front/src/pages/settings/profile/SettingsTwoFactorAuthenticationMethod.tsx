@@ -70,7 +70,7 @@ const StyledCopySetupKeyLink = styled.button`
   cursor: pointer;
   display: inline;
   font-size: ${themeCssVariables.font.size.sm};
-  margin-left: 0;
+  margin-inline-start: 0;
   padding: 0;
   text-decoration: underline;
 

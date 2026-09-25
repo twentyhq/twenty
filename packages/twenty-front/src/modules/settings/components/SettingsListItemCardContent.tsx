@@ -16,7 +16,7 @@ const StyledRowContainer = styled.div`
     gap: ${themeCssVariables.spacing[2]};
     height: ${themeCssVariables.spacing[10]};
     padding: ${themeCssVariables.spacing[2]};
-    padding-left: ${themeCssVariables.spacing[3]};
+    padding-inline-start: ${themeCssVariables.spacing[3]};
 
     > svg {
       flex-shrink: 0;
@@ -57,7 +57,7 @@ const StyledDescription = styled.span`
   line-height: ${themeCssVariables.text.lineHeight.lg};
   min-width: 0;
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
   text-overflow: ellipsis;
   white-space: nowrap;
 `;

@@ -95,7 +95,7 @@ const StyledButton = styled.button`
 const StyledIconContainer = styled.span`
   color: ${themeCssVariables.grayScale.gray12};
   display: inline-flex;
-  margin-right: 8px;
+  margin-inline-end: 8px;
 `;
 
 export const AppRootErrorFallback = ({

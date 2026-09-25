@@ -12,9 +12,9 @@ const StyledListItem = styled.div<{
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[10]};
   justify-content: space-between;
-  padding-left: ${({ noHorizontalPadding }) =>
+  padding-inline-start: ${({ noHorizontalPadding }) =>
     noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
-  padding-right: ${({ noHorizontalPadding }) =>
+  padding-inline-end: ${({ noHorizontalPadding }) =>
     noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
 
   .displayOnHover {

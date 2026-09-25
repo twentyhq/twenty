@@ -21,9 +21,9 @@ const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
 
   height: ${themeCssVariables.spacing[7]};
   justify-content: space-between;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

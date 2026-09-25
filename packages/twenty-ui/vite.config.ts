@@ -33,7 +33,8 @@ export default defineConfig(({ command }) => {
 
   const checkersConfig: Checkers = {
     typescript: {
-      tsconfigPath: tsConfigPath,
+      // Relative so a space in the repo path is not split by the checker shell.
+      tsconfigPath: isBuildCommand ? 'tsconfig.lib.json' : 'tsconfig.json',
     },
   };
 

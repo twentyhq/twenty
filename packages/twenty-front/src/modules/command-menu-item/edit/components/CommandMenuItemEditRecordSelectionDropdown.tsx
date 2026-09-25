@@ -28,8 +28,8 @@ const StyledClickableArea = styled.div<{ disabled?: boolean }>`
   gap: ${themeCssVariables.spacing[1]};
   height: 24px;
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabel = styled.span`

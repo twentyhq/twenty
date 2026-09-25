@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  margin-left: ${themeCssVariables.spacing[2]};
+  margin-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
 type VariableChipStandaloneProps = {

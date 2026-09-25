@@ -28,7 +28,7 @@ const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
 const StyledIconPointContainer = styled.span`
   align-items: center;
   display: flex;
-  margin-right: 0;
+  margin-inline-end: 0;
 `;
 
 export const AdvancedSettingsContentWrapperWithDot = ({

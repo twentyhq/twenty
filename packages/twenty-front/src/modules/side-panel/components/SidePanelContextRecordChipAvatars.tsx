@@ -16,7 +16,7 @@ const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
         ? themeCssVariables.border.color.medium
         : 'transparent'};
   &:not(:first-of-type) {
-    margin-left: -${themeCssVariables.spacing[1]};
+    margin-inline-start: -${themeCssVariables.spacing[1]};
   }
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
