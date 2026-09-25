@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import crypto from 'crypto';
+
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import {
@@ -10,6 +13,9 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -19,6 +25,8 @@ export class LoginTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
+    private readonly cacheStorage: CacheStorageService,
   ) {}
 
   async generateLoginToken(
@@ -40,6 +48,7 @@ export class LoginTokenService {
       workspaceId,
       authProvider,
       impersonatorUserWorkspaceId: options?.impersonatorUserWorkspaceId,
+      jti: crypto.randomUUID(),
     };
 
     const expiresIn = this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN');
@@ -77,5 +86,24 @@ export class LoginTokenService {
     }
 
     return decoded;
+  }
+
+  // Keeping the claim for the whole token lifetime rejects a replay for as
+  // long as the signature would still verify
+  async consumeLoginTokenOrThrow({ jti }: LoginTokenJwtPayload): Promise<void> {
+    const isFirstUse =
+      isNonEmptyString(jti) &&
+      (await this.cacheStorage.setIfAbsent(
+        `login-token:consumed:${jti}`,
+        true,
+        ms(this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN')),
+      ));
+
+    if (!isFirstUse) {
+      throw new AuthException(
+        'Login token has already been used',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
   }
 }
