@@ -154,16 +154,14 @@ export class AgentChatService {
     });
     const rankedThreads = await this.threadRepository.query(
       workspaceId,
-      ({ manager, table, storage }) =>
+      ({ manager, table }) =>
         manager.query<{ id: string; last_message_at: Date | null }[]>(
           `SELECT thread.id, MAX(message."createdAt") AS last_message_at
        FROM ${table('agentChatThread')} thread
        LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
-       WHERE thread.id = ANY($1::uuid[]) ${storage === 'core' ? 'AND thread."workspaceId" = $2' : ''}
+       WHERE thread.id = ANY($1::uuid[])
        GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC`,
-          storage === 'core'
-            ? [readableThreadIds, workspaceId]
-            : [readableThreadIds],
+          [readableThreadIds],
         ),
     );
 
@@ -204,11 +202,11 @@ export class AgentChatService {
   }): Promise<Date | null> {
     const [result] = await this.messageRepository.query(
       workspaceId,
-      ({ manager, table, storage }) =>
+      ({ manager, table }) =>
         manager.query<{ last_message_at: Date | null }[]>(
           `SELECT MAX("createdAt") AS last_message_at FROM ${table('agentMessage')}
-       WHERE "threadId" = $1 AND "isHidden" = false ${storage === 'core' ? 'AND "workspaceId" = $2' : ''}`,
-          storage === 'core' ? [threadId, workspaceId] : [threadId],
+       WHERE "threadId" = $1 AND "isHidden" = false`,
+          [threadId],
         ),
     );
 

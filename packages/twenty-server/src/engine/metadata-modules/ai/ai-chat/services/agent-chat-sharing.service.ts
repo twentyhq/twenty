@@ -193,16 +193,11 @@ export class AgentChatSharingService {
     }
     return this.threadRepository.query(
       args.workspaceId,
-      async ({ manager, table, storage }) => {
+      async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId"${storage === 'core' ? ', "workspaceId"' : ''})
-         VALUES ($1, $2, $3${storage === 'core' ? ', $4' : ''}) RETURNING *`,
-          [
-            args.id ?? randomUUID(),
-            args.title ?? null,
-            args.userWorkspaceId,
-            ...(storage === 'core' ? [args.workspaceId] : []),
-          ],
+          `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId")
+         VALUES ($1, $2, $3) RETURNING *`,
+          [args.id ?? randomUUID(), args.title ?? null, args.userWorkspaceId],
         );
         const record = records[0];
         await this.recordShareStorageService.deleteByRecordIdsInTransaction({
@@ -215,7 +210,6 @@ export class AgentChatSharingService {
           manager,
           workspaceId: args.workspaceId,
           threadTableExpression: table('agentChatThread'),
-          isCoreStorage: storage === 'core',
           recordIds: [record.id],
         });
         if (ownerGrantCount !== 1) {
@@ -224,13 +218,11 @@ export class AgentChatSharingService {
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         }
-        return storage === 'core'
-          ? record
-          : (normalizeAgentHistoryRecord({
-              record,
-              workspaceId: args.workspaceId,
-              objectName: 'agentChatThread',
-            }) as AgentChatThreadEntity);
+        return normalizeAgentHistoryRecord({
+          record,
+          workspaceId: args.workspaceId,
+          objectName: 'agentChatThread',
+        }) as AgentChatThreadEntity;
       },
     );
   }
@@ -249,19 +241,14 @@ export class AgentChatSharingService {
       ...args,
       operationType,
       updatedColumns: operationType === 'update' ? Object.keys(changes) : [],
-      mutate: async ({ manager, table, storage }, thread) => {
+      mutate: async ({ manager, table }, thread) => {
         if (operationType === 'soft-delete' && isDefined(thread.deletedAt)) {
           return thread;
         }
         const entries = Object.entries(changes).map(
           ([fieldName, value]) =>
             [
-              storage === 'workspace'
-                ? mapAgentHistoryFieldNameToWorkspace(
-                    'agentChatThread',
-                    fieldName,
-                  )
-                : fieldName,
+              mapAgentHistoryFieldNameToWorkspace('agentChatThread', fieldName),
               value,
             ] as const,
         );
@@ -273,13 +260,11 @@ export class AgentChatSharingService {
         if (!isDefined(record)) {
           return this.throwNotFound();
         }
-        return storage === 'core'
-          ? record
-          : (normalizeAgentHistoryRecord({
-              record,
-              workspaceId: args.workspaceId,
-              objectName: 'agentChatThread',
-            }) as AgentChatThreadEntity);
+        return normalizeAgentHistoryRecord({
+          record,
+          workspaceId: args.workspaceId,
+          objectName: 'agentChatThread',
+        }) as AgentChatThreadEntity;
       },
     });
   }
