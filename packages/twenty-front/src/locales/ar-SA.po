@@ -7377,7 +7377,7 @@ msgstr "صف ما تريد أن يقوم به الذكاء الاصطناعي...
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -8114,7 +8114,8 @@ msgid "Edit tab icon"
 msgstr "تحرير أيقونة علامة التبويب"
 
 #. js-lingui-id: /VLYQj
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Edit translations"
 msgstr "تعديل الترجمات"
 
@@ -12311,7 +12312,7 @@ msgid "Korean"
 msgstr "الكورية"
 
 #. js-lingui-id: 87a/t/
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -12323,16 +12324,6 @@ msgstr "الكورية"
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "التسمية"
-
-#. js-lingui-id: B9/B0O
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (plural)"
-msgstr "التسمية (الجمع)"
-
-#. js-lingui-id: J8GEvd
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (singular)"
-msgstr "التسمية (المفرد)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -12346,19 +12337,21 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "يجب أن تحتوي التسمية على محرف أبجدي رقمي واحد على الأقل"
 
 #. js-lingui-id: vXIe7J
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "اللغة"
 
 #. js-lingui-id: GAmD3h
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages"
 msgstr "اللغات"
 
-#. js-lingui-id: PEi+K2
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Languages without their own translation show the source text."
-msgstr "تعرض اللغات التي ليس لها ترجمتها الخاصة النص المصدر."
+#. js-lingui-id: oWZaVM
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Languages without a translation show the source text."
+msgstr ""
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14851,6 +14844,11 @@ msgstr "لم يتم حذف أي وظائف{errorDetails}"
 msgid "No jobs were retried{errorDetails}"
 msgstr "لم يتم إعادة محاولة أي وظائف{errorDetails}"
 
+#. js-lingui-id: CYafz+
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
+msgid "No languages found"
+msgstr ""
+
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
@@ -15647,6 +15645,7 @@ msgstr "مستوى الكائن"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Objects"
 msgstr "كائنات"
 
@@ -16807,6 +16806,7 @@ msgstr "برقوقي"
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Plural"
 msgstr "جمع"
 
@@ -18065,8 +18065,8 @@ msgstr "إعادة تعيين تخطيط صفحة السجل"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
@@ -18558,6 +18558,11 @@ msgstr "حفظ الإعدادات"
 msgid "Save the record before attaching a file"
 msgstr "احفظ السجل قبل إرفاق ملف"
 
+#. js-lingui-id: kv9Dnn
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+msgid "Save your changes first"
+msgstr ""
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -18682,6 +18687,11 @@ msgstr "ابحث عن حقل واحد"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Search a field..."
 msgstr "ابحث عن حقل..."
+
+#. js-lingui-id: grvmBE
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Search a language..."
+msgstr ""
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -19930,6 +19940,7 @@ msgstr "تسجيل الدخول لمرة واحدة (SSO)"
 
 #. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Singular"
 msgstr "فردي"
 
@@ -20192,11 +20203,6 @@ msgstr "المصدر"
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "Source Email Address"
 msgstr "عنوان البريد الإلكتروني المصدر"
-
-#. js-lingui-id: MEXVHu
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Source: {canonicalValue}"
-msgstr "المصدر: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -22168,8 +22174,9 @@ msgstr "ترجمة أم إعادة تسمية؟"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Translations"
 msgstr "الترجمات"
 
@@ -24459,6 +24466,7 @@ msgstr "سير العمل"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx

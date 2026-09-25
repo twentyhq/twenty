@@ -7377,7 +7377,7 @@ msgstr "Mô tả điều bạn muốn AI làm gì..."
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -8114,7 +8114,8 @@ msgid "Edit tab icon"
 msgstr "Chỉnh sửa biểu tượng thẻ"
 
 #. js-lingui-id: /VLYQj
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Edit translations"
 msgstr "Chỉnh sửa bản dịch"
 
@@ -12311,7 +12312,7 @@ msgid "Korean"
 msgstr "Tiếng Hàn"
 
 #. js-lingui-id: 87a/t/
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -12323,16 +12324,6 @@ msgstr "Tiếng Hàn"
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "Nhãn"
-
-#. js-lingui-id: B9/B0O
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (plural)"
-msgstr "Nhãn (số nhiều)"
-
-#. js-lingui-id: J8GEvd
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (singular)"
-msgstr "Nhãn (số ít)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -12346,19 +12337,21 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Nhãn phải chứa ít nhất một ký tự chữ hoặc số"
 
 #. js-lingui-id: vXIe7J
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Ngôn ngữ"
 
 #. js-lingui-id: GAmD3h
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages"
 msgstr "Ngôn ngữ"
 
-#. js-lingui-id: PEi+K2
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Languages without their own translation show the source text."
-msgstr "Các ngôn ngữ không có bản dịch riêng sẽ hiển thị văn bản nguồn."
+#. js-lingui-id: oWZaVM
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Languages without a translation show the source text."
+msgstr ""
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14851,6 +14844,11 @@ msgstr "Không có công việc nào bị xóa{errorDetails}"
 msgid "No jobs were retried{errorDetails}"
 msgstr "Không có công việc nào được thử lại{errorDetails}"
 
+#. js-lingui-id: CYafz+
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
+msgid "No languages found"
+msgstr ""
+
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
@@ -15647,6 +15645,7 @@ msgstr "Cấp độ đối tượng"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Objects"
 msgstr "Các đối tượng"
 
@@ -16807,6 +16806,7 @@ msgstr "Mận tím"
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Plural"
 msgstr "Số nhiều"
 
@@ -18065,8 +18065,8 @@ msgstr "Đặt lại bố cục trang bản ghi"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
@@ -18558,6 +18558,11 @@ msgstr "Lưu cài đặt"
 msgid "Save the record before attaching a file"
 msgstr "Lưu bản ghi trước khi đính kèm tệp"
 
+#. js-lingui-id: kv9Dnn
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+msgid "Save your changes first"
+msgstr ""
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -18682,6 +18687,11 @@ msgstr "Tìm 1 trường"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Search a field..."
 msgstr "Tìm một trường..."
+
+#. js-lingui-id: grvmBE
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Search a language..."
+msgstr ""
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -19930,6 +19940,7 @@ msgstr "Đăng nhập một lần (SSO)"
 
 #. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Singular"
 msgstr "Số ít"
 
@@ -20192,11 +20203,6 @@ msgstr "Nguồn"
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "Source Email Address"
 msgstr "Địa chỉ Email nguồn"
-
-#. js-lingui-id: MEXVHu
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Source: {canonicalValue}"
-msgstr "Nguồn: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -22168,8 +22174,9 @@ msgstr "Dịch hay đổi tên?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Translations"
 msgstr "Dịch thuật"
 
@@ -24459,6 +24466,7 @@ msgstr "Quy Trình Làm Việc"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx

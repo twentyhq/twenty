@@ -7372,7 +7372,7 @@ msgstr "Describe what you want the AI to do..."
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -8109,7 +8109,8 @@ msgid "Edit tab icon"
 msgstr "Edit tab icon"
 
 #. js-lingui-id: /VLYQj
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Edit translations"
 msgstr "Edit translations"
 
@@ -12306,7 +12307,7 @@ msgid "Korean"
 msgstr "Korean"
 
 #. js-lingui-id: 87a/t/
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -12318,16 +12319,6 @@ msgstr "Korean"
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "Label"
-
-#. js-lingui-id: B9/B0O
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (plural)"
-msgstr "Label (plural)"
-
-#. js-lingui-id: J8GEvd
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (singular)"
-msgstr "Label (singular)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -12341,19 +12332,21 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Label must contain at least one alphanumeric character"
 
 #. js-lingui-id: vXIe7J
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Language"
 
 #. js-lingui-id: GAmD3h
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages"
 msgstr "Languages"
 
-#. js-lingui-id: PEi+K2
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Languages without their own translation show the source text."
-msgstr "Languages without their own translation show the source text."
+#. js-lingui-id: oWZaVM
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Languages without a translation show the source text."
+msgstr "Languages without a translation show the source text."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14846,6 +14839,11 @@ msgstr "No jobs were deleted{errorDetails}"
 msgid "No jobs were retried{errorDetails}"
 msgstr "No jobs were retried{errorDetails}"
 
+#. js-lingui-id: CYafz+
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
+msgid "No languages found"
+msgstr "No languages found"
+
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
@@ -15642,6 +15640,7 @@ msgstr "Object-Level"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Objects"
 msgstr "Objects"
 
@@ -16802,6 +16801,7 @@ msgstr "Plum"
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Plural"
 msgstr "Plural"
 
@@ -18060,8 +18060,8 @@ msgstr "Reset record page layout"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
@@ -18553,6 +18553,11 @@ msgstr "Save settings"
 msgid "Save the record before attaching a file"
 msgstr "Save the record before attaching a file"
 
+#. js-lingui-id: kv9Dnn
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+msgid "Save your changes first"
+msgstr "Save your changes first"
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -18677,6 +18682,11 @@ msgstr "Search 1 field"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Search a field..."
 msgstr "Search a field..."
+
+#. js-lingui-id: grvmBE
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Search a language..."
+msgstr "Search a language..."
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -19925,6 +19935,7 @@ msgstr "Single sign-on (SSO)"
 
 #. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Singular"
 msgstr "Singular"
 
@@ -20187,11 +20198,6 @@ msgstr "Source"
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "Source Email Address"
 msgstr "Source Email Address"
-
-#. js-lingui-id: MEXVHu
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Source: {canonicalValue}"
-msgstr "Source: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -22165,8 +22171,9 @@ msgstr "Translate or rename?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Translations"
 msgstr "Translations"
 
@@ -24456,6 +24463,7 @@ msgstr "Workflows"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
