@@ -9,14 +9,29 @@ import { useTheme } from 'twenty-ui/theme';
 type SettingsTranslationsCardProps = {
   objectNamePlural: string;
   fieldName?: string;
+  disabled?: boolean;
 };
 
 export const SettingsTranslationsCard = ({
   objectNamePlural,
   fieldName,
+  disabled = false,
 }: SettingsTranslationsCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const icon = <IconLanguage size={theme.icon.size.md} />;
+
+  // Leaving the page discards unsaved form edits, so the link waits for a save
+  if (disabled) {
+    return (
+      <SettingsCard
+        Icon={icon}
+        title={t`Edit translations`}
+        description={t`Save your changes first`}
+        disabled
+      />
+    );
+  }
 
   return (
     <UndecoratedLink
@@ -31,10 +46,7 @@ export const SettingsTranslationsCard = ({
             })
       }
     >
-      <SettingsCard
-        Icon={<IconLanguage size={theme.icon.size.md} />}
-        title={t`Edit translations`}
-      />
+      <SettingsCard Icon={icon} title={t`Edit translations`} />
     </UndecoratedLink>
   );
 };

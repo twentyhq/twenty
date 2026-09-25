@@ -410,6 +410,7 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsTranslationsCard
                 objectNamePlural={objectNamePlural}
                 fieldName={fieldMetadataItem.name}
+                disabled={isDirty}
               />
             </Section.Root>
 
