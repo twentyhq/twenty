@@ -2,7 +2,7 @@ import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
   type ValidatableWorkflow,
   type WorkflowValidationIssueCode,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { buildWorkflowGraph } from '../build-workflow-graph.util';
 import { validateWorkflowGraph } from '../validate-workflow-graph.util';
 

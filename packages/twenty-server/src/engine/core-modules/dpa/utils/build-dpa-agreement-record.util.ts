@@ -2,7 +2,7 @@ import { getDpaRegionConfig } from 'src/engine/core-modules/dpa/config/dpa-regio
 import { DPA_TEMPLATE_VERSION } from 'src/engine/core-modules/dpa/constants/dpa-template-version.constant';
 import { type DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { type DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
-import { type DpaRegion } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type DpaRegion } from 'src/engine/core-modules/dpa/types/dpa.type';
 
 type BuildDpaAgreementRecordArgs = {
   workspaceId: string;

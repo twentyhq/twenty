@@ -15,7 +15,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { v4 as uuidv4 } from 'uuid';
 
 import { settings } from 'src/engine/constants/settings';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const MINIMAL_PDF = Buffer.from(

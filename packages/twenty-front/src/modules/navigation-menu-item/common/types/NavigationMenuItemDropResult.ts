@@ -1,4 +1,4 @@
-import type { DropDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDropDestination';
+import type { DropDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitDropDestination';
 
 export type NavigationMenuItemDropResult = {
   source: DropDestination;

@@ -89,6 +89,10 @@ import {
   RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
 import {
+  rule as typesFolderFilename,
+  RULE_NAME as typesFolderFilenameName,
+} from './rules/types-folder-filename';
+import {
   rule as upgradeCommandFilename,
   RULE_NAME as upgradeCommandFilenameName,
 } from './rules/upgrade-command-filename';
@@ -120,6 +124,7 @@ export default definePlugin({
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
+    [typesFolderFilenameName]: typesFolderFilename,
     [upgradeCommandFilenameName]: upgradeCommandFilename,
   },
 });

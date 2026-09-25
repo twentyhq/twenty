@@ -1,4 +1,4 @@
-import { type AllMetadataName } from '@/metadata/types/all-metadata-name.type';
+import { type AllMetadataName } from '@/metadata/types/AllMetadataName';
 
 // The single source of truth for which provider-owned metadata properties are
 // translatable. twenty-server resolves them against a catalog at request time
