@@ -7401,7 +7401,7 @@ export interface RecordPermissionsTargetInput {objectMetadataId: Scalars['UUID']
 
 export interface EventLogQueryInput {table: EventLogTable,filters?: (EventLogFiltersInput | null),first?: (Scalars['Int'] | null),after?: (Scalars['String'] | null)}
 
-export interface EventLogFiltersInput {eventType?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),dateRange?: (EventLogDateRangeInput | null),recordId?: (Scalars['String'] | null),objectMetadataId?: (Scalars['String'] | null),fieldFilters?: (EventLogFieldFilterInput[] | null)}
+export interface EventLogFiltersInput {eventType?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),dateRange?: (EventLogDateRangeInput | null),recordId?: (Scalars['String'] | null),objectMetadataId?: (Scalars['String'] | null),fieldFilters?: (EventLogFieldFilterInput[] | null),search?: (Scalars['String'] | null)}
 
 export interface EventLogDateRangeInput {start?: (Scalars['DateTime'] | null),end?: (Scalars['DateTime'] | null)}
 
@@ -8141,7 +8141,7 @@ export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable, fieldFilters?: (EventLogFieldFilterInput[] | null)} })
+    eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable, fieldFilters?: (EventLogFieldFilterInput[] | null), search?: (Scalars['String'] | null)} })
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     __typename?: boolean | number
     __scalar?: boolean | number

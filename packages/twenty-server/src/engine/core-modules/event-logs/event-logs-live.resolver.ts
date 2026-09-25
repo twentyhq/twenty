@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { EventLogTable } from 'twenty-shared/types';
 
@@ -25,10 +26,15 @@ import { EventLogsService } from './event-logs.service';
 
 import { EventLogFieldFilterInput } from './dtos/event-log-field-filter.input';
 import { EventLogRecord } from './dtos/event-log-result.dto';
-import { getClickHouseTableName } from './registry/event-log-registry';
+import {
+  EVENT_LOG_TYPES,
+  getClickHouseTableName,
+} from './registry/event-log-registry';
 import { isEventLogRowMatchingFieldFilters } from './utils/is-event-log-row-matching-field-filters.util';
+import { isEventLogRowMatchingSearch } from './utils/is-event-log-row-matching-search.util';
 import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
 import { validateEventLogFieldFilterOrThrow } from './utils/validate-event-log-field-filter-or-throw.util';
+import { validateEventLogSearchOrThrow } from './utils/validate-event-log-search-or-throw.util';
 
 type WorkspaceEventLivePayload = {
   table: string;
@@ -38,7 +44,25 @@ type WorkspaceEventLivePayload = {
 type EventLogsLiveVariables = {
   table: EventLogTable;
   fieldFilters?: EventLogFieldFilterInput[];
+  search?: string;
 };
+
+const isRowMatchingVariables = ({
+  row,
+  variables,
+}: {
+  row: Record<string, unknown>;
+  variables: EventLogsLiveVariables;
+}): boolean =>
+  isEventLogRowMatchingFieldFilters({
+    row,
+    fieldFilters: variables.fieldFilters ?? [],
+  }) &&
+  isEventLogRowMatchingSearch({
+    row,
+    search: variables.search ?? '',
+    searchableFields: EVENT_LOG_TYPES[variables.table].searchableFields,
+  });
 
 @MetadataResolver()
 @UseFilters(
@@ -67,22 +91,14 @@ export class EventLogsLiveResolver {
       variables: EventLogsLiveVariables,
     ) =>
       getClickHouseTableName(variables.table) === payload.table &&
-      payload.rows.some((row) =>
-        isEventLogRowMatchingFieldFilters({
-          row,
-          fieldFilters: variables.fieldFilters ?? [],
-        }),
-      ),
+      payload.rows.some((row) => isRowMatchingVariables({ row, variables })),
     resolve: (
       payload: WorkspaceEventLivePayload,
       variables: EventLogsLiveVariables,
     ) =>
       normalizeEventLogRecords(
         payload.rows.filter((row) =>
-          isEventLogRowMatchingFieldFilters({
-            row,
-            fieldFilters: variables.fieldFilters ?? [],
-          }),
+          isRowMatchingVariables({ row, variables }),
         ),
         variables.table,
       ),
@@ -94,6 +110,8 @@ export class EventLogsLiveResolver {
       nullable: true,
     })
     fieldFilters: EventLogFieldFilterInput[] | undefined,
+    @Args('search', { type: () => String, nullable: true })
+    search: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     await this.eventLogsService.validateAccess(workspace.id, table);
@@ -101,6 +119,10 @@ export class EventLogsLiveResolver {
     fieldFilters?.forEach((fieldFilter) =>
       validateEventLogFieldFilterOrThrow({ fieldFilter, table }),
     );
+
+    if (isNonEmptyString(search?.trim())) {
+      validateEventLogSearchOrThrow({ table });
+    }
 
     const clickHouseTable = getClickHouseTableName(table);
 

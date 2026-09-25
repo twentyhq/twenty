@@ -8649,6 +8649,9 @@ export default {
             "fieldFilters": [
                 434
             ],
+            "search": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -14535,6 +14538,9 @@ export default {
                     "fieldFilters": [
                         434,
                         "[EventLogFieldFilterInput!]"
+                    ],
+                    "search": [
+                        1
                     ]
                 }
             ],
