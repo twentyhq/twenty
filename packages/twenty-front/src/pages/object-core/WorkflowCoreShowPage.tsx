@@ -1,6 +1,7 @@
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
-import { CoreWorkflowIdentifierBar } from '@/object-core/workflows/components/CoreWorkflowIdentifierBar';
+import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
+import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -71,6 +72,10 @@ const CoreWorkflowShowContent = ({
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
   const isReadOnlyVersion = isDefined(requestedVersionId);
+  const { renameWorkflow } = useRenameCoreWorkflow({
+    coreWorkflowId,
+    currentName: record?.name,
+  });
 
   const resource = (
     <RecordShowPageResourceEffect
@@ -143,9 +148,11 @@ const CoreWorkflowShowContent = ({
         }
       >
         <StyledContainer>
-          <CoreWorkflowIdentifierBar
-            coreWorkflowId={coreWorkflowId}
+          <CoreObjectIdentifierBar
+            recordId={coreWorkflowId}
             name={record.name}
+            namePlaceholder={t`Workflow name`}
+            onRename={renameWorkflow}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor

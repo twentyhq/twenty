@@ -1,11 +1,9 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
@@ -29,26 +27,26 @@ const StyledBar = styled.div`
   width: 100%;
 `;
 
-type CoreWorkflowIdentifierBarProps = {
-  coreWorkflowId: string;
+type CoreObjectIdentifierBarProps = {
+  recordId: string;
   name: string | null | undefined;
+  namePlaceholder: string;
+  onRename: (name: string) => Promise<boolean>;
 };
 
-export const CoreWorkflowIdentifierBar = ({
-  coreWorkflowId,
+export const CoreObjectIdentifierBar = ({
+  recordId,
   name,
-}: CoreWorkflowIdentifierBarProps) => {
+  namePlaceholder,
+  onRename,
+}: CoreObjectIdentifierBarProps) => {
   const [editedName, setEditedName] = useState<string>();
-  const { renameWorkflow } = useRenameCoreWorkflow({
-    coreWorkflowId,
-    currentName: name,
-  });
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
   const recordIdentifier = useAtomFamilySelectorValue(
     recordStoreIdentifierFamilySelector,
-    { recordId: coreWorkflowId, allowRequestsToTwentyIcons },
+    { recordId, allowRequestsToTwentyIcons },
   );
 
   const saveName = async () => {
@@ -56,7 +54,7 @@ export const CoreWorkflowIdentifierBar = ({
       return;
     }
 
-    const didSave = await renameWorkflow(editedName);
+    const didSave = await onRename(editedName);
 
     if (didSave) {
       setEditedName((currentName) =>
@@ -71,16 +69,16 @@ export const CoreWorkflowIdentifierBar = ({
         fontSize="lg"
         avatar={{
           src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
-          colorSeed: coreWorkflowId,
+          colorSeed: recordId,
           name: recordIdentifier?.name ?? '',
           shape: recordIdentifier?.avatarShape ?? 'circle',
         }}
         title={
           <TitleInput
-            instanceId={`core-workflow-name-${coreWorkflowId}`}
+            instanceId={`core-object-name-${recordId}`}
             sizeVariant="sm"
             value={editedName ?? name ?? ''}
-            placeholder={t`Workflow name`}
+            placeholder={namePlaceholder}
             onChange={setEditedName}
             onEnter={saveName}
             onEscape={() => setEditedName(undefined)}
@@ -90,7 +88,7 @@ export const CoreWorkflowIdentifierBar = ({
           />
         }
       />
-      <RecordIdentifierBarCreatedAt objectRecordId={coreWorkflowId} />
+      <RecordIdentifierBarCreatedAt objectRecordId={recordId} />
     </StyledBar>
   );
 };
