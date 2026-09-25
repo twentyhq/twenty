@@ -1,13 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
-import { IconCalendarEvent, IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { IconRefresh } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -30,7 +28,6 @@ import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogC
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -79,8 +76,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const timeZone = useLogConsoleTimeZone();
   const { dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
-  const { retentionInDays, retentionDescription } =
-    useLogConsoleRetention(source);
+  const { retentionInDays } = useLogConsoleRetention(source);
 
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
@@ -175,17 +171,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const isInitialLoading = loading && records.length === 0;
 
-  const longerTimeRange = (['7d', '30d'] as const).find((preset) =>
-    isBefore(
-      getLogConsoleTimeRangeBounds({
-        timeRange: preset,
-        now: refreshedAt,
-        timeZone,
-      }).start,
-      dateRange.start,
-    ),
-  );
-
   const renderLogs = () => {
     if (isDefined(error)) {
       return (
@@ -197,27 +182,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
     if (!loading && records.length === 0) {
       return (
-        <EmptyState.Root>
-          <EmptyState.Content>
-            <EmptyState.Title>{t`No logs in this time range`}</EmptyState.Title>
-            <EmptyState.Description>
-              {isDefined(longerTimeRange)
-                ? t`Try a longer time range.`
-                : retentionDescription}
-            </EmptyState.Description>
-          </EmptyState.Content>
-          {isDefined(longerTimeRange) && (
-            <Button
-              variant="outline"
-              startIcon={<IconCalendarEvent />}
-              onClick={() => changeTimeRange(longerTimeRange)}
-            >
-              {longerTimeRange === '7d'
-                ? t`Search last 7 days`
-                : t`Search last 30 days`}
-            </Button>
-          )}
-        </EmptyState.Root>
+        <SettingsEmptyPlaceholder>{t`No event logs found`}</SettingsEmptyPlaceholder>
       );
     }
 

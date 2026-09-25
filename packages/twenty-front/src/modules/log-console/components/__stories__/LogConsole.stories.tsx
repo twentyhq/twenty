@@ -354,12 +354,7 @@ export const EmptyInRange: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText(
-      'No logs in this time range',
-      {},
-      { timeout: 5000 },
-    );
-    await canvas.findByRole('button', { name: 'Search last 7 days' });
+    await canvas.findByText('No event logs found', {}, { timeout: 5000 });
   },
 };
 
