@@ -120,6 +120,12 @@ describe('createRecordExportConnection', () => {
         .mockImplementation(() => {});
       const finished = createRecordExportConnection().exportRecords({ input });
 
+      expect(createClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: 'https://workspace.example.test/twenty/metadata',
+          credentials: 'include',
+        }),
+      );
       update({
         progress: 100,
         downloadUrl: `${downloadPath}?token=signed%2Btoken%2Fvalue%3D&expires=123`,
