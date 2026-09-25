@@ -46,6 +46,7 @@ export const IconButton = ({
 
   return (
     <Tooltip
+      key={isDisabled ? 'disabled' : 'enabled'}
       content={tooltip}
       delay={tooltipDelay}
       side={tooltipPlace}

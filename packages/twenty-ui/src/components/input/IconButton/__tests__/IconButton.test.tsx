@@ -78,4 +78,29 @@ describe('IconButton', () => {
 
     expect(onClick).not.toHaveBeenCalled();
   });
+
+  it('shows the tooltip on hover after loading ends', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <IconButton
+        aria-label="Search"
+        tooltip="Search records"
+        loading
+        tooltipDelay={0}
+      >
+        <IconSearch />
+      </IconButton>,
+    );
+
+    rerender(
+      <IconButton aria-label="Search" tooltip="Search records" tooltipDelay={0}>
+        <IconSearch />
+      </IconButton>,
+    );
+    await user.hover(screen.getByRole('button', { name: 'Search' }));
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Search records',
+    );
+  });
 });
