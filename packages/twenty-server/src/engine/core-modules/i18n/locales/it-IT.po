@@ -6966,13 +6966,13 @@ msgstr "Esiste già una funzione logica con lo stesso identificatore universale"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Make Private"
-msgstr ""
+msgstr "Rendi privata"
 
 #. js-lingui-id: OT90yl
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
-msgstr ""
+msgstr "Rendi privato il flusso di lavoro"
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -10506,13 +10506,13 @@ msgstr "Il titolo della voce del menu delle impostazioni è obbligatorio"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Share with Workspace"
-msgstr ""
+msgstr "Condividi con lo spazio di lavoro"
 
 #. js-lingui-id: tVHa8m
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Share Workflow with Workspace"
-msgstr ""
+msgstr "Condividi il flusso di lavoro con lo spazio di lavoro"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

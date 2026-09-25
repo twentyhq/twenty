@@ -6966,13 +6966,13 @@ msgstr "Logiikkafunktio, jolla on sama universaalitunniste, on jo olemassa"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Make Private"
-msgstr ""
+msgstr "Muuta yksityiseksi"
 
 #. js-lingui-id: OT90yl
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
-msgstr ""
+msgstr "Tee työnkulusta yksityinen"
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -10506,13 +10506,13 @@ msgstr "Asetusten valikkokohdan otsikko vaaditaan"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Share with Workspace"
-msgstr ""
+msgstr "Jaa työtilan kanssa"
 
 #. js-lingui-id: tVHa8m
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Share Workflow with Workspace"
-msgstr ""
+msgstr "Jaa työnkulku työtilan kanssa"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
