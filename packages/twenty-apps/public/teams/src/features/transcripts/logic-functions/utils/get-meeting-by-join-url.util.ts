@@ -15,9 +15,7 @@ export const getMeetingByJoinUrl = async ({
   });
 
   try {
-    const page = await graphFetchJson<
-      GraphCollectionPage<GraphOnlineMeeting>
-    >({
+    const page = await graphFetchJson<GraphCollectionPage<GraphOnlineMeeting>>({
       accessToken,
       url: `me/onlineMeetings?${query}`,
     });
