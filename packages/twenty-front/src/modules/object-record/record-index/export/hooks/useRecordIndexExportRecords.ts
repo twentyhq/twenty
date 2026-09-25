@@ -165,6 +165,8 @@ export const useRecordIndexExportRecords = ({
   pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   viewType,
+  onMoreRecords,
+  abortSignal,
 }: UseExportTableDataOptions) => {
   const { processRecordsForCSVExport } = useExportProcessRecordsForCSV(
     objectMetadataItem.nameSingular,
@@ -194,6 +196,8 @@ export const useRecordIndexExportRecords = ({
     recordIndexId,
     callback: downloadCsv,
     viewType,
+    onMoreRecords,
+    abortSignal,
   });
 
   return { progress, download };

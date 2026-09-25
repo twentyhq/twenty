@@ -7,6 +7,8 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
+const mockIndexDownload = jest.fn().mockResolvedValue(undefined);
+let mockHasMoreRecords = false;
 const mockAsyncDownload = jest.fn().mockResolvedValue(undefined);
 const mockCancelAsyncDownload = jest.fn();
 const mockSingleRecordDownload = jest.fn().mockResolvedValue(undefined);
@@ -29,6 +31,23 @@ jest.mock(
     useRecordIndexAsyncExportRecords: () => ({
       download: mockAsyncDownload,
       cancel: mockCancelAsyncDownload,
+    }),
+  }),
+);
+jest.mock(
+  '@/object-record/record-index/export/hooks/useRecordIndexExportRecords',
+  () => ({
+    useRecordIndexExportRecords: ({
+      onMoreRecords,
+    }: {
+      onMoreRecords: () => Promise<void>;
+    }) => ({
+      download: async () => {
+        await mockIndexDownload();
+        if (mockHasMoreRecords) {
+          await onMoreRecords();
+        }
+      },
     }),
   }),
 );
@@ -63,9 +82,18 @@ beforeEach(() => {
   jest.useRealTimers();
   jest.clearAllMocks();
   mockRecordIndexId = 'record-index';
+  mockHasMoreRecords = false;
 });
 
-it('exports index records asynchronously without workspace feature flags', async () => {
+it('exports a single batch without starting an async export', async () => {
+  renderExport();
+  await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
+  expect(mockAsyncDownload).not.toHaveBeenCalled();
+  expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+});
+
+it('exports additional pages asynchronously without workspace feature flags', async () => {
+  mockHasMoreRecords = true;
   renderExport();
   await waitFor(() => expect(mockAsyncDownload).toHaveBeenCalledTimes(1));
   expect(mockSingleRecordDownload).not.toHaveBeenCalled();
@@ -78,4 +106,5 @@ it('keeps single-record export on the show page', async () => {
     expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
   );
   expect(mockAsyncDownload).not.toHaveBeenCalled();
+  expect(mockIndexDownload).not.toHaveBeenCalled();
 });

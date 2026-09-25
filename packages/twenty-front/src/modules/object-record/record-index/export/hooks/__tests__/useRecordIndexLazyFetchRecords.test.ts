@@ -81,13 +81,16 @@ describe('useRecordData', () => {
     (item) => item.nameSingular === 'person',
   );
   let mockFetchAllRecords: jest.Mock;
+  let mockFetchFirstPage: jest.Mock;
 
   beforeEach(() => {
     mockFetchAllRecords = jest.fn();
+    mockFetchFirstPage = jest.fn();
     (useLazyFetchAllRecords as jest.Mock).mockReturnValue({
       progress: 100,
       isDownloading: false,
       fetchAllRecords: mockFetchAllRecords, // Mock the function
+      fetchFirstPage: mockFetchFirstPage,
     });
   });
   if (!objectMetadataItem) {
@@ -153,6 +156,89 @@ describe('useRecordData', () => {
         expect(callback).toHaveBeenCalledWith([mockPerson], []);
       });
     });
+  });
+
+  describe('single-page exports', () => {
+    const callback = jest.fn();
+    const onMoreRecords = jest.fn();
+    const renderExport = (abortSignal?: AbortSignal) =>
+      renderHook(
+        () =>
+          useRecordIndexLazyFetchRecords({
+            recordIndexId,
+            objectMetadataItem,
+            callback,
+            delayMs: 0,
+            onMoreRecords,
+            abortSignal,
+          }),
+        { wrapper: Wrapper },
+      );
+
+    beforeEach(() => jest.clearAllMocks());
+
+    it.each([0, 20, 200, 201])(
+      'exports %i records using the appropriate path',
+      async (count) => {
+        const records = Array.from(
+          { length: Math.min(count, 200) },
+          (_, index) => ({
+            ...mockPerson,
+            id: String(index),
+          }),
+        );
+        mockFetchFirstPage.mockResolvedValue({
+          records,
+          totalCount: count,
+          hasNextPage: count > 200,
+        });
+        const { result } = renderExport();
+
+        await act(() => result.current.getTableData());
+
+        if (count > 0 && count <= 200) {
+          expect(callback).toHaveBeenCalledWith(records, []);
+        } else {
+          expect(callback).not.toHaveBeenCalled();
+        }
+        expect(onMoreRecords).toHaveBeenCalledTimes(count > 200 ? 1 : 0);
+        expect(mockFetchAllRecords).not.toHaveBeenCalled();
+        expect(useLazyFetchAllRecords).toHaveBeenLastCalledWith(
+          expect.objectContaining({ limit: 200, fetchPolicy: 'network-only' }),
+        );
+      },
+    );
+
+    it('propagates a failed first-page query without starting an export', async () => {
+      mockFetchFirstPage.mockResolvedValue({
+        error: new Error('Query failed'),
+      });
+      const { result } = renderExport();
+
+      await expect(result.current.getTableData()).rejects.toThrow(
+        'Query failed',
+      );
+
+      expect(callback).not.toHaveBeenCalled();
+      expect(onMoreRecords).not.toHaveBeenCalled();
+    });
+
+    it.each([false, true])(
+      'ignores a first page received after cancellation, hasNextPage=%s',
+      async (hasNextPage) => {
+        const abortController = new AbortController();
+        mockFetchFirstPage.mockImplementation(async () => {
+          abortController.abort();
+          return { records: [mockPerson], hasNextPage };
+        });
+        const { result } = renderExport(abortController.signal);
+
+        await act(() => result.current.getTableData());
+
+        expect(callback).not.toHaveBeenCalled();
+        expect(onMoreRecords).not.toHaveBeenCalled();
+      },
+    );
   });
 
   describe('utils', () => {

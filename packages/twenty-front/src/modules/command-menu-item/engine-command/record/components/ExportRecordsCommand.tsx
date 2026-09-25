@@ -1,5 +1,6 @@
 import { RecordExportConnectionEffect } from '@/record-export/components/RecordExportConnectionEffect';
 import { useRecordIndexAsyncExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexAsyncExportRecords';
+import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
@@ -10,8 +11,9 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
+import { useCallback, useState } from 'react';
 
-const ExportAsyncIndexRecordsContent = ({
+const ExportIndexRecordsContent = ({
   objectMetadataItem,
   recordIndexId,
   onProgress,
@@ -20,11 +22,26 @@ const ExportAsyncIndexRecordsContent = ({
   recordIndexId: string;
   onProgress: (progress: number) => void;
 }) => {
-  const { download, cancel } = useRecordIndexAsyncExportRecords({
+  const [abortController] = useState(() => new AbortController());
+  const { download: downloadAsync, cancel: cancelAsync } =
+    useRecordIndexAsyncExportRecords({
+      objectMetadataItem,
+      recordIndexId,
+      onProgress,
+    });
+  const { download } = useRecordIndexExportRecords({
     objectMetadataItem,
     recordIndexId,
-    onProgress,
+    filename: `${objectMetadataItem.nameSingular}.csv`,
+    delayMs: 0,
+    onMoreRecords: downloadAsync,
+    abortSignal: abortController.signal,
   });
+  const cancel = useCallback(() => {
+    abortController.abort();
+    cancelAsync();
+  }, [abortController, cancelAsync]);
+
   return (
     <>
       <RecordExportConnectionEffect cancel={cancel} />
@@ -89,7 +106,7 @@ export const ExportRecordsCommand = () => {
     <ViewComponentInstanceContext.Provider
       value={{ instanceId: recordIndexId }}
     >
-      <ExportAsyncIndexRecordsContent
+      <ExportIndexRecordsContent
         objectMetadataItem={objectMetadataItem}
         recordIndexId={recordIndexId}
         onProgress={setCommandMenuItemProgress}
