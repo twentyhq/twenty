@@ -30,6 +30,20 @@ export class ViewEntityLookupService {
         );
       }
 
+      case 'viewFieldGroup': {
+        const { flatViewFieldGroupMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewFieldGroupMaps'] },
+          );
+
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewFieldGroupMaps,
+          })?.viewId ?? null
+        );
+      }
+
       case 'viewFilter': {
         const { flatViewFilterMaps } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
