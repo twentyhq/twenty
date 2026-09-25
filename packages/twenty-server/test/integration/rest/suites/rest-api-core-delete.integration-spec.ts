@@ -2,7 +2,7 @@ import {
   NOT_EXISTING_TEST_PERSON_ID,
   TEST_PERSON_1_ID,
 } from 'test/integration/constants/test-person-ids.constants';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('Core REST API Delete One endpoint', () => {
@@ -11,7 +11,7 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   beforeEach(async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       body: {
@@ -21,7 +21,7 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   it('should delete one person', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'delete',
       path: `/people/${TEST_PERSON_1_ID}`,
     })
@@ -32,7 +32,7 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   it('should return a EntityNotFoundError when trying to delete a non-existing person', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'delete',
       path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
     });
@@ -49,7 +49,7 @@ describe('Core REST API Delete Many endpoint', () => {
   });
 
   it('should require filters for bulk delete operations', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'delete',
       path: `/people?soft_delete=true`,
     });
@@ -68,7 +68,7 @@ describe('Core REST API Destroy Many endpoint', () => {
   });
 
   it('should require filters for bulk destroy operations', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'delete',
       path: `/people?soft_delete=false`,
     });

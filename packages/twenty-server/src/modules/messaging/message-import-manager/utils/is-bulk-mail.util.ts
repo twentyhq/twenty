@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type MessageHeader } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageHeader } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 const BULK_LIST_HEADER_NAMES = ['list-unsubscribe', 'list-id'];
 const BULK_PRECEDENCE_VALUES = ['bulk', 'list', 'junk'];

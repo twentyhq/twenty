@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -11,7 +11,7 @@ const findWorkspaceMembers = async (
   workspaceMemberId: string,
   gqlFields: string,
 ): Promise<Record<string, unknown>[]> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'workspaceMember',
       objectMetadataPluralName: 'workspaceMembers',
@@ -47,7 +47,7 @@ export const workspaceMemberExists = async (
 };
 
 export const readWorkspaceDisplayName = async (): Promise<string> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query CurrentWorkspace {
         currentWorkspace {
@@ -64,7 +64,7 @@ export const readWorkspaceDisplayName = async (): Promise<string> => {
 
 // A refused workspace-scoped blocklist entry must leave the count untouched.
 export const countWorkspaceBlocklistEntries = async (): Promise<number> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'blocklist',
       objectMetadataPluralName: 'blocklists',
@@ -83,7 +83,7 @@ export const countWorkspaceBlocklistEntries = async (): Promise<number> => {
 export const workspaceBlocklistEntryExists = async (
   blocklistEntryId: string,
 ): Promise<boolean> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'blocklist',
       objectMetadataPluralName: 'blocklists',
