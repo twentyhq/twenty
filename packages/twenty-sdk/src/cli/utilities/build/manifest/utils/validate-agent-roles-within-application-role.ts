@@ -10,6 +10,18 @@ import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+type ObjectDescriptor = Pick<
+  ObjectManifest,
+  'universalIdentifier' | 'nameSingular'
+>;
+
+type PermissionFlagDescriptor = Pick<
+  PermissionFlagManifest,
+  'universalIdentifier' | 'key' | 'permissionType'
+>;
+
+type AgentNamesByRoleUniversalIdentifier = Map<string, string[]>;
+
 const OBJECT_ACTION_LABELS = {
   canReadObjectRecords: 'read',
   canUpdateObjectRecords: 'update',
@@ -37,11 +49,8 @@ const describeGrant = ({
   permissionFlags,
 }: {
   grant: RoleManifestGrant;
-  objects: Pick<ObjectManifest, 'universalIdentifier' | 'nameSingular'>[];
-  permissionFlags: Pick<
-    PermissionFlagManifest,
-    'universalIdentifier' | 'key' | 'permissionType'
-  >[];
+  objects: ObjectDescriptor[];
+  permissionFlags: PermissionFlagDescriptor[];
 }): string => {
   const describeObject = (objectUniversalIdentifier: string) =>
     objects.find(
@@ -80,38 +89,18 @@ const describeGrant = ({
   }
 };
 
-export const validateAgentRolesWithinApplicationRole = ({
+const describeAgentList = (agentNames: string[]): string =>
+  agentNames.map((name) => `"${name}"`).join(', ');
+
+const groupAgentNamesByRoleUniversalIdentifier = ({
   agents,
-  roles,
-  objects,
-  permissionFlags,
   defaultRoleUniversalIdentifier,
 }: {
   agents: AgentManifest[];
-  roles: RoleManifest[];
-  objects: Pick<ObjectManifest, 'universalIdentifier' | 'nameSingular'>[];
-  permissionFlags: Pick<
-    PermissionFlagManifest,
-    'universalIdentifier' | 'key' | 'permissionType'
-  >[];
   defaultRoleUniversalIdentifier: string;
-}): string[] => {
-  const errors: string[] = [];
-  const applicationRole = roles.find(
-    (role) => role.universalIdentifier === defaultRoleUniversalIdentifier,
-  );
-
-  if (!isDefined(applicationRole)) {
-    errors.push(
-      `Application default role "${defaultRoleUniversalIdentifier}" is not defined by this application.`,
-    );
-  }
-
-  const toolPermissionFlagUniversalIdentifiers = permissionFlags
-    .filter((flag) => (flag.permissionType ?? 'tool') === 'tool')
-    .map((flag) => flag.universalIdentifier);
-
-  const agentNamesByRoleUniversalIdentifier = new Map<string, string[]>();
+}): AgentNamesByRoleUniversalIdentifier => {
+  const agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier =
+    new Map();
 
   for (const agent of agents) {
     if (
@@ -129,44 +118,128 @@ export const validateAgentRolesWithinApplicationRole = ({
     ]);
   }
 
-  for (const [
-    roleUniversalIdentifier,
-    agentNames,
-  ] of agentNamesByRoleUniversalIdentifier) {
-    const agentRole = roles.find(
-      (role) => role.universalIdentifier === roleUniversalIdentifier,
+  return agentNamesByRoleUniversalIdentifier;
+};
+
+const validateApplicationDefaultRoleIsDefined = ({
+  applicationRole,
+  defaultRoleUniversalIdentifier,
+}: {
+  applicationRole: RoleManifest | undefined;
+  defaultRoleUniversalIdentifier: string;
+}): string[] =>
+  isDefined(applicationRole)
+    ? []
+    : [
+        `Application default role "${defaultRoleUniversalIdentifier}" is not defined by this application.`,
+      ];
+
+const validateAgentRolesAreDefined = ({
+  agentNamesByRoleUniversalIdentifier,
+  roles,
+}: {
+  agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
+  roles: RoleManifest[];
+}): string[] =>
+  [...agentNamesByRoleUniversalIdentifier]
+    .filter(
+      ([roleUniversalIdentifier]) =>
+        !roles.some(
+          (role) => role.universalIdentifier === roleUniversalIdentifier,
+        ),
+    )
+    .map(
+      ([roleUniversalIdentifier, agentNames]) =>
+        `Agent ${describeAgentList(agentNames)} references role "${roleUniversalIdentifier}", which is not defined by this application.`,
     );
-    const agentList = agentNames.map((name) => `"${name}"`).join(', ');
 
-    if (!isDefined(agentRole)) {
-      errors.push(
-        `Agent ${agentList} references role "${roleUniversalIdentifier}", which is not defined by this application.`,
+const validateAgentRolesAreCoveredByApplicationRole = ({
+  agentNamesByRoleUniversalIdentifier,
+  applicationRole,
+  roles,
+  objects,
+  permissionFlags,
+}: {
+  agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
+  applicationRole: RoleManifest;
+  roles: RoleManifest[];
+  objects: ObjectDescriptor[];
+  permissionFlags: PermissionFlagDescriptor[];
+}): string[] => {
+  const toolPermissionFlagUniversalIdentifiers = permissionFlags
+    .filter((flag) => (flag.permissionType ?? 'tool') === 'tool')
+    .map((flag) => flag.universalIdentifier);
+
+  return [...agentNamesByRoleUniversalIdentifier].flatMap(
+    ([roleUniversalIdentifier, agentNames]) => {
+      const agentRole = roles.find(
+        (role) => role.universalIdentifier === roleUniversalIdentifier,
       );
-      continue;
-    }
 
-    if (!isDefined(applicationRole)) {
-      continue;
-    }
+      if (!isDefined(agentRole)) {
+        return [];
+      }
 
-    const uncoveredGrants = getRoleManifestGrantsNotCoveredBy({
-      role: agentRole,
-      superset: applicationRole,
-      toolPermissionFlagUniversalIdentifiers,
+      const uncoveredGrants = getRoleManifestGrantsNotCoveredBy({
+        role: agentRole,
+        superset: applicationRole,
+        toolPermissionFlagUniversalIdentifiers,
+      });
+
+      if (uncoveredGrants.length === 0) {
+        return [];
+      }
+
+      const grantList = uncoveredGrants
+        .map((grant) => describeGrant({ grant, objects, permissionFlags }))
+        .join(', ');
+
+      return [
+        `Role "${agentRole.label}" used by agent ${describeAgentList(agentNames)} grants more than the application role "${applicationRole.label}": ${grantList}. The application role must cover every permission an agent role grants.`,
+      ];
+    },
+  );
+};
+
+export const validateAgentRolesWithinApplicationRole = ({
+  agents,
+  roles,
+  objects,
+  permissionFlags,
+  defaultRoleUniversalIdentifier,
+}: {
+  agents: AgentManifest[];
+  roles: RoleManifest[];
+  objects: ObjectDescriptor[];
+  permissionFlags: PermissionFlagDescriptor[];
+  defaultRoleUniversalIdentifier: string;
+}): string[] => {
+  const applicationRole = roles.find(
+    (role) => role.universalIdentifier === defaultRoleUniversalIdentifier,
+  );
+  const agentNamesByRoleUniversalIdentifier =
+    groupAgentNamesByRoleUniversalIdentifier({
+      agents,
+      defaultRoleUniversalIdentifier,
     });
 
-    if (uncoveredGrants.length === 0) {
-      continue;
-    }
-
-    const grantList = uncoveredGrants
-      .map((grant) => describeGrant({ grant, objects, permissionFlags }))
-      .join(', ');
-
-    errors.push(
-      `Role "${agentRole.label}" used by agent ${agentList} grants more than the application role "${applicationRole.label}": ${grantList}. The application role must cover every permission an agent role grants.`,
-    );
-  }
-
-  return errors;
+  return [
+    ...validateApplicationDefaultRoleIsDefined({
+      applicationRole,
+      defaultRoleUniversalIdentifier,
+    }),
+    ...validateAgentRolesAreDefined({
+      agentNamesByRoleUniversalIdentifier,
+      roles,
+    }),
+    ...(isDefined(applicationRole)
+      ? validateAgentRolesAreCoveredByApplicationRole({
+          agentNamesByRoleUniversalIdentifier,
+          applicationRole,
+          roles,
+          objects,
+          permissionFlags,
+        })
+      : []),
+  ];
 };
