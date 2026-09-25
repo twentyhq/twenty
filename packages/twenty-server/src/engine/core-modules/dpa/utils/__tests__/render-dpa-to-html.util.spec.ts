@@ -2,7 +2,7 @@ import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import {
   type DpaResolveContext,
   type ResolvedDpa,
-} from 'src/engine/core-modules/dpa/types/dpa.types';
+} from 'src/engine/core-modules/dpa/types/dpa.type';
 import { resolveDpa } from 'src/engine/core-modules/dpa/utils/resolve-dpa.util';
 import { renderDpaToHtml } from 'src/engine/core-modules/dpa/utils/render-dpa-to-html.util';
 

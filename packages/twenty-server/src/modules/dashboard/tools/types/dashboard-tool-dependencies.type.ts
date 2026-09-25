@@ -5,7 +5,7 @@ import type { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-l
 import type { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export type DashboardToolDependencies = {
   pageLayoutService: PageLayoutService;

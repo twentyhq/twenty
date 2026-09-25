@@ -1,7 +1,7 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { randomUUID } from 'node:crypto';
 
-import { type LinkChatThreadsToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790314765778-link-chat-threads-to-workspace-members.command';
+import { type LinkChatThreadsToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790338657365-link-chat-threads-to-workspace-members.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -9,7 +9,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const THREAD_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread"`;
 
-describe('2-43 workspace command 1790314765778 - LinkChatThreadsToWorkspaceMembersCommand (integration)', () => {
+describe('2-43 workspace command 1790338657365 - LinkChatThreadsToWorkspaceMembersCommand (integration)', () => {
   const janeThreadId = randomUUID();
   const departedThreadId = randomUUID();
   const departedUserWorkspaceId = randomUUID();

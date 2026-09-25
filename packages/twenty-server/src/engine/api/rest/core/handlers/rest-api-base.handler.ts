@@ -12,7 +12,7 @@ import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-grou
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';

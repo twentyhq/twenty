@@ -22,7 +22,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import {
   type FlatUpdateObjectAction,
   type UniversalUpdateObjectAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action.type';
 import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,

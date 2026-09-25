@@ -4,7 +4,7 @@ import {
   type BaseOutputSchemaV2,
   type Leaf,
   type Node,
-} from './base-output-schema.type';
+} from './BaseOutputSchema';
 
 export type RecordFieldLeaf = {
   isLeaf: true;

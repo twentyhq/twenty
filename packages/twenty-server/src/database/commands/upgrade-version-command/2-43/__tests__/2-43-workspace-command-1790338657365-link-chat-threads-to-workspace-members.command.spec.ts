@@ -4,7 +4,7 @@ import { type DataSource } from 'typeorm';
 import { type AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { LinkChatThreadsToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790314765778-link-chat-threads-to-workspace-members.command';
+import { LinkChatThreadsToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790338657365-link-chat-threads-to-workspace-members.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';

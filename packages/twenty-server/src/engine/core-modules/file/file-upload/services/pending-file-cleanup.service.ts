@@ -14,7 +14,7 @@ import {
   RECORD_EXPORT_FILE_MAX_AGE_MS,
 } from 'src/engine/core-modules/file/file-upload/crons/constants/pending-file-cleanup.constants';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 
 @Injectable()

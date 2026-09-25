@@ -3,7 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 import { type OrderByWithGroupBy } from 'twenty-shared/types';
 
 import { RestInputRequestParserExceptionCode } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 
 export const parseOrderByWithGroupByRestRequest = (
   request: AuthenticatedRequest,
