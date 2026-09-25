@@ -1,3 +1,4 @@
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
@@ -7,6 +8,7 @@ import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules
 export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   messages: EntityRelation<AgentMessageWorkspaceEntity[]>;
   turns: EntityRelation<AgentTurnWorkspaceEntity[]>;
+  attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
 
   archivedAt: string | null;
   userWorkspaceId: string;

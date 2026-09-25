@@ -9,6 +9,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
+import { computeSystemMorphTargetFieldLabel } from 'src/engine/metadata-modules/object-metadata/utils/compute-system-morph-target-field-label.util';
 import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
@@ -107,7 +108,10 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
             targetObjectMetadataId:
               targetFlatObjectMetadata.universalIdentifier,
             type: RelationType.ONE_TO_MANY,
-            targetFieldLabel: capitalize(sourceFlatObjectMetadata.nameSingular),
+            targetFieldLabel: computeSystemMorphTargetFieldLabel({
+              morphId,
+              targetObjectNameSingular: sourceFlatObjectMetadata.nameSingular,
+            }),
             targetFieldIcon: reverseFieldIcon,
           },
         },

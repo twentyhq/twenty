@@ -539,6 +539,7 @@ export class ObjectRecordEventPublisher {
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   }): RowAccessPolicySubject {
     return {
+      isSystemContext: false,
       objectsPermissions,
       principalIds: [
         EVERYONE_PRINCIPAL_ID,

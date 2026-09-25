@@ -25,6 +25,10 @@ export const FIELD_WIDGET_CONFIG: Partial<
     availableDisplayModes: [FieldDisplayMode.FIELD, FieldDisplayMode.CARD],
     defaultDisplayMode: FieldDisplayMode.CARD,
   },
+  [FieldMetadataType.FILES]: {
+    availableDisplayModes: [FieldDisplayMode.FIELD, FieldDisplayMode.CARD],
+    defaultDisplayMode: FieldDisplayMode.FIELD,
+  },
   [FieldMetadataType.RICH_TEXT]: {
     availableDisplayModes: [FieldDisplayMode.FIELD, FieldDisplayMode.EDITOR],
     defaultDisplayMode: FieldDisplayMode.EDITOR,
