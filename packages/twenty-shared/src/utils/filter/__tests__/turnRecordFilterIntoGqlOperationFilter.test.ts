@@ -717,7 +717,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toEqual({ metadata: { like: '%test%' } });
+      expect(result).toEqual({ metadata: { ilike: '%test%' } });
     });
 
     it('should handle DOES_NOT_CONTAIN operand', () => {
@@ -731,7 +731,12 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toEqual({ not: { metadata: { like: '%test%' } } });
+      expect(result).toEqual({
+        or: [
+          { not: { metadata: { ilike: '%test%' } } },
+          { metadata: { is: 'NULL' } },
+        ],
+      });
     });
   });
 

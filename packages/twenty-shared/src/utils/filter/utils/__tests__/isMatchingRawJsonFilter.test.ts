@@ -43,13 +43,69 @@ describe('isMatchingRawJsonFilter', () => {
       ).toBe(false);
     });
 
-    it('should match across lines', () => {
+    it('should match against the Postgres jsonb text representation', () => {
+      const value = { tags: ['a', 'b'], name: 'Acme', ok: true };
+
       expect(
         isMatchingRawJsonFilter({
-          rawJsonFilter: { like: '%value%' },
-          value: { key: 'value' } as any,
+          rawJsonFilter: { like: '{"ok": true, "name": "Acme", %}' },
+          value,
         }),
       ).toBe(true);
+
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%"tags": ["a", "b"]%' },
+          value,
+        }),
+      ).toBe(true);
+    });
+
+    it('should be case sensitive', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%acme%' },
+          value: { name: 'Acme' },
+        }),
+      ).toBe(false);
+    });
+
+    it('should match escaped characters as Postgres renders them', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%say \\\\"hi\\\\"%' },
+          value: { note: 'say "hi"' },
+        }),
+      ).toBe(true);
+    });
+
+    it('should not match a null value', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%null%' },
+          value: null,
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('ilike', () => {
+    it('should match case insensitively', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { ilike: '%acme%' },
+          value: { name: 'Acme' },
+        }),
+      ).toBe(true);
+    });
+
+    it('should not match a null value', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { ilike: '%null%' },
+          value: null,
+        }),
+      ).toBe(false);
     });
   });
 

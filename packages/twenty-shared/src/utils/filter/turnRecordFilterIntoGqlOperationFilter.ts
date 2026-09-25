@@ -317,16 +317,23 @@ const buildDirectFieldGqlOperationFilter = ({
         case RecordFilterOperand.CONTAINS:
           return {
             [fieldMetadataItem.name]: {
-              like: `%${recordFilter.value}%`,
+              ilike: `%${recordFilter.value}%`,
             } as RawJsonFilter,
           };
         case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
-            not: {
-              [fieldMetadataItem.name]: {
-                like: `%${recordFilter.value}%`,
-              } as RawJsonFilter,
-            },
+            or: [
+              {
+                not: {
+                  [fieldMetadataItem.name]: {
+                    ilike: `%${recordFilter.value}%`,
+                  } as RawJsonFilter,
+                },
+              },
+              {
+                [fieldMetadataItem.name]: { is: 'NULL' } as RawJsonFilter,
+              },
+            ],
           };
         default:
           throw new Error(
