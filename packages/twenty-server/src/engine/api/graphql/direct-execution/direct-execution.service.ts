@@ -206,7 +206,7 @@ export class DirectExecutionService {
     );
   }
 
-  recordOperationMetrics(result: DirectExecutionResult): void {
+  recordOperationMetrics(result: Pick<DirectExecutionResult, 'errors'>): void {
     if (!isNonEmptyArray(result.errors)) {
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.GraphqlOperation200,
