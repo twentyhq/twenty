@@ -222,7 +222,7 @@ export const Empty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('No logs yet', {}, { timeout: 5000 });
+    await canvas.findByText('No event logs found', {}, { timeout: 5000 });
   },
 };
 
@@ -245,8 +245,11 @@ export const LoadError: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText("Couldn't load logs", {}, { timeout: 5000 });
-    await canvas.findByRole('button', { name: 'Try again' });
+    await canvas.findByText(
+      'Something went wrong while loading logs. Please try again.',
+      {},
+      { timeout: 5000 },
+    );
   },
 };
 

@@ -3,16 +3,14 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
-import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
-import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 
 const RECORDS_PER_PAGE = 100;
@@ -64,28 +62,15 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const renderLogs = () => {
     if (isDefined(error)) {
       return (
-        <ErrorState.Root>
-          <ErrorState.Content>
-            <ErrorState.Title>{t`Couldn't load logs`}</ErrorState.Title>
-          </ErrorState.Content>
-          <Button
-            variant="outline"
-            startIcon={<IconRefresh />}
-            onClick={refreshLogs}
-          >
-            {t`Try again`}
-          </Button>
-        </ErrorState.Root>
+        <SettingsEmptyPlaceholder>
+          {t`Something went wrong while loading logs. Please try again.`}
+        </SettingsEmptyPlaceholder>
       );
     }
 
     if (!loading && records.length === 0) {
       return (
-        <EmptyState.Root>
-          <EmptyState.Content>
-            <EmptyState.Title>{t`No logs yet`}</EmptyState.Title>
-          </EmptyState.Content>
-        </EmptyState.Root>
+        <SettingsEmptyPlaceholder>{t`No event logs found`}</SettingsEmptyPlaceholder>
       );
     }
 
