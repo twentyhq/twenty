@@ -538,6 +538,14 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const SettingsObjectTranslations = lazy(() =>
+  import('~/pages/settings/data-model/SettingsObjectTranslations').then(
+    (module) => ({
+      default: module.SettingsObjectTranslations,
+    }),
+  ),
+);
+
 const SettingsSecuritySsoIdentifyProvider = lazy(() =>
   import('~/pages/settings/security/SettingsSecuritySsoIdentifyProvider').then(
     (module) => ({
@@ -954,6 +962,16 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectFieldEdit}
         element={<SettingsObjectFieldEdit />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.ObjectTranslations}
+        element={<SettingsObjectTranslations />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.ObjectFieldTranslations}
+        element={<SettingsObjectTranslations />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
     </Route>
