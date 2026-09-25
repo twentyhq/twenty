@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -52,7 +53,7 @@ export class RenameCallRecordingTabsToTranscriptCommand extends ProvisionedWorks
       direction,
     });
 
-    if (pageLayoutTabsToUpdate.length === 0) {
+    if (!isNonEmptyArray(pageLayoutTabsToUpdate)) {
       return;
     }
 

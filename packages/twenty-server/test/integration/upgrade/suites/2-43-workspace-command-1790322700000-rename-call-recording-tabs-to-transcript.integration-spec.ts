@@ -1,6 +1,7 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790322700000-rename-call-recording-tabs-to-transcript.command';
@@ -45,15 +46,18 @@ describe('RenameCallRecordingTabsToTranscriptCommand (integration)', () => {
     workspaceCacheService.invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
       'flatPageLayoutTabMaps',
     ]);
-  const runCommand = (
-    options: { dryRun?: boolean } = {},
-    direction: 'up' | 'down' = 'up',
-  ) =>
+  const runCommand = ({
+    dryRun = false,
+    direction = 'up',
+  }: { dryRun?: boolean; direction?: 'up' | 'down' } = {}) =>
     workspaceOrmManager.executeInWorkspaceContext(
       () =>
         direction === 'up'
-          ? command.runOnWorkspace({ ...RUN_ON_WORKSPACE_ARGS, options })
-          : command.down({ ...RUN_ON_WORKSPACE_ARGS, options }),
+          ? command.runOnWorkspace({
+              ...RUN_ON_WORKSPACE_ARGS,
+              options: { dryRun },
+            })
+          : command.down({ ...RUN_ON_WORKSPACE_ARGS, options: { dryRun } }),
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     );
 
@@ -96,7 +100,7 @@ describe('RenameCallRecordingTabsToTranscriptCommand (integration)', () => {
         overrides: tab.overrides,
       });
     }
-    if (workspaceCacheService) {
+    if (isDefined(workspaceCacheService)) {
       await refreshCache();
     }
   });
@@ -162,10 +166,10 @@ describe('RenameCallRecordingTabsToTranscriptCommand (integration)', () => {
     await runCommand();
     const tabsAfterUp = await findTabs();
 
-    await runCommand({ dryRun: true }, 'down');
+    await runCommand({ dryRun: true, direction: 'down' });
     expect(await findTabs()).toEqual(tabsAfterUp);
 
-    await runCommand({}, 'down');
+    await runCommand({ direction: 'down' });
     expect(
       (await findTabs()).every(
         (tab) => tab.title === 'Call Recording' && tab.icon === 'IconVideo',
