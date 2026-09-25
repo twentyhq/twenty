@@ -30,15 +30,7 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import {
-  DeferredWorkspaceMigrationActionException,
-  DeferredWorkspaceMigrationActionExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
-import {
-  type DeferredWorkspaceMigrationAction,
-  type DeferredWorkspaceMigrationActionPayload,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
-import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
+import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import {
   WorkspaceMigrationActionRunnerContext,
@@ -153,24 +145,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   protected getDeferredAction(
     _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
-  ):
-    | Extract<
-        DeferredWorkspaceMigrationAction,
-        { actionHandlerKey: `${TActionType}_${TMetadataName}` }
-      >
-    | undefined {
+  ): DeferredWorkspaceMigrationAction | undefined {
     return undefined;
-  }
-
-  executeDeferredAction(
-    _args: DeferredWorkspaceMigrationActionExecutionArgs<
-      DeferredWorkspaceMigrationActionPayload<`${TActionType}_${TMetadataName}`>
-    >,
-  ): Promise<void> {
-    throw new DeferredWorkspaceMigrationActionException(
-      `${this.actionType}_${this.metadataName} does not implement deferred execution`,
-      DeferredWorkspaceMigrationActionExceptionCode.HANDLER_NOT_FOUND,
-    );
   }
 
   private optimisticallyApplyActionOnAllFlatEntityMaps({

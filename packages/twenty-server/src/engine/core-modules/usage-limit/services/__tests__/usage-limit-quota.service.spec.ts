@@ -78,6 +78,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   meter: 'creditsUsedMicro',
   limitValue: 1_000,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 
