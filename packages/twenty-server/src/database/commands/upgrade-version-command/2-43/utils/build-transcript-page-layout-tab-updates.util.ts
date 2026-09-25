@@ -1,15 +1,8 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { TRANSCRIPT_TAB_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-43/constants/transcript-tab-universal-identifiers.constant';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-
-const TRANSCRIPT_TAB_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .callRecording.universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
-    .callRecording.universalIdentifier,
-];
 
 const CALL_RECORDING_TAB_DEFAULTS = {
   title: 'Call Recording',

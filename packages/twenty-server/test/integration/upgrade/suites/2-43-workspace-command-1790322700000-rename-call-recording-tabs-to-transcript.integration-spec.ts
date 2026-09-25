@@ -1,10 +1,10 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790322700000-rename-call-recording-tabs-to-transcript.command';
+import { TRANSCRIPT_TAB_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-43/constants/transcript-tab-universal-identifiers.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -12,12 +12,6 @@ import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.ma
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const TRANSCRIPT_TAB_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .callRecording.universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
-    .callRecording.universalIdentifier,
-];
 const RUN_ON_WORKSPACE_ARGS = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
   options: {},
