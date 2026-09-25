@@ -8,9 +8,7 @@ import { isValidLocale } from '@/utils/validation/isValidLocale';
 
 // Maps language codes to full locale keys in APP_LOCALES
 // Example: 'fr' -> 'fr-FR', 'en' -> 'en'
-const languageToLocaleMap = Object.keys(APP_LOCALES).reduce<
-  Record<string, string>
->((map, locale) => {
+const languageToLocaleMap = Object.keys(APP_LOCALES).reduce((map, locale) => {
   const language = (locale.split('-')[0] ?? locale).toLowerCase();
 
   // Only add to the map if not already added or if the current locale is the source locale
@@ -43,8 +41,10 @@ export const normalizeLocale = (value: string | null): AppLocale => {
   const languageCode = value?.trim()
     ? (value.split('-')[0] ?? value).toLowerCase()
     : '';
-  if (languageToLocaleMap[languageCode]) {
-    return languageToLocaleMap[languageCode] as AppLocale;
+  const languageLocale = languageToLocaleMap.get(languageCode);
+
+  if (isDefined(languageLocale)) {
+    return languageLocale;
   }
 
   return SOURCE_LOCALE;
