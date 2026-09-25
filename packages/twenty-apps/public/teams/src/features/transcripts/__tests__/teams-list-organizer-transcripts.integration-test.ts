@@ -18,11 +18,19 @@ vi.mock('src/constants/feature-flags', () => ({
 }));
 
 const ROADMAP_JOIN_URL = 'https://teams.microsoft.com/l/meetup-join/roadmap';
+const WEEKLY_JOIN_URL = 'https://teams.microsoft.com/l/meetup-join/weekly';
 const requesterContext = { userWorkspaceId: TEAMS_TEST_USER_WORKSPACE_ID };
 const window = {
   startDateTime: '2026-09-01T00:00:00.000Z',
   endDateTime: '2026-09-19T00:00:00.000Z',
 };
+
+const occurrenceAt = (startDateTime: string) => ({
+  startDateTime,
+  endDateTime: new Date(
+    Date.parse(startDateTime) + 60 * 60 * 1_000,
+  ).toISOString(),
+});
 
 describe('List My Teams Transcripts', () => {
   const { graph, appRuntime } = setupTeamsIntegrationTest();
@@ -41,7 +49,10 @@ describe('List My Teams Transcripts', () => {
         { id: 'transcript-roadmap', createdDateTime: '2026-09-10T10:00:00Z' },
       ],
     });
-    graph.addCalendarEvent({ joinUrl: ROADMAP_JOIN_URL });
+    graph.addCalendarEvent({
+      joinUrl: ROADMAP_JOIN_URL,
+      ...occurrenceAt('2026-09-10T09:30:00Z'),
+    });
   };
 
   describe('feature availability', () => {
@@ -75,18 +86,24 @@ describe('List My Teams Transcripts', () => {
   describe('listing transcripts', () => {
     it('lists the transcripts of scheduled Teams meetings the account organizes', async () => {
       addRoadmapMeeting();
-      graph.addCalendarEvent({ joinUrl: ROADMAP_JOIN_URL });
+      graph.addCalendarEvent({
+        joinUrl: ROADMAP_JOIN_URL,
+        ...occurrenceAt('2026-09-17T09:30:00Z'),
+      });
       graph.addCalendarEvent({
         joinUrl: 'https://teams.microsoft.com/l/meetup-join/attendee-only',
         isOrganizer: false,
+        ...occurrenceAt('2026-09-10T09:30:00Z'),
       });
       graph.addCalendarEvent({
         joinUrl: 'https://teams.microsoft.com/l/meetup-join/cancelled',
         isCancelled: true,
+        ...occurrenceAt('2026-09-10T09:30:00Z'),
       });
       graph.addCalendarEvent({
         joinUrl: 'https://zoom.us/j/123',
         onlineMeetingProvider: 'unknown',
+        ...occurrenceAt('2026-09-10T09:30:00Z'),
       });
 
       const result = await teamsListOrganizerTranscriptsHandler(
@@ -138,7 +155,10 @@ describe('List My Teams Transcripts', () => {
           { id: 'transcript-sync', createdDateTime: '2026-09-11T09:00:00Z' },
         ],
       });
-      graph.addCalendarEvent({ joinUrl });
+      graph.addCalendarEvent({
+        joinUrl,
+        ...occurrenceAt('2026-09-11T08:30:00Z'),
+      });
 
       const result = await teamsListOrganizerTranscriptsHandler(
         window,
@@ -170,7 +190,17 @@ describe('List My Teams Transcripts', () => {
           { id: 'transcript-3', createdDateTime: '2026-09-16T10:00:00Z' },
         ],
       });
-      graph.addCalendarEvent({ joinUrl: ROADMAP_JOIN_URL });
+
+      for (const startDateTime of [
+        '2026-09-02T09:30:00Z',
+        '2026-09-09T09:30:00Z',
+        '2026-09-16T09:30:00Z',
+      ]) {
+        graph.addCalendarEvent({
+          joinUrl: ROADMAP_JOIN_URL,
+          ...occurrenceAt(startDateTime),
+        });
+      }
 
       const result = await teamsListOrganizerTranscriptsHandler(
         window,
@@ -209,7 +239,10 @@ describe('List My Teams Transcripts', () => {
           },
         ],
       });
-      graph.addCalendarEvent({ joinUrl: planningJoinUrl });
+      graph.addCalendarEvent({
+        joinUrl: planningJoinUrl,
+        ...occurrenceAt('2026-09-12T09:30:00Z'),
+      });
 
       const firstPage = await teamsListOrganizerTranscriptsHandler(
         window,
@@ -248,13 +281,35 @@ describe('List My Teams Transcripts', () => {
       expect(secondPage).not.toHaveProperty('nextPageUrl');
     });
 
-    it('omits the subject and creation time Graph does not provide', async () => {
+    it('lists only the transcripts created during an occurrence in the window', async () => {
       graph.addMeeting({
-        id: 'meeting-bare',
-        joinWebUrl: ROADMAP_JOIN_URL,
-        transcripts: [{ id: 'transcript-bare' }],
+        id: 'meeting-weekly',
+        joinWebUrl: WEEKLY_JOIN_URL,
+        subject: 'Weekly sync',
+        transcripts: [
+          {
+            id: 'transcript-before-window',
+            createdDateTime: '2026-08-27T10:05:00Z',
+          },
+          { id: 'transcript-week-1', createdDateTime: '2026-09-03T10:05:00Z' },
+          {
+            id: 'transcript-between-occurrences',
+            createdDateTime: '2026-09-05T15:00:00Z',
+          },
+          {
+            id: 'transcript-week-2-early',
+            createdDateTime: '2026-09-10T09:50:00Z',
+          },
+        ],
       });
-      graph.addCalendarEvent({ joinUrl: ROADMAP_JOIN_URL });
+      graph.addCalendarEvent({
+        joinUrl: WEEKLY_JOIN_URL,
+        ...occurrenceAt('2026-09-03T10:00:00Z'),
+      });
+      graph.addCalendarEvent({
+        joinUrl: WEEKLY_JOIN_URL,
+        ...occurrenceAt('2026-09-10T10:00:00Z'),
+      });
 
       const result = await teamsListOrganizerTranscriptsHandler(
         window,
@@ -265,7 +320,114 @@ describe('List My Teams Transcripts', () => {
         expect.objectContaining({
           success: true,
           transcripts: [
-            { transcriptId: 'transcript-bare', meetingId: 'meeting-bare' },
+            expect.objectContaining({ transcriptId: 'transcript-week-1' }),
+            expect.objectContaining({
+              transcriptId: 'transcript-week-2-early',
+            }),
+          ],
+        }),
+      );
+    });
+
+    it('lists each transcript of a recurring meeting on the page of its occurrence', async () => {
+      graph.setCalendarPageSize(1);
+      graph.addMeeting({
+        id: 'meeting-weekly',
+        joinWebUrl: WEEKLY_JOIN_URL,
+        transcripts: [
+          { id: 'transcript-week-1', createdDateTime: '2026-09-03T10:05:00Z' },
+          { id: 'transcript-week-2', createdDateTime: '2026-09-10T10:05:00Z' },
+        ],
+      });
+      graph.addCalendarEvent({
+        joinUrl: WEEKLY_JOIN_URL,
+        ...occurrenceAt('2026-09-03T10:00:00Z'),
+      });
+      graph.addCalendarEvent({
+        joinUrl: WEEKLY_JOIN_URL,
+        ...occurrenceAt('2026-09-10T10:00:00Z'),
+      });
+
+      const firstPage = await teamsListOrganizerTranscriptsHandler(
+        window,
+        requesterContext,
+      );
+
+      expect(firstPage).toEqual(
+        expect.objectContaining({
+          success: true,
+          transcripts: [
+            expect.objectContaining({ transcriptId: 'transcript-week-1' }),
+          ],
+        }),
+      );
+
+      if (!firstPage.success) {
+        throw new Error(firstPage.error);
+      }
+
+      const secondPage = await teamsListOrganizerTranscriptsHandler(
+        { nextPageUrl: firstPage.nextPageUrl },
+        requesterContext,
+      );
+
+      expect(secondPage).toEqual(
+        expect.objectContaining({
+          success: true,
+          transcripts: [
+            expect.objectContaining({ transcriptId: 'transcript-week-2' }),
+          ],
+        }),
+      );
+    });
+
+    it('reads Graph event times as UTC whatever the server time zone', async () => {
+      vi.stubEnv('TZ', 'Asia/Kolkata');
+      addRoadmapMeeting();
+
+      const result = await teamsListOrganizerTranscriptsHandler(
+        window,
+        requesterContext,
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: true,
+          transcripts: [
+            expect.objectContaining({ transcriptId: 'transcript-roadmap' }),
+          ],
+        }),
+      );
+    });
+
+    it('omits a missing subject and skips transcripts without a creation time', async () => {
+      graph.addMeeting({
+        id: 'meeting-bare',
+        joinWebUrl: ROADMAP_JOIN_URL,
+        transcripts: [
+          { id: 'transcript-dated', createdDateTime: '2026-09-10T10:00:00Z' },
+          { id: 'transcript-undated' },
+        ],
+      });
+      graph.addCalendarEvent({
+        joinUrl: ROADMAP_JOIN_URL,
+        ...occurrenceAt('2026-09-10T09:30:00Z'),
+      });
+
+      const result = await teamsListOrganizerTranscriptsHandler(
+        window,
+        requesterContext,
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: true,
+          transcripts: [
+            {
+              transcriptId: 'transcript-dated',
+              meetingId: 'meeting-bare',
+              createdDateTime: '2026-09-10T10:00:00Z',
+            },
           ],
         }),
       );
@@ -274,6 +436,7 @@ describe('List My Teams Transcripts', () => {
     it('skips meetings Graph no longer returns for the join URL', async () => {
       graph.addCalendarEvent({
         joinUrl: 'https://teams.microsoft.com/l/meetup-join/expired',
+        ...occurrenceAt('2026-09-10T09:30:00Z'),
       });
 
       const result = await teamsListOrganizerTranscriptsHandler(
@@ -283,6 +446,39 @@ describe('List My Teams Transcripts', () => {
 
       expect(result).toEqual(
         expect.objectContaining({ success: true, transcripts: [] }),
+      );
+    });
+
+    it('skips a meeting Graph answers with 404 and keeps listing the others', async () => {
+      const removedJoinUrl =
+        'https://teams.microsoft.com/l/meetup-join/removed';
+
+      graph.addMeeting({
+        id: 'meeting-removed',
+        joinWebUrl: removedJoinUrl,
+        isExpired: true,
+        transcripts: [
+          { id: 'transcript-removed', createdDateTime: '2026-09-05T10:00:00Z' },
+        ],
+      });
+      graph.addCalendarEvent({
+        joinUrl: removedJoinUrl,
+        ...occurrenceAt('2026-09-05T09:30:00Z'),
+      });
+      addRoadmapMeeting();
+
+      const result = await teamsListOrganizerTranscriptsHandler(
+        window,
+        requesterContext,
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: true,
+          transcripts: [
+            expect.objectContaining({ transcriptId: 'transcript-roadmap' }),
+          ],
+        }),
       );
     });
   });

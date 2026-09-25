@@ -68,6 +68,11 @@ const paginate = <TItem>({
   });
 };
 
+const toGraphDateTimeTimeZone = (isoDateTime: string) => ({
+  dateTime: new Date(isoDateTime).toISOString().replace('Z', '0000'),
+  timeZone: 'UTC',
+});
+
 const toGraphCalendarEvent = ({
   event,
   selectedFields,
@@ -77,6 +82,12 @@ const toGraphCalendarEvent = ({
 }) => ({
   isOrganizer: event.isOrganizer ?? true,
   isCancelled: event.isCancelled ?? false,
+  ...(selectedFields.includes('start')
+    ? { start: toGraphDateTimeTimeZone(event.startDateTime) }
+    : {}),
+  ...(selectedFields.includes('end')
+    ? { end: toGraphDateTimeTimeZone(event.endDateTime) }
+    : {}),
   ...(selectedFields.includes('isOnlineMeeting')
     ? {
         isOnlineMeeting: true,
@@ -155,6 +166,14 @@ export const createGraphApiMock = ({
       const meeting = state.meetings.find(
         (candidate) => candidate.joinWebUrl === joinWebUrl,
       );
+
+      if (isDefined(meeting) && meeting.isExpired) {
+        return graphError({
+          status: 404,
+          code: 'NotFound',
+          message: 'Online meeting not found.',
+        });
+      }
 
       return HttpResponse.json({
         value: !isDefined(meeting)
