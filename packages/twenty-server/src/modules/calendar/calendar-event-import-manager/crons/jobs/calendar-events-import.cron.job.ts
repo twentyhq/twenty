@@ -110,6 +110,7 @@ export class CalendarEventsImportCronJob {
                 CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
               syncStageStartedAt: new Date(),
             },
+            ['id'],
           );
 
         for (const { id: calendarChannelId } of scheduledCalendarChannels) {

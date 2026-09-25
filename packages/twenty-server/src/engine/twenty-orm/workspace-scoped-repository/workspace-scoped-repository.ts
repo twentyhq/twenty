@@ -126,11 +126,12 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  async updateAndReturn(
+  async updateAndReturn<TColumn extends keyof T & string>(
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
     partialEntity: QueryDeepPartialEntity<T>,
-  ): Promise<T[]> {
+    returning: TColumn[],
+  ): Promise<Pick<T, TColumn>[]> {
     this.assertWorkspaceId(workspaceId);
 
     const { raw } = await this.repository
@@ -138,11 +139,11 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
       .update()
       .set(partialEntity)
       .where(this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria))
-      .returning('*')
+      .returning(returning)
       .execute();
 
-    return ((raw ?? []) as Record<string, unknown>[]).map((row) =>
-      this.repository.create(this.hydrateRawRow(row)),
+    return ((raw ?? []) as Record<string, unknown>[]).map(
+      (row) => this.hydrateRawRow(row, returning) as Pick<T, TColumn>,
     );
   }
 
@@ -209,11 +210,20 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   // UPDATE/DELETE ... RETURNING hand back raw driver output, which skips the
   // hydration a find would do, so column transformers have to be applied by
   // hand: a bigint column would otherwise read back as a string.
-  private hydrateRawRow(row: Record<string, unknown>): DeepPartial<T> {
+  private hydrateRawRow(
+    row: Record<string, unknown>,
+    propertyNames?: string[],
+  ): DeepPartial<T> {
     const { driver } = this.repository.manager.connection;
 
+    const columns = isDefined(propertyNames)
+      ? this.repository.metadata.columns.filter((column) =>
+          propertyNames.includes(column.propertyName),
+        )
+      : this.repository.metadata.columns;
+
     return Object.fromEntries(
-      this.repository.metadata.columns.map((column) => [
+      columns.map((column) => [
         column.propertyName,
         driver.prepareHydratedValue(row[column.databaseName], column),
       ]),

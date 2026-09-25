@@ -85,6 +85,7 @@ export class CalendarEventWebhookSyncService {
             CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
           syncStageStartedAt: new Date(),
         },
+        ['id'],
       );
 
     return scheduledCalendarChannels.length > 0;

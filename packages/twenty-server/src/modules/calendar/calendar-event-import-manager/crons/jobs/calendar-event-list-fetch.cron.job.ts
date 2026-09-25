@@ -119,6 +119,7 @@ export class CalendarEventListFetchCronJob {
                 CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
               syncStageStartedAt: new Date(),
             },
+            ['id'],
           );
 
         for (const { id: calendarChannelId } of scheduledCalendarChannels) {
