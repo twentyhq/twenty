@@ -1738,6 +1738,7 @@ enum NavigationMenuItemType {
   OBJECT
   RECORD
   PAGE_LAYOUT
+  DIVIDER
 }
 
 type RecordPermissionsDTO {
