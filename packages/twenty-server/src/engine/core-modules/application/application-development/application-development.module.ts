@@ -20,9 +20,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
     ApplicationManifestModule,
     ApplicationPackageModule,

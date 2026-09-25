@@ -1,0 +1,99 @@
+---
+title: ResizeHandle
+description: Resize a panel with pointer dragging or keyboard controls.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.mdx';
+
+`ResizeHandle` manages a numeric size and exposes a focusable separator. The application applies that size to the panel; the handle does not resize another element automatically.
+
+<StoryEmbed
+  storyId="ui-layout-resizehandle--resizable"
+  title="ResizeHandle example"
+/>
+
+## Usage
+
+Use `axis="y"` for height or `axis="x"` for width. Give the handle a specific accessible name and use `aria-controls` to identify the panel.
+
+## Uncontrolled state
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <>
+      <Text id={panelId} style={{ height, overflow: 'auto' }}>
+        Record notes
+      </Text>
+      <ResizeHandle
+        axis="y"
+        defaultValue={150}
+        onValueChange={setHeight}
+        min={50}
+        max={500}
+        aria-label="Resize notes height"
+        aria-controls={panelId}
+      />
+    </>
+  );
+};
+```
+
+The handle owns its value. `onValueChange` copies the latest size to the panel layout without controlling the handle. `defaultValue` only sets the initial size.
+
+## Controlled state
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <>
+      <Text id={panelId} style={{ height, overflow: 'auto' }}>
+        Record notes
+      </Text>
+      <ResizeHandle
+        axis="y"
+        value={height}
+        onValueChange={setHeight}
+        min={50}
+        max={500}
+        aria-label="Resize notes height"
+        aria-controls={panelId}
+      />
+    </>
+  );
+};
+```
+
+The application owns the value and can update it from other controls. Keep `value` and `defaultValue` separate and retain the same ownership mode throughout the component's lifetime.
+
+## Keyboard and bounds
+
+For `axis="y"`, Down increases the size and Up decreases it. For `axis="x"`, Right increases and Left decreases in left-to-right content; the directions reverse under [TextDirectionProvider](/ui/primitives/layout/text-direction-provider) with `direction="rtl"`.
+
+Arrow keys use `step`, which defaults to `10`. Home moves to `min`, and End moves to `max`. Pointer dragging uses the pixel movement and is not snapped to `step`. Both interactions stay within the bounds. `disabled` prevents resizing and removes the handle from the tab order.
+
+The separator orientation describes the dividing edge: horizontal for height resizing and vertical for width resizing.
+
+## Custom handle
+
+`children` replaces the visible grip; it does not replace the separator behavior. `render` can replace the root element. Custom wrappers must [forward the supplied props and ref](/ui/primitives/overview#custom-components) so focus, pointer capture, keyboard handlers, and accessibility attributes reach the same element.
+
+## Props
+
+<ResizeHandleReference />

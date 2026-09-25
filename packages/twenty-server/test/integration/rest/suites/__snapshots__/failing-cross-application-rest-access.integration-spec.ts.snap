@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application token REST access to another application should fail with a user-bound application token should refuse the SDK client module of another application 1`] = `
+{
+  "body": {
+    "code": "FORBIDDEN",
+    "error": "Error",
+    "messages": [
+      "An application token can only target its own application",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST access to another application should fail with a user-bound application token should refuse the front component built JS of another application 1`] = `
+{
+  "body": {
+    "code": "FORBIDDEN",
+    "error": "Error",
+    "messages": [
+      "An application token can only reach its own application",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST access to another application should fail with a user-bound application token should refuse the front component shared dependencies of another application 1`] = `
+{
+  "body": {
+    "code": "FORBIDDEN",
+    "error": "Error",
+    "messages": [
+      "An application token can only target its own application",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST access to another application should fail with an application token without user binding should refuse the SDK client module of another application 1`] = `
+{
+  "body": {
+    "code": "FORBIDDEN",
+    "error": "Error",
+    "messages": [
+      "An application token can only target its own application",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST access to another application should fail with an application token without user binding should refuse the front component built JS of another application 1`] = `
+{
+  "body": {
+    "code": "FORBIDDEN",
+    "error": "Error",
+    "messages": [
+      "An application token can only reach its own application",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST access to another application should fail with an application token without user binding should refuse the front component shared dependencies of another application 1`] = `
+{
+  "body": {
+    "code": "FORBIDDEN",
+    "error": "Error",
+    "messages": [
+      "An application token can only target its own application",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;

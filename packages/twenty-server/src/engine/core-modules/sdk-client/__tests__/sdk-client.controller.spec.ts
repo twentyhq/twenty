@@ -8,9 +8,11 @@ import {
   SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
 } from 'src/engine/core-modules/sdk-client/constants/sdk-client-module-cache-control';
 import { SdkClientController } from 'src/engine/core-modules/sdk-client/controllers/sdk-client.controller';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.mock(
@@ -75,6 +77,11 @@ describe('SdkClientController', () => {
         {
           provide: SdkClientArchiveService,
           useValue: sdkClientArchiveService,
+        },
+        { provide: HttpExceptionHandlerService, useValue: {} },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {},
         },
       ],
     }).compile();
