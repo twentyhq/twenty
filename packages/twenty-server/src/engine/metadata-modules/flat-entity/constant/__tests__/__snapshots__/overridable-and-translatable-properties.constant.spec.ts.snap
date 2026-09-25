@@ -69,7 +69,6 @@ exports[`registry-derived override property maps derives the overridable propert
     "icon",
     "isActive",
   ],
-  "validationRule": [],
   "view": [
     "name",
     "type",

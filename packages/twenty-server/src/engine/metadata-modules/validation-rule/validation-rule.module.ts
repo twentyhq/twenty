@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ValidationRuleGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/validation-rule/interceptors/validation-rule-graphql-api-exception.interceptor';
@@ -13,6 +14,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
+    CacheLockModule,
     PermissionsModule,
     WorkspaceMigrationModule,
   ],

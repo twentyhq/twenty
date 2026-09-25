@@ -132,10 +132,6 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   settingsMenuItem: {
     frontComponent: true,
   },
-  validationRule: {
-    objectMetadata: true,
-    fieldMetadata: true,
-  },
   workflow: {},
   workflowVersion: {},
 } as const satisfies MetadataRequiredForValidation;

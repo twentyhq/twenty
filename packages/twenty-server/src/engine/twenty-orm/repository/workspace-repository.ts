@@ -5,6 +5,7 @@ import {
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
+  type ObjectValidationRule,
   type ValidationRuleAggregateFunctionName,
   type ValidationRuleAggregateValues,
 } from 'twenty-shared/types';
@@ -63,7 +64,6 @@ import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/r
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
-import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import {
   RecordValidationRuleException,
   RecordValidationRuleExceptionCode,
@@ -1457,27 +1457,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private getActiveFlatValidationRules(): FlatValidationRule[] {
+  private getActiveValidationRules(): ObjectValidationRule[] {
     if (this.options.shouldBypassValidationRules) {
       return [];
     }
 
-    return Object.values(
-      this.options.internalContext.flatValidationRuleMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (flatValidationRule) =>
-          flatValidationRule.isActive &&
-          flatValidationRule.objectMetadataId ===
-            this.options.flatObjectMetadata.id,
-      );
+    return (this.options.flatObjectMetadata.validationRules ?? []).filter(
+      (validationRule) => validationRule.isActive,
+    );
   }
 
   private async runWithValidationRuleAtomicity<T>(
     work: (repository: WorkspaceRepository<TEntity>) => Promise<T>,
   ): Promise<T> {
-    if (this.getActiveFlatValidationRules().length === 0) {
+    if (this.getActiveValidationRules().length === 0) {
       return work(this);
     }
 
@@ -1509,16 +1502,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private async attachRelatedRecordsForValidationRules({
     writtenRecords,
     rawWrittenRecords,
-    flatValidationRules,
+    validationRules,
   }: {
     writtenRecords: ObjectRecord[];
     rawWrittenRecords: ObjectRecord[];
-    flatValidationRules: FlatValidationRule[];
+    validationRules: ObjectValidationRule[];
   }): Promise<ObjectRecord[]> {
     const referencedRelationShapes = [
       ...new Set(
-        flatValidationRules.flatMap((flatValidationRule) =>
-          Object.keys(flatValidationRule.bindings),
+        validationRules.flatMap((validationRule) =>
+          Object.keys(validationRule.bindings),
         ),
       ),
     ]
@@ -1573,21 +1566,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private async attachAggregatesForValidationRules({
     records,
-    flatValidationRules,
+    validationRules,
   }: {
     records: ObjectRecord[];
-    flatValidationRules: FlatValidationRule[];
+    validationRules: ObjectValidationRule[];
   }): Promise<ObjectRecord[]> {
     const functionNamesByRelationFieldName = new Map<
       string,
       Set<ValidationRuleAggregateFunctionName>
     >();
 
-    for (const flatValidationRule of flatValidationRules) {
+    for (const validationRule of validationRules) {
       for (const {
         functionName,
         relationFieldName,
-      } of extractValidationRuleAggregates(flatValidationRule.expression)) {
+      } of extractValidationRuleAggregates(validationRule.expression)) {
         functionNamesByRelationFieldName.set(
           relationFieldName,
           new Set([
@@ -1664,9 +1657,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     recordIds: string[];
     inputIndexByRecordId?: Map<string, number>;
   }): Promise<void> {
-    const flatValidationRules = this.getActiveFlatValidationRules();
+    const validationRules = this.getActiveValidationRules();
 
-    if (flatValidationRules.length === 0 || recordIds.length === 0) {
+    if (validationRules.length === 0 || recordIds.length === 0) {
       return;
     }
 
@@ -1678,15 +1671,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       records: await this.attachRelatedRecordsForValidationRules({
         writtenRecords: this.formatResult<ObjectRecord[]>(rawWrittenRecords),
         rawWrittenRecords,
-        flatValidationRules,
+        validationRules,
       }),
-      flatValidationRules,
+      validationRules,
     });
 
     const { violations, evaluationErrors } =
       computeRecordValidationRuleViolations({
         records,
-        flatValidationRules,
+        validationRules,
         fields: buildValidationRuleFieldDescriptors({
           objectMetadataId: this.options.flatObjectMetadata.id,
           flatObjectMetadataMaps:

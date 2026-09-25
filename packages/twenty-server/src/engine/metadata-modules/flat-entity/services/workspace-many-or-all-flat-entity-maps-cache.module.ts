@@ -26,7 +26,6 @@ import { WorkspaceFlatViewGroupMapCacheService } from 'src/engine/metadata-modul
 import { WorkspaceFlatSearchFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-search-field-metadata/services/workspace-flat-search-field-metadata-map-cache.service';
 import { WorkspaceFlatTimelineActivityTypeMapCacheService } from 'src/engine/metadata-modules/flat-timeline-activity-type/services/workspace-flat-timeline-activity-type-map-cache.service';
 import { WorkspaceFlatSettingsMenuItemMapCacheService } from 'src/engine/metadata-modules/flat-settings-menu-item/services/workspace-flat-settings-menu-item-map-cache.service';
-import { WorkspaceFlatValidationRuleMapCacheService } from 'src/engine/metadata-modules/flat-validation-rule/services/workspace-flat-validation-rule-map-cache.service';
 import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-modules/flat-view-sort/services/workspace-flat-view-sort-map-cache.service';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/metadata-modules/flat-view/services/workspace-flat-view-map-cache.service';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -46,7 +45,6 @@ import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/r
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
-import { ValidationRuleEntity } from 'src/engine/metadata-modules/validation-rule/entities/validation-rule.entity';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -87,7 +85,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       SearchFieldMetadataEntity,
       TimelineActivityTypeEntity,
       SettingsMenuItemEntity,
-      ValidationRuleEntity,
       CommandMenuItemEntity,
     ]),
   ],
@@ -116,7 +113,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
     WorkspaceFlatTimelineActivityTypeMapCacheService,
     WorkspaceFlatSettingsMenuItemMapCacheService,
-    WorkspaceFlatValidationRuleMapCacheService,
     provideWorkspaceScopedRepository(PermissionFlagEntity),
     provideWorkspaceScopedRepository(SearchFieldMetadataEntity),
     provideWorkspaceScopedRepository(IndexMetadataEntity),
@@ -137,7 +133,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity),
     provideWorkspaceScopedRepository(TimelineActivityTypeEntity),
     provideWorkspaceScopedRepository(SettingsMenuItemEntity),
-    provideWorkspaceScopedRepository(ValidationRuleEntity),
     provideWorkspaceScopedRepository(CommandMenuItemEntity),
   ],
   exports: [
@@ -165,7 +160,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
     WorkspaceFlatTimelineActivityTypeMapCacheService,
     WorkspaceFlatSettingsMenuItemMapCacheService,
-    WorkspaceFlatValidationRuleMapCacheService,
   ],
 })
 export class WorkspaceManyOrAllFlatEntityMapsCacheModule {}

@@ -13,11 +13,13 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  type ObjectValidationRule,
 } from 'twenty-shared/types';
 
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-27/add-object-metadata-open-record-in-upgrade-command-name.constant';
+import { ADD_OBJECT_METADATA_VALIDATION_RULES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-43/add-object-metadata-validation-rules-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_READABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-object-metadata-readability-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_READABILITY_PARENT_FIELDS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-object-metadata-readability-parent-fields-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
@@ -95,6 +97,13 @@ export class ObjectMetadataEntity
   })
   @Column({ type: 'jsonb', nullable: true })
   overrides: JsonbProperty<AuthoredOverrides<ObjectMetadataOverrides>> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_OBJECT_METADATA_VALIDATION_RULES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: false, default: [] })
+  validationRules: JsonbProperty<ObjectValidationRule[]>;
 
   /**
    * @deprecated Please use `overrides` instead.

@@ -3699,9 +3699,6 @@ type ValidationRule {
   expression: String!
   message: String!
   isActive: Boolean!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type PermissionFlag {
@@ -3756,7 +3753,6 @@ enum AllMetadataName {
   searchFieldMetadata
   timelineActivityType
   settingsMenuItem
-  validationRule
   workflow
   workflowVersion
 }

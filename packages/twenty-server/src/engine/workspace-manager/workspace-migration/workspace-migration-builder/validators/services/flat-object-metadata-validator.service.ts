@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util';
+import { validateFlatObjectMetadataValidationRules } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-validation-rules.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
@@ -83,6 +84,14 @@ export class FlatObjectMetadataValidatorService {
         buildOptions,
       }),
     );
+    if (isDefined(flatEntityUpdate.validationRules)) {
+      validationResult.errors.push(
+        ...validateFlatObjectMetadataValidationRules(
+          flatEntityUpdate.validationRules,
+        ),
+      );
+    }
+
     // TODO remove this once we migrated labelIdentifierFieldMetadataId as non nullable
     if (
       flatEntityUpdate.labelIdentifierFieldMetadataUniversalIdentifier !==

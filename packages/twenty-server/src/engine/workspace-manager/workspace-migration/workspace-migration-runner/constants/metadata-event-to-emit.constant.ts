@@ -32,7 +32,6 @@ export const METADATA_EVENTS_TO_EMIT = {
   applicationVariable: false,
   connectionProvider: true,
   timelineActivityType: true,
-  validationRule: true,
   searchFieldMetadata: true,
   settingsMenuItem: true,
   workflow: true,

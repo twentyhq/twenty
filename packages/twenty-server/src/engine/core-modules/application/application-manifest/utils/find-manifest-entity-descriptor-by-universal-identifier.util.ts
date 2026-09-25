@@ -283,10 +283,6 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'workflow version',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
-  validationRule: {
-    entityKind: 'validation rule',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
-  },
 };
 
 const MANIFEST_ENTITY_REGISTRY_ENTRIES = Object.values(

@@ -1,10 +1,10 @@
 import {
   type ObjectRecord,
+  type ObjectValidationRule,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import { evaluateValidationRuleExpression } from 'twenty-shared/utils';
 
-import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
 
 type ComputeRecordValidationRuleViolationsResult = {
@@ -14,14 +14,14 @@ type ComputeRecordValidationRuleViolationsResult = {
 
 export const computeRecordValidationRuleViolations = ({
   records,
-  flatValidationRules,
+  validationRules,
   fields,
   now,
   inputIndexByRecordId,
 }: {
   records: ObjectRecord[];
-  flatValidationRules: Pick<
-    FlatValidationRule,
+  validationRules: Pick<
+    ObjectValidationRule,
     'id' | 'expression' | 'message' | 'errorFieldMetadataId'
   >[];
   fields: ValidationRuleFieldDescriptor[];
@@ -32,9 +32,9 @@ export const computeRecordValidationRuleViolations = ({
   const evaluationErrors: RecordValidationRuleViolation[] = [];
 
   for (const record of records) {
-    for (const flatValidationRule of flatValidationRules) {
+    for (const validationRule of validationRules) {
       const evaluationResult = evaluateValidationRuleExpression({
-        expression: flatValidationRule.expression,
+        expression: validationRule.expression,
         record,
         fields,
         now,
@@ -45,9 +45,9 @@ export const computeRecordValidationRuleViolations = ({
       }
 
       const violation: RecordValidationRuleViolation = {
-        ruleId: flatValidationRule.id,
-        message: flatValidationRule.message,
-        fieldMetadataId: flatValidationRule.errorFieldMetadataId,
+        ruleId: validationRule.id,
+        message: validationRule.message,
+        fieldMetadataId: validationRule.errorFieldMetadataId,
         recordId: String(record.id),
         inputIndex: inputIndexByRecordId.get(String(record.id)) ?? null,
       };

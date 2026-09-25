@@ -236,7 +236,6 @@ export enum AllMetadataName {
   settingsMenuItem = 'settingsMenuItem',
   skill = 'skill',
   timelineActivityType = 'timelineActivityType',
-  validationRule = 'validationRule',
   view = 'view',
   viewField = 'viewField',
   viewFieldGroup = 'viewFieldGroup',
@@ -7323,15 +7322,12 @@ export type ValidatePasswordResetToken = {
 
 export type ValidationRule = {
   __typename?: 'ValidationRule';
-  applicationId: Scalars['UUID']['output'];
-  createdAt: Scalars['DateTime']['output'];
   errorFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   expression: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
   message: Scalars['String']['output'];
   objectMetadataId: Scalars['UUID']['output'];
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type VerificationRecord = {

@@ -7305,15 +7305,6 @@ export default {
             "isActive": [
                 8
             ],
-            "applicationId": [
-                3
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
             "__typename": [
                 1
             ]

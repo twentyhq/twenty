@@ -34,7 +34,6 @@ import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/worksp
 import { FlatConnectionProviderValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service';
 import { FlatTimelineActivityTypeValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service';
 import { FlatSettingsMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service';
-import { FlatValidationRuleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-validation-rule-validator.service';
 import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service';
 
 @Module({
@@ -73,7 +72,6 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatConnectionProviderValidatorService,
     FlatTimelineActivityTypeValidatorService,
     FlatSettingsMenuItemValidatorService,
-    FlatValidationRuleValidatorService,
     FlatSearchFieldMetadataValidatorService,
   ],
   exports: [
@@ -109,7 +107,6 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatConnectionProviderValidatorService,
     FlatTimelineActivityTypeValidatorService,
     FlatSettingsMenuItemValidatorService,
-    FlatValidationRuleValidatorService,
     FlatSearchFieldMetadataValidatorService,
   ],
 })

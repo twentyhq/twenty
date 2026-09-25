@@ -1,8 +1,7 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
-  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -40,18 +39,4 @@ export class ValidationRuleDTO {
   @IsBoolean()
   @Field()
   isActive: boolean;
-
-  @HideField()
-  workspaceId: string;
-
-  @Field(() => UUIDScalarType)
-  applicationId: string;
-
-  @IsDateString()
-  @Field()
-  createdAt: Date;
-
-  @IsDateString()
-  @Field()
-  updatedAt: Date;
 }

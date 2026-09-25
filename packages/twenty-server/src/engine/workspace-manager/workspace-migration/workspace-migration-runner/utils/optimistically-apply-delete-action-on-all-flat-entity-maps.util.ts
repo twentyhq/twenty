@@ -51,7 +51,6 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'connectionProvider':
     case 'timelineActivityType':
     case 'settingsMenuItem':
-    case 'validationRule':
     case 'searchFieldMetadata': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
         MetadataFlatEntity<typeof flatAction.metadataName>
