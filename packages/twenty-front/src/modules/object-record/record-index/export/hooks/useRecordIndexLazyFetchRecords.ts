@@ -44,8 +44,6 @@ export type UseRecordDataOptions = {
     >[],
   ) => void | Promise<void>;
   viewType?: ViewType;
-  onMoreRecords?: () => Promise<void>;
-  abortSignal?: AbortSignal;
 };
 
 export const useRecordIndexLazyFetchRecords = ({
@@ -56,8 +54,6 @@ export const useRecordIndexLazyFetchRecords = ({
   recordIndexId,
   callback,
   viewType = ViewType.TABLE,
-  onMoreRecords,
-  abortSignal,
 }: UseRecordDataOptions) => {
   const { hiddenBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -155,40 +151,18 @@ export const useRecordIndexLazyFetchRecords = ({
       : []),
   ];
 
-  const { progress, isDownloading, fetchAllRecords, fetchFirstPage } =
-    useLazyFetchAllRecords({
-      ...findManyRecordsParams,
-      filter: queryFilter,
-      limit: pageSize,
-      delayMs,
-      maximumRequests,
-      fetchPolicy: isDefined(onMoreRecords) ? 'network-only' : undefined,
-    });
+  const { progress, isDownloading, fetchAllRecords } = useLazyFetchAllRecords({
+    ...findManyRecordsParams,
+    filter: queryFilter,
+    limit: pageSize,
+    delayMs,
+    maximumRequests,
+  });
 
   const getTableData = async () => {
-    if (isDefined(onMoreRecords)) {
-      const firstPage = await fetchFirstPage();
-
-      if (abortSignal?.aborted) {
-        return;
-      }
-
-      if (isDefined(firstPage.error)) {
-        throw firstPage.error;
-      }
-
-      if (firstPage.hasNextPage) {
-        await onMoreRecords();
-      } else if (isDefined(firstPage.records) && firstPage.records.length > 0) {
-        await callback(firstPage.records, finalColumns);
-      }
-
-      return;
-    }
-
     const result = await fetchAllRecords();
     if (result.length > 0) {
-      await callback(result, finalColumns);
+      callback(result, finalColumns);
     }
   };
 

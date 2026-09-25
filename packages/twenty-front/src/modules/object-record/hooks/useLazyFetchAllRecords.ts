@@ -24,7 +24,6 @@ export const useLazyFetchAllRecords = <T>({
   delayMs = 0,
   maximumRequests = 100,
   recordGqlFields,
-  fetchPolicy,
 }: UseLazyFetchAllRecordIdsParams<T>) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState<ObjectRecordQueryProgress>({
@@ -36,7 +35,6 @@ export const useLazyFetchAllRecords = <T>({
     orderBy,
     limit,
     recordGqlFields,
-    fetchPolicy,
     shouldToastOnError: false,
   });
 
@@ -140,6 +138,5 @@ export const useLazyFetchAllRecords = <T>({
     progress,
     isDownloading,
     fetchAllRecords,
-    fetchFirstPage: findManyRecordsLazy,
   };
 };
