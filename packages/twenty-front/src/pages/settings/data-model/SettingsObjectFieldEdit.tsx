@@ -157,11 +157,11 @@ export const SettingsObjectFieldEdit = () => {
     workspaceSurface.type,
   ]);
 
-  const { isDirty, isValid, isSubmitting, dirtyFields } = formConfig.formState;
+  const { isValid, isSubmitting, dirtyFields } = formConfig.formState;
+
+  const isDirty = !isEmptyObject(dirtyFields);
 
   const canSave = isDirty && isValid && !isSubmitting;
-
-  const hasUnsavedEdits = !isEmptyObject(dirtyFields);
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
     return workspaceSurface.type === 'side-panel' ? (
@@ -412,7 +412,7 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsTranslationsCard
                 objectNamePlural={objectNamePlural}
                 fieldName={fieldMetadataItem.name}
-                disabled={hasUnsavedEdits}
+                disabled={isDirty}
               />
             </Section.Root>
 

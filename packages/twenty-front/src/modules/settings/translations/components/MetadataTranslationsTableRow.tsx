@@ -14,7 +14,7 @@ import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 type MetadataTranslationsTableRowProps = {
   gridTemplateColumns: string;
   localeLabel: string;
-  rows: (MetadataTranslationRow | undefined)[];
+  translations: (MetadataTranslationRow | undefined)[];
   onSaveTranslationRows: (
     rowValues: MetadataTranslationRowValue[],
   ) => Promise<void>;
@@ -23,39 +23,46 @@ type MetadataTranslationsTableRowProps = {
 export const MetadataTranslationsTableRow = ({
   gridTemplateColumns,
   localeLabel,
-  rows,
+  translations,
   onSaveTranslationRows,
 }: MetadataTranslationsTableRowProps) => {
   const { t } = useLingui();
-  const editedRows = rows.filter(
-    (row): row is MetadataTranslationRow =>
-      row?.provenance === MetadataTranslationProvenance.WORKSPACE,
+  const editedTranslations = translations.filter(
+    (translation): translation is MetadataTranslationRow =>
+      translation?.provenance === MetadataTranslationProvenance.WORKSPACE,
   );
 
-  const resetEditedRows = () =>
-    onSaveTranslationRows(editedRows.map((row) => ({ row, value: null })));
+  const resetEditedTranslations = () =>
+    onSaveTranslationRows(
+      editedTranslations.map((translation) => ({
+        row: translation,
+        value: null,
+      })),
+    );
 
   return (
     <TableRow gridTemplateColumns={gridTemplateColumns}>
       <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
         <OverflowingTextWithTooltip text={localeLabel} />
       </TableCell>
-      {rows.map((row, index) => (
-        <TableCell key={row?.property ?? index} overflow="hidden">
-          {isDefined(row) && (
+      {translations.map((translation, index) => (
+        <TableCell key={translation?.property ?? index} overflow="hidden">
+          {isDefined(translation) && (
             <MetadataTranslationValueCell
-              row={row}
-              onSave={(value) => onSaveTranslationRows([{ row, value }])}
+              row={translation}
+              onSave={(value) =>
+                onSaveTranslationRows([{ row: translation, value }])
+              }
             />
           )}
         </TableCell>
       ))}
       <TableCell padding="0">
-        {isNonEmptyArray(editedRows) && (
+        {isNonEmptyArray(editedTranslations) && (
           <LightIconButton
             title={t`Reset to default`}
             emphasis="subtle"
-            onClick={resetEditedRows}
+            onClick={resetEditedTranslations}
             aria-label={t`Reset to default`}
           >
             <IconRestore />

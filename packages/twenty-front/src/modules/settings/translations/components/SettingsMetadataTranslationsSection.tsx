@@ -1,8 +1,6 @@
 import { MetadataTranslationsTable } from '@/settings/translations/components/MetadataTranslationsTable';
-import {
-  type MetadataTranslationRow,
-  useMetadataTranslations,
-} from '@/settings/translations/hooks/useMetadataTranslations';
+import { useMetadataTranslations } from '@/settings/translations/hooks/useMetadataTranslations';
+import { buildMetadataTranslationsTable } from '@/settings/translations/utils/buildMetadataTranslationsTable';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -13,8 +11,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { type MetadataTranslationsInput } from '~/generated-metadata/graphql';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-
-const DESCRIPTION_PROPERTY = 'description';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -39,25 +35,6 @@ export const SettingsMetadataTranslationsSection = ({
     useMetadataTranslations(input);
   const localeOptions = useLocaleOptions();
 
-  const rowsByProperty = new Map<string, Map<string, MetadataTranslationRow>>();
-
-  for (const row of metadataTranslations) {
-    const localeRows = rowsByProperty.get(row.property) ?? new Map();
-
-    localeRows.set(row.locale, row);
-    rowsByProperty.set(row.property, localeRows);
-  }
-
-  const columns = [
-    ...[...rowsByProperty.keys()].filter(
-      (property) => property !== DESCRIPTION_PROPERTY,
-    ),
-    ...(rowsByProperty.has(DESCRIPTION_PROPERTY) ? [DESCRIPTION_PROPERTY] : []),
-  ].map((property) => ({
-    property,
-    label: columnLabelByProperty[property] ?? property,
-  }));
-
   const normalizedSearchTerm = normalizeSearchText(searchTerm);
   const filteredLocaleOptions = localeOptions.filter(
     ({ label, searchKeywords }) =>
@@ -65,6 +42,15 @@ export const SettingsMetadataTranslationsSection = ({
         normalizedSearchTerm,
       ),
   );
+
+  const { properties, languageRows } = buildMetadataTranslationsTable({
+    metadataTranslations,
+    localeOptions: filteredLocaleOptions,
+  });
+  const columns = properties.map((property) => ({
+    property,
+    label: columnLabelByProperty[property] ?? property,
+  }));
 
   return (
     <Section.Root>
@@ -83,8 +69,7 @@ export const SettingsMetadataTranslationsSection = ({
       </StyledSearchInputContainer>
       <MetadataTranslationsTable
         columns={columns}
-        rowsByProperty={rowsByProperty}
-        localeOptions={filteredLocaleOptions}
+        languageRows={languageRows}
         loading={loading}
         onSaveTranslationRows={saveTranslationRows}
       />
