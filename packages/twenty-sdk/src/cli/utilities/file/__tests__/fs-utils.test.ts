@@ -1,4 +1,11 @@
-import { mkdtemp, readFile, writeFile, readdir, stat } from 'node:fs/promises';
+import {
+  chmod,
+  mkdtemp,
+  readFile,
+  writeFile,
+  readdir,
+  stat,
+} from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import os from 'node:os';
@@ -7,16 +14,21 @@ import {
   copy,
   emptyDir,
   ensureDir,
-  ensureFile,
+  ensurePrivateDir,
+  ensurePrivateFile,
   move,
   pathExists,
   pathExistsSync,
   readJson,
   remove,
   writeJson,
+  writePrivateFile,
 } from '@/cli/utilities/file/fs-utils';
 
 let tmpDir: string;
+
+const getPermissionMode = async (targetPath: string) =>
+  (await stat(targetPath)).mode & 0o777;
 
 beforeEach(async () => {
   tmpDir = await mkdtemp(join(os.tmpdir(), 'fs-utils-test-'));
@@ -65,25 +77,72 @@ describe('ensureDir', () => {
   });
 });
 
-describe('ensureFile', () => {
-  it('should create the file and parent directories when missing', async () => {
-    const filePath = join(tmpDir, 'deep', 'nested', 'file.txt');
+describe('ensurePrivateDir', () => {
+  it('should create the directory accessible only by the owner', async () => {
+    const directoryPath = join(tmpDir, 'private');
 
-    await ensureFile(filePath);
+    await ensurePrivateDir(directoryPath);
 
-    expect(existsSync(filePath)).toBe(true);
-    const content = await readFile(filePath, 'utf-8');
-    expect(content).toBe('');
+    expect(await getPermissionMode(directoryPath)).toBe(0o700);
+  });
+});
+
+describe('ensurePrivateFile', () => {
+  it('should create an empty file accessible only by the owner when missing', async () => {
+    const directoryPath = join(tmpDir, 'private');
+    const filePath = join(directoryPath, 'config.json');
+
+    await ensurePrivateFile(filePath);
+
+    expect(await readFile(filePath, 'utf-8')).toBe('');
+    expect(await getPermissionMode(filePath)).toBe(0o600);
+    expect(await getPermissionMode(directoryPath)).toBe(0o700);
   });
 
   it('should not overwrite an existing file', async () => {
     const filePath = join(tmpDir, 'existing.txt');
     await writeFile(filePath, 'keep me');
 
-    await ensureFile(filePath);
+    await ensurePrivateFile(filePath);
 
-    const content = await readFile(filePath, 'utf-8');
-    expect(content).toBe('keep me');
+    expect(await readFile(filePath, 'utf-8')).toBe('keep me');
+  });
+});
+
+describe('writePrivateFile', () => {
+  it('should create the file accessible only by the owner', async () => {
+    const directoryPath = join(tmpDir, 'private');
+    const filePath = join(directoryPath, 'config.json');
+
+    await writePrivateFile(filePath, 'secret');
+
+    expect(await readFile(filePath, 'utf-8')).toBe('secret');
+    expect(await getPermissionMode(filePath)).toBe(0o600);
+    expect(await getPermissionMode(directoryPath)).toBe(0o700);
+  });
+
+  it('should tighten an existing world-readable file', async () => {
+    const filePath = join(tmpDir, 'config.json');
+    await writeFile(filePath, 'old secret');
+    await chmod(filePath, 0o644);
+
+    await writePrivateFile(filePath, 'new');
+
+    expect(await readFile(filePath, 'utf-8')).toBe('new');
+    expect(await getPermissionMode(filePath)).toBe(0o600);
+  });
+
+  it('should fail on a read-only file without changing it', async () => {
+    const filePath = join(tmpDir, 'config.json');
+    await writeFile(filePath, 'old secret');
+    await chmod(filePath, 0o444);
+
+    await expect(writePrivateFile(filePath, 'new')).rejects.toMatchObject({
+      code: 'EACCES',
+    });
+
+    expect(await readFile(filePath, 'utf-8')).toBe('old secret');
+    expect(await getPermissionMode(filePath)).toBe(0o444);
   });
 });
 

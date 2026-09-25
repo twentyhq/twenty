@@ -6,6 +6,7 @@ import { gql } from 'graphql-tag';
 import { createClient } from 'redis';
 import { type Repository } from 'typeorm';
 
+import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -49,8 +50,8 @@ const USAGE_QUOTAS_WITH_CONSUMPTION = gql`
 `;
 
 const buildPayload = (
-  overrides: Record<string, unknown> = {},
-): Record<string, unknown> => ({
+  overrides: Partial<CreateUsageLimitInput> = {},
+): CreateUsageLimitInput => ({
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   spenderType: 'workspace',
@@ -68,7 +69,9 @@ describe('Usage limit mutations', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
 
-  const createUsageLimitRequest = (overrides: Record<string, unknown> = {}) =>
+  const createUsageLimitRequest = (
+    overrides: Partial<CreateUsageLimitInput> = {},
+  ) =>
     makeMetadataAPIRequest({
       query: CREATE_USAGE_LIMIT,
       variables: { input: buildPayload(overrides) },
@@ -76,7 +79,7 @@ describe('Usage limit mutations', () => {
 
   const updateUsageLimit = (
     id: string,
-    overrides: Record<string, unknown> = {},
+    overrides: Partial<CreateUsageLimitInput> = {},
   ) =>
     makeMetadataAPIRequest({
       query: UPDATE_USAGE_LIMIT,
@@ -91,7 +94,9 @@ describe('Usage limit mutations', () => {
     return response.body.data?.usageQuotasWithConsumption ?? [];
   };
 
-  const createUsageLimit = async (overrides: Record<string, unknown> = {}) => {
+  const createUsageLimit = async (
+    overrides: Partial<CreateUsageLimitInput> = {},
+  ) => {
     const response = await createUsageLimitRequest(overrides);
     const usageLimitId = response.body.data?.createUsageLimit?.id;
 
@@ -240,6 +245,172 @@ describe('Usage limit mutations', () => {
       });
 
       expect(response.body.data?.deleteUsageLimit).toBe(false);
+    });
+  });
+
+  describe('rows an operator set', () => {
+    const OPERATOR_ROW_MESSAGE = 'only an operator can change it';
+
+    const seedOperatorRow = async () => {
+      await usageLimitRepository.insert({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        ...buildPayload({
+          resourceType: UsageResourceType.STORAGE,
+          operationType: UsageOperationType.STORAGE_FILE,
+          spenderType: 'workspace',
+          limitKind: 'stock',
+          periodCount: 1,
+          periodUnit: 'lifetime',
+          meter: 'quantity',
+          limitValue: 5_000,
+        }),
+        spenderId: '',
+        burstValue: null,
+        isInstanceOverride: true,
+      });
+
+      const usageLimit = await usageLimitRepository.findOneByOrFail({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        meter: 'quantity',
+      });
+
+      return usageLimit;
+    };
+
+    it('refuses a workspace update of one', async () => {
+      const usageLimit = await seedOperatorRow();
+
+      const response = await updateUsageLimit(usageLimit.id, {
+        resourceType: UsageResourceType.STORAGE,
+        operationType: UsageOperationType.STORAGE_FILE,
+        spenderType: 'workspace',
+        limitKind: 'stock',
+        periodCount: 1,
+        periodUnit: 'lifetime',
+        meter: 'quantity',
+        limitValue: 9_000_000,
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ROW_MESSAGE),
+      );
+      expect(
+        (await usageLimitRepository.findOneByOrFail({ id: usageLimit.id }))
+          .limitValue,
+      ).toBe(5_000);
+    });
+
+    it('refuses a workspace delete of one', async () => {
+      const usageLimit = await seedOperatorRow();
+
+      const response = await makeMetadataAPIRequest({
+        query: DELETE_USAGE_LIMIT,
+        variables: { usageLimitId: usageLimit.id },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ROW_MESSAGE),
+      );
+      expect(await usageLimitRepository.countBy({ id: usageLimit.id })).toBe(1);
+    });
+  });
+
+  describe('instance defaults', () => {
+    const OPERATOR_ONLY_MESSAGE = 'only an operator can replace it';
+
+    const storageStockPayload = (
+      overrides: Partial<CreateUsageLimitInput> = {},
+    ) =>
+      buildPayload({
+        resourceType: UsageResourceType.STORAGE,
+        operationType: UsageOperationType.STORAGE_FILE,
+        spenderType: 'workspace',
+        spenderId: null,
+        limitKind: 'stock',
+        periodCount: 1,
+        periodUnit: 'lifetime',
+        meter: 'bytes',
+        limitValue: 1_000_000,
+        ...overrides,
+      });
+
+    const seedOperatorOverride = async () => {
+      await usageLimitRepository.insert({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        ...storageStockPayload(),
+        spenderId: '',
+        burstValue: null,
+      });
+
+      const usageLimit = await usageLimitRepository.findOneBy({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: UsageResourceType.STORAGE,
+      });
+
+      jestExpectToBeDefined(usageLimit);
+
+      return usageLimit;
+    };
+
+    it('refuses a workspace write that would replace a default', async () => {
+      const response = await makeMetadataAPIRequest({
+        query: CREATE_USAGE_LIMIT,
+        variables: { input: storageStockPayload() },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ONLY_MESSAGE),
+      );
+      expect(
+        await usageLimitRepository.countBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('allows a workspace write on a meter no default covers', async () => {
+      const response = await makeMetadataAPIRequest({
+        query: CREATE_USAGE_LIMIT,
+        variables: { input: storageStockPayload({ meter: 'quantity' }) },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+    });
+
+    it('refuses moving an operator override off the default it replaces', async () => {
+      const usageLimit = await seedOperatorOverride();
+
+      const response = await makeMetadataAPIRequest({
+        query: UPDATE_USAGE_LIMIT,
+        variables: {
+          input: {
+            id: usageLimit.id,
+            payload: storageStockPayload({ meter: 'quantity' }),
+          },
+        },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ONLY_MESSAGE),
+      );
+      expect(
+        (await usageLimitRepository.findOneByOrFail({ id: usageLimit.id }))
+          .meter,
+      ).toBe('bytes');
+    });
+
+    it('refuses deleting an operator override', async () => {
+      const usageLimit = await seedOperatorOverride();
+
+      const response = await makeMetadataAPIRequest({
+        query: DELETE_USAGE_LIMIT,
+        variables: { usageLimitId: usageLimit.id },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ONLY_MESSAGE),
+      );
+      expect(await usageLimitRepository.countBy({ id: usageLimit.id })).toBe(1);
     });
   });
 });
