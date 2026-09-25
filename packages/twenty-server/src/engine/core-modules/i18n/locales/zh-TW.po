@@ -5448,6 +5448,11 @@ msgstr "ID"
 msgid "ID field cannot be searched"
 msgstr "ID 欄位無法搜尋"
 
+#. js-lingui-id: TGM/Xy
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider already exists."
+msgstr ""
+
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider not found."
