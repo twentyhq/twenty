@@ -4,7 +4,6 @@ import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelSh
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { Dropdown, SettingsRow, TintedIconTile } from 'twenty-ui/components';
@@ -52,6 +51,12 @@ export const SidePanelObjectFilterDropdownContent = ({
     return item.labelPlural.toLowerCase().includes(searchFilter);
   });
 
+  const allObjectsLabel = t`All objects`;
+
+  const isAllObjectsOptionMatchingSearch = allObjectsLabel
+    .toLowerCase()
+    .includes(searchFilter);
+
   return (
     <>
       <StyledHeader>{t`Object`}</StyledHeader>
@@ -63,12 +68,14 @@ export const SidePanelObjectFilterDropdownContent = ({
       />
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
-        {!isNonEmptyString(filterSearch) && (
+        {isAllObjectsOptionMatchingSearch && (
           <Dropdown.OptionItem
             onSelect={() => onSelectObject(null)}
             selected={selectedObjectNameSingular === null}
             startIcon={<TintedIconTile Icon={IconCube} />}
-          >{t`All objects`}</Dropdown.OptionItem>
+          >
+            {allObjectsLabel}
+          </Dropdown.OptionItem>
         )}
         {displayedObjects.map((objectMetadataItem) => (
           <Dropdown.OptionItem

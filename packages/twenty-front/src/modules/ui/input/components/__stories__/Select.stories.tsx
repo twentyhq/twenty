@@ -138,6 +138,13 @@ export const SearchWithPinnedDisabledAndAction: Story = {
     expect(args.callToActionButton?.onClick).toHaveBeenCalledTimes(1);
     expect(popup).toBeVisible();
     const search = within(popup).getByRole('searchbox', { name: 'Search' });
+    await userEvent.type(search, 'default');
+    await waitFor(() =>
+      expect(
+        within(popup).getByRole('button', { name: 'Use default' }),
+      ).toHaveAttribute('data-highlighted'),
+    );
+    await userEvent.clear(search);
     await userEvent.type(search, 'pastry');
     expect(
       within(popup).queryByRole('button', { name: 'Option C' }),
