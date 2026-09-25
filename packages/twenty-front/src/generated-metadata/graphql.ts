@@ -3031,6 +3031,7 @@ export type Mutation = {
   archiveChatThread: AgentChatThread;
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
+  attachChatThreadToRecord: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   cancelMessageCampaign: CancelMessageCampaignOutputDto;
   cancelSwitchBillingInterval: BillingUpdate;
@@ -3144,6 +3145,7 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean']['output'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean']['output'];
+  detachChatThreadFromRecord: Scalars['Boolean']['output'];
   disconnectConnectedAccount: ConnectedAccountPublicDto;
   duplicateDashboard: DuplicatedDashboard;
   duplicateMessageList: DuplicatedMessageList;
@@ -3340,6 +3342,13 @@ export type MutationAssignRoleToAgentArgs = {
 export type MutationAssignRoleToApiKeyArgs = {
   apiKeyId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAttachChatThreadToRecordArgs = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
 };
 
 
@@ -3893,6 +3902,13 @@ export type MutationDestroyViewGroupArgs = {
 
 export type MutationDestroyViewSortArgs = {
   input: DestroyViewSortInput;
+};
+
+
+export type MutationDetachChatThreadFromRecordArgs = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
 };
 
 
@@ -5194,6 +5210,7 @@ export type Query = {
   chatStreamCatchupChunks: ChatStreamCatchupChunks;
   chatThread: AgentChatThread;
   chatThreads: Array<AgentChatThread>;
+  chatThreadsForRecord: Array<AgentChatThread>;
   checkUserExists: CheckUserExist;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   checkWorkspaceSubdomainAvailability: SubdomainAvailabilityDto;
@@ -5395,6 +5412,14 @@ export type QueryChatStreamCatchupChunksArgs = {
 
 export type QueryChatThreadArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryChatThreadsForRecordArgs = {
+  limit?: Scalars['Int']['input'];
+  objectNameSingular: Scalars['String']['input'];
+  offset?: Scalars['Int']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 

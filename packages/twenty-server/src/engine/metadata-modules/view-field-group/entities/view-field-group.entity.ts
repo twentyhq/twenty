@@ -26,6 +26,7 @@ export type ViewFieldGroupOverrides = {
 };
 
 @Entity({ name: 'viewFieldGroup', schema: 'core' })
+@Index('IDX_VIEW_FIELD_GROUP_APPLICATION_ID', ['applicationId'])
 @Index('IDX_VIEW_FIELD_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FIELD_GROUP_VIEW_ID', ['viewId'])
 export class ViewFieldGroupEntity

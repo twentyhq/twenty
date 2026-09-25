@@ -24,11 +24,17 @@ import { PageLayoutType } from 'twenty-shared/types';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'pageLayout', schema: 'core' })
+@Index('IDX_PAGE_LAYOUT_APPLICATION_ID', ['applicationId'])
 @ObjectType('PageLayout')
 @Index(
-  'IDX_PAGE_LAYOUT_WORKSPACE_ID_OBJECT_METADATA_ID',
-  ['workspaceId', 'objectMetadataId'],
-  { where: '"deletedAt" IS NULL' },
+  'IDX_PAGE_LAYOUT_OBJECT_METADATA_ID_WORKSPACE_ID',
+  ['objectMetadataId', 'workspaceId'],
+  { where: '"objectMetadataId" IS NOT NULL' },
+)
+@Index(
+  'IDX_PAGE_LAYOUT_DEFAULT_TAB_TO_FOCUS_ID',
+  ['defaultTabToFocusOnMobileAndSidePanelId'],
+  { where: '"defaultTabToFocusOnMobileAndSidePanelId" IS NOT NULL' },
 )
 export class PageLayoutEntity
   extends SyncableEntity
