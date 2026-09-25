@@ -4,7 +4,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { IconDownload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;

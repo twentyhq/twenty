@@ -17,8 +17,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { MainButton } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -52,7 +51,7 @@ const StyledCopySetupKeyLink = styled.button`
 `;
 
 export const SignInUpTwoFactorAuthenticationProvision = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const qrCode = useAtomStateValue(qrCodeState);

@@ -25,7 +25,7 @@ import {
   IconChevronRight,
   IconClock,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,

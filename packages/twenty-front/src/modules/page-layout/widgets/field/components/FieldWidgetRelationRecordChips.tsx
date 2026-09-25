@@ -2,7 +2,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { type FieldWidgetRelationRecord } from '@/page-layout/widgets/field/types/FieldWidgetRelationRecord';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

@@ -18,7 +18,7 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { EMAIL_RECIPIENT_DND_TYPE } from '@/activities/emails/recipients/constants/EmailRecipientDndType';

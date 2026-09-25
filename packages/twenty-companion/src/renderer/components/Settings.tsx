@@ -80,16 +80,17 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
       >
         <SegmentedControl
           itemWidth="content"
-          ariaLabel={i18n._('Appearance')}
+          aria-label={i18n._('Appearance')}
+          disabled={isPending('settings')}
           value={state.settings.appearance}
-          options={(
+          options={
             [
               { value: 'system', label: i18n._('System') },
               { value: 'light', label: i18n._('Light') },
               { value: 'dark', label: i18n._('Dark') },
             ] as const
-          ).map((option) => ({ ...option, disabled: isPending('settings') }))}
-          onChange={(appearance) =>
+          }
+          onValueChange={(appearance) =>
             void command({ type: 'settings', settings: { appearance } })
           }
         />

@@ -1,3 +1,4 @@
+import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -48,6 +49,10 @@ jest.mock('@/ai/components/AiChatCloseButton', () => ({
   AiChatCloseButton: () => <button>Close chat</button>,
 }));
 
+jest.mock('@/ai/components/AiChatSharingDropdown', () => ({
+  AiChatSharingDropdown: () => <button>Share</button>,
+}));
+
 const THREAD: AgentChatThread = {
   __typename: 'AgentChatThread',
   id: 'thread-1',
@@ -90,6 +95,12 @@ describe('AiChatPageHeader', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     setThreads([THREAD]);
+    setAgentChatThreadPermissions(jotaiStore, THREAD.id, {
+      canRead: true,
+      canUpdate: true,
+      canDelete: true,
+      canSoftDelete: true,
+    });
     jotaiStore.set(currentAiChatThreadState.atom, THREAD.id);
     renameChatThread.mockResolvedValue(true);
   });
@@ -105,6 +116,20 @@ describe('AiChatPageHeader', () => {
       expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
     },
   );
+
+  it('hides rename and mutation actions from shared viewers', () => {
+    setAgentChatThreadPermissions(jotaiStore, THREAD.id, {
+      canRead: true,
+      canUpdate: false,
+      canDelete: false,
+      canSoftDelete: false,
+    });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+    expect(screen.getByText('Best leads')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Share' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Rename chat' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
+  });
 
   it('starts a new chat from the current conversation', async () => {
     const user = userEvent.setup();

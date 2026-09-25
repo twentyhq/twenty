@@ -1,6 +1,6 @@
 import { type Decorator } from '@storybook/react-vite';
 
-import { themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables } from '@ui/theme';
 
 import { ComponentStorybookLayout } from '../ComponentStorybookLayout';
 

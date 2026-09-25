@@ -1,6 +1,8 @@
 import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMarginLimits';
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/getBarChartLayout';
 import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
+import { computeLeftAxisTitleWidth } from '@/page-layout/widgets/graph/utils/computeLeftAxisTitleWidth';
+import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartDatum';
 import { BarChartLayout } from '~/generated-metadata/graphql';
@@ -123,6 +125,81 @@ describe('getBarChartLayout', () => {
       expect(result.margins.left).toBeLessThanOrEqual(
         TEXT_MARGIN_LIMITS.max.left,
       );
+    });
+
+    it('widens the left margin to fit long category labels instead of truncating them to the minimum', () => {
+      const longLabel = 'Achraf Benjelloun';
+
+      const result = getBarChartLayout({
+        ...baseParams,
+        layout: BarChartLayout.HORIZONTAL,
+        xAxisLabel: undefined,
+        yAxisLabel: undefined,
+        data: [{ category: longLabel, value: 10 }],
+      });
+
+      expect(result.margins.left).toBeGreaterThan(75);
+      expect(result.margins.left).toBeLessThanOrEqual(
+        TEXT_MARGIN_LIMITS.max.left,
+      );
+      expect(result.axisLeftConfiguration.format(longLabel)).toBe(longLabel);
+    });
+
+    it('caps the left margin and still truncates labels that exceed the maximum margin', () => {
+      const veryLongLabel = 'A'.repeat(40);
+
+      const result = getBarChartLayout({
+        ...baseParams,
+        layout: BarChartLayout.HORIZONTAL,
+        xAxisLabel: undefined,
+        yAxisLabel: undefined,
+        data: [{ category: veryLongLabel, value: 10 }],
+      });
+
+      expect(result.margins.left).toBe(TEXT_MARGIN_LIMITS.max.left);
+      expect(result.axisLeftConfiguration.format(veryLongLabel)).toMatch(
+        /\.\.\.$/,
+      );
+      expect(
+        result.axisLeftConfiguration.format(veryLongLabel).length,
+      ).toBeLessThan(veryLongLabel.length);
+    });
+
+    it('keeps capped labels clear of the Y-axis title sharing the left margin', () => {
+      const veryLongLabel = 'A'.repeat(40);
+
+      const buildLayout = (yAxisLabel: string | undefined) =>
+        getBarChartLayout({
+          ...baseParams,
+          layout: BarChartLayout.HORIZONTAL,
+          xAxisLabel: undefined,
+          yAxisLabel,
+          data: [{ category: veryLongLabel, value: 10 }],
+        });
+
+      const withoutTitle = buildLayout(undefined);
+      const withTitle = buildLayout('Company');
+
+      expect(withTitle.margins.left).toBe(TEXT_MARGIN_LIMITS.max.left);
+
+      const renderedWithoutTitle =
+        withoutTitle.axisLeftConfiguration.format(veryLongLabel);
+      const renderedWithTitle =
+        withTitle.axisLeftConfiguration.format(veryLongLabel);
+
+      expect(renderedWithTitle.length).toBeLessThan(
+        renderedWithoutTitle.length,
+      );
+      expect(
+        computeMaxLabelLengthForMargin({
+          marginSize: withTitle.margins.left,
+          axisFontSize: 11,
+          axisTitleWidth: computeLeftAxisTitleWidth({
+            yAxisLabel: 'Company',
+            legendFontSize: 11,
+          }),
+        }),
+      ).toBe(renderedWithTitle.length);
     });
 
     it('keeps explicit range bounds as value domain', () => {

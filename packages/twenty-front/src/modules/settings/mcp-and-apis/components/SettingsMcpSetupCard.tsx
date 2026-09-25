@@ -6,7 +6,7 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { IconExternalLink } from 'twenty-ui/icon';
 import { Pill } from 'twenty-ui/primitives/data-display';
 import { Card, CardContent, Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledCardContent = styled(CardContent)`
   align-items: center;

@@ -4,7 +4,7 @@ import { Section } from 'twenty-ui/components';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { Button } from 'twenty-ui/primitives/input';
 import { Heading, Text } from 'twenty-ui/primitives/typography';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,

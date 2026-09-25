@@ -3,6 +3,8 @@ import {
   type AppLocale,
 } from '@/translations/constants/AppLocales';
 import { SOURCE_LOCALE } from '@/translations/constants/SourceLocale';
+import { isDefined } from '@/utils/validation/isDefined';
+import { isValidLocale } from '@/utils/validation/isValidLocale';
 
 // Maps language codes to full locale keys in APP_LOCALES
 // Example: 'fr' -> 'fr-FR', 'en' -> 'en'
@@ -14,20 +16,20 @@ const languageToLocaleMap = Object.keys(APP_LOCALES).reduce<
   // Only add to the map if not already added or if the current locale is the source locale
   // This ensures language codes map to their full locale version (e.g., 'es' -> 'es-ES')
   // but preserves 'en' -> 'en' since it's the source locale
-  if (!map[language] || locale === SOURCE_LOCALE) {
-    map[language] = locale;
+  if (!map.has(language) || locale === SOURCE_LOCALE) {
+    map.set(language, locale as AppLocale);
   }
 
   return map;
-}, {});
+}, new Map<string, AppLocale>());
 
 export const normalizeLocale = (value: string | null): AppLocale => {
   if (value === null) {
     return SOURCE_LOCALE;
   }
 
-  if (value in APP_LOCALES) {
-    return value as AppLocale;
+  if (isValidLocale(value)) {
+    return value;
   }
 
   const caseInsensitiveMatch = Object.keys(APP_LOCALES).find(

@@ -8,7 +8,7 @@ import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
 import { IconUserPlus } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`

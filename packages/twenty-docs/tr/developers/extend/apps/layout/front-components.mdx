@@ -711,7 +711,7 @@ Kullandığınız bileşenlerin yalnızca paketinizde yer alması için, paket k
 | `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` ve daha fazlası              |
 | `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` ve daha fazlası |
 | `twenty-ui/icon`            | `Icon*` bileşenleri (ör. `IconCheck`)                    |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`                     |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`                     |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Twenty UI bileşenleri, çalışma alanının açık ve koyu temasıyla otomatik
 Kendi satır içi stillerinizde aynı tasarım belirteçlerini kullanmak için `useTheme()` kancasını çağırın. Bu kanca, etkin temaya bağlı Twenty tema belirteçlerini (boşluklandırma, renkler, köşe yarıçapları, yazı tipleri) döndürür; bileşeninizde `ThemeProvider` kurulumuna gerek yoktur:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

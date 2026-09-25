@@ -28,6 +28,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -61,6 +62,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ObjectRecordCountService,
     MostlyEmptyFieldsService,
     ObjectMetadataToolsFactory,
+    provideWorkspaceScopedRepository(ObjectMetadataEntity),
+    provideWorkspaceScopedRepository(FieldMetadataEntity),
   ],
   exports: [ObjectMetadataService, ObjectMetadataToolsFactory],
 })

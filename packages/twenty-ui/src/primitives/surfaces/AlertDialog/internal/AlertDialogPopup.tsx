@@ -1,7 +1,7 @@
 import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog';
 import { useDirection } from '@base-ui/react/direction-provider';
 
-import { useThemeContainer } from '@ui/theme-constants';
+import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '@ui/primitives/surfaces/internal/Dialog.module.scss';

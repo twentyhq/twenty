@@ -67,12 +67,14 @@ export const resolveSlackAssistantMentions = async ({
   conversationMessages,
   client,
   slackClient,
+  slackConnectionId,
   assistantBotUserId,
 }: {
   requestText: string;
   conversationMessages: SlackAssistantAgentMessage[];
   client: CoreApiClient;
   slackClient: WebClient | undefined;
+  slackConnectionId: string | undefined;
   assistantBotUserId: string | undefined;
 }): Promise<ResolvedSlackAssistantMentions> => {
   const splitMessages = conversationMessages.map(splitAuthorPrefix);
@@ -91,6 +93,7 @@ export const resolveSlackAssistantMentions = async ({
       slackUserIds: [...new Set([...mentionedUserIds, ...authorSlackUserIds])],
       client,
       slackClient,
+      slackConnectionId,
       assistantBotUserId,
     }).catch((error) => {
       console.warn(

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreWorkflowFiltersBuilder } from '@/object-core/workflows/components/CoreWorkflowFiltersBuilder';
 import {

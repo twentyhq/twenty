@@ -8,7 +8,7 @@ import {
   CardHeader,
   Tooltip,
 } from 'twenty-ui/primitives/surfaces';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,

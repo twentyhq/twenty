@@ -176,7 +176,7 @@ Use `type="panel"` for form inputs. Input interaction keeps the panel open; a sa
   height={380}
 />
 
-Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
+Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
 
 ## Props
 

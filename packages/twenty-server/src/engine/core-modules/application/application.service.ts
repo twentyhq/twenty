@@ -60,8 +60,8 @@ export class ApplicationService {
     private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
     @InjectWorkspaceScopedRepository(SettingsMenuItemEntity)
     private readonly settingsMenuItemRepository: WorkspaceScopedRepository<SettingsMenuItemEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
@@ -229,8 +229,8 @@ export class ApplicationService {
       this.settingsMenuItemRepository.find(workspaceId, {
         where: { applicationId: application.id },
       }),
-      this.objectMetadataRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.objectMetadataRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.applicationVariableRepository.find(workspaceId, {
         where: { applicationId: application.id },

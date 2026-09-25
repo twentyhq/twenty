@@ -7,15 +7,9 @@ import { computeBaselineBar } from '@/page-layout/widgets/graph/graph-widget-bar
 import { interpolateBars } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/interpolateBars';
 import { renderBars } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/renderBars';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import {
-  type RefObject,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { type RefObject, useCallback, useEffect, useState } from 'react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type BarChartBaseLayerEffectProps = {
   bars: BarPosition[];
@@ -51,7 +45,7 @@ export const BarChartBaseLayerEffect = ({
   allowDataTransitions,
   canvasRef,
 }: BarChartBaseLayerEffectProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const borderRadius = parseInt(theme.border.radius.sm);
   const gridColor = theme.border.color.light;

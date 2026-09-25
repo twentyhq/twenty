@@ -7,7 +7,6 @@ import React, {
   type FocusEventHandler,
   type InputHTMLAttributes,
   forwardRef,
-  useContext,
   useId,
   useRef,
   useState,
@@ -15,7 +14,7 @@ import React, {
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
@@ -304,7 +303,7 @@ const TextInputComponent = forwardRef<
     },
     ref,
   ) => {
-    const { theme } = useContext(ThemeContext);
+    const theme = useTheme();
     const inputRef = useRef<HTMLInputElement>(null);
     const combinedRef = useCombinedRefs(ref, inputRef);
 

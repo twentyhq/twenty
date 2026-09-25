@@ -19,11 +19,11 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray } from '@sniptt/guards';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -98,7 +98,7 @@ export const FormMultiSelectFieldInput = ({
   hint,
   dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();

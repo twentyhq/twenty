@@ -7,7 +7,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SearchInput, Section } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { SettingsAdminChatsContent } from '@/settings/admin-panel/chats/components/SettingsAdminChatsContent';
