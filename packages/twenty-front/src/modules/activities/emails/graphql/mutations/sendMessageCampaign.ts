@@ -9,7 +9,6 @@ export const SEND_MESSAGE_CAMPAIGN = gql`
         totalMembers
         withoutEmail
         duplicateEmails
-        overCap
         hardSuppressed
         globallyUnsubscribed
         topicUnsubscribed
