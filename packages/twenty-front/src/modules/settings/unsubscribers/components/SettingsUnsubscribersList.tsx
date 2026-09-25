@@ -105,12 +105,19 @@ export const SettingsUnsubscribersList = () => {
     ]),
   );
 
-  const getScopeLabel = (topicId: string | null) => {
-    if (!isDefined(topicId)) {
+  const getScopeLabel = ({
+    reason,
+    unsubscribeTopicId,
+  }: Pick<MessageSuppression, 'reason' | 'unsubscribeTopicId'>) => {
+    if (reason === MessageSuppressionReason.TRACKING) {
+      return t`Clicks only`;
+    }
+
+    if (!isDefined(unsubscribeTopicId)) {
       return t`All emails`;
     }
 
-    return topicNameById.get(topicId) ?? t`Unknown topic`;
+    return topicNameById.get(unsubscribeTopicId) ?? t`Unknown topic`;
   };
 
   const items = loading ? [] : messageSuppressions;
@@ -125,7 +132,7 @@ export const SettingsUnsubscribersList = () => {
     <StyledContainer>
       <SettingsTableListSection<MessageSuppression>
         title={t`Unsubscribers`}
-        description={t`Email addresses that will no longer receive campaign emails`}
+        description={t`Email addresses that opted out of campaign emails or of click tracking`}
         toolbar={
           <StyledToolbar>
             <StyledSearch>
@@ -155,9 +162,7 @@ export const SettingsUnsubscribersList = () => {
           },
           {
             label: t`Scope`,
-            Cell: ({ item }) => (
-              <>{getScopeLabel(item.unsubscribeTopicId ?? null)}</>
-            ),
+            Cell: ({ item }) => <>{getScopeLabel(item)}</>,
           },
           {
             label: t`Reason`,
