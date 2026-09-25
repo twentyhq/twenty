@@ -63,7 +63,6 @@
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "11.2.1",
     "@nestjs/schedule": "^6.0.1",
-    "@nestjs/serve-static": "5.0.5",
     "@nestjs/terminus": "11.0.0",
     "@nestjs/typeorm": "11.0.0",
     "@node-saml/node-saml": "5.1.0",

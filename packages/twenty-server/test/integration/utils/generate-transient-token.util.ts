@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
@@ -28,7 +28,7 @@ export const generateTransientTokenResponse = async ({
 }: Omit<PerformMetadataQueryParams<never>, 'input'>): CommonResponseBody<{
   generateTransientToken: TransientTokenDTO;
 }> => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     generateTransientTokenQueryFactory(),
     token,
   );
@@ -52,7 +52,7 @@ export const generateTransientTokenResponse = async ({
 };
 
 export const generateTransientToken = async (): Promise<string> => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     generateTransientTokenQueryFactory(),
   );
 

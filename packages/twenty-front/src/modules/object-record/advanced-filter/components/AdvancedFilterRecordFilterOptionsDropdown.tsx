@@ -8,7 +8,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -73,7 +73,7 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
         </IconButton>
       }
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             <ListItem
               onClick={handleRemove}
@@ -81,7 +81,7 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
               color="danger"
             >{t`Remove rule`}</ListItem>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
       dropdownPlacement="bottom-start"

@@ -4,9 +4,8 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -23,10 +22,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { SettingsRow } from 'twenty-ui/components';
+import { Dropdown, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
   OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
@@ -201,30 +200,35 @@ export const SettingsObjectRelationsTable = ({
             onChange={setSearchTerm}
           />
         </StyledSearchInputContainer>
-        <Dropdown
+        <DropdownRoot
           dropdownId="settings-relations-filter-dropdown"
-          dropdownPlacement="bottom-end"
-          dropdownOffset={{ x: 0, y: 8 }}
-          clickableComponent={
-            <Button
-              startIcon={<IconFilter />}
-              size="md"
-              aria-label={t`Filter`}
-              variant="outline"
-            />
-          }
-          dropdownComponents={
-            <DropdownContent>
-              <DropdownMenuItemsContainer>
-                <SettingsRow
-                  startIcon={<IconArchive />}
-                  onCheckedChange={() => setShowInactive(!showInactive)}
-                  checked={showInactive}
-                >{t`Inactive`}</SettingsRow>
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          }
-        />
+          type="panel"
+        >
+          <Dropdown.Trigger
+            render={
+              <Button
+                startIcon={<IconFilter />}
+                size="md"
+                aria-label={t`Filter`}
+                variant="outline"
+              />
+            }
+          />
+          <DropdownContent
+            side="bottom"
+            align="end"
+            sideOffset={8}
+            alignOffset={0}
+          >
+            <Dropdown.Section>
+              <SettingsRow
+                startIcon={<IconArchive />}
+                onCheckedChange={() => setShowInactive(!showInactive)}
+                checked={showInactive}
+              >{t`Inactive`}</SettingsRow>
+            </Dropdown.Section>
+          </DropdownContent>
+        </DropdownRoot>
       </StyledSearchAndFilterContainer>
       <Table>
         <TableRow

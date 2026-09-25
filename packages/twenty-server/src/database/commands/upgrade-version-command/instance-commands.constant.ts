@@ -200,12 +200,15 @@ import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/
 import { AddAiEvaluationModelToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789918648347-add-ai-evaluation-model-to-workspace';
 import { AddIsRequiredToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789920900000-add-is-required-to-application-variables';
 import { AddDeferredWorkspaceMigrationActionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790085198967-add-deferred-workspace-migration-action-table';
+import { RenameDeferredWorkspaceMigrationActionNameFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790255000000-rename-deferred-workspace-migration-action-name';
 import { AddHealthCheckToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088275000-add-health-check-to-application';
 import { AddApplicationGrantedCapabilitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088525621-add-application-granted-capabilities';
 import { AddViewGroupLoadLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088647379-add-view-group-load-limit';
 import { AddSettingsMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790165860000-add-settings-menu-item';
 import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1790165870000-backfill-settings-menu-item';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
+import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790232481570-add-workspace-allowed-iframe-origins';
+import { AddUsageLimitInstanceOverrideFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790245573467-add-usage-limit-instance-override';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -408,10 +411,13 @@ export const INSTANCE_COMMANDS = [
   AddAiEvaluationModelToWorkspaceFastInstanceCommand,
   AddIsRequiredToApplicationVariablesFastInstanceCommand,
   AddDeferredWorkspaceMigrationActionTableFastInstanceCommand,
+  RenameDeferredWorkspaceMigrationActionNameFastInstanceCommand,
   AddHealthCheckToApplicationFastInstanceCommand,
   AddApplicationGrantedCapabilitiesFastInstanceCommand,
   AddViewGroupLoadLimitFastInstanceCommand,
   AddSettingsMenuItemFastInstanceCommand,
   BackfillSettingsMenuItemSlowInstanceCommand,
   AddChatMessageSenderFastInstanceCommand,
+  AddWorkspaceAllowedIframeOriginsFastInstanceCommand,
+  AddUsageLimitInstanceOverrideFastInstanceCommand,
 ];

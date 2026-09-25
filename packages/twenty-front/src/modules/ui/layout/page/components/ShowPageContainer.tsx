@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties, type ReactNode } from 'react';
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOuterContainer = styled.div`
   display: flex;

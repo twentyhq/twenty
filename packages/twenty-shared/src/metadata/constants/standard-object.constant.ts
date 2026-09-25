@@ -48,6 +48,9 @@ export const STANDARD_OBJECTS = {
       workflowIdIndex: {
         universalIdentifier: 'fadeab4b-79ee-4173-af79-72c51fbad888',
       },
+      agentChatThreadIdIndex: {
+        universalIdentifier: '69857371-6ff9-48fa-a9de-db4f71593431',
+      },
     },
     views: {
       allAttachments: buildStandardObjectIndexView({
@@ -67,6 +70,13 @@ export const STANDARD_OBJECTS = {
           'targetDashboard',
           'targetWorkflow',
         ],
+      }),
+      attachmentRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+        fields: STANDARD_OBJECT_FIELDS.attachment,
+        viewFieldNames: ['createdBy', 'createdAt'],
+        viewFieldGroupNames: {},
       }),
     },
   },
@@ -1407,6 +1417,38 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  agentChatThreadTarget: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+    fields: STANDARD_OBJECT_FIELDS.agentChatThreadTarget,
+    morphIds: {
+      targetMorphId: { morphId: '2c4cc537-39a2-4df9-81a1-dda26eb19658' },
+    },
+    indexes: {
+      threadIdIndex: {
+        universalIdentifier: '19291d2c-15ab-43a0-91f7-1694b34813dd',
+      },
+      personIdIndex: {
+        universalIdentifier: 'fe9c48d0-5b2a-4a51-bd47-f9205ea0c09d',
+      },
+      companyIdIndex: {
+        universalIdentifier: 'ab45593a-3614-41c8-aab1-20aa91f1095c',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: 'b68e2031-73c6-4bc4-b062-5f795539e452',
+      },
+      threadPersonUniqueIndex: {
+        universalIdentifier: '5a12050f-4de2-4076-aecc-959b863e14b2',
+      },
+      threadCompanyUniqueIndex: {
+        universalIdentifier: 'd9067628-fd16-4843-955b-5fd47fea52a9',
+      },
+      threadOpportunityUniqueIndex: {
+        universalIdentifier: '1b9bec10-2788-40be-9435-44937b9f7018',
+      },
+    },
+    views: {},
+  },
   agentTurn: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentTurn,
     fields: STANDARD_OBJECT_FIELDS.agentTurn,
@@ -1453,6 +1495,37 @@ export const STANDARD_OBJECTS = {
     indexes: {
       turnIndex: {
         universalIdentifier: 'f85d8283-84ae-4343-8328-8c4e21c5b984',
+      },
+    },
+  },
+  campaignDelivery: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.campaignDelivery,
+    fields: STANDARD_OBJECT_FIELDS.campaignDelivery,
+    indexes: {
+      campaignPersonUniqueIndex: {
+        universalIdentifier: '8d719548-d34f-4891-bbc9-e0e09f0e363b',
+      },
+      expiredClaimIndex: {
+        universalIdentifier: 'a4d7e8ed-0008-4f6a-a20c-a2b821487481',
+      },
+      countsIndex: {
+        universalIdentifier: '1ea1ae7a-158f-436a-95a0-e9c998ad94f7',
+      },
+      claimTokenIndex: {
+        universalIdentifier: '91640dcd-3f6b-4378-b284-bb02cc8b81ec',
+      },
+      providerMessageIdUniqueIndex: {
+        universalIdentifier: '4de6f73d-ef3a-4c80-b71a-88739213f1c0',
+      },
+    },
+  },
+  messageSuppression: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageSuppression,
+    fields: STANDARD_OBJECT_FIELDS.messageSuppression,
+    indexes: {
+      emailAddressTopicUniqueIndex: {
+        universalIdentifier: 'a6c1f4dc-d925-49f9-8205-3e7f95545966',
       },
     },
   },

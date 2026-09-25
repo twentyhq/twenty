@@ -22,7 +22,7 @@ import {
   IconPassword,
 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,

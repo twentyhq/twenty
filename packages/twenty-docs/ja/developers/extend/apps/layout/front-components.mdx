@@ -711,7 +711,7 @@ yarn add twenty-ui@1.0.0-alpha.1
 | `twenty-ui/feedback`        | `Callout`、`Banner`、`Info` など             |
 | `twenty-ui/typography`      | `H1Title`、`H2Title`、`H3Title`、`Label` など |
 | `twenty-ui/icon`            | `Icon*` コンポーネント（例: `IconCheck`）          |
-| `twenty-ui/theme-constants` | `ThemeProvider`、`themeCssVariables`      |
+| `twenty-ui/theme` | `ThemeProvider`、`themeCssVariables`      |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Twenty UI コンポーネントはワークスペースのライト／ダーク�
 独自のインラインスタイルでも同じデザイントークンを使うには、`useTheme()` フックを呼び出します。 これにより、アクティブなテーマに紐づいた Twenty のテーマトークン（スペーシング、カラー、角丸、フォント）が返されます。コンポーネント側で `ThemeProvider` をセットアップする必要はありません。
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

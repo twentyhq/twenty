@@ -10,16 +10,6 @@ export const galleryRenderTest = createGalleryRenderTest({
   expectedFailedComponents: [],
 });
 
-// Unselected radios need the :disabled pseudo-class, which the worker selector
-// engine does not support; React radio groups also need compareDocumentPosition,
-// which the sandbox DOM does not implement.
-export const inputReactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['Radio', 'RadioGroup'],
-});
-export const inputPreactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['Radio'],
-});
-
 // Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
 // but the editor's onMount never fires.
 export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
@@ -36,27 +26,6 @@ export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
   expect(codeEditor).toHaveAttribute('data-monaco-mount-state', 'pending');
-};
-
-export const themeTokenTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-
-  const iconWrapper = await canvas.findByTestId(
-    'theme-token-icon-wrapper',
-    {},
-    { timeout: MOUNT_TIMEOUT },
-  );
-
-  await waitFor(() => {
-    const iconBox = iconWrapper.getBoundingClientRect();
-
-    expect(Math.round(iconBox.width)).toBe(16);
-    expect(Math.round(iconBox.height)).toBe(16);
-  });
-
-  expect(errorHandler).not.toHaveBeenCalled();
 };
 
 export const displayHelpersTest: TwentyUiGalleryPlayFunction = async ({

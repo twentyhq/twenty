@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierInformationButton } from '@/ai/components/AiModelTierInformationButton';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';

@@ -3,8 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -29,7 +29,7 @@ describe('restoreManyObjectRecordsPermissions', () => {
       ],
     });
 
-    await makeGraphqlAPIRequest(createGraphqlOperation);
+    await makeGraphqlApiRequest(createGraphqlOperation);
 
     const deleteGraphqlOperation = deleteManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -42,7 +42,7 @@ describe('restoreManyObjectRecordsPermissions', () => {
       },
     });
 
-    await makeGraphqlAPIRequest(deleteGraphqlOperation);
+    await makeGraphqlApiRequest(deleteGraphqlOperation);
   });
 
   it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -57,7 +57,7 @@ describe('restoreManyObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ restorePeople: null });
     expect(response.body.errors).toBeDefined();
@@ -79,7 +79,7 @@ describe('restoreManyObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.restorePeople).toBeDefined();

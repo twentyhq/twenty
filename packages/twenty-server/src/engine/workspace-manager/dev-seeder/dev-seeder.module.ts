@@ -73,6 +73,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DevSeederDataService,
     TimelineActivitySeederService,
     provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
 })
 export class DevSeederModule {}

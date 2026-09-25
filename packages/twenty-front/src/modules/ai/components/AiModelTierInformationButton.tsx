@@ -27,10 +27,7 @@ import {
   IconInfoCircle,
 } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import {
-  themeCssVariables,
-  useThemeContainer,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables, useThemeContainer } from 'twenty-ui/theme';
 
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';

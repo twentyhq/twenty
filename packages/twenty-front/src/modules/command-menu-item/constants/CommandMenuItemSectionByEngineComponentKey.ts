@@ -51,13 +51,14 @@ export const COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY = {
   [EngineComponentKey.EXPORT_FROM_RECORD_SHOW]: 'SELECTION',
   [EngineComponentKey.EXPORT_MULTIPLE_RECORDS]: 'SELECTION',
 
-  [EngineComponentKey.CREATE_NEW_RECORD]: 'THIS_VIEW',
-  [EngineComponentKey.CREATE_NEW_VIEW]: 'THIS_VIEW',
-  [EngineComponentKey.IMPORT_RECORDS]: 'THIS_VIEW',
-  [EngineComponentKey.EXPORT_VIEW]: 'THIS_VIEW',
-  [EngineComponentKey.SEE_DELETED_RECORDS]: 'THIS_VIEW',
-  [EngineComponentKey.HIDE_DELETED_RECORDS]: 'THIS_VIEW',
-  [EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT]: 'THIS_VIEW',
+  [EngineComponentKey.EXPORT_VIEW]: 'CURRENT_VIEW',
+  [EngineComponentKey.SEE_DELETED_RECORDS]: 'CURRENT_VIEW',
+  [EngineComponentKey.HIDE_DELETED_RECORDS]: 'CURRENT_VIEW',
+
+  [EngineComponentKey.CREATE_NEW_RECORD]: 'THIS_OBJECT',
+  [EngineComponentKey.CREATE_NEW_VIEW]: 'THIS_OBJECT',
+  [EngineComponentKey.IMPORT_RECORDS]: 'THIS_OBJECT',
+  [EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT]: 'THIS_OBJECT',
 
   [EngineComponentKey.ASK_AI]: 'ASK_AND_FIND',
   [EngineComponentKey.SEARCH_RECORDS]: 'ASK_AND_FIND',

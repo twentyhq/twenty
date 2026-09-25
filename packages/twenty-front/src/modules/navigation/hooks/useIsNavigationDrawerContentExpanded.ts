@@ -1,5 +1,5 @@
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 // Whether the navigation content renders its full width rather than the icon
 // rail. Mobile has no rail: the content is either a full-width drawer or the

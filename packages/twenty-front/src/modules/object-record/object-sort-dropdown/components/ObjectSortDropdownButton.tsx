@@ -13,7 +13,7 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
@@ -172,7 +172,9 @@ export const ObjectSortDropdownButton = () => {
         </StyledHeaderDropdownButton>
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+        >
           <DropdownMenuHeader
             StartComponent={
               <DropdownMenuHeaderLeftComponent
@@ -286,7 +288,7 @@ export const ObjectSortDropdownButton = () => {
               </>
             )}
           </SelectableList>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       onClose={handleDropdownButtonClose}
     />

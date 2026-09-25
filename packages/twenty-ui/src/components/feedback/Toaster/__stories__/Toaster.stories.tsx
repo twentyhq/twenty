@@ -4,7 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { ToastProvider } from '@ui/components/feedback/Toast/ToastProvider';
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Toaster } from '../Toaster';
 import { ToastControls } from './ToastControls';

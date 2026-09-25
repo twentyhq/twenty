@@ -10,7 +10,7 @@ import {
   type CustomMentionMenuProps,
   type MentionItem,
 } from '@/blocknote-editor/types/types';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,7 +64,7 @@ export const CustomMentionMenu = ({
               style={floatingStyles}
               data-click-outside-id={MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
             >
-              <DropdownContent widthInPixels={MenuPixelWidth}>
+              <LegacyDropdownContent widthInPixels={MenuPixelWidth}>
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredItems.map((item, index) => (
                     <MentionMenuListItem
@@ -79,7 +79,7 @@ export const CustomMentionMenu = ({
                     />
                   ))}
                 </DropdownMenuItemsContainer>
-              </DropdownContent>
+              </LegacyDropdownContent>
             </OverlayContainer>
           </motion.div>,
           document.body,

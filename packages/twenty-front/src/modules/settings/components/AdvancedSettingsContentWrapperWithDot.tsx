@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconPoint } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledWrapper = styled.div`
   position: relative;
@@ -37,7 +36,7 @@ export const AdvancedSettingsContentWrapperWithDot = ({
   hideDot = false,
   dotPosition = 'centered',
 }: AdvancedSettingsContentWrapperWithDotProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledWrapper>

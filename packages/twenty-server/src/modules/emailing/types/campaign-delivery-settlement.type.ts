@@ -1,6 +1,6 @@
-import { type CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { type CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 
 export type CampaignDeliverySettlement = Pick<
-  CampaignDeliveryEntity,
+  CampaignDeliveryWorkspaceEntity,
   'state' | 'skipReason' | 'failureReason' | 'providerMessageId' | 'sentAt'
 > & { deliveryId: string };

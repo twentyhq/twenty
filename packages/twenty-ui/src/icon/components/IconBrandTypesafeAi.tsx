@@ -1,6 +1,6 @@
 import IconBrandTypesafeAiRaw from '@assets/icons/typesafe-ai.svg?react';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IconBrandTypesafeAiProps = Pick<IconComponentProps, 'size' | 'color'>;
 

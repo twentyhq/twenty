@@ -7,7 +7,7 @@ import {
   TEST_PRIMARY_LINK_URL,
   TEST_PRIMARY_LINK_URL_AS_DOMAIN,
 } from 'test/integration/constants/test-primary-link-url.constant';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
@@ -20,7 +20,7 @@ describe('Core REST API Find One endpoint', () => {
 
     personJobTitle = generateRecordName(TEST_PERSON_1_ID);
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/companies',
       body: {
@@ -31,7 +31,7 @@ describe('Core REST API Find One endpoint', () => {
       },
     });
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/people',
       body: {
@@ -43,7 +43,7 @@ describe('Core REST API Find One endpoint', () => {
   });
 
   it('should retrieve a person by ID', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/people/${TEST_PERSON_1_ID}`,
     })
@@ -58,7 +58,7 @@ describe('Core REST API Find One endpoint', () => {
   });
 
   it('should return 404 error when trying to retrieve a non-existing person', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
     });
@@ -69,7 +69,7 @@ describe('Core REST API Find One endpoint', () => {
   });
 
   it('should return 400 error when trying to retrieve with malformed uuid', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/people/malformed-uuid`,
     })
@@ -83,7 +83,7 @@ describe('Core REST API Find One endpoint', () => {
   });
 
   it('should support depth 0 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/people/${TEST_PERSON_1_ID}?depth=0`,
     })
@@ -98,7 +98,7 @@ describe('Core REST API Find One endpoint', () => {
   });
 
   it('should support depth 1 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/people/${TEST_PERSON_1_ID}?depth=1`,
     })
@@ -115,7 +115,7 @@ describe('Core REST API Find One endpoint', () => {
   });
 
   it('should not support depth 2 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/people/${TEST_PERSON_1_ID}?depth=2`,
     }).expect(400);

@@ -14,9 +14,8 @@ import {
   StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -27,16 +26,12 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { SearchInput, SettingsRow } from 'twenty-ui/components';
+import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
@@ -70,7 +65,7 @@ export const SettingsObjectTable = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const navigate = useNavigateSettings();
@@ -166,35 +161,38 @@ export const SettingsObjectTable = ({
             placeholder={t`Search for an object...`}
             value={searchTerm}
             onChange={setSearchTerm}
-            filterDropdown={(filterButton: ReactNode) => (
-              <Dropdown
+            filterDropdown={(filterButton) => (
+              <DropdownRoot
                 dropdownId="settings-objects-filter-dropdown"
-                dropdownPlacement="bottom-end"
-                dropdownOffset={{ x: 0, y: 8 }}
-                clickableComponent={filterButton}
-                dropdownComponents={
-                  <DropdownContent>
-                    <DropdownMenuItemsContainer>
+                type="panel"
+              >
+                <Dropdown.Trigger render={filterButton} />
+                <DropdownContent
+                  side="bottom"
+                  align="end"
+                  sideOffset={8}
+                  alignOffset={0}
+                >
+                  <Dropdown.Section>
+                    <SettingsRow
+                      startIcon={<IconArchive />}
+                      onCheckedChange={() =>
+                        setShowDeactivated(!showDeactivated)
+                      }
+                      checked={showDeactivated}
+                    >{t`Deactivated`}</SettingsRow>
+                    {isAdvancedModeEnabled && (
                       <SettingsRow
-                        startIcon={<IconArchive />}
+                        startIcon={<IconSettings />}
                         onCheckedChange={() =>
-                          setShowDeactivated(!showDeactivated)
+                          setShowSystemObjects(!showSystemObjects)
                         }
-                        checked={showDeactivated}
-                      >{t`Deactivated`}</SettingsRow>
-                      {isAdvancedModeEnabled && (
-                        <SettingsRow
-                          startIcon={<IconSettings />}
-                          onCheckedChange={() =>
-                            setShowSystemObjects(!showSystemObjects)
-                          }
-                          checked={showSystemObjects}
-                        >{t`System objects`}</SettingsRow>
-                      )}
-                    </DropdownMenuItemsContainer>
-                  </DropdownContent>
-                }
-              />
+                        checked={showSystemObjects}
+                      >{t`System objects`}</SettingsRow>
+                    )}
+                  </Dropdown.Section>
+                </DropdownContent>
+              </DropdownRoot>
             )}
           />
         </StyledSearchInputContainer>

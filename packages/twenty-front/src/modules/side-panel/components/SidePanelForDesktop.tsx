@@ -22,7 +22,7 @@ import { styled } from '@linaria/react';
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type AnimationEvent, useCallback, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;

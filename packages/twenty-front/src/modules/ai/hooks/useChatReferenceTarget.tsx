@@ -9,7 +9,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';

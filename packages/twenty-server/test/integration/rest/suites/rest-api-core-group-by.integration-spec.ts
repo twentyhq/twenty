@@ -3,8 +3,8 @@ import { randomUUID } from 'crypto';
 import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 const OPPORTUNITY_GQL_FIELDS = `
   id
@@ -34,7 +34,7 @@ describe('REST API Core Group By endpoint', () => {
   const COMPANY_2_POSITION = 20;
 
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -47,7 +47,7 @@ describe('REST API Core Group By endpoint', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -61,7 +61,7 @@ describe('REST API Core Group By endpoint', () => {
     );
 
     // Create test opportunities with different stages and dates
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -77,7 +77,7 @@ describe('REST API Core Group By endpoint', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -93,7 +93,7 @@ describe('REST API Core Group By endpoint', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -109,7 +109,7 @@ describe('REST API Core Group By endpoint', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -133,7 +133,7 @@ describe('REST API Core Group By endpoint', () => {
       testOpportunityId3,
       testOpportunityId4,
     ]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'opportunity',
           gqlFields: 'id',
@@ -143,7 +143,7 @@ describe('REST API Core Group By endpoint', () => {
     }
 
     for (const id of [testCompanyId1, testCompanyId2]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: 'id',
@@ -165,7 +165,7 @@ describe('REST API Core Group By endpoint', () => {
       },
     ]);
 
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/opportunities/groupBy?group_by=${encodeURIComponent(groupByQuery)}&aggregate=${encodeURIComponent(AGGREGATE_FIELDS)}&filter=${encodeURIComponent(FILTER_2020)}&include_records_sample=true&limit=3`,
       body: {},
@@ -251,7 +251,7 @@ describe('REST API Core Group By endpoint', () => {
 
     const filterQuery = `${FILTER_2020},stage[eq]:'NEW'`;
 
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/opportunities/groupBy?group_by=${encodeURIComponent(groupByQuery)}&aggregate=${encodeURIComponent(AGGREGATE_FIELDS)}&filter=${encodeURIComponent(filterQuery)}&include_records_sample=true&limit=2`,
       body: {},
@@ -310,7 +310,7 @@ describe('REST API Core Group By endpoint', () => {
     };
 
     it('sorts by name in ascending order', async () => {
-      const response = await makeRestAPIRequest(
+      const response = await makeRestApiRequest(
         getGroupByRequestWithOrderByForRecords('AscNullsFirst'),
       );
 
@@ -332,7 +332,7 @@ describe('REST API Core Group By endpoint', () => {
     });
 
     it('sorts by name in descending order', async () => {
-      const response = await makeRestAPIRequest(
+      const response = await makeRestApiRequest(
         getGroupByRequestWithOrderByForRecords('DescNullsFirst'),
       );
 

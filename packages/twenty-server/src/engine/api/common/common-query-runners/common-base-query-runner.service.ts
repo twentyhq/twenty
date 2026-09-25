@@ -384,7 +384,6 @@ export abstract class CommonBaseQueryRunnerService<
       rolePermissionConfig,
       repository,
       featureFlagsMap: context.featureFlagsMap,
-      isRecordSharingEnabled: context.isRecordSharingEnabled,
     };
   }
 

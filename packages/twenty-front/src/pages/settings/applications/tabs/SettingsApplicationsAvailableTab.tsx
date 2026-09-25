@@ -1,18 +1,18 @@
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import {
+  Dropdown,
   InlineBanner,
   SearchInput,
   Section,
   SettingsRow,
 } from 'twenty-ui/components';
 import { IconSparkles } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 
@@ -99,24 +99,24 @@ export const SettingsApplicationsAvailableTab = () => {
           placeholder={t`Search an application`}
           value={searchTerm}
           onChange={setSearchTerm}
-          filterDropdown={(filterButton: ReactNode) => (
-            <Dropdown
-              dropdownId="marketplace-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <SettingsRow
-                      startIcon={<IconSparkles />}
-                      onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
-                      checked={showVettedOnly}
-                    >{t`Vetted only`}</SettingsRow>
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
+          filterDropdown={(filterButton) => (
+            <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
+              <Dropdown.Trigger render={filterButton} />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+              >
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconSparkles />}
+                    onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
+                    checked={showVettedOnly}
+                  >{t`Vetted only`}</SettingsRow>
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           )}
         />
       </StyledSearchInputContainer>

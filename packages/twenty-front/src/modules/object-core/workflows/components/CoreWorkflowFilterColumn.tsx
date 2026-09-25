@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreWorkflowFilterFieldSelect } from '@/object-core/workflows/components/CoreWorkflowFilterFieldSelect';
 import { CoreWorkflowFilterValueInput } from '@/object-core/workflows/components/CoreWorkflowFilterValueInput';

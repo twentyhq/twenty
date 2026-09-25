@@ -3,15 +3,14 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { Dropdown, useToast } from 'twenty-ui/components';
 import {
   IconMail,
   IconPhoto,
@@ -20,8 +19,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledDropdownContainer = styled.div`
@@ -115,39 +113,38 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   return (
     <StyledDropdownContainer>
-      <Dropdown
+      <DropdownRoot
         dropdownId={EDITABLE_PROFILE_FIELDS_DROPDOWN_ID}
-        dropdownPlacement="bottom-start"
-        dropdownOffset={{ y: 8 }}
-        clickableComponent={
+        type="picker"
+        multiple
+      >
+        <Dropdown.Trigger
+          render={<div />}
+          nativeButton={false}
+          disabled={!isDefined(currentWorkspace)}
+        >
           <SelectControl
             selectedOption={selectedOption}
             isDisabled={!currentWorkspace}
             hasRightElement={false}
           />
-        }
-        dropdownComponents={
-          <DropdownContent>
-            <DropdownMenuItemsContainer isMultiSelect>
-              {profileFieldOptions.map((option) => (
-                <ListItem
-                  render={<button type="button" />}
-                  key={option.value}
-                  className="settings-security-editable-profile-fields-menu-item"
-                  role="option"
-                  aria-selected={selectedFields.includes(option.value)}
-                  selected={selectedFields.includes(option.value)}
-                  indicator="checkbox"
-                  onClick={() => toggleField(option.value)}
-                  startIcon={<SelectOptionIcon Icon={option.Icon} />}
-                >
-                  {option.label}
-                </ListItem>
-              ))}
-            </DropdownMenuItemsContainer>
-          </DropdownContent>
-        }
-      />
+        </Dropdown.Trigger>
+        <DropdownContent side="bottom" align="start" sideOffset={8}>
+          <Dropdown.Section>
+            {profileFieldOptions.map((option) => (
+              <Dropdown.OptionItem
+                key={option.value}
+                className="settings-security-editable-profile-fields-menu-item"
+                selected={selectedFields.includes(option.value)}
+                onSelect={() => toggleField(option.value)}
+                startIcon={<SelectOptionIcon Icon={option.Icon} />}
+              >
+                {option.label}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.Section>
+        </DropdownContent>
+      </DropdownRoot>
     </StyledDropdownContainer>
   );
 };

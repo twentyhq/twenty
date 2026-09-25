@@ -9,7 +9,7 @@ import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-dr
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useMouseDownNavigation } from '@/ui/navigation/utils/hooks/useMouseDownNavigation';
 import { type TriggerEventType } from '@/ui/navigation/utils/types/trigger-event.type';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -23,11 +23,7 @@ import {
   Text,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/typography';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 export type NavigationDrawerItemIndentationLevel = 1 | 2;
@@ -263,7 +259,7 @@ export const NavigationDrawerItem = ({
   isSelectedInEditMode = false,
   variant = 'default',
 }: NavigationDrawerItemProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();

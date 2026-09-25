@@ -25,6 +25,7 @@ const buildLimit = (overrides: Partial<FlatQuotaLimit>): FlatQuotaLimit => ({
   meter: 'creditsUsedMicro',
   limitValue: 1_000_000,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 

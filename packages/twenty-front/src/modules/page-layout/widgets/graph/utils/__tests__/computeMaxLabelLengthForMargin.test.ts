@@ -1,4 +1,5 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
+import { TEXT_MARGIN_EXTRAS } from '@/page-layout/widgets/graph/constants/TextMarginExtras';
 import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 
 describe('computeMaxLabelLengthForMargin', () => {
@@ -10,7 +11,10 @@ describe('computeMaxLabelLengthForMargin', () => {
 
     const expectedCharacterWidth =
       11 * COMMON_CHART_CONSTANTS.HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO;
-    const availableWidth = 100 - COMMON_CHART_CONSTANTS.TICK_PADDING_ALLOWANCE;
+    const availableWidth =
+      100 -
+      (COMMON_CHART_CONSTANTS.TICK_PADDING +
+        TEXT_MARGIN_EXTRAS.tickPaddingExtra);
     const expectedLength = Math.floor(availableWidth / expectedCharacterWidth);
 
     expect(result).toBe(expectedLength);

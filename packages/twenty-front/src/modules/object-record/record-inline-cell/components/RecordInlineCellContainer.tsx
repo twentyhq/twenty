@@ -1,7 +1,7 @@
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -71,7 +71,7 @@ export const StyledSkeletonDiv = styled.div`
 export const RecordInlineCellContainer = () => {
   const { readonly, IconLabel, label, labelWidth, showLabel } =
     useRecordInlineCellContext();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);

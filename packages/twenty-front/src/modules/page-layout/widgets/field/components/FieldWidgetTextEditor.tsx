@@ -8,7 +8,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
