@@ -101,6 +101,11 @@ const resolveInGenericMap = (
   segments: string[],
 ): ResolvedVariable => {
   const [segment, ...rest] = segments;
+
+  if (!isDefined(segment)) {
+    return NOT_FOUND;
+  }
+
   const field = map[segment];
 
   if (isSchemaField(field)) {

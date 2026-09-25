@@ -27,7 +27,7 @@ export const formatUpgradeCommandName = (commandName: string): string => {
 
   const version = commandNameParts[0];
   const lastPart = commandNameParts[commandNameParts.length - 1];
-  const hasTrailingTimestamp = TRAILING_TIMESTAMP_PATTERN.test(lastPart);
+  const hasTrailingTimestamp = TRAILING_TIMESTAMP_PATTERN.test(lastPart ?? '');
 
   const className = commandNameParts.slice(1, -1).join('_');
   const friendlyCommandName = stripCommandSuffix(className);

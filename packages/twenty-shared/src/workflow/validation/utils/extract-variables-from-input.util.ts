@@ -1,5 +1,6 @@
 import { isObject, isString } from '@sniptt/guards';
 
+import { isDefined } from '@/utils';
 import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/constants/CaptureAllVariableTagInnerRegex';
 
 function* resolveVariables(value: unknown): Generator<string> {
@@ -7,7 +8,9 @@ function* resolveVariables(value: unknown): Generator<string> {
     for (const [, variablePath] of value.matchAll(
       CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     )) {
-      yield variablePath;
+      if (isDefined(variablePath)) {
+        yield variablePath;
+      }
     }
 
     return;

@@ -55,6 +55,10 @@ const applyDiffToPath = (
   const pathLength = path.length;
   const lastPathElement = path[pathLength - 1];
 
+  if (!isDefined(lastPathElement)) {
+    throw new Error('Cannot apply diff at an empty path');
+  }
+
   const parentContainer = navigateToParent(obj, path);
 
   switch (type) {
@@ -218,7 +222,7 @@ const filterRemoveSymbols = (array: ArrayType): void => {
   }
 
   for (let i = indicesToRemove.length - 1; i >= 0; i--) {
-    array.splice(indicesToRemove[i], 1);
+    array.splice(indicesToRemove[i]!, 1);
   }
 };
 

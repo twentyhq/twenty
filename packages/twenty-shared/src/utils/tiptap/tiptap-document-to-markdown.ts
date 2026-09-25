@@ -31,7 +31,7 @@ const MARKDOWN_DESTINATION_CHARACTER_ESCAPES: Readonly<Record<string, string>> =
 const escapeMarkdownDestination = (destination: string): string =>
   destination.replace(/[\\()<>\s]/g, (character) =>
     character in MARKDOWN_DESTINATION_CHARACTER_ESCAPES
-      ? MARKDOWN_DESTINATION_CHARACTER_ESCAPES[character]
+      ? (MARKDOWN_DESTINATION_CHARACTER_ESCAPES[character] ?? character)
       : encodeURIComponent(character),
   );
 

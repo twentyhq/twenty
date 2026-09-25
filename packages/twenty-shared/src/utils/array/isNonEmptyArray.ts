@@ -1,12 +1,13 @@
 import { isNumber } from '@sniptt/guards';
 
-export const isNonEmptyArray = <T>(
-  probableArray: T[] | readonly T[] | undefined | null,
-): probableArray is NonNullable<T[]> => {
+export const isNonEmptyArray = <TArray extends readonly unknown[]>(
+  probableArray: TArray | undefined | null,
+): probableArray is TArray & { 0: TArray[number] } => {
   if (
     Array.isArray(probableArray) &&
     isNumber(probableArray.length) &&
-    probableArray.length > 0
+    probableArray.length > 0 &&
+    0 in probableArray
   ) {
     return true;
   }
