@@ -64,17 +64,9 @@ export const createRecordExportConnection = () => {
                 throw new Error(recordExport.errorMessage);
               }
               onProgress?.(recordExport.progress);
-              if (isDefined(recordExport.downloadUrl)) {
-                const { search } = new URL(
-                  recordExport.downloadUrl,
-                  serverBaseUrl,
-                );
-                const downloadUrl = new URL(
-                  `${serverBaseUrl}/file/record-export/${recordExport.id}`,
-                );
-                downloadUrl.search = search;
+              if (isDefined(recordExport.downloadPath)) {
                 const link = document.createElement('a');
-                link.href = downloadUrl.toString();
+                link.href = `${serverBaseUrl}${recordExport.downloadPath}`;
                 link.download = recordExport.filename;
                 document.body.appendChild(link);
                 link.click();
