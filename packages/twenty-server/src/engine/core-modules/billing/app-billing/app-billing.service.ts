@@ -3,7 +3,10 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isUsageOperationTypeValue } from 'twenty-shared/application';
+import {
+  isUsageOperationTypeValue,
+  type UsageOperationTypeValue,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
@@ -17,10 +20,14 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Each operation type has one canonical counting unit — matches how
-// `ai-billing.service.ts` emits native usage events.
+type AppChargeableOperationType =
+  (typeof UsageOperationType)[UsageOperationTypeValue];
+
+// An app sends a quantity and never a unit, so the platform names what the
+// number counts. Keyed on the app-facing vocabulary, so adding a value to
+// twenty-shared's USAGE_OPERATION_TYPES fails to compile until it has a unit.
 const USAGE_UNIT_BY_OPERATION_TYPE: Record<
-  Exclude<UsageOperationType, UsageOperationType.ALL>,
+  AppChargeableOperationType,
   UsageUnit
 > = {
   [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
@@ -30,13 +37,6 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.WEB_SEARCH]: UsageUnit.INVOCATION,
   [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
-  [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: UsageUnit.INVOCATION,
-  [UsageOperationType.API_REQUEST]: UsageUnit.COMPLEXITY,
-  [UsageOperationType.WEBHOOK_CALL]: UsageUnit.REQUEST,
-  [UsageOperationType.STORAGE_FILE]: UsageUnit.BYTE,
-  [UsageOperationType.RECORD_WRITE]: UsageUnit.RECORD,
-  // Platform-raised only; ApplicationRecurringChargeService sets its own unit.
-  [UsageOperationType.SUBSCRIPTION]: UsageUnit.CREDIT,
 };
 
 // `workspaceId` + `applicationId` come from the application-access token,
@@ -116,7 +116,7 @@ export class AppBillingService {
     workspaceId: string;
     applicationId: string;
     charge: ChargeDto;
-  }): Promise<Exclude<UsageOperationType, UsageOperationType.ALL>> {
+  }): Promise<AppChargeableOperationType> {
     if (!isDefined(charge.operation)) {
       if (!isDefined(charge.operationType)) {
         throw new BadRequestException(
