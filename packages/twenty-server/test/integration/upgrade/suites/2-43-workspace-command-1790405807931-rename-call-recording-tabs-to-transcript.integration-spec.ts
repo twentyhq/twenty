@@ -3,7 +3,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { type RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790322700000-rename-call-recording-tabs-to-transcript.command';
+import { type RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790405807931-rename-call-recording-tabs-to-transcript.command';
 import { TRANSCRIPT_TAB_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-43/constants/transcript-tab-universal-identifiers.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
