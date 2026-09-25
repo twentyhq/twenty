@@ -1,26 +1,47 @@
 ---
-title: Create a Campaign with AI
-description: Let the AI build your list and write the whole email, then review it and send.
+title: Use AI for Sales Campaigns
+description: Use AI and workflows to build focused sales lists and draft the campaign.
 ---
 
-Twenty's AI works directly with your CRM data, so it can do most of the work of a campaign for you. Describe who you want to reach and what you want to say. The AI finds the right people, builds the list and writes the email, layout and personalization included. You review the draft, send yourself a test, and click send.
+AI is useful when you have a sales goal but do not want to start with a blank list or blank email. Tell it what you are trying to do. It can look through your CRM, build a focused list, and draft one campaign for that list. You review the work, send a test, then decide whether to send it.
 
 <Note>
-  The AI prepares drafts. It never sends a campaign on its own. Sending is
-  always a step you take yourself.
+  AI can prepare a campaign, but it cannot send one. Sending is always your
+  decision.
 </Note>
 
-## What the AI can do
+<Note>
+  Campaigns are one-to-many. AI creates one draft with one subject and one email
+  body for the selected list; it does not write a separate draft for each lead.
+</Note>
+
+## What AI can help with
 
 | Task                   | Example                                                                                    |
 | ---------------------- | ------------------------------------------------------------------------------------------ |
-| **Find people**        | "Find everyone at software companies in Germany whose job title contains Head or VP."      |
-| **Build a list**       | "Create a list called Webinar invitees and add those people to it."                        |
-| **Write the campaign** | Subject line, body, sections, columns, buttons, images and raw HTML.                       |
-| **Personalize**        | Adds variables like `{{name.firstName}}` so each person gets their own version.            |
-| **Edit a draft**       | "Make it shorter", "Add a button linking to our pricing page", "Translate it into French". |
+| **Find people**        | "Find decision makers at software companies in Germany with a Head or VP title."           |
+| **Build a list**       | "Create a list for open opportunities in the healthcare industry."                         |
+| **Draft the campaign** | Write the subject, copy, call to action, and personalization for the sales play.            |
+| **Personalize**        | Add variables such as `{{name.firstName}}` so the campaign includes that value when it sends. |
+| **Improve a draft**    | "Make this more direct", "Add a demo CTA", or "Give me three subject lines."              |
 
-The AI works with your permissions. It can only see and change the records your role allows.
+The AI follows your permissions. It can only see and change records your role can access.
+
+## Pair AI with workflows
+
+AI helps you decide what to say and who to say it to. Workflows keep the data and lists ready for the next campaign.
+
+Lists and List Members are records in Twenty. A workflow can create or update them as your CRM changes. This gives you a repeatable way to build sales segments instead of starting from scratch each time.
+
+| Sales play | What the workflow does | Where AI helps |
+| --- | --- | --- |
+| **New ICP leads** | When a new lead matches your criteria, add them to an outbound list. | Draft one campaign for that segment. |
+| **Stalled opportunities** | Find deals that have been idle for a set time and build a follow-up list. | Draft one campaign for the selected follow-up list. |
+| **Account expansion** | Add contacts when an account reaches a renewal date, plan change, or other milestone. | Draft one campaign for the renewal or expansion list. |
+
+Workflows prepare or refresh the list. AI can research the CRM data and draft one campaign for that list. You still review the audience and choose when to send.
+
+See [Workflows](/user-guide/workflows/overview) to build the automation behind a sales play.
 
 ## Part 1: Open the AI
 
@@ -28,40 +49,40 @@ Press `@` anywhere in Twenty, or press `Cmd+K` (`Ctrl+K` on Windows) and choose 
 
 ## Part 2: Build your audience
 
-Tell the AI who the campaign is for. Describe the people the way you would describe them to a colleague, using fields that exist in your workspace.
+Tell the AI who should receive the email. Use the fields in your workspace, just as you would when speaking to a teammate.
 
 > Create a list called "Q4 product update" with everyone at companies that have more than 50 employees and are in the healthcare industry.
 
-The AI searches your records, creates the list and adds the people it found. Open the list afterwards to check its members before you send.
+The AI searches your records, creates the list, and adds the people it finds. Open the list and check the members before you send.
 
 <Warning>
-  Only add people who agreed to receive your emails. A list built from everyone
-  in your CRM will include people you have only exchanged emails with. See
+  Only add people who agreed to receive your emails. Your CRM can include people
+  you have only exchanged emails with. See
   [Email campaign best
   practices](/user-guide/email-campaigns/how-tos/email-campaign-best-practices).
 </Warning>
 
 ## Part 3: Write the campaign
 
-Describe the email: its purpose, the key points, the tone, and any links or buttons.
+Tell the AI the goal, key points, tone, and call to action you need.
 
-> Write a campaign announcing our new reporting dashboard. Keep the subject under 50 characters. Start with a short, friendly intro that greets each person by first name, list three benefits in a two-column layout, and end with a "See what's new" button linking to https://example.com/reports.
+> Write a follow-up for people at open opportunities in the healthcare industry. Keep the subject under 50 characters. Start with a short, friendly intro that greets each person by first name, name three reasons the reporting dashboard can help their team, and end with a "Book a demo" button linking to https://example.com/demo.
 
-The AI creates a draft campaign with the name, subject and body. Open it from **Campaigns** to see the result in the editor.
+The AI creates a draft with a name, subject, and email body. Open it from **Campaigns** to review it in the editor.
 
 <img
   src="/images/user-guide/email-campaigns/ai-chat-campaign.png"
   style={{ width: '50%' }}
 />
 
-To change something, keep the conversation going. Open the campaign first, and the AI knows which one you mean:
+To make changes, keep chatting. Open the campaign first so the AI knows which one you mean:
 
-- "Make the tone more casual."
+- "Make the tone more direct."
 - "Shorten the intro to two sentences."
 - "Replace the button text with Book a demo."
 - "Suggest three other subject lines."
 
-You can also edit the draft yourself in the editor at any time.
+You can edit the draft yourself at any time.
 
 ## Part 4: Review and send
 
@@ -70,11 +91,11 @@ You can also edit the draft yourself in the editor at any time.
   style={{ width: '100%' }}
 />
 
-The AI writes the email, but you choose where it goes and when:
+AI writes the draft. You choose the sender, audience, and send time:
 
 1. Open the campaign's **Email** tab.
 2. Choose the **From** address, the list under **To** and, optionally, an **Unsubscribe topic**.
-3. Read the email through. Check the facts, links and prices the AI wrote.
+3. Read the email. Check the facts, links, and prices.
 4. Click **Test** and send yourself a copy.
 5. Click **Send**, then choose **Send now** or **Send later**.
 
@@ -82,16 +103,16 @@ Each step is covered in detail in [Send your first campaign](/user-guide/email-c
 
 ## Tips for good prompts
 
-- **Name the fields you care about.** "Contacts whose city is Paris" works better than "my French contacts".
-- **Give the facts.** The AI does not know your launch date, prices or offer unless you tell it or they are in your CRM.
-- **Ask for structure.** Mention sections, columns, bullet points or buttons if you want them.
-- **Paste your own HTML** if you already have a design, and ask the AI to fill in the content.
-- **Check the list size** before sending. Ask "How many people are in the Q4 product update list?"
+- **Use the field name.** "People at companies in the healthcare industry" is clearer than "healthcare leads."
+- **Give it the facts.** It does not know your offer, price, or sales motion unless you tell it or the information is in your CRM.
+- **Give it a job.** Say who this is for, what you want them to do, and why it matters to them.
+- **Ask for options.** Try three subject lines or two versions of the same message for different segments.
+- **Check the list size.** Ask "How many people are in the Q4 product update list?" before you send.
 
 ## Limitations
 
 - The AI can only edit campaigns that are still **Draft**.
 - Unsubscribe topics and the unsubscribe list are managed in **Settings**, not through the AI. See [Manage unsubscribes and topics](/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
-- Like any AI, it can get facts wrong. Always read the email before you send it.
+- AI can get facts wrong. Always read the email before you send it.
 
 See [AI Chatbot](/user-guide/ai/capabilities/ai-chatbot) for more on what the AI can do across your workspace.
