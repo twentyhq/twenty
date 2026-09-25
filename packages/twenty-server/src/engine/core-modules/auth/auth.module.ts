@@ -17,6 +17,7 @@ import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controller
 import { OAuthPropagatorController } from 'src/engine/core-modules/auth/controllers/oauth-propagator.controller';
 import { SsoAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
@@ -167,6 +168,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateConnectedAccountService,
+    ConnectedAccountOAuthService,
     CreateSsoConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,

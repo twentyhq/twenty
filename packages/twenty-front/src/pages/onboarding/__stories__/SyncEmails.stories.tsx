@@ -6,7 +6,10 @@ import { AppPath } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
+import {
+  OnboardingStatus,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import {
@@ -35,11 +38,22 @@ const meta: Meta<PageDecoratorArgs> = {
     msw: {
       handlers: [
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
+          const currentUser = mockedOnboardingUserData(
+            OnboardingStatus.SYNC_EMAIL,
+          );
+
           return HttpResponse.json({
             data: {
-              currentUser: mockedOnboardingUserData(
-                OnboardingStatus.SYNC_EMAIL,
-              ),
+              currentUser: {
+                ...currentUser,
+                currentUserWorkspace: {
+                  ...currentUser.currentUserWorkspace,
+                  permissionFlags: [
+                    ...currentUser.currentUserWorkspace.permissionFlags,
+                    PermissionFlagType.CONNECTED_ACCOUNTS,
+                  ],
+                },
+              },
             },
           });
         }),

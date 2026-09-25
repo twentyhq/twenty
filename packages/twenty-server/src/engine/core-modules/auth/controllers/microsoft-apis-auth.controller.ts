@@ -20,8 +20,8 @@ import {
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-exchange-code-for-token.guard';
 import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-request-code.guard';
+import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
-import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -37,7 +37,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class MicrosoftAPIsAuthController {
   constructor(
     private readonly microsoftAPIsService: MicrosoftAPIsService,
-    private readonly transientTokenService: TransientTokenService,
+    private readonly connectedAccountOAuthService: ConnectedAccountOAuthService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly onboardingService: OnboardingService,
@@ -84,7 +84,9 @@ export class MicrosoftAPIsAuthController {
       } = user;
 
       const { workspaceMemberId, userId, workspaceId } =
-        await this.transientTokenService.verifyTransientToken(transientToken);
+        await this.connectedAccountOAuthService.verifyTransientTokenAndPermissions(
+          transientToken,
+        );
 
       if (!workspaceId) {
         throw new AuthException(

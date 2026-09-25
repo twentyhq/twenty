@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -9,10 +10,13 @@ import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEma
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
   CalendarChannelVisibility,
@@ -24,6 +28,10 @@ export const SyncEmails = () => {
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const hasConnectedAccountsPermission = useHasPermissionFlag(
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  );
 
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
@@ -39,9 +47,11 @@ export const SyncEmails = () => {
   );
 
   const isGoogleProviderEnabled =
-    isGoogleMessagingEnabled || isGoogleCalendarEnabled;
+    hasConnectedAccountsPermission &&
+    (isGoogleMessagingEnabled || isGoogleCalendarEnabled);
   const isMicrosoftProviderEnabled =
-    isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled;
+    hasConnectedAccountsPermission &&
+    (isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled);
   const hasProviderEnabled =
     isGoogleProviderEnabled || isMicrosoftProviderEnabled;
   const isClientConfigLoaded = useAtomStateValue(
@@ -91,7 +101,7 @@ export const SyncEmails = () => {
     setHasAutoSkipFailed(true);
   }, []);
 
-  if (!isClientConfigLoaded) {
+  if (!isClientConfigLoaded || !isDefined(currentUserWorkspace)) {
     return null;
   }
 
