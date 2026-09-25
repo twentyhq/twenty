@@ -6,6 +6,10 @@ type CreationArgs = Parameters<
   FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemCreation']
 >[0];
 
+type UpdateArgs = Parameters<
+  FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemUpdate']
+>[0];
+
 const buildCommand = (
   overrides: Partial<CreationArgs['flatEntityToValidate']> = {},
 ) => ({
@@ -82,9 +86,7 @@ describe('workflow command menu validation', () => {
           byUniversalIdentifier: { [command.universalIdentifier]: command },
         },
       },
-    } as Parameters<
-      FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemUpdate']
-    >[0];
+    } as UpdateArgs;
     expect(service.validateFlatCommandMenuItemUpdate(args).errors).toEqual([]);
   });
 });
@@ -97,7 +99,7 @@ describe('navigation command menu activation validation', () => {
     flatEntityUpdate,
   }: {
     isObjectActive: boolean;
-    flatEntityUpdate: Record<string, unknown>;
+    flatEntityUpdate: UpdateArgs['flatEntityUpdate'];
   }) => {
     const objectMetadata = {
       id: 'object-id',
@@ -128,9 +130,7 @@ describe('navigation command menu activation validation', () => {
           byUniversalIdentifier: { [command.universalIdentifier]: command },
         },
       },
-    } as unknown as Parameters<
-      FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemUpdate']
-    >[0];
+    } as unknown as UpdateArgs;
   };
 
   it('rejects showing a navigation command whose object is inactive', () => {
