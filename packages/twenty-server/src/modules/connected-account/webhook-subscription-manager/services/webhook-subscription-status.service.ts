@@ -24,10 +24,11 @@ export class WebhookSubscriptionStatusService {
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    // Handed to a shared helper that casts to the raw Repository so it can
-    // take either channel type, then calls update(criteria, data). The scoped
-    // wrapper's update takes workspaceId first, and the cast hides the
-    // mismatch from the type checker.
+    // getRepository() hands out this or the still-raw MessageChannelEntity
+    // repository under one Repository type, and update(criteria, data) through
+    // that cast would silently mis-bind the scoped wrapper's workspaceId-first
+    // arguments. Every caller has a workspaceId, so this moves to the scoped
+    // repository together with MessageChannelEntity.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,

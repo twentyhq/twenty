@@ -33,7 +33,9 @@ export class CalendarEventsImportCronJob {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
     // Instance-wide cron sweep across every active workspace, so there is no
-    // single request workspace to scope by.
+    // single request workspace to scope by. The per-workspace claim update
+    // is a query builder, which the scoped wrapper does not scope either, so
+    // it filters on workspaceId itself.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,

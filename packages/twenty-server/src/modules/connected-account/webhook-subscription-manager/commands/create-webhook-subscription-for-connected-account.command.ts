@@ -35,8 +35,9 @@ export class CreateWebhookSubscriptionForConnectedAccountCommand extends Provisi
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    // Handed to a shared helper typed against the raw Repository so it can take
-    // either a calendar or a message channel.
+    // findEligibleChannelIds is shared with the still-raw MessageChannelEntity
+    // repository. Its query already filters on workspaceId, so this moves to
+    // the scoped repository together with MessageChannelEntity.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
