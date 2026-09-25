@@ -12,6 +12,7 @@ import { InstanceCommandGenerationService } from 'src/database/commands/instance
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
+import { RepairInitialCompanyTargetsCommand } from 'src/database/commands/repair-initial-company-targets/repair-initial-company-targets.command';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
@@ -123,6 +124,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     GenerateApiKeyCommand,
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
+    RepairInitialCompanyTargetsCommand,
     InstallPreInstalledAppsCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
