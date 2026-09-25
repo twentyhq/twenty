@@ -64,6 +64,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   exports: [
     UsageLimitEntitlementService,
+    UsageLimitService,
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitStockService,

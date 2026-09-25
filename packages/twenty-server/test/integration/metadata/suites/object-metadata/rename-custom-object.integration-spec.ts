@@ -133,9 +133,12 @@ describe('Custom object renaming', () => {
 
       expect(relationFieldMetadataId).not.toBeUndefined();
       // Reverse system relation fields carry the engine-derived label
-      // (capitalized source object nameSingular)
+      // (capitalized source object nameSingular), except attachment targets
+      // which share their morph group label
       expect(relationFieldMetadata?.label).toBe(
-        capitalize(CUSTOM_OBJECT.nameSingular),
+        relation === 'attachment'
+          ? 'Attached to'
+          : capitalize(CUSTOM_OBJECT.nameSingular),
       );
 
       // @ts-expect-error legacy noImplicitAny
@@ -199,7 +202,9 @@ describe('Custom object renaming', () => {
 
       expect(renamedReverseField).toBeDefined();
       expect(renamedReverseField.name).toBe(expectedReverseFieldName);
-      expect(renamedReverseField.label).toBe(expectedReverseFieldLabel);
+      expect(renamedReverseField.label).toBe(
+        relation === 'attachment' ? 'Attached to' : expectedReverseFieldLabel,
+      );
       expect(renamedReverseField.universalIdentifier).toBe(
         relationFieldMetadataUniversalIdentifier,
       );

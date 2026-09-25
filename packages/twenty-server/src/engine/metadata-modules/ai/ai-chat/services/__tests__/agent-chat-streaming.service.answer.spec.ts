@@ -25,7 +25,9 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const fileRepository = { find: jest.fn().mockResolvedValue([]) };
     const agentChatService = {
-      getThreadById: jest.fn().mockResolvedValue(undefined),
+      getWritableThread: jest
+        .fn()
+        .mockImplementation(() => threadRepository.findOne()),
       resolvePendingQuestion: jest.fn().mockResolvedValue({
         turnId: 'turn-id',
         answerText: 'Which option?\nFirst option',

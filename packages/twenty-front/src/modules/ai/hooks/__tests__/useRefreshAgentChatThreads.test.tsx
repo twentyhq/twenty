@@ -8,10 +8,11 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const queryMock = jest.fn();
+const mockApolloClient = { query: queryMock };
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useApolloClient: () => ({ query: queryMock }),
+  useApolloClient: () => mockApolloClient,
 }));
 
 const buildThread = (id: string, title: string): AgentChatThread => ({
@@ -38,6 +39,17 @@ describe('useRefreshAgentChatThreads', () => {
   beforeEach(async () => {
     await clearMetadataStoreStorage();
     jest.clearAllMocks();
+  });
+
+  it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
+    const store = createStore();
+    const { result, rerender } = renderHook(
+      () => useRefreshAgentChatThreads(),
+      { wrapper: getWrapper(store) },
+    );
+    const refresh = result.current.refreshAgentChatThreads;
+    rerender();
+    expect(result.current.refreshAgentChatThreads).toBe(refresh);
   });
 
   it('loads chat threads into an empty store', async () => {
@@ -104,6 +116,31 @@ describe('useRefreshAgentChatThreads', () => {
     expect(
       store.get(metadataStoreState.atomFamily('agentChatThreads')).current,
     ).toEqual([newerThread, serverOnlyThread]);
+  });
+
+  it('stops retrying when streaming continually updates the store', async () => {
+    const store = createStore();
+    const newerThread = buildThread('thread-1', 'Streaming title');
+    queryMock.mockImplementation(async () => {
+      store.set(metadataStoreState.atomFamily('agentChatThreads'), {
+        current: [newerThread],
+        draft: [],
+        status: 'up-to-date',
+      });
+      return {
+        data: { chatThreads: [buildThread('thread-1', 'Stale title')] },
+      };
+    });
+    const { result } = renderHook(() => useRefreshAgentChatThreads(), {
+      wrapper: getWrapper(store),
+    });
+    await act(async () => {
+      expect(await result.current.refreshAgentChatThreads()).toBeUndefined();
+    });
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(
+      store.get(metadataStoreState.atomFamily('agentChatThreads')).current,
+    ).toEqual([newerThread]);
   });
 
   it('applies server updates and removals when the store has not changed', async () => {

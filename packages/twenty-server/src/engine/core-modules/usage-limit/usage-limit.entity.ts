@@ -66,6 +66,9 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   })
   burstValue: number | null;
 
+  @Column({ type: 'boolean', default: false })
+  isInstanceOverride: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

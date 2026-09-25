@@ -10,6 +10,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "archivedAt": {
         "universalIdentifier": "b42eaf6f-240f-41ef-af61-51d5ac9cde7d",
       },
+      "attachments": {
+        "universalIdentifier": "2a0e0b57-e55b-5432-9ec1-04a43f4cd8b8",
+      },
       "contextWindowTokens": {
         "universalIdentifier": "c58dc0b0-bd0e-4ee2-8a80-615a2d8fc7c8",
       },
@@ -324,6 +327,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "searchVector": {
         "universalIdentifier": "e3222f8c-aad5-5873-9a10-648908f48f81",
       },
+      "targetAgentChatThread": {
+        "universalIdentifier": "5beddb5d-6e18-5e7b-be55-de88e47fc337",
+      },
       "targetCompany": {
         "universalIdentifier": "a69093bb-6f2a-5ad6-90b1-0d78e9528019",
       },
@@ -353,6 +359,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "agentChatThreadIdIndex": {
+        "universalIdentifier": "69857371-6ff9-48fa-a9de-db4f71593431",
+      },
       "companyIdIndex": {
         "universalIdentifier": "4137ba06-184d-438f-b484-080f02a97659",
       },
@@ -417,6 +426,18 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "targetWorkflow": {
             "universalIdentifier": "75d1d092-412f-57b1-9e74-e3f8285a3f0c",
+          },
+        },
+      },
+      "attachmentRecordPageFields": {
+        "universalIdentifier": "c002db33-a973-5565-bf4c-092881c25fa6",
+        "viewFieldGroups": {},
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "e52334fc-3757-58ad-afaa-f8729dc45595",
+          },
+          "createdBy": {
+            "universalIdentifier": "ca777867-3f7a-56f6-ac5f-2b3802fa41bf",
           },
         },
       },

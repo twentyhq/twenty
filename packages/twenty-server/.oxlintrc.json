@@ -153,6 +153,24 @@
           }
         ]
       }
+    },
+    {
+      "files": [
+        "src/database/commands/upgrade-version-command/1-21/**",
+        "src/database/commands/upgrade-version-command/2-8/**",
+        "src/database/commands/upgrade-version-command/2-10/**",
+        "src/database/commands/upgrade-version-command/2-19/**",
+        "src/database/commands/upgrade-version-command/2-21/**",
+        "src/database/commands/upgrade-version-command/2-23/**",
+        "src/database/commands/upgrade-version-command/2-25/**",
+        "src/database/commands/upgrade-version-command/2-33/**",
+        "src/database/commands/upgrade-version-command/2-34/**",
+        "src/database/commands/upgrade-version-command/2-39/**",
+        "src/database/commands/upgrade-version-command/2-41/**"
+      ],
+      "rules": {
+        "twenty/prefer-workspace-scoped-repository": "off"
+      }
     }
   ]
 }

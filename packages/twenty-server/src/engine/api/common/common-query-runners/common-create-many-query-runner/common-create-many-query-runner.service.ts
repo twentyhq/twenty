@@ -619,9 +619,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
+      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
       shareWith,
       transactionScope,
     });
