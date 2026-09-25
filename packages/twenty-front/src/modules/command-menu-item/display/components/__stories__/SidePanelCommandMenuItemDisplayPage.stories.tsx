@@ -30,6 +30,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import {
   CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
   EngineComponentKey,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
@@ -58,6 +59,7 @@ const createCommandMenuItem = (
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  variant: CommandMenuItemVariant.SECONDARY,
   availabilityObjectMetadataId: null,
   payload: null,
   ...overrides,

@@ -1,5 +1,6 @@
 import {
   CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
   EngineComponentKey,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
@@ -22,6 +23,7 @@ export const createMockCommandMenuItems =
       hotKeys: null,
       conditionalAvailabilityExpression: null,
       availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      variant: CommandMenuItemVariant.SECONDARY,
       availabilityObjectMetadataId: null,
       payload: null,
     },
@@ -41,6 +43,7 @@ export const createMockCommandMenuItems =
       hotKeys: null,
       conditionalAvailabilityExpression: null,
       availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      variant: CommandMenuItemVariant.SECONDARY,
       availabilityObjectMetadataId: null,
       payload: null,
     },
@@ -60,6 +63,7 @@ export const createMockCommandMenuItems =
       hotKeys: null,
       conditionalAvailabilityExpression: null,
       availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      variant: CommandMenuItemVariant.SECONDARY,
       availabilityObjectMetadataId: null,
       payload: null,
     },
@@ -79,6 +83,7 @@ export const createMockCommandMenuItems =
       hotKeys: ['G', 'P'],
       conditionalAvailabilityExpression: null,
       availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+      variant: CommandMenuItemVariant.SECONDARY,
       availabilityObjectMetadataId: null,
       payload: null,
     },

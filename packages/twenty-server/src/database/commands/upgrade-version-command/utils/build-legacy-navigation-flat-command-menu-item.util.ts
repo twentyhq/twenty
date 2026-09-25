@@ -1,7 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
+} from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { NAVIGATION_INTERPOLATED_ICON, NAVIGATION_INTERPOLATED_LABEL, NAVIGATION_INTERPOLATED_SHORT_LABEL, buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -75,6 +78,10 @@ export const buildLegacyNavigationFlatCommandMenuItem = ({
     coreWorkflowVersionId: null,
     availabilityObjectMetadataId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
+    availabilityFieldMetadataId: null,
+    availabilityFieldMetadataUniversalIdentifier: null,
+    variant: CommandMenuItemVariant.SECONDARY,
+    conditionalVariantExpression: null,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     isActive: true,

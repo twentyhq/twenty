@@ -46,7 +46,13 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
+import {
+  CustomError,
+  getAppPath,
+  isAbsoluteUrl,
+  isDefined,
+  isSafeUrl,
+} from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -477,6 +483,18 @@ export const useFrontComponentExecutionContext = ({
       await copyToClipboardWithoutSuccessToast(text);
     };
 
+  // Only absolute http(s) URLs: in-app routes go through navigate, and any
+  // other scheme from sandboxed application code could run in the host origin.
+  const openUrl: FrontComponentHostCommunicationApi['openUrl'] = async (
+    url,
+  ) => {
+    if (!isNonEmptyString(url) || !isAbsoluteUrl(url) || !isSafeUrl(url)) {
+      return;
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =
     async (file, params) => {
       // Arguments come from sandboxed application code: reject malformed
@@ -592,6 +610,7 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      openUrl,
       uploadFile: hostUploadFile,
       storageSet,
       storageDelete,

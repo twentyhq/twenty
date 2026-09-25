@@ -1,6 +1,9 @@
 import { type CommandMenuItemManifest } from 'twenty-shared/application';
 
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
+} from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
@@ -27,10 +30,16 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
       commandMenuItemManifest.conditionalAvailabilityExpression ?? null,
     conditionalPinnedExpression:
       commandMenuItemManifest.conditionalPinnedExpression ?? null,
+    variant: (commandMenuItemManifest.variant ??
+      CommandMenuItemVariant.SECONDARY) as CommandMenuItemVariant,
+    conditionalVariantExpression:
+      commandMenuItemManifest.conditionalVariantExpression ?? null,
     frontComponentUniversalIdentifier:
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:
       commandMenuItemManifest.availabilityObjectUniversalIdentifier ?? null,
+    availabilityFieldMetadataUniversalIdentifier:
+      commandMenuItemManifest.availabilityFieldUniversalIdentifier ?? null,
     navigationTargetObjectMetadataUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.FRONT_COMPONENT_RENDERER,
     payload: null,

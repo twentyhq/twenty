@@ -7,6 +7,7 @@ export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
+export { openUrl } from './functions/openUrl';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
 export { uploadFile } from './functions/uploadFile';
@@ -43,6 +44,7 @@ export type {
   OpenCommandConfirmationModalHostFunction,
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
+  OpenUrlFunction,
   RequestAccessTokenRefreshFunction,
   StorageClearFunction,
   StorageDeleteFunction,

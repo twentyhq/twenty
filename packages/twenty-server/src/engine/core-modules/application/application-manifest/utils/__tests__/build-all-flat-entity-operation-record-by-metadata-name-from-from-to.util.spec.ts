@@ -1,5 +1,6 @@
 import {
   CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
   NavigationMenuItemType,
   PageLayoutType,
 } from 'twenty-shared/types';
@@ -91,6 +92,10 @@ const COMMAND_MENU_ITEM: FlatCommandMenuItem = {
   conditionalPinnedExpression: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
+  availabilityFieldMetadataId: null,
+  availabilityFieldMetadataUniversalIdentifier: null,
+  variant: CommandMenuItemVariant.SECONDARY,
+  conditionalVariantExpression: null,
   navigationTargetObjectMetadataId: null,
   navigationTargetObjectMetadataUniversalIdentifier: null,
   pageLayoutId: null,
