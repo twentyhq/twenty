@@ -22,9 +22,17 @@ describe('FileStorageService', () => {
         .mockImplementation((_workspaceId, entity) => entity),
     };
 
+    const insertQueryBuilder = {
+      insert: jest.fn().mockReturnThis(),
+      values: jest.fn().mockReturnThis(),
+      orIgnore: jest.fn().mockReturnThis(),
+      returning: jest.fn().mockReturnThis(),
+      execute: jest.fn().mockResolvedValue({ raw: [{ id: 'created-row' }] }),
+    };
+
     const fileRepository = {
       findOne: jest.fn().mockResolvedValue(existingFile),
-      upsert: jest.fn().mockResolvedValue(undefined),
+      createQueryBuilder: jest.fn().mockReturnValue(insertQueryBuilder),
       upsertAndReturnOne: jest
         .fn()
         .mockImplementation((_workspaceId, entity) => entity),
@@ -77,6 +85,7 @@ describe('FileStorageService', () => {
       service,
       fileRepository,
       transactionRepository,
+      insertQueryBuilder,
       driver,
       usageLimitStockService,
     };
@@ -212,7 +221,7 @@ describe('FileStorageService', () => {
     await copyFileByPath(service);
 
     expect(driver.getFileMetadata).not.toHaveBeenCalled();
-    expect(fileRepository.upsert).not.toHaveBeenCalled();
+    expect(fileRepository.createQueryBuilder).not.toHaveBeenCalled();
     expect(fileRepository.insertAndReturnOne).toHaveBeenCalledWith(
       WORKSPACE_ID,
       expect.objectContaining({
@@ -224,22 +233,21 @@ describe('FileStorageService', () => {
   });
 
   it('should create the missing row of a copied file from the stored file', async () => {
-    const { service, fileRepository, driver } = buildService(null);
+    const { service, fileRepository, insertQueryBuilder, driver } =
+      buildService(null);
 
     await copyFileByPath(service);
 
-    expect(fileRepository.upsert).toHaveBeenCalledWith(
-      WORKSPACE_ID,
-      {
-        path: 'source/original/src/index.ts',
-        applicationId: APPLICATION_ID,
-        mimeType: 'application/typescript',
-        size: 42,
-        status: 'UPLOADED',
-        settings: { isTemporaryFile: false, toDelete: false },
-      },
-      ['path', 'workspaceId', 'applicationId'],
-    );
+    expect(insertQueryBuilder.values).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      path: 'source/original/src/index.ts',
+      applicationId: APPLICATION_ID,
+      mimeType: 'application/typescript',
+      size: 42,
+      status: 'UPLOADED',
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+    expect(insertQueryBuilder.orIgnore).toHaveBeenCalled();
     expect(driver.copy).toHaveBeenCalledTimes(1);
     expect(fileRepository.insertAndReturnOne).toHaveBeenCalledWith(
       WORKSPACE_ID,
@@ -273,15 +281,26 @@ describe('FileStorageService', () => {
     );
   });
 
+  it('should only charge the copy when a concurrent copy already created the missing row', async () => {
+    const { service, insertQueryBuilder, usageLimitStockService } =
+      buildService(null);
+
+    insertQueryBuilder.execute.mockResolvedValue({ raw: [] });
+
+    await copyFileByPath(service);
+
+    expect(usageLimitStockService.acquireStock).toHaveBeenCalledTimes(1);
+  });
+
   it('should fail to copy a file missing from storage', async () => {
-    const { service, fileRepository, driver } = buildService(null);
+    const { service, insertQueryBuilder, driver } = buildService(null);
 
     driver.getFileMetadata.mockResolvedValue(null);
 
     await expect(copyFileByPath(service)).rejects.toMatchObject({
       code: FileStorageExceptionCode.FILE_NOT_FOUND,
     });
-    expect(fileRepository.upsert).not.toHaveBeenCalled();
+    expect(insertQueryBuilder.values).not.toHaveBeenCalled();
     expect(driver.copy).not.toHaveBeenCalled();
   });
 });

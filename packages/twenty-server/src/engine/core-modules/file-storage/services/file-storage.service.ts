@@ -222,22 +222,27 @@ export class FileStorageService {
       settings: { isTemporaryFile: false, toDelete: false },
     };
 
-    await this.fileRepository.upsert(
-      resourceIdentifier.workspaceId,
-      {
+    const insertResult = await this.fileRepository
+      .createQueryBuilder()
+      .insert()
+      .values({
         ...fileRow,
+        workspaceId: resourceIdentifier.workspaceId,
         path: filePath,
         applicationId,
         status: FILE_STATUS.UPLOADED,
-      },
-      ['path', 'workspaceId', 'applicationId'],
-    );
+      })
+      .orIgnore()
+      .returning('id')
+      .execute();
 
-    await this.applyStorageStockDelta({
-      workspaceId: resourceIdentifier.workspaceId,
-      applicationId,
-      delta: { bytes: metadata.size, quantity: 1 },
-    });
+    if (insertResult.raw.length > 0) {
+      await this.applyStorageStockDelta({
+        workspaceId: resourceIdentifier.workspaceId,
+        applicationId,
+        delta: { bytes: metadata.size, quantity: 1 },
+      });
+    }
 
     return fileRow;
   }
