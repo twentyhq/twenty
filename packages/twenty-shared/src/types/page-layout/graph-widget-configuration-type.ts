@@ -1,4 +1,4 @@
-import { type PageLayoutWidgetConfiguration } from './page-layout-widget-configuration.type';
+import { type PageLayoutWidgetConfiguration } from './PageLayoutWidgetConfiguration';
 
 export const GRAPH_WIDGET_CONFIGURATION_TYPES = [
   'AGGREGATE_CHART',
