@@ -3,7 +3,7 @@ import { type DocumentNode } from 'graphql';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -78,7 +78,7 @@ const requestTimeline = (
   page = 1,
   pageSize = PAGE_SIZE,
 ) =>
-  makeGraphqlAPIRequest({
+  makeGraphqlApiRequest({
     query,
     variables: { objectNameSingular, recordId, page, pageSize },
   });
@@ -193,7 +193,7 @@ const createTimelineRecord = async (
   objectMetadataSingularName: string,
   data: object,
 ) => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName,
       gqlFields: 'id',
@@ -359,7 +359,7 @@ describe('timeline from object record resolvers (integration)', () => {
 
   afterAll(async () => {
     for (const { objectMetadataSingularName, id } of TIMELINE_FIXTURES) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName,
           gqlFields: 'id',
@@ -502,7 +502,7 @@ describe('timeline from object record resolvers (integration)', () => {
       ['messageThreadTarget', TIMELINE_SECOND_MESSAGE_THREAD_TARGET_ID],
       ['calendarEventTarget', TIMELINE_SECOND_CALENDAR_EVENT_TARGET_ID],
     ] as const) {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         deleteOneOperationFactory({
           objectMetadataSingularName,
           gqlFields: 'id',
@@ -542,7 +542,7 @@ describe('timeline from object record resolvers (integration)', () => {
   it('should serve getTimelineThreadsFromPersonId identically to the object-record resolver', async () => {
     const [fromObjectRecord, fromLegacy] = await Promise.all([
       requestTimeline(GET_TIMELINE_THREADS, 'person', personWithThreads.id),
-      makeGraphqlAPIRequest({
+      makeGraphqlApiRequest({
         query: buildLegacyQuery(
           'getTimelineThreadsFromPersonId',
           'personId',
@@ -565,7 +565,7 @@ describe('timeline from object record resolvers (integration)', () => {
         'company',
         personWithThreads.companyId,
       ),
-      makeGraphqlAPIRequest({
+      makeGraphqlApiRequest({
         query: buildLegacyQuery(
           'getTimelineThreadsFromCompanyId',
           'companyId',
@@ -592,7 +592,7 @@ describe('timeline from object record resolvers (integration)', () => {
         'person',
         personWithEvents.id,
       ),
-      makeGraphqlAPIRequest({
+      makeGraphqlApiRequest({
         query: buildLegacyQuery(
           'getTimelineCalendarEventsFromPersonId',
           'personId',
@@ -615,7 +615,7 @@ describe('timeline from object record resolvers (integration)', () => {
         'company',
         personWithEvents.companyId,
       ),
-      makeGraphqlAPIRequest({
+      makeGraphqlApiRequest({
         query: buildLegacyQuery(
           'getTimelineCalendarEventsFromCompanyId',
           'companyId',
@@ -655,7 +655,7 @@ describe('timeline from object record resolvers (integration)', () => {
 
       customObjectMetadataId = data.createOneObject.id;
 
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: CUSTOM_OBJECT_NAME_SINGULAR,
           gqlFields: 'id',

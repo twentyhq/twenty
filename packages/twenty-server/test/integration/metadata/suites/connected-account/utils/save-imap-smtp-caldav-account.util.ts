@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 
@@ -28,7 +28,7 @@ export const saveImapSmtpCaldavAccount = async ({
   input: SaveImapSmtpCaldavAccountInput;
   expectToFail: boolean;
 }) => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation SaveImapSmtpCaldavAccount(
         $handle: String!

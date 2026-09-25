@@ -1361,7 +1361,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT'
+export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT' | 'DIVIDER'
 
 export interface RecordPermissionsDTO {
     canRead: Scalars['Boolean']
@@ -3015,7 +3015,7 @@ export interface RecordExport {
     filename: Scalars['String']
     progress: Scalars['Int']
     errorMessage?: Scalars['String']
-    downloadUrl?: Scalars['String']
+    downloadPath?: Scalars['String']
     __typename: 'RecordExport'
 }
 
@@ -6899,7 +6899,7 @@ export interface RecordExportGenqlSelection{
     filename?: boolean | number
     progress?: boolean | number
     errorMessage?: boolean | number
-    downloadUrl?: boolean | number
+    downloadPath?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11157,7 +11157,8 @@ export const enumNavigationMenuItemType = {
    LINK: 'LINK' as const,
    OBJECT: 'OBJECT' as const,
    RECORD: 'RECORD' as const,
-   PAGE_LAYOUT: 'PAGE_LAYOUT' as const
+   PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
+   DIVIDER: 'DIVIDER' as const
 }
 
 export const enumRecordShareAccessLevel = {

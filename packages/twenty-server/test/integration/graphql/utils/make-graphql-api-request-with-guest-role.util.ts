@@ -6,7 +6,7 @@ type GraphqlOperation = {
   variables?: Record<string, unknown>;
 };
 
-export const makeGraphqlAPIRequestWithGuestRole = (
+export const makeGraphqlApiRequestWithGuestRole = (
   graphqlOperation: GraphqlOperation,
 ) => {
   const client = request(`http://localhost:${APP_PORT}`);

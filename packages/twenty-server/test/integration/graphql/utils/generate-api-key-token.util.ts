@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const generateApiKeyToken = async ({
   apiKeyId,
@@ -18,7 +18,7 @@ export const generateApiKeyToken = async ({
     }
   `;
 
-  return await makeMetadataAPIRequest(
+  return await makeMetadataApiRequest(
     { query: mutation, variables: { apiKeyId, expiresAt } },
     accessToken,
   );

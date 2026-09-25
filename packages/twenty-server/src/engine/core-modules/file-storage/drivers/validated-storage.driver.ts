@@ -55,24 +55,6 @@ export class ValidatedStorageDriver implements StorageDriver {
     return this.delegate.getFileMetadata(params);
   }
 
-  async downloadFolder(params: {
-    onStoragePath: string;
-    localPath: string;
-  }): Promise<void> {
-    assertStoragePathIsSafe(params.onStoragePath);
-
-    return this.delegate.downloadFolder(params);
-  }
-
-  async uploadFolder(params: {
-    localPath: string;
-    onStoragePath: string;
-  }): Promise<void> {
-    assertStoragePathIsSafe(params.onStoragePath);
-
-    return this.delegate.uploadFolder(params);
-  }
-
   async downloadFile(params: {
     onStoragePath: string;
     localPath: string;

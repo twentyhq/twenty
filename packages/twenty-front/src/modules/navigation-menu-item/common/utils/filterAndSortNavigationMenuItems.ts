@@ -35,7 +35,10 @@ export const filterAndSortNavigationMenuItems = (
       if (item.type === NavigationMenuItemType.FOLDER) {
         return true;
       }
-      if (item.type === NavigationMenuItemType.LINK) {
+      if (
+        item.type === NavigationMenuItemType.LINK ||
+        item.type === NavigationMenuItemType.DIVIDER
+      ) {
         return true;
       }
       if (item.type === NavigationMenuItemType.PAGE_LAYOUT) {

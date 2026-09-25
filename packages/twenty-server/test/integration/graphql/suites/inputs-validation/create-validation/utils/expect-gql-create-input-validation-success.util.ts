@@ -1,6 +1,6 @@
 import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/constants/test-object-gql-fields.constant';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { pascalCase } from 'twenty-shared/utils';
 
 export const expectGqlCreateInputValidationSuccess = async (
@@ -23,7 +23,7 @@ export const expectGqlCreateInputValidationSuccess = async (
   });
 
   const createOneResponse =
-    await makeGraphqlAPIRequestWithApiKey(createOneOperation);
+    await makeGraphqlApiRequestWithApiKey(createOneOperation);
 
   expect(createOneResponse.body.errors).toBeUndefined();
   expect(createOneResponse.body.data).toBeDefined();

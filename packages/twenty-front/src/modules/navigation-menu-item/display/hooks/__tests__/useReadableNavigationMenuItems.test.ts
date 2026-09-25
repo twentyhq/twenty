@@ -5,9 +5,13 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useReadableNavigationMenuItems';
 
+let mockIsLayoutCustomizationModeEnabled = false;
+
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: (state: unknown) =>
-    state === isLayoutCustomizationModeEnabledState ? false : [],
+    state === isLayoutCustomizationModeEnabledState
+      ? mockIsLayoutCustomizationModeEnabled
+      : [],
 }));
 jest.mock('@/object-record/hooks/useObjectPermissions', () => ({
   useObjectPermissions: () => ({ objectPermissionsByObjectMetadataId: {} }),
@@ -23,6 +27,10 @@ const FOLDER: NavigationMenuItem = {
 };
 
 describe('useReadableNavigationMenuItems', () => {
+  afterEach(() => {
+    mockIsLayoutCustomizationModeEnabled = false;
+  });
+
   it('keeps empty Favorites folders visible for renaming and adding items', () => {
     const folder = { ...FOLDER, userWorkspaceId: 'user-workspace' };
     const { result } = renderHook(() =>
@@ -61,5 +69,50 @@ describe('useReadableNavigationMenuItems', () => {
     );
     expect(result.current.displayTopLevelItems).toEqual([folder]);
     expect(result.current.displayFolderChildrenById.get(folder.id)).toEqual([]);
+  });
+
+  describe('with a divider at the end of a folder', () => {
+    const LINK = {
+      ...FOLDER,
+      id: 'link',
+      folderId: FOLDER.id,
+      type: NavigationMenuItemType.LINK,
+      link: 'https://twenty.com',
+    };
+    const DIVIDER = {
+      ...FOLDER,
+      id: 'divider',
+      folderId: FOLDER.id,
+      type: NavigationMenuItemType.DIVIDER,
+      name: null,
+      position: 1,
+    };
+    const folderChildrenById = new Map([[FOLDER.id, [LINK, DIVIDER]]]);
+
+    it('drops it outside customization so the folder tree line closes', () => {
+      const { result } = renderHook(() =>
+        useReadableNavigationMenuItems({
+          topLevelItems: [FOLDER],
+          folderChildrenById,
+        }),
+      );
+      expect(result.current.displayFolderChildrenById.get(FOLDER.id)).toEqual([
+        LINK,
+      ]);
+    });
+
+    it('keeps it during customization so it can be moved or removed', () => {
+      mockIsLayoutCustomizationModeEnabled = true;
+      const { result } = renderHook(() =>
+        useReadableNavigationMenuItems({
+          topLevelItems: [FOLDER],
+          folderChildrenById,
+        }),
+      );
+      expect(result.current.displayFolderChildrenById.get(FOLDER.id)).toEqual([
+        LINK,
+        DIVIDER,
+      ]);
+    });
   });
 });

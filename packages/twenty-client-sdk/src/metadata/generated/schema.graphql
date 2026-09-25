@@ -1748,6 +1748,7 @@ enum NavigationMenuItemType {
   OBJECT
   RECORD
   PAGE_LAYOUT
+  DIVIDER
 }
 
 type RecordPermissionsDTO {
@@ -3432,7 +3433,7 @@ type RecordExport {
   filename: String!
   progress: Int!
   errorMessage: String
-  downloadUrl: String
+  downloadPath: String
 }
 
 type AiChatUsage {
