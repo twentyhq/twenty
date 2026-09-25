@@ -194,7 +194,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       WorkspaceMigrationValidateBuildAndRunService.name,
     );
 
-    this.metadataEventEmitter.emitMetadataEvents({
+    // Commands can close Redis as soon as the migration returns.
+    await this.metadataEventEmitter.emitMetadataEvents({
       metadataEvents: metadataEvents,
       workspaceId: args.workspaceId,
     });

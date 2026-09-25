@@ -24,11 +24,11 @@ type EmitMetadataEventsArgs = {
 export class MetadataEventEmitter {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  public emitMetadataEvents({
+  public async emitMetadataEvents({
     metadataEvents,
     workspaceId,
     initiatorContext,
-  }: EmitMetadataEventsArgs): void {
+  }: EmitMetadataEventsArgs): Promise<void> {
     if (metadataEvents.length === 0) {
       return;
     }
@@ -63,7 +63,7 @@ export class MetadataEventEmitter {
         apiKeyId,
       };
 
-      this.eventEmitter.emit(eventName, metadataEventBatch);
+      await this.eventEmitter.emitAsync(eventName, metadataEventBatch);
     }
   }
 
