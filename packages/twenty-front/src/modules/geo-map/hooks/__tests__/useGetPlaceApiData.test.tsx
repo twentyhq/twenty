@@ -11,7 +11,7 @@ import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import {
   type PlaceAutocompleteResult,
   type PlaceDetailsResult,
-} from '@/geo-map/types/placeApi';
+} from '@/geo-map/types/PlaceApi';
 
 const mockAutocompleteResults: PlaceAutocompleteResult[] = [
   {

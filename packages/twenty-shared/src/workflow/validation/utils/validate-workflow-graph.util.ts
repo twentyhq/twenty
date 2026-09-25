@@ -6,7 +6,7 @@ import {
   type ValidatableWorkflow,
   type ValidatableWorkflowStep,
   type WorkflowValidationIssue,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { type WorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { getStepInput } from '@/workflow/validation/utils/get-step-outgoing-step-ids.util';
 

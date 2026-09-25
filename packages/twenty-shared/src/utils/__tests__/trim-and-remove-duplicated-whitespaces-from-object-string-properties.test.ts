@@ -1,5 +1,5 @@
 import { eachTestingContextFilter } from '@/testing';
-import { type EachTestingContext } from '@/testing/types/EachTestingContext.type';
+import { type EachTestingContext } from '@/testing/types/EachTestingContext';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from '../trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 type SanitizeObjectStringPropertiesTestCase = EachTestingContext<{
   input: Record<string, any>;

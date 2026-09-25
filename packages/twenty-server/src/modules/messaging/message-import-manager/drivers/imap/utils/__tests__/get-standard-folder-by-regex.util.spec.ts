@@ -1,4 +1,4 @@
-import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
+import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder.type';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 function testFolderMatches(

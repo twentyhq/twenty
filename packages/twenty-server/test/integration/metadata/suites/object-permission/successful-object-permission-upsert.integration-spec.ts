@@ -4,7 +4,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -50,7 +50,7 @@ describe('Object permission upsert should succeed', () => {
     customObjectMetadataId = createOneObject.id;
     jestExpectToBeDefined(customObjectMetadataId);
 
-    const objectMetadataResponse = await makeMetadataAPIRequest({
+    const objectMetadataResponse = await makeMetadataApiRequest({
       query: gql`
         query {
           objects(paging: { first: 1000 }) {

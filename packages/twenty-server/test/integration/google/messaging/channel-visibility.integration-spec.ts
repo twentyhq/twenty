@@ -8,8 +8,8 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { getGmailMessageSubject } from 'test/integration/google/mocks/gmail-message-subject.util';
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
@@ -39,8 +39,8 @@ describe('Message channel visibility (integration)', () => {
 
   const readMessageAs = async (
     makeRequest:
-      | typeof makeGraphqlAPIRequest
-      | typeof makeGraphqlAPIRequestWithMemberRole,
+      | typeof makeGraphqlApiRequest
+      | typeof makeGraphqlApiRequestWithMemberRole,
   ) => {
     const response = await makeRequest(messageQuery());
 
@@ -74,7 +74,7 @@ describe('Message channel visibility (integration)', () => {
   it('shows the full message to another member when the channel shares everything', async () => {
     await setVisibility(MessageChannelVisibility.SHARE_EVERYTHING);
 
-    const [message] = await readMessageAs(makeGraphqlAPIRequestWithMemberRole);
+    const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
 
     expect(message.subject).toBe(subject);
     expect(message.text).not.toBe(RESTRICTED);
@@ -83,7 +83,7 @@ describe('Message channel visibility (integration)', () => {
   it('masks the body but keeps the subject for another member under subject visibility', async () => {
     await setVisibility(MessageChannelVisibility.SUBJECT);
 
-    const [message] = await readMessageAs(makeGraphqlAPIRequestWithMemberRole);
+    const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
 
     expect(message.subject).toBe(subject);
     expect(message.text).toBe(RESTRICTED);
@@ -92,7 +92,7 @@ describe('Message channel visibility (integration)', () => {
   it('masks both the subject and the body for another member under metadata visibility', async () => {
     await setVisibility(MessageChannelVisibility.METADATA);
 
-    const [message] = await readMessageAs(makeGraphqlAPIRequestWithMemberRole);
+    const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
 
     expect(message.subject).toBe(RESTRICTED);
     expect(message.text).toBe(RESTRICTED);
@@ -101,7 +101,7 @@ describe('Message channel visibility (integration)', () => {
   it('always shows the full message to the owner of the connected account', async () => {
     await setVisibility(MessageChannelVisibility.METADATA);
 
-    const [message] = await readMessageAs(makeGraphqlAPIRequest);
+    const [message] = await readMessageAs(makeGraphqlApiRequest);
 
     expect(message.subject).toBe(subject);
     expect(message.text).not.toBe(RESTRICTED);

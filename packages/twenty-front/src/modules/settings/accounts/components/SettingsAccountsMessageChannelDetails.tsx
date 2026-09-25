@@ -129,7 +129,7 @@ export const SettingsAccountsMessageChannelDetails = ({
           title={t`Options`}
           description={t`Configure what emails should get synced`}
         />
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconUsers}
             title={t`Exclude group emails`}
@@ -153,7 +153,7 @@ export const SettingsAccountsMessageChannelDetails = ({
               );
             }}
           />
-        </Card>
+        </Card.Root>
       </Section.Root>
     </StyledDetailsContainer>
   );

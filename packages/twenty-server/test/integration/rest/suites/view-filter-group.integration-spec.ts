@@ -2,7 +2,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertMetadataRestListResponse,
   assertRestApiErrorNotFoundResponse,
@@ -99,7 +99,7 @@ describe('View Filter Group REST API', () => {
 
   describe('GET /metadata/viewFilterGroups', () => {
     it('should return empty array when no view filter groups exist', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewFilterGroups?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -112,7 +112,7 @@ describe('View Filter Group REST API', () => {
     });
 
     it('should return all view filter groups for workspace when no viewId provided', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/viewFilterGroups',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -129,7 +129,7 @@ describe('View Filter Group REST API', () => {
 
       testViewFilterGroupId = viewFilterGroup.id;
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewFilterGroups?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -159,7 +159,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const parentResponse = await makeRestAPIRequest({
+      const parentResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: parentData,
@@ -175,7 +175,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const childResponse = await makeRestAPIRequest({
+      const childResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: childData,
@@ -184,7 +184,7 @@ describe('View Filter Group REST API', () => {
 
       const childId = childResponse.body.id;
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewFilterGroups?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -209,7 +209,7 @@ describe('View Filter Group REST API', () => {
       expect(childGroup.parentViewFilterGroupId).toBe(parentId);
       expect(childGroup.logicalOperator).toBe('OR');
 
-      const deleteChildResponse = await makeRestAPIRequest({
+      const deleteChildResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewFilterGroups/${childId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -217,7 +217,7 @@ describe('View Filter Group REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteChildResponse);
 
-      const deleteParentResponse = await makeRestAPIRequest({
+      const deleteParentResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewFilterGroups/${parentId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -264,7 +264,7 @@ describe('View Filter Group REST API', () => {
         logicalOperator: 'NOT',
       };
 
-      const notGroupResponse = await makeRestAPIRequest({
+      const notGroupResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: viewFilterGroupData,
@@ -275,7 +275,7 @@ describe('View Filter Group REST API', () => {
 
       const notGroupId = notGroupResponse.body.id;
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewFilterGroups/${notGroupId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -289,7 +289,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const parentResponse = await makeRestAPIRequest({
+      const parentResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: parentData,
@@ -305,7 +305,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const childGroupResponse = await makeRestAPIRequest({
+      const childGroupResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: childData,
@@ -324,7 +324,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const createResponse = await makeRestAPIRequest({
+      const createResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: viewFilterGroupData,
@@ -333,7 +333,7 @@ describe('View Filter Group REST API', () => {
 
       const viewFilterGroupId = createResponse.body.id;
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewFilterGroups/${viewFilterGroupId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -347,7 +347,7 @@ describe('View Filter Group REST API', () => {
     });
 
     it('should return empty object for non-existent view filter group', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewFilterGroups/20202020-e214-44fa-a39a-d81447b2c44f`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -365,7 +365,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const createResponse = await makeRestAPIRequest({
+      const createResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: viewFilterGroupData,
@@ -379,7 +379,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewFilterGroups/${viewFilterGroupId}`,
         body: updateData,
@@ -400,7 +400,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const parentResponse = await makeRestAPIRequest({
+      const parentResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: parentData,
@@ -415,7 +415,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const childResponse = await makeRestAPIRequest({
+      const childResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: childData,
@@ -428,7 +428,7 @@ describe('View Filter Group REST API', () => {
         parentViewFilterGroupId: parentId,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewFilterGroups/${childId}`,
         body: updateData,
@@ -449,7 +449,7 @@ describe('View Filter Group REST API', () => {
         logicalOperator: 'AND',
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewFilterGroups/20202020-e214-44fa-a39a-d81447b2c44f`,
         body: updateData,
@@ -475,7 +475,7 @@ describe('View Filter Group REST API', () => {
         objectMetadataId: testObjectMetadataId,
       };
 
-      const createResponse = await makeRestAPIRequest({
+      const createResponse = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewFilterGroups',
         body: viewFilterGroupData,
@@ -484,7 +484,7 @@ describe('View Filter Group REST API', () => {
 
       const viewFilterGroupId = createResponse.body.id;
 
-      const deleteResponse = await makeRestAPIRequest({
+      const deleteResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewFilterGroups/${viewFilterGroupId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -494,7 +494,7 @@ describe('View Filter Group REST API', () => {
       expect(deleteResponse.body).toBeDefined();
       expect(deleteResponse.body.success).toBe(true);
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewFilterGroups/${viewFilterGroupId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -504,7 +504,7 @@ describe('View Filter Group REST API', () => {
     });
 
     it('should return 404 error when deleting non-existent filter group', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewFilterGroups/20202020-e214-44fa-a39a-d81447b2c44f`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

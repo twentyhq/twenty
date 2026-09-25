@@ -52,7 +52,7 @@ export const SettingsLabContent = () => {
     currentWorkspace?.id && (
       <StyledCardGrid>
         {labPublicFeatureFlagsWithImage.map((flag) => (
-          <Card
+          <Card.Root
             key={flag.key}
             rounded
             backgroundColor={themeCssVariables.background.secondary}
@@ -72,11 +72,11 @@ export const SettingsLabContent = () => {
               onChange={(value) => handleToggle(flag.key, value)}
               switchCentered={false}
             />
-          </Card>
+          </Card.Root>
         ))}
 
         {labPublicFeatureFlagsWithoutImage.length > 0 && (
-          <Card
+          <Card.Root
             rounded
             backgroundColor={themeCssVariables.background.secondary}
           >
@@ -92,7 +92,7 @@ export const SettingsLabContent = () => {
                 divider={index < labPublicFeatureFlagsWithoutImage.length - 1}
               />
             ))}
-          </Card>
+          </Card.Root>
         )}
       </StyledCardGrid>
     )

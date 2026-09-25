@@ -2,7 +2,7 @@ import http from 'http';
 
 import { gql } from 'graphql-tag';
 
-import { makeMetadataAPIRequest } from './make-metadata-api-request.util';
+import { makeMetadataApiRequest } from './make-metadata-api-request.util';
 
 const CREATE_WEBHOOK_MUTATION = gql`
   mutation CreateWebhook($input: CreateWebhookInput!) {
@@ -78,28 +78,28 @@ export type WebhookReceiver = {
 };
 
 export const createWebhook = (input: WebhookInput) => {
-  return makeMetadataAPIRequest({
+  return makeMetadataApiRequest({
     query: CREATE_WEBHOOK_MUTATION,
     variables: { input },
   });
 };
 
 export const deleteWebhook = (id: string) => {
-  return makeMetadataAPIRequest({
+  return makeMetadataApiRequest({
     query: DELETE_WEBHOOK_MUTATION,
     variables: { id },
   });
 };
 
 export const getWebhook = (id: string) => {
-  return makeMetadataAPIRequest({
+  return makeMetadataApiRequest({
     query: GET_WEBHOOK_QUERY,
     variables: { id },
   });
 };
 
 export const getWebhooks = () => {
-  return makeMetadataAPIRequest({
+  return makeMetadataApiRequest({
     query: GET_WEBHOOKS_QUERY,
   });
 };
@@ -107,7 +107,7 @@ export const getWebhooks = () => {
 export const updateWebhook = (
   input: Partial<WebhookInput> & { id: string },
 ) => {
-  return makeMetadataAPIRequest({
+  return makeMetadataApiRequest({
     query: UPDATE_WEBHOOK_MUTATION,
     variables: { input },
   });

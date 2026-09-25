@@ -35,7 +35,7 @@ export const ActivityList = ({
 }: ActivityListProps) => {
   return (
     <StyledListContainer data-scrollable={isScrollable || undefined}>
-      <Card>{children}</Card>
+      <Card.Root>{children}</Card.Root>
     </StyledListContainer>
   );
 };

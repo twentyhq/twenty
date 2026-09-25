@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useSyncExternalStore } from 'react';
 import { IconButton, useToast } from 'twenty-ui/components';
 import {
   IconChevronDown,
@@ -10,7 +11,6 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { useScreenSize } from 'twenty-ui/utilities';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
@@ -35,7 +35,7 @@ import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -101,6 +101,14 @@ const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
+const subscribeToWindowResize = (onWindowResize: () => void) => {
+  window.addEventListener('resize', onWindowResize);
+
+  return () => window.removeEventListener('resize', onWindowResize);
+};
+
+const getWindowHeight = () => window.innerHeight;
+
 export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -134,7 +142,10 @@ export const LogConsole = () => {
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
-  const { height: windowHeight } = useScreenSize();
+  const windowHeight = useSyncExternalStore(
+    subscribeToWindowResize,
+    getWindowHeight,
+  );
 
   const isLogConsoleAllowed =
     isLogsSettingsSectionEnabled &&
