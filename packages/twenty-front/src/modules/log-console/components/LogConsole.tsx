@@ -1,24 +1,17 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconButton, useToast } from 'twenty-ui/components';
 import {
-  IconArrowUp,
   IconChevronDown,
   IconChevronUp,
   IconLock,
   IconMaximize,
   IconMinimize,
-  IconTerminal,
   IconX,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
@@ -27,18 +20,17 @@ import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFu
 import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
-import { type LogConsoleSourceId } from '@/log-console/types/LogConsoleSourceId';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -89,15 +81,6 @@ const StyledBody = styled.div<{ isFullScreen: boolean }>`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledEmptyStateDescription = styled(EmptyState.Description)`
-  max-height: none;
-`;
-
-const StyledEmptyStateActions = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
 export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -113,8 +96,6 @@ export const LogConsole = () => {
     PermissionFlagType.SECURITY,
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const currentUser = useAtomStateValue(currentUserState);
-  const billing = useAtomStateValue(billingState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
   const [logConsoleDisplayMode, setLogConsoleDisplayMode] = useAtomState(
@@ -123,7 +104,7 @@ export const LogConsole = () => {
   const [isLogConsoleFullScreen, setIsLogConsoleFullScreen] = useAtomState(
     isLogConsoleFullScreenState,
   );
-  const [activeTabId, setActiveTabId] = useAtomComponentState(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
   );
@@ -176,13 +157,6 @@ export const LogConsole = () => {
     ) : undefined,
   }));
 
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const canDisplayUpgradeButton =
-    isBillingEnabled || currentUser?.canAccessFullAdminPanel === true;
-  const upgradeSettingsPath = isBillingEnabled
-    ? SettingsPath.BillingPlans
-    : SettingsPath.AdminPanelOrganization;
-
   const openLogConsole = () => {
     if (!isOpen) {
       setLogConsoleDisplayMode('open');
@@ -223,49 +197,19 @@ export const LogConsole = () => {
   const renderActiveSource = () => {
     if (!isClickHouseConfigured) {
       return (
-        <EmptyState.Root>
-          <EmptyState.Content>
-            <EmptyState.Title>{t`ClickHouse is not configured`}</EmptyState.Title>
-            <StyledEmptyStateDescription>
-              {t`Logs require ClickHouse. Please contact your administrator.`}
-            </StyledEmptyStateDescription>
-          </EmptyState.Content>
-        </EmptyState.Root>
+        <SettingsEmptyPlaceholder>
+          {t`Logs require ClickHouse to be configured. Please contact your administrator.`}
+        </SettingsEmptyPlaceholder>
       );
     }
 
     if (isSourceLocked(activeSource)) {
       return (
-        <EmptyState.Root>
-          <EmptyState.Content>
-            <EmptyState.Title>
-              {t`Audit logs are part of the Organization plan`}
-            </EmptyState.Title>
-            <StyledEmptyStateDescription>
-              {t`Record changes, security events, webhook deliveries, page views and usage need the Organization plan. App logs are available on every plan.`}
-            </StyledEmptyStateDescription>
-          </EmptyState.Content>
-          <StyledEmptyStateActions>
-            {canDisplayUpgradeButton && (
-              <NavigationButton
-                variant="solid"
-                color="accent"
-                startIcon={<IconArrowUp />}
-                to={getSettingsPath(upgradeSettingsPath)}
-              >
-                {t`Upgrade`}
-              </NavigationButton>
-            )}
-            <Button
-              startIcon={<IconTerminal />}
-              onClick={() =>
-                setActiveTabId('app-logs' satisfies LogConsoleSourceId)
-              }
-            >
-              {t`Open app logs`}
-            </Button>
-          </StyledEmptyStateActions>
-        </EmptyState.Root>
+        <SettingsEnterpriseFeatureGateCard
+          title={t`Upgrade to access audit logs`}
+          description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
+          buttonTitle={t`Upgrade`}
+        />
       );
     }
 
