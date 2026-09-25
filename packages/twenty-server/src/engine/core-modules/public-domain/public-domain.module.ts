@@ -28,6 +28,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CheckPublicDomainsValidRecordsCronCommand,
     CheckPublicDomainsValidRecordsCronJob,
     provideWorkspaceScopedRepository(PublicDomainEntity),
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
 })
 export class PublicDomainModule {}

@@ -14,6 +14,7 @@ import {
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const APPLICATION_REGISTRATION_ID = '20202020-0000-0000-0000-000000000001';
 const OUTDATED_WORKSPACE_ID = '20202020-0000-0000-0000-000000000002';
@@ -80,6 +81,10 @@ describe('ApplicationUpgradeService', () => {
         },
         {
           provide: getRepositoryToken(ApplicationEntity),
+          useValue: applicationRepository,
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(ApplicationEntity),
           useValue: applicationRepository,
         },
         {

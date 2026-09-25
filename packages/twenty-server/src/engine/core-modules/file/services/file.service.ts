@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like, Repository } from 'typeorm';
+import { Like } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -40,8 +39,8 @@ export class FileService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
   async getFilePresignedUrlOrStreamByPath({
@@ -55,10 +54,9 @@ export class FileService {
     filepath: string;
     fileFolder: FileFolder;
   }): Promise<FileResponse | null> {
-    const application = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne(workspaceId, {
       where: {
         id: applicationId,
-        workspaceId,
       },
     });
 
@@ -113,10 +111,9 @@ export class FileService {
       return null;
     }
 
-    const application = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne(workspaceId, {
       where: {
         id: file.applicationId,
-        workspaceId,
       },
     });
 
@@ -170,12 +167,14 @@ export class FileService {
       return null;
     }
 
-    const application = await this.applicationRepository.findOne({
-      where: {
-        id: file.applicationId,
-        workspaceId: params.workspaceId,
+    const application = await this.applicationRepository.findOne(
+      params.workspaceId,
+      {
+        where: {
+          id: file.applicationId,
+        },
       },
-    });
+    );
 
     if (application === null) {
       this.logger.warn(
@@ -306,10 +305,9 @@ export class FileService {
       return null;
     }
 
-    const application = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne(workspaceId, {
       where: {
         id: file.applicationId,
-        workspaceId,
       },
     });
 
