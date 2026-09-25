@@ -19,19 +19,16 @@ import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/inter
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
+import { getGraphqlOperationMetricKeyFromErrorCode } from 'src/engine/core-modules/graphql/utils/get-graphql-operation-metric-key-from-error-code.util';
 import {
   BaseGraphQLError,
   convertGraphQLErrorToBaseGraphQLError,
-  ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  graphQLErrorCodesToFilter,
-  shouldCaptureException,
-} from 'src/engine/utils/global-exception-handler.util';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
@@ -140,14 +137,6 @@ export const useGraphQLErrorHandlerHook = <
               return originalError;
             });
 
-            const codeToMetricKey: Partial<Record<ErrorCode, MetricsKeys>> = {
-              [ErrorCode.UNAUTHENTICATED]: MetricsKeys.GraphqlOperation401,
-              [ErrorCode.FORBIDDEN]: MetricsKeys.GraphqlOperation403,
-              [ErrorCode.NOT_FOUND]: MetricsKeys.GraphqlOperation404,
-              [ErrorCode.INTERNAL_SERVER_ERROR]:
-                MetricsKeys.GraphqlOperation500,
-            };
-
             const statusToMetricKey: Record<number, MetricsKeys> = {
               400: MetricsKeys.GraphqlOperation400,
               401: MetricsKeys.GraphqlOperation401,
@@ -160,12 +149,9 @@ export const useGraphQLErrorHandlerHook = <
               let metricKey: MetricsKeys | undefined;
 
               if (error instanceof BaseGraphQLError) {
-                const code = error.extensions?.code as ErrorCode;
-
-                metricKey = codeToMetricKey[code];
-                if (!metricKey && graphQLErrorCodesToFilter.includes(code)) {
-                  metricKey = MetricsKeys.GraphqlOperation400;
-                }
+                metricKey = getGraphqlOperationMetricKeyFromErrorCode(
+                  error.extensions?.code,
+                );
               } else if (error instanceof GraphQLError) {
                 const status = error.extensions?.http?.status as number;
 

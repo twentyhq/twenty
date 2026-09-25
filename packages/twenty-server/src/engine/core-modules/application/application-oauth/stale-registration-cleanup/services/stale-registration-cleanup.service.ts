@@ -16,6 +16,9 @@ export class StaleRegistrationCleanupService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    // Counts installations of a stale registration across every workspace to
+    // decide whether it can be deleted.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}

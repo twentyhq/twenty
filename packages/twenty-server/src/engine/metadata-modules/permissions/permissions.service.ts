@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import {
@@ -7,7 +6,6 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -48,8 +46,8 @@ export class PermissionsService {
     private readonly apiKeyRoleService: ApiKeyRoleService,
     @InjectWorkspaceScopedRepository(RoleEntity)
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
   private isToolPermission(feature: string) {
@@ -226,9 +224,12 @@ export class PermissionsService {
     }
 
     if (applicationId) {
-      const application = await this.applicationRepository.findOne({
-        where: { id: applicationId, workspaceId },
-      });
+      const application = await this.applicationRepository.findOne(
+        workspaceId,
+        {
+          where: { id: applicationId },
+        },
+      );
 
       if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
         throw new ApplicationException(
@@ -278,8 +279,8 @@ export class PermissionsService {
     applicationId: string;
     workspaceId: string;
   }): Promise<string | undefined> {
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
     });
 
     if (!isDefined(application)) {

@@ -16,6 +16,8 @@ import {
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class PendingFileCleanupService {
@@ -25,9 +27,8 @@ export class PendingFileCleanupService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- the reaper runs in a cron with no workspace context and must sweep stale PENDING files across every workspace
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- resolves the application universalIdentifier of a cross-workspace file while reaping outside any workspace context
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly fileStorageService: FileStorageService,
   ) {}
 
@@ -116,9 +117,12 @@ export class PendingFileCleanupService {
 
     const [fileFolder] = file.path.split('/');
 
-    const application = await this.applicationRepository.findOne({
-      where: { id: file.applicationId, workspaceId: file.workspaceId },
-    });
+    const application = await this.applicationRepository.findOne(
+      file.workspaceId,
+      {
+        where: { id: file.applicationId },
+      },
+    );
 
     if (!isDefined(application)) {
       return;

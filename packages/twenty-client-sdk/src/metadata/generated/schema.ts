@@ -96,6 +96,7 @@ export interface FrontComponent {
     updatedAt: Scalars['DateTime']
     isHeadless: Scalars['Boolean']
     usesSdkClient: Scalars['Boolean']
+    /** @deprecated Use generateFrontComponentApplicationTokenPair */
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
@@ -3577,6 +3578,7 @@ export interface Mutation {
     updateCommandMenuItem: CommandMenuItem
     resetCommandMenuItem: CommandMenuItem
     deleteCommandMenuItem: CommandMenuItem
+    generateFrontComponentApplicationTokenPair: ApplicationTokenPair
     createFrontComponent: FrontComponent
     updateFrontComponent: FrontComponent
     deleteFrontComponent: FrontComponent
@@ -3854,6 +3856,7 @@ export interface FrontComponentGenqlSelection{
     updatedAt?: boolean | number
     isHeadless?: boolean | number
     usesSdkClient?: boolean | number
+    /** @deprecated Use generateFrontComponentApplicationTokenPair */
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
@@ -7529,6 +7532,7 @@ export interface MutationGenqlSelection{
     updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
     resetCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    generateFrontComponentApplicationTokenPair?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     createFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: CreateFrontComponentInput} })
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
     deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
