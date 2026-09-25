@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { Repository } from 'typeorm';
+
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -11,6 +10,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   CalendarEventListFetchJob,
   type CalendarEventListFetchJobData,
@@ -33,8 +34,8 @@ export class CalendarTriggerEventListFetchCommand extends CommandRunner {
 
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
@@ -55,15 +56,17 @@ export class CalendarTriggerEventListFetchCommand extends CommandRunner {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarChannels = await this.calendarChannelRepository.find({
-          where: {
-            isSyncEnabled: true,
-            syncStage:
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-            ...(calendarChannelId ? { id: calendarChannelId } : {}),
-            workspaceId,
+        const calendarChannels = await this.calendarChannelRepository.find(
+          workspaceId,
+          {
+            where: {
+              isSyncEnabled: true,
+              syncStage:
+                CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+              ...(calendarChannelId ? { id: calendarChannelId } : {}),
+            },
           },
-        });
+        );
 
         if (calendarChannels.length === 0) {
           this.logger.warn(
@@ -79,7 +82,8 @@ export class CalendarTriggerEventListFetchCommand extends CommandRunner {
 
         for (const calendarChannel of calendarChannels) {
           await this.calendarChannelRepository.update(
-            { id: calendarChannel.id, workspaceId },
+            workspaceId,
+            { id: calendarChannel.id },
             {
               syncStage:
                 CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,

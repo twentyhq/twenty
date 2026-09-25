@@ -9,6 +9,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { ChannelSyncResolver } from 'src/modules/connected-account/channel-sync/channel-sync.resolver';
 import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/services/channel-sync.service';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -18,7 +19,11 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     WorkspaceDataSourceModule,
     MessagingCommonModule,
   ],
-  providers: [ChannelSyncResolver, ChannelSyncService],
+  providers: [
+    ChannelSyncResolver,
+    ChannelSyncService,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
+  ],
   exports: [ChannelSyncService],
 })
 export class ChannelSyncModule {}

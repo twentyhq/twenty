@@ -18,14 +18,16 @@ import { WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT } from 'src/modules/connected-acco
 import { CreateWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 import { RevokeWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/revoke-webhook-subscription.job';
 import { type WebhookSubscriptionChannelReference } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-channel-reference.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class WebhookSubscriptionWorkspaceSyncService {
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -68,19 +70,18 @@ export class WebhookSubscriptionWorkspaceSyncService {
     syncEnabledOnly?: boolean;
   }): Promise<WebhookSubscriptionChannelReference[]> {
     const where = {
-      workspaceId,
       webhookSubscriptionStatus: In(webhookSubscriptionStatuses),
       ...(syncEnabledOnly ? { isSyncEnabled: true } : {}),
     };
 
     const messageChannels = await this.messageChannelRepository.find({
-      where,
+      where: { ...where, workspaceId },
       select: { id: true },
     });
-    const calendarChannels = await this.calendarChannelRepository.find({
-      where,
-      select: { id: true },
-    });
+    const calendarChannels = await this.calendarChannelRepository.find(
+      workspaceId,
+      { where, select: { id: true } },
+    );
 
     return [
       ...messageChannels.map((channel) => ({

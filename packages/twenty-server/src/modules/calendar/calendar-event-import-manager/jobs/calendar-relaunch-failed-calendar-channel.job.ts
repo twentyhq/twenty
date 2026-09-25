@@ -1,7 +1,6 @@
 import { Scope } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+
 
 import {
   CalendarChannelSyncStage,
@@ -13,6 +12,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export type CalendarRelaunchFailedCalendarChannelJobData = {
   workspaceId: string;
@@ -26,8 +27,8 @@ export type CalendarRelaunchFailedCalendarChannelJobData = {
 export class CalendarRelaunchFailedCalendarChannelJob {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
   ) {}
 
   @Process(CalendarRelaunchFailedCalendarChannelJob.name)
@@ -38,12 +39,14 @@ export class CalendarRelaunchFailedCalendarChannelJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarChannel = await this.calendarChannelRepository.findOne({
-          where: {
-            id: calendarChannelId,
-            workspaceId,
+        const calendarChannel = await this.calendarChannelRepository.findOne(
+          workspaceId,
+          {
+            where: {
+              id: calendarChannelId,
+            },
           },
-        });
+        );
 
         if (
           !calendarChannel ||
@@ -55,7 +58,8 @@ export class CalendarRelaunchFailedCalendarChannelJob {
         }
 
         await this.calendarChannelRepository.update(
-          { id: calendarChannelId, workspaceId },
+          workspaceId,
+          { id: calendarChannelId },
           {
             syncStage:
               CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,

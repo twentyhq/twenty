@@ -1,7 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -13,6 +12,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { CALENDAR_ONGOING_STALE_SYNC_STAGES } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-ongoing-stale-sync-stages.constant';
 import { isSyncStale } from 'src/modules/calendar/calendar-event-import-manager/utils/is-sync-stale.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export type CalendarOngoingStaleJobData = {
   workspaceId: string;
@@ -26,8 +27,8 @@ export class CalendarOngoingStaleJob {
   private readonly logger = new Logger(CalendarOngoingStaleJob.name);
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
@@ -39,12 +40,14 @@ export class CalendarOngoingStaleJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarChannels = await this.calendarChannelRepository.find({
-          where: {
-            syncStage: In(CALENDAR_ONGOING_STALE_SYNC_STAGES),
-            workspaceId,
+        const calendarChannels = await this.calendarChannelRepository.find(
+          workspaceId,
+          {
+            where: {
+              syncStage: In(CALENDAR_ONGOING_STALE_SYNC_STAGES),
+            },
           },
-        });
+        );
 
         for (const calendarChannel of calendarChannels) {
           const syncStageStartedAt = calendarChannel.syncStageStartedAt;

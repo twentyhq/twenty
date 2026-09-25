@@ -10,6 +10,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { TargetModule } from 'src/engine/core-modules/target/target.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { TargetModule } from 'src/engine/core-modules/target/target.module';
     ]),
   ],
   exports: [],
-  providers: [TimelineCalendarEventResolver, TimelineCalendarEventService],
+  providers: [
+    TimelineCalendarEventResolver,
+    TimelineCalendarEventService,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
+  ],
 })
 export class TimelineCalendarEventModule {}

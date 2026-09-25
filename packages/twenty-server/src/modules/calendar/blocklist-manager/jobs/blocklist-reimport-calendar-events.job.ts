@@ -18,6 +18,8 @@ import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-ob
 import { groupBlocklistHandlesByOwner } from 'src/modules/blocklist/utils/group-blocklist-handles-by-owner.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
   ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
@@ -30,8 +32,8 @@ export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
 export class BlocklistReimportCalendarEventsJob {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
@@ -133,17 +135,16 @@ export class BlocklistReimportCalendarEventsJob {
       syncStage: Not(
         CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
       ),
-      workspaceId,
     };
 
     if (isDefined(userWorkspaceId)) {
       where.connectedAccount = { userWorkspaceId };
     }
 
-    const calendarChannels = await this.calendarChannelRepository.find({
-      select: ['id'],
-      where,
-    });
+    const calendarChannels = await this.calendarChannelRepository.find(
+      workspaceId,
+      { select: ['id'], where },
+    );
 
     return calendarChannels.map((calendarChannel) => calendarChannel.id);
   }

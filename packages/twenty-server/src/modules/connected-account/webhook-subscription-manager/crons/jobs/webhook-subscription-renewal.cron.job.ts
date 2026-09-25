@@ -60,6 +60,9 @@ export class WebhookSubscriptionRenewalCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    // Batches channels needing renewal across every active workspace, filtering
+    // on the workspace id list rather than one request workspace.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectMessageQueue(MessageQueue.webhookQueue)

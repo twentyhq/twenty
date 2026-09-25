@@ -8,6 +8,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -20,7 +21,10 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
     ConnectedAccountModule,
     MetricsModule,
   ],
-  providers: [CalendarChannelSyncStatusService],
+  providers: [
+    CalendarChannelSyncStatusService,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
+  ],
   exports: [CalendarChannelSyncStatusService],
 })
 export class CalendarCommonModule {}

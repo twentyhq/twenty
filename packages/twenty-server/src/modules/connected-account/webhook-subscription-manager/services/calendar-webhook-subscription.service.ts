@@ -20,6 +20,8 @@ import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   type WebhookSubscriptionContext,
   type WebhookSubscriptionResult,
@@ -30,8 +32,8 @@ export class CalendarWebhookSubscriptionService {
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     private readonly workspaceActivationService: WorkspaceActivationService,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
     private readonly metricsService: MetricsService,
@@ -50,10 +52,13 @@ export class CalendarWebhookSubscriptionService {
       return;
     }
 
-    const calendarChannel = await this.calendarChannelRepository.findOne({
-      where: { id: calendarChannelId, workspaceId },
-      relations: ['connectedAccount'],
-    });
+    const calendarChannel = await this.calendarChannelRepository.findOne(
+      workspaceId,
+      {
+        where: { id: calendarChannelId },
+        relations: ['connectedAccount'],
+      },
+    );
 
     if (!isDefined(calendarChannel?.connectedAccount)) {
       return;
@@ -203,10 +208,13 @@ export class CalendarWebhookSubscriptionService {
       return;
     }
 
-    const calendarChannel = await this.calendarChannelRepository.findOne({
-      where: { id: calendarChannelId, workspaceId },
-      relations: ['connectedAccount'],
-    });
+    const calendarChannel = await this.calendarChannelRepository.findOne(
+      workspaceId,
+      {
+        where: { id: calendarChannelId },
+        relations: ['connectedAccount'],
+      },
+    );
 
     if (!isDefined(calendarChannel)) {
       return;
@@ -281,9 +289,12 @@ export class CalendarWebhookSubscriptionService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const calendarChannel = await this.calendarChannelRepository.findOne({
-      where: { id: calendarChannelId, workspaceId },
-    });
+    const calendarChannel = await this.calendarChannelRepository.findOne(
+      workspaceId,
+      {
+        where: { id: calendarChannelId },
+      },
+    );
 
     if (!isDefined(calendarChannel)) {
       return;

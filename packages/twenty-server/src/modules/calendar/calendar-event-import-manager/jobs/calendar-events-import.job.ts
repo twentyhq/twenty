@@ -1,7 +1,6 @@
 import { Scope } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -11,6 +10,8 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export type CalendarEventsImportJobData = {
   calendarChannelId: string;
@@ -25,8 +26,8 @@ export class CalendarEventsImportJob {
   constructor(
     private readonly calendarEventsImportService: CalendarEventsImportService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
   ) {}
 
   @Process(CalendarEventsImportJob.name)
@@ -37,14 +38,16 @@ export class CalendarEventsImportJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarChannel = await this.calendarChannelRepository.findOne({
-          where: {
-            id: calendarChannelId,
-            isSyncEnabled: true,
-            workspaceId,
+        const calendarChannel = await this.calendarChannelRepository.findOne(
+          workspaceId,
+          {
+            where: {
+              id: calendarChannelId,
+              isSyncEnabled: true,
+            },
+            relations: ['connectedAccount'],
           },
-          relations: ['connectedAccount'],
-        });
+        );
 
         if (!calendarChannel?.isSyncEnabled) {
           return;

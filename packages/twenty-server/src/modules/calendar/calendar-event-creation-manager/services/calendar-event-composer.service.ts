@@ -15,6 +15,8 @@ import { isValidTimeZone } from 'src/modules/calendar/calendar-event-creation-ma
 import { type CalendarEventComposerResult } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-composer-result.type';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
 import { type ComposeCalendarEventParams } from 'src/modules/calendar/calendar-event-creation-manager/types/compose-calendar-event-params.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 // Timed events need an absolute instant, so the date-time must carry an explicit
 // UTC offset (Z or ±hh:mm); without one the instant is ambiguous and providers
@@ -36,8 +38,8 @@ export class CalendarEventComposerService {
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
   ) {}
 
   async composeCalendarEvent(
@@ -234,11 +236,14 @@ export class CalendarEventComposerService {
   private async resolveDefaultCalendarAccount(
     workspaceId: string,
   ): Promise<ResolvedCalendarAccount> {
-    const calendarChannels = await this.calendarChannelRepository.find({
-      where: { workspaceId, isSyncEnabled: true },
-      relations: { connectedAccount: true },
-      order: { createdAt: 'ASC' },
-    });
+    const calendarChannels = await this.calendarChannelRepository.find(
+      workspaceId,
+      {
+        where: { isSyncEnabled: true },
+        relations: { connectedAccount: true },
+        order: { createdAt: 'ASC' },
+      },
+    );
 
     const calendarChannel = calendarChannels.find(
       (channel) =>
@@ -264,8 +269,8 @@ export class CalendarEventComposerService {
     connectedAccountId: string,
     workspaceId: string,
   ): Promise<CalendarChannelEntity | null> {
-    return this.calendarChannelRepository.findOne({
-      where: { connectedAccountId, workspaceId, isSyncEnabled: true },
+    return this.calendarChannelRepository.findOne(workspaceId, {
+      where: { connectedAccountId, isSyncEnabled: true },
       order: { createdAt: 'ASC' },
     });
   }

@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -12,6 +11,8 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_INLINE_IMPORT_MAX_EVENTS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-inline-import-max-events.constant';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class CalendarEventWebhookSyncService {
@@ -20,8 +21,8 @@ export class CalendarEventWebhookSyncService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     private readonly calendarFetchEventsService: CalendarFetchEventsService,
     private readonly calendarEventsImportService: CalendarEventsImportService,
   ) {}
@@ -98,8 +99,8 @@ export class CalendarEventWebhookSyncService {
     calendarChannelId: string;
     workspaceId: string;
   }): Promise<CalendarChannelEntity | null> {
-    return this.calendarChannelRepository.findOne({
-      where: { id: calendarChannelId, workspaceId, isSyncEnabled: true },
+    return this.calendarChannelRepository.findOne(workspaceId, {
+      where: { id: calendarChannelId, isSyncEnabled: true },
       relations: ['connectedAccount'],
     });
   }

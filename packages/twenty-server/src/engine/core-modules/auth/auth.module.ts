@@ -76,6 +76,7 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { OnboardingRecentMessagesImportModule } from 'src/modules/onboarding-recent-messages-import/onboarding-recent-messages-import.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -171,6 +172,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
   ],
   exports: [
     AccessTokenService,

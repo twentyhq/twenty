@@ -54,6 +54,8 @@ import {
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { OnboardingRecentMessagesImportService } from 'src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
@@ -87,8 +89,8 @@ export class GoogleAPIsService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -181,10 +183,9 @@ export class GoogleAPIsService {
       });
 
       const existingCalendarChannels =
-        await this.calendarChannelRepository.find({
+        await this.calendarChannelRepository.find(workspaceId, {
           where: {
             connectedAccountId: newOrExistingConnectedAccountId,
-            workspaceId,
           },
         });
 
@@ -368,12 +369,14 @@ export class GoogleAPIsService {
       }
 
       if (isCalendarEnabled) {
-        const calendarChannels = await this.calendarChannelRepository.find({
-          where: {
-            connectedAccountId: newOrExistingConnectedAccountId,
-            workspaceId,
+        const calendarChannels = await this.calendarChannelRepository.find(
+          workspaceId,
+          {
+            where: {
+              connectedAccountId: newOrExistingConnectedAccountId,
+            },
           },
-        });
+        );
 
         if (!isCalendarAvailable && calendarChannels.length > 0) {
           await this.calendarChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushCalendarEventsToImport(

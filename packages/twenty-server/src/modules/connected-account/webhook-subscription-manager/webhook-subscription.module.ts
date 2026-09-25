@@ -25,6 +25,7 @@ import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/
 import { WebhookSubscriptionWorkspaceSyncService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-workspace-sync.service';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     RevokeWebhookSubscriptionJob,
     SyncWorkspaceWebhookSubscriptionsJob,
     CreateWebhookSubscriptionForConnectedAccountCommand,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
   ],
   exports: [
     WorkspaceActivationService,

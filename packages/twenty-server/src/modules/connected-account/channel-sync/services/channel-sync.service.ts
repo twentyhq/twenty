@@ -28,6 +28,8 @@ import {
   type CreateWebhookSubscriptionJobData,
 } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
@@ -53,8 +55,8 @@ export class ChannelSyncService {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -130,17 +132,20 @@ export class ChannelSyncService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannels = await this.calendarChannelRepository.find({
-        where: {
-          connectedAccountId,
-          syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
-          workspaceId,
+      const calendarChannels = await this.calendarChannelRepository.find(
+        workspaceId,
+        {
+          where: {
+            connectedAccountId,
+            syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
+          },
         },
-      });
+      );
 
       for (const calendarChannel of calendarChannels) {
         await this.calendarChannelRepository.update(
-          { id: calendarChannel.id, workspaceId },
+          workspaceId,
+          { id: calendarChannel.id },
           {
             syncStage:
               CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,

@@ -37,6 +37,9 @@ export class CalendarEventListFetchCronJob {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    // Instance-wide cron sweep across every active workspace, so there is no
+    // single request workspace to scope by.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}

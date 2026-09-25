@@ -17,6 +17,7 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 import { ImapSmtpCalDavApiService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -38,7 +39,10 @@ import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
   ],
-  providers: [ImapSmtpCalDavApiService],
+  providers: [
+    ImapSmtpCalDavApiService,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
+  ],
   exports: [ImapSmtpCalDavApiService],
 })
 export class IMAPAPIsModule {}

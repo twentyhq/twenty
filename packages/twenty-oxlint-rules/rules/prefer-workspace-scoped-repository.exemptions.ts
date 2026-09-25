@@ -32,8 +32,7 @@ export const WORKSPACE_SCOPED_EXEMPTIONS = [
   // authorized" screen) and from the OAuth token endpoint, which has no
   // request workspace to scope by.
   'ApplicationAuthorizationEntity',
-  // 20+ call sites across calendar/messaging modules; staged for a dedicated PR.
-  'CalendarChannelEntity',
+  // 20+ call sites across messaging modules; staged for a dedicated PR.
   'MessageChannelEntity',
   'UserWorkspaceEntity',
   'ConnectedAccountEntity',

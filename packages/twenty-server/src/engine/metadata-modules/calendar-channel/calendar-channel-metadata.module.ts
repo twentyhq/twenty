@@ -9,6 +9,7 @@ import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-ch
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     CalendarChannelMetadataService,
     CalendarChannelResolver,
     CalendarChannelGraphqlApiExceptionInterceptor,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
   ],
   exports: [CalendarChannelMetadataService],
 })

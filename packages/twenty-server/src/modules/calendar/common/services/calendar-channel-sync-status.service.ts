@@ -19,6 +19,8 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class CalendarChannelSyncStatusService {
   private readonly logger = new Logger(CalendarChannelSyncStatusService.name);
@@ -27,8 +29,8 @@ export class CalendarChannelSyncStatusService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -51,7 +53,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStage:
               CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
@@ -79,7 +82,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStage:
               CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
@@ -112,7 +116,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncCursor: '',
             syncStageStartedAt: null,
@@ -143,7 +148,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStageStartedAt: null,
           },
@@ -168,7 +174,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
             ...(!preserveSyncStageStartedAt
@@ -195,7 +202,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
             syncStatus: CalendarChannelSyncStatus.ONGOING,
@@ -221,7 +229,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStage:
               CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
@@ -270,7 +279,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
             syncStage: CalendarChannelSyncStage.FAILED,
@@ -310,7 +320,8 @@ export class CalendarChannelSyncStatusService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.calendarChannelRepository.update(
-          { id: In(calendarChannelIds), workspaceId },
+          workspaceId,
+          { id: In(calendarChannelIds) },
           {
             syncStatus:
               CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
@@ -318,10 +329,13 @@ export class CalendarChannelSyncStatusService {
           },
         );
 
-        const calendarChannels = await this.calendarChannelRepository.find({
-          select: ['id', 'connectedAccountId'],
-          where: { id: Any(calendarChannelIds), workspaceId },
-        });
+        const calendarChannels = await this.calendarChannelRepository.find(
+          workspaceId,
+          {
+            select: ['id', 'connectedAccountId'],
+            where: { id: Any(calendarChannelIds) },
+          },
+        );
 
         const connectedAccountIds = calendarChannels.map(
           (calendarChannel) => calendarChannel.connectedAccountId,
@@ -357,13 +371,15 @@ export class CalendarChannelSyncStatusService {
       return;
     }
 
-    const calendarChannels = await this.calendarChannelRepository.find({
-      select: ['id', 'connectedAccountId'],
-      where: {
-        id: Any(calendarChannelIds),
-        workspaceId,
+    const calendarChannels = await this.calendarChannelRepository.find(
+      workspaceId,
+      {
+        select: ['id', 'connectedAccountId'],
+        where: {
+          id: Any(calendarChannelIds),
+        },
       },
-    });
+    );
 
     for (const calendarChannel of calendarChannels) {
       const connectedAccount = await this.connectedAccountRepository.findOne({

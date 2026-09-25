@@ -9,6 +9,7 @@ import { CalendarEventFindOnePostQueryHook } from 'src/modules/calendar/common/q
 import { ApplyCalendarEventsVisibilityRestrictionsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service';
 import { CalendarEventTargetCreateManyPreQueryHook } from 'src/modules/calendar/common/query-hooks/calendar-event-target/calendar-event-target-create-many.pre-query-hook';
 import { CalendarEventTargetCreateOnePreQueryHook } from 'src/modules/calendar/common/query-hooks/calendar-event-target/calendar-event-target-create-one.pre-query-hook';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CalendarEventTargetCreateOnePreQueryHook } from 'src/modules/calendar/c
     CalendarEventFindManyPostQueryHook,
     CalendarEventTargetCreateOnePreQueryHook,
     CalendarEventTargetCreateManyPreQueryHook,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
   ],
 })
 export class CalendarQueryHookModule {}

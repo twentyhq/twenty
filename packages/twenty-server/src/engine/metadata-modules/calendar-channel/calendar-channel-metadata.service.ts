@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import {
   CalendarChannelSyncStage,
@@ -18,18 +17,21 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class CalendarChannelMetadataService {
   constructor(
-    @InjectRepository(CalendarChannelEntity)
-    private readonly repository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly repository: WorkspaceScopedRepository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
-    return this.repository.find({ where: { workspaceId } });
+    return this.repository.find(workspaceId);
   }
 
   async findByUserWorkspaceId({
@@ -76,8 +78,8 @@ export class CalendarChannelMetadataService {
     connectedAccountId: string;
     workspaceId: string;
   }): Promise<CalendarChannelDTO[]> {
-    return this.repository.find({
-      where: { connectedAccountId, workspaceId },
+    return this.repository.find(workspaceId, {
+      where: { connectedAccountId },
     });
   }
 
@@ -92,8 +94,8 @@ export class CalendarChannelMetadataService {
       return [];
     }
 
-    return this.repository.find({
-      where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+    return this.repository.find(workspaceId, {
+      where: { connectedAccountId: In(connectedAccountIds) },
     });
   }
 
@@ -104,7 +106,7 @@ export class CalendarChannelMetadataService {
     id: string;
     workspaceId: string;
   }): Promise<CalendarChannelDTO | null> {
-    return this.repository.findOne({ where: { id, workspaceId } });
+    return this.repository.findOne(workspaceId, { where: { id } });
   }
 
   async verifyOwnership({
@@ -116,8 +118,8 @@ export class CalendarChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<CalendarChannelEntity> {
-    const calendarChannel = await this.repository.findOne({
-      where: { id, workspaceId },
+    const calendarChannel = await this.repository.findOne(workspaceId, {
+      where: { id },
     });
 
     if (!calendarChannel) {
@@ -152,9 +154,10 @@ export class CalendarChannelMetadataService {
       syncStage: CalendarChannelSyncStage;
     },
   ): Promise<CalendarChannelDTO> {
-    const entity = this.repository.create(data);
-
-    return this.repository.save(entity);
+    return this.repository.insertAndReturnOne(
+      data.workspaceId,
+      data as QueryDeepPartialEntity<CalendarChannelEntity>,
+    );
   }
 
   async update({
@@ -167,11 +170,12 @@ export class CalendarChannelMetadataService {
     data: Partial<CalendarChannelEntity>;
   }): Promise<CalendarChannelDTO> {
     await this.repository.update(
-      { id, workspaceId },
+      workspaceId,
+      { id },
       data as Record<string, unknown>,
     );
 
-    return this.repository.findOneOrFail({ where: { id, workspaceId } });
+    return this.repository.findOneOrFail(workspaceId, { where: { id } });
   }
 
   async delete({
@@ -181,11 +185,11 @@ export class CalendarChannelMetadataService {
     id: string;
     workspaceId: string;
   }): Promise<CalendarChannelDTO> {
-    const calendarChannel = await this.repository.findOneOrFail({
-      where: { id, workspaceId },
+    const calendarChannel = await this.repository.findOneOrFail(workspaceId, {
+      where: { id },
     });
 
-    await this.repository.delete({ id, workspaceId });
+    await this.repository.delete(workspaceId, { id });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
       CALENDAR_CHANNEL_DELETED_EVENT,

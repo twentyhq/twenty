@@ -14,6 +14,8 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ApplyCalendarEventsVisibilityRestrictionsService {
@@ -23,8 +25,8 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
   ) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
@@ -59,10 +61,9 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
 
         const calendarChannelsFromCore =
           calendarChannelIds.length > 0
-            ? await this.calendarChannelRepository.find({
+            ? await this.calendarChannelRepository.find(workspaceId, {
                 where: {
                   id: In(calendarChannelIds),
-                  workspaceId,
                 },
               })
             : [];

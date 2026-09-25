@@ -30,6 +30,8 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
@@ -40,8 +42,8 @@ export class ImapSmtpCalDavApiService {
   private readonly logger = new Logger(ImapSmtpCalDavApiService.name);
 
   constructor(
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(MessageChannelEntity)
@@ -104,8 +106,8 @@ export class ImapSmtpCalDavApiService {
       : null;
 
     const existingCalendarChannel = existingAccount
-      ? await this.calendarChannelRepository.findOne({
-          where: { connectedAccountId: existingAccount.id, workspaceId },
+      ? await this.calendarChannelRepository.findOne(workspaceId, {
+          where: { connectedAccountId: existingAccount.id },
         })
       : null;
 

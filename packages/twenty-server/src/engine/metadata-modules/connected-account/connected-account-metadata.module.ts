@@ -17,6 +17,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook
     ConnectedAccountOwnershipTransferService,
     ConnectedAccountResolver,
     ConnectedAccountGraphqlApiExceptionInterceptor,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
   ],
   exports: [
     ConnectedAccountMetadataService,

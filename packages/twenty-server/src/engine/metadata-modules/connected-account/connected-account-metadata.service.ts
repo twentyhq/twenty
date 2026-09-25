@@ -38,6 +38,8 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
@@ -46,8 +48,8 @@ export class ConnectedAccountMetadataService {
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly repository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
@@ -389,8 +391,8 @@ export class ConnectedAccountMetadataService {
         where: { connectedAccountId: In(connectedAccountIds), workspaceId },
         select: { id: true },
       }),
-      this.calendarChannelRepository.find({
-        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+      this.calendarChannelRepository.find(workspaceId, {
+        where: { connectedAccountId: In(connectedAccountIds) },
         select: { id: true },
       }),
     ]);
@@ -488,8 +490,8 @@ export class ConnectedAccountMetadataService {
         where: { connectedAccountId: id, workspaceId },
         select: { id: true },
       }),
-      this.calendarChannelRepository.find({
-        where: { connectedAccountId: id, workspaceId },
+      this.calendarChannelRepository.find(workspaceId, {
+        where: { connectedAccountId: id },
         select: { id: true },
       }),
     ]);
@@ -576,8 +578,8 @@ export class ConnectedAccountMetadataService {
         where: { connectedAccountId: id, workspaceId },
         select: { id: true },
       }),
-      this.calendarChannelRepository.find({
-        where: { connectedAccountId: id, workspaceId },
+      this.calendarChannelRepository.find(workspaceId, {
+        where: { connectedAccountId: id },
         select: { id: true },
       }),
     ]);

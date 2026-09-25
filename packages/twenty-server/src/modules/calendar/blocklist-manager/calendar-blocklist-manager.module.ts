@@ -8,6 +8,7 @@ import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/blockli
 import { CalendarBlocklistListener } from 'src/modules/calendar/blocklist-manager/listeners/calendar-blocklist.listener';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-commo
     CalendarBlocklistListener,
     BlocklistItemDeleteCalendarEventsJob,
     BlocklistReimportCalendarEventsJob,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
   ],
   exports: [],
 })

@@ -27,6 +27,9 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
   );
 
   constructor(
+    // Inbound provider webhook: the subscription id in the callback is what
+    // resolves the workspace, so the lookup cannot be scoped by one.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,

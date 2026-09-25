@@ -23,6 +23,9 @@ export const CALENDAR_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class CalendarOngoingStaleCronJob {
   constructor(
+    // Instance-wide cron sweep across every active workspace, so there is no
+    // single request workspace to scope by.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
