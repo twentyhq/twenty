@@ -1,6 +1,6 @@
 import { BASIC_FAILING_STRING_EDGE_CASE_INPUTS } from 'test/constants/basic-failing-string-edge-case-inputs.constant';
-import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/fieldMetadataEnumSuccessfulAndFailingTestCases';
-import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
+import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/field-metadata-enum-successful-and-failing-test-cases.type';
+import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case.type';
 import {
   type FieldMetadataComplexOption,
   type TagColor,

@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   getTargetFieldNameForObjectRecord,
   type TargetFilter,
@@ -13,10 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class MessageCalendarTargetReadinessService {
-  constructor(
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
+  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   async resolveTargetFilter({
     objectNameSingular,
@@ -37,17 +32,8 @@ export class MessageCalendarTargetReadinessService {
   }
 
   async isReady(workspaceId: string): Promise<boolean> {
-    const isReadEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED,
-      workspaceId,
-    );
-
-    if (!isReadEnabled) {
-      return false;
-    }
-
-    // A premature flag flip on a workspace whose metadata sync has not run
-    // must degrade to legacy reads, not break the timeline relation join.
+    // During workspace upgrades the target objects may not exist yet;
+    // retain legacy reads until metadata sync creates both junctions.
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',

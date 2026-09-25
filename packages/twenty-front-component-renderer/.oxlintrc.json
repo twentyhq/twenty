@@ -60,6 +60,7 @@
     "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "twenty/no-miscased-acronym-in-identifier": "error",
     "twenty/effect-components": "error",
     "twenty/component-props-naming": "error",
     "twenty/styled-components-prefixed-with-styled": "error"

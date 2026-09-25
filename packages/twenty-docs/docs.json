@@ -552,6 +552,7 @@
                         "group": "Surfaces",
                         "pages": [
                           "ui/primitives/surfaces/alert-dialog",
+                          "ui/primitives/surfaces/card",
                           "ui/primitives/surfaces/dialog",
                           "ui/primitives/surfaces/menu",
                           "ui/primitives/surfaces/popover",
@@ -7365,6 +7366,18 @@
     {
       "source": "/ui/primitives/feedback/toast",
       "destination": "/ui/components/toast"
+    },
+    {
+      "source": "/ui/primitives/surfaces/card-header",
+      "destination": "/ui/primitives/surfaces/card"
+    },
+    {
+      "source": "/ui/primitives/surfaces/card-content",
+      "destination": "/ui/primitives/surfaces/card"
+    },
+    {
+      "source": "/ui/primitives/surfaces/card-footer",
+      "destination": "/ui/primitives/surfaces/card"
     }
   ]
 }

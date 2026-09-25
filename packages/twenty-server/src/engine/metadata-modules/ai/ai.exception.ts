@@ -11,6 +11,7 @@ export enum AiExceptionCode {
   AGENT_EXECUTION_FAILED = 'AGENT_EXECUTION_FAILED',
   INVALID_AGENT_INPUT = 'INVALID_AGENT_INPUT',
   THREAD_NOT_FOUND = 'THREAD_NOT_FOUND',
+  RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
   INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
@@ -45,6 +46,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Invalid agent input.`;
     case AiExceptionCode.THREAD_NOT_FOUND:
       return msg`Chat thread not found.`;
+    case AiExceptionCode.RECORD_NOT_FOUND:
+      return msg`Record not found.`;
     case AiExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
     case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:

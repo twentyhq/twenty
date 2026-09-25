@@ -1,4 +1,4 @@
-import { type EachTestingContext } from '@/testing/types/EachTestingContext.type';
+import { type EachTestingContext } from '@/testing/types/EachTestingContext';
 import { fromArrayToUniqueKeyRecord } from '@/utils/from-array-to-unique-key-record.util';
 
 type FromArrayToUniqueKeyRecordTestCase = EachTestingContext<{

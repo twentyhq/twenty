@@ -5,7 +5,7 @@ import { RouteContextStoreProvider } from '@/context-store/components/RouteConte
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
 

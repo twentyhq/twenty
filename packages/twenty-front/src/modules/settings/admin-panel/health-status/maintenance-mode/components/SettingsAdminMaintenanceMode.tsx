@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconLink, IconTool } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormContainer = styled.div`
@@ -194,7 +194,7 @@ export const SettingsAdminMaintenanceMode = () => {
         title={t`Maintenance`}
         description={t`Schedule a maintenance window and notify all users`}
       />
-      <Card rounded>
+      <Card.Root rounded>
         <SettingsOptionCardContentSwitch
           Icon={IconTool}
           title={t`Maintenance mode`}
@@ -203,7 +203,7 @@ export const SettingsAdminMaintenanceMode = () => {
           onChange={handleToggle}
         />
         {isEnabled && (
-          <CardContent>
+          <Card.Content>
             <StyledFormContainer>
               <SettingsDatePickerInput
                 label={t`Start date`}
@@ -243,9 +243,9 @@ export const SettingsAdminMaintenanceMode = () => {
                 </StyledStatusRow>
               )}
             </StyledFormContainer>
-          </CardContent>
+          </Card.Content>
         )}
-      </Card>
+      </Card.Root>
     </Section.Root>
   );
 };

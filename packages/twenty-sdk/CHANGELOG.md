@@ -43,6 +43,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   });
   ```
 
+- **`useSelectedObjectMetadata` in `twenty-sdk/front-component`.** Returns the `id`, `nameSingular` and `namePlural` of the object a front component runs against, such as the object of the current record page, or `null` when there is none. Twenty servers that predate it also return `null`. The return type is exported as `FrontComponentSelectedObjectMetadata`.
+
+  ```tsx
+  import { useSelectedObjectMetadata } from 'twenty-sdk/front-component';
+
+  const objectMetadata = useSelectedObjectMetadata();
+  ```
+
 ### Deprecated
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.

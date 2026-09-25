@@ -8,7 +8,7 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import {
   type FlatDeleteFieldAction,
   type UniversalDeleteFieldAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,
