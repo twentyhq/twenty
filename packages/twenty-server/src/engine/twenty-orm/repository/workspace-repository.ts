@@ -1486,6 +1486,37 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
+  // Reads up to `limit` ids of the rows a delete built on this query builder
+  // would remove, with the same permission checks and row-level predicates
+  async findDeleteTargetIds({
+    selectQueryBuilder,
+    rowLevelPermissionsApplied,
+    limit,
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    limit: number;
+  }): Promise<string[]> {
+    this.validateWriteIsPermitted({
+      operationType: 'delete',
+      columnsToReturn: ['id'],
+      updatedColumns: [],
+    });
+
+    if (!rowLevelPermissionsApplied) {
+      this.applyRowLevelPermissionPredicates(selectQueryBuilder, 'delete');
+    }
+
+    const records = await this.buildEventSnapshotQueryBuilder(
+      selectQueryBuilder,
+    )
+      .select(['id'])
+      .limit(limit)
+      .getMany<ObjectRecord>({ noFormatting: true });
+
+    return records.map(({ id }) => String(id));
+  }
+
   async runMutation({
     selectQueryBuilder,
     rowLevelPermissionsApplied,
@@ -1516,16 +1547,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
 
-    const recordsBefore =
-      kind === 'delete'
-        ? [
-            await eventSelectQueryBuilder.getOne<ObjectRecord>({
-              noFormatting: true,
-            }),
-          ].filter(isDefined)
-        : await eventSelectQueryBuilder.getMany<ObjectRecord>({
-            noFormatting: true,
-          });
+    // A delete builds its events from the rows returned by the DELETE itself,
+    // so it only reads them beforehand when inherited permissions or
+    // readability need them while they still exist
+    const shouldReadRecordsBefore =
+      kind !== 'delete' || this.shouldReadRecordsBeforeDeletion();
+
+    const recordsBefore = shouldReadRecordsBefore
+      ? await eventSelectQueryBuilder.getMany<ObjectRecord>({
+          noFormatting: true,
+        })
+      : [];
 
     if (kind === 'update' && recordsBefore.length > QUERY_MAX_RECORDS) {
       throw new TwentyOrmException(
@@ -1579,29 +1611,29 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    // The delete snapshot keeps a single row for the event while every deleted
-    // row may be one some record inherits through
-    const recordsBeforeInheritanceCheck =
-      kind === 'delete' && this.hasInheritingRecordLinks()
-        ? await eventSelectQueryBuilder.getMany<ObjectRecord>({
-            noFormatting: true,
-          })
-        : recordsBefore;
-
     await this.validateInheritedParentsAreWritableOrThrow({
       writtenRecords: isDefined(setColumns) ? [setColumns] : [],
       affectedRecords: isDefined(setColumns)
-        ? recordsBeforeInheritanceCheck.flatMap((record) => [
+        ? recordsBefore.flatMap((record) => [
             record,
             { ...record, ...setColumns },
           ])
-        : recordsBeforeInheritanceCheck,
+        : recordsBefore,
     });
 
     const inheritedReadabilityChildRecordsByRecordId =
       kind === 'delete' || kind === 'soft-delete'
         ? await this.fetchInheritedReadabilityChildRecords(recordsBefore)
         : undefined;
+
+    if (kind === 'delete') {
+      return this.executeDeleteAndEmitEvent({
+        selectQueryBuilder,
+        columnsToReturn,
+        checkedRecords: shouldReadRecordsBefore ? recordsBefore : undefined,
+        inheritedReadabilityChildRecordsByRecordId,
+      });
+    }
 
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
@@ -1616,20 +1648,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       setColumns,
     });
 
-    if (kind === 'delete') {
-      await this.releaseRecordStock(mutationResult.generatedMaps.length);
-    }
-
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
 
-    const recordsAfterWrite =
-      kind === 'delete' || this.options.shouldSkipEventEmission
-        ? undefined
-        : await eventSelectQueryBuilder.getMany<ObjectRecord>({
-            noFormatting: true,
-          });
+    const recordsAfterWrite = this.options.shouldSkipEventEmission
+      ? undefined
+      : await eventSelectQueryBuilder.getMany<ObjectRecord>({
+          noFormatting: true,
+        });
 
     const recordsAfter =
       kind === 'update' && isDefined(setColumns)
@@ -1652,24 +1679,94 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return mutationResult.generatedMaps;
   }
 
-  private async fetchInheritedReadabilityChildRecords(
-    records: ObjectRecord[],
-  ): Promise<Map<string, InheritedReadabilityChildRecords> | undefined> {
-    const { flatObjectMetadata } = this.options;
+  private async executeDeleteAndEmitEvent({
+    selectQueryBuilder,
+    columnsToReturn,
+    checkedRecords,
+    inheritedReadabilityChildRecordsByRecordId,
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    columnsToReturn: string[];
+    checkedRecords?: ObjectRecord[];
+    inheritedReadabilityChildRecordsByRecordId?: Map<
+      string,
+      InheritedReadabilityChildRecords
+    >;
+  }): Promise<ObjectRecord[]> {
+    if (isDefined(checkedRecords)) {
+      if (checkedRecords.length === 0) {
+        return [];
+      }
 
-    if (
-      records.length === 0 ||
-      flatObjectMetadata.readability !== MetadataReadability.INHERITED
-    ) {
-      return undefined;
+      // A row that starts matching after the checks must not be deleted unchecked
+      selectQueryBuilder.andWhere({
+        id: In(checkedRecords.map(({ id }) => id)),
+      });
     }
 
-    const childrenParents = this.resolveInheritedReadabilityParents(
-      flatObjectMetadata,
-    ).filter(
+    const returningColumns = this.options.shouldSkipEventEmission
+      ? columnsToReturn
+      : [
+          ...new Set([
+            ...columnsToReturn,
+            ...this.options.tableShape.columnNames,
+          ]),
+        ];
+
+    const { generatedMaps: deletedRecords } = await selectQueryBuilder
+      .delete()
+      .returning(returningColumns)
+      .execute({ noFormatting: true });
+
+    await this.releaseRecordStock(deletedRecords.length);
+
+    this.emitMutationEvent({
+      kind: 'delete',
+      recordsBefore: deletedRecords,
+      inheritedReadabilityChildRecordsByRecordId,
+    });
+
+    return this.formatResult<ObjectRecord[]>(
+      deletedRecords.map((deletedRecord: ObjectRecord) =>
+        Object.fromEntries(
+          columnsToReturn.map((columnName) => [
+            columnName,
+            deletedRecord[columnName],
+          ]),
+        ),
+      ),
+    );
+  }
+
+  private shouldReadRecordsBeforeDeletion(): boolean {
+    return (
+      this.hasInheritingRecordLinks() ||
+      (!this.options.shouldSkipEventEmission &&
+        this.resolveInheritedReadabilityChildrenParents().length > 0)
+    );
+  }
+
+  private resolveInheritedReadabilityChildrenParents(): InheritedReadabilityChildrenParent[] {
+    const { flatObjectMetadata } = this.options;
+
+    if (flatObjectMetadata.readability !== MetadataReadability.INHERITED) {
+      return [];
+    }
+
+    return this.resolveInheritedReadabilityParents(flatObjectMetadata).filter(
       (parent): parent is InheritedReadabilityChildrenParent =>
         parent.kind === 'children',
     );
+  }
+
+  private async fetchInheritedReadabilityChildRecords(
+    records: ObjectRecord[],
+  ): Promise<Map<string, InheritedReadabilityChildRecords> | undefined> {
+    if (records.length === 0) {
+      return undefined;
+    }
+
+    const childrenParents = this.resolveInheritedReadabilityChildrenParents();
 
     if (childrenParents.length === 0) {
       return undefined;
