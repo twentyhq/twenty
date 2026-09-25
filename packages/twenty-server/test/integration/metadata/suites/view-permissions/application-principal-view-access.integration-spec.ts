@@ -246,7 +246,7 @@ describe('application principal view access (integration)', () => {
   }, 120000);
 
   it('allows field group creation for an application with VIEWS permission', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       createViewFieldGroupQueryFactory({
         input: { viewId: groupedViewId, name: 'Allowed group' },
       }),
@@ -258,7 +258,7 @@ describe('application principal view access (integration)', () => {
   });
 
   it('denies field group creation for an application without VIEWS permission', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       createViewFieldGroupQueryFactory({
         input: { viewId: groupedViewId, name: 'Denied group' },
       }),
@@ -270,7 +270,7 @@ describe('application principal view access (integration)', () => {
   });
 
   it('checks every view in a batch, including one after a missing view', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       createManyViewFieldGroupsQueryFactory({
         inputs: [
           { viewId: crypto.randomUUID(), name: 'Missing view' },

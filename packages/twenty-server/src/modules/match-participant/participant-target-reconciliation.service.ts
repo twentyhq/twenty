@@ -81,7 +81,7 @@ export class ParticipantTargetReconciliationService {
                   transactionScope,
                 });
 
-                lastParticipantId = participants.at(-1)?.id;
+                lastParticipantId = participants[participants.length - 1]?.id;
                 hasMoreParticipants = participants.length === QUERY_MAX_RECORDS;
               },
             );
