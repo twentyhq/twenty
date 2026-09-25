@@ -29,6 +29,7 @@ type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
@@ -43,6 +44,7 @@ type FrontComponentRendererContentProps = {
   frontComponent: ResolvedFrontComponent;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
@@ -52,6 +54,7 @@ export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
+  objectNameSingular,
   timelineActivityId,
   toolCall,
   loadingFallback,
@@ -80,6 +83,7 @@ export const FrontComponentRenderer = ({
           frontComponent={frontComponent}
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
+          objectNameSingular={objectNameSingular}
           timelineActivityId={timelineActivityId}
           toolCall={toolCall}
           loadingFallback={loadingFallback}
@@ -93,6 +97,7 @@ const FrontComponentRendererContent = ({
   frontComponent,
   commandMenuItemId,
   selectedRecordIds,
+  objectNameSingular,
   timelineActivityId,
   toolCall,
   loadingFallback,
@@ -118,6 +123,7 @@ const FrontComponentRendererContent = ({
     applicationId,
     commandMenuItemId,
     selectedRecordIds,
+    objectNameSingular,
     timelineActivityId,
     toolCall,
     colorScheme,
