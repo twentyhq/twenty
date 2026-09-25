@@ -4,9 +4,9 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 const APPLICATION_TOKEN_TYPE_NAME = 'ApplicationTokenPair';
 
-// These two fields are the exceptions the invariant allows: both mint under
-// the caller's own session, so the token carries the intersection of that
-// user's permissions and the application's role. Anything else reaching an
+// These fields are the exceptions the invariant allows: all mint under the
+// caller's own session, so the token carries the intersection of that user's
+// permissions and the application's role. Anything else reaching an
 // application token would be a caller asking the API for an application's
 // credentials.
 //
@@ -16,6 +16,7 @@ const APPLICATION_TOKEN_TYPE_NAME = 'ApplicationTokenPair';
 // rotating one.
 const METADATA_FIELDS_RETURNING_AN_APPLICATION_TOKEN = [
   'FrontComponent.applicationTokenPair',
+  'Mutation.generateFrontComponentApplicationTokenPair',
   'Mutation.renewApplicationToken',
 ];
 
