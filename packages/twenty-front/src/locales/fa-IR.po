@@ -11650,6 +11650,11 @@ msgstr "مجوزها"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "مجوزها · {objectLabelSingular}"
 
+#. js-lingui-id: JFI3iH
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Persian"
+msgstr "فارسی"
+
 #. js-lingui-id: qrGMTi
 msgid "Person created"
 msgstr "شخص ایجاد شد"

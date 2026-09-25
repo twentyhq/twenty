@@ -16427,6 +16427,11 @@ msgstr "権限"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "権限 · {objectLabelSingular}"
 
+#. js-lingui-id: JFI3iH
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Persian"
+msgstr "ペルシア語"
+
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 msgid "Person created"
