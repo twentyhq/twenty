@@ -14,6 +14,9 @@ import {
   MetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
+// Shutdown must not hang on a stalled listener: notifications are best effort.
+const DRAIN_TIMEOUT_MS = 30_000;
+
 type EmitMetadataEventsArgs = {
   metadataEvents: MetadataEvent[];
   workspaceId: string;
@@ -79,10 +82,26 @@ export class MetadataEventEmitter {
     }
   }
 
-  async drain(): Promise<void> {
-    // A listener can emit more metadata events while an earlier batch settles.
-    while (this.pendingEvents.size > 0) {
-      await Promise.allSettled([...this.pendingEvents]);
+  async drain(timeoutMs = DRAIN_TIMEOUT_MS): Promise<void> {
+    if (this.pendingEvents.size === 0) {
+      return;
+    }
+
+    let timeout: NodeJS.Timeout | undefined;
+
+    const hasTimedOut = await Promise.race([
+      Promise.allSettled([...this.pendingEvents]).then(() => false),
+      new Promise<boolean>((resolve) => {
+        timeout = setTimeout(() => resolve(true), timeoutMs);
+      }),
+    ]);
+
+    clearTimeout(timeout);
+
+    if (hasTimedOut) {
+      this.logger.warn(
+        `Stopped waiting for ${this.pendingEvents.size} metadata event batches after ${timeoutMs}ms`,
+      );
     }
   }
 
