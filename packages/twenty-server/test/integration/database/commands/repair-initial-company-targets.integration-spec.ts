@@ -154,7 +154,8 @@ describe('repair initial company activity targets (PostgreSQL)', () => {
     );
     const commands = reader
       .getUpgradeSequence()
-      .filter((step) => step.kind === 'workspace' && step.version === '2.43.0');
+      .filter((step) => step.kind === 'workspace')
+      .filter((step) => step.version === '2.43.0');
     const repairIndex = commands.findIndex((step) => step.command === command);
 
     expect(repairIndex).toBeGreaterThan(0);
