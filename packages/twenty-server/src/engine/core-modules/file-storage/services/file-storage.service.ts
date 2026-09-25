@@ -31,8 +31,10 @@ import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/val
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
@@ -186,6 +188,59 @@ export class FileStorageService {
       where: { path: filePath, applicationId },
       withDeleted: true,
     });
+  }
+
+  // Legacy storage copies wrote files without a file row.
+  private async createFileRowFromStorageOrThrow({
+    resourceIdentifier,
+    filePath,
+    applicationId,
+  }: {
+    resourceIdentifier: ResourceIdentifier;
+    filePath: string;
+    applicationId: string;
+  }): Promise<Pick<FileEntity, 'mimeType' | 'size' | 'settings'>> {
+    const metadata = await this.getFileMetadata(resourceIdentifier);
+
+    if (!isDefined(metadata)) {
+      throw new FileStorageException(
+        `File not found at path "${filePath}"`,
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    const { mimeType } = await extractFileInfoOrThrow({
+      file: await this.readFilePrefix({
+        ...resourceIdentifier,
+        byteCount: FILE_CONTENT_SNIFF_BYTE_COUNT,
+      }),
+      filename: resourceIdentifier.resourcePath,
+    });
+
+    const fileRow = {
+      mimeType,
+      size: metadata.size,
+      settings: { isTemporaryFile: false, toDelete: false },
+    };
+
+    await this.fileRepository.upsert(
+      resourceIdentifier.workspaceId,
+      {
+        ...fileRow,
+        path: filePath,
+        applicationId,
+        status: FILE_STATUS.UPLOADED,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
+
+    await this.applyStorageStockDelta({
+      workspaceId: resourceIdentifier.workspaceId,
+      applicationId,
+      delta: { bytes: metadata.size, quantity: 1 },
+    });
+
+    return fileRow;
   }
 
   private async applyStorageStockDelta({
@@ -896,19 +951,18 @@ export class FileStorageService {
       this.resolveApplicationIdOrThrow(to),
     ]);
 
-    const sourceFile = await this.findFileByPath({
-      fileRepository: this.fileRepository,
-      workspaceId: from.workspaceId,
-      filePath,
-      applicationId: sourceApplicationId,
-    });
-
-    if (!isDefined(sourceFile)) {
-      throw new FileStorageException(
-        `File not found at path "${filePath}"`,
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
-    }
+    const sourceFile =
+      (await this.findFileByPath({
+        fileRepository: this.fileRepository,
+        workspaceId: from.workspaceId,
+        filePath,
+        applicationId: sourceApplicationId,
+      })) ??
+      (await this.createFileRowFromStorageOrThrow({
+        resourceIdentifier: from,
+        filePath,
+        applicationId: sourceApplicationId,
+      }));
 
     return this.copyFile({
       from,
