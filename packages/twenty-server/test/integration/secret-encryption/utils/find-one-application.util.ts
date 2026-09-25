@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export type ApplicationVariableSummary = {
   key: string;
@@ -14,7 +14,7 @@ export const findOneApplicationIdByUniversalIdentifier = async ({
 }: {
   universalIdentifier: string;
 }): Promise<string> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query FindOneApplicationIdByUniversalIdentifier(
         $universalIdentifier: UUID!
@@ -45,7 +45,7 @@ export const findOneApplicationVariables = async ({
 }: {
   id: string;
 }): Promise<ApplicationVariableSummary[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query FindOneApplicationVariables($id: UUID!) {
         findOneApplication(id: $id) {

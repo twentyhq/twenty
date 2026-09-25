@@ -62,6 +62,7 @@
       }
     ],
 
+    "twenty/no-miscased-acronym-in-identifier": "error",
     "twenty/enforce-module-boundaries": [
       "error",
       {

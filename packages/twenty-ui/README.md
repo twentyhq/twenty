@@ -72,7 +72,7 @@ import { Button } from 'twenty-ui/primitives/input';
 | `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                    |
 | `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
 | `twenty-ui/primitives/typography`    | Text and headings                                                     |
-| `twenty-ui/testing`                  | Storybook and test decorators                                         |
+| `twenty-ui/testing`                  | Storybook and test decorators and helpers                             |
 | `twenty-ui/theme`          | Design tokens, `ThemeProvider`, and `useTheme`                        |
 | `twenty-ui/utilities`                | Hooks and shared utilities                                            |
 
@@ -81,6 +81,12 @@ import { Button } from 'twenty-ui/primitives/input';
 - `twenty-ui/style.css` ships the base reset and component styles. Import it once.
 - `twenty-ui/theme-light.css` and `twenty-ui/theme-dark.css` define the design-token CSS variables for each color scheme.
 - `ThemeProvider` exposes the active theme through `useTheme()` and applies the `light` / `dark` class. Pass `applyToRoot={false}` with `overrides` to scope a theme to a subtree instead of the document root.
+
+# Responsive hooks
+
+- `useIsMobile` matches `MOBILE_MEDIA_QUERY` (up to and including `MOBILE_VIEWPORT`). `useIsTouchDevice` matches `TOUCH_DEVICE_MEDIA_QUERY` and is independent of width: branch interaction behavior on it, and layout on `useIsMobile`.
+- `useMediaQuery(query)` subscribes to native `matchMedia` changes and shares one `MediaQueryList` per query. It returns `false` during server rendering and the first hydration render, and wherever `window.matchMedia` is unavailable, including the front component sandbox.
+- To force a result in a story, return `overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true })` from `beforeEach`; the returned cleanup restores the native `matchMedia`.
 
 # Development
 
