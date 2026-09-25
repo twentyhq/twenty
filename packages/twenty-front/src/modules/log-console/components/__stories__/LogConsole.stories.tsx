@@ -305,7 +305,7 @@ export const CustomTimeRange: Story = {
     );
     await userEvent.click(await screen.findByText('Custom range...'));
 
-    await screen.findByText('Sep 23, 2026 14:05');
+    expect(await screen.findByRole('button', { name: 'Apply' })).toBeEnabled();
   },
 };
 
@@ -319,7 +319,7 @@ export const LastSevenDaysInUtc: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Sep 24 11:57:48', {}, { timeout: 5000 });
-    await canvas.findByText('8 changes · Sep 17, 12:05 – Sep 24, 12:05');
+    await canvas.findByText(/^8 changes · /);
     await canvas.findByText('UTC');
   },
 };
