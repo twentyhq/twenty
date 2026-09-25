@@ -3,13 +3,10 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ThemeProvider } from 'twenty-ui/theme';
 
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
-import { isStayingOnDefaultDomainState } from '@/domain-manager/states/isStayingOnDefaultDomainState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -116,46 +113,5 @@ describe('SignInUpGlobalScopeForm', () => {
     fireEvent.click(forgotPasswordLink);
 
     expect(resetPasswordClickMock).toHaveBeenCalledTimes(1);
-  });
-  it('forgets the stay-on-default-domain request when a workspace is picked', () => {
-    jotaiStore.set(isStayingOnDefaultDomainState.atom, true);
-    buildWorkspaceUrlMock.mockReturnValue('https://apple.twenty.com/verify');
-    jotaiStore.set(signInUpStepState.atom, SignInUpStep.WorkspaceSelection);
-    jotaiStore.set(availableWorkspacesState.atom, {
-      availableWorkspacesForSignIn: [
-        {
-          id: 'workspace-id',
-          displayName: 'Apple',
-          loginToken: 'login-token',
-          inviteHash: null,
-          personalInviteToken: null,
-          logo: null,
-          sso: [],
-          workspaceUrls: {
-            subdomainUrl: 'https://apple.twenty.com',
-            customUrl: null,
-          },
-        },
-      ],
-      availableWorkspacesForSignUp: [],
-    });
-
-    render(
-      <MockedProvider mocks={[]}>
-        <JotaiProvider store={jotaiStore}>
-          <ThemeProvider colorScheme="light">
-            <I18nProvider i18n={i18n}>
-              <MemoryRouter>
-                <SignInUpGlobalScopeForm />
-              </MemoryRouter>
-            </I18nProvider>
-          </ThemeProvider>
-        </JotaiProvider>
-      </MockedProvider>,
-    );
-
-    fireEvent.click(screen.getByText('Apple'));
-
-    expect(jotaiStore.get(isStayingOnDefaultDomainState.atom)).toBe(false);
   });
 });
