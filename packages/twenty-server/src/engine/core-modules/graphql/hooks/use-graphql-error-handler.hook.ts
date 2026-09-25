@@ -1,6 +1,7 @@
 import {
   getDocumentString,
   handleStreamOrSingleExecutionResult,
+  isAsyncIterable,
   type OnExecuteDoneHookResultOnNextHook,
   type Plugin,
 } from '@envelop/core';
@@ -19,6 +20,7 @@ import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/inter
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
+import { withSubscriptionErrorResults } from 'src/engine/core-modules/graphql/utils/with-subscription-error-results.util';
 import {
   BaseGraphQLError,
   convertGraphQLErrorToBaseGraphQLError,
@@ -77,7 +79,17 @@ export const useGraphQLErrorHandlerHook = <
   }
 
   return {
-    // TODO: define onSubscribe here to handle subscription errors too
+    onSubscribe() {
+      return {
+        onSubscribeResult({ result, setResult }) {
+          if (isAsyncIterable(result)) {
+            // Yoga serializes results, but an iterator rejection tears down SSE
+            // without delivering an error. Keep errors in its masking pipeline.
+            setResult(withSubscriptionErrorResults(result));
+          }
+        },
+      };
+    },
     async onExecute({ args }) {
       const exceptionHandlerService = options.exceptionHandlerService;
       const rootOperation = args.document.definitions.find(
