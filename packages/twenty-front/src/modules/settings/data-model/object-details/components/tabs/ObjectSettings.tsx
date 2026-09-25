@@ -8,6 +8,7 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
+import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
@@ -136,6 +137,20 @@ export const ObjectSettings = ({
           />
         </Section.Root>
       </StyledFormSectionContainer>
+      {!objectMetadataItem.isRemote && !objectMetadataItem.isSystem && (
+        <StyledFormSectionContainer>
+          <Section.Root>
+            <Section.Header
+              title={t`Validation rules`}
+              description={t`A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows.`}
+            />
+            <SettingsObjectValidationRulesSection
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isReadOnly}
+            />
+          </Section.Root>
+        </StyledFormSectionContainer>
+      )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section.Root>

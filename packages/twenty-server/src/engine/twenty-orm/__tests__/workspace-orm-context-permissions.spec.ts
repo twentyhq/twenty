@@ -35,7 +35,7 @@ describe('Domain repository permissions', () => {
     expect(getRepository).toHaveBeenCalledWith(
       'note',
       { intersectionOf: ['member-role', 'application-role'] },
-      { shouldSkipEventEmission: false },
+      { shouldSkipEventEmission: false, shouldBypassValidationRules: false },
     );
   });
 

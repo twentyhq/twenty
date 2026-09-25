@@ -70,6 +70,7 @@ declare module 'expr-eval-fork' {
   export class Parser {
     constructor(options?: ParserOptions);
     unaryOps: any;
+    binaryOps: any;
     functions: any;
     consts: any;
     parse(expression: string): Expression;
@@ -78,7 +79,13 @@ declare module 'expr-eval-fork' {
     static evaluate(expression: string, values?: EvaluationContext): number;
   }
 
+  export type Instruction = {
+    type: string;
+    value: unknown;
+  };
+
   export interface Expression {
+    tokens: Instruction[];
     simplify(values?: EvaluationContext): Expression;
     evaluate(values?: EvaluationContext): any;
     substitute(
