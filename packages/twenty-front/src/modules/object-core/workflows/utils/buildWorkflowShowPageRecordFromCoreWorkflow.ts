@@ -16,6 +16,8 @@ export const buildWorkflowShowPageRecordFromCoreWorkflow = (
     name: coreWorkflow.name ?? '',
     statuses: coreWorkflow.statuses,
     lastPublishedVersionId: coreWorkflow.lastPublishedCoreWorkflowVersionId,
+    visibility: coreWorkflow.visibility,
+    canChangeVisibility: coreWorkflow.canChangeVisibility,
     createdAt: coreWorkflow.createdAt,
     updatedAt: coreWorkflow.updatedAt,
     deletedAt: null,
