@@ -72,7 +72,10 @@ export class MetadataEventEmitter {
       const pendingEvent = this.eventEmitter
         .emitAsync(eventName, metadataEventBatch)
         .catch((error: unknown) => {
-          this.logger.error(error);
+          this.logger.error(
+            `Failed to handle ${eventName} for workspace ${workspaceId}`,
+            error instanceof Error ? error.stack : String(error),
+          );
         })
         .finally(() => {
           this.pendingEvents.delete(pendingEvent);
