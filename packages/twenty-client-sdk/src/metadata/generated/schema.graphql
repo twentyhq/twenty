@@ -5009,6 +5009,7 @@ input UpdateCommandMenuItemInput {
   shortLabel: String
   position: Float
   isPinned: Boolean
+  isActive: Boolean
   availabilityType: CommandMenuItemAvailabilityType
   availabilityObjectMetadataId: UUID
   engineComponentKey: EngineComponentKey

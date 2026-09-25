@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { UPDATE_COMMAND_MENU_ITEM } from '@/command-menu-item/graphql/mutations/updateCommandMenuItem';
-import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { commandMenuItemsWithInactiveSelector } from '@/command-menu-item/states/commandMenuItemsWithInactiveSelector';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -20,7 +20,9 @@ export const useSaveCommandMenuItemsDraft = () => {
     UpdateCommandMenuItemMutation,
     UpdateCommandMenuItemMutationVariables
   >(UPDATE_COMMAND_MENU_ITEM);
-  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const commandMenuItemsWithInactive = useAtomStateValue(
+    commandMenuItemsWithInactiveSelector,
+  );
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const saveCommandMenuItemsDraft = useCallback(async () => {
@@ -31,7 +33,7 @@ export const useSaveCommandMenuItemsDraft = () => {
     }
 
     const serverItemsById = new Map(
-      commandMenuItems.map((item) => [item.id, item]),
+      commandMenuItemsWithInactive.map((item) => [item.id, item]),
     );
 
     const changedItems = draft.filter((draftItem) => {
@@ -43,6 +45,7 @@ export const useSaveCommandMenuItemsDraft = () => {
 
       return (
         draftItem.isPinned !== serverItem.isPinned ||
+        draftItem.isActive !== serverItem.isActive ||
         draftItem.position !== serverItem.position ||
         draftItem.shortLabel !== serverItem.shortLabel
       );
@@ -57,6 +60,7 @@ export const useSaveCommandMenuItemsDraft = () => {
         const input: UpdateCommandMenuItemInput = {
           id: item.id,
           isPinned: item.isPinned,
+          isActive: item.isActive,
           position: item.position,
           shortLabel: item.shortLabel,
         };
@@ -69,7 +73,7 @@ export const useSaveCommandMenuItemsDraft = () => {
     applyChanges();
   }, [
     store,
-    commandMenuItems,
+    commandMenuItemsWithInactive,
     updateCommandMenuItem,
     updateInDraft,
     applyChanges,

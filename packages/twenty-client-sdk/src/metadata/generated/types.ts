@@ -12898,6 +12898,9 @@ export default {
             "isPinned": [
                 8
             ],
+            "isActive": [
+                8
+            ],
             "availabilityType": [
                 17
             ],

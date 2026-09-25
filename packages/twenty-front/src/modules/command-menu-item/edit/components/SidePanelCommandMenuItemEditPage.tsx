@@ -1,3 +1,5 @@
+import { CommandMenuItemEditIconButton } from '@/command-menu-item/edit/components/CommandMenuItemEditIconButton';
+import { CommandMenuItemEditListItem } from '@/command-menu-item/edit/components/CommandMenuItemEditListItem';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
@@ -20,14 +22,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  LightIconButton,
-  MenuItem,
-  MenuItemDraggable,
-} from 'twenty-ui/components';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
 import {
   IconDotsVertical,
+  IconEye,
+  IconEyeOff,
   IconPin,
   IconPinnedOff,
   useIcons,
@@ -82,8 +82,15 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const editableCommandMenuItems = useEditableCommandMenuItems();
 
+  const visibleCommandMenuItems = editableCommandMenuItems.filter(
+    (item) => item.isActive,
+  );
+  const hiddenCommandMenuItems = editableCommandMenuItems.filter(
+    (item) => !item.isActive,
+  );
+
   const filteredCommandMenuItemIds = new Set(
-    editableCommandMenuItems.map((item) => item.id),
+    visibleCommandMenuItems.map((item) => item.id),
   );
 
   const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
@@ -93,7 +100,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
     );
 
   const { pinned: allPinnedItems, other: allOtherItems } =
-    groupCommandMenuItems(editableCommandMenuItems);
+    groupCommandMenuItems(visibleCommandMenuItems);
 
   const normalizedSearch =
     sidePanelSearch.length > 0
@@ -106,11 +113,21 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const displayedPinnedItems = allPinnedItems.filter(matchesSearch);
   const displayedOtherItems = allOtherItems.filter(matchesSearch);
+  const displayedHiddenItems = hiddenCommandMenuItems.filter(matchesSearch);
 
   const selectableItemIds = [
     ...displayedPinnedItems.map((item) => item.id),
     ...displayedOtherItems.map((item) => item.id),
+    ...displayedHiddenItems.map((item) => item.id),
   ];
+
+  const handleHide = (itemId: string) => {
+    updateCommandMenuItemInDraft(itemId, { isActive: false });
+  };
+
+  const handleShow = (itemId: string) => {
+    updateCommandMenuItemInDraft(itemId, { isActive: true });
+  };
 
   const handleTogglePin = (itemId: string, currentlyPinned: boolean) => {
     if (currentlyPinned) {
@@ -248,15 +265,16 @@ export const SidePanelCommandMenuItemEditPage = () => {
                                   </LightIconButton>
                                 }
                               />
-                              <LightIconButton
-                                aria-label={t`Unpin`}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleTogglePin(item.id, true);
-                                }}
-                              >
-                                <IconPinnedOff />
-                              </LightIconButton>
+                              <CommandMenuItemEditIconButton
+                                ariaLabel={t`Hide`}
+                                Icon={IconEyeOff}
+                                onClick={() => handleHide(item.id)}
+                              />
+                              <CommandMenuItemEditIconButton
+                                ariaLabel={t`Unpin`}
+                                Icon={IconPinnedOff}
+                                onClick={() => handleTogglePin(item.id, true)}
+                              />
                             </ButtonGroup>
                           }
                         />
@@ -269,38 +287,54 @@ export const SidePanelCommandMenuItemEditPage = () => {
           </SidePanelGroup>
 
           <SidePanelGroup heading={t`Other`}>
-            {displayedOtherItems.map((item) => {
-              const ItemIcon = isDefined(item.icon)
-                ? getIcon(item.icon)
-                : undefined;
+            {displayedOtherItems.map((item) => (
+              <CommandMenuItemEditListItem
+                key={item.id}
+                itemId={item.id}
+                icon={item.icon}
+                text={getDisplayLabel(item)}
+                onEnter={() => handleTogglePin(item.id, false)}
+                iconButtons={
+                  <ButtonGroup
+                    attached={false}
+                    aria-label={t`Menu item actions`}
+                  >
+                    <CommandMenuItemEditIconButton
+                      ariaLabel={t`Hide`}
+                      Icon={IconEyeOff}
+                      onClick={() => handleHide(item.id)}
+                    />
+                    <CommandMenuItemEditIconButton
+                      ariaLabel={t`Pin`}
+                      Icon={IconPin}
+                      onClick={() => handleTogglePin(item.id, false)}
+                    />
+                  </ButtonGroup>
+                }
+              />
+            ))}
+          </SidePanelGroup>
 
-              return (
-                <SelectableListItem
+          {isNonEmptyArray(displayedHiddenItems) && (
+            <SidePanelGroup heading={t`Hidden`}>
+              {displayedHiddenItems.map((item) => (
+                <CommandMenuItemEditListItem
                   key={item.id}
                   itemId={item.id}
-                  onEnter={() => handleTogglePin(item.id, false)}
-                >
-                  <MenuItem
-                    withIconContainer
-                    LeftIcon={ItemIcon}
-                    text={getDisplayLabel(item)}
-                    isIconDisplayedOnHoverOnly={false}
-                    iconButtons={
-                      <LightIconButton
-                        aria-label={t`Pin`}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleTogglePin(item.id, false);
-                        }}
-                      >
-                        <IconPin />
-                      </LightIconButton>
-                    }
-                  />
-                </SelectableListItem>
-              );
-            })}
-          </SidePanelGroup>
+                  icon={item.icon}
+                  text={getDisplayLabel(item)}
+                  onEnter={() => handleShow(item.id)}
+                  iconButtons={
+                    <CommandMenuItemEditIconButton
+                      ariaLabel={t`Show`}
+                      Icon={IconEye}
+                      onClick={() => handleShow(item.id)}
+                    />
+                  }
+                />
+              ))}
+            </SidePanelGroup>
+          )}
         </SidePanelList>
       </StyledContent>
     </StyledContainer>
