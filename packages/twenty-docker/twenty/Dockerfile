@@ -90,9 +90,10 @@ FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491
 # Force the patched Alpine OpenSSL libs to the fixed release (3.5.8-r0 clears
 # CVE-2026-14456/14457/18798/54874/63072/63075/63076). Node bundles its own
 # OpenSSL, but psql/curl link these system libs, so the upgrade hardens
-# runtime TLS and clears the scanner.
+# runtime TLS and clears the scanner. libexpat 2.8.5-r0 clears CVE-2026-93990.
 RUN apk add --no-cache \
     'curl>=8.22.0-r0' \
+    'libexpat>=2.8.5-r0' \
     'nghttp2-libs>=1.69.0-r0' \
     'libcrypto3>=3.5.8-r0' \
     'libssl3>=3.5.8-r0' \
@@ -241,6 +242,7 @@ RUN apk add --no-cache \
     redis \
     'libcrypto3>=3.5.8-r0' \
     'libssl3>=3.5.8-r0' \
+    'libexpat>=2.8.5-r0' \
     'curl>=8.22.0-r0' 'jq>=1.8.2-r0' su-exec
 
 # Workspace root config
