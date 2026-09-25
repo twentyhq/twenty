@@ -2351,19 +2351,19 @@ msgstr "Chattar"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the company"
-msgstr ""
+msgstr "Chattar knutna till företaget"
 
 #. js-lingui-id: rRV3D2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the contact"
-msgstr ""
+msgstr "Chattar knutna till kontakten"
 
 #. js-lingui-id: ro3F4h
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
-msgstr ""
+msgstr "Chattar kopplade till affärsmöjligheten"
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3406,7 +3406,7 @@ msgstr "Avböjd"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-attachment-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Attachment Layout"
-msgstr ""
+msgstr "Standardlayout för bilaga"
 
 #. js-lingui-id: RbQaAF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -9356,7 +9356,7 @@ msgstr "Mottagare"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Record an agent chat thread is attached to"
-msgstr ""
+msgstr "Post som en agentchatttråd är bifogad till"
 
 #. js-lingui-id: EESfI5
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9407,7 +9407,7 @@ msgstr "Record table-widgeten hittades inte"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Record Targets"
-msgstr ""
+msgstr "Postmål"
 
 #. js-lingui-id: BwOej2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -9415,7 +9415,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Record the chat is attached to"
-msgstr ""
+msgstr "Post som chatten är bifogad till"
 
 #. js-lingui-id: tsYhp1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9445,7 +9445,7 @@ msgstr "Sammanfattning av inspelning"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
-msgstr ""
+msgstr "Poster som den här tråden är bifogad till"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts

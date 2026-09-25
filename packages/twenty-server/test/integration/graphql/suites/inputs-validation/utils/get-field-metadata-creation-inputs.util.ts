@@ -1,7 +1,7 @@
 import {
   type FieldMetadataTypesToTestForCreateInputValidation,
   type FieldMetadataTypesToTestForFilterInputValidation,
-} from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+} from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test.type';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataSettingsMapping,

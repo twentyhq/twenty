@@ -1,4 +1,4 @@
-import { type ValidatableWorkflow } from '@/workflow/validation/types/workflow-validation.type';
+import { type ValidatableWorkflow } from '@/workflow/validation/types/WorkflowValidation';
 import { validateWorkflowStepParams } from '../validate-workflow-step-params.util';
 
 describe('validateWorkflowStepParams', () => {
