@@ -14,8 +14,6 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { CLAIMABLE_WEBHOOK_SUBSCRIPTION_STATUSES } from 'src/modules/connected-account/webhook-subscription-manager/constants/claimable-webhook-subscription-statuses.constant';
 import { WEBHOOK_SUBSCRIPTION_CLAIM_STALE_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-claim-stale-ms.constant';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   type WebhookSubscribableChannel,
   type WebhookSubscriptionResult,
@@ -26,8 +24,13 @@ export class WebhookSubscriptionStatusService {
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
+    // Handed to a shared helper that casts to the raw Repository so it can
+    // take either channel type, then calls update(criteria, data). The scoped
+    // wrapper's update takes workspaceId first, and the cast hides the
+    // mismatch from the type checker.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   public async claimSubscriptionCreation(
