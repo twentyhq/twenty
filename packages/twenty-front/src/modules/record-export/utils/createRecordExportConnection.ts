@@ -69,7 +69,6 @@ export const createRecordExportConnection = () => {
                   recordExport.downloadUrl,
                   serverBaseUrl,
                 );
-                // The canonical server URL can have a different path prefix.
                 const downloadUrl = new URL(
                   `${serverBaseUrl}/file/record-export/${recordExport.id}`,
                 );
