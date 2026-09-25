@@ -61,7 +61,7 @@ export const DropdownMenuInnerSelect = ({
         width={widthInPixels}
         side="bottom"
         align="end"
-        alignOffset={8}
+        alignOffset={-8}
       >
         <Dropdown.Section>
           {options.map((selectOption) => (
