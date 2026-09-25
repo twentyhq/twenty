@@ -1080,29 +1080,30 @@ describe('call recorder app lifecycle (integration)', () => {
       },
     });
 
-  const deliverCalendarEventUpdate = ({
-    calendarEventId,
-    updatedFields,
-    before,
-    after,
-  }: {
-    calendarEventId: string;
-    updatedFields: string[];
-    before: Record<string, unknown>;
-    after: Record<string, unknown>;
-  }) =>
+  const deliverCalendarEventUpdates = (
+    ...calendarEventUpdates: {
+      calendarEventId: string;
+      updatedFields: string[];
+      before: Record<string, unknown>;
+      after: Record<string, unknown>;
+    }[]
+  ) =>
     (
       reconcileCalendarEventLogicFunction.config.handler as (
-        event: unknown,
+        batch: unknown,
       ) => Promise<object | undefined>
     )({
       name: 'calendarEvent.updated',
-      recordId: calendarEventId,
-      properties: {
-        updatedFields,
-        before: { id: calendarEventId, ...before },
-        after: { id: calendarEventId, ...after },
-      },
+      events: calendarEventUpdates.map(
+        ({ calendarEventId, updatedFields, before, after }) => ({
+          recordId: calendarEventId,
+          properties: {
+            updatedFields,
+            before: { id: calendarEventId, ...before },
+            after: { id: calendarEventId, ...after },
+          },
+        }),
+      ),
     });
 
   // Mocked webhook trigger: invokes the webhook logic function handler with
@@ -2579,7 +2580,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventIds: [calendarEventId],
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -2592,12 +2593,59 @@ describe('call recorder app lifecycle (integration)', () => {
       });
     });
 
+    it('reconciles every change of a batch except the echo of its own On write', async () => {
+      const echoedCalendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [echoedCalendarEventId],
+      });
+
+      const newlyOnCalendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'ON',
+      });
+
+      const result = await deliverCalendarEventUpdates(
+        {
+          calendarEventId: echoedCalendarEventId,
+          updatedFields: ['callRecorderPreference'],
+          before: { callRecorderPreference: null },
+          after: { callRecorderPreference: 'ON' },
+        },
+        {
+          calendarEventId: newlyOnCalendarEventId,
+          updatedFields: ['callRecorderPreference'],
+          before: { callRecorderPreference: null },
+          after: { callRecorderPreference: 'ON' },
+        },
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          reconciled: true,
+          calendarEventIds: [newlyOnCalendarEventId],
+        }),
+      );
+
+      const callRecording = (
+        await findCallRecordings({
+          calendarEventId: { in: [newlyOnCalendarEventId] },
+        })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(callRecording.externalBotId).toBeTruthy();
+    });
+
     it('schedules a bot when a user sets On on an eligible meeting that has none yet', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: 'ON',
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -2623,7 +2671,7 @@ describe('call recorder app lifecycle (integration)', () => {
         callRecorderPreference: 'ON',
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -2649,7 +2697,7 @@ describe('call recorder app lifecycle (integration)', () => {
         callRecorderPreference: 'ON',
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -2680,7 +2728,7 @@ describe('call recorder app lifecycle (integration)', () => {
         },
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: 'OFF' },
@@ -2870,7 +2918,7 @@ describe('call recorder app lifecycle (integration)', () => {
         },
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },

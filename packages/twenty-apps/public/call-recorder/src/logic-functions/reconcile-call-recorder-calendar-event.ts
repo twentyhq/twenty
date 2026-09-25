@@ -1,95 +1,71 @@
-import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
-  type DatabaseEventPayload,
   type ObjectRecordBaseEvent,
 } from 'twenty-sdk/define';
+import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
 
-import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
-import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CALENDAR_EVENT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/batch-handler-timeout-seconds';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { type CalendarEventForDatabaseEvent } from 'src/logic-functions/types/calendar-event-for-database-event.type';
+import { type CallRecorderReconciliationResult } from 'src/logic-functions/types/call-recorder-reconciliation-result.type';
 import { type RemovedCallRecorderOccurrence } from 'src/logic-functions/types/removed-call-recorder-occurrence.type';
+import { buildCalendarEventReconciliationPayload } from 'src/logic-functions/domain/build-calendar-event-reconciliation-payload.util';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
-import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
-import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
-import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
 const CALENDAR_EVENT_OBJECT_NAME = 'calendarEvent';
 
-const CALL_RECORDER_RELEVANT_CALENDAR_EVENT_FIELDS = [
-  'title',
-  'callRecorderPreference',
-  'conferenceLink',
-  'location',
-  'description',
-  'startsAt',
-  'endsAt',
-  'isCanceled',
-  'iCalUid',
-];
-
-// location and description are key fields because the conference link is
-// parsed out of them when the structured conferenceLink is empty.
-const CALL_RECORDER_KEY_CALENDAR_EVENT_FIELDS = [
-  'conferenceLink',
-  'location',
-  'description',
-  'startsAt',
-  'iCalUid',
-];
-
-type CalendarEventForDatabaseEvent = {
-  id: string;
-  callRecorderPreference?: string | null;
-  conferenceLink?: { primaryLinkUrl?: string | null } | null;
-  location?: string | null;
-  description?: string | null;
-  iCalUid?: string | null;
-  startsAt?: string | null;
-};
-
-type CalendarEventDatabaseEvent = DatabaseEventPayload<
-  ObjectRecordBaseEvent<CalendarEventForDatabaseEvent>
->;
-
-type CalendarEventReconciliationPayload = {
-  calendarEventIds: string[];
-  removedOccurrences: RemovedCallRecorderOccurrence[];
-};
+type CalendarEventBatchReconciliationResult =
+  | { skipped: true; reason: string }
+  | {
+      reconciled: true;
+      calendarEventIds: string[];
+      removedOccurrenceCount: number;
+      reconciliationResults: CallRecorderReconciliationResult[];
+    };
 
 const handler = async (
-  event: CalendarEventDatabaseEvent,
-): Promise<object | undefined> => {
-  const [objectName, action] = event.name.split('.');
+  batch: DatabaseEventBatchPayload<
+    ObjectRecordBaseEvent<CalendarEventForDatabaseEvent>
+  >,
+): Promise<CalendarEventBatchReconciliationResult> => {
+  const [objectName, action] = batch.name.split('.');
 
   if (objectName !== CALENDAR_EVENT_OBJECT_NAME) {
     return { skipped: true, reason: 'not a calendar event' };
   }
 
   const reconciliationPayload = buildCalendarEventReconciliationPayload({
-    event,
     action,
+    events: batch.events,
   });
 
   if (
     reconciliationPayload.calendarEventIds.length === 0 &&
+    reconciliationPayload.echoCandidateCalendarEventIds.length === 0 &&
     reconciliationPayload.removedOccurrences.length === 0
   ) {
     return { skipped: true, reason: 'no relevant calendar event change' };
   }
 
   const client = new CoreApiClient();
+  const calendarEventIds = await resolveCalendarEventIdsToReconcile({
+    client,
+    changedCalendarEventIds: reconciliationPayload.calendarEventIds,
+    echoCandidateCalendarEventIds:
+      reconciliationPayload.echoCandidateCalendarEventIds,
+  });
 
-  // Skips only the echo of the app's own On write; any other blank/On change reconciles, which schedules a missing bot or clears an On the policy cannot honor.
   if (
-    isPreferenceChangeBetweenBlankAndOn(event) &&
-    (await isRecordingOnAlreadyHonored(client, event.recordId))
+    calendarEventIds.length === 0 &&
+    reconciliationPayload.removedOccurrences.length === 0
   ) {
     return {
       skipped: true,
@@ -97,153 +73,124 @@ const handler = async (
     };
   }
 
-  const reconciliationResults = await reconcileCallRecorderForCalendarEventIds({
+  const reconciliationResults = await reconcileCalendarEventChanges({
     client,
-    calendarEventIds: reconciliationPayload.calendarEventIds,
+    calendarEventIds,
     removedOccurrences: reconciliationPayload.removedOccurrences,
   });
+  const failedReconciliationCount = reconciliationResults.filter(
+    (reconciliationResult) => reconciliationResult.action === 'FAILED',
+  ).length;
+
+  if (failedReconciliationCount > 0) {
+    throw buildRetryableStepFailure(
+      'calendar event batch reconciliation',
+      `${failedReconciliationCount} of ${reconciliationResults.length} meetings failed`,
+    );
+  }
 
   return {
     reconciled: true,
-    calendarEventIds: reconciliationPayload.calendarEventIds,
+    calendarEventIds,
     removedOccurrenceCount: reconciliationPayload.removedOccurrences.length,
     reconciliationResults,
   };
 };
 
-const buildCalendarEventReconciliationPayload = ({
-  event,
-  action,
+const resolveCalendarEventIdsToReconcile = async ({
+  client,
+  changedCalendarEventIds,
+  echoCandidateCalendarEventIds,
 }: {
-  event: CalendarEventDatabaseEvent;
-  action: string | undefined;
-}): CalendarEventReconciliationPayload => {
-  if (action === 'created') {
-    return {
-      calendarEventIds: getUniqueSortedIds([
-        event.recordId,
-        event.properties.after?.id,
-      ]),
-      removedOccurrences: [],
-    };
+  client: CoreApiClient;
+  changedCalendarEventIds: string[];
+  echoCandidateCalendarEventIds: string[];
+}): Promise<string[]> => {
+  try {
+    const calendarEventIdsWithRecordingOnAlreadyHonored =
+      await findCalendarEventIdsWithRecordingOnAlreadyHonored(
+        client,
+        echoCandidateCalendarEventIds,
+      );
+
+    return getUniqueSortedIds([
+      ...changedCalendarEventIds,
+      ...echoCandidateCalendarEventIds.filter(
+        (calendarEventId) =>
+          !calendarEventIdsWithRecordingOnAlreadyHonored.includes(
+            calendarEventId,
+          ),
+      ),
+    ]);
+  } catch (error) {
+    throw buildRetryableStepFailure('recording On echo check', error);
   }
-
-  if (action === 'updated') {
-    const updatedFields = event.properties.updatedFields ?? [];
-
-    if (!hasRelevantFieldChange(updatedFields)) {
-      return { calendarEventIds: [], removedOccurrences: [] };
-    }
-
-    const removedOccurrence = hasKeyFieldChange(updatedFields)
-      ? buildRemovedOccurrence(event.properties.before)
-      : undefined;
-
-    return {
-      calendarEventIds: getUniqueSortedIds([
-        event.recordId,
-        event.properties.after?.id,
-      ]),
-      removedOccurrences: isUndefined(removedOccurrence)
-        ? []
-        : [removedOccurrence],
-    };
-  }
-
-  if (action === 'deleted' || action === 'destroyed') {
-    const removedOccurrence = buildRemovedOccurrence(event.properties.before);
-
-    return {
-      calendarEventIds: [],
-      removedOccurrences: isUndefined(removedOccurrence)
-        ? []
-        : [removedOccurrence],
-    };
-  }
-
-  return { calendarEventIds: [], removedOccurrences: [] };
 };
 
-const hasRelevantFieldChange = (updatedFields: string[]): boolean =>
-  updatedFields.some((updatedField) =>
-    CALL_RECORDER_RELEVANT_CALENDAR_EVENT_FIELDS.includes(updatedField),
-  );
-
-const isPreferenceChangeBetweenBlankAndOn = (
-  event: CalendarEventDatabaseEvent,
-): boolean => {
-  const updatedFields = event.properties.updatedFields ?? [];
-
-  return (
-    updatedFields.length === 1 &&
-    updatedFields[0] === 'callRecorderPreference' &&
-    event.properties.before?.callRecorderPreference !==
-      CallRecorderPreference.OFF &&
-    event.properties.after?.callRecorderPreference !==
-      CallRecorderPreference.OFF
-  );
-};
-
-const isRecordingOnAlreadyHonored = async (
+const findCalendarEventIdsWithRecordingOnAlreadyHonored = async (
   client: CoreApiClient,
-  calendarEventId: string,
-): Promise<boolean> => {
-  const calendarEvent = (
-    await fetchCalendarEventsByIds(client, [calendarEventId])
-  )[0];
-
-  if (isUndefined(calendarEvent)) {
-    return false;
-  }
-
-  const policyResult = buildCallRecorderPolicyResult(calendarEvent, new Date());
-
-  if (!policyResult.shouldRequestBot) {
-    return false;
-  }
-
-  const policyManagedCallRecording = (
-    await findCallRecordingsByIds(client, [
-      computeCallRecordingIdForMeeting(policyResult.realMeetingKey),
-    ])
-  )[0];
-
-  return (
-    policyManagedCallRecording?.recordingRequestStatus ===
-    CallRecordingRequestStatus.REQUESTED
+  calendarEventIds: string[],
+): Promise<string[]> => {
+  const now = new Date();
+  const requestingCalendarEvents = (
+    await fetchCalendarEventsByIds(client, calendarEventIds)
+  )
+    .map((calendarEvent) => buildCallRecorderPolicyResult(calendarEvent, now))
+    .filter((policyResult) => policyResult.shouldRequestBot)
+    .map((policyResult) => ({
+      calendarEventId: policyResult.calendarEventId,
+      callRecordingId: computeCallRecordingIdForMeeting(
+        policyResult.realMeetingKey,
+      ),
+    }));
+  const requestedCallRecordingIds = new Set(
+    (
+      await findCallRecordingsByIds(
+        client,
+        getUniqueSortedIds(
+          requestingCalendarEvents.map(
+            (requestingCalendarEvent) =>
+              requestingCalendarEvent.callRecordingId,
+          ),
+        ),
+      )
+    )
+      .filter(
+        (callRecording) =>
+          callRecording.recordingRequestStatus ===
+          CallRecordingRequestStatus.REQUESTED,
+      )
+      .map((callRecording) => callRecording.id),
   );
+
+  return requestingCalendarEvents
+    .filter((requestingCalendarEvent) =>
+      requestedCallRecordingIds.has(requestingCalendarEvent.callRecordingId),
+    )
+    .map((requestingCalendarEvent) => requestingCalendarEvent.calendarEventId);
 };
 
-const hasKeyFieldChange = (updatedFields: string[]): boolean =>
-  updatedFields.some((updatedField) =>
-    CALL_RECORDER_KEY_CALENDAR_EVENT_FIELDS.includes(updatedField),
-  );
-
-const buildRemovedOccurrence = (
-  calendarEvent: CalendarEventForDatabaseEvent | undefined,
-): RemovedCallRecorderOccurrence | undefined => {
-  if (isUndefined(calendarEvent)) {
-    return undefined;
+const reconcileCalendarEventChanges = async ({
+  client,
+  calendarEventIds,
+  removedOccurrences,
+}: {
+  client: CoreApiClient;
+  calendarEventIds: string[];
+  removedOccurrences: RemovedCallRecorderOccurrence[];
+}): Promise<CallRecorderReconciliationResult[]> => {
+  try {
+    return await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds,
+      removedOccurrences,
+    });
+  } catch (error) {
+    throw buildRetryableStepFailure(
+      'calendar event batch reconciliation',
+      error,
+    );
   }
-
-  return {
-    calendarEventId: calendarEvent.id,
-    realMeetingKey: computeRealMeetingKey({
-      calendarEventId: calendarEvent.id,
-      conferenceLinkUrl: resolveConferenceLinkUrl({
-        conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl,
-        location: stripRestrictedFieldValue(
-          calendarEvent.location ?? undefined,
-        ),
-        description: stripRestrictedFieldValue(
-          calendarEvent.description ?? undefined,
-        ),
-      }),
-      iCalUid: calendarEvent.iCalUid ?? undefined,
-      startsAt: calendarEvent.startsAt ?? undefined,
-    }),
-    startsAt: calendarEvent.startsAt ?? undefined,
-  };
 };
 
 export default defineLogicFunction({
@@ -252,9 +199,21 @@ export default defineLogicFunction({
   name: 'reconcile-call-recorder-calendar-event',
   description:
     'Reconciles app-managed Recall bot recording requests when calendar events change.',
-  timeoutSeconds: 60,
+  timeoutSeconds: BATCH_HANDLER_TIMEOUT_SECONDS,
   handler,
   databaseEventTriggerSettings: {
     eventName: `${CALENDAR_EVENT_OBJECT_NAME}.*`,
+    updatedFields: [
+      'title',
+      'callRecorderPreference',
+      'conferenceLink',
+      'location',
+      'description',
+      'startsAt',
+      'endsAt',
+      'isCanceled',
+      'iCalUid',
+    ],
+    batchMode: true,
   },
 });
