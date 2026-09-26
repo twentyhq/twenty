@@ -22,16 +22,18 @@ const EVENT_LOGS_LIVE_SUBSCRIPTION_QUERY = print(EVENT_LOGS_LIVE_SUBSCRIPTION);
 export const useEventLogsLiveStream = ({
   table,
   fieldFilters,
+  search,
   enabled,
 }: {
   table: EventLogTable;
   fieldFilters?: EventLogFieldFilterInput[];
+  search?: string;
   enabled: boolean;
 }) => {
   const sseClient = useAtomStateValue(sseClientState);
   const [liveRecords, setLiveRecords] = useState<EventLogRecord[]>([]);
 
-  const serializedVariables = JSON.stringify({ table, fieldFilters });
+  const serializedVariables = JSON.stringify({ table, fieldFilters, search });
 
   useEffect(() => {
     setLiveRecords([]);

@@ -24,7 +24,7 @@ export type LogConsoleSource = {
   columns: LogConsoleColumn[];
   detailFields?: Pick<LogConsoleColumn, 'label' | 'renderCell'>[];
   idFields: LogConsoleIdField[];
-  getCountLabel: (input: { count: number; formattedCount: string }) => string;
+  searchPlaceholder?: MessageDescriptor;
   getSeverity?: (entry: EventLogRecord) => LogConsoleSeverity | undefined;
   renderDetailTitle?: (entry: EventLogRecord) => ReactNode;
   renderDetailSubtitle?: (entry: EventLogRecord) => ReactNode;
