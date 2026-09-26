@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -31,7 +32,10 @@ export const useGetRelativeDateFilterWithUserTimezone = () => {
       ...relativeDateFilter,
       timezone: userTimezone,
       firstDayOfTheWeek: resolvedCalendarStartDay,
-      calendarSystem,
+      calendarSystem:
+        calendarSystem === CalendarSystem.GREGORIAN
+          ? undefined
+          : calendarSystem,
     };
   };
 
