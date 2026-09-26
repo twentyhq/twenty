@@ -8,9 +8,11 @@ export type BackendGraphQLResponse<TData> = {
   };
 };
 
-type WindowWithTwentyEnv = Window & {
-  _env_?: { REACT_APP_SERVER_BASE_URL?: string };
-};
+declare global {
+  interface Window {
+    _env_?: { REACT_APP_SERVER_BASE_URL?: string };
+  }
+}
 
 // Sent from inside the page so it carries the same workspace origin and
 // session cookie as the app's own requests. The cookie is scoped to the
@@ -24,8 +26,7 @@ export const postBackendGraphQL = <TData>({
 }): Promise<BackendGraphQLResponse<TData>> =>
   page.evaluate(async (requestBody): Promise<BackendGraphQLResponse<TData>> => {
     const serverBaseUrl =
-      (window as WindowWithTwentyEnv)._env_?.REACT_APP_SERVER_BASE_URL ||
-      window.location.origin;
+      window._env_?.REACT_APP_SERVER_BASE_URL || window.location.origin;
 
     const response = await fetch(`${serverBaseUrl}/graphql`, {
       method: 'POST',
