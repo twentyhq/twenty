@@ -439,13 +439,15 @@ export const LogConsoleToolbar = ({
     return (
       <LegacyDropdownContent>
         <DropdownMenuItemsContainer>
-          <ListItem
-            startIcon={<IconFilter />}
-            hasSubmenu
-            onClick={() => setIsFilterSubmenuOpen(true)}
-          >
-            {t`Filter`}
-          </ListItem>
+          {isNonEmptyArray(filterFields) && (
+            <ListItem
+              startIcon={<IconFilter />}
+              hasSubmenu
+              onClick={() => setIsFilterSubmenuOpen(true)}
+            >
+              {t`Filter`}
+            </ListItem>
+          )}
           <ListItem startIcon={<logsAction.Icon />} onClick={runLogsAction}>
             {logsAction.label}
           </ListItem>
@@ -474,29 +476,19 @@ export const LogConsoleToolbar = ({
           </StyledFilterChips>
         )}
         <StyledActions>
-          {isNonEmptyArray(filterFields) ? (
-            <Dropdown
-              dropdownId={LOG_CONSOLE_MENU_DROPDOWN_ID}
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ y: 8 }}
-              onOpen={() => setSearchInput('')}
-              onClose={resetMenu}
-              clickableComponent={
-                <IconButton aria-label={t`More options`}>
-                  <IconDotsVertical />
-                </IconButton>
-              }
-              dropdownComponents={renderMenu()}
-            />
-          ) : (
-            <IconButton
-              tooltip={logsAction.label}
-              aria-label={logsAction.label}
-              onClick={logsAction.onClick}
-            >
-              <logsAction.Icon />
-            </IconButton>
-          )}
+          <Dropdown
+            dropdownId={LOG_CONSOLE_MENU_DROPDOWN_ID}
+            dropdownPlacement="bottom-end"
+            dropdownOffset={{ y: 8 }}
+            onOpen={() => setSearchInput('')}
+            onClose={resetMenu}
+            clickableComponent={
+              <IconButton aria-label={t`More options`}>
+                <IconDotsVertical />
+              </IconButton>
+            }
+            dropdownComponents={renderMenu()}
+          />
           {children}
         </StyledActions>
       </StyledToolbar>
