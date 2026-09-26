@@ -13,9 +13,12 @@ test('Create workflow', async ({ page }) => {
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
 
-  const createWorkflowButton = page.getByRole('button', {
-    name: 'Create Workflow',
-  });
+  await page.getByRole('button', { name: 'Create Workflow' }).click();
+
+  const recordCreationForm = page.getByRole('complementary');
+  await recordCreationForm
+    .getByRole('textbox', { name: 'Name' })
+    .fill(NEW_WORKFLOW_NAME);
 
   const [createWorkflowResponse] = await Promise.all([
     page.waitForResponse(async (response) => {
@@ -28,16 +31,8 @@ test('Create workflow', async ({ page }) => {
       return requestBody.operationName === 'CreateOneWorkflow';
     }),
 
-    createWorkflowButton.click()
+    recordCreationForm.getByRole('button', { name: 'Create' }).click(),
   ]);
-
-
-  const recordName = page.getByTestId('top-bar-title').getByPlaceholder('Name');
-  await expect(recordName).toBeVisible();
-  await recordName.fill(NEW_WORKFLOW_NAME);
-
-  const workflowDiagramContainer = page.locator('.react-flow__renderer');
-  await workflowDiagramContainer.click();
 
   const body = await createWorkflowResponse.json();
   const newWorkflowId = body.data.createWorkflow.id;

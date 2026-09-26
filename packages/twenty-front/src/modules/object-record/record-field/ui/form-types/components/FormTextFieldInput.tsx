@@ -36,12 +36,14 @@ export const FormTextFieldInput = ({
   VariablePicker,
 }: FormTextFieldInputProps) => {
   const instanceId = useId();
+  const labelId = `${instanceId}-label`;
 
   const editor = useTextVariableEditor({
     placeholder: placeholder ?? t`Enter text`,
     multiline,
     readonly,
     defaultValue,
+    ariaLabelledBy: label ? labelId : undefined,
     onUpdate: (editor) => {
       const jsonContent = editor.getJSON();
       const parsedContent = parseEditorContent(jsonContent);
@@ -66,7 +68,7 @@ export const FormTextFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <Field.Label>{label}</Field.Label> : null}
+      {label ? <Field.Label id={labelId}>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer multiline={multiline}>
         <FormFieldInputInnerContainer

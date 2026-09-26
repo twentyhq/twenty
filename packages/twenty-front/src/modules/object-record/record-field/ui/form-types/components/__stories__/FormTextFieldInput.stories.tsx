@@ -39,6 +39,8 @@ export const WithLabel: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText(/^Text$/);
+
+    expect(await canvas.findByRole('textbox', { name: 'Text' })).toBeVisible();
   },
 };
 
