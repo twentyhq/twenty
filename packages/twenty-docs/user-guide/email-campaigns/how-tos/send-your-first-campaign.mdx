@@ -1,0 +1,211 @@
+---
+title: Send Your First Campaign
+description: Build your list, write the email, test it, then send or schedule it.
+---
+
+Start with a list of people who expect to hear from you. Write the email, send yourself a test, then send it now or schedule it for later.
+
+<Tip>
+  AI can help with this: it can build the list and draft the email.
+  See [Create a campaign with
+  AI](/user-guide/email-campaigns/how-tos/create-a-campaign-with-ai).
+</Tip>
+
+## Before you start
+
+Before you start, make sure you have:
+
+- **A verified sending domain.** See [Set up a sending domain](/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+- **The Workspace settings permission** to test, schedule, and send campaigns.
+- **Email credits** if you use Twenty Cloud. Each sent email uses credits. See [Credits](/user-guide/billing/capabilities/credits).
+
+## Part 1: Build a list
+
+Make a list of the people who should receive this email.
+
+1. Press `Cmd+K` (`Ctrl+K` on Windows) and search for **Go to Lists**.
+2. Click **New List** and give the list a name, for example `Newsletter subscribers`.
+3. Open the list and use the **Members** field to add people.
+
+<img
+  src="/images/user-guide/email-campaigns/list-members.png"
+  style={{ width: '100%' }}
+/>
+
+You can also add one person from their record with the **Lists** field.
+
+<Note>
+  Twenty sends to each person's primary email address. It skips people without
+  an address and people who unsubscribed, bounced, or reported spam.
+</Note>
+
+## Part 2: Create the campaign
+
+1. Press `Cmd+K` and choose **Compose Campaign**, or open **Campaigns** and click **New Campaign**.
+2. Give the campaign a name. Only your team sees this name.
+3. Open the **Email** tab and fill in the envelope:
+   - **From**: the address people see as the sender. It lists your email channels.
+   - **To**: the list from Part 1. You can also make a new list here.
+   - **Unsubscribe topic**: optional. Choose a topic so people can leave this type of email without leaving every list. This field appears after you create a topic. See [Manage unsubscribes and topics](/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+   - **Subject**: the subject line people see in their inbox.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-composer.png"
+  style={{ width: '100%' }}
+/>
+
+## Part 3: Write the email
+
+Write your email in the editor below the subject. Twenty saves the draft as you go.
+
+- Type `/` to see commands, or use the left rail to add **Text**, **Image**, **Blocks**, and **Variables**.
+- **Blocks** include **Section**, **2 Columns**, **3 Columns**, **Button**, **Divider**, **Image** and **HTML**, for pasting your own HTML.
+
+### Personalize with variables
+
+Variables are replaced with each person's details when the campaign sends. Insert one from **Variables**, or type it in double curly braces:
+
+| Variable             | Replaced with |
+| -------------------- | ------------- |
+| `{{name.firstName}}` | First name    |
+| `{{name.lastName}}`  | Last name     |
+| `{{fullName}}`       | Full name     |
+| `{{jobTitle}}`       | Job title     |
+
+You can also use text, number, date, and select fields from People, including custom fields. Variables work in the subject line, body, and link addresses.
+
+For example, `Hi {{name.firstName}},` becomes `Hi Ana,` for Ana.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-variables.png"
+  style={{ width: '100%' }}
+/>
+
+<Warning>
+  If a person has no value for a variable, Twenty leaves it empty.
+  `Hi {{name.firstName}},` becomes `Hi ,` when a person has no first name.
+  Check your list, or write a greeting that still works.
+</Warning>
+
+Twenty does not add your company's postal address. Add it to the bottom of the email; US law requires it in marketing emails.
+
+## Part 4: Send a test
+
+1. Click **Test** at the top of the campaign, or press `Cmd+K` and choose **Send Test Email**.
+2. In **Recipient**, type your own address.
+3. Click **Send test email**.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-send-test.png"
+  style={{ width: '100%' }}
+/>
+
+Check the layout, links, and sender in your inbox, on desktop and on your phone.
+
+<Note>
+  Variables are empty in test emails because a test is not sent to a specific
+  person. Your workspace can send three test emails a day.
+</Note>
+
+## Part 5: Send or schedule
+
+1. Click **Send** at the top of the campaign, or press `Cmd+K` and choose **Send Campaign**.
+2. Check the summary. **Recipients** shows how many people will receive the email and why others are skipped, such as no email address or an unsubscribe.
+3. Under **Delivery**, choose:
+   - **Send now**: starts right away and cannot be undone.
+   - **Send later**: choose a date and time in **Send at**.
+4. Click **Send campaign** or **Schedule campaign**.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-send-panel.png"
+  style={{ width: '50%' }}
+/>
+
+To move a scheduled campaign, click **Send** again, choose a new time in **Send at**, and click **Reschedule campaign**. Twenty counts recipients again when it sends, so the number can change.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-schedule-panel.png"
+  style={{ width: '50%' }}
+/>
+
+Your workspace can send up to 1,000 campaign emails a day. Need more? Contact us to request a higher limit.
+
+<Note>
+  Twenty checks a scheduled campaign again when it is time to send. If nobody
+  can receive it or the sending domain is no longer verified, it goes back to
+  **Draft** instead of sending.
+</Note>
+
+## After you send
+
+The campaign's **Status** tells you where it is:
+
+<img
+  src="/images/user-guide/email-campaigns/campaigns-list.png"
+  style={{ width: '100%' }}
+/>
+
+| Status               | Meaning                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| **Draft**            | Not sent yet. You can edit it.                                                       |
+| **Scheduled**        | Waiting for its send time.                                                           |
+| **Sending**          | Emails are going out.                                                                |
+| **Sent**             | Every email was sent to the delivery provider.                                       |
+| **Sent with errors** | Some emails could not be sent, for example because the workspace ran out of credits. |
+| **Canceled**         | Stopped before it finished.                                                          |
+
+The **Home** tab shows sent, delivered, bounced, complained, failed, and skipped counts. The **Recipients** list shows who the campaign went to.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-sent-results.png"
+  style={{ width: '100%' }}
+/>
+
+To send a similar campaign later, click **Duplicate**. Twenty copies the email, list, and settings into a new draft.
+
+### Cancel a campaign
+
+Click **Cancel** at the top of the campaign, or press `Cmd+K` and choose **Cancel Campaign**:
+
+- **Scheduled**: nothing has gone out. Confirm with **Unschedule Campaign**. The campaign returns to drafts, and you can edit or schedule it again.
+- **Sending**: emails still waiting are stopped. You cannot recall emails already sent.
+
+## Troubleshooting
+
+<Accordion title="The From field has no addresses">
+  **From** lists your email channels. Create an email channel first, then verify
+  its domain. See [Set up a sending
+  domain](/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+</Accordion>
+
+<Accordion title="Sending fails with No verified sending domain matches this from address">
+  The **From** address is on a domain that is not verified yet. Finish the steps
+  in [Set up a sending
+  domain](/user-guide/email-campaigns/how-tos/set-up-a-sending-domain), or
+  choose another address.
+</Accordion>
+
+<Accordion title="Send campaign is greyed out">
+  The campaign needs a **From** address, a list, a subject and a body, and at
+  least one person who can receive it. Check the **Recipients** summary for
+  people who are skipped. With **Send later**, the send time must also be in the
+  future.
+</Accordion>
+
+<Accordion title="Sending fails with This campaign cannot be sent">
+  Check that the campaign has a **From** address, a list and a subject. Then
+  check the variables: a variable that does not match a field on People blocks
+  sending. Insert variables from **Variables** rather than typing them, and use
+  `{{name.firstName}}`, not `{{firstName}}`.
+</Accordion>
+
+<Accordion title="A scheduled campaign went back to Draft">
+  When it was time to send, the campaign could not go out, for example because
+  no one on the list could receive it or the domain was no longer verified. Fix
+  the cause, then schedule it again.
+</Accordion>
+
+<Accordion title="I can't find Campaigns">
+  Email campaigns may not be turned on for your workspace yet. Contact us to
+  enable them.
+</Accordion>
