@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 
 import { LogConsoleChangesCell } from '@/log-console/components/LogConsoleChangesCell';
+import { LogConsoleObjectCell } from '@/log-console/components/LogConsoleObjectCell';
 import { LogConsoleRecordCell } from '@/log-console/components/LogConsoleRecordCell';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
 import { LOG_CONSOLE_RECORD_CHANGE_ACTOR_COLUMN } from '@/log-console/constants/LogConsoleRecordChangeActorColumn';
@@ -22,6 +23,14 @@ export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
         <Status color={action.color}>{t(action.label)}</Status>
       ) : null;
     },
+  },
+  {
+    id: 'object',
+    label: msg`Object`,
+    gridTrack: 'minmax(0, 160px)',
+    renderCell: (entry, color) => (
+      <LogConsoleObjectCell entry={entry} color={color} />
+    ),
   },
   {
     id: 'record',
