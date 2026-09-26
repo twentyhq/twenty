@@ -3,8 +3,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonTree, LightButton, Section } from 'twenty-ui/components';
-import { IconCopy } from 'twenty-ui/icon';
+import {
+  IconButton,
+  JsonTree,
+  LightButton,
+  Section,
+} from 'twenty-ui/components';
+import { IconCopy, IconLayoutSidebarRightCollapse } from 'twenty-ui/icon';
 import { Chip, Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -13,6 +18,7 @@ import { type JsonValue } from 'type-fest';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
+import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
@@ -22,6 +28,8 @@ import {
   SettingsTableCard,
   type TableItem,
 } from '@/settings/components/SettingsTableCard';
+import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -41,10 +49,38 @@ const MESSAGE_COLORS_BY_SEVERITY: Record<
   },
 };
 
-const StyledPage = styled.div`
+const StyledPanel = styled.aside`
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 400px;
+
+  @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
+    border-left: none;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+`;
+
+const StyledTopBar = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[1]};
+  min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+`;
+
+const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
+  overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
 `;
 
@@ -58,7 +94,6 @@ const StyledTitle = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[2]};
   overflow-wrap: anywhere;
@@ -100,13 +135,15 @@ const StyledRawEvent = styled.div`
   overflow-x: auto;
 `;
 
-export const SidePanelLogDetailPage = () => {
+export const LogConsoleDetailPanel = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const timeZone = useLogConsoleTimeZone();
   const { dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
-  const logConsoleSelectedLog = useAtomStateValue(logConsoleSelectedLogState);
+  const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
+    logConsoleSelectedLogState,
+  );
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
@@ -172,9 +209,20 @@ export const SidePanelLogDetailPage = () => {
     }),
   ];
 
+  const closeLabel = t`Close details`;
+
   return (
-    <StyledPage>
-      <StyledHeader>
+    <StyledPanel>
+      <StyledTopBar>
+        <IconButton
+          size="sm"
+          variant="ghost"
+          tooltip={closeLabel}
+          aria-label={closeLabel}
+          onClick={() => setLogConsoleSelectedLog(null)}
+        >
+          <IconLayoutSidebarRightCollapse />
+        </IconButton>
         <StyledTitle>
           {source.renderDetailTitle?.(entry) ?? (
             <>
@@ -187,76 +235,82 @@ export const SidePanelLogDetailPage = () => {
             </>
           )}
         </StyledTitle>
-        <StyledTimestamp>
-          {formatInTimeZone(
-            entry.timestamp,
-            timeZone,
-            `EEE, ${dateFormat} · ${timeWithMillisecondsFormat} zzz`,
-            { locale: localeCatalog },
+      </StyledTopBar>
+      <StyledContent>
+        <StyledHeader>
+          <StyledTimestamp>
+            {formatInTimeZone(
+              entry.timestamp,
+              timeZone,
+              `EEE, ${dateFormat} · ${timeWithMillisecondsFormat} zzz`,
+              { locale: localeCatalog },
+            )}
+            {' · '}
+            {beautifyPastDateRelativeToNow(entry.timestamp, localeCatalog)}
+          </StyledTimestamp>
+          {isDefined(source.renderDetailSubtitle) && (
+            <StyledSubtitle>
+              {source.renderDetailSubtitle(entry)}
+            </StyledSubtitle>
           )}
-          {' · '}
-          {beautifyPastDateRelativeToNow(entry.timestamp, localeCatalog)}
-        </StyledTimestamp>
-        {isDefined(source.renderDetailSubtitle) && (
-          <StyledSubtitle>{source.renderDetailSubtitle(entry)}</StyledSubtitle>
+        </StyledHeader>
+        {isNonEmptyString(message) && (
+          <Section.Root>
+            <Section.Header
+              title={t`Message`}
+              adornment={
+                <LightButton
+                  startIcon={<IconCopy />}
+                  onClick={() => copyToClipboard(message)}
+                >
+                  {t`Copy`}
+                </LightButton>
+              }
+            />
+            <StyledMessage severity={source.getSeverity?.(entry)}>
+              {message}
+            </StyledMessage>
+          </Section.Root>
         )}
-      </StyledHeader>
-      {isNonEmptyString(message) && (
+        {source.renderDetailContent?.(entry)}
+        <Section.Root>
+          <Section.Header title={t`Details`} />
+          <SettingsTableCard
+            items={detailItems}
+            rounded
+            gridAutoColumns="minmax(0, 2fr) minmax(0, 3fr)"
+          />
+        </Section.Root>
         <Section.Root>
           <Section.Header
-            title={t`Message`}
+            title={t`Raw event`}
             adornment={
               <LightButton
                 startIcon={<IconCopy />}
-                onClick={() => copyToClipboard(message)}
+                onClick={() =>
+                  copyToClipboard(
+                    JSON.stringify(rawEvent, null, 2),
+                    t`Log copied as JSON`,
+                  )
+                }
               >
-                {t`Copy`}
+                {t`Copy as JSON`}
               </LightButton>
             }
           />
-          <StyledMessage severity={source.getSeverity?.(entry)}>
-            {message}
-          </StyledMessage>
+          <StyledRawEvent>
+            <JsonTree
+              value={rawEvent as JsonValue}
+              emptyArrayLabel={t`Empty Array`}
+              emptyObjectLabel={t`Empty Object`}
+              emptyStringLabel={t`[empty string]`}
+              arrowButtonCollapsedLabel={t`Expand`}
+              arrowButtonExpandedLabel={t`Collapse`}
+              onNodeValueClick={copyToClipboard}
+            />
+          </StyledRawEvent>
         </Section.Root>
-      )}
-      {source.renderDetailContent?.(entry)}
-      <Section.Root>
-        <Section.Header title={t`Details`} />
-        <SettingsTableCard
-          items={detailItems}
-          rounded
-          gridAutoColumns="minmax(0, 2fr) minmax(0, 3fr)"
-        />
-      </Section.Root>
-      <Section.Root>
-        <Section.Header
-          title={t`Raw event`}
-          adornment={
-            <LightButton
-              startIcon={<IconCopy />}
-              onClick={() =>
-                copyToClipboard(
-                  JSON.stringify(rawEvent, null, 2),
-                  t`Log copied as JSON`,
-                )
-              }
-            >
-              {t`Copy as JSON`}
-            </LightButton>
-          }
-        />
-        <StyledRawEvent>
-          <JsonTree
-            value={rawEvent as JsonValue}
-            emptyArrayLabel={t`Empty Array`}
-            emptyObjectLabel={t`Empty Object`}
-            emptyStringLabel={t`[empty string]`}
-            arrowButtonCollapsedLabel={t`Expand`}
-            arrowButtonExpandedLabel={t`Collapse`}
-            onNodeValueClick={copyToClipboard}
-          />
-        </StyledRawEvent>
-      </Section.Root>
-    </StyledPage>
+      </StyledContent>
+    </StyledPanel>
   );
 };

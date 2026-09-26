@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSyncExternalStore } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconButton, useToast } from 'twenty-ui/components';
 import {
   IconChevronDown,
@@ -15,20 +16,21 @@ import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
+import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
 import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
+import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
-import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
+import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { RESIZE_EDGE_WIDTH_PX } from '@/ui/layout/resizable-panel/constants/ResizeEdgeWidthPx';
@@ -78,16 +80,29 @@ const StyledBarActions = styled.div`
 `;
 
 const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
-  box-sizing: border-box;
+  container-name: log-console-body;
+  container-type: inline-size;
   display: flex;
   flex: ${({ isFullScreen }) => (isFullScreen ? '1' : 'none')};
-  flex-direction: column;
   height: var(
     ${LOG_CONSOLE_HEIGHT_CSS_VARIABLE},
     ${({ bodyHeight }) => bodyHeight}px
   );
   min-height: ${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px;
+  position: relative;
+`;
+
+const StyledActiveSource = styled.div<{ isDetailPanelOpen: boolean }>`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+
+  @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
+    visibility: ${({ isDetailPanelOpen }) =>
+      isDetailPanelOpen ? 'hidden' : 'visible'};
+  }
 `;
 
 const subscribeToWindowResize = (onWindowResize: () => void) => {
@@ -102,7 +117,6 @@ export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { enqueueToast } = useToast();
-  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -118,13 +132,13 @@ export const LogConsole = () => {
     activeTabIdComponentState,
     LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
   );
-  const isLogConsoleSelectedLogOpened = useAtomStateValue(
-    isLogConsoleSelectedLogOpenedSelector,
-  );
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
   const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
+  const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
+    logConsoleSelectedLogState,
+  );
   const windowHeight = useSyncExternalStore(
     subscribeToWindowResize,
     getWindowHeight,
@@ -219,9 +233,7 @@ export const LogConsole = () => {
   };
 
   const closeSelectedLog = () => {
-    if (isLogConsoleSelectedLogOpened) {
-      void closeSidePanelMenu();
-    }
+    setLogConsoleSelectedLog(null);
   };
 
   const changeSource = (sourceId: string) => {
@@ -321,7 +333,12 @@ export const LogConsole = () => {
             bodyHeight={logConsoleBodyHeight}
             isFullScreen={isFullScreen}
           >
-            {renderActiveSource()}
+            <StyledActiveSource
+              isDetailPanelOpen={isDefined(logConsoleSelectedLog)}
+            >
+              {renderActiveSource()}
+            </StyledActiveSource>
+            <LogConsoleDetailPanel />
           </StyledBody>
         )}
       </TabListRoot>

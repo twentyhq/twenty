@@ -96,9 +96,10 @@ export const LogConsoleTable = ({
     },
   });
 
-  const columns = isSidePanelOpened
-    ? source.columns.filter((column) => !column.hiddenWhenPanelOpen)
-    : source.columns;
+  const columns =
+    isDefined(selectedEntry) || isSidePanelOpened
+      ? source.columns.filter((column) => !column.hiddenWhenPanelOpen)
+      : source.columns;
 
   const gridTemplateColumns = columns
     .map((column) => column.gridTrack)

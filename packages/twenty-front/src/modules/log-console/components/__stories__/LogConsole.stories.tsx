@@ -256,6 +256,7 @@ export const RecordChangeDiff: Story = {
       await canvas.findByText('Lumen Health - Pilot', {}, { timeout: 5000 }),
     );
 
+    await canvas.findByRole('button', { name: 'Close details' });
     await canvas.findByText('Proposal');
   },
 };
@@ -271,6 +272,7 @@ export const RecordDeletion: Story = {
       await canvas.findByText('Maple Consulting Inc.', {}, { timeout: 5000 }),
     );
 
+    await canvas.findByRole('button', { name: 'Close details' });
     await canvas.findByText('Values before deletion');
   },
 };
@@ -324,6 +326,14 @@ export const AppLogDetail: Story = {
     await userEvent.click(typeErrorMessage);
 
     await canvas.findByText(/at mapInvoiceToOpportunity/, { selector: 'pre' });
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Close details' }),
+    );
+
+    expect(
+      canvas.queryByText(/at mapInvoiceToOpportunity/, { selector: 'pre' }),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -423,6 +433,7 @@ export const WebhookFailureDetail: Story = {
     );
     await userEvent.click(await canvas.findByText('503'));
 
+    await canvas.findByRole('button', { name: 'Close details' });
     await canvas.findByText('person.created → ingest.northwind-data.io');
     await canvas.findByRole('link', { name: 'Open webhook settings' });
   },
@@ -454,6 +465,7 @@ export const PageViewDetail: Story = {
     );
     await userEvent.click(await canvas.findByText('Priya Nair'));
 
+    await canvas.findByRole('button', { name: 'Close details' });
     await canvas.findByText('Session ID');
   },
 };

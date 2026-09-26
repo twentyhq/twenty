@@ -50,7 +50,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'record-changes',
     label: msg`Record changes`,
-    entryLabel: msg`Record change`,
     Icon: IconAddressBook,
     table: EventLogTable.OBJECT_EVENT,
     filterFields: LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS,
@@ -101,7 +100,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'security',
     label: msg`Security`,
-    entryLabel: msg`Security event`,
     Icon: IconKey,
     table: EventLogTable.WORKSPACE_EVENT,
     fieldFilters: [
@@ -133,7 +131,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'app-logs',
     label: msg`App logs`,
-    entryLabel: msg`App log`,
     Icon: IconTerminal,
     table: EventLogTable.APPLICATION_LOG,
     filterFields: LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS,
@@ -164,7 +161,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'webhooks',
     label: msg`Webhooks`,
-    entryLabel: msg`Webhook delivery`,
     Icon: IconWebhook,
     table: EventLogTable.WORKSPACE_EVENT,
     fieldFilters: [
@@ -227,7 +223,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'page-views',
     label: msg`Page views`,
-    entryLabel: msg`Page view`,
     Icon: IconEye,
     table: EventLogTable.PAGEVIEW,
     filterFields: [{ ...LOG_CONSOLE_ACTOR_FILTER_FIELD, label: msg`Member` }],
@@ -250,7 +245,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'usage',
     label: msg`Usage`,
-    entryLabel: msg`Usage event`,
     Icon: IconGauge,
     table: EventLogTable.USAGE_EVENT,
     requiresAuditLogs: true,
