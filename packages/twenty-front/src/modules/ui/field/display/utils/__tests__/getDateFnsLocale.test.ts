@@ -19,7 +19,6 @@ describe('getDateFnsLocale', () => {
   // The switch has an en-US default, so a case pointing at a module path that
   // does not exist fails the same silent way a missing case would.
   it.each([
-    ['fa-IR', 'fa-IR'],
     ['hy-AM', 'hy'],
     ['sr-Latn', 'sr-Latn'],
     ['uz-UZ', 'uz'],

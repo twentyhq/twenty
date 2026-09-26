@@ -16572,11 +16572,6 @@ msgstr "Ruxsatlar"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Ruxsatlar · {objectLabelSingular}"
 
-#. js-lingui-id: JFI3iH
-#: src/localization/hooks/useLocaleOptions.ts
-msgid "Persian"
-msgstr "Fors tili"
-
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 msgid "Person created"

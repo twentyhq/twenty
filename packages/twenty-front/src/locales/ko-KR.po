@@ -16572,11 +16572,6 @@ msgstr "권한"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "권한 · {objectLabelSingular}"
 
-#. js-lingui-id: JFI3iH
-#: src/localization/hooks/useLocaleOptions.ts
-msgid "Persian"
-msgstr "페르시아어"
-
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 msgid "Person created"

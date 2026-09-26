@@ -50,7 +50,6 @@ export const useLocaleOptions = (): LocaleOption[] => {
     'da-DK': t`Danish`,
     'nl-NL': t`Dutch`,
     en: t`English`,
-    'fa-IR': t`Persian`,
     'fi-FI': t`Finnish`,
     'fr-FR': t`French`,
     'de-DE': t`German`,

@@ -4,7 +4,6 @@ import { APP_LOCALES } from '@/translations/constants/AppLocales';
 describe('getLocaleTextDirection', () => {
   it.each([
     ['ar-SA', 'rtl'],
-    ['fa-IR', 'rtl'],
     ['he-IL', 'rtl'],
     ['en', 'ltr'],
     ['fr-FR', 'ltr'],
@@ -31,7 +30,7 @@ describe('getLocaleTextDirection', () => {
     const directions = Object.values(APP_LOCALES).map(getLocaleTextDirection);
 
     expect(directions.filter((direction) => direction === 'rtl')).toHaveLength(
-      3,
+      2,
     );
   });
 });
