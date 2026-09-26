@@ -145,10 +145,14 @@ const StyledUpgradeCardContainer = styled.div`
 const StyledDetailPanelWrapper = styled.div<{
   detailPanelWidth: number;
   isOpen: boolean;
+  isResizing: boolean;
 }>`
   overflow: hidden;
   position: relative;
-  transition: width calc(${themeCssVariables.animation.duration.normal} * 1s);
+  transition: ${({ isResizing }) =>
+    isResizing
+      ? 'none'
+      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
   width: ${({ isOpen, detailPanelWidth }) =>
     isOpen
       ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
@@ -185,6 +189,7 @@ export const LogConsole = () => {
   const [detailPanelWidth, setDetailPanelWidth] = useState(
     LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.default,
   );
+  const [isDetailPanelResizing, setIsDetailPanelResizing] = useState(false);
 
   const windowHeight = useSyncExternalStore(
     subscribeToWindowResize,
@@ -260,6 +265,7 @@ export const LogConsole = () => {
     setDetailPanelWidth(
       Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min),
     );
+    setIsDetailPanelResizing(false);
   };
 
   const handleHeightChange = (height: number) => {
@@ -396,6 +402,7 @@ export const LogConsole = () => {
             <StyledDetailPanelWrapper
               detailPanelWidth={detailPanelWidth}
               isOpen={isDefined(logConsoleSelectedLog)}
+              isResizing={isDetailPanelResizing}
             >
               {isDefined(logConsoleSelectedLog) && (
                 <ResizablePanelEdge
@@ -405,6 +412,7 @@ export const LogConsole = () => {
                   onSizeChange={handleDetailPanelWidthChange}
                   cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
                   showHandle={false}
+                  onResizeStart={() => setIsDetailPanelResizing(true)}
                 />
               )}
               <LogConsoleDetailPanel />
