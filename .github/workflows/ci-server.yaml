@@ -346,10 +346,14 @@ jobs:
           args: ${{ format('--shard={0}/{1}', matrix.shard, env.SHARD_COUNTER) }}
       # The secure-deployment suite boots the app as a production https
       # deployment (SERVER_URL is env-only, forced by its jest config), so it
-      # cannot ride the main run. One shard is enough.
+      # cannot ride the main run. One shard is enough. Gated like the main run
+      # because it reuses the database that run sets up.
       - name: Server / Run secure-deployment integration tests
         if: matrix.shard == 1
-        run: npx nx run twenty-server:test:integration:secure
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: 'test:integration:secure'
 
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
