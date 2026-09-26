@@ -1,6 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { type TagColor } from 'twenty-ui/primitives/data-display';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 
@@ -9,8 +9,7 @@ export const LOG_CONSOLE_LEVELS: Partial<
     string,
     {
       label: MessageDescriptor;
-      color: TagColor;
-      variant: 'soft' | 'outline';
+      color: ThemeColor;
       severity?: LogConsoleSeverity;
     }
   >
@@ -18,15 +17,13 @@ export const LOG_CONSOLE_LEVELS: Partial<
   ERROR: {
     label: msg`Error`,
     color: 'red',
-    variant: 'soft',
     severity: 'error',
   },
   WARN: {
     label: msg`Warning`,
     color: 'orange',
-    variant: 'soft',
     severity: 'warning',
   },
-  INFO: { label: msg`Info`, color: 'gray', variant: 'soft' },
-  DEBUG: { label: msg`Debug`, color: 'transparent', variant: 'outline' },
+  INFO: { label: msg`Info`, color: 'blue' },
+  DEBUG: { label: msg`Debug`, color: 'gray' },
 };

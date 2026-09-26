@@ -14,8 +14,8 @@ export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
     id: 'spender',
     label: msg`Spender`,
     gridTrack: 'minmax(0, 1fr)',
-    renderCell: (entry) => (
-      <LogConsoleMemberCell userWorkspaceId={entry.userId} />
+    renderCell: (entry, color) => (
+      <LogConsoleMemberCell userWorkspaceId={entry.userId} color={color} />
     ),
   },
   {

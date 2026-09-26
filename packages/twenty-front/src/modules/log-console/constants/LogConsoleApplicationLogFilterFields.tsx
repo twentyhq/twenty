@@ -24,11 +24,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] 
                 {
                   label: t(level.label),
                   values: [levelValue],
-                  tag: (
-                    <Tag color={level.color} variant={level.variant}>
-                      {t(level.label)}
-                    </Tag>
-                  ),
+                  tag: <Tag color={level.color}>{t(level.label)}</Tag>,
                 },
               ]
             : [],

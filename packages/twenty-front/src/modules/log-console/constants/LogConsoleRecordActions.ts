@@ -9,14 +9,14 @@ import {
   IconTrash,
   IconTrashX,
 } from 'twenty-ui/icon';
-import { type TagColor } from 'twenty-ui/primitives/data-display';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 export const LOG_CONSOLE_RECORD_ACTIONS: Partial<
   Record<
     string,
     {
       label: MessageDescriptor;
-      color: TagColor;
+      color: ThemeColor;
       Icon: IconComponent;
       summary?: MessageDescriptor;
       valuesTitle?: MessageDescriptor;

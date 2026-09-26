@@ -8,19 +8,17 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/format-preferences/getWorkspaceDateFormatFromDateFormat';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
+import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-const StyledTime = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-family: ${themeCssVariables.code.font.family};
-  white-space: nowrap;
-`;
-
-const StyledMilliseconds = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
+const StyledTimeAndDate = styled.span`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
 type LogConsoleTimeCellProps = {
@@ -32,11 +30,10 @@ export const LogConsoleTimeCell = ({ timestamp }: LogConsoleTimeCellProps) => {
   const { dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const isTwelveHourFormat = timeFormat === TimeFormat.HOUR_12;
-
   const dayAndMonthFormat =
     DATE_FORMAT_WITHOUT_YEAR[getWorkspaceDateFormatFromDateFormat(dateFormat)];
-  const timeWithSecondsFormat = isTwelveHourFormat ? 'h:mm:ss' : 'HH:mm:ss';
+  const timeWithMillisecondsFormat =
+    timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
 
   const formatTimestamp = (format: string) =>
     formatInTimeZone(timestamp, timeZone, format, { locale: localeCatalog });
@@ -46,11 +43,12 @@ export const LogConsoleTimeCell = ({ timestamp }: LogConsoleTimeCellProps) => {
       content={beautifyPastDateRelativeToNow(timestamp, localeCatalog)}
       delay={TooltipDelay.mediumDelay}
     >
-      <StyledTime>
-        {formatTimestamp(`${dayAndMonthFormat} ${timeWithSecondsFormat}`)}
-        <StyledMilliseconds>{formatTimestamp('.SSS')}</StyledMilliseconds>
-        {isTwelveHourFormat && formatTimestamp(' aa')}
-      </StyledTime>
+      <StyledTimeAndDate>
+        {formatTimestamp(timeWithMillisecondsFormat)}
+        <SettingsNameCellSecondaryLabel>
+          {formatTimestamp(dayAndMonthFormat)}
+        </SettingsNameCellSecondaryLabel>
+      </StyledTimeAndDate>
     </Tooltip>
   );
 };

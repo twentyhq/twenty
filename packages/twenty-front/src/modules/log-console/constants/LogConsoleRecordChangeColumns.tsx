@@ -1,6 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 
 import { LogConsoleChangesCell } from '@/log-console/components/LogConsoleChangesCell';
 import { LogConsoleRecordCell } from '@/log-console/components/LogConsoleRecordCell';
@@ -14,22 +14,22 @@ export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'action',
     label: msg`Action`,
-    gridTrack: 'minmax(0, 184px)',
+    gridTrack: 'minmax(0, 176px)',
     renderCell: (entry) => {
       const action = LOG_CONSOLE_RECORD_ACTIONS[entry.event];
 
       return isDefined(action) ? (
-        <Tag color={action.color} startIcon={<action.Icon />}>
-          {t(action.label)}
-        </Tag>
+        <Status color={action.color}>{t(action.label)}</Status>
       ) : null;
     },
   },
   {
     id: 'record',
     label: msg`Record`,
-    gridTrack: 'minmax(0, 200px)',
-    renderCell: (entry) => <LogConsoleRecordCell entry={entry} />,
+    gridTrack: 'minmax(0, 216px)',
+    renderCell: (entry, color) => (
+      <LogConsoleRecordCell entry={entry} color={color} />
+    ),
   },
   {
     id: 'changes',

@@ -10,7 +10,11 @@ import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
+import {
+  Chip,
+  type ChipProps,
+  type ChipSize,
+} from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export type RecordChipProps = {
@@ -18,6 +22,7 @@ export type RecordChipProps = {
   record: ObjectRecord;
   className?: string;
   variant?: 'soft' | 'ghost';
+  color?: ChipProps['color'];
   forceDisableClick?: boolean;
   isBold?: boolean;
   maxWidth?: number;
@@ -34,6 +39,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
+  color,
   isBold = false,
   maxWidth,
   to,
@@ -78,6 +84,7 @@ export const RecordChip = ({
         maxWidth={maxWidth}
         className={className}
         variant="ghost"
+        color={color}
         startElement={
           isIconHidden ? null : (
             <AvatarOrIcon
@@ -114,6 +121,7 @@ export const RecordChip = ({
       }
       className={className}
       variant={variant ?? 'soft'}
+      color={color}
       clickable={variant !== 'ghost'}
       style={variant === 'ghost' ? { paddingInlineStart: 0 } : undefined}
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
