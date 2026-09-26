@@ -6,17 +6,8 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
-// TODO: delete this util once the 2.5 cross-upgrade window closes and every
-// `core.twoFactorAuthenticationMethod.secret` row is known to be in the
-// `enc:v2:` envelope. Also drop the call sites in TwoFactorAuthenticationService
-// and the matching slow instance command, and stop providing this util in
-// TwoFactorAuthenticationModule and InstanceCommandProviderModule.
-/**
- * @deprecated Legacy TOTP secret decryption (AES-256-CBC keyed off
- * `APP_SECRET + userId + workspaceId + 'otp-secret' + 'KEY_ENCRYPTION_KEY'`).
- * Kept only to read pre-2.5 rows during the cross-upgrade window. New rows are
- * written by `SecretEncryptionService.encryptVersioned` (enc:v2 envelope).
- */
+// Legacy TOTP secret decryption (AES-256-CBC), used only by the 2.5
+// encrypt-totp-secrets slow command to re-encrypt pre-2.5 rows into enc:v2.
 @Injectable()
 export class SimpleSecretEncryptionUtil {
   private readonly algorithm = 'aes-256-cbc';
