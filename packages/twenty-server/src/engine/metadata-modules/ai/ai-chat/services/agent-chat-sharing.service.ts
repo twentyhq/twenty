@@ -178,6 +178,9 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
+    const writesWorkspaceMember = await this.hasWorkspaceMemberOwnerField(
+      args.workspaceId,
+    );
     if (objectMetadata.readability !== MetadataReadability.SYSTEM) {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
@@ -195,9 +198,14 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId")
-         VALUES ($1, $2, $3) RETURNING *`,
-          [args.id ?? randomUUID(), args.title ?? null, args.userWorkspaceId],
+          `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId"${writesWorkspaceMember ? ', "workspaceMemberId"' : ''})
+         VALUES ($1, $2, $3${writesWorkspaceMember ? ', $4' : ''}) RETURNING *`,
+          [
+            args.id ?? randomUUID(),
+            args.title ?? null,
+            args.userWorkspaceId,
+            ...(writesWorkspaceMember ? [authContext.workspaceMemberId] : []),
+          ],
         );
         const record = records[0];
         await this.recordShareStorageService.deleteByRecordIdsInTransaction({
@@ -361,6 +369,25 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     return authContext;
+  }
+
+  // TRANSITION(2.43 -> 2.44): workspaces gain the workspaceMember owner when
+  // the 2.43 link-chat-threads-to-workspace-members command reaches them, and
+  // this server can run before it does. Remove with the owner cleanup tracked
+  // in twentyhq/core-team-issues#2925.
+  private async hasWorkspaceMemberOwnerField(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
+          .universalIdentifier
+      ],
+    );
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {
