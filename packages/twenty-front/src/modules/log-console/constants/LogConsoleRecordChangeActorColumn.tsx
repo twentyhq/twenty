@@ -15,5 +15,4 @@ export const LOG_CONSOLE_RECORD_CHANGE_ACTOR_COLUMN: LogConsoleColumn = {
       color={color}
     />
   ),
-  hiddenWhenPanelOpen: true,
 };
