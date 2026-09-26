@@ -274,6 +274,31 @@ describe('frontend HTML delivery', () => {
     },
   );
 
+  it.each([
+    '/invite/apple.dev-invite-hash',
+    '/invite/apple.dev-invite-hash/',
+    '/settings/domains/crm.example.com',
+  ])('serves browser navigation to dotted path %s', async (pathname) => {
+    await request(app.getHttpServer())
+      .get(pathname)
+      .set('Accept', 'text/html,application/xhtml+xml,*/*;q=0.8')
+      .set('Sec-Fetch-Dest', 'document')
+      .expect(200);
+    expect(getClientConfig).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['script', 'style', 'empty'])(
+    'does not serve a document for a missing asset with Sec-Fetch-Dest: %s',
+    async (destination) => {
+      await request(app.getHttpServer())
+        .get('/assets/missing.js')
+        .set('Accept', 'text/html')
+        .set('Sec-Fetch-Dest', destination)
+        .expect(404);
+      expect(getClientConfig).not.toHaveBeenCalled();
+    },
+  );
+
   it('serves extensionless static files in arbitrary directories before the SPA fallback', async () => {
     mkdirSync(join(directory, 'new-asset-directory'));
     writeFileSync(
