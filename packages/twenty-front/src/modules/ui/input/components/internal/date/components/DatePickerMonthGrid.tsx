@@ -49,6 +49,10 @@ const StyledDay = styled.button<{
         : themeCssVariables.font.color.primary};
   cursor: pointer;
   font-family: inherit;
+
+  &:disabled {
+    cursor: default;
+  }
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${({ isToday }) =>
     isToday
@@ -128,6 +132,7 @@ export const DatePickerMonthGrid = ({
           <StyledDay
             key={plainDate.toString()}
             type="button"
+            disabled={disabled}
             aria-label={t`Choose ${fullDate}`}
             isHighlighted={
               (isDefined(selectedDate) && plainDate.equals(selectedDate)) ||
