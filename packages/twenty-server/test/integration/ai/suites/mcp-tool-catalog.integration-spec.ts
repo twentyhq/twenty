@@ -259,6 +259,40 @@ describe('MCP tool catalog (integration)', () => {
     });
   });
 
+  describe('query search', () => {
+    it('should return a flat ranked list capped by limit with the matching CRUD tool first', async () => {
+      const result = await callMcpTool(adminApiKeyToken, 'get_tool_catalog', {
+        query: 'find companies',
+        limit: 3,
+      });
+
+      expect(result.isError).toBe(false);
+
+      const output = JSON.parse(result.content[0].text);
+
+      expect(output.catalog).toBeUndefined();
+      expect(output.matches).toHaveLength(3);
+      expect(output.matches[0]).toEqual({
+        name: 'find_many_companies',
+        category: ToolCategory.DATABASE_CRUD,
+        description: expect.any(String),
+      });
+      expect(output.totalMatches).toBeGreaterThan(3);
+      expect(output.truncated).toBe(true);
+    });
+
+    it('should reject an unknown category instead of returning an empty catalog', async () => {
+      const result = await callMcpTool(adminApiKeyToken, 'get_tool_catalog', {
+        categories: ['CRUD'],
+      });
+
+      expect(result.isError).toBe(true);
+      expect(JSON.parse(result.content[0].text).error).toContain(
+        'Valid categories:',
+      );
+    });
+  });
+
   describe('permission gating', () => {
     it('should expose role tools to an admin-bound API key', async () => {
       const catalog = await getToolCatalog(adminApiKeyToken);

@@ -46,6 +46,7 @@ export type LearnToolsResult = {
 export type LearnToolsOptions = {
   isToolAllowed?: (toolName: string) => boolean;
   spillLargeOutput?: boolean;
+  discoveryHint?: string;
 };
 
 export const createLearnToolsTool = (
@@ -59,10 +60,18 @@ export const createLearnToolsTool = (
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;
 
-    const { isToolAllowed } = options ?? {};
-    const allowedNames = isToolAllowed
-      ? toolNames.filter((name) => isToolAllowed(name))
-      : toolNames;
+    const { isToolAllowed, discoveryHint } = options ?? {};
+
+    const allowedNames: string[] = [];
+    const unavailableNames: string[] = [];
+
+    for (const toolName of toolNames) {
+      if (isToolAllowed?.(toolName) === false) {
+        unavailableNames.push(toolName);
+      } else {
+        allowedNames.push(toolName);
+      }
+    }
 
     const toolInfos = await toolRegistry.getToolInfo(
       allowedNames,
@@ -71,13 +80,12 @@ export const createLearnToolsTool = (
     );
 
     const foundNames = new Set(toolInfos.map((toolInfo) => toolInfo.name));
-    // Base notFound on allowedNames so excluded tools aren't surfaced as
-    // missing (which would also trigger misleading suggestions).
-    const notFound = allowedNames.filter((name) => !foundNames.has(name));
+    const unknownNames = allowedNames.filter((name) => !foundNames.has(name));
+    const notFound = [...unknownNames, ...unavailableNames];
 
     const suggestions: Record<string, string[]> =
-      notFound.length > 0
-        ? await toolRegistry.suggestSimilarToolNames(notFound, context)
+      unknownNames.length > 0
+        ? await toolRegistry.suggestSimilarToolNames(unknownNames, context)
         : {};
 
     const messageParts: string[] = [];
@@ -92,18 +100,26 @@ export const createLearnToolsTool = (
     }
 
     if (notFound.length > 0) {
-      const notFoundDescription = notFound
-        .map((name) => {
+      const notFoundDescription = [
+        ...unknownNames.map((name) => {
           const similarToolNames = suggestions[name];
 
           return similarToolNames?.length
             ? `${name} (did you mean: ${similarToolNames.join(', ')}?)`
             : name;
-        })
-        .join('; ');
+        }),
+        ...unavailableNames.map(
+          (name) => `${name} (not available in this context)`,
+        ),
+      ].join('; ');
 
       messageParts.push(`Could not find: ${notFoundDescription}`);
     }
+
+    const discoveryHintSuffix =
+      unknownNames.length > 0 && isDefined(discoveryHint)
+        ? ` ${discoveryHint}`
+        : '';
 
     const learnToolsResult: LearnToolsResult = {
       tools: toolInfos,
@@ -111,7 +127,7 @@ export const createLearnToolsTool = (
       ...(Object.keys(suggestions).length > 0 && { suggestions }),
       message:
         messageParts.length > 0
-          ? `${messageParts.join('. ')}.`
+          ? `${messageParts.join('. ')}.${discoveryHintSuffix}`
           : 'No matching tools found.',
     };
 

@@ -1,11 +1,13 @@
+import { type McpObjectNameForms } from 'src/engine/api/mcp/types/mcp-object-name-forms.type';
+import { formatMcpObjectName } from 'src/engine/api/mcp/utils/format-mcp-object-name.util';
 import { settings } from 'src/engine/constants/settings';
 
 export const buildMcpServerInstructions = ({
-  objectNames,
+  objects,
   actionToolNames,
   skillNames,
 }: {
-  objectNames: string;
+  objects: McpObjectNameForms[];
   actionToolNames: string[];
   skillNames?: string;
 }): string => {
@@ -15,7 +17,11 @@ export const buildMcpServerInstructions = ({
     `You are an AI assistant for a Twenty CRM workspace.`,
     `Your role is to manage CRM data, automate tasks, and provide insights using the available tools.`,
     ``,
-    `Available objects: ${objectNames}.`,
+    `Available objects (plural is +s unless shown as singular/plural): ${objects
+      .map((objectNameForms) =>
+        formatMcpObjectName({ objectNameForms, omitRegularPlural: true }),
+      )
+      .join(', ')}.`,
     ``,
     `Key relations:`,
     `  person.companyId → company`,
@@ -27,10 +33,10 @@ export const buildMcpServerInstructions = ({
     `  load_skills(skillNames)             — load step-by-step instructions for complex tasks`,
     `  list_object_metadata_names()        — list this workspace's object names`,
     `  list_skills()                       — list the available skill names`,
-    `  get_tool_catalog(categories)        — fallback discovery, only when you do not know which tool exists. Pass ONE category, never call it unfiltered`,
+    `  get_tool_catalog(query, categories) — fallback discovery, only when you do not know which tool exists. Pass a short query or ONE category; never call it with no arguments`,
     ``,
     ...(skillNames ? [`Available skills: ${skillNames}.`, ``] : []),
-    `CRUD tool name grammar — construct names directly without prior discovery:`,
+    `CRUD tool name grammar — construct names directly without prior discovery ({object} = singular, {objects} = plural, as in Available objects):`,
     `  Read:  find_many_{objects} | find_one_{object} | group_by_{objects}`,
     `  Write: create_one_{object} | create_many_{objects} | update_one_{object} | update_many_{objects} | delete_one_{object} | delete_many_{objects} | upsert_many_{objects}. Use upsert_many_{objects} instead of update_many_{objects} when each record has its own individual data.`,
     `  Not sure a constructed name exists? Pass it to learn_tools — unknown names come back under notFound with the closest matching names. Never call get_tool_catalog just to check a name.`,
@@ -43,8 +49,8 @@ export const buildMcpServerInstructions = ({
     `  VIEW:             get_views | get_view_query_parameters | create/update/delete_view | manage view fields, filters, sorts`,
     `  WEBHOOK:          list/create/update/delete_webhook`,
     `  NAVIGATION:       list/create/update/delete_navigation_menu_item`,
-    `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; use list_logic_function_tools to discover`,
-    `  Don't know which tool exists at all? get_tool_catalog with ONE category from the list above, then learn_tools, then execute_tool.`,
+    `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; use get_tool_catalog with categories: ['LOGIC_FUNCTION'] to discover`,
+    `  Don't know which tool exists at all? get_tool_catalog with ONE category from the list above, or a short query (e.g. "workflow runs"), then learn_tools, then execute_tool.`,
     ``,
     `Skills vs Tools:`,
     `  Skills = documentation (load_skills) — teach HOW to do something, correct schemas and patterns`,

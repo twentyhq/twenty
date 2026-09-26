@@ -125,10 +125,11 @@ If the client cannot do OAuth, configure bearer headers in the user's private MC
 
 After setup, verify the server is available with the client's own inspection command (`codex mcp get <server-name>`, `claude mcp list`, or the equivalent), or by listing available tools in a fresh session.
 
-When connected, use the Twenty MCP discovery flow:
+When connected, use the Twenty MCP flow:
 
 ```text
-learn_tools -> execute_tool
+learn_tools -> execute_tool                            (tool name known or built from the CRUD naming grammar)
+get_tool_catalog(query) -> learn_tools -> execute_tool (unsure which tool exists)
 ```
 
 ## Troubleshooting

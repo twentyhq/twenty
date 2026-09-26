@@ -8,13 +8,19 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools';
 import { GET_TOOL_CATALOG_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
 
+const COMPANY = { nameSingular: 'company', namePlural: 'companies' };
+const PERSON = { nameSingular: 'person', namePlural: 'people' };
+
+const getLine = (instructions: string, marker: string): string =>
+  instructions.split('\n').find((line) => line.includes(marker)) ?? '';
+
 const getActionLine = (instructions: string): string =>
-  instructions.split('\n').find((line) => line.includes('ACTION:')) ?? '';
+  getLine(instructions, 'ACTION:');
 
 describe('buildMcpServerInstructions', () => {
   it('should render the ACTION line from the tools the caller can reach', () => {
     const instructions = buildMcpServerInstructions({
-      objectNames: 'companies, people',
+      objects: [COMPANY, PERSON],
       actionToolNames: ['send_email', 'search_help_center'],
     });
 
@@ -27,14 +33,14 @@ describe('buildMcpServerInstructions', () => {
 
   it('should add the upload recipe only when the upload tools are reachable', () => {
     const withUpload = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['create_file_upload', 'complete_file_upload'],
     });
 
     expect(withUpload).toContain('To attach a file: create_file_upload');
 
     const withoutUpload = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['send_email'],
     });
 
@@ -43,14 +49,14 @@ describe('buildMcpServerInstructions', () => {
 
   it('should add the http_request guidance only when http_request is reachable', () => {
     const withHttp = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['http_request'],
     });
 
     expect(withHttp).toContain('http_request is ONLY for external');
 
     const withoutHttp = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['send_email'],
     });
 
@@ -59,7 +65,7 @@ describe('buildMcpServerInstructions', () => {
 
   it('should document every meta-tool the MCP server exposes', () => {
     const instructions = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['send_email'],
     });
 
@@ -77,7 +83,7 @@ describe('buildMcpServerInstructions', () => {
 
   it('should route an unverified tool name to learn_tools, not to the catalog', () => {
     const instructions = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['send_email'],
     });
 
@@ -94,10 +100,57 @@ describe('buildMcpServerInstructions', () => {
 
   it('should omit the skills line when the workspace has no skills', () => {
     const instructions = buildMcpServerInstructions({
-      objectNames: 'companies',
+      objects: [COMPANY],
       actionToolNames: ['send_email'],
     });
 
     expect(instructions).not.toContain('Available skills');
+  });
+
+  it('should pair only the objects whose plural is not the singular plus "s"', () => {
+    const instructions = buildMcpServerInstructions({
+      objects: [
+        COMPANY,
+        { nameSingular: 'equipment', namePlural: 'equipment' },
+        { nameSingular: 'note', namePlural: 'notes' },
+        { nameSingular: 'note_target', namePlural: 'note_targets' },
+        PERSON,
+      ],
+      actionToolNames: [],
+    });
+
+    expect(getLine(instructions, 'Available objects')).toBe(
+      'Available objects (plural is +s unless shown as singular/plural): company/companies, equipment/equipment, note, note_target, person/people.',
+    );
+  });
+
+  it('should advertise query search on get_tool_catalog', () => {
+    const instructions = buildMcpServerInstructions({
+      objects: [COMPANY],
+      actionToolNames: [],
+    });
+
+    const catalogLine = getLine(instructions, 'get_tool_catalog(');
+
+    expect(catalogLine).toContain('get_tool_catalog(query, categories)');
+    expect(catalogLine).toContain('Pass a short query or ONE category');
+    expect(catalogLine.indexOf('—')).toBe(
+      getLine(instructions, 'execute_tool(').indexOf('—'),
+    );
+    expect(getLine(instructions, "Don't know which tool exists")).toContain(
+      'or a short query',
+    );
+  });
+
+  it('should point logic function discovery to the catalog', () => {
+    const instructions = buildMcpServerInstructions({
+      objects: [COMPANY],
+      actionToolNames: [],
+    });
+
+    expect(getLine(instructions, 'LOGIC_FUNCTION:')).toContain(
+      "get_tool_catalog with categories: ['LOGIC_FUNCTION']",
+    );
+    expect(instructions).not.toContain('list_logic_function_tools');
   });
 });

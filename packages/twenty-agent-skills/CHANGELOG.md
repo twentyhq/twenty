@@ -14,6 +14,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 - Build one distribution in ignored `dist/` for both the `skills` CLI and Codex. Individual skills contain their required references; only the publishing branch contains generated copies.
 - Publish the built distribution at the root of the `agent-skills` branch from `main`. Installation instructions use that branch and explain local installation before the first publish.
 - Unified source validation, distribution validation, installation checks, and CI under `twenty-agent-skills`.
+- `use-twenty-mcp` setup: describe both MCP paths, `learn_tools` for known or grammar-built tool names and `get_tool_catalog` with a query when unsure.
 
 ## [0.1.0] - Unreleased
 
