@@ -1,4 +1,5 @@
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { recordIndexCommandMenuDropdownTargetCellComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownTargetCellComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordCalendarCardCellEditModePortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellEditModePortal';
@@ -105,6 +106,11 @@ export const RecordCalendarCard = ({
     commandMenuDropdownId,
   );
 
+  const setRecordIndexCommandMenuDropdownTargetCell = useSetAtomComponentState(
+    recordIndexCommandMenuDropdownTargetCellComponentState,
+    commandMenuDropdownId,
+  );
+
   const { openDropdown } = useOpenDropdown();
 
   const handleCardClick = () => {
@@ -122,6 +128,7 @@ export const RecordCalendarCard = ({
       x: event.clientX,
       y: event.clientY,
     });
+    setRecordIndexCommandMenuDropdownTargetCell(null);
     openDropdown({
       dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       globalHotkeysConfig: {

@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { recordIndexCommandMenuDropdownTargetCellComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownTargetCellComponentState';
+import { type RecordIndexCommandMenuDropdownTargetCell } from '@/command-menu-item/types/RecordIndexCommandMenuDropdownTargetCell';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -36,19 +38,35 @@ export const useTriggerCommandMenuDropdown = ({
       commandMenuDropdownId,
     );
 
+  const recordIndexCommandMenuDropdownTargetCellCallbackState =
+    useAtomComponentStateCallbackState(
+      recordIndexCommandMenuDropdownTargetCellComponentState,
+      commandMenuDropdownId,
+    );
+
   const { openDropdown } = useOpenDropdown();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const workspaceSurface = useWorkspaceSurface();
   const store = useStore();
 
   const triggerCommandMenuDropdown = useCallback(
-    (event: React.MouseEvent, recordId: string) => {
+    (
+      event: React.MouseEvent,
+      targetCell: RecordIndexCommandMenuDropdownTargetCell,
+    ) => {
       event.preventDefault();
+
+      const { recordId } = targetCell;
 
       store.set(recordIndexCommandMenuDropdownPositionCallbackState, {
         x: event.pageX,
         y: event.pageY,
       });
+
+      store.set(
+        recordIndexCommandMenuDropdownTargetCellCallbackState,
+        targetCell,
+      );
 
       const isRowSelected = store.get(isRowSelectedFamilyState(recordId));
 
@@ -66,6 +84,7 @@ export const useTriggerCommandMenuDropdown = ({
     },
     [
       recordIndexCommandMenuDropdownPositionCallbackState,
+      recordIndexCommandMenuDropdownTargetCellCallbackState,
       isRowSelectedFamilyState,
       closeSidePanelMenu,
       openDropdown,
