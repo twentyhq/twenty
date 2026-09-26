@@ -35,6 +35,7 @@ test('Create workflow', async ({ page }) => {
   ]);
 
   const body = await createWorkflowResponse.json();
+  expect(body.errors).toBeUndefined();
   const newWorkflowId = body.data.createWorkflow.id;
 
   try {
