@@ -143,6 +143,7 @@ const StyledUpgradeCardContainer = styled.div`
 `;
 
 const StyledDetailPanelWrapper = styled.div<{ detailPanelWidth: number }>`
+  overflow: hidden;
   position: relative;
   width: var(
     ${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE},

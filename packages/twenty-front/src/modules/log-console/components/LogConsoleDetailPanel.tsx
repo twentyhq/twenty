@@ -48,7 +48,7 @@ const StyledPanel = styled.aside`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
+  height: 100%;
   width: 100%;
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
@@ -72,8 +72,10 @@ const StyledTopBar = styled.div`
 
 const StyledContent = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
+  min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
 `;
