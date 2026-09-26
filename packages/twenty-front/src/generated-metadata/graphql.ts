@@ -2055,6 +2055,7 @@ export type EventLogFiltersInput = {
   fieldFilters?: InputMaybe<Array<EventLogFieldFilterInput>>;
   objectMetadataId?: InputMaybe<Scalars['String']['input']>;
   recordId?: InputMaybe<Scalars['String']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
   userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -6339,6 +6340,7 @@ export type Subscription = {
 
 export type SubscriptionEventLogsLiveArgs = {
   fieldFilters?: InputMaybe<Array<EventLogFieldFilterInput>>;
+  search?: InputMaybe<Scalars['String']['input']>;
   table: EventLogTable;
 };
 

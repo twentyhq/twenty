@@ -19,6 +19,7 @@ export const eventLogsGraphqlApiExceptionHandler = (
     case EventLogsExceptionCode.NO_ENTITLEMENT:
       throw new ForbiddenError(exception);
     case EventLogsExceptionCode.INVALID_FIELD_FILTER:
+    case EventLogsExceptionCode.INVALID_SEARCH:
       throw new UserInputError(exception);
     default: {
       assertUnreachable(exception.code);

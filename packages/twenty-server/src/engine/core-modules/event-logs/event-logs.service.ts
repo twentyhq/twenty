@@ -3,8 +3,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { EventLogTable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
@@ -26,6 +27,7 @@ import {
   getClickHouseTableName,
 } from './registry/event-log-registry';
 import { buildEventLogFieldFilterCondition } from './utils/build-event-log-field-filter-condition.util';
+import { buildEventLogSearchCondition } from './utils/build-event-log-search-condition.util';
 import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
 
 const ALLOWED_TABLES = Object.values(EventLogTable);
@@ -261,6 +263,18 @@ export class EventLogsService {
       );
       params[parameterName] = fieldFilter.values;
     });
+
+    filters.search
+      ?.split(/\s+/)
+      .filter(isNonEmptyString)
+      .forEach((searchWord, index) => {
+        const parameterName = `searchPattern${index}`;
+
+        whereClauses.push(
+          buildEventLogSearchCondition({ parameterName, table }),
+        );
+        params[parameterName] = `%${escapeForIlike(searchWord)}%`;
+      });
   }
 
   private encodeCursor(timestamp: Date): string {
