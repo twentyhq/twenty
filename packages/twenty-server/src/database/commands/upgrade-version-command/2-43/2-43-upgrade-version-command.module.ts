@@ -16,6 +16,7 @@ import { ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upg
 import { BackfillOAuthOnlyApplicationSourceTypeCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790352791059-backfill-oauth-only-application-source-type.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { AddWorkflowVisibilityCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790358777596-add-workflow-visibility-command-menu-items.command';
+import { DeleteFieldLessIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790417346000-delete-field-less-index-metadata.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -56,6 +57,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillOAuthOnlyApplicationSourceTypeCommand,
     provideWorkspaceScopedRepository(ApplicationEntity),
     AddWorkflowVisibilityCommandMenuItemsCommand,
+    DeleteFieldLessIndexMetadataCommand,
     provideWorkspaceScopedRepository(FieldMetadataEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],
