@@ -74,7 +74,8 @@ const StyledToolbar = styled.div`
 `;
 
 const StyledSearch = styled.div`
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
 `;
 
 const StyledActions = styled.div`
@@ -85,9 +86,9 @@ const StyledActions = styled.div`
 const StyledFilterChips = styled.div`
   align-items: center;
   display: flex;
-  flex: 1;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
+  max-width: 40%;
   overflow: hidden;
 `;
 
