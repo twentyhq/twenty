@@ -1,14 +1,10 @@
 import { extname } from 'path';
-import { match } from 'path-to-regexp';
 
 import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
-import { ApiPath, AppPath } from 'twenty-shared/types';
+import { ApiPath } from 'twenty-shared/types';
 
-const AUTHENTICATION_ROUTE_MATCHER = match(
-  [AppPath.Invite, AppPath.ResetPassword],
-  { decode: false },
-);
+const NAVIGATION_DESTINATIONS = ['document', 'iframe', 'frame'];
 
 export const isFrontendDocumentRequest = (request: Request): boolean => {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
@@ -20,15 +16,17 @@ export const isFrontendDocumentRequest = (request: Request): boolean => {
     (prefix) => pathname === `/${prefix}` || pathname.startsWith(`/${prefix}/`),
   );
 
+  if (isApiPath || !request.accepts().includes('text/html')) {
+    return false;
+  }
+
   const destination = request.get('Sec-Fetch-Dest');
 
-  return (
-    !isApiPath &&
-    (pathname === '/index.html' ||
-      extname(pathname) === '' ||
-      AUTHENTICATION_ROUTE_MATCHER(pathname) !== false) &&
-    request.accepts().includes('text/html') &&
-    (!isDefined(destination) ||
-      ['document', 'iframe', 'frame'].includes(destination))
-  );
+  if (isDefined(destination)) {
+    return NAVIGATION_DESTINATIONS.includes(destination);
+  }
+
+  // Without fetch metadata (non-browser clients, non-secure origins) we cannot
+  // tell a navigation from a missing file, so dotted paths are treated as files
+  return pathname === '/index.html' || extname(pathname) === '';
 };
