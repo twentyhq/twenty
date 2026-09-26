@@ -26,7 +26,15 @@
           "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration-secure.config.ts --logHeapUsage"
         ]
       },
-      "parallel": false
+      "parallel": false,
+      "configurations": {
+        "with-db-reset": {
+          "cwd": "packages/twenty-server",
+          "commands": [
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration-secure.config.ts --logHeapUsage"
+          ]
+        }
+      }
     },
     "test:integration": {
       "executor": "nx:run-commands",
