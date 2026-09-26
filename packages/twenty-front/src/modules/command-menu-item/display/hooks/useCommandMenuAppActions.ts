@@ -1,4 +1,6 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
+import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
@@ -6,10 +8,11 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconCopy } from 'twenty-ui/icon';
+import { IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -26,6 +29,8 @@ export const useCommandMenuAppActions = () => {
   );
   const { copyToClipboard } = useCopyToClipboard();
   const { colorScheme, setColorScheme, colorSchemeList } = useColorScheme();
+  const isLogConsoleAllowed = useIsLogConsoleAllowed();
+  const setLogConsoleDisplayMode = useSetAtomState(logConsoleDisplayModeState);
 
   const themeLabels: Record<ColorScheme, string> = {
     Light: t`Change theme to light`,
@@ -55,6 +60,13 @@ export const useCommandMenuAppActions = () => {
       onClick: () => setColorScheme(theme.id),
       isAvailable: theme.id !== colorScheme,
     })),
+    {
+      id: 'open-log-console',
+      label: t`Open logs console`,
+      Icon: IconTerminal,
+      onClick: () => setLogConsoleDisplayMode('open'),
+      isAvailable: isLogConsoleAllowed,
+    },
   ];
 
   const normalizedSearch = normalizeSearchText(sidePanelSearch.trim());

@@ -11,6 +11,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
@@ -18,7 +19,7 @@ import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
-import { useLogConsoleHotKeys } from '@/log-console/hooks/useLogConsoleHotKeys';
+import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
@@ -27,7 +28,6 @@ import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightStat
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
@@ -35,19 +35,12 @@ import { RESIZE_EDGE_WIDTH_PX } from '@/ui/layout/resizable-panel/constants/Resi
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
-import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  BillingEntitlementKey,
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 const LOG_CONSOLE_BAR_HEIGHT = 48;
 
@@ -109,16 +102,9 @@ export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { enqueueToast } = useToast();
-  const isMobile = useIsMobile();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const isLogsSettingsSectionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
-  );
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
-  const hasSecurityPermission = useHasPermissionFlag(
-    PermissionFlagType.SECURITY,
-  );
+  const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
@@ -144,13 +130,6 @@ export const LogConsole = () => {
     getWindowHeight,
   );
 
-  const isLogConsoleAllowed =
-    isLogsSettingsSectionEnabled &&
-    isAdvancedModeEnabled &&
-    hasSecurityPermission;
-
-  useLogConsoleHotKeys({ isLogConsoleAllowed });
-
   const logConsoleResizeConstraints = {
     ...LOG_CONSOLE_HEIGHT_CONSTRAINTS,
     min: 0,
@@ -164,7 +143,7 @@ export const LogConsole = () => {
     logConsoleResizeConstraints.max,
   );
 
-  if (!isLogConsoleAllowed || isMobile || logConsoleDisplayMode === 'closed') {
+  if (!isLogConsoleAllowed || logConsoleDisplayMode === 'closed') {
     return null;
   }
 
@@ -265,7 +244,7 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(false);
     enqueueToast({
       variant: 'info',
-      children: t`Logs console hidden. Press Ctrl + \` to show it again.`,
+      children: t`Logs console hidden. Open it again from the command menu (${getOsControlSymbol()}K).`,
     });
   };
 
