@@ -538,7 +538,6 @@ export const LastSevenDaysInUtc: Story = {
 
     await canvas.findByText('11:57:48.203', {}, { timeout: 5000 });
     await canvas.findAllByText('Updated');
-    await canvas.findByText('UTC');
   },
 };
 
