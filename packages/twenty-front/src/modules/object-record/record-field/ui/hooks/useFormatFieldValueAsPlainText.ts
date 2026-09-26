@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { AuthContext } from '@/auth/contexts/AuthContext';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -10,6 +11,7 @@ import {
   formatFieldValueAsPlainText,
   type FieldValuePlainTextFormatters,
 } from '@/object-record/record-field/ui/utils/formatFieldValueAsPlainText';
+import { resolveActorFieldDisplay } from '@/object-record/record-field/ui/utils/resolveActorFieldDisplay';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -23,6 +25,8 @@ export const useFormatFieldValueAsPlainText = () => {
   const dateLocale = useAtomStateValue(dateLocaleState);
   const { formatNumber } = useNumberFormat();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { currentWorkspaceMembers, currentWorkspaceDeletedMembers } =
+    useContext(AuthContext);
 
   const formatters: FieldValuePlainTextFormatters = {
     formatNumber,
@@ -56,6 +60,14 @@ export const useFormatFieldValueAsPlainText = () => {
           : undefined,
       ).trim();
     },
+    getActorName: (fieldValue) =>
+      resolveActorFieldDisplay({
+        fieldValue,
+        workspaceMembers: [
+          ...(currentWorkspaceDeletedMembers ?? []),
+          ...(currentWorkspaceMembers ?? []),
+        ],
+      }).name,
   };
 
   const formatFieldValue = (

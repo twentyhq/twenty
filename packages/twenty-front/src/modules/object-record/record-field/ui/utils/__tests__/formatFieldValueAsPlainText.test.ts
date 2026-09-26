@@ -31,6 +31,7 @@ const formatters: FieldValuePlainTextFormatters = {
   formatDateTime: (value) => `datetime:${value}`,
   getRecordLabel: (record, objectNameSingular) =>
     `${objectNameSingular}:${record.name}`,
+  getActorName: (fieldValue) => `actor:${fieldValue.name}`,
 };
 
 const format = (
@@ -140,7 +141,7 @@ describe('formatFieldValueAsPlainText', () => {
         name: 'Tim Apple',
         context: null,
       }),
-    ).toBe('Tim Apple');
+    ).toBe('actor:Tim Apple');
     expect(
       format(relationFieldDefinition, { id: 'company-id', name: 'Airbnb' }),
     ).toBe('company:Airbnb');

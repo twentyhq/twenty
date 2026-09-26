@@ -5,6 +5,7 @@ import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-t
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
+  type FieldActorValue,
   type FieldDateMetadataSettings,
   type FieldMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -60,6 +61,7 @@ export type FieldValuePlainTextFormatters = {
     dateFieldSettings?: FieldDateMetadataSettings,
   ) => string;
   getRecordLabel: (record: ObjectRecord, objectNameSingular: string) => string;
+  getActorName: (fieldValue: FieldActorValue) => string;
 };
 
 const joinNonEmpty = (
@@ -184,7 +186,7 @@ export const formatFieldValueAsPlainText = ({
   }
 
   if (isFieldActor(fieldDefinition) && isFieldActorValue(fieldValue)) {
-    return fieldValue.name;
+    return formatters.getActorName(fieldValue);
   }
 
   if (isFieldRawJson(fieldDefinition)) {

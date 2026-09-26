@@ -7,6 +7,7 @@ import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecor
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceMember } from '~/generated-metadata/graphql';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { resolveActorFieldDisplay } from '@/object-record/record-field/ui/utils/resolveActorFieldDisplay';
 
 export type ActorFieldDisplayValue = {
   fieldValue: FieldActorValue;
@@ -30,24 +31,14 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
     return undefined;
   }
 
-  const relatedWorkspaceMember = [
-    ...(currentWorkspaceDeletedMembers ?? []),
-    ...(currentWorkspaceMembers ?? []),
-  ].find(
-    (workspaceMember) => workspaceMember.id === fieldValue.workspaceMemberId,
-  );
-
-  if (!isDefined(relatedWorkspaceMember)) {
-    return {
-      fieldValue,
-      name: fieldValue.name,
-    };
-  }
-
-  const { name, avatarUrl } = relatedWorkspaceMember;
   return {
     fieldValue,
-    name: `${name.firstName} ${name.lastName}`,
-    avatarUrl: avatarUrl,
+    ...resolveActorFieldDisplay({
+      fieldValue,
+      workspaceMembers: [
+        ...(currentWorkspaceDeletedMembers ?? []),
+        ...(currentWorkspaceMembers ?? []),
+      ],
+    }),
   };
 };
