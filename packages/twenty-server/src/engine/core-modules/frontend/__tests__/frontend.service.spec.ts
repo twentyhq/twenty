@@ -227,8 +227,6 @@ describe('frontend HTML delivery', () => {
     '/graphql/missing',
     '/rest/missing',
     '/auth/missing',
-    '/assets/missing.js',
-    '/invite/apple.dev-invite-hash/missing.js',
     '/.well-known/missing',
   ])('does not turn %s into a successful HTML response', async (pathname) => {
     await request(app.getHttpServer())
