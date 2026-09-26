@@ -48,6 +48,7 @@ type LogConsoleTableProps = {
   entries: EventLogRecord[];
   liveEntryCount: number;
   entriesSinceClear?: EventLogRecord[];
+  searchQuery?: string;
   loading: boolean;
   hasNextPage: boolean;
   selectedEntry?: EventLogRecord;
@@ -55,11 +56,23 @@ type LogConsoleTableProps = {
   onEntryClick: (entry: EventLogRecord) => void;
 };
 
+const filterBySearchQuery = (
+  entriesToFilter: EventLogRecord[],
+  query: string,
+) => {
+  const lowerQuery = query.toLowerCase();
+
+  return entriesToFilter.filter((entry) =>
+    entry.event.toLowerCase().includes(lowerQuery),
+  );
+};
+
 export const LogConsoleTable = ({
   source,
   entries,
   liveEntryCount,
   entriesSinceClear,
+  searchQuery,
   loading,
   hasNextPage,
   selectedEntry,
@@ -92,6 +105,14 @@ export const LogConsoleTable = ({
   const gridTemplateColumns = columns
     .map((column) => column.gridTrack)
     .join(' ');
+
+  const filteredEntries =
+    searchQuery ? filterBySearchQuery(entries, searchQuery) : entries;
+
+  const filteredEntriesSinceClear =
+    isDefined(entriesSinceClear) && searchQuery
+      ? filterBySearchQuery(entriesSinceClear, searchQuery)
+      : entriesSinceClear;
 
   const isInitialLoading = loading && entries.length === 0;
 
@@ -142,14 +163,17 @@ export const LogConsoleTable = ({
             </TableHeader>
           ))}
         </StyledHeaderRow>
-        {isDefined(entriesSinceClear) && (
+        {isDefined(filteredEntriesSinceClear) && (
           <StyledEntriesSinceClear>
-            {entriesSinceClear.map((entry, entryIndex) =>
-              renderEntryRow(entry, entriesSinceClear.length - entryIndex),
+            {filteredEntriesSinceClear.map((entry, entryIndex) =>
+              renderEntryRow(
+                entry,
+                filteredEntriesSinceClear.length - entryIndex,
+              ),
             )}
           </StyledEntriesSinceClear>
         )}
-        {entries.map((entry, entryIndex) =>
+        {filteredEntries.map((entry, entryIndex) =>
           renderEntryRow(entry, liveEntryCount - entryIndex),
         )}
         {hasNextPage && (

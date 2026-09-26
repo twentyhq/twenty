@@ -230,6 +230,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         entries={[...liveEntries, ...records]}
         liveEntryCount={liveEntries.length}
         entriesSinceClear={entriesSinceClear}
+        searchQuery={logConsoleSearch}
         loading={loading}
         hasNextPage={hasNextPage}
         selectedEntry={logConsoleSelectedLog?.entry}
@@ -246,13 +247,15 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         filters={logConsoleFilters}
         onFiltersChange={changeFilters}
         search={
-          isDefined(source.searchPlaceholder) && (
-            <SearchInput
-              placeholder={t(source.searchPlaceholder)}
-              value={searchInput}
-              onChange={changeSearchInput}
-            />
-          )
+          <SearchInput
+            placeholder={
+              isDefined(source.searchPlaceholder)
+                ? t(source.searchPlaceholder)
+                : t`Search...`
+            }
+            value={searchInput}
+            onChange={changeSearchInput}
+          />
         }
         logsAction={logsAction}
       >
