@@ -1,9 +1,19 @@
-export const backendGraphQLUrl = new URL(
-  '/graphql',
-  process.env.BACKEND_BASE_URL,
-).toString();
+import { type Page } from '@playwright/test';
 
-// Mirrors the baseURL default in playwright.config.ts.
-export const frontendOrigin = new URL(
-  process.env.FRONTEND_BASE_URL || 'http://localhost:3001',
-).origin;
+export const getBackendRequestConfig = (page: Page) =>
+  page.evaluate(() => {
+    const runtimeConfig = (
+      window as Window & {
+        _env_?: { REACT_APP_SERVER_BASE_URL?: string };
+      }
+    )._env_;
+
+    // Match the frontend's endpoint so workspace queries use its scoped host.
+    return {
+      backendGraphQLUrl: new URL(
+        '/graphql',
+        runtimeConfig?.REACT_APP_SERVER_BASE_URL || window.location.origin,
+      ).toString(),
+      frontendOrigin: window.location.origin,
+    };
+  });
