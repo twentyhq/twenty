@@ -30,8 +30,8 @@ export class PublicDomainService {
     private readonly publicDomainRepositoryUnscoped: Repository<PublicDomainEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
   async deletePublicDomain({
@@ -69,9 +69,8 @@ export class PublicDomainService {
         this.publicDomainRepository.findOne(workspace.id, {
           where: { domain: formattedDomain },
         }),
-        this.applicationRepository.findOneBy({
+        this.applicationRepository.findOneBy(workspace.id, {
           id: applicationId,
-          workspaceId: workspace.id,
         }),
       ]);
 

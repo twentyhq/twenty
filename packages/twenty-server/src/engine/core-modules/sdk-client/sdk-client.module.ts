@@ -11,9 +11,12 @@ import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/s
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([ApplicationEntity, WorkspaceEntity]),
     WorkspaceCacheModule,
     CoreGraphQLApiModule,
@@ -21,7 +24,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetricsModule,
   ],
   controllers: [SdkClientController],
-  providers: [SdkClientGenerationService, SdkClientArchiveService],
+  providers: [
+    SdkClientGenerationService,
+    SdkClientArchiveService,
+    provideWorkspaceScopedRepository(ApplicationEntity),
+  ],
   exports: [SdkClientGenerationService, SdkClientArchiveService],
 })
 export class SdkClientModule implements OnApplicationBootstrap {

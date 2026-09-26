@@ -9,7 +9,6 @@ type ExcludedRecipientCounts = Pick<
   | 'hardSuppressed'
   | 'globallyUnsubscribed'
   | 'topicUnsubscribed'
-  | 'overCap'
 >;
 
 export const buildExcludedRecipientReasons = ({
@@ -48,9 +47,6 @@ export const buildExcludedRecipientReasons = ({
     reasons.push(
       t`${formatNumber(counts.topicUnsubscribed)} opted out of this topic`,
     );
-  }
-  if (counts.overCap > 0) {
-    reasons.push(t`${formatNumber(counts.overCap)} over the recipient limit`);
   }
 
   return reasons;

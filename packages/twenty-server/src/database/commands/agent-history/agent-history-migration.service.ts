@@ -86,6 +86,10 @@ export class AgentHistoryMigrationService {
               storage: current.storage,
             });
             if (target === 'core') {
+              await this.validationService.assertNoThreadTargets({
+                runner,
+                workspaceId,
+              });
               await this.validationService.assertNoCoreIdCollisions({
                 runner,
                 workspaceId,

@@ -6,6 +6,7 @@ import {
   DEFAULT_TOOL_INPUT_SCHEMA,
 } from 'twenty-shared/logic-function';
 
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -84,7 +85,11 @@ export class LogicFunctionToolProvider implements ToolProvider {
       (fn): fn is FlatLogicFunction =>
         isDefined(fn) &&
         isDefined(fn.toolTriggerSettings) &&
-        fn.deletedAt === null,
+        fn.deletedAt === null &&
+        canCallerReachApplication({
+          callingApplication: context.application,
+          applicationId: fn.applicationId,
+        }),
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];

@@ -1,0 +1,51 @@
+---
+title: ColorSample
+description: Display a theme color or a custom color alongside a text label.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ColorSampleReference from '/snippets/ui/generated/data-display/color-sample.mdx';
+
+`ColorSample` is a non-interactive color swatch. Use it next to a label so the meaning does not depend on color alone. Selection belongs to the surrounding control.
+
+<StoryEmbed
+  storyId="ui-data-display-colorsample--default"
+  title="ColorSample example"
+/>
+
+## Usage
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PriorityColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample colorName="red" variant="circle" />
+    High priority
+  </Text>
+);
+```
+
+`colorName` selects a theme palette entry for the fill and border. `variant` accepts `default`, `circle`, or `pipeline`. Omitting it uses the default shape.
+
+## Custom colors
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BrandColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample colorName="blue" color="#2563eb" />
+    Brand blue
+  </Text>
+);
+```
+
+A custom `color` overrides the fill; `colorName` remains required and still determines the border color. `className` styles the swatch. Other native attributes and click handlers are not forwarded. To offer selectable colors, compose the swatch inside a labeled [ListItem](/ui/primitives/navigation/list-item).
+
+## Props
+
+<ColorSampleReference />

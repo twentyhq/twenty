@@ -648,6 +648,55 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.DUPLICATE_WORKFLOW,
     hotKeys: null,
   },
+  makeWorkflowPrivate: {
+    universalIdentifier: '26f98606-8b6e-42f2-bc97-2cfc4359bada',
+    label: i18nLabel(
+      msg({
+        message: `Make Workflow Private`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconCircleDashed',
+    isPinned: false,
+    position: 33,
+    shortLabel: i18nLabel(
+      msg({ message: `Make Private`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "WORKSPACE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.workflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
+    hotKeys: null,
+  },
+  shareWorkflowWithWorkspace: {
+    universalIdentifier: '37745922-ba18-4bea-a1da-8625ad22d233',
+    label: i18nLabel(
+      msg({
+        message: `Share Workflow with Workspace`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconCircle',
+    isPinned: false,
+    position: 33,
+    shortLabel: i18nLabel(
+      msg({
+        message: `Share with Workspace`,
+        context: 'commandMenuItem.shortLabel',
+      }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "PRIVATE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.workflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
+    hotKeys: null,
+  },
   seeVersionWorkflowRun: {
     universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
     label: i18nLabel(
