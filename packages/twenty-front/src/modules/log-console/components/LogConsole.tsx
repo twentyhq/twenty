@@ -50,7 +50,8 @@ import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
 
-const LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE = '--log-console-detail-panel-width';
+const LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE =
+  '--log-console-detail-panel-width';
 
 const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
@@ -248,8 +249,12 @@ export const LogConsole = () => {
   };
 
   const handleDetailPanelWidthChange = (width: number) => {
-    document.documentElement.style.removeProperty(LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE);
-    setDetailPanelWidth(Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min));
+    document.documentElement.style.removeProperty(
+      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
+    );
+    setDetailPanelWidth(
+      Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min),
+    );
   };
 
   const handleHeightChange = (height: number) => {

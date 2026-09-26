@@ -109,14 +109,8 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const isLive = !isDefined(dateRange.end);
   const isPaused = isDefined(pausedLiveRecords);
 
-  const {
-    records,
-    hasNextPage,
-    loading,
-    error,
-    loadMore,
-    refetch,
-  } = useEventLogs(getEventLogsInput(refreshedAt));
+  const { records, hasNextPage, loading, error, loadMore, refetch } =
+    useEventLogs(getEventLogsInput(refreshedAt));
 
   const { liveRecords, clearLiveRecords } = useEventLogsLiveStream({
     table: source.table,
