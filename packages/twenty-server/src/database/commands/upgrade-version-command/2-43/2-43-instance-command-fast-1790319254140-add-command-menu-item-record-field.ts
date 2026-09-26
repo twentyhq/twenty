@@ -52,6 +52,9 @@ export class AddCommandMenuItemRecordFieldFastInstanceCommand implements FastIns
       'DROP INDEX "core"."IDX_COMMAND_MENU_ITEM_AVAILABILITY_FIELD_METADATA_ID"',
     );
     await queryRunner.query(
+      'UPDATE "core"."commandMenuItem" SET "availabilityType" = \'RECORD_SELECTION\' WHERE "availabilityType" = \'RECORD_FIELD\'',
+    );
+    await queryRunner.query(
       "CREATE TYPE \"core\".\"commandMenuItem_availabilitytype_enum_old\" AS ENUM('FALLBACK', 'GLOBAL', 'GLOBAL_OBJECT_CONTEXT', 'RECORD_SELECTION')",
     );
     await queryRunner.query(
