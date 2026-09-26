@@ -440,6 +440,61 @@ export const Clear: Story = {
   },
 };
 
+const APPLICATION_LOGS_PER_PAGE = 3;
+
+export const LoadNextPage: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-logs',
+    );
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query<EventLogsQuery, EventLogsQueryVariables>(
+          getOperationName(GET_EVENT_LOGS) ?? '',
+          ({ variables }) => {
+            const applicationLogs =
+              mockedEventLogRecordsByTable[EventLogTable.APPLICATION_LOG] ?? [];
+            const pageStart = Number(variables.input.after ?? 0);
+            const pageEnd = pageStart + APPLICATION_LOGS_PER_PAGE;
+            const hasNextPage = pageEnd < applicationLogs.length;
+
+            return HttpResponse.json({
+              data: {
+                eventLogs: {
+                  __typename: 'EventLogQueryResult',
+                  records: applicationLogs.slice(pageStart, pageEnd),
+                  totalCount: applicationLogs.length,
+                  pageInfo: {
+                    __typename: 'EventLogPageInfo',
+                    endCursor: hasNextPage ? String(pageEnd) : null,
+                    hasNextPage,
+                  },
+                },
+              },
+            });
+          },
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Fetched firmographics for halcyon-robotics.com in 819 ms',
+      {},
+      { timeout: 5000 },
+    );
+  },
+};
+
 export const WebhookFailureDetail: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');

@@ -109,9 +109,15 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const isLive = !isDefined(dateRange.end);
   const isPaused = isDefined(pausedLiveRecords);
 
-  const { records, loading, error, loadMore, refetch } = useEventLogs(
-    getEventLogsInput(refreshedAt),
-  );
+  const {
+    records,
+    totalCount,
+    hasNextPage,
+    loading,
+    error,
+    loadMore,
+    refetch,
+  } = useEventLogs(getEventLogsInput(refreshedAt));
 
   const { liveRecords, clearLiveRecords } = useEventLogsLiveStream({
     table: source.table,
@@ -225,6 +231,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         liveEntryCount={liveEntries.length}
         entriesSinceClear={entriesSinceClear}
         loading={loading}
+        hasNextPage={hasNextPage}
         selectedEntry={logConsoleSelectedLog?.entry}
         onLoadMore={loadMore}
         onEntryClick={openLog}
