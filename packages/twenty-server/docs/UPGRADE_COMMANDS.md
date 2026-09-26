@@ -131,7 +131,7 @@ Known gap: the static definition does not yet declare `callRecording`'s `searchV
 
 An upgrade command is frozen once released: self-hosters can jump several versions in one upgrade, so the code that runs for them is whatever the current release ships for that old command. Two rules follow.
 
-- **Command logic lives in its version folder.** Helpers, SQL builders, constants and legacy formats that only a command needs go under `upgrade-version-command/<version>/` (or its `utils/`), never in `src/engine` or `src/modules`. Generic primitives (flat-entity utils, schema managers, repositories) are fine to call. Lint rejects runtime imports from `upgrade-version-command/`, except the `*-upgrade-command-name.constant` files that upgrade-aware entities use.
+- **Command logic lives in its version folder.** Helpers, SQL builders, constants and legacy formats that only a command needs go under `upgrade-version-command/<version>/` (or its `utils/`), never in `src/engine` or `src/modules`. Generic primitives (flat-entity utils, schema managers, repositories) are fine to call. The `twenty/no-runtime-import-from-upgrade-command` lint rule rejects runtime imports from `upgrade-version-command/`, except the `*-upgrade-command-name.constant` files that upgrade-aware entities use.
 - **Runtime code never branches on migration state.** Do not teach the runtime to serve both the old and the new shape. When a runtime must not run against a workspace mid-migration, fence it with one explicit check and remove that check once the command leaves the cross-upgrade window.
 
 A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
