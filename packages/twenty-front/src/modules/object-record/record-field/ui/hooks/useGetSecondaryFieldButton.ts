@@ -62,7 +62,7 @@ export const useGetSecondaryFieldButton = () => {
       fieldValue as FieldPhonesValue;
     const phoneNumber = `${primaryPhoneCallingCode}${primaryPhoneNumber}`;
     openLinkOnClick = () => {
-      window.open(`tel:${phoneNumber}`, '_blank');
+      window.open(`tel:${phoneNumber}`, '_blank', 'noopener,noreferrer');
     };
     copyOnClick = () => {
       copyToClipboard(phoneNumber, t`Phone number copied to clipboard`);
@@ -72,7 +72,7 @@ export const useGetSecondaryFieldButton = () => {
   if (isFieldEmails(fieldDefinition)) {
     const email = (fieldValue as FieldEmailsValue).primaryEmail ?? '';
     openLinkOnClick = () => {
-      window.open(`mailto:${email}`, '_blank');
+      window.open(`mailto:${email}`, '_blank', 'noopener,noreferrer');
     };
     copyOnClick = () => {
       copyToClipboard(email, t`Email copied to clipboard`);
@@ -85,7 +85,7 @@ export const useGetSecondaryFieldButton = () => {
   if (isFieldLinks(fieldDefinition)) {
     const url = (fieldValue as FieldLinksValue).primaryLinkUrl ?? '';
     openLinkOnClick = () => {
-      window.open(ensureAbsoluteUrl(url), '_blank');
+      window.open(ensureAbsoluteUrl(url), '_blank', 'noopener,noreferrer');
     };
     copyOnClick = () => {
       copyToClipboard(url, t`Link copied to clipboard`);
