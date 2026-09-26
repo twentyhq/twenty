@@ -49,6 +49,7 @@ type LogConsoleTableProps = {
   liveEntryCount: number;
   entriesSinceClear?: EventLogRecord[];
   loading: boolean;
+  hasNextPage: boolean;
   selectedEntry?: EventLogRecord;
   onLoadMore: () => void;
   onEntryClick: (entry: EventLogRecord) => void;
@@ -60,6 +61,7 @@ export const LogConsoleTable = ({
   liveEntryCount,
   entriesSinceClear,
   loading,
+  hasNextPage,
   selectedEntry,
   onLoadMore,
   onEntryClick,
@@ -92,6 +94,10 @@ export const LogConsoleTable = ({
     .join(' ');
 
   const isInitialLoading = loading && entries.length === 0;
+
+  const isLoadingNextPage = loading && hasNextPage;
+
+  const storedEntryCount = entries.length - liveEntryCount;
 
   const renderEntryRow = (entry: EventLogRecord, key: number) => (
     <TableRow
@@ -143,34 +149,36 @@ export const LogConsoleTable = ({
             )}
           </StyledEntriesSinceClear>
         )}
-        <TableBody>
-          {isInitialLoading ? (
-            <SkeletonTheme
-              baseColor={theme.background.tertiary}
-              highlightColor={theme.background.transparent.lighter}
-              borderRadius={4}
-            >
-              {Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
-                <TableRow
-                  key={rowIndex}
-                  gridTemplateColumns={gridTemplateColumns}
-                >
-                  {columns.map((column) => (
-                    <TableCell key={column.id}>
-                      <Skeleton width={80} height={16} />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </SkeletonTheme>
-          ) : (
-            entries.map((entry, entryIndex) =>
-              renderEntryRow(entry, liveEntryCount - entryIndex),
-            )
-          )}
-        </TableBody>
+        {entries.map((entry, entryIndex) =>
+          renderEntryRow(entry, liveEntryCount - entryIndex),
+        )}
+        {hasNextPage && (
+          <StyledLoadMoreTrigger
+            key={storedEntryCount}
+            ref={loadMoreTriggerRef}
+          />
+        )}
+        {(isInitialLoading || isLoadingNextPage) && (
+          <SkeletonTheme
+            baseColor={theme.background.tertiary}
+            highlightColor={theme.background.transparent.lighter}
+            borderRadius={4}
+          >
+            {Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
+              <TableRow
+                key={rowIndex}
+                gridTemplateColumns={gridTemplateColumns}
+              >
+                {columns.map((column) => (
+                  <TableCell key={column.id}>
+                    <Skeleton width={80} height={16} />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </SkeletonTheme>
+        )}
       </Table>
-      <StyledLoadMoreTrigger ref={loadMoreTriggerRef} />
     </StyledScrollWrapper>
   );
 };
