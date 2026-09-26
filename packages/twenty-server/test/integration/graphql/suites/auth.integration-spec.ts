@@ -19,6 +19,25 @@ const auth = {
 describe('AuthResolve (integration)', () => {
   let loginToken: string;
 
+  const exchangeLoginToken = () =>
+    client
+      .post('/metadata')
+      .set('Host', ORIGIN.host)
+      .set('Origin', ORIGIN.origin)
+      .send({
+        query: `
+          mutation GetAuthTokensFromLoginToken {
+            getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
+              tokens {
+                accessOrWorkspaceAgnosticToken {
+                  token
+                }
+              }
+            }
+          }
+        `,
+      });
+
   it('should getLoginTokenFromCredentials with email and password', () => {
     const queryData = {
       query: `
@@ -54,25 +73,7 @@ describe('AuthResolve (integration)', () => {
   });
 
   it('should getAuthTokensFromLoginToken with login token', () => {
-    const queryData = {
-      query: `
-        mutation GetAuthTokensFromLoginToken {
-          getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
-            tokens {
-              accessOrWorkspaceAgnosticToken {
-                token
-              }
-            }
-          }
-        }
-      `,
-    };
-
-    return client
-      .post('/metadata')
-      .set('Host', ORIGIN.host)
-      .set('Origin', ORIGIN.origin)
-      .send(queryData)
+    return exchangeLoginToken()
       .expect(200)
       .expect((res) => {
         expect(res.body.data).toBeDefined();
@@ -88,6 +89,15 @@ describe('AuthResolve (integration)', () => {
 
         expect(accessToken).toBeDefined();
         expect(accessToken.token).toBeDefined();
+      });
+  });
+
+  it('should reject a login token that was already exchanged', () => {
+    return exchangeLoginToken()
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.data).toBeNull();
+        expect(res.body.errors?.[0]?.extensions?.code).toBe('UNAUTHENTICATED');
       });
   });
 });
