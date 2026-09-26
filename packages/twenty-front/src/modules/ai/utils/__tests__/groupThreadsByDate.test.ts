@@ -1,5 +1,6 @@
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 
 describe('groupThreadsByDate', () => {
   const today = new Date('2026-04-26T12:00:00');
@@ -54,7 +55,7 @@ describe('groupThreadsByDate', () => {
       buildThread('6', fourteenDaysAgo),
     ];
 
-    const result = groupThreadsByDate(threads, today);
+    const result = groupThreadsByDate(threads, CalendarSystem.GREGORIAN, today);
 
     expect(result).toHaveLength(4);
     expect(result[0]).toMatchObject({
@@ -80,7 +81,7 @@ describe('groupThreadsByDate', () => {
   });
 
   it('returns no groups if no threads', () => {
-    expect(groupThreadsByDate([], today)).toEqual([]);
+    expect(groupThreadsByDate([], CalendarSystem.GREGORIAN, today)).toEqual([]);
   });
 
   it('falls back to updatedAt when lastMessageAt is null', () => {
@@ -91,7 +92,11 @@ describe('groupThreadsByDate', () => {
       updatedAt: yesterday.toISOString(),
     };
 
-    const [group] = groupThreadsByDate([thread], today);
+    const [group] = groupThreadsByDate(
+      [thread],
+      CalendarSystem.GREGORIAN,
+      today,
+    );
 
     expect(group.id).toBe('yesterday');
   });
@@ -103,6 +108,7 @@ describe('groupThreadsByDate', () => {
 
       const result = groupThreadsByDate(
         [buildThread('late', todayLate), buildThread('early', todayEarly)],
+        CalendarSystem.GREGORIAN,
         today,
       );
 
@@ -118,6 +124,7 @@ describe('groupThreadsByDate', () => {
 
       const [group] = groupThreadsByDate(
         [buildThread('y', yesterdayJustBeforeMidnight)],
+        CalendarSystem.GREGORIAN,
         today,
       );
 
@@ -129,10 +136,28 @@ describe('groupThreadsByDate', () => {
 
       const [group] = groupThreadsByDate(
         [buildThread('y', yesterdayMorning)],
+        CalendarSystem.GREGORIAN,
         today,
       );
 
       expect(group.id).toBe('yesterday');
     });
+  });
+
+  it('groups older threads by month of the user calendar system', () => {
+    const result = groupThreadsByDate(
+      [
+        buildThread('shahrivar', new Date('2026-09-21T12:00:00')),
+        buildThread('mehr', new Date('2026-09-23T12:00:00')),
+      ],
+      CalendarSystem.PERSIAN,
+      new Date('2026-10-26T12:00:00'),
+    );
+
+    expect(result.map(({ id }) => id)).toEqual([
+      'month:1405-6',
+      'month:1405-7',
+    ]);
+    expect(result[1].title).toContain('1405');
   });
 });

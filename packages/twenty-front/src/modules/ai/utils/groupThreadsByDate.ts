@@ -1,5 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { differenceInCalendarDays } from 'date-fns';
+import { turnJSDateToPlainDate } from 'twenty-shared/utils';
+
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -12,18 +15,24 @@ export type AgentChatThreadDateGroup = {
 const getLocalDayDifference = (date: Date, today: Date) =>
   differenceInCalendarDays(today, date);
 
-const getMonthGroupId = (date: Date) =>
-  `month:${date.getFullYear()}-${date.getMonth() + 1}`;
+const getMonthGroupId = (date: Date, calendarSystem: CalendarSystem) => {
+  const { year, month } =
+    turnJSDateToPlainDate(date).withCalendar(calendarSystem);
 
-const formatMonthGroupTitle = (date: Date) =>
+  return `month:${year}-${month}`;
+};
+
+const formatMonthGroupTitle = (date: Date, calendarSystem: CalendarSystem) =>
   new Intl.DateTimeFormat(undefined, {
     month: 'long',
     year: 'numeric',
+    calendar: calendarSystem,
   }).format(date);
 
 const getThreadDateGroup = (
   threadActivityAt: Date,
   today: Date,
+  calendarSystem: CalendarSystem,
 ): Omit<AgentChatThreadDateGroup, 'threads'> => {
   const localDayDifference = getLocalDayDifference(threadActivityAt, today);
 
@@ -49,13 +58,14 @@ const getThreadDateGroup = (
   }
 
   return {
-    id: getMonthGroupId(threadActivityAt),
-    title: formatMonthGroupTitle(threadActivityAt),
+    id: getMonthGroupId(threadActivityAt, calendarSystem),
+    title: formatMonthGroupTitle(threadActivityAt, calendarSystem),
   };
 };
 
 export const groupThreadsByDate = (
   threads: AgentChatThread[],
+  calendarSystem: CalendarSystem,
   today = new Date(),
 ): AgentChatThreadDateGroup[] => {
   const groupedThreadsByDate = new Map<string, AgentChatThreadDateGroup>();
@@ -64,6 +74,7 @@ export const groupThreadsByDate = (
     const threadDateGroup = getThreadDateGroup(
       new Date(thread.lastMessageAt ?? thread.updatedAt),
       today,
+      calendarSystem,
     );
     const existingThreadDateGroup = groupedThreadsByDate.get(
       threadDateGroup.id,

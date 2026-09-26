@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId, useRef, useState } from 'react';
@@ -83,6 +84,7 @@ export const SettingsDatePickerInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { userTimezone } = useUserTimezone();
+  const { calendarSystem } = useDateTimeFormat();
   const generatedId = useId();
 
   const pickerInstanceId = instanceId ?? label ?? generatedId;
@@ -138,6 +140,7 @@ export const SettingsDatePickerInput = ({
       hour: '2-digit',
       minute: '2-digit',
       timeZone: userTimezone,
+      calendar: calendarSystem,
     });
   };
 
