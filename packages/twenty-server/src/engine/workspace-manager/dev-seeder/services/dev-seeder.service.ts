@@ -248,11 +248,10 @@ export class DevSeederService {
   }) {
     await this.agentHistoryStorageService.run(
       workspaceId,
-      async ({ manager, storage, table }) => {
+      async ({ manager, table }) => {
         await seedAgents({
           queryRunner: manager.queryRunner!,
-          schemaName:
-            storage === 'core' ? 'core' : getWorkspaceSchemaName(workspaceId),
+          schemaName: getWorkspaceSchemaName(workspaceId),
           workspaceId,
           chatReferenceIds,
         });
@@ -260,7 +259,6 @@ export class DevSeederService {
           manager,
           workspaceId,
           threadTableExpression: table('agentChatThread'),
-          isCoreStorage: storage === 'core',
         });
       },
     );

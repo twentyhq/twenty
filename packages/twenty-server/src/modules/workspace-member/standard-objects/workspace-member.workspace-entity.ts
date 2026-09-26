@@ -4,6 +4,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { type Relation } from 'typeorm';
 
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -75,6 +76,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     CalendarEventParticipantWorkspaceEntity[]
   >;
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  agentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
   ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;

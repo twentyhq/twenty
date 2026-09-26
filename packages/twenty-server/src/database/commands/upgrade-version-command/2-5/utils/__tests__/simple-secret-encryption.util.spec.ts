@@ -5,7 +5,7 @@ import { createCipheriv, createHash, randomBytes } from 'crypto';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
-import { SimpleSecretEncryptionUtil } from './simple-secret-encryption.util';
+import { SimpleSecretEncryptionUtil } from 'src/database/commands/upgrade-version-command/2-5/utils/simple-secret-encryption.util';
 
 // Mirrors the production write path the util used to perform; kept inside
 // the spec so the deprecated decryptSecret can still be exercised end-to-end

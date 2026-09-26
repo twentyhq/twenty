@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { legacyDecryptVersionedWithFallback } from 'src/database/commands/upgrade-version-command/2-5/utils/legacy-decrypt-versioned-with-fallback.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
@@ -54,10 +55,10 @@ export class EncryptSigningKeyPrivateKeysSlowInstanceCommand implements SlowInst
           continue;
         }
 
-        const plaintext =
-          this.secretEncryptionService.legacyDecryptVersionedWithFallback(
-            row.privateKey as EncryptedString,
-          );
+        const plaintext = legacyDecryptVersionedWithFallback({
+          secretEncryptionService: this.secretEncryptionService,
+          value: row.privateKey as EncryptedString,
+        });
 
         if (!isDefined(plaintext)) {
           continue;

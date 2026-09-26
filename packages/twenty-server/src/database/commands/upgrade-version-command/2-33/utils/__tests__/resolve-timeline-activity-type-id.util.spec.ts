@@ -1,7 +1,7 @@
 import {
   buildTimelineActivityTypeResolver,
   type TimelineActivityTypeResolutionMaps,
-} from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
+} from 'src/database/commands/upgrade-version-command/2-33/utils/resolve-timeline-activity-type-id.util';
 
 const SHARED_LINKED_ID = '00000000-0000-4000-8000-000000000001';
 const NOTE_LINKED_ID = '00000000-0000-4000-8000-000000000002';

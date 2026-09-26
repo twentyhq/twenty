@@ -298,6 +298,16 @@ describe('versioned agent history upgrade (integration)', () => {
     }
   });
 
+  const readStorage = async () => {
+    const runner = dataSource.createQueryRunner();
+    try {
+      await runner.connect();
+      return (await storage.readState(runner, WORKSPACE_ID)).storage;
+    } finally {
+      await runner.release();
+    }
+  };
+
   it('is discovered by upgrade, prepares missing objects, preserves live streams, recovers interrupted streams and supports reverse copy', async () => {
     await expect(runCommand('up', true)).rejects.toThrow(/stream/i);
     expect(
@@ -315,9 +325,7 @@ describe('versioned agent history upgrade (integration)', () => {
         [WORKSPACE_ID, upgradeCommandName],
       ),
     ).toEqual([{ status: 'failed' }]);
-    await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-      expect(selected).toBe('core');
-    });
+    expect(await readStorage()).toBe('core');
     expect(
       await dataSource.query(
         'SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
@@ -334,9 +342,7 @@ describe('versioned agent history upgrade (integration)', () => {
         [WORKSPACE_ID, upgradeCommandName],
       ),
     ).toEqual([{ status: 'completed' }]);
-    await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-      expect(selected).toBe('workspace');
-    });
+    expect(await readStorage()).toBe('workspace');
     expect(
       await dataSource.query(
         `SELECT title, "activeStreamId", "lastStreamError"->>'code' AS error FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
