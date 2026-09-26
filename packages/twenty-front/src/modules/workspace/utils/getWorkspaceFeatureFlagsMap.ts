@@ -10,7 +10,7 @@ export const getWorkspaceFeatureFlagsMap = (
   const featureFlags: Record<string, boolean> = {};
 
   for (const flag of workspaceFeatureFlags ?? []) {
-    featureFlags[flag.key] = flag.value === true;
+    featureFlags[flag.key] = flag.value;
   }
 
   return featureFlags;
