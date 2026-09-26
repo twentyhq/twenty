@@ -32,9 +32,11 @@ export const resolveRelativeDateTimeFilter = (
       return {
         ...relativeDateFilter,
         start: startOfNextPeriod.withCalendar('iso8601'),
-        end: addUnitToZonedDateTime(startOfNextPeriod, unit, amount).withCalendar(
-          'iso8601',
-        ),
+        end: addUnitToZonedDateTime(
+          startOfNextPeriod,
+          unit,
+          amount,
+        ).withCalendar('iso8601'),
       };
     }
     case 'PAST': {

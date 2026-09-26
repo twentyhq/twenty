@@ -54,9 +54,7 @@ describe('getCalendarMonthGridDays', () => {
       (day) => day.withCalendar(CalendarSystem.ISLAMIC).day === 1,
     );
 
-    expect(
-      firstDayOfMonth?.withCalendar(CalendarSystem.ISLAMIC).month,
-    ).toBe(4);
+    expect(firstDayOfMonth?.withCalendar(CalendarSystem.ISLAMIC).month).toBe(4);
     expect(days.every((day) => day.calendarId === 'iso8601')).toBe(true);
   });
 });

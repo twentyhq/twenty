@@ -3,7 +3,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import z from 'zod';
 
 const REGEX_FOR_RELATIVE_DATE_FILTER_STRINGIFIED_PARSING =
-  /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|QUARTER|HOUR|MINUTE|SECOND)(?:(?:;;([^;;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?(?:(gregory|persian|islamic-umalqura);;)?)?/;
+  /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|QUARTER|HOUR|MINUTE|SECOND)(?:(?:;;([^;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?(?:(gregory|persian|islamic-umalqura);;)?)?/;
 
 export const relativeDateFilterStringifiedSchema = z
   .string()

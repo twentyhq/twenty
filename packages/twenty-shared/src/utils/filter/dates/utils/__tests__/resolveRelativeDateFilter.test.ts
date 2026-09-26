@@ -219,13 +219,11 @@ describe('resolveRelativeDateFilter', () => {
       );
 
       expect(
-        Temporal.PlainDate.from(result.start)
-          .withCalendar('islamic-umalqura')
+        Temporal.PlainDate.from(result.start).withCalendar('islamic-umalqura')
           .day,
       ).toBe(1);
       expect(
-        Temporal.PlainDate.from(result.end)
-          .withCalendar('islamic-umalqura')
+        Temporal.PlainDate.from(result.end).withCalendar('islamic-umalqura')
           .day,
       ).toBe(1);
     });
