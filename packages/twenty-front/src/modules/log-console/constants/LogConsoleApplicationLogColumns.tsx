@@ -1,7 +1,7 @@
-import { msg, plural, t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrandTypescript } from 'twenty-ui/icon';
-import { Chip, Pill, Tag } from 'twenty-ui/primitives/data-display';
+import { Chip, Status } from 'twenty-ui/primitives/data-display';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -21,18 +21,17 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
       const level = LOG_CONSOLE_LEVELS[entry.properties?.level];
 
       return isDefined(level) ? (
-        <Tag color={level.color} variant={level.variant}>
-          {t(level.label)}
-        </Tag>
+        <Status color={level.color}>{t(level.label)}</Status>
       ) : null;
     },
   },
   {
     id: 'function',
     label: msg`Function`,
-    gridTrack: '232px',
-    renderCell: (entry) => (
+    gridTrack: '216px',
+    renderCell: (entry, color) => (
       <Chip
+        color={color}
         startElement={
           <IconBrandTypescript
             size={14}
@@ -52,35 +51,16 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
     label: msg`Message`,
     gridTrack: 'minmax(0, 1fr)',
     renderCell: (entry) => {
-      const [firstLine, ...otherLines] = (
-        entry.properties?.message ?? ''
-      ).split('\n');
+      const [firstLine] = (entry.properties?.message ?? '').split('\n');
 
-      return (
-        <>
-          <Text
-            truncate
-            style={{ color: themeCssVariables.font.color.primary }}
-          >
-            {firstLine}
-          </Text>
-          {otherLines.length > 0 && (
-            <Pill
-              label={plural(otherLines.length, {
-                one: '+# line',
-                other: '+# lines',
-              })}
-            />
-          )}
-        </>
-      );
+      return <Text truncate>{firstLine}</Text>;
     },
     hiddenInDetails: true,
   },
   {
     id: 'execution',
     label: msg`Execution`,
-    gridTrack: '104px',
+    gridTrack: '88px',
     renderCell: (entry) =>
       entry.properties?.executionId?.slice(0, EXECUTION_ID_DISPLAYED_LENGTH),
     hiddenWhenPanelOpen: true,

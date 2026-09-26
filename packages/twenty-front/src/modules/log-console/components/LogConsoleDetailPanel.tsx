@@ -227,9 +227,7 @@ export const LogConsoleDetailPanel = () => {
           {source.renderDetailTitle?.(entry) ?? (
             <>
               {isDefined(level) && (
-                <Tag color={level.color} variant={level.variant}>
-                  {t(level.label)}
-                </Tag>
+                <Tag color={level.color}>{t(level.label)}</Tag>
               )}
               {entry.event}
             </>

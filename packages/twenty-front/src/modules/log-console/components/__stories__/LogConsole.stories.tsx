@@ -527,7 +527,7 @@ export const LastSevenDaysInUtc: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Sep 24 11:57:48', {}, { timeout: 5000 });
+    await canvas.findByText('11:57:48.203', {}, { timeout: 5000 });
     await canvas.findByText('8 changes');
     await canvas.findByText('UTC');
   },

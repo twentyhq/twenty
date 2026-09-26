@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberCell';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
@@ -14,17 +13,15 @@ export const LOG_CONSOLE_PAGE_VIEW_COLUMNS: LogConsoleColumn[] = [
     id: 'member',
     label: msg`Member`,
     gridTrack: 'minmax(0, 200px)',
-    renderCell: (entry) => <LogConsoleMemberCell userId={entry.userId} />,
+    renderCell: (entry, color) => (
+      <LogConsoleMemberCell userId={entry.userId} color={color} />
+    ),
   },
   {
     id: 'page',
     label: msg`Page`,
     gridTrack: 'minmax(0, 1fr)',
-    renderCell: (entry) => (
-      <Text truncate style={{ fontFamily: themeCssVariables.code.font.family }}>
-        {entry.properties?.pathname}
-      </Text>
-    ),
+    renderCell: (entry) => <Text truncate>{entry.properties?.pathname}</Text>,
   },
   {
     id: 'session',

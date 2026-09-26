@@ -18,11 +18,12 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { Chip } from 'twenty-ui/primitives/data-display';
+import { Chip, type ChipProps } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
+  color?: ChipProps['color'];
 };
 
 const PROVIDERS_ICON_MAPPING = {
@@ -83,6 +84,7 @@ export const ActorDisplay = ({
   workspaceMemberId,
   avatarUrl,
   context,
+  color,
 }: ActorDisplayProps) => {
   const LeftIcon = getLeftIcon({ source, context });
 
@@ -90,6 +92,7 @@ export const ActorDisplay = ({
     <Chip
       emptyLabel={t`Untitled`}
       variant="ghost"
+      color={color}
       startElement={
         <AvatarOrIcon
           colorSeed={workspaceMemberId ?? undefined}

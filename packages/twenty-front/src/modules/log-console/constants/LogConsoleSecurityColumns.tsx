@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberCell';
 import { LOG_CONSOLE_SECURITY_EVENT_COLUMN } from '@/log-console/constants/LogConsoleSecurityEventColumn';
@@ -14,10 +13,11 @@ export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
     id: 'actor',
     label: msg`Actor`,
     gridTrack: 'minmax(0, 200px)',
-    renderCell: (entry) => (
+    renderCell: (entry, color) => (
       <LogConsoleMemberCell
         userId={entry.userId}
         isImpersonator={entry.event === 'Impersonation'}
+        color={color}
       />
     ),
   },
@@ -25,11 +25,7 @@ export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
     id: 'details',
     label: msg`Details`,
     gridTrack: 'minmax(0, 1fr)',
-    renderCell: (entry) => (
-      <Text truncate style={{ color: themeCssVariables.font.color.tertiary }}>
-        {entry.properties?.message}
-      </Text>
-    ),
+    renderCell: (entry) => <Text truncate>{entry.properties?.message}</Text>,
     hiddenWhenPanelOpen: true,
     hiddenInDetails: true,
   },

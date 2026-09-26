@@ -6,10 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
-import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -21,11 +22,6 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const SKELETON_ROW_COUNT = 8;
 
-const SEVERITY_STRIPE_COLORS: Record<LogConsoleSeverity, string> = {
-  error: themeCssVariables.color.red,
-  warning: themeCssVariables.color.orange,
-};
-
 const StyledHeaderRow = styled(TableRow)`
   background-color: ${themeCssVariables.background.primary};
   border-radius: 0;
@@ -33,15 +29,6 @@ const StyledHeaderRow = styled(TableRow)`
   position: sticky;
   top: 0;
   z-index: 1;
-`;
-
-const StyledEntryRow = styled(TableRow)<{ severity?: LogConsoleSeverity }>`
-  & > :first-child {
-    box-shadow: ${({ severity }) =>
-      isDefined(severity)
-        ? `inset 2px 0 0 ${SEVERITY_STRIPE_COLORS[severity]}`
-        : 'none'};
-  }
 `;
 
 const StyledLoadMoreTrigger = styled.div`
@@ -52,9 +39,8 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   container-type: size;
 `;
 
-const StyledEntriesSinceClear = styled.div`
+const StyledEntriesSinceClear = styled(TableBody)`
   min-height: calc(100cqh - ${themeCssVariables.spacing[8]});
-  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 type LogConsoleTableProps = {
@@ -108,27 +94,31 @@ export const LogConsoleTable = ({
   const isInitialLoading = loading && entries.length === 0;
 
   const renderEntryRow = (entry: EventLogRecord, key: number) => (
-    <StyledEntryRow
+    <TableRow
       key={key}
       gridTemplateColumns={gridTemplateColumns}
-      severity={source.getSeverity?.(entry)}
-      isSelected={
+      isExpanded={
         isDefined(selectedEntry) && isDeeplyEqual(entry, selectedEntry)
       }
       onClick={() => onEntryClick(entry)}
     >
-      {columns.map((column) => (
-        <TableCell
-          key={column.id}
-          align={column.align}
-          gap={themeCssVariables.spacing[2]}
-          overflow="hidden"
-          whiteSpace="nowrap"
-        >
-          {column.renderCell(entry)}
-        </TableCell>
-      ))}
-    </StyledEntryRow>
+      {columns.map((column, columnIndex) => {
+        const isFirstColumn = columnIndex === 0;
+        const EntryCell = isFirstColumn ? StyledNameTableCell : TableCell;
+
+        return (
+          <EntryCell
+            key={column.id}
+            align={column.align}
+            gap={themeCssVariables.spacing[2]}
+            overflow="hidden"
+            whiteSpace="nowrap"
+          >
+            {column.renderCell(entry, isFirstColumn ? 'primary' : 'secondary')}
+          </EntryCell>
+        );
+      })}
+    </TableRow>
   );
 
   return (
@@ -153,30 +143,32 @@ export const LogConsoleTable = ({
             )}
           </StyledEntriesSinceClear>
         )}
-        {isInitialLoading ? (
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            {Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
-              <TableRow
-                key={rowIndex}
-                gridTemplateColumns={gridTemplateColumns}
-              >
-                {columns.map((column) => (
-                  <TableCell key={column.id}>
-                    <Skeleton width={80} height={16} />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </SkeletonTheme>
-        ) : (
-          entries.map((entry, entryIndex) =>
-            renderEntryRow(entry, liveEntryCount - entryIndex),
-          )
-        )}
+        <TableBody>
+          {isInitialLoading ? (
+            <SkeletonTheme
+              baseColor={theme.background.tertiary}
+              highlightColor={theme.background.transparent.lighter}
+              borderRadius={4}
+            >
+              {Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
+                <TableRow
+                  key={rowIndex}
+                  gridTemplateColumns={gridTemplateColumns}
+                >
+                  {columns.map((column) => (
+                    <TableCell key={column.id}>
+                      <Skeleton width={80} height={16} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </SkeletonTheme>
+          ) : (
+            entries.map((entry, entryIndex) =>
+              renderEntryRow(entry, liveEntryCount - entryIndex),
+            )
+          )}
+        </TableBody>
       </Table>
       <StyledLoadMoreTrigger ref={loadMoreTriggerRef} />
     </StyledScrollWrapper>

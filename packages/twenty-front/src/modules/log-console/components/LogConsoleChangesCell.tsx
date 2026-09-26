@@ -1,10 +1,9 @@
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/primitives/data-display';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
@@ -13,8 +12,8 @@ import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/obj
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 
-const StyledSummary = styled(Text)`
-  color: ${themeCssVariables.font.color.tertiary};
+const StyledOtherFieldDiffCount = styled.span`
+  flex-shrink: 0;
 `;
 
 type LogConsoleChangesCellProps = {
@@ -36,7 +35,7 @@ export const LogConsoleChangesCell = ({
   );
 
   if (isDefined(summary)) {
-    return <StyledSummary truncate>{t(summary)}</StyledSummary>;
+    return <Text truncate>{t(summary)}</Text>;
   }
 
   if (!isDefined(objectMetadataItem)) {
@@ -63,7 +62,12 @@ export const LogConsoleChangesCell = ({
         eventId={diffId}
       />
       {otherFieldDiffs.length > 0 && (
-        <Pill label={`+${otherFieldDiffs.length}`} />
+        <StyledOtherFieldDiffCount>
+          {plural(otherFieldDiffs.length, {
+            one: 'and # more',
+            other: 'and # more',
+          })}
+        </StyledOtherFieldDiffCount>
       )}
     </>
   );

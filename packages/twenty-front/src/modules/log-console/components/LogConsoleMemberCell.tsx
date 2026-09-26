@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLifebuoy } from 'twenty-ui/icon';
-import { Chip } from 'twenty-ui/primitives/data-display';
+import { Chip, type ChipProps } from 'twenty-ui/primitives/data-display';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -15,6 +15,7 @@ type LogConsoleMemberCellProps = {
   userWorkspaceId?: string | null;
   actor?: Partial<FieldActorValue>;
   isImpersonator?: boolean;
+  color?: ChipProps['color'];
 };
 
 export const LogConsoleMemberCell = ({
@@ -22,6 +23,7 @@ export const LogConsoleMemberCell = ({
   userWorkspaceId,
   actor,
   isImpersonator = false,
+  color,
 }: LogConsoleMemberCellProps) => {
   const { t } = useLingui();
   const currentWorkspaceMembers = useAtomStateValue(
@@ -44,6 +46,7 @@ export const LogConsoleMemberCell = ({
         avatarUrl={workspaceMember.avatarUrl}
         workspaceMemberId={workspaceMember.id}
         context={actor?.context}
+        color={color}
       />
     );
   }
@@ -55,6 +58,7 @@ export const LogConsoleMemberCell = ({
         source={actor.source}
         workspaceMemberId={actor.workspaceMemberId}
         context={actor.context}
+        color={color}
       />
     );
   }
@@ -66,6 +70,7 @@ export const LogConsoleMemberCell = ({
   if (isUnknownUser && isImpersonator) {
     return (
       <Chip
+        color={color}
         startElement={<AvatarOrIcon Icon={IconLifebuoy} />}
         style={{ paddingInlineStart: 0 }}
       >
@@ -74,5 +79,7 @@ export const LogConsoleMemberCell = ({
     );
   }
 
-  return isUnknownUser ? <ActorDisplay name={t`Unknown user`} /> : null;
+  return isUnknownUser ? (
+    <ActorDisplay name={t`Unknown user`} color={color} />
+  ) : null;
 };
