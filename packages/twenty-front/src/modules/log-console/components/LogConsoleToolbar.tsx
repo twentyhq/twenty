@@ -62,14 +62,8 @@ const VIEW_FILTER_OPERAND_BY_EVENT_LOG_FILTER_OPERAND: Record<
 };
 
 const StyledContainer = styled.div`
-  align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   flex-shrink: 0;
-  height: ${APP_HEADER_HEIGHT}px;
-  justify-content: center;
 `;
 
 const StyledToolbar = styled.div`
@@ -77,6 +71,7 @@ const StyledToolbar = styled.div`
   display: flex;
   flex-wrap: nowrap;
   gap: ${themeCssVariables.spacing[2]};
+  height: ${APP_HEADER_HEIGHT}px;
   overflow: hidden;
 `;
 
