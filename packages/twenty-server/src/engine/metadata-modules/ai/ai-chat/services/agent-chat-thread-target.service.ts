@@ -233,25 +233,16 @@ export class AgentChatThreadTargetService {
   ): Promise<TResult> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
-        // A target's foreign key points at the workspace-schema thread table, so
-        // a workspace whose history still routes to core has nothing to attach
-        // to. Holding the storage fence keeps the route from flipping mid-write.
-        this.agentHistoryStorageService.run(workspaceId, async (context) => {
-          if (context.storage !== 'workspace') {
-            throw new AiException(
-              'AI history has not been migrated to this workspace yet',
-              AiExceptionCode.INVALID_AGENT_INPUT,
-            );
-          }
-
-          return work(
+        // Holding the storage fence keeps the route from flipping mid-write.
+        this.agentHistoryStorageService.run(workspaceId, async () =>
+          work(
             this.workspaceOrmManager.getRepository(
               AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
               { shouldBypassPermissionChecks: true },
               { shouldSkipEventEmission: true },
             ),
-          );
-        }),
+          ),
+        ),
       buildSystemAuthContext(workspaceId),
     );
   }

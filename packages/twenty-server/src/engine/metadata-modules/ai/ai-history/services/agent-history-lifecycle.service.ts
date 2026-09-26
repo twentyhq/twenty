@@ -6,9 +6,6 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { AGENT_HISTORY_STORAGE_KEY } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-storage-key.constant';
 
-export const AGENT_HISTORY_DEFAULT_STORAGE_KEY =
-  'agent-history-new-workspace-storage-v1';
-
 @Injectable()
 export class AgentHistoryLifecycleService {
   constructor(
@@ -39,32 +36,18 @@ export class AgentHistoryLifecycleService {
       }
       // Detect lost routes with workspace data before an initialization retry.
       await this.storage.readState(runner, workspaceId);
-      // New workspace metadata uses generic record permissions, whose repository
-      // reads workspace tables. A legacy operator default cannot route new chats to core.
-      const selected = 'workspace';
       // Initialization can be retried. Existing data must use verified migration.
       const legacy = await runner.query(
         'SELECT 1 FROM core."agentChatThread" WHERE "workspaceId" = $1 LIMIT 1',
         [workspaceId],
       );
-      await this.storage.writeState(runner, workspaceId, {
-        storage: isNonEmptyArray(legacy) ? 'core' : selected,
-        ...(!isNonEmptyArray(legacy) && selected === 'workspace'
-          ? { verifiedAt: new Date().toISOString() }
-          : {}),
-      });
+      await this.storage.writeState(
+        runner,
+        workspaceId,
+        isNonEmptyArray(legacy)
+          ? { storage: 'core' }
+          : { storage: 'workspace', verifiedAt: new Date().toISOString() },
+      );
     });
-  }
-
-  async setNewWorkspaceDefault(storage: 'core' | 'workspace'): Promise<void> {
-    if (storage === 'core') {
-      throw new Error('New workspaces require workspace agent history storage');
-    }
-    await this.dataSource.query(
-      `INSERT INTO core."keyValuePair" ("key", "type", "value") VALUES ($1, 'CONFIG_VARIABLE', $2::jsonb)
-      ON CONFLICT ("key") WHERE "userId" IS NULL AND "workspaceId" IS NULL AND "applicationId" IS NULL
-      DO UPDATE SET "value" = EXCLUDED."value", "updatedAt" = now()`,
-      [AGENT_HISTORY_DEFAULT_STORAGE_KEY, JSON.stringify({ storage })],
-    );
   }
 }

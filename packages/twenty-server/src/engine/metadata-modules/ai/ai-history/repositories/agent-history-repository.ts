@@ -15,7 +15,6 @@ import {
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import {
-  type EntityTarget,
   type FindManyOptions,
   type FindOneOptions,
   type FindOptionsWhere,
@@ -35,14 +34,12 @@ import {
   normalizeFindOptionsRelations,
 } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export class AgentHistoryRepository<
   TRecord extends { id: string; workspaceId: string },
 > {
   constructor(
     private readonly name: AgentHistoryObjectName,
-    private readonly legacyEntity: EntityTarget<TRecord>,
     private readonly storageService: AgentHistoryStorageService,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
@@ -52,8 +49,7 @@ export class AgentHistoryRepository<
 
   private run<TResult>(
     workspaceId: string,
-    core: (repository: WorkspaceScopedRepository<TRecord>) => Promise<TResult>,
-    workspace: (
+    work: (
       repository: WorkspaceRepository<TRecord>,
       context: AgentHistoryStorageContext,
     ) => Promise<TResult>,
@@ -65,23 +61,16 @@ export class AgentHistoryRepository<
     // A later core COMMIT failure does not roll back an already committed write.
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
-        this.storageService.run(workspaceId, (context) => {
-          if (context.storage === 'core') {
-            return core(
-              new WorkspaceScopedRepository(
-                context.manager.getRepository(this.legacyEntity),
-              ),
-            );
-          }
-          return workspace(
+        this.storageService.run(workspaceId, (context) =>
+          work(
             this.workspaceOrmManager.getRepository<TRecord>(
               this.name,
               { shouldBypassPermissionChecks: true },
               { shouldSkipEventEmission: true },
             ),
             context,
-          );
-        }),
+          ),
+        ),
       buildSystemAuthContext(workspaceId),
       { lite: true },
     );
@@ -91,41 +80,37 @@ export class AgentHistoryRepository<
     workspaceId: string,
     options?: FindManyOptions<TRecord>,
   ): Promise<TRecord[]> {
-    return this.run(
-      workspaceId,
-      (repository) => repository.find(workspaceId, options),
-      async (repository, context) => {
-        const relations = normalizeFindOptionsRelations(
-          (options?.relations ?? {}) as WorkspaceFindOptions['relations'] & {},
-        );
-        const records = await repository.find({
-          ...options,
-          select: mapAgentHistorySelectToWorkspace(this.name, options?.select),
-          order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
-          where: mapAgentHistoryWhereToWorkspace<TRecord>(
-            this.name,
-            options?.where,
-          ),
-          withDeleted: true,
-          relations: removeAgentHistoryFileRelations(relations),
-        } as WorkspaceFindOptions);
-        const normalized = records.map((record) =>
-          normalizeAgentHistoryRecord({
-            record,
-            workspaceId,
-            objectName: this.name,
-          }),
-        );
-        if (JSON.stringify(relations).includes('"file"')) {
-          await hydrateAgentHistoryFiles({
-            records: normalized,
-            manager: context.manager,
-            workspaceId,
-          });
-        }
-        return normalized as TRecord[];
-      },
-    );
+    return this.run(workspaceId, async (repository, context) => {
+      const relations = normalizeFindOptionsRelations(
+        (options?.relations ?? {}) as WorkspaceFindOptions['relations'] & {},
+      );
+      const records = await repository.find({
+        ...options,
+        select: mapAgentHistorySelectToWorkspace(this.name, options?.select),
+        order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
+        where: mapAgentHistoryWhereToWorkspace<TRecord>(
+          this.name,
+          options?.where,
+        ),
+        withDeleted: true,
+        relations: removeAgentHistoryFileRelations(relations),
+      } as WorkspaceFindOptions);
+      const normalized = records.map((record) =>
+        normalizeAgentHistoryRecord({
+          record,
+          workspaceId,
+          objectName: this.name,
+        }),
+      );
+      if (JSON.stringify(relations).includes('"file"')) {
+        await hydrateAgentHistoryFiles({
+          records: normalized,
+          manager: context.manager,
+          workspaceId,
+        });
+      }
+      return normalized as TRecord[];
+    });
   }
 
   async findOne(
@@ -165,19 +150,16 @@ export class AgentHistoryRepository<
     workspaceId: string,
     options?: FindManyOptions<TRecord>,
   ): Promise<number> {
-    return this.run(
-      workspaceId,
-      (repository) => repository.count(workspaceId, options),
-      (repository) =>
-        repository.count({
-          ...options,
-          order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
-          where: mapAgentHistoryWhereToWorkspace<TRecord>(
-            this.name,
-            options?.where,
-          ),
-          withDeleted: true,
-        } as WorkspaceFindOptions),
+    return this.run(workspaceId, (repository) =>
+      repository.count({
+        ...options,
+        order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
+        where: mapAgentHistoryWhereToWorkspace<TRecord>(
+          this.name,
+          options?.where,
+        ),
+        withDeleted: true,
+      } as WorkspaceFindOptions),
     );
   }
 
@@ -185,14 +167,11 @@ export class AgentHistoryRepository<
     workspaceId: string,
     where: FindOptionsWhere<TRecord>,
   ): Promise<boolean> {
-    return this.run(
-      workspaceId,
-      (repository) => repository.existsBy(workspaceId, where),
-      (repository) =>
-        repository.exists({
-          where: mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where),
-          withDeleted: true,
-        }),
+    return this.run(workspaceId, (repository) =>
+      repository.exists({
+        where: mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where),
+        withDeleted: true,
+      }),
     );
   }
 
@@ -211,11 +190,8 @@ export class AgentHistoryRepository<
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(
-      workspaceId,
-      (repository) => repository.insert(workspaceId, values),
-      async (repository, context) =>
-        repository.insert(await this.prepareWorkspaceInsert(values, context)),
+    return this.run(workspaceId, async (repository, context) =>
+      repository.insert(await this.prepareWorkspaceInsert(values, context)),
     );
   }
 
@@ -223,20 +199,16 @@ export class AgentHistoryRepository<
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
-    return this.run(
-      workspaceId,
-      (repository) => repository.insertAndReturnOne(workspaceId, values),
-      async (repository, context) => {
-        const result = await repository.insert(
-          await this.prepareWorkspaceInsert(values, context),
-        );
-        return normalizeAgentHistoryRecord({
-          record: result.raw[0],
-          workspaceId,
-          objectName: this.name,
-        }) as TRecord;
-      },
-    );
+    return this.run(workspaceId, async (repository, context) => {
+      const result = await repository.insert(
+        await this.prepareWorkspaceInsert(values, context),
+      );
+      return normalizeAgentHistoryRecord({
+        record: result.raw[0],
+        workspaceId,
+        objectName: this.name,
+      }) as TRecord;
+    });
   }
 
   update(
@@ -244,50 +216,38 @@ export class AgentHistoryRepository<
     where: FindOptionsWhere<TRecord>,
     values: QueryDeepPartialEntity<TRecord>,
   ) {
-    return this.run(
-      workspaceId,
-      (repository) => repository.update(workspaceId, where, values),
-      async (repository) => {
-        const result = await repository
-          .createQueryBuilder()
-          .withDeleted()
-          .where(
-            mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {},
-          )
-          .update()
-          .set(mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values))
-          .returning(['id'])
-          .execute();
-        return {
-          affected: result.generatedMaps.length,
-          generatedMaps: result.generatedMaps,
-          raw: result.generatedMaps,
-        };
-      },
-    );
+    return this.run(workspaceId, async (repository) => {
+      const result = await repository
+        .createQueryBuilder()
+        .withDeleted()
+        .where(mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {})
+        .update()
+        .set(mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values))
+        .returning(['id'])
+        .execute();
+      return {
+        affected: result.generatedMaps.length,
+        generatedMaps: result.generatedMaps,
+        raw: result.generatedMaps,
+      };
+    });
   }
 
   delete(workspaceId: string, where: FindOptionsWhere<TRecord>) {
-    return this.run(
-      workspaceId,
-      (repository) => repository.delete(workspaceId, where),
-      async (repository) => {
-        const result = await repository
-          .createQueryBuilder()
-          .withDeleted()
-          .where(
-            mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {},
-          )
-          .delete()
-          .returning(['id'])
-          .execute();
-        return {
-          affected: result.generatedMaps.length,
-          generatedMaps: result.generatedMaps,
-          raw: result.generatedMaps,
-        };
-      },
-    );
+    return this.run(workspaceId, async (repository) => {
+      const result = await repository
+        .createQueryBuilder()
+        .withDeleted()
+        .where(mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {})
+        .delete()
+        .returning(['id'])
+        .execute();
+      return {
+        affected: result.generatedMaps.length,
+        generatedMaps: result.generatedMaps,
+        raw: result.generatedMaps,
+      };
+    });
   }
 
   upsert(
@@ -295,28 +255,24 @@ export class AgentHistoryRepository<
     values: QueryDeepPartialEntity<TRecord>,
     conflictPaths: string[],
   ) {
-    return this.run(
-      workspaceId,
-      (repository) => repository.upsert(workspaceId, values, conflictPaths),
-      async (repository, context) => {
-        // Workspace upsert selects before inserting. Serialize concurrent stream
-        // checkpoints for the same identity to preserve core ON CONFLICT behavior.
-        const valuesByField: ObjectLiteral = values;
-        const identity = [...conflictPaths]
-          .sort()
-          .map((field) => [field, valuesByField[field]]);
-        await context.manager.query(
-          'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-          [
-            `agent-history-upsert:${workspaceId}:${this.name}:${JSON.stringify(identity)}`,
-          ],
-        );
-        return repository.upsert(
-          mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
-          conflictPaths,
-        );
-      },
-    );
+    return this.run(workspaceId, async (repository, context) => {
+      // Workspace upsert selects before inserting. Serialize concurrent stream
+      // checkpoints for the same identity so both cannot take the insert path.
+      const valuesByField: ObjectLiteral = values;
+      const identity = [...conflictPaths]
+        .sort()
+        .map((field) => [field, valuesByField[field]]);
+      await context.manager.query(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+        [
+          `agent-history-upsert:${workspaceId}:${this.name}:${JSON.stringify(identity)}`,
+        ],
+      );
+      return repository.upsert(
+        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
+        conflictPaths,
+      );
+    });
   }
 
   query<TResult>(
