@@ -66,4 +66,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Record creation form`,
     description: msg`Use a dedicated form when creating records.`,
   },
+  [FeatureFlagKey.IS_MESSAGES_TAB_ENABLED]: {
+    label: msg`Messages tab`,
+    description: msg`Show emails and AI conversations together in a Messages tab, and notes in the Files tab, on record pages of new workspaces.`,
+  },
 };

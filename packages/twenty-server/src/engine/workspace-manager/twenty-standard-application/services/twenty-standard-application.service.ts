@@ -49,6 +49,7 @@ export class TwentyStandardApplicationService {
       now: new Date().toISOString(),
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      isWorkspaceCreation: true,
     });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};

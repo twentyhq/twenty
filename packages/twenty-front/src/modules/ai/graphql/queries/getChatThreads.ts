@@ -1,22 +1,12 @@
 import { gql } from '@apollo/client';
 
+import { AGENT_CHAT_THREAD_FRAGMENT } from '@/ai/graphql/fragments/agentChatThreadFragment';
+
 export const GET_CHAT_THREADS = gql`
+  ${AGENT_CHAT_THREAD_FRAGMENT}
   query GetChatThreads {
     chatThreads {
-      id
-
-      title
-      totalCacheReadTokens
-      totalInputTokens
-      totalOutputTokens
-      contextWindowTokens
-      conversationSize
-      totalInputCredits
-      totalOutputCredits
-      deletedAt
-      lastMessageAt
-      createdAt
-      updatedAt
+      ...AgentChatThreadFields
     }
   }
 `;

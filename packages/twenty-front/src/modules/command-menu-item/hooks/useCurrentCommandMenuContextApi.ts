@@ -17,6 +17,7 @@ import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/r
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -142,11 +143,9 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const featureFlags: Record<string, boolean> = {};
-
-  for (const flag of currentWorkspace?.featureFlags ?? []) {
-    featureFlags[flag.key] = flag.value === true;
-  }
+  const featureFlags = getWorkspaceFeatureFlagsMap(
+    currentWorkspace?.featureFlags,
+  );
 
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 

@@ -1,0 +1,42 @@
+import { QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+
+@RegisteredInstanceCommand('2.44.0', 1790424270051)
+export class AddChatThreadsWidgetTypeFastInstanceCommand implements FastInstanceCommand {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // Recreating the type would cast every row of the instance-wide
+    // pageLayoutWidget table under ACCESS EXCLUSIVE, blocking layout loads and
+    // field creation in every workspace until this transaction commits.
+    // Appending a label is a catalog-only change, as the view_type_enum
+    // commands in 2-23 and 2-30 already do.
+    await queryRunner.query(
+      `ALTER TYPE "core"."pageLayoutWidget_type_enum" ADD VALUE IF NOT EXISTS 'CHAT_THREADS'`,
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // The cast below fails on any row still holding the value the old enum
+    // never had.
+    await queryRunner.query(
+      `DELETE FROM "core"."pageLayoutWidget" WHERE "type" = 'CHAT_THREADS'`,
+    );
+    await queryRunner.query(
+      "CREATE TYPE \"core\".\"pageLayoutWidget_type_enum_old\" AS ENUM('CALENDAR', 'CALL_RECORDING_SUMMARY', 'CALL_RECORDING_TRANSCRIPT', 'EMAILS', 'EMAIL_THREAD', 'FIELD', 'FIELDS', 'FIELD_RICH_TEXT', 'FILES', 'FORM_FIELD', 'FRONT_COMPONENT', 'GRAPH', 'IFRAME', 'MESSAGE_CAMPAIGN_BODY', 'MESSAGE_CAMPAIGN_DETAILS', 'NOTES', 'RECORD_TABLE', 'STANDALONE_RICH_TEXT', 'TASKS', 'TIMELINE', 'VIEW', 'WORKFLOW', 'WORKFLOW_RUN', 'WORKFLOW_VERSION')",
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" DROP DEFAULT',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" TYPE "core"."pageLayoutWidget_type_enum_old" USING "type"::"text"::"core"."pageLayoutWidget_type_enum_old"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" SET DEFAULT \'VIEW\'',
+    );
+    await queryRunner.query('DROP TYPE "core"."pageLayoutWidget_type_enum"');
+    await queryRunner.query(
+      'ALTER TYPE "core"."pageLayoutWidget_type_enum_old" RENAME TO "pageLayoutWidget_type_enum"',
+    );
+  }
+}

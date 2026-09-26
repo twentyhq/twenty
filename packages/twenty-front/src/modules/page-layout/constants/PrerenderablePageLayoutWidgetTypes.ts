@@ -12,6 +12,7 @@ export const PRERENDERABLE_PAGE_LAYOUT_WIDGET_TYPES: WidgetType[] = [
   WidgetType.TASKS,
   WidgetType.NOTES,
   WidgetType.FILES,
+  WidgetType.CHAT_THREADS,
   WidgetType.EMAILS,
   WidgetType.CALENDAR,
   WidgetType.FRONT_COMPONENT,

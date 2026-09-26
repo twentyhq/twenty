@@ -114,6 +114,30 @@ describe('getTabsRenderableForTargetObject', () => {
     expect(result.map((tab) => tab.id)).toEqual(['tab-4']);
   });
 
+  // Chats attach through a leg of agentChatThreadTarget, which only person,
+  // company, opportunity and custom objects have.
+  it('keeps the chat threads tab only on objects that can hold chats', () => {
+    const tabs = [
+      createMockTab('chats-tab', [
+        createMockWidget('chats-widget', WidgetType.CHAT_THREADS),
+      ]),
+    ];
+
+    expect(
+      getTabsRenderableForTargetObject({
+        tabs,
+        targetObjectFields: [createRelationField('noteTargets')],
+      }),
+    ).toHaveLength(0);
+
+    expect(
+      getTabsRenderableForTargetObject({
+        tabs,
+        targetObjectFields: [createRelationField('agentChatThreadTargets')],
+      }).map((tab) => tab.id),
+    ).toEqual(['chats-tab']);
+  });
+
   it('keeps both call recording widgets without a call recordings relation', () => {
     const tabs = [
       createMockTab('summary-tab', [

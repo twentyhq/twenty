@@ -1,3 +1,4 @@
+import { replaceViewerConditionInAvailabilityExpression } from '@/page-layout/utils/replaceViewerConditionInAvailabilityExpression';
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -18,7 +19,11 @@ export const WidgetVisibilityDropdownContent = () => {
 
   const handleSelectVisibility = (optionId: string) => {
     updateCurrentWidgetConfig({
-      conditionalAvailabilityExpression: optionIdToExpression(optionId),
+      conditionalAvailabilityExpression:
+        replaceViewerConditionInAvailabilityExpression({
+          expression: widgetInEditMode?.conditionalAvailabilityExpression,
+          viewerCondition: optionIdToExpression(optionId),
+        }),
     });
     closeDropdown();
   };

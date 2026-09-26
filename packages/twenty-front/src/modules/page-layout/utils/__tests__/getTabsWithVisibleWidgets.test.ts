@@ -443,4 +443,129 @@ describe('getTabsWithVisibleWidgets', () => {
       expect(result[0].id).toBe('always');
     });
   });
+  describe('with feature flags', () => {
+    const FLAG_ON_EXPRESSION = 'featureFlags.IS_MESSAGES_TAB_ENABLED';
+    const FLAG_OFF_EXPRESSION = 'not featureFlags.IS_MESSAGES_TAB_ENABLED';
+
+    const createGatedWidget = (
+      id: string,
+      conditionalAvailabilityExpression: string | null,
+      type: WidgetType = WidgetType.FIELDS,
+    ): PageLayoutTab['widgets'][0] => ({
+      ...createMockWidget(id),
+      type,
+      conditionalAvailabilityExpression,
+    });
+
+    const buildTabs = () => [
+      createMockTab('emails', [
+        createGatedWidget('emails-widget', FLAG_OFF_EXPRESSION),
+      ]),
+      createMockTab('messages', [
+        createGatedWidget('messages-emails-widget', FLAG_ON_EXPRESSION),
+        createGatedWidget(
+          'messages-conversations-widget',
+          FLAG_ON_EXPRESSION,
+          WidgetType.CHAT_THREADS,
+        ),
+      ]),
+    ];
+
+    const getRenderedWidgetIds = (tabs: PageLayoutTab[]) =>
+      tabs.map((tab) => [tab.id, tab.widgets.map((widget) => widget.id)]);
+
+    it('should show the flag-off variant while the flag is off', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: buildTabs(),
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(getRenderedWidgetIds(result)).toEqual([
+        ['emails', ['emails-widget']],
+      ]);
+    });
+
+    it('should show the flag-on variant while the flag is on', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: buildTabs(),
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+          featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+        }),
+      });
+
+      expect(getRenderedWidgetIds(result)).toEqual([
+        [
+          'messages',
+          ['messages-emails-widget', 'messages-conversations-widget'],
+        ],
+      ]);
+    });
+
+    it('should apply flag conditions in edit mode but keep device conditions and empty tabs', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [
+          ...buildTabs(),
+          createMockTab('mobile-only', [
+            createGatedWidget('mobile-widget', 'device == "MOBILE"'),
+          ]),
+          createMockTab('empty', []),
+        ],
+        isEditMode: true,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(getRenderedWidgetIds(result)).toEqual([
+        ['emails', ['emails-widget']],
+        ['mobile-only', ['mobile-widget']],
+        ['empty', []],
+      ]);
+    });
+
+    it('should hide a chat threads widget without the flag, whatever its layout', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('fields-widget'),
+          createGatedWidget(
+            'conversations-widget',
+            null,
+            WidgetType.CHAT_THREADS,
+          ),
+        ]),
+      ];
+
+      const readResult = getTabsWithVisibleWidgets({
+        tabs,
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+      const editResult = getTabsWithVisibleWidgets({
+        tabs,
+        isEditMode: true,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(getRenderedWidgetIds(readResult)).toEqual([
+        ['tab-1', ['fields-widget']],
+      ]);
+      expect(getRenderedWidgetIds(editResult)).toEqual([
+        ['tab-1', ['fields-widget']],
+      ]);
+    });
+  });
 });

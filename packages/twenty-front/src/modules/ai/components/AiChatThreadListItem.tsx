@@ -6,6 +6,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
@@ -81,9 +82,16 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThread;
+  surface?: AiChatThreadActionsSurface;
 };
 
-export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
+// The surface keys the row's dropdown state, so rows for one thread on two
+// surfaces do not share it. Every record page uses RECORD_PAGE, including one
+// open in the side panel, so two record pages on screen at once still do.
+export const AiChatThreadListItem = ({
+  thread,
+  surface = AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
+}: AiChatThreadListItemProps) => {
   const theme = useTheme();
   const { t } = useLingui();
   const { handleThreadClick } = useAiChatThreadClick();
@@ -99,12 +107,13 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
   const isArchived = Boolean(thread.deletedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
+  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
+    threadId: thread.id,
+    surface,
+  });
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    getAiChatThreadItemMenuDropdownId({
-      threadId: thread.id,
-      surface: AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
-    }),
+    itemMenuDropdownId,
   );
   return (
     <StyledThreadItem
@@ -154,7 +163,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
           threadId={thread.id}
           threadTitle={displayTitle}
           isArchived={isArchived}
-          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
+          surface={surface}
           onRenameRequested={startRename}
         />
       </StyledMenuTrigger>

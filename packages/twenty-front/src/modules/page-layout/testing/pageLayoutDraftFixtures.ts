@@ -29,6 +29,16 @@ export const makeWidget = (
     deletedAt: null,
   }) as unknown as PageLayoutWidget;
 
+// Hidden unless the workspace has the flag, which no test store sets.
+export const makeFlagGatedWidget = (
+  id: string,
+  index: number,
+  tabId = 'tab-1',
+): PageLayoutWidget => ({
+  ...makeWidget(id, index, tabId),
+  conditionalAvailabilityExpression: 'featureFlags.IS_MESSAGES_TAB_ENABLED',
+});
+
 export const makeTab = (
   id: string,
   widgets: PageLayoutWidget[],

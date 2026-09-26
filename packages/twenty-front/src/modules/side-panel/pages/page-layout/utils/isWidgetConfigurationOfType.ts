@@ -5,6 +5,7 @@ import {
   type CalendarConfiguration,
   type CallRecordingSummaryConfiguration,
   type CallRecordingTranscriptConfiguration,
+  type ChatThreadsConfiguration,
   type EmailThreadConfiguration,
   type EmailsConfiguration,
   type FieldRichTextConfiguration,
@@ -66,6 +67,12 @@ type WidgetConfigurationTypenameMap = {
     'configurationType'
   > & {
     configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT;
+  };
+  ChatThreadsConfiguration: Omit<
+    ChatThreadsConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.CHAT_THREADS;
   };
   MessageCampaignBodyConfiguration: Omit<
     MessageCampaignBodyConfiguration,

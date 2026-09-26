@@ -19,6 +19,7 @@ export const getPageLayoutWidgetHeightBehavior = ({
     case WidgetType.CALENDAR:
     case WidgetType.CALL_RECORDING_SUMMARY:
     case WidgetType.CALL_RECORDING_TRANSCRIPT:
+    case WidgetType.CHAT_THREADS:
     case WidgetType.EMAILS:
     case WidgetType.EMAIL_THREAD:
     case WidgetType.FILES:
