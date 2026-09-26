@@ -8,6 +8,7 @@ import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constan
 import { plural, t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
+import { type Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -44,11 +45,9 @@ type RelativeDatePickerHeaderProps = {
   readonly?: boolean;
   unitDropdownWidth?: number;
   allowIntraDayUnits?: boolean;
-  calendarMonthDate?: Date;
+  calendarMonthDate?: Temporal.PlainDate;
   onPreviousMonth?: () => void;
   onNextMonth?: () => void;
-  prevMonthButtonDisabled?: boolean;
-  nextMonthButtonDisabled?: boolean;
 };
 
 export const RelativeDatePickerHeader = ({
@@ -64,8 +63,6 @@ export const RelativeDatePickerHeader = ({
   calendarMonthDate,
   onPreviousMonth,
   onNextMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
 }: RelativeDatePickerHeaderProps) => {
   const amountString = amount?.toString() ?? '';
 
@@ -193,8 +190,6 @@ export const RelativeDatePickerHeader = ({
             monthLabelDate={calendarMonthDate}
             onPreviousMonth={onPreviousMonth}
             onNextMonth={onNextMonth}
-            prevMonthButtonDisabled={prevMonthButtonDisabled ?? false}
-            nextMonthButtonDisabled={nextMonthButtonDisabled ?? false}
           />
         )}
     </StyledContainer>

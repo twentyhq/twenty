@@ -1,10 +1,11 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { isDefined } from 'twenty-shared/utils';
+import { localizeDateFormatToCalendarSystem } from '@/localization/utils/localizeDateFormatToCalendarSystem';
 import { format, isValid } from 'date-fns';
+import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
 import { getDateTimeFormatStringFoDatePickerInputMask } from '~/utils/date-utils';
 
 export const useParseJSDateToIMaskDateTimeInputString = () => {
-  const { dateFormat, timeFormat } = useDateTimeFormat();
+  const { dateFormat, timeFormat, calendarSystem } = useDateTimeFormat();
 
   const parseJSDateToDateTimeInputString = (date: Date) => {
     if (!isDefined(date) || !isValid(date)) {
@@ -16,7 +17,14 @@ export const useParseJSDateToIMaskDateTimeInputString = () => {
       timeFormat,
     });
 
-    return format(date, parsingFormat);
+    return format(
+      date,
+      localizeDateFormatToCalendarSystem({
+        dateFormat: parsingFormat,
+        plainDate: turnJSDateToPlainDate(date),
+        calendarSystem,
+      }),
+    );
   };
 
   return {

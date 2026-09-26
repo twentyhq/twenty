@@ -156,7 +156,7 @@ export class InsertFieldData {
 
   async selectDay(value: string) {
     await this.page
-      .locator(`//div[@aria-label='${formatDate(value)}']`)
+      .locator(`//button[@aria-label='${formatDate(value)}']`)
       .click();
   }
 

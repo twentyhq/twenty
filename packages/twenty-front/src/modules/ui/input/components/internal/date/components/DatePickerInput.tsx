@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { useParseDateInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToJSDate';
 import { useParsePlainDateToDateInputString } from '@/ui/input/components/internal/date/hooks/useParsePlainDateToDateInputString';
 import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMask';
+import { getDateMaskBlocks } from '@/ui/input/components/internal/date/utils/getDateMaskBlocks';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 
 import { useParseDateInputStringToPlainDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate';
@@ -65,7 +65,7 @@ export const DatePickerInput = ({
   readonly = false,
   variant = 'default',
 }: DatePickerInputProps) => {
-  const { dateFormat } = useDateTimeFormat();
+  const { dateFormat, calendarSystem } = useDateTimeFormat();
 
   const [internalDate, setInternalDate] = useState(date);
 
@@ -85,7 +85,7 @@ export const DatePickerInput = ({
   };
 
   const pattern = getDateMask(dateFormat);
-  const blocks = DATE_BLOCKS;
+  const blocks = getDateMaskBlocks(calendarSystem);
 
   const defaultValue = internalDate
     ? (parsePlainDateToDateInputString(internalDate) ?? undefined)

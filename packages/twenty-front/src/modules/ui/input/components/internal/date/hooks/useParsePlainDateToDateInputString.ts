@@ -1,20 +1,26 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { localizeDateFormatToCalendarSystem } from '@/localization/utils/localizeDateFormatToCalendarSystem';
 
-import { format, parse } from 'date-fns';
-import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
+import { format } from 'date-fns';
+import { Temporal } from 'temporal-polyfill';
 import { getDateFormatStringForDatePickerInputMask } from '~/utils/date-utils';
 
 export const useParsePlainDateToDateInputString = () => {
-  const { dateFormat } = useDateTimeFormat();
+  const { dateFormat, calendarSystem } = useDateTimeFormat();
 
-  const parsePlainDateToDateInputString = (plainDate: string) => {
+  const parsePlainDateToDateInputString = (plainDateString: string) => {
     const parsingFormat = getDateFormatStringForDatePickerInputMask(dateFormat);
 
-    const parsedDate = parse(plainDate, DATE_TYPE_FORMAT, new Date());
+    const plainDate = Temporal.PlainDate.from(plainDateString);
 
-    const formattedDate = format(parsedDate, parsingFormat);
-
-    return formattedDate;
+    return format(
+      new Date(plainDate.year, plainDate.month - 1, plainDate.day),
+      localizeDateFormatToCalendarSystem({
+        dateFormat: parsingFormat,
+        plainDate,
+        calendarSystem,
+      }),
+    );
   };
 
   return {
