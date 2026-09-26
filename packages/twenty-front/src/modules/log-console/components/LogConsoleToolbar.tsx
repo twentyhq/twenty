@@ -4,7 +4,7 @@ import { type ReactNode, useState } from 'react';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconButton, LightButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import {
   type IconComponent,
   IconChevronLeft,
@@ -470,9 +470,6 @@ export const LogConsoleToolbar = ({
             >
               <StyledChips>{filterFieldsWithChip.map(renderChip)}</StyledChips>
             </ScrollWrapper>
-            <LightButton emphasis="subtle" onClick={() => onFiltersChange([])}>
-              {t`Reset`}
-            </LightButton>
           </StyledFilterChips>
         )}
         <StyledActions>
