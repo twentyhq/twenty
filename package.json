@@ -12,6 +12,7 @@
     "@yarnpkg/types": "^4.0.0",
     "concurrently": "^8.2.2",
     "http-server": "^14.1.1",
+    "knip": "^6.37.0",
     "nx": "22.7.8",
     "oxfmt": "0.50.0",
     "tsx": "^4.17.0",
