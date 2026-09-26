@@ -1,0 +1,10 @@
+export const TEAMS_PROVIDER_NAME = 'microsoft-teams';
+export const MICROSOFT_GRAPH_BASE_URL = 'https://graph.microsoft.com/v1.0';
+export const GRAPH_REQUEST_MAX_ATTEMPTS = 4;
+export const GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS = 1_000;
+export const MAX_GRAPH_TRANSCRIPT_LIST_PAGES = 200;
+export const TEAMS_CALENDAR_PAGE_SIZE = 50;
+export const TEAMS_DEFAULT_LOOKBACK_DAYS = 31;
+export const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1_000;
+export const TEAMS_OCCURRENCE_MARGIN_MILLISECONDS = 15 * 60 * 1_000;
+export const GRAPH_RETRYABLE_STATUSES = new Set([429, 502, 503, 504]);

@@ -1,10 +1,11 @@
 import { defineConnectionProvider } from 'twenty-sdk/define';
 
+import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams.constant';
 import { TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 
 export default defineConnectionProvider({
   universalIdentifier: TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
-  name: 'microsoft-teams',
+  name: TEAMS_PROVIDER_NAME,
   displayName: 'Microsoft Teams',
   type: 'oauth',
   oauth: {

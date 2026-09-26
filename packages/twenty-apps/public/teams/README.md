@@ -4,12 +4,12 @@ Microsoft Teams chat and transcript features in one application.
 
 ## Status
 
-The application provides a settings page, the Bot Connector helpers, and a
-Microsoft OAuth connection for transcripts. Chat handlers and transcript imports
-are still under development. Both features are unavailable in this version and
-their workspace settings default to off. Connecting a Microsoft account does not
-start transcript imports or register subscriptions. The default application role
-has no CRM data access.
+The application provides a settings page, the Bot Connector helpers, a
+Microsoft OAuth connection, and a List My Teams Transcripts action. Chat handlers
+and transcript imports are still under development. Both features are unavailable
+in this version and their workspace settings default to off. Connecting a Microsoft
+account does not start transcript imports or register subscriptions. The default
+application role has no CRM data access.
 
 See [SETUP.md](SETUP.md) for Microsoft OAuth setup.
 
@@ -32,7 +32,7 @@ See [SETUP.md](SETUP.md) for Microsoft OAuth setup.
 `false`. A disabled feature is shown as unavailable in settings, retaining any
 saved workspace preference.
 
-The frontend and future handlers share
+The frontend and handlers share
 `isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's development
 flag as `isAvailable`; the serialized workspace setting must also be `'true'`.
 In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` or
@@ -54,6 +54,17 @@ Feature flags do not exclude SDK definitions from the manifest or make broken
 code buildable. Disabled features must still pass typecheck and build. The
 Microsoft OAuth connection remains available independently of the transcript
 release flag; connecting an account only stores its credentials for future use.
+
+## List My Teams Transcripts
+
+The AI and workflow action lists transcripts for scheduled meetings organized by
+the connected Microsoft account. It reads one calendar page at a time and returns
+`nextPageUrl` for continuation. A transcript is listed with the scheduled
+occurrence it was created during, give or take 15 minutes, so a recurring
+meeting lists only the transcripts of its occurrences in the requested window.
+It does not import transcript content or write CRM records. Both
+`IS_TRANSCRIPT_IMPORT_ENABLED` and `TEAMS_TRANSCRIPTS_ENABLED` must be enabled
+before the action can access connections or Microsoft Graph.
 
 ## Bot server variables
 

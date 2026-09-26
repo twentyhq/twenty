@@ -5,6 +5,16 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identi
 import { describe, expect, it } from 'vitest';
 
 describe('App installation', () => {
+  it('deploys the List My Teams Transcripts function', async () => {
+    const result = await new MetadataApiClient().query({
+      findManyLogicFunctions: { name: true },
+    });
+
+    expect(
+      result.findManyLogicFunctions.map((logicFunction) => logicFunction.name),
+    ).toContain('teams-list-organizer-transcripts');
+  });
+
   it('registers Microsoft OAuth under Teams without configured credentials', async () => {
     const client = new MetadataApiClient();
 
