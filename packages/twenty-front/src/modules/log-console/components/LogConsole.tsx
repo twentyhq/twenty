@@ -397,6 +397,7 @@ export const LogConsole = () => {
                   currentSize={detailPanelWidth}
                   onSizeChange={handleDetailPanelWidthChange}
                   cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
+                  showHandle={false}
                 />
                 <LogConsoleDetailPanel />
               </StyledDetailPanelWrapper>
@@ -412,6 +413,7 @@ export const LogConsole = () => {
           onSizeChange={handleHeightChange}
           cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
           onResizeStart={handleResizeStart}
+          showHandle={false}
         />
       )}
     </StyledContainer>
