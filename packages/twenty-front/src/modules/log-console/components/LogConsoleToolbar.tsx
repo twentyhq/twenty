@@ -457,14 +457,12 @@ export const LogConsoleToolbar = ({
   return (
     <StyledContainer>
       <StyledToolbar>
-        {isDefined(search) && (
-          <StyledSearch
-            onFocus={pushSearchFocusItem}
-            onBlur={removeSearchFocusItem}
-          >
-            {search}
-          </StyledSearch>
-        )}
+        <StyledSearch
+          onFocus={isDefined(search) ? pushSearchFocusItem : undefined}
+          onBlur={isDefined(search) ? removeSearchFocusItem : undefined}
+        >
+          {search}
+        </StyledSearch>
         {isNonEmptyArray(filterFieldsWithChip) && (
           <StyledFilterChips>
             <ScrollWrapper
