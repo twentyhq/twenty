@@ -2,6 +2,8 @@ import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { type Request } from 'express';
+
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
@@ -30,6 +32,7 @@ import { UserSessionCookieService } from 'src/engine/core-modules/user-session/s
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -40,6 +43,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 
 import { AuthResolver } from './auth.resolver';
 
+import { type UserCredentialsInput } from './dto/user-credentials.input';
 import { AuthService } from './services/auth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
@@ -55,17 +59,24 @@ describe('AuthResolver', () => {
     findWorkspaceForSignInUp: jest.Mock;
     formatUserDataPayload: jest.Mock;
     signInUp: jest.Mock;
+    validateLoginWithPassword: jest.Mock;
+    verify: jest.Mock;
   };
   let emailVerificationService: { sendVerificationEmail: jest.Mock };
   let emailVerificationTokenService: {
     validateEmailVerificationTokenOrThrow: jest.Mock;
   };
-  let loginTokenService: { generateLoginToken: jest.Mock };
+  let loginTokenService: {
+    generateLoginToken: jest.Mock;
+    verifyLoginToken: jest.Mock;
+  };
   let resetPasswordService: ResetPasswordService;
   let signInUpService: { signUpOnNewWorkspace: jest.Mock };
   let throttlerService: ThrottlerService;
+  let twoFactorAuthenticationService: { validateStrategy: jest.Mock };
   let userService: {
     findUserByEmail: jest.Mock;
+    findUserByEmailOrThrow: jest.Mock;
     findUserByIdOrThrow: jest.Mock;
     markEmailAsVerified: jest.Mock;
   };
@@ -101,6 +112,8 @@ describe('AuthResolver', () => {
             findWorkspaceForSignInUp: jest.fn(),
             formatUserDataPayload: jest.fn(),
             signInUp: jest.fn(),
+            validateLoginWithPassword: jest.fn(),
+            verify: jest.fn(),
           },
         },
         {
@@ -111,6 +124,7 @@ describe('AuthResolver', () => {
           provide: UserService,
           useValue: {
             findUserByEmail: jest.fn(),
+            findUserByEmailOrThrow: jest.fn(),
             findUserByIdOrThrow: jest.fn(),
             markEmailAsVerified: jest.fn(),
           },
@@ -185,12 +199,15 @@ describe('AuthResolver', () => {
           provide: ThrottlerService,
           useValue: {
             tokenBucketThrottleOrThrow: jest.fn(),
+            getAvailableTokensCount: jest.fn().mockResolvedValue(1),
+            consumeTokens: jest.fn(),
           },
         },
         {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: jest.fn(),
+            verifyLoginToken: jest.fn(),
           },
         },
         {
@@ -237,7 +254,9 @@ describe('AuthResolver', () => {
         },
         {
           provide: TwoFactorAuthenticationService,
-          useValue: {},
+          useValue: {
+            validateStrategy: jest.fn(),
+          },
         },
         {
           provide: TwentyConfigService,
@@ -267,6 +286,7 @@ describe('AuthResolver', () => {
       module.get<ResetPasswordService>(ResetPasswordService);
     signInUpService = module.get(SignInUpService);
     throttlerService = module.get<ThrottlerService>(ThrottlerService);
+    twoFactorAuthenticationService = module.get(TwoFactorAuthenticationService);
     userService = module.get(UserService);
     workspaceDomainsService = module.get(WorkspaceDomainsService);
   });
@@ -453,6 +473,112 @@ describe('AuthResolver', () => {
       ).rejects.toThrow('cache down');
       expect(
         resetPasswordService.generateAndSendPasswordResetLink,
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sign-in failure throttling', () => {
+    const workspace = { id: 'workspace-id' };
+    const request = { ip: '203.0.113.7' } as Request;
+    const credentials = {
+      email: 'TeSt@Example.com',
+      password: 'wrong-password',
+    } as UserCredentialsInput;
+
+    beforeEach(() => {
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
+        workspace,
+      );
+    });
+
+    it('should refuse a password attempt once the limit is reached', async () => {
+      (throttlerService.getAvailableTokensCount as jest.Mock).mockResolvedValue(
+        0,
+      );
+
+      await expect(
+        resolver.getLoginTokenFromCredentials(credentials, 'origin', {
+          req: request,
+        }),
+      ).rejects.toThrow(ThrottlerException);
+      expect(authService.validateLoginWithPassword).not.toHaveBeenCalled();
+    });
+
+    it('should count a failed password attempt per email and per IP', async () => {
+      authService.validateLoginWithPassword.mockRejectedValue(
+        new Error('Wrong password'),
+      );
+
+      await expect(
+        resolver.getLoginTokenFromCredentials(credentials, 'origin', {
+          req: request,
+        }),
+      ).rejects.toThrow('Wrong password');
+      expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
+        'sign-in-password:email:test@example.com',
+        1,
+        expect.any(Number),
+        expect.any(Number),
+      );
+      expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
+        'sign-in-password:ip:203.0.113.7',
+        1,
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it('should not count a successful password attempt', async () => {
+      authService.validateLoginWithPassword.mockResolvedValue({
+        email: 'test@example.com',
+      });
+      loginTokenService.generateLoginToken.mockResolvedValue({
+        token: 'login-token',
+      });
+
+      await resolver.getLoginTokenFromCredentials(credentials, 'origin', {
+        req: request,
+      });
+
+      expect(throttlerService.consumeTokens).not.toHaveBeenCalled();
+    });
+
+    it('should count a failed OTP per user and refuse codes once the limit is reached', async () => {
+      loginTokenService.verifyLoginToken.mockResolvedValue({
+        sub: 'test@example.com',
+        authProvider: AuthProviderEnum.Password,
+        workspaceId: workspace.id,
+      });
+      userService.findUserByEmailOrThrow.mockResolvedValue({ id: 'user-id' });
+      twoFactorAuthenticationService.validateStrategy.mockRejectedValue(
+        new Error('Invalid OTP'),
+      );
+
+      const otpInput = {
+        loginToken: 'login-token',
+        otp: '000000',
+      } as TwoFactorAuthenticationVerificationInput;
+
+      await expect(
+        resolver.getAuthTokensFromOTP(otpInput, 'origin', { req: request }),
+      ).rejects.toThrow('Invalid OTP');
+      expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
+        'sign-in-otp:user:user-id',
+        1,
+        expect.any(Number),
+        expect.any(Number),
+      );
+
+      (throttlerService.getAvailableTokensCount as jest.Mock).mockResolvedValue(
+        0,
+      );
+      twoFactorAuthenticationService.validateStrategy.mockClear();
+
+      await expect(
+        resolver.getAuthTokensFromOTP(otpInput, 'origin', { req: request }),
+      ).rejects.toThrow(ThrottlerException);
+      expect(
+        twoFactorAuthenticationService.validateStrategy,
       ).not.toHaveBeenCalled();
     });
   });
