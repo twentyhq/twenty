@@ -165,4 +165,20 @@ describe('resolveRelativeDateTimeFilter', () => {
       expect(result.end?.minute).toBe(0);
     });
   });
+
+  describe('with a non-Gregorian calendar system', () => {
+    it('should compute THIS MONTH as the current Persian month in ISO calendar', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'THIS', unit: 'MONTH', calendarSystem: 'persian' },
+        Temporal.ZonedDateTime.from('2026-09-26T12:00:00[Asia/Tehran]'),
+      );
+
+      expect(result.start?.toString()).toBe(
+        '2026-09-23T00:00:00+03:30[Asia/Tehran]',
+      );
+      expect(result.end?.toString()).toBe(
+        '2026-10-23T00:00:00+03:30[Asia/Tehran]',
+      );
+    });
+  });
 });

@@ -3,7 +3,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import z from 'zod';
 
 const REGEX_FOR_RELATIVE_DATE_FILTER_STRINGIFIED_PARSING =
-  /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|QUARTER|HOUR|MINUTE|SECOND)(?:(?:;;([^;;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?)?/;
+  /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|QUARTER|HOUR|MINUTE|SECOND)(?:(?:;;([^;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?(?:(gregory|persian|islamic-umalqura);;)?)?/;
 
 export const relativeDateFilterStringifiedSchema = z
   .string()
@@ -22,7 +22,15 @@ export const relativeDateFilterStringifiedSchema = z
       return z.NEVER;
     }
 
-    const [_, direction, amount, unit, timezone, firstDayOfTheWeek] = result;
+    const [
+      _,
+      direction,
+      amount,
+      unit,
+      timezone,
+      firstDayOfTheWeek,
+      calendarSystem,
+    ] = result;
 
     const parseResult = relativeDateFilterSchema.safeParse({
       direction,
@@ -30,6 +38,7 @@ export const relativeDateFilterStringifiedSchema = z
       unit,
       timezone,
       firstDayOfTheWeek,
+      calendarSystem,
     });
 
     if (!parseResult.success) {

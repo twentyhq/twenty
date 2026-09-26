@@ -1,3 +1,4 @@
+import { calendarSystemSchema } from '@/utils/filter/dates/utils/calendarSystemSchema';
 import { firstDayOfWeekSchema } from '@/utils/filter/dates/utils/firstDayOfWeekSchema';
 import { relativeDateFilterAmountSchema } from '@/utils/filter/dates/utils/relativeDateFilterAmountSchema';
 import { relativeDateFilterDirectionSchema } from '@/utils/filter/dates/utils/relativeDateFilterDirectionSchema';
@@ -12,6 +13,7 @@ export const relativeDateFilterSchema = z
     unit: relativeDateFilterUnitSchema,
     timezone: z.string().nullish(),
     firstDayOfTheWeek: firstDayOfWeekSchema.nullish(),
+    calendarSystem: calendarSystemSchema.nullish(),
   })
   .refine((data) => !(data.amount === undefined && data.direction !== 'THIS'), {
     error: "Amount cannot be 'undefined' unless direction is 'THIS'",

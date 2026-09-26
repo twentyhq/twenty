@@ -79,6 +79,7 @@ export const ObjectFilterDropdownDateInput = () => {
           ...relativeDate,
           timezone: timeZone,
           firstDayOfTheWeek: resolvedCalendarStartDay,
+          calendarSystem,
         })
       : '';
 

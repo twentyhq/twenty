@@ -1,4 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -9,6 +11,7 @@ import { type RelativeDateFilter } from 'twenty-shared/utils';
 export const useGetRelativeDateFilterWithUserTimezone = () => {
   const { userTimezone } = useUserTimezone();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const { calendarSystem } = useDateTimeFormat();
 
   const getRelativeDateFilterWithUserTimezone = (
     relativeDateFilter: RelativeDateFilter,
@@ -29,6 +32,10 @@ export const useGetRelativeDateFilterWithUserTimezone = () => {
       ...relativeDateFilter,
       timezone: userTimezone,
       firstDayOfTheWeek: resolvedCalendarStartDay,
+      calendarSystem:
+        calendarSystem === CalendarSystem.GREGORIAN
+          ? undefined
+          : calendarSystem,
     };
   };
 

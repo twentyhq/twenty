@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarGridDay } from '@/object-record/record-calendar/grid/components/RecordCalendarGridDay';
 import { RecordCalendarDragDropContext } from '@/object-record/record-calendar/components/RecordCalendarDragDropContext';
 import { useRecordCalendarDaysRange } from '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange';
@@ -60,6 +61,7 @@ export const RecordCalendarGrid = ({
   const recordCalendarSelectedDate = useAtomComponentStateValue(
     recordCalendarSelectedDateComponentState,
   );
+  const { calendarSystem } = useDateTimeFormat();
   const { days, weekDayLabels } = useRecordCalendarDaysRange(
     recordCalendarSelectedDate,
     calendarLayout,
@@ -82,7 +84,10 @@ export const RecordCalendarGrid = ({
                   day={day}
                   isOtherMonth={
                     calendarLayout === ViewCalendarLayout.MONTH &&
-                    !isPlainDateInSameMonth(day, recordCalendarSelectedDate)
+                    !isPlainDateInSameMonth(
+                      day.withCalendar(calendarSystem),
+                      recordCalendarSelectedDate.withCalendar(calendarSystem),
+                    )
                   }
                 />
               ))}

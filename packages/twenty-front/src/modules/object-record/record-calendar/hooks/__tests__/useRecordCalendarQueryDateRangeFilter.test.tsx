@@ -47,7 +47,11 @@ jest.mock(
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => {
   const { enUS } = jest.requireActual('date-fns/locale');
   return {
-    useAtomStateValue: () => ({ calendarStartDay: 1, localeCatalog: enUS }),
+    useAtomStateValue: () => ({
+      calendarStartDay: 1,
+      calendarSystem: 'gregory',
+      localeCatalog: enUS,
+    }),
   };
 });
 jest.mock('twenty-shared/utils', () => ({

@@ -7,7 +7,7 @@ export type UserContextType = {
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   timeZone: string;
-  calendarSystem: CalendarSystem;
+  calendarSystem: Exclude<CalendarSystem, CalendarSystem.SYSTEM>;
 };
 
 export const UserContext = createContext<UserContextType>(

@@ -1,3 +1,4 @@
+import { localizeDateFormatToCalendarSystem } from '@/localization/utils/localizeDateFormatToCalendarSystem';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
@@ -84,7 +85,7 @@ export const RecordCalendarTopBar = () => {
     useAtomComponentState(recordIndexCalendarLayoutComponentState);
 
   const dateLocale = useAtomStateValue(dateLocaleState);
-  const { timeZone } = useDateTimeFormat();
+  const { timeZone, calendarSystem } = useDateTimeFormat();
   const { firstDay: firstDayOfWeek, lastDay: lastDayOfWeek } =
     useRecordCalendarDaysRange(
       recordCalendarSelectedDate,
@@ -109,7 +110,10 @@ export const RecordCalendarTopBar = () => {
         ? recordCalendarSelectedDate.subtract({ days: 1 })
         : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
           ? recordCalendarSelectedDate.subtract({ weeks: 1 })
-          : recordCalendarSelectedDate.subtract({ months: 1 });
+          : recordCalendarSelectedDate
+              .withCalendar(calendarSystem)
+              .subtract({ months: 1 })
+              .withCalendar('iso8601');
 
     setRecordCalendarSelectedDate(previousDate);
   };
@@ -120,7 +124,10 @@ export const RecordCalendarTopBar = () => {
         ? recordCalendarSelectedDate.add({ days: 1 })
         : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
           ? recordCalendarSelectedDate.add({ weeks: 1 })
-          : recordCalendarSelectedDate.add({ months: 1 });
+          : recordCalendarSelectedDate
+              .withCalendar(calendarSystem)
+              .add({ months: 1 })
+              .withCalendar('iso8601');
 
     setRecordCalendarSelectedDate(nextDate);
   };
@@ -138,18 +145,25 @@ export const RecordCalendarTopBar = () => {
     recordIndexCalendarLayout === ViewCalendarLayout.DAY
       ? recordCalendarSelectedDate.toLocaleString(dateLocale.locale, {
           dateStyle: 'full',
+          calendar: calendarSystem,
         })
       : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
         ? formatRecordCalendarWeekRange({
             firstDayOfWeek,
             lastDayOfWeek,
             locale: dateLocale.localeCatalog,
+            calendarSystem,
           })
         : format(
             turnPlainDateToShiftedDateInSystemTimeZone(
               recordCalendarSelectedDate,
             ),
-            'MMMM yyyy',
+            localizeDateFormatToCalendarSystem({
+              dateFormat: 'MMMM yyyy',
+              plainDate: recordCalendarSelectedDate,
+              calendarSystem,
+              localeCode: dateLocale.localeCatalog.code,
+            }),
             { locale: dateLocale.localeCatalog },
           );
 

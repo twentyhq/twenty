@@ -10,7 +10,15 @@ export const resolveRelativeDateFilter = (
   relativeDateFilter: RelativeDateFilter,
   referenceTodayZonedDateTime: Temporal.ZonedDateTime,
 ) => {
-  const { direction, amount, unit, firstDayOfTheWeek } = relativeDateFilter;
+  const { direction, amount, unit, firstDayOfTheWeek, calendarSystem } =
+    relativeDateFilter;
+
+  const referenceTodayInCalendar = referenceTodayZonedDateTime.withCalendar(
+    calendarSystem ?? 'iso8601',
+  );
+
+  const toPlainDateISOString = (zonedDateTime: Temporal.ZonedDateTime) =>
+    zonedDateTime.toPlainDate().withCalendar('iso8601').toString();
 
   switch (direction) {
     case 'NEXT': {
@@ -19,7 +27,7 @@ export const resolveRelativeDateFilter = (
       }
 
       const startOfNextPeriod = getNextPeriodStart(
-        referenceTodayZonedDateTime,
+        referenceTodayInCalendar,
         unit,
         firstDayOfTheWeek,
       );
@@ -32,8 +40,8 @@ export const resolveRelativeDateFilter = (
 
       return {
         ...relativeDateFilter,
-        start: startOfNextPeriod.toPlainDate().toString(),
-        end: endOfNextPeriod.toPlainDate().toString(),
+        start: toPlainDateISOString(startOfNextPeriod),
+        end: toPlainDateISOString(endOfNextPeriod),
       };
     }
     case 'PAST': {
@@ -42,7 +50,7 @@ export const resolveRelativeDateFilter = (
       }
 
       const startOfCurrentPeriod = getPeriodStart(
-        referenceTodayZonedDateTime,
+        referenceTodayInCalendar,
         unit,
         firstDayOfTheWeek,
       );
@@ -55,25 +63,25 @@ export const resolveRelativeDateFilter = (
 
       return {
         ...relativeDateFilter,
-        start: startOfPastPeriod.toPlainDate().toString(),
-        end: startOfCurrentPeriod.toPlainDate().toString(),
+        start: toPlainDateISOString(startOfPastPeriod),
+        end: toPlainDateISOString(startOfCurrentPeriod),
       };
     }
     case 'THIS': {
       const startOfPeriod = getPeriodStart(
-        referenceTodayZonedDateTime,
+        referenceTodayInCalendar,
         unit,
         firstDayOfTheWeek,
       );
 
       const endOfPeriod = getNextPeriodStart(
-        referenceTodayZonedDateTime,
+        referenceTodayInCalendar,
         unit,
         firstDayOfTheWeek,
       );
 
-      const start = startOfPeriod?.toPlainDate().toString();
-      const end = endOfPeriod?.toPlainDate().toString();
+      const start = toPlainDateISOString(startOfPeriod);
+      const end = toPlainDateISOString(endOfPeriod);
 
       return {
         ...relativeDateFilter,
