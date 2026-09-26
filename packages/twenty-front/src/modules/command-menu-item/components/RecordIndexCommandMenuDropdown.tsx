@@ -2,6 +2,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
+import { useRecordIndexCommandMenuDropdownCopyCellText } from '@/command-menu-item/hooks/useRecordIndexCommandMenuDropdownCopyCellText';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -18,8 +19,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
+import { IconCopy, IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`
@@ -58,7 +61,20 @@ export const RecordIndexCommandMenuDropdown = () => {
 
   const { openSidePanelMenu } = useSidePanelMenu();
 
+  const { copyToClipboard } = useCopyToClipboard();
+
+  const copyCellText =
+    useRecordIndexCommandMenuDropdownCopyCellText(dropdownId);
+
+  const shouldShowCopyCell = isNonEmptyString(copyCellText);
+
+  const handleCopyCell = () => {
+    closeDropdown(dropdownId);
+    copyToClipboard(copyCellText);
+  };
+
   const selectedItemIdArray = [
+    ...(shouldShowCopyCell ? ['copy-cell'] : []),
     ...recordIndexCommandMenuItems.map((item) => item.id),
     ...(shouldShowMoreActions ? ['more-actions'] : []),
   ];
@@ -88,6 +104,18 @@ export const RecordIndexCommandMenuDropdown = () => {
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
               >
+                {shouldShowCopyCell && (
+                  <SelectableListItem
+                    itemId="copy-cell"
+                    onEnter={handleCopyCell}
+                  >
+                    <ListItem
+                      startIcon={<IconCopy />}
+                      onClick={handleCopyCell}
+                      focused={selectedItemId === 'copy-cell'}
+                    >{t`Copy cell`}</ListItem>
+                  </SelectableListItem>
+                )}
                 {recordIndexCommandMenuItems.map((item) => (
                   <CommandMenuItemRenderer item={item} key={item.id} />
                 ))}

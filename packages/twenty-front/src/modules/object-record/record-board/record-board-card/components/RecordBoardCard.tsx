@@ -1,4 +1,5 @@
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { recordIndexCommandMenuDropdownTargetCellComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownTargetCellComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -116,6 +117,11 @@ export const RecordBoardCard = () => {
     commandMenuDropdownId,
   );
 
+  const setRecordIndexCommandMenuDropdownTargetCell = useSetAtomComponentState(
+    recordIndexCommandMenuDropdownTargetCellComponentState,
+    commandMenuDropdownId,
+  );
+
   const { openDropdown } = useOpenDropdown();
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
@@ -135,6 +141,7 @@ export const RecordBoardCard = () => {
       x: event.clientX,
       y: event.clientY,
     });
+    setRecordIndexCommandMenuDropdownTargetCell(null);
     openDropdown({
       dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       globalHotkeysConfig: {

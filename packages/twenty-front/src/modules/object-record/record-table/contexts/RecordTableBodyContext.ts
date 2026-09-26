@@ -1,5 +1,6 @@
 import type React from 'react';
 
+import { type RecordIndexCommandMenuDropdownTargetCell } from '@/command-menu-item/types/RecordIndexCommandMenuDropdownTargetCell';
 import { type OpenTableCellArgs } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -13,7 +14,7 @@ export type RecordTableBodyContextProps = {
   onMoveHoverToCurrentCell: (cellPosition: TableCellPosition) => void;
   onCommandMenuDropdownOpened: (
     event: React.MouseEvent,
-    recordId: string,
+    targetCell: RecordIndexCommandMenuDropdownTargetCell,
   ) => void;
   hasUserSelectedAllRows?: boolean;
 };
