@@ -240,15 +240,13 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         filters={logConsoleFilters}
         onFiltersChange={changeFilters}
         search={
-          <SearchInput
-            placeholder={
-              isDefined(source.searchPlaceholder)
-                ? t(source.searchPlaceholder)
-                : t`Search...`
-            }
-            value={searchInput}
-            onChange={changeSearchInput}
-          />
+          isDefined(source.searchPlaceholder) ? (
+            <SearchInput
+              placeholder={t(source.searchPlaceholder)}
+              value={searchInput}
+              onChange={changeSearchInput}
+            />
+          ) : undefined
         }
         logsAction={logsAction}
       >

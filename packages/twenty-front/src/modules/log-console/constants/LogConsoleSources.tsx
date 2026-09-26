@@ -100,7 +100,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       { label: msg`Record ID`, getId: (entry) => entry.recordId },
       { label: msg`User ID`, getId: (entry) => entry.userId },
     ],
-    searchPlaceholder: msg`Search events`,
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} change`,
@@ -285,7 +284,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         getId: (entry) => entry.properties?.sessionId,
       },
     ],
-    searchPlaceholder: msg`Search pages`,
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} page view`,
@@ -327,7 +325,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     idFields: [
       { label: msg`User workspace ID`, getId: (entry) => entry.userId },
     ],
-    searchPlaceholder: msg`Search usage`,
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} usage event`,
