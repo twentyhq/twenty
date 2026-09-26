@@ -23,6 +23,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
+import { markIntentionalSignOut } from '@/auth/utils/intentional-sign-out';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
@@ -454,6 +455,10 @@ export const useAuth = () => {
 
     broadcastSignOutToOtherTabs();
     clearSession();
+    // clearSession wipes sessionStorage; the flag has to be written after it
+    // so the welcome page shows the signed-out notice instead of bouncing
+    // straight back through the identity provider.
+    markIntentionalSignOut();
   }, [clearSession, signOutMutation, store]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(

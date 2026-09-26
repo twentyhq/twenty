@@ -10,10 +10,18 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import {
+  clearIntentionalSignOutFlag,
+  hasIntentionalSignOutFlag,
+} from '@/auth/utils/intentional-sign-out';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useEffect, useState } from 'react';
+import { useLingui } from '@lingui/react/macro';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { MainButton } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 const REDIRECT_ATTEMPT_STORAGE_KEY = 'dos-id-auto-redirect-attempted-at';
 // Bounces do not always land back on /welcome with an errorMessage: guard
@@ -44,7 +52,10 @@ const wasRedirectAttemptedRecently = (): boolean => {
 // errorMessage or via /verify, the break-glass form is requested with
 // ?direct=1, an ssoExchangeToken in the hash takes the page over, any step
 // past Init means a flow is already in progress, and the cooldown covers
-// every other bounce path the URL-based checks cannot see.
+// every other bounce path the URL-based checks cannot see. An intentional
+// sign-out sets its own flag: the page then shows a signed-out notice with
+// an explicit sign-in button instead of silently bouncing through the IdP,
+// which would make logging out read as a no-op.
 type SignInUpDosIdAutoRedirectEffectProps = {
   // Workspace-scoped SSO lives in the workspace public data (not the global
   // client config, whose sso field is always empty); while it is still
@@ -55,10 +66,43 @@ type SignInUpDosIdAutoRedirectEffectProps = {
   hasWorkspaceSso: boolean;
 };
 
+const StyledSignedOutNotice = styled.div`
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${themeCssVariables.background.primary};
+  z-index: 1;
+`;
+
+const StyledSignedOutCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  align-items: center;
+  text-align: center;
+  width: 320px;
+`;
+
+const StyledTitle = styled.h1`
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin: 0;
+  color: ${themeCssVariables.font.color.primary};
+`;
+
+const StyledSubtitle = styled.p`
+  font-size: ${themeCssVariables.font.size.md};
+  margin: 0;
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
 export const SignInUpDosIdAutoRedirectEffect = ({
   isWorkspacePublicDataLoading,
   hasWorkspaceSso,
 }: SignInUpDosIdAutoRedirectEffectProps) => {
+  const { t } = useLingui();
   const { signInWithDosId } = useSignInWithDosId();
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
   const authProviders = useAtomStateValue(authProvidersState);
@@ -70,9 +114,41 @@ export const SignInUpDosIdAutoRedirectEffect = ({
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const [searchParams] = useSearchParams();
   const [hasRedirected, setHasRedirected] = useState(false);
+  const [isSignedOutNoticeShown, setIsSignedOutNoticeShown] = useState(
+    hasIntentionalSignOutFlag,
+  );
   const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
     lastAuthenticatedMethodState,
   );
+
+  // The flag outlives the sign-out tab only until the next successful
+  // sign-in, so a stale notice cannot suppress the redirect forever.
+  useEffect(() => {
+    if (isLogged && hasIntentionalSignOutFlag()) {
+      clearIntentionalSignOutFlag();
+      setIsSignedOutNoticeShown(false);
+    }
+  }, [isLogged]);
+
+  const triggerSignIn = useCallback(() => {
+    setHasRedirected(true);
+    setIsSignedOutNoticeShown(false);
+    clearIntentionalSignOutFlag();
+    setLastAuthenticatedMethod(AuthenticatedMethod.DOS_ID);
+    sessionStorage.setItem(REDIRECT_ATTEMPT_STORAGE_KEY, String(Date.now()));
+
+    signInWithDosId({
+      action:
+        isDefaultDomain && isMultiWorkspaceEnabled
+          ? 'list-available-workspaces'
+          : 'join-workspace',
+    });
+  }, [
+    isDefaultDomain,
+    isMultiWorkspaceEnabled,
+    setLastAuthenticatedMethod,
+    signInWithDosId,
+  ]);
 
   useEffect(() => {
     if (hasRedirected) {
@@ -84,6 +160,10 @@ export const SignInUpDosIdAutoRedirectEffect = ({
     }
 
     if (isLogged) {
+      return;
+    }
+
+    if (isSignedOutNoticeShown) {
       return;
     }
 
@@ -116,16 +196,7 @@ export const SignInUpDosIdAutoRedirectEffect = ({
       return;
     }
 
-    setHasRedirected(true);
-    setLastAuthenticatedMethod(AuthenticatedMethod.DOS_ID);
-    sessionStorage.setItem(REDIRECT_ATTEMPT_STORAGE_KEY, String(Date.now()));
-
-    signInWithDosId({
-      action:
-        isDefaultDomain && isMultiWorkspaceEnabled
-          ? 'list-available-workspaces'
-          : 'join-workspace',
-    });
+    triggerSignIn();
   }, [
     authProviders.dosId,
     authProviders.google,
@@ -134,16 +205,34 @@ export const SignInUpDosIdAutoRedirectEffect = ({
     clientConfigApiStatus.isLoadedOnce,
     hasRedirected,
     hasWorkspaceSso,
-    isDefaultDomain,
     isLogged,
-    isMultiWorkspaceEnabled,
+    isSignedOutNoticeShown,
     isWorkspacePublicDataLoading,
-    lastAuthenticatedMethod,
     searchParams,
-    setLastAuthenticatedMethod,
     signInUpStep,
-    signInWithDosId,
+    triggerSignIn,
   ]);
+
+  if (isSignedOutNoticeShown && !isLogged) {
+    return (
+      <StyledSignedOutNotice>
+        <StyledSignedOutCard>
+          <StyledTitle>{t`You have been signed out`}</StyledTitle>
+          <StyledSubtitle>
+            {t`Your session was closed on this device. Sign in again when you are ready.`}
+          </StyledSubtitle>
+          <MainButton
+            onClick={triggerSignIn}
+            title={t`Sign in with DOS ID`}
+            variant="solid"
+            fullWidth
+          >
+            {t`Sign in with DOS ID`}
+          </MainButton>
+        </StyledSignedOutCard>
+      </StyledSignedOutNotice>
+    );
+  }
 
   return <></>;
 };
