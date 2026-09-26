@@ -103,7 +103,9 @@ test('Create and update record', async ({ page }) => {
 
   // Fill URL
   await recordFieldList.getByText('Linkedin', { exact: true }).first().click();
-  const urlInput = recordFieldList.getByText('Linkedin', { exact: true }).nth(1);
+  const urlInput = recordFieldList
+    .getByText('Linkedin', { exact: true })
+    .nth(1);
   await expect(urlInput).toBeVisible();
   await urlInput.click({ force: true });
   await page.getByPlaceholder('URL').fill('linkedin.com/johndoe');
@@ -119,7 +121,9 @@ test('Create and update record', async ({ page }) => {
 
   // Fill phone field
   await recordFieldList.getByText('Phones', { exact: true }).first().click();
-  const phoneInput = recordFieldList.getByText('Phones', { exact: true }).nth(1);
+  const phoneInput = recordFieldList
+    .getByText('Phones', { exact: true })
+    .nth(1);
   await expect(phoneInput).toBeVisible();
   await phoneInput.click({ force: true });
   await page.getByPlaceholder('Phone').fill('+336 1 122 3344');
@@ -158,21 +162,22 @@ test('Create and update record', async ({ page }) => {
     },
   });
 
-  const findOnePersonReponseBody = await findOnePersonResponse.json();
+  const findOnePersonResponseBody = await findOnePersonResponse.json();
 
-  expect(findOnePersonReponseBody.data.person.name.firstName).toBe('John');
-  expect(findOnePersonReponseBody.data.person.name.lastName).toBe('Doe');
-  expect(findOnePersonReponseBody.data.person.emails.primaryEmail).toBe(
+  expect(findOnePersonResponseBody.errors).toBeUndefined();
+  expect(findOnePersonResponseBody.data.person.name.firstName).toBe('John');
+  expect(findOnePersonResponseBody.data.person.name.lastName).toBe('Doe');
+  expect(findOnePersonResponseBody.data.person.emails.primaryEmail).toBe(
     randomEmail,
   );
-  expect(findOnePersonReponseBody.data.person.intro).toBe('This is an intro');
-  expect(findOnePersonReponseBody.data.person.linkedinLink.primaryLinkUrl).toBe(
-    'linkedin.com/johndoe',
-  );
-  expect(findOnePersonReponseBody.data.person.phones.primaryPhoneNumber).toBe(
+  expect(findOnePersonResponseBody.data.person.intro).toBe('This is an intro');
+  expect(
+    findOnePersonResponseBody.data.person.linkedinLink.primaryLinkUrl,
+  ).toBe('linkedin.com/johndoe');
+  expect(findOnePersonResponseBody.data.person.phones.primaryPhoneNumber).toBe(
     '611223344',
   );
-  expect(findOnePersonReponseBody.data.person.workPreference).toEqual([
+  expect(findOnePersonResponseBody.data.person.workPreference).toEqual([
     'HYBRID',
   ]);
 });
