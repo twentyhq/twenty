@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
+import { SyncShortLinkObjectCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790333284553-sync-short-link-object.command';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddAgentChatThreadAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790272965444-add-agent-chat-thread-attachment-target.command';
 import { AttributeChatMessageSendersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790171503075-attribute-chat-message-senders.command';
@@ -49,6 +50,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     EnableCommonRecordSharingCommand,
     DeleteSystemReadableObjectNavigationCommandMenuItemsCommand,
     MoveCampaignSendingTablesToWorkspaceCommand,
+    SyncShortLinkObjectCommand,
     BackfillLogicFunctionFileRowsCommand,
     SyncAttachmentRecordPageCommand,
     RelabelAttachmentTargetFieldsCommand,

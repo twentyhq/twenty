@@ -73,6 +73,7 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.messageSuppression.universalIdentifier,
 
     STANDARD_OBJECTS.recordShare.universalIdentifier,
+    STANDARD_OBJECTS.shortLink.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
     ),
@@ -85,12 +86,15 @@ describe('Standard object readability', () => {
       ),
   );
 
-  it('declares recordShare SYSTEM for readability and writability', () => {
-    expect(findStandardFlatObjectMetadata('recordShare')).toMatchObject({
-      readability: MetadataReadability.SYSTEM,
-      writability: MetadataWritability.SYSTEM,
-    });
-  });
+  it.each(['recordShare', 'shortLink'] as const)(
+    'declares %s SYSTEM for readability and writability',
+    (objectName) => {
+      expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+      });
+    },
+  );
 
   // A link inheriting from its record, as noteTarget does, would tell everyone
   // who can read the record which private conversations are filed under it.
