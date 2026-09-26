@@ -12,7 +12,6 @@ import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
-import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -32,7 +31,6 @@ export const StandalonePageCommandMenu = () => {
   const store = useStore();
   const isLayoutCustomizationAllowedOnCurrentPage =
     useIsLayoutCustomizationAllowedOnCurrentPage();
-  const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
@@ -118,11 +116,6 @@ export const StandalonePageCommandMenu = () => {
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
       )
-      .filter(
-        (item) =>
-          item.engineComponentKey !== EngineComponentKey.OPEN_LOG_CONSOLE ||
-          isLogConsoleAllowed,
-      )
       .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
       .filter(
         (item) =>
@@ -147,7 +140,6 @@ export const StandalonePageCommandMenu = () => {
     commandMenuContextApi,
     currentPageLayoutId,
     isLayoutCustomizationAllowedOnCurrentPage,
-    isLogConsoleAllowed,
   ]);
 
   return (

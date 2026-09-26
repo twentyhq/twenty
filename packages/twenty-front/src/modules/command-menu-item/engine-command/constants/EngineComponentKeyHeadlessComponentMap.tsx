@@ -11,7 +11,6 @@ import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/
 import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/components/EditLayoutCommand';
-import { OpenLogConsoleCommand } from '@/command-menu-item/engine-command/global/components/OpenLogConsoleCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
@@ -272,7 +271,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.EMAIL_BLOCK_SETTINGS]: (
     <OpenEmailBlockSettingsSingleRecordCommand />
   ),
-  [EngineComponentKey.OPEN_LOG_CONSOLE]: <OpenLogConsoleCommand />,
 
   // Deprecated keys kept for backward compatibility until migration runs
   [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteRecordsCommand />,
