@@ -3,8 +3,10 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { recordIndexCommandMenuDropdownTargetCellComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownTargetCellComponentState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFormatFieldValueAsPlainText } from '@/object-record/record-field/ui/hooks/useFormatFieldValueAsPlainText';
 import { hasFieldCopyAction } from '@/object-record/record-field/ui/utils/hasFieldCopyAction';
+import { isJunctionRelationFieldDefinition } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationFieldDefinition';
 import { recordStoreFieldValueSelector } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelector';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
@@ -16,6 +18,8 @@ export const useRecordIndexCommandMenuDropdownCopyCellText = (
     dropdownId,
   );
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const targetCellWithValueAtom = useMemo(
     () =>
       atom((get) => {
@@ -23,7 +27,11 @@ export const useRecordIndexCommandMenuDropdownCopyCellText = (
 
         if (
           !isDefined(targetCell) ||
-          hasFieldCopyAction(targetCell.fieldDefinition)
+          hasFieldCopyAction(targetCell.fieldDefinition) ||
+          isJunctionRelationFieldDefinition({
+            fieldDefinition: targetCell.fieldDefinition,
+            objectMetadataItems,
+          })
         ) {
           return null;
         }
@@ -41,7 +49,7 @@ export const useRecordIndexCommandMenuDropdownCopyCellText = (
           ),
         };
       }),
-    [targetCellAtom],
+    [targetCellAtom, objectMetadataItems],
   );
 
   const targetCellWithValue = useAtomValue(targetCellWithValueAtom);
