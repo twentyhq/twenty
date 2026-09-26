@@ -44,7 +44,10 @@ test.describe.serial('Create Kanban View', () => {
       .locator('xpath=..')
       .getByRole('button')
       .click();
-    await page.getByRole('button', { name: industryLabel }).click();
+    await page
+      .getByLabel('Stages', { exact: true })
+      .getByRole('button', { name: industryLabel, exact: true })
+      .click();
     await page.getByRole('button', { name: 'Create new view' }).click();
     await expect(page.getByText('Food')).toBeVisible({ timeout: 30000 });
     await expect(page.getByText('Tech')).toBeVisible();
