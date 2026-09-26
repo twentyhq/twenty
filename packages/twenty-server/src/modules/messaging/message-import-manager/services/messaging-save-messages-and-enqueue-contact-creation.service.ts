@@ -54,7 +54,19 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       }
     | undefined
   > {
-    const handleAliases = connectedAccount.handleAliases || [];
+    // Participant handles are stored lowercased, while an IMAP handle is saved
+    // as typed and Gmail send-as aliases keep their configured casing.
+    const connectedAccountHandles = [
+      connectedAccount.handle,
+      ...(connectedAccount.handleAliases || []),
+    ]
+      .filter(isDefined)
+      .map((handle) => handle.toLowerCase());
+
+    const isConnectedAccountHandle = (handle: string | null | undefined) =>
+      isDefined(handle) &&
+      connectedAccountHandles.includes(handle.toLowerCase());
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     const savedMessagesResult =
@@ -88,12 +100,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                         )?.handle || '';
 
                       const isMessageSentByConnectedAccount =
-                        handleAliases.includes(fromHandle) ||
-                        fromHandle === connectedAccount.handle;
+                        isConnectedAccountHandle(fromHandle);
 
                       const isParticipantConnectedAccount =
-                        handleAliases.includes(participant.handle) ||
-                        participant.handle === connectedAccount.handle;
+                        isConnectedAccountHandle(participant.handle);
 
                       const isExcludedByNonProfessionalEmails =
                         messageChannel.excludeNonProfessionalEmails &&
