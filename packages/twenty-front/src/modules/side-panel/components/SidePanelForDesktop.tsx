@@ -5,7 +5,6 @@ import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffe
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
 import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
@@ -76,7 +75,6 @@ export const SidePanelForDesktop = () => {
   const store = useStore();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const [sidePanelWidth, setSidePanelWidth] = useAtomState(sidePanelWidthState);
-  const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
   const shouldReduceMotion = useReducedMotion();
@@ -150,12 +148,6 @@ export const SidePanelForDesktop = () => {
     setTableWidthResizeIsActive(false);
   }, [setTableWidthResizeIsActive]);
 
-  const handleCollapse = useCallback(() => {
-    closeSidePanelMenu();
-    setIsResizing(false);
-    setTableWidthResizeIsActive(true);
-  }, [closeSidePanelMenu, setTableWidthResizeIsActive]);
-
   return (
     <>
       <SidePanelWidthEffect />
@@ -167,7 +159,6 @@ export const SidePanelForDesktop = () => {
         constraints={SIDE_PANEL_CONSTRAINTS}
         currentSize={sidePanelWidth}
         onSizeChange={handleWidthChange}
-        onCollapse={handleCollapse}
         gapWidth={0}
         cssVariableName={SIDE_PANEL_WIDTH_VAR}
         onResizeStart={handleResizeStart}

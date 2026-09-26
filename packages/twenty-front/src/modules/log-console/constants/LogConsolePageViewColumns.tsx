@@ -29,6 +29,5 @@ export const LOG_CONSOLE_PAGE_VIEW_COLUMNS: LogConsoleColumn[] = [
     gridTrack: '104px',
     renderCell: (entry) =>
       entry.properties?.sessionId?.slice(0, SESSION_ID_DISPLAYED_LENGTH),
-    hiddenWhenPanelOpen: true,
   },
 ];
