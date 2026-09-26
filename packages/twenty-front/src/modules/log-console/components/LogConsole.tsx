@@ -142,13 +142,17 @@ const StyledUpgradeCardContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDetailPanelWrapper = styled.div<{ detailPanelWidth: number }>`
+const StyledDetailPanelWrapper = styled.div<{
+  detailPanelWidth: number;
+  isOpen: boolean;
+}>`
   overflow: hidden;
   position: relative;
-  width: var(
-    ${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE},
-    ${({ detailPanelWidth }) => detailPanelWidth}px
-  );
+  transition: width calc(${themeCssVariables.animation.duration.normal} * 1s);
+  width: ${({ isOpen, detailPanelWidth }) =>
+    isOpen
+      ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
+      : '0px'};
 `;
 
 export const LogConsole = () => {
@@ -389,8 +393,11 @@ export const LogConsole = () => {
             >
               {renderActiveSource()}
             </StyledActiveSource>
-            {isDefined(logConsoleSelectedLog) && (
-              <StyledDetailPanelWrapper detailPanelWidth={detailPanelWidth}>
+            <StyledDetailPanelWrapper
+              detailPanelWidth={detailPanelWidth}
+              isOpen={isDefined(logConsoleSelectedLog)}
+            >
+              {isDefined(logConsoleSelectedLog) && (
                 <ResizablePanelEdge
                   side="left"
                   constraints={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS}
@@ -399,9 +406,9 @@ export const LogConsole = () => {
                   cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
                   showHandle={false}
                 />
-                <LogConsoleDetailPanel />
-              </StyledDetailPanelWrapper>
-            )}
+              )}
+              <LogConsoleDetailPanel />
+            </StyledDetailPanelWrapper>
           </StyledBody>
         )}
       </TabListRoot>

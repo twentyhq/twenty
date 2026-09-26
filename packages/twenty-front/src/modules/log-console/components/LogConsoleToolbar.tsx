@@ -61,8 +61,9 @@ const VIEW_FILTER_OPERAND_BY_EVENT_LOG_FILTER_OPERAND: Record<
 };
 
 const StyledContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   flex-shrink: 0;
-  padding-bottom: ${themeCssVariables.spacing[5]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledToolbar = styled.div`
