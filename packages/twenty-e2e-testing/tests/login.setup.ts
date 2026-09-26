@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import path from 'path';
+import { AUTH_STORAGE_STATE_PATH } from '../lib/constants/authStorageStatePath';
 import { LoginPage } from '../lib/pom/loginPage';
 
 // fixture
@@ -36,8 +36,6 @@ test('Login test', async ({ loginPage, page }) => {
   );
 
   await test.step('Saved auth state', async () => {
-    await page.context().storageState({
-      path: path.resolve(__dirname, '..', '.auth', 'user.json'),
-    });
+    await page.context().storageState({ path: AUTH_STORAGE_STATE_PATH });
   });
 });
