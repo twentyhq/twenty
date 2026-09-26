@@ -6,7 +6,6 @@ import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWiza
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
-import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,11 +14,12 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { NEW_FIELD_EXCLUDED_FIELD_TYPES } from '~/pages/settings/data-model/constants/NewFieldExcludedFieldTypes';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -48,14 +48,6 @@ export const SettingsObjectNewFieldSelect = () => {
       type: FieldMetadataType.TEXT,
     },
   });
-
-  const excludedFieldTypes: FieldType[] = (
-    [
-      FieldMetadataType.NUMERIC,
-      FieldMetadataType.ACTOR,
-      FieldMetadataType.UUID,
-    ] as const
-  ).filter(isDefined);
 
   useEffect(() => {
     if (workspaceSurface.type === 'main' && !activeObjectMetadataItem) {
@@ -102,7 +94,7 @@ export const SettingsObjectNewFieldSelect = () => {
         <SettingsPageContainer>
           <SettingsObjectNewFieldSelector
             objectNamePlural={objectNamePlural}
-            excludedFieldTypes={excludedFieldTypes}
+            excludedFieldTypes={NEW_FIELD_EXCLUDED_FIELD_TYPES}
           />
         </SettingsPageContainer>
       </SettingsPageLayout>

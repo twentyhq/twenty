@@ -14,6 +14,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
+import { SettingsDataModelFieldCopyToObjectDropdown } from '@/settings/data-model/fields/components/SettingsDataModelFieldCopyToObjectDropdown';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
@@ -42,6 +43,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { AUDIT_FIELD_NAMES } from '~/pages/settings/data-model/constants/AuditFieldNames';
+import { isFieldMetadataItemCopyable } from '~/pages/settings/data-model/utils/isFieldMetadataItemCopyable';
 import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
@@ -177,14 +180,7 @@ export const SettingsObjectFieldEdit = () => {
     objectMetadataItem: objectMetadataItem,
   });
 
-  const fieldNamesThatCannotBeDeactivated = [
-    'createdAt',
-    'createdBy',
-    'deletedAt',
-    'updatedAt',
-  ];
-
-  const fieldCanBeDeactivated = !fieldNamesThatCannotBeDeactivated.includes(
+  const fieldCanBeDeactivated = !AUDIT_FIELD_NAMES.includes(
     fieldMetadataItem.name,
   );
 
@@ -416,6 +412,19 @@ export const SettingsObjectFieldEdit = () => {
                 }}
               />
             </Section.Root>
+
+            {isFieldMetadataItemCopyable(fieldMetadataItem) && !isDDLLocked && (
+              <Section.Root>
+                <Section.Header
+                  title={t`Copy`}
+                  description={t`Create the same field on another object`}
+                />
+                <SettingsDataModelFieldCopyToObjectDropdown
+                  fieldMetadataItem={fieldMetadataItem}
+                  sourceObjectMetadataId={objectMetadataItem.id}
+                />
+              </Section.Root>
+            )}
 
             {!isLabelIdentifier && !readonly && fieldCanBeDeactivated && (
               <Section.Root>

@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { SettingsObjectNewFieldConfigure } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure';
 
 import {
@@ -38,5 +38,21 @@ export const Default: Story = {
     const saveButton = await canvas.findByText('Save');
     await new Promise((resolve) => setTimeout(resolve, 5000));
     await userEvent.click(saveButton);
+  },
+};
+
+export const CopiedFromAnotherObject: Story = {
+  args: {
+    searchParams: {
+      fieldType: 'SELECT',
+      sourceFieldMetadataId: '4e029608-6039-4720-9119-61aa6db12430',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByDisplayValue('Stage')).toBeVisible();
+    expect(await canvas.findByDisplayValue('Screening')).toBeVisible();
+    expect(await canvas.findByText('Opportunity stage')).toBeVisible();
   },
 };
