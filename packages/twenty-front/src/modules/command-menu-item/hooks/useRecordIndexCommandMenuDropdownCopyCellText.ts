@@ -4,10 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { recordIndexCommandMenuDropdownTargetCellComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownTargetCellComponentState';
 import { useFormatFieldValueAsPlainText } from '@/object-record/record-field/ui/hooks/useFormatFieldValueAsPlainText';
+import { hasFieldCopyAction } from '@/object-record/record-field/ui/utils/hasFieldCopyAction';
 import { recordStoreFieldValueSelector } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelector';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-export const useRecordIndexCommandMenuDropdownTargetCellText = (
+export const useRecordIndexCommandMenuDropdownCopyCellText = (
   dropdownId: string,
 ) => {
   const targetCellAtom = useAtomComponentStateCallbackState(
@@ -20,7 +21,10 @@ export const useRecordIndexCommandMenuDropdownTargetCellText = (
       atom((get) => {
         const targetCell = get(targetCellAtom);
 
-        if (!isDefined(targetCell)) {
+        if (
+          !isDefined(targetCell) ||
+          hasFieldCopyAction(targetCell.fieldDefinition)
+        ) {
           return null;
         }
 

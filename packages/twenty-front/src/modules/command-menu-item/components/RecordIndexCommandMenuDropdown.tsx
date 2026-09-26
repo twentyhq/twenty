@@ -2,7 +2,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
-import { useRecordIndexCommandMenuDropdownTargetCellText } from '@/command-menu-item/hooks/useRecordIndexCommandMenuDropdownTargetCellText';
+import { useRecordIndexCommandMenuDropdownCopyCellText } from '@/command-menu-item/hooks/useRecordIndexCommandMenuDropdownCopyCellText';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -63,14 +63,14 @@ export const RecordIndexCommandMenuDropdown = () => {
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const targetCellText =
-    useRecordIndexCommandMenuDropdownTargetCellText(dropdownId);
+  const copyCellText =
+    useRecordIndexCommandMenuDropdownCopyCellText(dropdownId);
 
-  const shouldShowCopyCell = isNonEmptyString(targetCellText);
+  const shouldShowCopyCell = isNonEmptyString(copyCellText);
 
   const handleCopyCell = () => {
     closeDropdown(dropdownId);
-    copyToClipboard(targetCellText);
+    copyToClipboard(copyCellText);
   };
 
   const selectedItemIdArray = [

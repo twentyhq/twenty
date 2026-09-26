@@ -1,8 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isArray, isNonEmptyString, isNumber, isString } from '@sniptt/guards';
 
-import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
-import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldActorValue,
@@ -20,22 +18,16 @@ import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
-import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
-import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
-import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
-import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldMorphRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOneValue';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldMorphRelationOneToManyValue } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToManyValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
-import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
-import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
@@ -149,27 +141,6 @@ export const formatFieldValueAsPlainText = ({
     return formatAddressDisplay(
       fieldValue,
       fieldDefinition.metadata.settings?.subFields,
-    );
-  }
-
-  if (isFieldEmails(fieldDefinition) && isFieldEmailsValue(fieldValue)) {
-    return joinNonEmpty([
-      fieldValue.primaryEmail,
-      ...(fieldValue.additionalEmails ?? []),
-    ]);
-  }
-
-  if (isFieldPhones(fieldDefinition) && isFieldPhonesValue(fieldValue)) {
-    return joinNonEmpty(
-      createPhonesFromFieldValue(fieldValue).map(
-        ({ callingCode, number }) => `${callingCode}${number}`,
-      ),
-    );
-  }
-
-  if (isFieldLinks(fieldDefinition) && isFieldLinksValue(fieldValue)) {
-    return joinNonEmpty(
-      getFieldLinkDefinedLinks(fieldValue).map((link) => link.url),
     );
   }
 

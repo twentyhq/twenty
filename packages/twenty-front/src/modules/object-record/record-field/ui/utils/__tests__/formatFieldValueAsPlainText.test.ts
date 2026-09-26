@@ -3,9 +3,7 @@ import {
   booleanFieldDefinition,
   fieldMetadataId,
   fullNameFieldDefinition,
-  linksFieldDefinition,
   morphRelationFieldDefinition,
-  phonesFieldDefinition,
   ratingFieldDefinition,
   relationFieldDefinition,
   richTextFieldDefinition,
@@ -100,31 +98,6 @@ describe('formatFieldValueAsPlainText', () => {
     expect(
       format(fullNameFieldDefinition, { firstName: 'Ada', lastName: '' }),
     ).toBe('Ada');
-    expect(
-      format(phonesFieldDefinition, {
-        primaryPhoneNumber: '612345678',
-        primaryPhoneCountryCode: 'FR',
-        primaryPhoneCallingCode: '+33',
-        additionalPhones: [
-          { number: '5550100', callingCode: '+1', countryCode: 'US' },
-        ],
-      }),
-    ).toBe('+33612345678, +15550100');
-    expect(
-      format(phonesFieldDefinition, {
-        primaryPhoneNumber: '612345678',
-        primaryPhoneCountryCode: '+33',
-        primaryPhoneCallingCode: '',
-        additionalPhones: null,
-      }),
-    ).toBe('+33612345678');
-    expect(
-      format(linksFieldDefinition, {
-        primaryLinkUrl: 'https://twenty.com',
-        primaryLinkLabel: 'Twenty',
-        secondaryLinks: [{ url: 'https://github.com', label: null }],
-      }),
-    ).toBe('https://twenty.com, https://github.com');
     expect(
       format(richTextFieldDefinition, {
         blocknote: null,
