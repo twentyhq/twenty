@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 import { useIMask } from 'react-imask';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
+import { getDateMaskBlocks } from '@/ui/input/components/internal/date/utils/getDateMaskBlocks';
 import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
 import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTimeBlocks';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
@@ -73,7 +73,7 @@ export const DateTimePickerInput = ({
 
   const { userTimezone } = useUserTimezone();
 
-  const { dateFormat, timeFormat } = useDateTimeFormat();
+  const { dateFormat, timeFormat, calendarSystem } = useDateTimeFormat();
 
   const { getShiftedDateToSystemTimeZone } =
     useGetShiftedDateToSystemTimeZone();
@@ -94,7 +94,10 @@ export const DateTimePickerInput = ({
 
   const pattern = getDateTimeMask({ dateFormat, timeFormat });
 
-  const blocks = { ...DATE_BLOCKS, ...getTimeBlocks(timeFormat) };
+  const blocks = {
+    ...getDateMaskBlocks(calendarSystem),
+    ...getTimeBlocks(timeFormat),
+  };
 
   const defaultValueForIMask = isDefined(internalDate)
     ? new Date(internalDate?.toInstant().toString())

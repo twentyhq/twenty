@@ -143,9 +143,7 @@ export const Default: Story = {
       { timeout: 10000 },
     );
     await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    const div = await body.findByText('January', {}, { timeout: 10000 });
+    const div = await body.findByText('January');
 
     await expect(div.innerText).toContain('January');
   },
@@ -164,9 +162,7 @@ export const ClickOutside: Story = {
       { timeout: 10000 },
     );
     await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await body.findByText('January', {}, { timeout: 10000 });
+    await body.findByText('January');
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
@@ -188,9 +184,7 @@ export const Escape: Story = {
       { timeout: 10000 },
     );
     await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await body.findByText('January', {}, { timeout: 10000 });
+    await body.findByText('January');
 
     await userEvent.keyboard('{escape}');
     await userEvent.keyboard('{escape}');
@@ -211,9 +205,7 @@ export const Enter: Story = {
       { timeout: 10000 },
     );
     await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await body.findByText('January', {}, { timeout: 10000 });
+    await body.findByText('January');
 
     await userEvent.keyboard('{enter}');
     await userEvent.keyboard('{enter}');

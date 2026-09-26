@@ -9,13 +9,14 @@ import { Select } from '@/ui/input/components/Select';
 import { DateTimePickerInput } from '@/ui/input/components/internal/date/components/DateTimePickerInput';
 import { useTimeInput } from '@/ui/input/components/internal/date/hooks/useTimeInput';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
+import { getYearSelectOptions } from '@/ui/input/components/internal/date/utils/getYearSelectOptions';
 import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTimeBlocks';
 import { getTimeMask } from '@/ui/input/components/internal/date/utils/getTimeMask';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { t } from '@lingui/core/macro';
-import { type Temporal } from 'temporal-polyfill';
+import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
@@ -34,11 +35,6 @@ import {
 
 export const DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID =
   'date-time-picker-month-year-panel';
-
-const YEARS_SELECT_OPTIONS = Array.from(
-  { length: 200 },
-  (_, i) => new Date().getFullYear() + 50 - i,
-).map((year) => ({ label: year.toString(), value: year }));
 
 const StyledTimeRow = styled.div`
   align-items: center;
@@ -133,8 +129,6 @@ type DateTimePickerHeaderProps = {
   onChange?: (date: Temporal.ZonedDateTime | null) => void;
   onAddMonth: () => void;
   onSubtractMonth: () => void;
-  prevMonthButtonDisabled: boolean;
-  nextMonthButtonDisabled: boolean;
   hideInput?: boolean;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
@@ -145,17 +139,18 @@ export const DateTimePickerHeader = ({
   onChange,
   onAddMonth,
   onSubtractMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
   hideInput = false,
   onChangeMonth,
   onChangeYear,
 }: DateTimePickerHeaderProps) => {
-  const { timeFormat } = useDateTimeFormat();
+  const { timeFormat, calendarSystem } = useDateTimeFormat();
   const { formatTime, parseTime, isHour12 } = useTimeInput(timeFormat);
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+  const calendarDate = (date ?? Temporal.Now.zonedDateTimeISO()).withCalendar(
+    calendarSystem,
+  );
 
   const { closeDropdown: closeMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeYearSelect } = useCloseDropdown();
@@ -245,9 +240,13 @@ export const DateTimePickerHeader = ({
                 >
                   <Select
                     dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-                    options={getMonthSelectOptions(userLocale)}
+                    options={getMonthSelectOptions({
+                      locale: userLocale,
+                      calendarSystem,
+                      calendarYear: calendarDate.year,
+                    })}
                     onChange={onChangeMonth}
-                    value={date?.month}
+                    value={isDefined(date) ? calendarDate.month : undefined}
                     fullWidth={false}
                     dropdownWidth={160}
                   />
@@ -261,8 +260,8 @@ export const DateTimePickerHeader = ({
                   <Select
                     dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
                     onChange={onChangeYear}
-                    value={date?.year}
-                    options={YEARS_SELECT_OPTIONS}
+                    value={isDefined(date) ? calendarDate.year : undefined}
+                    options={getYearSelectOptions(calendarSystem)}
                     fullWidth={false}
                     dropdownWidth={160}
                   />
@@ -274,7 +273,6 @@ export const DateTimePickerHeader = ({
             <LightIconButton
               onClick={onSubtractMonth}
               size="md"
-              disabled={prevMonthButtonDisabled}
               aria-label={t`Previous`}
             >
               <IconChevronLeft />
@@ -282,7 +280,6 @@ export const DateTimePickerHeader = ({
             <LightIconButton
               onClick={onAddMonth}
               size="md"
-              disabled={nextMonthButtonDisabled}
               aria-label={t`Next`}
             >
               <IconChevronRight />

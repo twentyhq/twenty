@@ -111,7 +111,7 @@ export const WithOpenYearSelect: Story = {
     );
     await userEvent.click(calendarButton);
 
-    const yearSelect = await body.findByText('2023', {}, { timeout: 10000 });
+    const yearSelect = await body.findByText('2023');
     await userEvent.click(yearSelect);
 
     for (const yearLabel of ['2024', '2025', '2026']) {
@@ -127,8 +127,6 @@ export const WithOpenYearSelect: Story = {
 export const WithTimeInput: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
     const timeInput = await canvas.findByPlaceholderText(
       /HH:mm/,
       {},

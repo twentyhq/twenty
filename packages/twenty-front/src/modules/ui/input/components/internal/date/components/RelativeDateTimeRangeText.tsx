@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { type Temporal } from 'temporal-polyfill';
@@ -35,11 +36,13 @@ export const RelativeDateTimeRangeText = ({
 }: RelativeDateTimeRangeTextProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+  const { calendarSystem } = useDateTimeFormat();
 
   const formatter = new Intl.DateTimeFormat(userLocale, {
     dateStyle: 'medium',
     timeStyle: 'short',
     timeZone: start.timeZoneId,
+    calendar: calendarSystem,
   });
 
   return (

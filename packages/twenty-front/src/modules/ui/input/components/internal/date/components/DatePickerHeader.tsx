@@ -4,8 +4,10 @@ import { t } from '@lingui/core/macro';
 import { Select } from '@/ui/input/components/Select';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
+import { getYearSelectOptions } from '@/ui/input/components/internal/date/utils/getYearSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
@@ -19,10 +21,6 @@ const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
 const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
-const YEARS_SELECT_OPTIONS = Array.from(
-  { length: 200 },
-  (_, i) => new Date().getFullYear() + 50 - i,
-).map((year) => ({ label: year.toString(), value: year }));
 
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
@@ -42,8 +40,6 @@ type DatePickerHeaderProps = {
   onChangeYear: (year: number) => void;
   onAddMonth: () => void;
   onSubtractMonth: () => void;
-  prevMonthButtonDisabled: boolean;
-  nextMonthButtonDisabled: boolean;
   hideInput?: boolean;
 };
 
@@ -54,14 +50,17 @@ export const DatePickerHeader = ({
   onChangeYear,
   onAddMonth,
   onSubtractMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
   hideInput = false,
 }: DatePickerHeaderProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+  const { calendarSystem } = useDateTimeFormat();
 
-  const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
+  const calendarDate = (
+    isDefined(date)
+      ? Temporal.PlainDate.from(date)
+      : Temporal.Now.plainDateISO()
+  ).withCalendar(calendarSystem);
 
   return (
     <>
@@ -74,9 +73,13 @@ export const DatePickerHeader = ({
         >
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-            options={getMonthSelectOptions(userLocale)}
+            options={getMonthSelectOptions({
+              locale: userLocale,
+              calendarSystem,
+              calendarYear: calendarDate.year,
+            })}
             onChange={onChangeMonth}
-            value={dateParsed?.month}
+            value={isDefined(date) ? calendarDate.month : undefined}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -88,25 +91,19 @@ export const DatePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={dateParsed?.year}
-            options={YEARS_SELECT_OPTIONS}
+            value={isDefined(date) ? calendarDate.year : undefined}
+            options={getYearSelectOptions(calendarSystem)}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
         <LightIconButton
           onClick={onSubtractMonth}
           size="md"
-          disabled={prevMonthButtonDisabled}
           aria-label={t`Previous`}
         >
           <IconChevronLeft />
         </LightIconButton>
-        <LightIconButton
-          onClick={onAddMonth}
-          size="md"
-          disabled={nextMonthButtonDisabled}
-          aria-label={t`Next`}
-        >
+        <LightIconButton onClick={onAddMonth} size="md" aria-label={t`Next`}>
           <IconChevronRight />
         </LightIconButton>
       </StyledCustomDatePickerHeader>
