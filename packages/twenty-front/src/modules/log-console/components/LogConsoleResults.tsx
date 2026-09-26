@@ -180,7 +180,10 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const applySearch = useDebouncedCallback((trimmedSearch: string) => {
     if (trimmedSearch !== logConsoleSearch) {
-      restartLogs(new Date().toISOString());
+      scrollToTop();
+      clearLiveRecords();
+      setPausedLiveRecords(isPaused ? [] : undefined);
+      setClearedLiveRecordCount(undefined);
       setLogConsoleSearch(trimmedSearch);
     }
   }, SEARCH_DEBOUNCE_IN_MILLISECONDS);

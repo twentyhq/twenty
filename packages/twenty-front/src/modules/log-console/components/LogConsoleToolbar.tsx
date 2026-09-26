@@ -16,6 +16,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type LogConsoleFilter } from '@/log-console/types/LogConsoleFilter';
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
@@ -61,9 +62,14 @@ const VIEW_FILTER_OPERAND_BY_EVENT_LOG_FILTER_OPERAND: Record<
 };
 
 const StyledContainer = styled.div`
+  align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
-  padding-bottom: ${themeCssVariables.spacing[1]};
+  height: ${APP_HEADER_HEIGHT}px;
+  justify-content: center;
 `;
 
 const StyledToolbar = styled.div`
