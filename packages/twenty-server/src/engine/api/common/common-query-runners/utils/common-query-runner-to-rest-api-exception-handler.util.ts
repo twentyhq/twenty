@@ -25,6 +25,7 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT:
     case CommonQueryRunnerExceptionCode.INVALID_CURSOR:
     case CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
+    case CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_DESTROY:
     case CommonQueryRunnerExceptionCode.BAD_REQUEST:
     case CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY:
     case CommonQueryRunnerExceptionCode.MISSING_TIMEZONE_FOR_DATE_GROUP_BY:

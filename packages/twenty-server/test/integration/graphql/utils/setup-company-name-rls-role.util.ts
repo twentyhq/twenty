@@ -18,9 +18,11 @@ export type CompanyNameRlsRoleSetup = {
 export const setupCompanyNameRlsRole = async ({
   label,
   description,
+  canDestroyAllObjectRecords = false,
 }: {
   label: string;
   description: string;
+  canDestroyAllObjectRecords?: boolean;
 }): Promise<CompanyNameRlsRoleSetup> => {
   const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
@@ -35,7 +37,7 @@ export const setupCompanyNameRlsRole = async ({
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: false,
-      canDestroyAllObjectRecords: false,
+      canDestroyAllObjectRecords,
       canBeAssignedToUsers: true,
       canBeAssignedToAgents: false,
       canBeAssignedToApiKeys: false,

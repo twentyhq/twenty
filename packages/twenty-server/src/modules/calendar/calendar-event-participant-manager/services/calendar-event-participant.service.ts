@@ -9,6 +9,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { RECORD_DELETE_BATCH_SIZE } from 'src/engine/twenty-orm/constants/record-delete-batch-size.constant';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -50,7 +51,10 @@ export class CalendarEventParticipantService {
     operations,
     transactionScope,
   }: {
-    operations: CalendarEventParticipantSaveOperations;
+    operations: Omit<
+      CalendarEventParticipantSaveOperations,
+      'participantIdsToDelete'
+    >;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
     const calendarEventParticipantRepository =
@@ -58,12 +62,6 @@ export class CalendarEventParticipantService {
         'calendarEventParticipant',
         { shouldBypassPermissionChecks: true },
       );
-
-    if (operations.participantIdsToDelete.length > 0) {
-      await calendarEventParticipantRepository.delete({
-        id: Any(operations.participantIdsToDelete),
-      });
-    }
 
     for (const participantsChunk of chunk(
       operations.participantsToUpdate,
@@ -77,6 +75,26 @@ export class CalendarEventParticipantService {
       CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE,
     )) {
       await calendarEventParticipantRepository.insert(participantsChunk);
+    }
+  }
+
+  public async deleteCalendarEventParticipants(
+    participantIds: string[],
+  ): Promise<void> {
+    for (const participantIdsChunk of chunk(
+      participantIds,
+      RECORD_DELETE_BATCH_SIZE,
+    )) {
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          await transactionScope
+            .getRepository<CalendarEventParticipantWorkspaceEntity>(
+              'calendarEventParticipant',
+              { shouldBypassPermissionChecks: true },
+            )
+            .delete({ id: Any(participantIdsChunk) });
+        },
+      );
     }
   }
 

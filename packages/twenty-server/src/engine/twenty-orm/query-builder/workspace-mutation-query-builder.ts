@@ -94,7 +94,7 @@ export class WorkspaceMutationQueryBuilder {
     return this.buildStatement().sql;
   }
 
-  async execute(): Promise<MutationResult> {
+  async execute(options?: { noFormatting?: boolean }): Promise<MutationResult> {
     const { sql, parameters } = this.buildStatement();
     const compiled = compileNamedParameters(sql, parameters);
     const rows = await this.context.executor.execute(compiled);
@@ -108,7 +108,9 @@ export class WorkspaceMutationQueryBuilder {
     );
 
     return {
-      generatedMaps: this.context.formatResult(entities),
+      generatedMaps: options?.noFormatting
+        ? entities
+        : this.context.formatResult(entities),
     };
   }
 

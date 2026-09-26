@@ -122,6 +122,10 @@ export class CalendarSaveEventsService {
             },
           );
 
+          await this.calendarEventParticipantService.deleteCalendarEventParticipants(
+            participantOperations.participantIdsToDelete,
+          );
+
           return {
             savedParticipantIds: participantOperations.participantsToInsert.map(
               (participant) => participant.id,
