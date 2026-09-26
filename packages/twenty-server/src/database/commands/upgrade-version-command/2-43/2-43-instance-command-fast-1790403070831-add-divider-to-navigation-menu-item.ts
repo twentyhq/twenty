@@ -5,7 +5,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 
 const TYPE_FIELDS_CHECK_WITHOUT_DIVIDER = `("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)`;
 
-@RegisteredInstanceCommand('2.43.0', 1790318917184)
+@RegisteredInstanceCommand('2.43.0', 1790403070831)
 export class AddDividerToNavigationMenuItemFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
