@@ -65,4 +65,24 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('item-id');
   });
+
+  it('keeps a divider item, which has no backing object', () => {
+    const dividerItem = {
+      id: 'divider-id',
+      type: NavigationMenuItemType.DIVIDER,
+      position: 3,
+    } as NavigationMenuItem;
+
+    const result = getWorkspaceSidebarOrphanItemsInDisplayOrder({
+      workspaceNavigationMenuItems: [dividerItem],
+      workspaceNavigationMenuItemsSorted: [dividerItem],
+      objectMetadataItems: [objectMetadataItem],
+      views: [],
+      objectPermissionsByObjectMetadataId: {},
+      includeInaccessibleObjectBackedItems: false,
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('divider-id');
+  });
 });

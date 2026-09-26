@@ -1357,7 +1357,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT'
+export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT' | 'DIVIDER'
 
 export interface RecordPermissionsDTO {
     canRead: Scalars['Boolean']
@@ -11147,7 +11147,8 @@ export const enumNavigationMenuItemType = {
    LINK: 'LINK' as const,
    OBJECT: 'OBJECT' as const,
    RECORD: 'RECORD' as const,
-   PAGE_LAYOUT: 'PAGE_LAYOUT' as const
+   PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
+   DIVIDER: 'DIVIDER' as const
 }
 
 export const enumRecordShareAccessLevel = {

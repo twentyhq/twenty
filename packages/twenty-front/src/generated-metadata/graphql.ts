@@ -4679,6 +4679,7 @@ export type NavigationMenuItem = {
 };
 
 export enum NavigationMenuItemType {
+  DIVIDER = 'DIVIDER',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',

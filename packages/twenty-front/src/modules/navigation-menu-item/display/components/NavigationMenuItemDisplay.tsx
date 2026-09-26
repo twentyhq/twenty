@@ -1,5 +1,6 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemDividerDisplay } from '@/navigation-menu-item/display/divider/components/NavigationMenuItemDividerDisplay';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
@@ -35,6 +36,15 @@ export const NavigationMenuItemDisplay = ({
           readOnly={readOnly}
           orphanIndex={orphanIndex}
         />
+      );
+    case NavigationMenuItemType.DIVIDER:
+      return (
+        <NavigationMenuItemEditable item={item}>
+          <NavigationMenuItemDividerDisplay
+            item={item}
+            onEditModeClick={editModeProps?.onEditModeClick}
+          />
+        </NavigationMenuItemEditable>
       );
     case NavigationMenuItemType.LINK:
       return (

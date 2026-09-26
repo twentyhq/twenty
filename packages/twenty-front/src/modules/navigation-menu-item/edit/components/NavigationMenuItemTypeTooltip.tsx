@@ -7,6 +7,7 @@ import {
   IconBox,
   IconFolder,
   IconLink,
+  IconMinus,
   IconPerspective,
   IconTable,
   type IconComponent,
@@ -38,6 +39,7 @@ export const NavigationMenuItemTypeTooltip = ({
     LINK: { label: t`Link`, Icon: IconLink },
     FOLDER: { label: t`Folder`, Icon: IconFolder },
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
+    DIVIDER: { label: t`Divider`, Icon: IconMinus },
   };
 
   const { label, Icon } = labelsByType[type];

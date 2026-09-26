@@ -8,6 +8,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { useNavigateToNavigationMenuItemLink } from '@/navigation-menu-item/common/hooks/useNavigateToNavigationMenuItemLink';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { NavigationMenuItemDividerDisplay } from '@/navigation-menu-item/display/divider/components/NavigationMenuItemDividerDisplay';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
@@ -72,6 +73,28 @@ export const NavigationMenuItemFolderSubItem = ({
 
   const { activeNavigationMenuItemIds } =
     useIdentifyActiveNavigationMenuItems();
+
+  const subItemState = getNavigationSubItemLeftAdornment({
+    index,
+    arrayLength,
+    selectedIndex,
+  });
+
+  if (navigationMenuItem.type === NavigationMenuItemType.DIVIDER) {
+    return (
+      <NavigationMenuItemEditable item={navigationMenuItem}>
+        <NavigationMenuItemDividerDisplay
+          item={navigationMenuItem}
+          onEditModeClick={
+            isDefined(onNavigationMenuItemClick)
+              ? () => onNavigationMenuItemClick({ item: navigationMenuItem })
+              : undefined
+          }
+          subItemState={subItemState}
+        />
+      </NavigationMenuItemEditable>
+    );
+  }
 
   const isActive = activeNavigationMenuItemIds.includes(navigationMenuItem.id);
 
@@ -153,11 +176,7 @@ export const NavigationMenuItemFolderSubItem = ({
         onClick={handleClick}
         active={isActive}
         isSelectedInEditMode={isEditHighlightedInNavigationMenu}
-        subItemState={getNavigationSubItemLeftAdornment({
-          index,
-          arrayLength,
-          selectedIndex,
-        })}
+        subItemState={subItemState}
         rightOptions={rightOptions}
         isDragging={isDragging}
         triggerEvent="CLICK"
