@@ -6962,6 +6962,18 @@ msgstr "로직 함수를 찾을 수 없음."
 msgid "Logic function with same universal identifier already exists"
 msgstr "같은 범용 식별자를 가진 로직 함수가 이미 존재합니다"
 
+#. js-lingui-id: 07Jk6f
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Make Private"
+msgstr "비공개로 전환"
+
+#. js-lingui-id: OT90yl
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Make Workflow Private"
+msgstr "워크플로를 비공개로 전환"
+
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10489,6 +10501,18 @@ msgstr "설정 메뉴 항목 제목 \"{updatedTitle}\"은(는) 예약되어 있�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "설정 메뉴 항목 제목이 필요합니다"
+
+#. js-lingui-id: mPgP26
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Share with Workspace"
+msgstr "워크스페이스와 공유"
+
+#. js-lingui-id: tVHa8m
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Share Workflow with Workspace"
+msgstr "워크플로를 워크스페이스와 공유"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

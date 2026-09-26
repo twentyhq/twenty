@@ -227,7 +227,6 @@ describe('frontend HTML delivery', () => {
     '/graphql/missing',
     '/rest/missing',
     '/auth/missing',
-    '/assets/missing.js',
     '/.well-known/missing',
   ])('does not turn %s into a successful HTML response', async (pathname) => {
     await request(app.getHttpServer())
@@ -271,6 +270,31 @@ describe('frontend HTML delivery', () => {
         .set('Sec-Fetch-Dest', destination)
         .expect(200);
       expect(getClientConfig).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each([
+    '/invite/apple.dev-invite-hash',
+    '/invite/apple.dev-invite-hash/',
+    '/settings/domains/crm.example.com',
+  ])('serves browser navigation to dotted path %s', async (pathname) => {
+    await request(app.getHttpServer())
+      .get(pathname)
+      .set('Accept', 'text/html,application/xhtml+xml,*/*;q=0.8')
+      .set('Sec-Fetch-Dest', 'document')
+      .expect(200);
+    expect(getClientConfig).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['script', 'style', 'empty'])(
+    'does not serve a document for a missing asset with Sec-Fetch-Dest: %s',
+    async (destination) => {
+      await request(app.getHttpServer())
+        .get('/assets/missing.js')
+        .set('Accept', 'text/html')
+        .set('Sec-Fetch-Dest', destination)
+        .expect(404);
+      expect(getClientConfig).not.toHaveBeenCalled();
     },
   );
 

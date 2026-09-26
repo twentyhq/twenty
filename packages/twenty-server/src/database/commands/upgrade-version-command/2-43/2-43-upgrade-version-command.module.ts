@@ -16,6 +16,7 @@ import { ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upg
 import { LinkChatThreadsToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790360612188-link-chat-threads-to-workspace-members.command';
 import { BackfillOAuthOnlyApplicationSourceTypeCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790352791059-backfill-oauth-only-application-source-type.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { AddWorkflowVisibilityCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790358777596-add-workflow-visibility-command-menu-items.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -56,6 +57,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     LinkChatThreadsToWorkspaceMembersCommand,
     BackfillOAuthOnlyApplicationSourceTypeCommand,
     provideWorkspaceScopedRepository(ApplicationEntity),
+    AddWorkflowVisibilityCommandMenuItemsCommand,
     provideWorkspaceScopedRepository(FieldMetadataEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],

@@ -53,7 +53,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
@@ -393,6 +395,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
     AdminPanelGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
@@ -438,6 +442,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Mutation(() => ApplicationRegistrationEntity)

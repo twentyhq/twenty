@@ -2,7 +2,7 @@ import { buildTimelineActivityTypeBackfillQuery } from 'src/database/commands/up
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type TimelineActivityTypeResolutionMaps } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
+import { type TimelineActivityTypeResolutionMaps } from 'src/database/commands/upgrade-version-command/2-33/utils/resolve-timeline-activity-type-id.util';
 
 const TYPE_ID_BY_ACTION = {
   created: '00000000-0000-4000-8000-000000000001',
@@ -35,7 +35,9 @@ const getTypeIdForCondition = (
   condition: string,
 ): string | undefined => {
   const placeholder = query.sql.match(
-    new RegExp(`WHEN ${condition.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} THEN \\$(\\d+)::uuid`),
+    new RegExp(
+      `WHEN ${condition.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} THEN \\$(\\d+)::uuid`,
+    ),
   );
 
   return isDefined(placeholder)
@@ -180,8 +182,8 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
         buildFlatTimelineActivityTypeMapsWithObjectBoundTypes(),
     });
 
-    expect(query!.sql.indexOf(`WHEN "name" = 'linked-note.created'`)).toBeLessThan(
-      query!.sql.indexOf(`WHEN "name" LIKE 'linked-%'`),
-    );
+    expect(
+      query!.sql.indexOf(`WHEN "name" = 'linked-note.created'`),
+    ).toBeLessThan(query!.sql.indexOf(`WHEN "name" LIKE 'linked-%'`));
   });
 });

@@ -6962,6 +6962,18 @@ msgstr "Логическая функция не найдена."
 msgid "Logic function with same universal identifier already exists"
 msgstr "Логическая функция с таким же универсальным идентификатором уже существует"
 
+#. js-lingui-id: 07Jk6f
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Make Private"
+msgstr "Сделать приватным"
+
+#. js-lingui-id: OT90yl
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Make Workflow Private"
+msgstr "Сделать рабочий процесс приватным"
+
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10489,6 +10501,18 @@ msgstr "Название пункта меню настроек \"{updatedTitle}
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Требуется название пункта меню настроек"
+
+#. js-lingui-id: mPgP26
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Share with Workspace"
+msgstr "Поделиться с рабочим пространством"
+
+#. js-lingui-id: tVHa8m
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Share Workflow with Workspace"
+msgstr "Поделиться рабочим процессом с рабочим пространством"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

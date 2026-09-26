@@ -3,7 +3,7 @@ import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-fu
 import {
   isLogicFunctionEligibleForPrebuiltConversion,
   type LogicFunctionPrebuiltConversionFields,
-} from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
+} from 'src/database/commands/upgrade-version-command/2-39/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
 
 const buildFlatLogicFunction = (
   overrides: Partial<LogicFunctionPrebuiltConversionFields> = {},

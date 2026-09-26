@@ -8,7 +8,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
 export const lockAgentChatThread = async ({
-  context: { manager, table, storage },
+  context: { manager, table },
   workspaceId,
   objectMetadataId,
   threadId,
@@ -28,17 +28,15 @@ export const lockAgentChatThread = async ({
     }),
   ]);
   const records = await manager.query<AgentChatThreadEntity[]>(
-    `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 ${storage === 'core' ? 'AND "workspaceId" = $2' : ''} FOR UPDATE`,
-    storage === 'core' ? [threadId, workspaceId] : [threadId],
+    `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+    [threadId],
   );
   if (records.length !== 1) {
     throw new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND);
   }
-  return storage === 'core'
-    ? records[0]
-    : (normalizeAgentHistoryRecord({
-        record: records[0],
-        workspaceId,
-        objectName: 'agentChatThread',
-      }) as AgentChatThreadEntity);
+  return normalizeAgentHistoryRecord({
+    record: records[0],
+    workspaceId,
+    objectName: 'agentChatThread',
+  }) as AgentChatThreadEntity;
 };

@@ -9,7 +9,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import {
   MESSAGE_CALENDAR_TARGET_BACKFILL_TIMESTAMP,
   MESSAGE_CALENDAR_TARGET_MIGRATION_VERSION,
-} from 'src/engine/core-modules/target/constants/message-calendar-target-migration.constants';
+} from 'src/database/commands/upgrade-version-command/2-37/message-calendar-target-migration.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const BACKFILL_BATCH_SIZE = 5_000;

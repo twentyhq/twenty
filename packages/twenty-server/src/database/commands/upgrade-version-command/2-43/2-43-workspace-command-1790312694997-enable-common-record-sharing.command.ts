@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
+import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
 import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
 import { Command } from 'nest-commander';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
@@ -66,7 +67,13 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
         STANDARD_OBJECTS.agentChatThread.fields.title.universalIdentifier
       ];
     if (!isDefined(thread) || !isDefined(title)) {
-      if (await this.storage.isEmptyUnprovisionedWorkspace(workspaceId)) {
+      if (
+        await isEmptyUnprovisionedAgentHistoryWorkspace({
+          dataSource: this.dataSource,
+          agentHistoryStorageService: this.storage,
+          workspaceId,
+        })
+      ) {
         this.logger.log(
           `Skipping common sharing upgrade for workspace ${workspaceId}: schema is absent and history is empty`,
         );
@@ -105,17 +112,12 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     });
     // Ownership commits before metadata changes. Retries are idempotent and
     // failure leaves SYSTEM protection intact.
-    await this.storage.run(workspaceId, async ({ manager, table, storage }) => {
-      if (storage !== 'workspace') {
-        throw new Error(
-          'Migrate agent history to workspace storage before enabling common record permissions',
-        );
-      }
+    // run() refuses workspaces whose history has not moved to workspace storage.
+    await this.storage.run(workspaceId, async ({ manager, table }) => {
       await backfillChatThreadOwnerGrants({
         manager,
         workspaceId,
         threadTableExpression: table('agentChatThread'),
-        isCoreStorage: false,
       });
     });
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

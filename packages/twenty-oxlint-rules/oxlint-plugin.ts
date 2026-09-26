@@ -65,6 +65,10 @@ import {
   RULE_NAME as noNavigatePreferLinkName,
 } from './rules/no-navigate-prefer-link';
 import {
+  rule as noRuntimeImportFromUpgradeCommand,
+  RULE_NAME as noRuntimeImportFromUpgradeCommandName,
+} from './rules/no-runtime-import-from-upgrade-command';
+import {
   rule as noStateUseref,
   RULE_NAME as noStateUserefName,
 } from './rules/no-state-useref';
@@ -117,6 +121,7 @@ export default definePlugin({
     [noMiscasedAcronymInIdentifierName]: noMiscasedAcronymInIdentifier,
     [noMiscasedAcronymInMessageName]: noMiscasedAcronymInMessage,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
+    [noRuntimeImportFromUpgradeCommandName]: noRuntimeImportFromUpgradeCommand,
     [noStateUserefName]: noStateUseref,
     [noStorybookA11yDisableName]: noStorybookA11yDisable,
     [preferWorkspaceScopedRepositoryName]: preferWorkspaceScopedRepository,
