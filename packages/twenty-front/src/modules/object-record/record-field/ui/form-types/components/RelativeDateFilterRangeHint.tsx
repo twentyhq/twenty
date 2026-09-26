@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
@@ -21,11 +22,13 @@ export const RelativeDateFilterRangeHint = ({
 }: RelativeDateFilterRangeHintProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+  const { calendarSystem } = useDateTimeFormat();
 
   const formatPlainDate = (plainDate: Temporal.PlainDate) =>
-    new Intl.DateTimeFormat(userLocale, { dateStyle: 'medium' }).format(
-      new Date(plainDate.year, plainDate.month - 1, plainDate.day),
-    );
+    new Intl.DateTimeFormat(userLocale, {
+      dateStyle: 'medium',
+      calendar: calendarSystem,
+    }).format(new Date(plainDate.year, plainDate.month - 1, plainDate.day));
 
   const formatPlainDateRange = (
     start: Temporal.PlainDate,
@@ -40,6 +43,7 @@ export const RelativeDateFilterRangeHint = ({
       dateStyle: 'medium',
       timeStyle: 'short',
       timeZone: zonedDateTime.timeZoneId,
+      calendar: calendarSystem,
     }).format(new Date(zonedDateTime.epochMilliseconds));
 
   let rangeLabel: string | null = null;

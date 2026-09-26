@@ -11,7 +11,7 @@ type DateDisplayProps = {
   dateFieldSettings?: FieldDateMetadataSettings;
 };
 export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
-  const { dateFormat } = useContext(UserContext);
+  const { dateFormat, calendarSystem } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
 
   const formattedDate = formatDateString({
@@ -19,6 +19,7 @@ export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
     timeZone: 'UTC', // Needed because we have db-stored date (yyyy-mm-dd) is converted to UTC dateTime by TypeORM
     dateFormat,
     dateFieldSettings,
+    calendarSystem,
     localeCatalog: dateLocale.localeCatalog,
   });
 

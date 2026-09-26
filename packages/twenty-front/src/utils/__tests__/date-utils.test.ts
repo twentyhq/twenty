@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { i18n } from '@lingui/core';
 import { addDays, format, formatDistanceToNow, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -28,7 +29,7 @@ describe('beautifyExactDateTime', () => {
     const actualDate = new Date(mockDate);
     const expected = format(actualDate, 'MMM d, yyyy · HH:mm');
 
-    const result = beautifyExactDateTime(mockDate);
+    const result = beautifyExactDateTime(mockDate, CalendarSystem.GREGORIAN);
     expect(result).toEqual(expected);
   });
   it('should return the time in the correct format for a datetime that is today', () => {
@@ -37,7 +38,7 @@ describe('beautifyExactDateTime', () => {
     const actualDate = new Date(mockDate);
     const expected = format(actualDate, 'HH:mm');
 
-    const result = beautifyExactDateTime(mockDate);
+    const result = beautifyExactDateTime(mockDate, CalendarSystem.GREGORIAN);
     expect(result).toEqual(expected);
   });
 });
@@ -48,7 +49,7 @@ describe('beautifyExactDate', () => {
     const actualDate = new Date(mockDate);
     const expected = format(actualDate, 'MMM d, yyyy');
 
-    const result = beautifyExactDate(mockDate);
+    const result = beautifyExactDate(mockDate, CalendarSystem.GREGORIAN);
     expect(result).toEqual(expected);
   });
   it('should return "Today" if the date is today', () => {
@@ -56,8 +57,16 @@ describe('beautifyExactDate', () => {
     const mockDate = `${todayString}T12:13:24`;
     const expected = 'Today';
 
-    const result = beautifyExactDate(mockDate);
+    const result = beautifyExactDate(mockDate, CalendarSystem.GREGORIAN);
     expect(result).toEqual(expected);
+  });
+});
+
+describe('beautifyExactDate with a non-Gregorian calendar system', () => {
+  it('should return the date in the Persian calendar', () => {
+    expect(
+      beautifyExactDate('2023-01-01T12:13:24', CalendarSystem.PERSIAN),
+    ).toMatch(/^\S+ 11, 1401$/);
   });
 });
 
@@ -362,7 +371,7 @@ describe('French locale tests', () => {
   describe('beautifyExactDate with French locale', () => {
     it('should translate "Today" to French', () => {
       const today = new Date('2024-01-01T12:00:00.000Z');
-      const result = beautifyExactDate(today);
+      const result = beautifyExactDate(today, CalendarSystem.GREGORIAN);
       expect(result).toBe("Aujourd'hui"); // French for "Today"
     });
   });

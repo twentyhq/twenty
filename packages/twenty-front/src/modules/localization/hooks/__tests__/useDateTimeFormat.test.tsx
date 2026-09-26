@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -12,6 +13,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 const mockPreferences = {
   timeZone: 'America/New_York',
   dateFormat: DateFormat.MONTH_FIRST,
+  calendarSystem: CalendarSystem.GREGORIAN,
   timeFormat: TimeFormat.HOUR_24,
   numberFormat: '1,000.00' as any,
   calendarStartDay: CalendarStartDay.MONDAY,
@@ -38,6 +40,7 @@ describe('useDateTimeFormat', () => {
     expect(result.current).toEqual({
       timeZone: 'America/New_York',
       dateFormat: DateFormat.MONTH_FIRST,
+      calendarSystem: CalendarSystem.GREGORIAN,
       timeFormat: TimeFormat.HOUR_24,
       calendarStartDay: CalendarStartDay.MONDAY,
     });
@@ -48,6 +51,7 @@ describe('useDateTimeFormat', () => {
       ...mockPreferences,
       timeZone: 'Europe/London',
       dateFormat: DateFormat.DAY_FIRST,
+      calendarSystem: CalendarSystem.GREGORIAN,
     });
 
     const { result } = renderHook(() => useDateTimeFormat(), {
@@ -71,6 +75,7 @@ describe('useDateTimeFormat', () => {
       'dateFormat',
       'timeFormat',
       'calendarStartDay',
+      'calendarSystem',
     ]);
   });
 });

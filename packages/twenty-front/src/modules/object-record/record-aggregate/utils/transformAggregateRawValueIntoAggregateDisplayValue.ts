@@ -1,5 +1,6 @@
 import { type Locale } from 'date-fns';
 
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { type NumberFormat } from '@/localization/constants/NumberFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
@@ -25,6 +26,7 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
   dateFormat,
   timeFormat,
   timeZone,
+  calendarSystem,
   localeCatalog,
   numberFormat,
   chartNumberFormat,
@@ -35,6 +37,7 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   timeZone: string;
+  calendarSystem: CalendarSystem;
   localeCatalog: Locale;
   numberFormat?: NumberFormat;
   chartNumberFormat?: ChartNumberFormat;
@@ -90,6 +93,7 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
           dateFormat,
           timeFormat,
           dateFieldSettings,
+          calendarSystem,
           localeCatalog,
         });
       }
@@ -104,6 +108,7 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
           timeZone,
           dateFormat,
           dateFieldSettings,
+          calendarSystem,
           localeCatalog,
         });
       }

@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -20,6 +21,7 @@ const meta: Meta = {
         <UserContext.Provider
           value={{
             dateFormat: DateFormat.SYSTEM,
+            calendarSystem: CalendarSystem.GREGORIAN,
             timeFormat: TimeFormat.SYSTEM,
             timeZone: 'UTC',
           }}

@@ -1,5 +1,6 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type WorkspaceMemberFormatPreferences } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { getWorkspaceCalendarSystemFromCalendarSystem } from '@/localization/utils/format-preferences/getWorkspaceCalendarSystemFromCalendarSystem';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/format-preferences/getWorkspaceDateFormatFromDateFormat';
 import { getWorkspaceNumberFormatFromNumberFormat } from '@/localization/utils/format-preferences/getWorkspaceNumberFormatFromNumberFormat';
 import { getWorkspaceTimeFormatFromTimeFormat } from '@/localization/utils/format-preferences/getWorkspaceTimeFormatFromTimeFormat';
@@ -33,6 +34,12 @@ export const getWorkspaceMemberUpdateFromFormatPreferences = (
 
   if (preferences.calendarStartDay !== undefined) {
     update.calendarStartDay = preferences.calendarStartDay;
+  }
+
+  if (preferences.calendarSystem !== undefined) {
+    update.calendarSystem = getWorkspaceCalendarSystemFromCalendarSystem(
+      preferences.calendarSystem,
+    );
   }
 
   return update;

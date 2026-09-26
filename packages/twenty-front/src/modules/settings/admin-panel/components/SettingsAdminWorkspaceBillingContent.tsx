@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -128,6 +129,7 @@ const StripeLink = ({
 export const SettingsAdminWorkspaceBillingContent = ({
   workspaceId,
 }: SettingsAdminWorkspaceBillingContentProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
   const { openDialog } = useDialog();
@@ -199,7 +201,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
         : null;
 
   const formatPeriod = (start: string, end: string): string =>
-    `${beautifyExactDate(start)} → ${beautifyExactDate(end)}`;
+    `${beautifyExactDate(start, calendarSystem)} → ${beautifyExactDate(end, calendarSystem)}`;
 
   const planKey = isDefined(subscription?.planKey)
     ? toBillingPlanKey(subscription.planKey)
@@ -322,7 +324,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
               {
                 Icon: IconCircleX,
                 label: t`Cancels at`,
-                value: beautifyExactDate(subscription.cancelAt),
+                value: beautifyExactDate(subscription.cancelAt, calendarSystem),
               },
             ]
           : []),
@@ -331,7 +333,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
               {
                 Icon: IconCircleX,
                 label: t`Canceled at`,
-                value: beautifyExactDate(subscription.canceledAt),
+                value: beautifyExactDate(
+                  subscription.canceledAt,
+                  calendarSystem,
+                ),
               },
             ]
           : []),

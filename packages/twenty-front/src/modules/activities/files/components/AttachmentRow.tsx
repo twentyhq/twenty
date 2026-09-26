@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
@@ -85,6 +86,7 @@ export const AttachmentRow = ({
   attachment,
   onPreview,
 }: AttachmentRowProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -228,7 +230,7 @@ export const AttachmentRow = ({
           <StyledCalendarIconContainer>
             <IconCalendar size={theme.icon.size.md} />
           </StyledCalendarIconContainer>
-          {formatToHumanReadableDate(attachment.createdAt)}
+          {formatToHumanReadableDate(attachment.createdAt, calendarSystem)}
           <AttachmentDropdown
             attachmentId={attachment.id}
             onDelete={handleDelete}

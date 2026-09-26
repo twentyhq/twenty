@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import {
   type Decorator,
   type Meta,
@@ -49,7 +50,10 @@ export const Default: Story = {
     ).toBeInTheDocument();
     expect(
       await canvas.findByText(
-        formatToHumanReadableDate(mockedBlocklist[0].createdAt),
+        formatToHumanReadableDate(
+          mockedBlocklist[0].createdAt,
+          CalendarSystem.GREGORIAN,
+        ),
       ),
     ).toBeInTheDocument();
   },

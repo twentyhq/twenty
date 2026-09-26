@@ -33,7 +33,8 @@ export const useSendMessageCampaign = () => {
   const { enqueueToast } = useToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { formatNumber } = useNumberFormat();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const sendMessageCampaign = async ({
@@ -83,6 +84,7 @@ export const useSendMessageCampaign = () => {
           value: scheduledAt,
           timeZone,
           dateFormat,
+          calendarSystem,
           timeFormat,
           localeCatalog,
         });

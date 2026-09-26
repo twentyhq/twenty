@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { act, renderHook } from '@testing-library/react';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
@@ -42,6 +43,7 @@ describe('useInitializeFormatPreferences', () => {
     const mockPreferences = {
       timeZone: 'UTC',
       dateFormat: 'MM/dd/yyyy' as any,
+      calendarSystem: CalendarSystem.GREGORIAN,
       timeFormat: 'HH:mm' as any,
       numberFormat: '1,000.00' as any,
       calendarStartDay: 'MONDAY' as any,

@@ -99,7 +99,8 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
 
   const { goBackFromSidePanel } = useSidePanelHistory();
   const { formatNumber } = useNumberFormat();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { sendMessageCampaign, loading: isSending } = useSendMessageCampaign();
 
@@ -142,6 +143,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
         value: scheduledAt,
         timeZone,
         dateFormat,
+        calendarSystem,
         timeFormat,
         localeCatalog,
       })

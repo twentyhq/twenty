@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -14,6 +15,7 @@ const meta: Meta<typeof DateDisplay> = {
       <UserContext.Provider
         value={{
           dateFormat: DateFormat.DAY_FIRST,
+          calendarSystem: CalendarSystem.GREGORIAN,
           timeFormat: TimeFormat.HOUR_24,
           timeZone: 'Pacific/Tahiti', // Needed for our test on time difference
         }}

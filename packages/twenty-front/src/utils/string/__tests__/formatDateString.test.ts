@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { subDays } from 'date-fns';
@@ -8,6 +9,7 @@ describe('formatDateString', () => {
   const defaultParams = {
     timeZone: 'UTC',
     dateFormat: DateFormat.DAY_FIRST,
+    calendarSystem: CalendarSystem.GREGORIAN,
   };
 
   it('should return empty string for null value', () => {

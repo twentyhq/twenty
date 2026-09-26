@@ -1,6 +1,7 @@
 import type { UI_SCALE_VALUES } from 'twenty-shared/constants';
 import { type OpenRecordIn } from 'twenty-shared/types';
 import {
+  type WorkspaceMemberCalendarSystemEnum,
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
@@ -34,6 +35,7 @@ export type WorkspaceMember = {
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
   numberFormat?: WorkspaceMemberNumberFormatEnum | null;
   calendarStartDay?: number | null;
+  calendarSystem?: WorkspaceMemberCalendarSystemEnum | null;
 };
 
 export type WorkspaceInvitation = {

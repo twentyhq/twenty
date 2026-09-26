@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { enUS } from 'date-fns/locale';
 
@@ -8,6 +9,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2022-01-01',
         timeZone: 'UTC',
         dateFormat: 'yyyy',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -19,6 +21,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2022-03-14',
         timeZone: 'UTC',
         dateFormat: 'dd/MM/yyyy',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -30,18 +33,21 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2022-01-01',
         timeZone: 'UTC',
         dateFormat: 'yyyy-MM-dd',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
       const resultLA = formatDateISOStringToCustomUnicodeFormat({
         date: '2022-01-01',
         timeZone: 'America/Los_Angeles',
         dateFormat: 'yyyy-MM-dd',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
       const resultTokyo = formatDateISOStringToCustomUnicodeFormat({
         date: '2022-01-01',
         timeZone: 'Asia/Tokyo',
         dateFormat: 'yyyy-MM-dd',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -55,6 +61,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2024-12-31',
         timeZone: 'Asia/Tokyo',
         dateFormat: 'yyyy-MM-dd',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -68,6 +75,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2022-01-01T12:00:00Z',
         timeZone: 'UTC',
         dateFormat: 'yyyy-MM-dd HH:mm',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -80,6 +88,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2022-01-01T00:00:00Z',
         timeZone: 'America/New_York',
         dateFormat: 'yyyy-MM-dd HH:mm',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -92,6 +101,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2022-01-01T22:00:00Z',
         timeZone: 'Asia/Tokyo',
         dateFormat: 'yyyy-MM-dd HH:mm',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -103,6 +113,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         date: '2022-01-01T12:00:00Z',
         timeZone: 'Mars/Olympus',
         dateFormat: 'yyyy-MM-dd',
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 

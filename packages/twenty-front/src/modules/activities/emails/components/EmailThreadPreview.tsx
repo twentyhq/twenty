@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
@@ -86,6 +87,7 @@ type LastAvatar = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -202,7 +204,10 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
         )}
       </StyledSubjectAndBody>
       <StyledReceivedAt>
-        {formatToHumanReadableDate(thread.lastMessageReceivedAt)}
+        {formatToHumanReadableDate(
+          thread.lastMessageReceivedAt,
+          calendarSystem,
+        )}
       </StyledReceivedAt>
     </ActivityRow>
   );

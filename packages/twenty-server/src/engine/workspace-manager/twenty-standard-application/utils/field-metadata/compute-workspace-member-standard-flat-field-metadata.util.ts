@@ -15,7 +15,10 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { WorkspaceMemberNumberFormatEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import {
+  WorkspaceMemberCalendarSystemEnum,
+  WorkspaceMemberNumberFormatEnum,
+} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
   now,
@@ -629,6 +632,70 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
           ),
           position: 4,
           color: 'purple',
+        },
+      ],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  calendarSystem: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'calendarSystem',
+      type: FieldMetadataType.SELECT,
+      label: i18nLabel(
+        msg({ message: `Calendar system`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `User's preferred calendar system for displaying dates`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconCalendar',
+      isSystem: true,
+      isNullable: false,
+      isUIEditable: false,
+      defaultValue: `'${WorkspaceMemberCalendarSystemEnum.SYSTEM}'`,
+      options: [
+        {
+          id: '20202020-e92d-4791-8680-7c1454b76f71',
+          value: WorkspaceMemberCalendarSystemEnum.SYSTEM,
+          label: i18nLabel(
+            msg({ message: `System`, context: 'fieldMetadata.label' }),
+          ),
+          position: 0,
+          color: 'turquoise',
+        },
+        {
+          id: '20202020-e2aa-46ad-bd5c-ae4543b083e8',
+          value: WorkspaceMemberCalendarSystemEnum.GREGORIAN,
+          label: i18nLabel(
+            msg({ message: `Gregorian`, context: 'fieldMetadata.label' }),
+          ),
+          position: 1,
+          color: 'blue',
+        },
+        {
+          id: '20202020-e818-4e47-becf-202e8b619a86',
+          value: WorkspaceMemberCalendarSystemEnum.PERSIAN,
+          label: i18nLabel(
+            msg({ message: `Persian`, context: 'fieldMetadata.label' }),
+          ),
+          position: 2,
+          color: 'green',
+        },
+        {
+          id: '20202020-b7c3-45e4-b51e-7b2ffc0a8fd5',
+          value: WorkspaceMemberCalendarSystemEnum.ISLAMIC,
+          label: i18nLabel(
+            msg({ message: `Islamic`, context: 'fieldMetadata.label' }),
+          ),
+          position: 3,
+          color: 'orange',
         },
       ],
     },

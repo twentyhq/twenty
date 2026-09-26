@@ -7724,6 +7724,7 @@ export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']['output']>;
   calendarStartDay?: Maybe<Scalars['Int']['output']>;
+  calendarSystem?: Maybe<WorkspaceMemberCalendarSystemEnum>;
   colorScheme: Scalars['String']['output'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID']['output'];
@@ -7738,6 +7739,14 @@ export type WorkspaceMember = {
   userEmail: Scalars['String']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
 };
+
+/** Calendar system used to display dates */
+export enum WorkspaceMemberCalendarSystemEnum {
+  GREGORIAN = 'GREGORIAN',
+  ISLAMIC = 'ISLAMIC',
+  PERSIAN = 'PERSIAN',
+  SYSTEM = 'SYSTEM'
+}
 
 /** Date format as Month first, Day first, Year first or system as default */
 export enum WorkspaceMemberDateFormatEnum {

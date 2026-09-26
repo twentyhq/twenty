@@ -3,13 +3,14 @@ import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext'
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { format, getYear } from 'date-fns';
+import { turnJSDateToPlainDate } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 
 import { Heading } from 'twenty-ui/primitives/typography';
@@ -53,13 +54,19 @@ export const CalendarEventsCardContent = ({
 }: CalendarEventsCardContentProps) => {
   const { t } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const { calendarSystem } = useDateTimeFormat();
 
   const {
     calendarEventsByDayTime,
     daysByMonthTime,
     monthTimes,
     monthTimesByYear,
-  } = useCalendarEvents(timelineCalendarEvents ?? []);
+  } = useCalendarEvents(timelineCalendarEvents ?? [], calendarSystem);
+
+  const monthFormatter = new Intl.DateTimeFormat(localeCatalog.code, {
+    month: 'long',
+    calendar: calendarSystem,
+  });
 
   if (firstQueryLoading) {
     return <SkeletonLoader />;
@@ -89,12 +96,12 @@ export const CalendarEventsCardContent = ({
       <StyledContainer>
         {monthTimes.map((monthTime) => {
           const monthDayTimes = daysByMonthTime[monthTime] || [];
-          const year = getYear(monthTime);
+          const year = turnJSDateToPlainDate(new Date(monthTime)).withCalendar(
+            calendarSystem,
+          ).year;
           const lastMonthTimeOfYear = monthTimesByYear[year]?.[0];
           const isLastMonthOfYear = lastMonthTimeOfYear === monthTime;
-          const monthLabel = format(monthTime, 'MMMM', {
-            locale: localeCatalog,
-          });
+          const monthLabel = monthFormatter.format(monthTime);
 
           return (
             <Section.Root key={monthTime}>

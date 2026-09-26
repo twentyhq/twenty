@@ -93,7 +93,8 @@ export const CronExpressionHelper = ({
   isScheduleVisible = true,
   isUpcomingExecutionVisible = true,
 }: CronExpressionHelperProps) => {
-  const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
+  const { timeZone, dateFormat, timeFormat, calendarSystem } =
+    useDateTimeFormat();
   const dateLocale = useAtomStateValue(dateLocaleState);
 
   if (!isVisible) {
@@ -153,6 +154,7 @@ export const CronExpressionHelper = ({
                 timeZone,
                 dateFormat,
                 timeFormat,
+                calendarSystem,
                 localeCatalog: dateLocale.localeCatalog,
               })}
             </StyledExecutionItem>

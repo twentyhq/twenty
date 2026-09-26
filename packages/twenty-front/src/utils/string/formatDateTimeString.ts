@@ -1,3 +1,4 @@
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
@@ -15,6 +16,7 @@ export const formatDateTimeString = ({
   dateFormat,
   timeFormat,
   dateFieldSettings,
+  calendarSystem,
   localeCatalog,
 }: {
   timeZone: string;
@@ -22,6 +24,7 @@ export const formatDateTimeString = ({
   timeFormat: TimeFormat;
   value?: string | null;
   dateFieldSettings?: FieldDateMetadataSettings;
+  calendarSystem: CalendarSystem;
   localeCatalog: Locale;
 }) => {
   if (!value) {
@@ -41,6 +44,7 @@ export const formatDateTimeString = ({
         timeZone,
         dateFormat,
         timeFormat,
+        calendarSystem,
         localeCatalog,
       });
     case FieldDateDisplayFormat.CUSTOM:
@@ -48,6 +52,7 @@ export const formatDateTimeString = ({
         date: value,
         timeZone,
         dateFormat: dateFieldSettings.customUnicodeDateFormat,
+        calendarSystem,
         localeCatalog,
       });
     default:
@@ -56,6 +61,7 @@ export const formatDateTimeString = ({
         timeZone,
         dateFormat,
         timeFormat,
+        calendarSystem,
         localeCatalog,
       });
   }

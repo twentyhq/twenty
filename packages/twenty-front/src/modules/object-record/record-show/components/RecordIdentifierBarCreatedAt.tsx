@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { StyledHeaderIdentifierLabel } from '@/ui/layout/page/components/StyledHeaderIdentifierLabel';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -25,6 +26,7 @@ type RecordIdentifierBarCreatedAtProps = {
 export const RecordIdentifierBarCreatedAt = ({
   objectRecordId,
 }: RecordIdentifierBarCreatedAtProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   const recordCreatedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     { recordId: objectRecordId, fieldName: 'createdAt' },
@@ -45,7 +47,7 @@ export const RecordIdentifierBarCreatedAt = ({
   return (
     <Tooltip
       delay={TooltipDelay.mediumDelay}
-      content={beautifyExactDateTime(recordCreatedAt)}
+      content={beautifyExactDateTime(recordCreatedAt, calendarSystem)}
       side="left"
     >
       <StyledCreatedAt id={createdAtElementId}>

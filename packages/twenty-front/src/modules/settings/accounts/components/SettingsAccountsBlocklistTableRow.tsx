@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -17,6 +18,7 @@ export const SettingsAccountsBlocklistTableRow = ({
   blocklistItem,
   onRemove,
 }: SettingsAccountsBlocklistTableRowProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   return (
     <TableRow
       key={blocklistItem.id}
@@ -28,7 +30,7 @@ export const SettingsAccountsBlocklistTableRow = ({
       </TableCell>
       <TableCell>
         {blocklistItem.createdAt
-          ? formatToHumanReadableDate(blocklistItem.createdAt)
+          ? formatToHumanReadableDate(blocklistItem.createdAt, calendarSystem)
           : ''}
       </TableCell>
       <TableCell align="right">

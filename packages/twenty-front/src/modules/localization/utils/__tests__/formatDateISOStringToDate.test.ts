@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { enUS } from 'date-fns/locale';
@@ -9,6 +10,7 @@ describe('formatDateISOStringToDate', () => {
         date: '2022-01-01',
         timeZone: 'UTC',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -20,6 +22,7 @@ describe('formatDateISOStringToDate', () => {
         date: '2022-01-01',
         timeZone: 'UTC',
         dateFormat: DateFormat.MONTH_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -31,6 +34,7 @@ describe('formatDateISOStringToDate', () => {
         date: '2022-01-01',
         timeZone: 'UTC',
         dateFormat: DateFormat.YEAR_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -42,18 +46,21 @@ describe('formatDateISOStringToDate', () => {
         date: '2022-01-01',
         timeZone: 'UTC',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
       const resultLA = formatDateISOStringToDate({
         date: '2022-01-01',
         timeZone: 'America/Los_Angeles',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
       const resultTokyo = formatDateISOStringToDate({
         date: '2022-01-01',
         timeZone: 'Asia/Tokyo',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -67,6 +74,7 @@ describe('formatDateISOStringToDate', () => {
         date: '2024-12-31',
         timeZone: 'America/Los_Angeles',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -78,6 +86,7 @@ describe('formatDateISOStringToDate', () => {
         date: '2025-01-01',
         timeZone: 'Asia/Tokyo',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -91,6 +100,7 @@ describe('formatDateISOStringToDate', () => {
         date: '2022-01-01T12:00:00Z',
         timeZone: 'UTC',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -103,6 +113,7 @@ describe('formatDateISOStringToDate', () => {
         date: '2022-01-01T00:00:00Z',
         timeZone: 'America/New_York',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
@@ -115,10 +126,49 @@ describe('formatDateISOStringToDate', () => {
         date: '2022-01-01T22:00:00Z',
         timeZone: 'Asia/Tokyo',
         dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.GREGORIAN,
         localeCatalog: enUS,
       });
 
       expect(result).toBe('2 Jan, 2022');
+    });
+  });
+
+  describe('non-Gregorian calendar systems', () => {
+    it('should render a date-only value in the Persian calendar', () => {
+      const result = formatDateISOStringToDate({
+        date: '2026-09-26',
+        timeZone: 'UTC',
+        dateFormat: DateFormat.DAY_FIRST,
+        calendarSystem: CalendarSystem.PERSIAN,
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('4 Mehr, 1405');
+    });
+
+    it('should use the calendar day of the user time zone for instants', () => {
+      const result = formatDateISOStringToDate({
+        date: '2026-09-26T22:30:00Z',
+        timeZone: 'Asia/Tehran',
+        dateFormat: DateFormat.YEAR_FIRST,
+        calendarSystem: CalendarSystem.PERSIAN,
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('1405 Mehr 5');
+    });
+
+    it('should render the Islamic calendar', () => {
+      const result = formatDateISOStringToDate({
+        date: '2026-09-26',
+        timeZone: 'UTC',
+        dateFormat: DateFormat.MONTH_FIRST,
+        calendarSystem: CalendarSystem.ISLAMIC,
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('Rab. II 15, 1448');
     });
   });
 });

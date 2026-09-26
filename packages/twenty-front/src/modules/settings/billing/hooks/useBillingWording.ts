@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import {
   BillingPlanKey,
@@ -15,6 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 
 export const useBillingWording = () => {
+  const { calendarSystem } = useDateTimeFormat();
   const { t } = useLingui();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -48,6 +50,7 @@ export const useBillingWording = () => {
 
     return beautifyExactDate(
       new Date(currentBillingSubscription.currentPeriodEnd),
+      calendarSystem,
     );
   };
 

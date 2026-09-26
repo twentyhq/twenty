@@ -255,6 +255,7 @@ export interface WorkspaceMember {
     roles?: Role[]
     userWorkspaceId?: Scalars['UUID']
     numberFormat?: WorkspaceMemberNumberFormatEnum
+    calendarSystem?: WorkspaceMemberCalendarSystemEnum
     __typename: 'WorkspaceMember'
 }
 
@@ -271,6 +272,10 @@ export type WorkspaceMemberTimeFormatEnum = 'SYSTEM' | 'HOUR_12' | 'HOUR_24'
 
 /** Number format for displaying numbers */
 export type WorkspaceMemberNumberFormatEnum = 'SYSTEM' | 'COMMAS_AND_DOT' | 'SPACES_AND_COMMA' | 'DOTS_AND_COMMA' | 'APOSTROPHE_AND_DOT'
+
+
+/** Calendar system used to display dates */
+export type WorkspaceMemberCalendarSystemEnum = 'SYSTEM' | 'GREGORIAN' | 'PERSIAN' | 'ISLAMIC'
 
 export interface FieldPermission {
     id: Scalars['UUID']
@@ -4032,6 +4037,7 @@ export interface WorkspaceMemberGenqlSelection{
     roles?: RoleGenqlSelection
     userWorkspaceId?: boolean | number
     numberFormat?: boolean | number
+    calendarSystem?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10781,6 +10787,13 @@ export const enumWorkspaceMemberNumberFormatEnum = {
    SPACES_AND_COMMA: 'SPACES_AND_COMMA' as const,
    DOTS_AND_COMMA: 'DOTS_AND_COMMA' as const,
    APOSTROPHE_AND_DOT: 'APOSTROPHE_AND_DOT' as const
+}
+
+export const enumWorkspaceMemberCalendarSystemEnum = {
+   SYSTEM: 'SYSTEM' as const,
+   GREGORIAN: 'GREGORIAN' as const,
+   PERSIAN: 'PERSIAN' as const,
+   ISLAMIC: 'ISLAMIC' as const
 }
 
 export const enumRowLevelPermissionPredicateGroupLogicalOperator = {

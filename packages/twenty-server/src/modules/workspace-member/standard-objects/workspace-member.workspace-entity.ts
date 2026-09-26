@@ -35,6 +35,18 @@ export enum WorkspaceMemberNumberFormatEnum {
   APOSTROPHE_AND_DOT = 'APOSTROPHE_AND_DOT',
 }
 
+export enum WorkspaceMemberCalendarSystemEnum {
+  SYSTEM = 'SYSTEM',
+  GREGORIAN = 'GREGORIAN',
+  PERSIAN = 'PERSIAN',
+  ISLAMIC = 'ISLAMIC',
+}
+
+registerEnumType(WorkspaceMemberCalendarSystemEnum, {
+  name: 'WorkspaceMemberCalendarSystemEnum',
+  description: 'Calendar system used to display dates',
+});
+
 registerEnumType(WorkspaceMemberNumberFormatEnum, {
   name: 'WorkspaceMemberNumberFormatEnum',
   description: 'Number format for displaying numbers',
@@ -78,4 +90,5 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;
+  calendarSystem: string;
 }

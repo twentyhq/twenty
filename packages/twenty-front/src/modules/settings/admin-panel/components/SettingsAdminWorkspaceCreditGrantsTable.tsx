@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useMutation } from '@apollo/client/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
@@ -67,6 +68,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
   creditGrants,
   onGrantCreditsClick,
 }: SettingsAdminWorkspaceCreditGrantsTableProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
   const { enqueueToast } = useToast();
@@ -144,14 +146,16 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
           },
           {
             label: t`Granted`,
-            Cell: ({ item }) => <>{beautifyExactDate(item.origin.createdAt)}</>,
+            Cell: ({ item }) => (
+              <>{beautifyExactDate(item.origin.createdAt, calendarSystem)}</>
+            ),
           },
           {
             label: t`Expires`,
             Cell: ({ item }) => (
               <>
                 {isDefined(item.current.expiresAt)
-                  ? beautifyExactDate(item.current.expiresAt)
+                  ? beautifyExactDate(item.current.expiresAt, calendarSystem)
                   : t`Never`}
               </>
             ),

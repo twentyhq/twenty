@@ -6,6 +6,7 @@ import { isOpenRecordIn } from '@/workspace-member/utils/toOpenRecordInPreferenc
 import { type OpenRecordIn } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
+  WorkspaceMemberCalendarSystemEnum,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberNumberFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -28,6 +29,7 @@ export type WorkspaceMemberSettingsUpdateInput = {
   dateFormat?: string;
   timeFormat?: string;
   numberFormat?: string;
+  calendarSystem?: string;
   position?: number;
 };
 
@@ -60,6 +62,15 @@ const isWorkspaceMemberNumberFormat = (
   value: unknown,
 ): value is NonNullable<CurrentWorkspaceMember['numberFormat']> =>
   isString(value) && WORKSPACE_MEMBER_NUMBER_FORMAT_VALUES.has(value);
+
+const WORKSPACE_MEMBER_CALENDAR_SYSTEM_VALUES: ReadonlySet<string> = new Set(
+  Object.values(WorkspaceMemberCalendarSystemEnum),
+);
+
+const isWorkspaceMemberCalendarSystem = (
+  value: unknown,
+): value is NonNullable<CurrentWorkspaceMember['calendarSystem']> =>
+  isString(value) && WORKSPACE_MEMBER_CALENDAR_SYSTEM_VALUES.has(value);
 
 export const mergeWorkspaceMemberSettingsIntoCurrent = (
   previous: CurrentWorkspaceMember,
@@ -169,6 +180,18 @@ export const mergeWorkspaceMemberSettingsIntoCurrent = (
       next = { ...next, numberFormat: null };
     } else if (isWorkspaceMemberNumberFormat(value)) {
       next = { ...next, numberFormat: value };
+    }
+  }
+
+  if (
+    'calendarSystem' in payload &&
+    (payload.calendarSystem === null || isDefined(payload.calendarSystem))
+  ) {
+    const value = payload.calendarSystem;
+    if (isNull(value)) {
+      next = { ...next, calendarSystem: null };
+    } else if (isWorkspaceMemberCalendarSystem(value)) {
+      next = { ...next, calendarSystem: value };
     }
   }
 

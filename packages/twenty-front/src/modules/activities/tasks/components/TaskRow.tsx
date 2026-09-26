@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
@@ -88,6 +89,7 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 export const TaskRow = ({ task }: { task: Task }) => {
+  const { calendarSystem } = useDateTimeFormat();
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -141,7 +143,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
             isPast={hasDatePassed(task.dueAt) && task.status === 'TODO'}
           >
             <IconCalendar size={theme.icon.size.md} />
-            {beautifyExactDate(task.dueAt)}
+            {beautifyExactDate(task.dueAt, calendarSystem)}
           </StyledDueDate>
         )}
         {

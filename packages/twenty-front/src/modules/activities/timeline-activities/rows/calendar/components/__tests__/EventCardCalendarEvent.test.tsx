@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -31,6 +32,7 @@ const renderCard = () =>
         <UserContext.Provider
           value={{
             dateFormat: DateFormat.MONTH_FIRST,
+            calendarSystem: CalendarSystem.GREGORIAN,
             timeFormat: TimeFormat.HOUR_24,
             timeZone: 'UTC',
           }}

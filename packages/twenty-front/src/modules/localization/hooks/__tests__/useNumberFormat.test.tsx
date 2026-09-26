@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -22,6 +23,7 @@ describe('useNumberFormat', () => {
     jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
       timeZone: 'UTC',
       dateFormat: 'MM/dd/yyyy' as any,
+      calendarSystem: CalendarSystem.GREGORIAN,
       timeFormat: 'HH:mm' as any,
       numberFormat: '1,000.00' as any,
       calendarStartDay: 'MONDAY' as any,

@@ -1,4 +1,6 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
+import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 
 export type EventGroup = {
@@ -7,13 +9,21 @@ export type EventGroup = {
   items: TimelineActivity[];
 };
 
-export const groupEventsByMonth = (events: TimelineActivity[]) => {
+export const groupEventsByMonth = (
+  events: TimelineActivity[],
+  {
+    timeZone,
+    calendarSystem,
+  }: { timeZone: string; calendarSystem: CalendarSystem },
+) => {
   const activityGroups: EventGroup[] = [];
 
   for (const event of events) {
-    const date = new Date(event.happensAt);
-    const month = date.getMonth();
-    const year = date.getFullYear();
+    const { month, year } = Temporal.Instant.fromEpochMilliseconds(
+      new Date(event.happensAt).getTime(),
+    )
+      .toZonedDateTimeISO(timeZone)
+      .withCalendar(calendarSystem);
 
     const matchingGroup = activityGroups.find(
       (group) => group.year === year && group.month === month,

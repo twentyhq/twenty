@@ -48,7 +48,8 @@ export const CampaignSentEnvelope = ({
 }: CampaignSentEnvelopeProps) => {
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   // withSoftDeleted so a list deleted after the send still names what the
@@ -94,6 +95,7 @@ export const CampaignSentEnvelope = ({
           value: campaign.scheduledAt,
           timeZone,
           dateFormat,
+          calendarSystem,
           timeFormat,
           localeCatalog,
         })

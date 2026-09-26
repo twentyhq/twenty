@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { enUS } from 'date-fns/locale/en-US';
 
 import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
@@ -6,6 +7,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 
 const FORMAT_PREFERENCES = {
   dateFormat: DateFormat.MONTH_FIRST,
+  calendarSystem: CalendarSystem.GREGORIAN,
   timeFormat: TimeFormat.HOUR_12,
   localeCatalog: enUS,
 };

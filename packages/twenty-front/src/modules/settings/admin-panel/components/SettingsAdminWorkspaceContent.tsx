@@ -53,7 +53,8 @@ export const SettingsAdminWorkspaceContent = ({
 }: SettingsAdminWorkspaceContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const formattedLastUpdated = formatDateTimeString({
@@ -61,6 +62,7 @@ export const SettingsAdminWorkspaceContent = ({
     timeZone,
     dateFormat,
     timeFormat,
+    calendarSystem,
     localeCatalog: localeCatalog,
   });
 

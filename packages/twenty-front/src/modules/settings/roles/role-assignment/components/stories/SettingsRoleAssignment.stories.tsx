@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
@@ -35,6 +36,7 @@ const meta: Meta<typeof SettingsRoleAssignmentWrapper> = {
       <UserContext.Provider
         value={{
           dateFormat: DateFormat.DAY_FIRST,
+          calendarSystem: CalendarSystem.GREGORIAN,
           timeFormat: TimeFormat.HOUR_24,
           timeZone: 'UTC',
         }}

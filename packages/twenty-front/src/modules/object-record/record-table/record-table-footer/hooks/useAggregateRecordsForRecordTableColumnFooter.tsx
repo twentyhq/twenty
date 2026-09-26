@@ -125,7 +125,8 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     skip: !isDefined(aggregateOperationForViewField),
   });
 
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useContext(UserContext);
 
   const aggregateFieldMetadataItem = objectMetadataItem.fields.find(
     findById(aggregateFieldMetadataId),
@@ -163,6 +164,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       aggregateOperation: aggregateOperationForViewField,
       aggregateRawValue: aggregateRawValue,
       dateFormat,
+      calendarSystem,
       localeCatalog: dateLocale.localeCatalog,
       timeFormat,
       timeZone,

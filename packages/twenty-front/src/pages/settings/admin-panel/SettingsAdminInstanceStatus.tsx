@@ -43,7 +43,8 @@ const StyledCommandValue = styled.span`
 export const SettingsAdminInstanceStatus = () => {
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const {
@@ -71,6 +72,7 @@ export const SettingsAdminInstanceStatus = () => {
     timeZone,
     dateFormat,
     timeFormat,
+    calendarSystem,
     localeCatalog,
   });
 
