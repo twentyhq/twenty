@@ -210,10 +210,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
             indexUniversalIdentifier
           ];
 
-        if (
-          !isDefined(flatIndexMetadata) ||
-          flatIndexMetadata.isSystemSideEffect !== true
-        ) {
+        if (!isDefined(flatIndexMetadata)) {
           continue;
         }
 
@@ -228,7 +225,15 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
               ),
           );
 
-        if (!belongsToObject && !referencesDeletedField) {
+        // Dropping a column drops every physical index on it, so an index on a
+        // deleted field must go whatever its flags or owner. Join-column indexes
+        // backfilled before isSystemSideEffect existed are still flagged false,
+        // and skipping them left field-less indexMetadata rows whose name then
+        // collided when the field was recreated.
+        const isEngineOwnedIndexOfObject =
+          belongsToObject && flatIndexMetadata.isSystemSideEffect === true;
+
+        if (!referencesDeletedField && !isEngineOwnedIndexOfObject) {
           continue;
         }
 
