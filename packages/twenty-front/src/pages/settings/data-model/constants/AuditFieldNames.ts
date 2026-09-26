@@ -3,4 +3,5 @@ export const AUDIT_FIELD_NAMES = [
   'createdBy',
   'deletedAt',
   'updatedAt',
+  'updatedBy',
 ];
