@@ -63,6 +63,51 @@ describe('convertTipTapBlocksToMarkdown', () => {
     expect(convertTipTapBlocksToMarkdown(document)).toBe('hello');
   });
 
+  it.each([
+    {
+      name: 'bold text in a plain paragraph',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Bold', marks: [{ type: 'bold' }] }],
+        },
+      ],
+      markdown: '**Bold**',
+    },
+    {
+      name: 'a heading level',
+      blocks: [
+        {
+          type: 'heading',
+          attrs: { level: 2 },
+          content: [{ type: 'text', text: 'Title' }],
+        },
+      ],
+      markdown: '## Title',
+    },
+    {
+      name: 'a line break',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'First' },
+            { type: 'hardBreak' },
+            { type: 'text', text: 'Second' },
+          ],
+        },
+      ],
+      markdown: 'First\nSecond',
+    },
+  ])(
+    'should convert $name without any TipTap-only block',
+    ({ blocks, markdown }) => {
+      expect(convertTipTapBlocksToMarkdown(JSON.stringify(blocks))).toBe(
+        markdown,
+      );
+    },
+  );
+
   it('should return undefined for invalid json', () => {
     expect(convertTipTapBlocksToMarkdown('not json')).toBeUndefined();
   });

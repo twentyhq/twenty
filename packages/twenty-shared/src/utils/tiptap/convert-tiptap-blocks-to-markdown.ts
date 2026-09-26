@@ -1,3 +1,5 @@
+import { isDefined } from '@/utils/validation';
+
 import { isTipTapNode } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';
 import { tipTapDocumentToMarkdown } from './tiptap-document-to-markdown';
@@ -17,11 +19,20 @@ const TIPTAP_ONLY_NODE_TYPES: string[] = [
   TIPTAP_NODE_TYPES.BUTTON,
   TIPTAP_NODE_TYPES.DIVIDER,
   TIPTAP_NODE_TYPES.HTML,
+  TIPTAP_NODE_TYPES.HARD_BREAK,
+  TIPTAP_NODE_TYPES.VARIABLE_TAG,
+  TIPTAP_NODE_TYPES.MENTION_TAG,
+  TIPTAP_NODE_TYPES.SKILL_TAG,
 ];
 
-const containsTipTapOnlyNode = (node: TipTapNode): boolean =>
+// BlockNote keeps formatting in `props` and `styles`, so `attrs` and `marks`
+// only ever come from TipTap, even in a body made of plain paragraphs.
+// Temporary until rich text is stored as TipTap: twentyhq/core-team-issues#2921
+const containsTipTapOnlyContent = (node: TipTapNode): boolean =>
   TIPTAP_ONLY_NODE_TYPES.includes(node.type) ||
-  (node.content ?? []).some(containsTipTapOnlyNode);
+  isDefined(node.attrs) ||
+  isDefined(node.marks) ||
+  (node.content ?? []).some(containsTipTapOnlyContent);
 
 export const convertTipTapBlocksToMarkdown = (
   serializedBlocks: string,
@@ -36,7 +47,7 @@ export const convertTipTapBlocksToMarkdown = (
 
   const nodes = Array.isArray(parsedBlocks) ? parsedBlocks : [parsedBlocks];
 
-  if (!nodes.every(isTipTapNode) || !nodes.some(containsTipTapOnlyNode)) {
+  if (!nodes.every(isTipTapNode) || !nodes.some(containsTipTapOnlyContent)) {
     return undefined;
   }
 
