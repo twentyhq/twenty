@@ -40,7 +40,9 @@ export const getChartValueFormatOptions = ({
   const aggregateFieldDecimals =
     aggregateFieldMetadataItem?.type === FieldMetadataType.CURRENCY
       ? 2
-      : aggregateNumberFieldDecimals;
+      : aggregateFieldMetadataItem?.type === FieldMetadataType.RATING
+        ? 1
+        : aggregateNumberFieldDecimals;
 
   const shouldUseAggregateFieldDecimals =
     NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(

@@ -50,6 +50,15 @@ export const getAvailableAggregationsFromObjectFields = (
         };
       }
 
+      if (field.type === FieldMetadataType.RATING) {
+        acc[field.name] = {
+          ...acc[field.name],
+          [AggregateOperations.MIN]: `min${capitalize(field.name)}`,
+          [AggregateOperations.MAX]: `max${capitalize(field.name)}`,
+          [AggregateOperations.AVG]: `avg${capitalize(field.name)}`,
+        };
+      }
+
       if (field.type === FieldMetadataType.CURRENCY) {
         acc[field.name] = {
           ...acc[field.name],
