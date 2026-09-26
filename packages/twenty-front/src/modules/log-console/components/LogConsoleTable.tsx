@@ -40,6 +40,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 `;
 
 const StyledEntriesSinceClear = styled(TableBody)`
+  justify-content: flex-end;
   min-height: calc(100cqh - ${themeCssVariables.spacing[8]});
 `;
 
