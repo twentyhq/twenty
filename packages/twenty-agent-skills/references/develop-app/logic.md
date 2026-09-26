@@ -75,6 +75,7 @@ When adding AI behavior:
 - Keep instructions grounded in available app data and tools.
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
+- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
 
 ## Connection Providers
 

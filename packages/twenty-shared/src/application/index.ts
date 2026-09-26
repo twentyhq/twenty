@@ -175,6 +175,8 @@ export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderCon
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
+export type { ObjectPermissionAction } from './objectPermissionActionType';
+export { OBJECT_PERMISSION_ACTIONS } from './objectPermissionActionType';
 export type {
   PageLayoutWidgetManifest,
   StandalonePageLayoutWidgetManifest,
@@ -187,6 +189,7 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
@@ -233,6 +236,13 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export {
+  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
+  getEffectiveObjectPermissionsFromRoleManifest,
+} from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
+export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
