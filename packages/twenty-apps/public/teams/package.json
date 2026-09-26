@@ -42,6 +42,7 @@
     "@types/react": "^19.0.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "jsdom": "^26.1.0",
+    "msw": "^2.12.14",
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
