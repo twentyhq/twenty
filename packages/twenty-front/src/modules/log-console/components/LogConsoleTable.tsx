@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
@@ -101,11 +102,12 @@ export const LogConsoleTable = ({
     .map((column) => column.gridTrack)
     .join(' ');
 
-  const filteredEntries =
-    searchQuery ? filterBySearchQuery(entries, searchQuery) : entries;
+  const filteredEntries = isNonEmptyString(searchQuery)
+    ? filterBySearchQuery(entries, searchQuery)
+    : entries;
 
   const filteredEntriesSinceClear =
-    isDefined(entriesSinceClear) && searchQuery
+    isDefined(entriesSinceClear) && isNonEmptyString(searchQuery)
       ? filterBySearchQuery(entriesSinceClear, searchQuery)
       : entriesSinceClear;
 

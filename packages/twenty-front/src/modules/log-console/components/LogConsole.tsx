@@ -248,12 +248,8 @@ export const LogConsole = () => {
   };
 
   const handleDetailPanelWidthChange = (width: number) => {
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
-    );
-    setDetailPanelWidth(
-      Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min),
-    );
+    document.documentElement.style.removeProperty(LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE);
+    setDetailPanelWidth(Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min));
   };
 
   const handleHeightChange = (height: number) => {
@@ -387,20 +383,17 @@ export const LogConsole = () => {
             >
               {renderActiveSource()}
             </StyledActiveSource>
-            {isDefined(logConsoleSelectedLog) ? (
+            {isDefined(logConsoleSelectedLog) && (
               <StyledDetailPanelWrapper detailPanelWidth={detailPanelWidth}>
                 <ResizablePanelEdge
                   side="left"
                   constraints={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS}
                   currentSize={detailPanelWidth}
                   onSizeChange={handleDetailPanelWidthChange}
-                  onCollapse={closeSelectedLog}
                   cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
                 />
                 <LogConsoleDetailPanel />
               </StyledDetailPanelWrapper>
-            ) : (
-              <LogConsoleDetailPanel />
             )}
           </StyledBody>
         )}
@@ -411,7 +404,6 @@ export const LogConsole = () => {
           constraints={logConsoleResizeConstraints}
           currentSize={isOpen ? logConsoleBodyHeight : 0}
           onSizeChange={handleHeightChange}
-          onCollapse={toggleLogConsoleOpen}
           cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
           onResizeStart={handleResizeStart}
         />

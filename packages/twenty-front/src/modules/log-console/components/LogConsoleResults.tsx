@@ -111,7 +111,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const {
     records,
-    totalCount,
     hasNextPage,
     loading,
     error,

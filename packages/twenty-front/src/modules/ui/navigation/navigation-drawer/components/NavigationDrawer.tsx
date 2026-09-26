@@ -98,13 +98,6 @@ export const NavigationDrawer = ({
     tableWidthResizeIsActiveState,
   );
 
-  const handleCollapse = () => {
-    setIsNavigationDrawerExpanded(false);
-    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
-    setIsResizing(false);
-    setTableWidthResizeIsActive(true);
-  };
-
   const handleWidthChange = (width: number) => {
     setNavigationDrawerWidth(width);
     setIsResizing(false);
@@ -136,7 +129,6 @@ export const NavigationDrawer = ({
             constraints={NAVIGATION_DRAWER_CONSTRAINTS}
             currentSize={navigationDrawerWidth}
             onSizeChange={handleWidthChange}
-            onCollapse={handleCollapse}
             showHandle={false}
             cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}
             onResizeStart={handleResizeStart}
