@@ -3,7 +3,9 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
+import { v4 } from 'uuid';
 
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import {
   CacheStorageException,
   CacheStorageExceptionCode,
@@ -296,27 +298,40 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
+  // The returned token must be passed to extendLock and releaseLock, so only
+  // the current holder can extend or release the lock
+  async acquireLock(key: string, ttl = 1000): Promise<string | null> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('acquireLock is only supported with Redis cache');
     }
 
     const redisClient = this.cache.store.client;
+    const token = v4();
 
-    const result = await redisClient.set(this.getKey(key), 'lock', {
+    const result = await redisClient.set(this.getKey(key), token, {
       NX: true,
       PX: ttl,
     });
 
-    return result === 'OK';
+    return result === 'OK' ? token : null;
   }
 
-  async releaseLock(key: string): Promise<void> {
-    if (!this.isRedisCache(this.cache)) {
-      throw new Error('releaseLock is only supported with Redis cache');
-    }
+  async extendLock(key: string, token: string, ttl: number): Promise<boolean> {
+    const extended = await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [token, String(ttl)],
+    });
 
-    await this.del(key);
+    return extended === 1;
+  }
+
+  async releaseLock(key: string, token: string): Promise<void> {
+    await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [token, '0'],
+    });
   }
 
   async incrBy(key: string, increment: number): Promise<number> {
