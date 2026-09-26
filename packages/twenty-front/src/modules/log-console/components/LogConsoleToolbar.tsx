@@ -61,21 +61,20 @@ const VIEW_FILTER_OPERAND_BY_EVENT_LOG_FILTER_OPERAND: Record<
 };
 
 const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
   flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledToolbar = styled.div`
   align-items: center;
   display: flex;
+  flex-wrap: nowrap;
   gap: ${themeCssVariables.spacing[2]};
+  overflow: hidden;
 `;
 
 const StyledSearch = styled.div`
-  flex: 1;
+  flex-shrink: 0;
 `;
 
 const StyledActions = styled.div`
@@ -86,8 +85,10 @@ const StyledActions = styled.div`
 const StyledFilterChips = styled.div`
   align-items: center;
   display: flex;
+  flex: 1;
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
+  overflow: hidden;
 `;
 
 const StyledChips = styled.div`
@@ -461,6 +462,19 @@ export const LogConsoleToolbar = ({
         >
           {search}
         </StyledSearch>
+        {isNonEmptyArray(filterFieldsWithChip) && (
+          <StyledFilterChips>
+            <ScrollWrapper
+              componentInstanceId={FILTER_CHIPS_SCROLL_WRAPPER_ID}
+              defaultEnableYScroll={false}
+            >
+              <StyledChips>{filterFieldsWithChip.map(renderChip)}</StyledChips>
+            </ScrollWrapper>
+            <LightButton emphasis="subtle" onClick={() => onFiltersChange([])}>
+              {t`Reset`}
+            </LightButton>
+          </StyledFilterChips>
+        )}
         <StyledActions>
           {isNonEmptyArray(filterFields) ? (
             <Dropdown
@@ -488,19 +502,6 @@ export const LogConsoleToolbar = ({
           {children}
         </StyledActions>
       </StyledToolbar>
-      {isNonEmptyArray(filterFieldsWithChip) && (
-        <StyledFilterChips>
-          <ScrollWrapper
-            componentInstanceId={FILTER_CHIPS_SCROLL_WRAPPER_ID}
-            defaultEnableYScroll={false}
-          >
-            <StyledChips>{filterFieldsWithChip.map(renderChip)}</StyledChips>
-          </ScrollWrapper>
-          <LightButton emphasis="subtle" onClick={() => onFiltersChange([])}>
-            {t`Reset`}
-          </LightButton>
-        </StyledFilterChips>
-      )}
     </StyledContainer>
   );
 };
