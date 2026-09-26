@@ -40,7 +40,7 @@ const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
 
 const StyledIconButton = styled.div`
   display: flex;
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDropdownContainer = styled.div`

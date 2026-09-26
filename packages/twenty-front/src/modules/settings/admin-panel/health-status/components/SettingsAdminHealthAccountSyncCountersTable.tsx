@@ -6,8 +6,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSettingsTableCardContainer = styled.div`
   > * {
-    padding-left: ${themeCssVariables.spacing[2]};
-    padding-right: ${themeCssVariables.spacing[2]};
+    padding-inline-start: ${themeCssVariables.spacing[2]};
+    padding-inline-end: ${themeCssVariables.spacing[2]};
   }
 `;
 

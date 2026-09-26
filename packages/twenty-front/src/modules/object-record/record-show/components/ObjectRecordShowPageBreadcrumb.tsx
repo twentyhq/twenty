@@ -64,7 +64,7 @@ const StyledAvatarContainer = styled.div`
   display: flex;
   flex-shrink: 0;
   justify-content: center;
-  margin-right: ${themeCssVariables.spacing[0.5]};
+  margin-inline-end: ${themeCssVariables.spacing[0.5]};
   padding: ${themeCssVariables.spacing[1]};
 `;
 

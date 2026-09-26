@@ -7,9 +7,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFixedContainer = styled.div<{ isMobile?: boolean }>`
   flex-shrink: 0;
-  padding-left: ${({ isMobile }) =>
+  padding-inline-start: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
-  padding-right: ${({ isMobile }) =>
+  padding-inline-end: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
 `;
 

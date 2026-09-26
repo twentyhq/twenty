@@ -55,7 +55,7 @@ const StyledTitle = styled.div`
 const StyledActionSlot = styled.div`
   display: flex;
   flex: 0 0 auto;
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 const StyledDescription = styled.div`

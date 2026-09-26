@@ -69,7 +69,7 @@ const StyledQuestionHeaderRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
   min-height: 24px;
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledQuestionText = styled.p`

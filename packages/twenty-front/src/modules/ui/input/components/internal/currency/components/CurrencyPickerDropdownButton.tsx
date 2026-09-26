@@ -17,8 +17,8 @@ const StyledDropdownButtonContainer = styled.div`
   cursor: pointer;
   display: flex;
   height: 32px;
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   user-select: none;
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};

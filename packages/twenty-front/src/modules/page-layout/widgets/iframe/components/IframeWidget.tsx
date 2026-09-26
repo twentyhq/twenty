@@ -32,7 +32,7 @@ const StyledLoadingContainer = styled.div`
   background: ${themeCssVariables.background.primary};
   bottom: 0;
   left: 0;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
   pointer-events: none;
   position: absolute;

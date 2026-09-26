@@ -85,8 +85,8 @@ const StyledSeparatorContainer = styled.div`
   align-self: stretch;
   display: flex;
   padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 

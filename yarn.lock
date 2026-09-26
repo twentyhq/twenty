@@ -6807,6 +6807,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/vazirmatn@npm:^5.2.8":
+  version: 5.3.0
+  resolution: "@fontsource/vazirmatn@npm:5.3.0"
+  checksum: 10c0/f3b11ed5f5002b2d87a1d506a9c393848ebf50c04af9fb160658bb3725059aab30814fe9d5fadb8a01d466d27326e974fb48d7aae7ed80e272e0694ea05399c9
+  languageName: node
+  linkType: hard
+
 "@formatjs/icu-messageformat-parser@npm:^3.5.16":
   version: 3.5.17
   resolution: "@formatjs/icu-messageformat-parser@npm:3.5.17"
@@ -50003,6 +50010,7 @@ __metadata:
     "@floating-ui/react": "npm:^0.24.3"
     "@fontsource/dm-mono": "npm:^5.2.7"
     "@fontsource/inter": "npm:^5.2.8"
+    "@fontsource/vazirmatn": "npm:^5.2.8"
     "@graphiql/plugin-explorer": "npm:^5.1.2"
     "@graphiql/react": "npm:^0.37.6"
     "@graphql-codegen/cli": "npm:^6.3.1"

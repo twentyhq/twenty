@@ -38,7 +38,7 @@ const StyledInputRow = styled.div`
 
 const StyledInputContainer = styled.div`
   flex: 1;
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSendingDomainColumn = styled.div`

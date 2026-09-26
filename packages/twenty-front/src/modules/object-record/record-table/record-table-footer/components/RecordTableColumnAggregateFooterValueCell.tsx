@@ -32,7 +32,7 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
 
   min-width: ${themeCssVariables.spacing[7]};
 
-  padding-left: ${({ isFirstCell }) =>
+  padding-inline-start: ${({ isFirstCell }) =>
     isFirstCell
       ? `calc(${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH} + ${themeCssVariables.spacing[1]})`
       : '0'};
@@ -45,7 +45,7 @@ const StyledIconContainer = styled.div`
   flex-shrink: 0;
   height: 20px;
   justify-content: center;
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 export const RecordTableColumnAggregateFooterValueCell = ({

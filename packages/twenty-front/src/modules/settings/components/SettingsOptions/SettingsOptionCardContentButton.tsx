@@ -21,7 +21,7 @@ type SettingsOptionCardContentButtonProps = {
 
 const StyledButtonContainer = styled.div`
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 export const SettingsOptionCardContentButton = ({

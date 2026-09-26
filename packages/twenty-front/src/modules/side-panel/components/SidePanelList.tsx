@@ -25,8 +25,8 @@ const StyledInnerList = styled.div`
     calc(100dvh / var(--t-zoom, 1)) - ${SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE}px -
       ${SIDE_PANEL_LIST_PADDING * 2}px
   );
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
   width: 100%;
 

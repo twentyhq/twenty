@@ -7,8 +7,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledGroupHeadingContainer = styled.div`
   align-items: center;
   padding-bottom: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[2]};
   user-select: none;
 `;

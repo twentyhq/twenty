@@ -101,7 +101,7 @@ const StyledMarkdownContent = styled.div`
   .markdown-section ol {
     margin-bottom: ${themeCssVariables.spacing[3]};
     margin-top: ${themeCssVariables.spacing[2]};
-    padding-left: ${themeCssVariables.spacing[5]};
+    padding-inline-start: ${themeCssVariables.spacing[5]};
   }
 
   .markdown-section li {

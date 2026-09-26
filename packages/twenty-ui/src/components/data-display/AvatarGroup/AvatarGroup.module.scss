@@ -7,19 +7,19 @@
   display: flex;
 
   &[data-overlap='right'] {
-    margin-right: calc(-1 * var(--avatar-group-overlap-offset));
+    margin-inline-end: calc(-1 * var(--avatar-group-overlap-offset));
   }
 
   &[data-overlap='right']:last-child {
-    margin-right: 0;
+    margin-inline-end: 0;
   }
 
   &[data-overlap='left'] {
-    margin-left: calc(-1 * var(--avatar-group-overlap-offset));
+    margin-inline-start: calc(-1 * var(--avatar-group-overlap-offset));
   }
 
   &[data-overlap='left']:first-child {
-    margin-left: 0;
+    margin-inline-start: 0;
   }
 }
 

@@ -52,14 +52,14 @@ const StyledStepLabel = styled.span<{ isInNextSteps: boolean }>`
       : themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin-left: ${themeCssVariables.spacing[2]};
+  margin-inline-start: ${themeCssVariables.spacing[2]};
   white-space: nowrap;
 `;
 
 const StyledStepLineBase = styled.div`
   height: 2px;
-  margin-left: ${themeCssVariables.spacing[2]};
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-inline-start: ${themeCssVariables.spacing[2]};
+  margin-inline-end: ${themeCssVariables.spacing[2]};
   overflow: hidden;
   width: 100%;
 `;

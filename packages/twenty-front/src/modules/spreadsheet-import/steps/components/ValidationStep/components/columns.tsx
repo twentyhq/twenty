@@ -56,7 +56,7 @@ const StyledInputContainer = styled.div`
   display: flex;
   min-height: 100%;
   min-width: 100%;
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDefaultContainer = styled.div`
@@ -69,7 +69,7 @@ const StyledDefaultContainer = styled.div`
 `;
 
 const StyledSelectReadonlyValueContianer = styled.div`
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
 const SELECT_COLUMN_KEY = 'select-row';

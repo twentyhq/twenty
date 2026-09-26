@@ -21,8 +21,8 @@ const StyledNavigationDrawerScrollWrapper = styled(ScrollWrapper)`
 const StyledScrollableMobileInnerContainer = styled.div`
   height: 100%;
   min-height: 0;
-  padding-left: ${themeCssVariables.spacing[5]};
-  padding-right: ${themeCssVariables.spacing[5]};
+  padding-inline-start: ${themeCssVariables.spacing[5]};
+  padding-inline-end: ${themeCssVariables.spacing[5]};
 `;
 
 export const NavigationDrawerScrollableContent = ({

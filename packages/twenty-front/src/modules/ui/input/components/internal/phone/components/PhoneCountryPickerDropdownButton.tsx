@@ -32,8 +32,8 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   display: flex;
 
   height: 32px;
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
 
   user-select: none;
 

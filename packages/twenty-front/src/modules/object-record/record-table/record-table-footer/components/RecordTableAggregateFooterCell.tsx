@@ -56,7 +56,7 @@ const StyledColumnFooterCell = styled.div<{
   padding: 0;
 
   position: sticky;
-  text-align: left;
+  text-align: start;
 
   width: ${({ columnWidth }) => columnWidth}px;
 

@@ -28,7 +28,7 @@ const StyledButton = styled.button`
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[8]};
   padding: 0 ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover {

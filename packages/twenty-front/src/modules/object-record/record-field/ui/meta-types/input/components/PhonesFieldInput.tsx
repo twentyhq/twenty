@@ -63,7 +63,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
     box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
     height: 100%;
-    padding-left: ${themeCssVariables.spacing[2]};
+    padding-inline-start: ${themeCssVariables.spacing[2]};
 
     &::placeholder,
     &::-webkit-input-placeholder {

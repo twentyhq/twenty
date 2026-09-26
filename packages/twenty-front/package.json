@@ -42,6 +42,7 @@
     "@floating-ui/react": "^0.24.3",
     "@fontsource/dm-mono": "^5.2.7",
     "@fontsource/inter": "^5.2.8",
+    "@fontsource/vazirmatn": "^5.2.8",
     "@graphiql/plugin-explorer": "^5.1.2",
     "@graphiql/react": "^0.37.6",
     "@hookform/resolvers": "^5.2.2",

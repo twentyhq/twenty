@@ -41,7 +41,7 @@ import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states
 
 const StyledContentContainer = styled.div`
   flex: 1;
-  padding-left: 0;
+  padding-inline-start: 0;
   width: 100%;
 `;
 

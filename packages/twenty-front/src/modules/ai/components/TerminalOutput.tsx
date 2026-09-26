@@ -92,7 +92,7 @@ const StyledCursor = styled.span`
   background: ${themeCssVariables.font.color.primary};
   display: inline-block;
   height: 1em;
-  margin-left: 2px;
+  margin-inline-start: 2px;
   vertical-align: text-bottom;
   width: 8px;
 

@@ -6,8 +6,8 @@ import { type ReactNode } from 'react';
 const StyledDropTargetSlot = styled.div`
   align-self: stretch;
   flex: 0 0 2px;
-  margin-left: -1px;
-  margin-right: -1px;
+  margin-inline-start: -1px;
+  margin-inline-end: -1px;
   min-height: 0;
   position: relative;
   z-index: 100;

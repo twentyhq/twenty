@@ -60,7 +60,7 @@ export const StyledDatePickerContainer = styled.div<{
   & .react-datepicker__header__dropdown {
     display: flex;
     color: ${themeCssVariables.font.color.primary};
-    margin-left: ${themeCssVariables.spacing[1]};
+    margin-inline-start: ${themeCssVariables.spacing[1]};
     margin-bottom: ${themeCssVariables.spacing[10]};
   }
 
@@ -70,10 +70,10 @@ export const StyledDatePickerContainer = styled.div<{
     border-radius: calc(
       ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
     );
-    margin-left: ${themeCssVariables.spacing[1]};
-    margin-right: 0;
+    margin-inline-start: ${themeCssVariables.spacing[1]};
+    margin-inline-end: 0;
     padding: ${themeCssVariables.spacing[2]};
-    padding-right: ${themeCssVariables.spacing[4]};
+    padding-inline-end: ${themeCssVariables.spacing[4]};
     background-color: ${themeCssVariables.background.tertiary};
   }
 
@@ -89,7 +89,7 @@ export const StyledDatePickerContainer = styled.div<{
 
   & .react-datepicker__year-read-view,
   & .react-datepicker__month-read-view {
-    padding-right: ${themeCssVariables.spacing[2]};
+    padding-inline-end: ${themeCssVariables.spacing[2]};
   }
 
   & .react-datepicker__month-dropdown-container {
@@ -209,7 +209,7 @@ export const StyledDatePickerContainer = styled.div<{
     left: auto;
 
     & > span {
-      margin-left: -6px;
+      margin-inline-start: -6px;
     }
   }
 
@@ -218,7 +218,7 @@ export const StyledDatePickerContainer = styled.div<{
     top: 6px;
 
     & > span {
-      margin-left: 6px;
+      margin-inline-start: 6px;
     }
   }
 

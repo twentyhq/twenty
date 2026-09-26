@@ -28,9 +28,9 @@ const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   justify-content: space-between;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
   padding-bottom: ${themeCssVariables.spacing[3]};
-  padding-left: ${({ isMobile }) =>
+  padding-inline-start: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[3] : themeCssVariables.spacing[4]};
-  padding-right: ${themeCssVariables.spacing[3]};
+  padding-inline-end: ${themeCssVariables.spacing[3]};
   padding-top: ${themeCssVariables.spacing[3]};
 `;
 
@@ -43,7 +43,7 @@ const StyledLeftContainer = styled.div`
   min-width: 0;
   overflow-x: hidden;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${themeCssVariables.spacing[1]};
+    padding-inline-start: ${themeCssVariables.spacing[1]};
   }
 `;
 
@@ -52,7 +52,7 @@ const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  margin-right: ${themeCssVariables.spacing[1]};
+  margin-inline-end: ${themeCssVariables.spacing[1]};
   overflow: hidden;
   width: 100%;
 `;

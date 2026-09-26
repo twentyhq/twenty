@@ -25,7 +25,7 @@ const StyledActions = styled.div`
 `;
 
 const StyledSpacer = styled.div`
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 export const SidePanelCoreWorkflowVersionPage = () => {

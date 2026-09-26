@@ -34,8 +34,8 @@ export const StyledHeading = styled.div`
 export const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[4]};
-  padding-left: ${themeCssVariables.spacing[4]};
-  padding-right: ${themeCssVariables.spacing[4]};
+  padding-inline-start: ${themeCssVariables.spacing[4]};
+  padding-inline-end: ${themeCssVariables.spacing[4]};
   padding-top: ${themeCssVariables.spacing[1]};
 `;
 
@@ -74,8 +74,8 @@ export const StyledShortcutKey = styled.div`
   font-weight: ${themeCssVariables.font.weight.regular};
   height: 20px;
   justify-content: center;
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
   text-align: center;
 `;
 

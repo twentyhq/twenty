@@ -46,8 +46,8 @@ const StyledTimeRow = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-start;
   padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 

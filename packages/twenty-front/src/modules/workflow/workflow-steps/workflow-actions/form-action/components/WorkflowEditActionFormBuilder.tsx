@@ -100,9 +100,9 @@ const StyledFieldContainer = styled.div<{
   display: flex;
   font-family: inherit;
   height: 100%;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover,
@@ -119,8 +119,8 @@ const StyledPlaceholderContainer = styled.div`
 `;
 
 const StyledAddFieldButtonContainer = styled.div`
-  padding-left: ${themeCssVariables.spacing[7]};
-  padding-right: ${themeCssVariables.spacing[7]};
+  padding-inline-start: ${themeCssVariables.spacing[7]};
+  padding-inline-end: ${themeCssVariables.spacing[7]};
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -136,15 +136,15 @@ const StyledAddFieldButtonContentContainer = styled.div`
 
 const StyledCalloutContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[7]};
-  padding-right: ${themeCssVariables.spacing[7]};
+  padding-inline-start: ${themeCssVariables.spacing[7]};
+  padding-inline-end: ${themeCssVariables.spacing[7]};
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNotClosableCalloutContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[4]};
-  padding-left: ${themeCssVariables.spacing[7]};
-  padding-right: ${themeCssVariables.spacing[7]};
+  padding-inline-start: ${themeCssVariables.spacing[7]};
+  padding-inline-end: ${themeCssVariables.spacing[7]};
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 

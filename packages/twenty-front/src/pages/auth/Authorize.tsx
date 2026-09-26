@@ -103,7 +103,7 @@ const StyledScopeItem = styled.li`
   font-size: ${themeCssVariables.font.size.md};
   gap: ${themeCssVariables.spacing[2]};
   line-height: ${themeCssVariables.text.lineHeight.lg};
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 
   & + & {
     border-top: 1px solid ${themeCssVariables.border.color.light};

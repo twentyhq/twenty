@@ -29,7 +29,7 @@ const StyledSide = styled.div`
 
 const StyledLeftSide = styled(StyledSide)`
   justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     justify-content: flex-start;
@@ -50,7 +50,7 @@ const StyledCenter = styled.div`
 
 const StyledRightSide = styled(StyledSide)`
   justify-content: flex-end;
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLogo = styled.div`

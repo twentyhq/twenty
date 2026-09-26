@@ -18,10 +18,12 @@ import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contex
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type AnimationEvent, useCallback, useState } from 'react';
+import { getLocaleTextDirection } from 'twenty-shared/translations';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSidePanelWrapper = styled.div<{
@@ -51,11 +53,12 @@ const StyledSidePanelWrapper = styled.div<{
 
 const StyledSidePanel = styled.aside<{ isShrinkingFromFullWidth: boolean }>`
   background: ${themeCssVariables.background.primary};
-  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  border-inline-start: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
+  inset-inline-end: 0;
   overflow: hidden;
   position: relative;
   width: ${({ isShrinkingFromFullWidth }) =>
@@ -64,7 +67,7 @@ const StyledSidePanel = styled.aside<{ isShrinkingFromFullWidth: boolean }>`
 
 const StyledModalContainer = styled.div`
   height: 100%;
-  left: 0;
+  inset-inline-start: 0;
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -74,6 +77,8 @@ const StyledModalContainer = styled.div`
 
 export const SidePanelForDesktop = () => {
   const store = useStore();
+  const { i18n } = useLingui();
+  const isRightToLeft = getLocaleTextDirection(i18n.locale) === 'rtl';
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const [sidePanelWidth, setSidePanelWidth] = useAtomState(sidePanelWidthState);
   const { closeSidePanelMenu } = useSidePanelMenu();
@@ -163,7 +168,7 @@ export const SidePanelForDesktop = () => {
         onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
       />
       <ResizablePanelGap
-        side="left"
+        side={isRightToLeft ? 'right' : 'left'}
         constraints={SIDE_PANEL_CONSTRAINTS}
         currentWidth={sidePanelWidth}
         onWidthChange={handleWidthChange}

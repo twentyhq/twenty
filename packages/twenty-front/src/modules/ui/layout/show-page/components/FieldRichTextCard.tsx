@@ -19,8 +19,8 @@ const ActivityRichTextEditor = lazy(() =>
 const StyledShowPageActivityContainer = styled.div`
   box-sizing: border-box;
   margin-top: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[6]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[6]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
