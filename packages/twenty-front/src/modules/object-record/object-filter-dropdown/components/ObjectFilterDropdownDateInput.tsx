@@ -22,7 +22,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
 
 export const ObjectFilterDropdownDateInput = () => {
-  const { dateFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeZone, calendarSystem } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
@@ -50,6 +50,7 @@ export const ObjectFilterDropdownDateInput = () => {
       value: newPlainDate,
       timeZone,
       dateFormat,
+      calendarSystem,
       localeCatalog: dateLocale.localeCatalog,
     });
 

@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
@@ -70,6 +71,7 @@ const mockCurrentWorkspaceMember = {
 const mockInitialPreferences = {
   timeZone: 'UTC',
   dateFormat: DateFormat.MONTH_FIRST,
+  calendarSystem: CalendarSystem.GREGORIAN,
   timeFormat: TimeFormat.HOUR_24,
   numberFormat: NumberFormat.COMMAS_AND_DOT,
   calendarStartDay: CalendarStartDay.MONDAY,

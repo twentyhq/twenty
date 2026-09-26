@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -54,6 +55,7 @@ export const CoreWorkflowVersionsListItem = ({
   onSelect,
 }: CoreWorkflowVersionsListItemProps) => {
   const { t } = useLingui();
+  const { calendarSystem } = useDateTimeFormat();
   const tagProps = CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS[status];
 
   return (
@@ -68,6 +70,7 @@ export const CoreWorkflowVersionsListItem = ({
             year: 'numeric',
             month: 'long',
             day: 'numeric',
+            calendar: calendarSystem,
           })}
         </StyledDate>
         <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>

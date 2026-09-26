@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import {
   CalendarChannelVisibility,
   type TimelineCalendarEvent,
@@ -91,11 +92,28 @@ const calendarEvents: TimelineCalendarEvent[] = [
 
 describe('useCalendarEvents', () => {
   it('returns calendar events grouped by day time', () => {
-    const { result } = renderHook(() => useCalendarEvents(calendarEvents));
+    const { result } = renderHook(() =>
+      useCalendarEvents(calendarEvents, CalendarSystem.GREGORIAN),
+    );
 
     expect(result.current.calendarEventsByDayTime).toBeDefined();
     expect(result.current.daysByMonthTime).toBeDefined();
     expect(result.current.monthTimes).toBeDefined();
     expect(result.current.monthTimesByYear).toBeDefined();
+  });
+
+  it('groups days by month of the user calendar system', () => {
+    const { result } = renderHook(() =>
+      useCalendarEvents(
+        [
+          { ...calendarEvents[0], startsAt: '2026-09-21T12:00:00' },
+          { ...calendarEvents[1], startsAt: '2026-09-23T12:00:00' },
+        ],
+        CalendarSystem.PERSIAN,
+      ),
+    );
+
+    expect(result.current.monthTimes).toHaveLength(2);
+    expect(Object.keys(result.current.monthTimesByYear)).toEqual(['1405']);
   });
 });

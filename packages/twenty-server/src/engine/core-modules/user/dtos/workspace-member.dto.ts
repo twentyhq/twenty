@@ -6,6 +6,7 @@ import { Max, Min } from 'class-validator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import {
+  WorkspaceMemberCalendarSystemEnum,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberNumberFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -70,4 +71,7 @@ export class WorkspaceMemberDTO {
 
   @Field(() => WorkspaceMemberNumberFormatEnum, { nullable: true })
   numberFormat?: WorkspaceMemberNumberFormatEnum;
+
+  @Field(() => WorkspaceMemberCalendarSystemEnum, { nullable: true })
+  calendarSystem?: WorkspaceMemberCalendarSystemEnum;
 }

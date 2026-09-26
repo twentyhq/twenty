@@ -12,9 +12,15 @@ import {
   type Locale,
 } from 'date-fns';
 
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { localizeDateFormatToCalendarSystem } from '@/localization/utils/localizeDateFormatToCalendarSystem';
+import {
+  CustomError,
+  isDefined,
+  turnJSDateToPlainDate,
+} from 'twenty-shared/utils';
 
 import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
@@ -70,22 +76,44 @@ export const formatDate = (
   }
 };
 
+const formatDateInCalendarSystem = (
+  dateToFormat: Date | string | number,
+  formatString: string,
+  calendarSystem: CalendarSystem,
+) =>
+  formatDate(
+    dateToFormat,
+    localizeDateFormatToCalendarSystem({
+      dateFormat: formatString,
+      plainDate: turnJSDateToPlainDate(parseDate(dateToFormat)),
+      calendarSystem,
+    }),
+  );
+
 export const beautifyExactDateTime = (
   dateToBeautify: Date | string | number,
+  calendarSystem: CalendarSystem,
 ) => {
   const parsedDate = parseDate(dateToBeautify);
   const isTodayDate = isToday(parsedDate);
   const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm';
-  return formatDate(dateToBeautify, dateFormat);
+  return formatDateInCalendarSystem(dateToBeautify, dateFormat, calendarSystem);
 };
 
-export const beautifyExactDate = (dateToBeautify: Date | string | number) => {
+export const beautifyExactDate = (
+  dateToBeautify: Date | string | number,
+  calendarSystem: CalendarSystem,
+) => {
   const parsedDate = parseDate(dateToBeautify);
   const isTodayDate = isToday(parsedDate);
   if (isTodayDate) {
     return t`Today`;
   }
-  return formatDate(dateToBeautify, 'MMM d, yyyy');
+  return formatDateInCalendarSystem(
+    dateToBeautify,
+    'MMM d, yyyy',
+    calendarSystem,
+  );
 };
 
 export const beautifyPastDateRelativeToNow = (
@@ -210,10 +238,16 @@ export const beautifyDateDiff = (
   return result;
 };
 
-export const formatToHumanReadableDate = (date: Date | string) => {
+export const formatToHumanReadableDate = (
+  date: Date | string,
+  calendarSystem: CalendarSystem,
+) => {
   const parsedJSDate = parseDate(date);
 
-  return i18n.date(parsedJSDate, { dateStyle: 'medium' });
+  return i18n.date(parsedJSDate, {
+    dateStyle: 'medium',
+    calendar: calendarSystem,
+  });
 };
 
 const getTimePattern = (timeFormat: TimeFormat) => {

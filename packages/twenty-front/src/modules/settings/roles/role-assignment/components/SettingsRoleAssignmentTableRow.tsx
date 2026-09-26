@@ -53,7 +53,7 @@ export const SettingsRoleAssignmentTableRow = ({
   );
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { dateFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeZone, calendarSystem } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
 
   const renderIcon = () => {
@@ -107,6 +107,7 @@ export const SettingsRoleAssignmentTableRow = ({
               value: roleTarget.data.expiresAt,
               timeZone,
               dateFormat,
+              calendarSystem,
               localeCatalog: dateLocale.localeCatalog,
             })
           : t`Never expires`;

@@ -132,6 +132,20 @@ describe('mergeWorkspaceMemberSettingsIntoCurrent', () => {
     expect(result.numberFormat).toBe('COMMAS_AND_DOT');
   });
 
+  it('should merge a valid calendarSystem and ignore an invalid one', () => {
+    const previous = createBaseWorkspaceMember();
+
+    const merged = mergeWorkspaceMemberSettingsIntoCurrent(previous, {
+      calendarSystem: 'PERSIAN',
+    } as Record<string, unknown>);
+    const ignored = mergeWorkspaceMemberSettingsIntoCurrent(merged, {
+      calendarSystem: 'hebrew',
+    } as Record<string, unknown>);
+
+    expect(merged.calendarSystem).toBe('PERSIAN');
+    expect(ignored.calendarSystem).toBe('PERSIAN');
+  });
+
   it('should ignore unknown keys in Record payload', () => {
     const previous = createBaseWorkspaceMember();
 

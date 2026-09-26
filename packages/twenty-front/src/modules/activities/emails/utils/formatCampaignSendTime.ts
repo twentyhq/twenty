@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Locale } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
@@ -12,6 +13,7 @@ export const formatCampaignSendTime = ({
   value,
   timeZone,
   dateFormat,
+  calendarSystem,
   timeFormat,
   localeCatalog,
 }: {
@@ -19,12 +21,14 @@ export const formatCampaignSendTime = ({
   timeZone: string;
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
+  calendarSystem: CalendarSystem;
   localeCatalog: Locale;
 }): string => {
   const sendTime = formatDateTimeString({
     value,
     timeZone,
     dateFormat,
+    calendarSystem,
     timeFormat,
     localeCatalog,
   });

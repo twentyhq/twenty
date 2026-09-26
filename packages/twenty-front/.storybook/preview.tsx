@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import '@fontsource/dm-mono/400.css';
 import '@fontsource/dm-mono/500.css';
 import '@fontsource/inter/400.css';
@@ -103,6 +104,7 @@ initialize(
 // can still override by nesting their own UserContext.Provider.
 const STORYBOOK_DEFAULT_USER_CONTEXT = {
   dateFormat: DateFormat.DAY_FIRST,
+  calendarSystem: CalendarSystem.GREGORIAN,
   timeFormat: TimeFormat.HOUR_24,
   timeZone: 'UTC',
 };

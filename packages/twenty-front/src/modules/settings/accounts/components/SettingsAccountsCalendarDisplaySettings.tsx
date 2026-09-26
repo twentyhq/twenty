@@ -14,7 +14,8 @@ const StyledContainer = styled.div`
 `;
 
 export const SettingsAccountsCalendarDisplaySettings = () => {
-  const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
+  const { timeZone, dateFormat, timeFormat, calendarSystem } =
+    useDateTimeFormat();
   const { updateFormatPreference } = useFormatPreferences();
 
   return (
@@ -27,6 +28,7 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
         value={dateFormat}
         onChange={(value) => updateFormatPreference('dateFormat', value)}
         timeZone={timeZone}
+        calendarSystem={calendarSystem}
       />
       <DateTimeSettingsTimeFormatSelect
         value={timeFormat}

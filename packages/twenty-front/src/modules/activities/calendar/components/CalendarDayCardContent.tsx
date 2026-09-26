@@ -1,8 +1,12 @@
 import { styled } from '@linaria/react';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
+import { useContext } from 'react';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
+import { localizeDateFormatToCalendarSystem } from '@/localization/utils/localizeDateFormatToCalendarSystem';
+import { UserContext } from '@/users/contexts/UserContext';
+import { turnJSDateToPlainDate } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
@@ -64,11 +68,19 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
+  const { calendarSystem } = useContext(UserContext);
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
   const weekDayLabel = format(endOfDayDate, 'EE');
-  const monthDayLabel = format(endOfDayDate, 'dd');
+  const monthDayLabel = format(
+    endOfDayDate,
+    localizeDateFormatToCalendarSystem({
+      dateFormat: 'dd',
+      plainDate: turnJSDateToPlainDate(endOfDayDate),
+      calendarSystem,
+    }),
+  );
 
   return (
     <StyledCardContentContainer>

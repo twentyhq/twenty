@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
@@ -41,6 +42,7 @@ export const EmailThreadMessageSender = ({
   sender,
   sentAt,
 }: EmailThreadMessageSenderProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   let sentAtContent = null;
 
@@ -50,7 +52,7 @@ export const EmailThreadMessageSender = ({
     sentAtContent = (
       <Tooltip
         delay={TooltipDelay.mediumDelay}
-        content={formatToHumanReadableDate(sentAt)}
+        content={formatToHumanReadableDate(sentAt, calendarSystem)}
         side="top"
       >
         <StyledThreadMessageSentAt id={tooltipId}>

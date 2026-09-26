@@ -25,7 +25,8 @@ type EventRowDateProps = {
 };
 
 export const EventRowDate = ({ happensAt }: EventRowDateProps) => {
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const instanceId = useId();
@@ -44,6 +45,7 @@ export const EventRowDate = ({ happensAt }: EventRowDateProps) => {
     timeZone,
     dateFormat,
     timeFormat,
+    calendarSystem,
     localeCatalog,
   });
 

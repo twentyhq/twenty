@@ -81,7 +81,8 @@ export const usePieChartCenterMetricData = ({
     skip,
   });
 
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
   const { numberFormat } = useNumberFormat();
   const chartNumberFormat =
@@ -134,6 +135,7 @@ export const usePieChartCenterMetricData = ({
         aggregateOperation: extendedAggregateOperation,
         aggregateRawValue: totalCountValue,
         dateFormat,
+        calendarSystem,
         localeCatalog: dateLocale.localeCatalog,
         timeFormat,
         timeZone,
@@ -152,6 +154,7 @@ export const usePieChartCenterMetricData = ({
       aggregateOperation: extendedAggregateOperation,
       aggregateRawValue,
       dateFormat,
+      calendarSystem,
       localeCatalog: dateLocale.localeCatalog,
       timeFormat,
       timeZone,
@@ -164,6 +167,7 @@ export const usePieChartCenterMetricData = ({
     centerMetricAggregateOperation,
     extendedAggregateOperation,
     dateFormat,
+    calendarSystem,
     dateLocale.localeCatalog,
     timeFormat,
     timeZone,

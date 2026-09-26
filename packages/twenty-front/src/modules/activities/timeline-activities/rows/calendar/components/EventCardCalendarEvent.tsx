@@ -95,7 +95,7 @@ export const EventCardCalendarEvent = ({
   calendarEventId: string;
 }) => {
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
-  const { timeZone } = useContext(UserContext);
+  const { timeZone, calendarSystem } = useContext(UserContext);
 
   const {
     record: calendarEvent,
@@ -164,10 +164,12 @@ export const EventCardCalendarEvent = ({
   const startsAtMonth = formatToHumanReadableMonth(
     calendarEvent.startsAt,
     timeZone,
+    calendarSystem,
   );
   const startsAtDay = formatToHumanReadableDay(
     calendarEvent.startsAt,
     timeZone,
+    calendarSystem,
   );
   const startsAtTime = formatToHumanReadableTime(
     calendarEvent.startsAt,

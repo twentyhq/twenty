@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -65,6 +66,7 @@ export const NavigationDrawerAiChatContent = () => {
   const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
 
   const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
+  const { calendarSystem } = useDateTimeFormat();
 
   if (loading && threads.length === 0) {
     return (
@@ -76,7 +78,9 @@ export const NavigationDrawerAiChatContent = () => {
 
   const isGroupedByDate =
     agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
+  const dateGroups = isGroupedByDate
+    ? groupThreadsByDate(threads, calendarSystem)
+    : [];
   const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
 
   const filterDropdown = (

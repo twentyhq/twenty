@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -9,6 +10,7 @@ import {
   type WorkspaceMemberFormatPreferences,
 } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
+import { detectCalendarSystem } from '@/localization/utils/detection/detectCalendarSystem';
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
@@ -73,6 +75,11 @@ export const useFormatPreferences = () => {
               detectCalendarStartDay()
             ] as WorkspaceMemberFormatPreferences[K];
             break;
+          case 'calendarSystem':
+            resolvedValue = CalendarSystem[
+              detectCalendarSystem()
+            ] as WorkspaceMemberFormatPreferences[K];
+            break;
         }
       }
 
@@ -135,6 +142,10 @@ export const useFormatPreferences = () => {
             case 'calendarStartDay':
               resolvedUpdates.calendarStartDay =
                 CalendarStartDay[detectCalendarStartDay()];
+              break;
+            case 'calendarSystem':
+              resolvedUpdates.calendarSystem =
+                CalendarSystem[detectCalendarSystem()];
               break;
           }
         }

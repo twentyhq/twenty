@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal';
 import { useRevokeSigningKey } from '@/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey';
@@ -53,6 +54,7 @@ const getStatusTag = (
 };
 
 export const SettingsAdminSigningKeysTable = () => {
+  const { calendarSystem } = useDateTimeFormat();
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
   const { copyToClipboard } = useCopyToClipboard();
@@ -119,7 +121,7 @@ export const SettingsAdminSigningKeysTable = () => {
                 >
                   <OverflowingTextWithTooltip
                     text={signingKey.id}
-                    tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}
+                    tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt, calendarSystem)}`}
                     alwaysShowTooltip
                   />
                   <Button
@@ -138,6 +140,7 @@ export const SettingsAdminSigningKeysTable = () => {
                       text={beautifyPastDateRelativeToNow(signingKey.revokedAt)}
                       tooltipContent={beautifyExactDateTime(
                         signingKey.revokedAt,
+                        calendarSystem,
                       )}
                       alwaysShowTooltip
                     />

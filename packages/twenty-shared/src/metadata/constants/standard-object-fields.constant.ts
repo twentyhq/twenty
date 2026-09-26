@@ -1569,5 +1569,8 @@ export const STANDARD_OBJECT_FIELDS = {
     numberFormat: {
       universalIdentifier: '20202020-7f40-4e7f-b126-11c0eda6b141',
     },
+    calendarSystem: {
+      universalIdentifier: '20202020-f0a3-4d47-ae82-3afed8d64732',
+    },
   },
 } satisfies Record<string, Record<string, { universalIdentifier: string }>>;

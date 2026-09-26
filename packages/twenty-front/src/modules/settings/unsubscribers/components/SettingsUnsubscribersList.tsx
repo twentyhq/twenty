@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -48,6 +49,7 @@ const StyledSearch = styled.div`
 `;
 
 export const SettingsUnsubscribersList = () => {
+  const { calendarSystem } = useDateTimeFormat();
   const { t } = useLingui();
 
   const [page, setPage] = useState(0);
@@ -175,7 +177,7 @@ export const SettingsUnsubscribersList = () => {
             label: t`Date`,
             align: 'right',
             Cell: ({ item }) => (
-              <>{formatToHumanReadableDate(item.createdAt)}</>
+              <>{formatToHumanReadableDate(item.createdAt, calendarSystem)}</>
             ),
           },
         ]}

@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useUserDateFormat } from '@/ui/input/components/internal/date/hooks/useUserDateFormat';
 import { useUserTimeFormat } from '@/ui/input/components/internal/date/hooks/useUserTimeFormat';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -10,6 +11,7 @@ export const useGetDateTimeFilterDisplayValue = () => {
   const { isSystemTimezone } = useUserTimezone();
 
   const { userDateFormat } = useUserDateFormat();
+  const { calendarSystem } = useDateTimeFormat();
   const { userTimeFormat } = useUserTimeFormat();
 
   const getDateTimeFilterDisplayValue = (
@@ -19,7 +21,7 @@ export const useGetDateTimeFilterDisplayValue = () => {
       ? ` (${getTimezoneAbbreviationForZonedDateTime(referenceZonedDateTime)})`
       : '';
 
-    const displayValue = `${formatZonedDateTimeDatePart(referenceZonedDateTime, userDateFormat)} ${formatZonedDateTimeTimePart(referenceZonedDateTime, userTimeFormat)}${timezoneSuffix}`;
+    const displayValue = `${formatZonedDateTimeDatePart(referenceZonedDateTime, userDateFormat, calendarSystem)} ${formatZonedDateTimeTimePart(referenceZonedDateTime, userTimeFormat)}${timezoneSuffix}`;
 
     return { displayValue };
   };

@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -26,6 +27,7 @@ export const SettingsDpaAgreementRow = ({
   agreement,
   onDownload,
 }: SettingsDpaAgreementRowProps) => {
+  const { calendarSystem } = useDateTimeFormat();
   const { t } = useLingui();
 
   const label =
@@ -44,7 +46,9 @@ export const SettingsDpaAgreementRow = ({
         <StyledEllipsisLabel>{label}</StyledEllipsisLabel>
       </TableCell>
       <TableCell>{agreement.templateVersion}</TableCell>
-      <TableCell>{beautifyExactDateTime(agreement.acceptedAt)}</TableCell>
+      <TableCell>
+        {beautifyExactDateTime(agreement.acceptedAt, calendarSystem)}
+      </TableCell>
       <TableCell align="right">
         {agreement.downloadUrl ? (
           <Button

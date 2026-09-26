@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatInTimeZone } from 'date-fns-tz';
 import { enUS } from 'date-fns/locale';
@@ -20,6 +21,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
       date: mockDate,
       timeZone: mockTimeZone,
       dateFormat: mockTimeFormat,
+      calendarSystem: CalendarSystem.GREGORIAN,
       localeCatalog: enUS,
     });
 
@@ -41,6 +43,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
       date: mockDate,
       timeZone: mockTimeZone,
       dateFormat: 'f',
+      calendarSystem: CalendarSystem.GREGORIAN,
       localeCatalog: enUS,
     });
 

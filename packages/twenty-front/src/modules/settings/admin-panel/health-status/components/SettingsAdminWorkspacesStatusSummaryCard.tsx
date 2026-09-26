@@ -27,7 +27,8 @@ export const SettingsAdminWorkspacesStatusSummaryCard = ({
   failedCount,
   computedAt,
 }: SettingsAdminWorkspacesStatusSummaryCardProps) => {
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone, calendarSystem } =
+    useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const workspacesUpgradeHealth = getWorkspacesUpgradeHealth(
@@ -74,6 +75,7 @@ export const SettingsAdminWorkspacesStatusSummaryCard = ({
               timeZone,
               dateFormat,
               timeFormat,
+              calendarSystem,
               localeCatalog,
             }) || t`N/A`,
         },

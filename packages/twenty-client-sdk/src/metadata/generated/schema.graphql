@@ -415,6 +415,7 @@ type WorkspaceMember {
   roles: [Role!]
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
+  calendarSystem: WorkspaceMemberCalendarSystemEnum
 }
 
 enum OpenRecordIn {
@@ -444,6 +445,14 @@ enum WorkspaceMemberNumberFormatEnum {
   SPACES_AND_COMMA
   DOTS_AND_COMMA
   APOSTROPHE_AND_DOT
+}
+
+"""Calendar system used to display dates"""
+enum WorkspaceMemberCalendarSystemEnum {
+  SYSTEM
+  GREGORIAN
+  PERSIAN
+  ISLAMIC
 }
 
 type FieldPermission {

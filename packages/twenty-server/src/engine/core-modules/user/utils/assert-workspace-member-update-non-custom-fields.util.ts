@@ -16,6 +16,7 @@ const WORKSPACE_MEMBER_SETTINGS_UPDATE_ALLOWED_FIELD_NAMES = new Set<string>([
   'dateFormat',
   'timeFormat',
   'numberFormat',
+  'calendarSystem',
 ]);
 
 export const assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly = ({

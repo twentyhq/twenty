@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
@@ -58,6 +59,7 @@ export const SettingsBillingSubscriptionInfo = ({
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
+  const { calendarSystem } = useDateTimeFormat();
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
@@ -118,7 +120,7 @@ export const SettingsBillingSubscriptionInfo = ({
     currentBillingSubscription.status !== SubscriptionStatus.Canceled &&
     isDefined(scheduledCancellationDate);
   const scheduledCancellationDateLabel = isDefined(scheduledCancellationDate)
-    ? beautifyExactDate(scheduledCancellationDate)
+    ? beautifyExactDate(scheduledCancellationDate, calendarSystem)
     : undefined;
 
   const canSwitchSubscription =
@@ -258,7 +260,7 @@ export const SettingsBillingSubscriptionInfo = ({
       : t`/month billed annually`
     : undefined;
   const scheduledChangeStartDate = isDefined(nextBillingPhase?.start_date)
-    ? beautifyExactDate(nextBillingPhase.start_date * 1000)
+    ? beautifyExactDate(nextBillingPhase.start_date * 1000, calendarSystem)
     : undefined;
 
   const canDisplaySwitchToYearlyAction =
