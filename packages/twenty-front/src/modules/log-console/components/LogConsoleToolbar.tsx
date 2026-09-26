@@ -101,7 +101,7 @@ type LogConsoleToolbarProps = {
   filterFields: LogConsoleFilterField[];
   filters: LogConsoleFilter[];
   onFiltersChange: (filters: LogConsoleFilter[]) => void;
-  search: ReactNode;
+  search?: ReactNode;
   logsAction: { label: string; Icon: IconComponent; onClick: () => void };
   children: ReactNode;
 };
@@ -458,8 +458,8 @@ export const LogConsoleToolbar = ({
     <StyledContainer>
       <StyledToolbar>
         <StyledSearch
-          onFocus={pushSearchFocusItem}
-          onBlur={removeSearchFocusItem}
+          onFocus={isDefined(search) ? pushSearchFocusItem : undefined}
+          onBlur={isDefined(search) ? removeSearchFocusItem : undefined}
         >
           {search}
         </StyledSearch>
