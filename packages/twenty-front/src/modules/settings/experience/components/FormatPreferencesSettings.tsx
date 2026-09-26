@@ -106,6 +106,7 @@ export const FormatPreferencesSettings = () => {
         value={displayDateFormat}
         onChange={handleDateFormatChange}
         timeZone={displayTimeZone}
+        calendarSystem={formatPreferences.calendarSystem}
       />
       <DateTimeSettingsTimeFormatSelect
         value={displayTimeFormat}

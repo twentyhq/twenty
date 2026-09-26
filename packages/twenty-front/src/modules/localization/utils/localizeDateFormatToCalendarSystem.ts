@@ -1,5 +1,6 @@
 import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { type Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
 
 const INTL_MONTH_STYLE_BY_TOKEN_LENGTH: Record<
   number,
@@ -53,7 +54,7 @@ const localizeToken = ({
     case 'L': {
       const monthStyle = INTL_MONTH_STYLE_BY_TOKEN_LENGTH[token.length];
 
-      if (monthStyle !== undefined) {
+      if (isDefined(monthStyle)) {
         return formatMonthName({
           plainDate,
           calendarSystem,
@@ -132,8 +133,9 @@ export const localizeDateFormatToCalendarSystem = ({
       localeCode,
     });
 
-    localizedDateFormat +=
-      localizedToken === undefined ? token : toQuotedLiteral(localizedToken);
+    localizedDateFormat += isDefined(localizedToken)
+      ? toQuotedLiteral(localizedToken)
+      : token;
     index = tokenEndIndex;
   }
 
