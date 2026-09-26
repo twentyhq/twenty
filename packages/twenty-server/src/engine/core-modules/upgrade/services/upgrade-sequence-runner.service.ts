@@ -144,6 +144,7 @@ export class UpgradeSequenceRunnerService {
         if (previousStep?.kind === 'workspace') {
           this.enforceWorkspacesCompletedPreviousWorkspaceSegment({
             sequence,
+            instanceStep: step,
             previousWorkspaceStep: previousStep,
             workspaceCursors,
           });
@@ -444,10 +445,12 @@ export class UpgradeSequenceRunnerService {
 
   private enforceWorkspacesCompletedPreviousWorkspaceSegment({
     sequence,
+    instanceStep,
     previousWorkspaceStep,
     workspaceCursors,
   }: {
     sequence: UpgradeStep[];
+    instanceStep: InstanceUpgradeStep;
     previousWorkspaceStep: WorkspaceUpgradeStep;
     workspaceCursors: Map<string, WorkspaceLastAttemptedCommand>;
   }): void {
@@ -455,6 +458,12 @@ export class UpgradeSequenceRunnerService {
       this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
         sequence,
         stepName: previousWorkspaceStep.name,
+      });
+
+    const instanceStepCursor =
+      this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
+        sequence,
+        stepName: instanceStep.name,
       });
 
     for (const [workspaceId, workspaceCursor] of workspaceCursors) {
@@ -468,7 +477,13 @@ export class UpgradeSequenceRunnerService {
         cursorPosition === barrierCursor &&
         workspaceCursor.status === 'completed';
 
-      if (!isAtBarrierAndCompleted) {
+      // A failed attempt of this step moves every workspace cursor onto it,
+      // and workspaces created before the retry start there too.
+      const isAtFailedAttemptOfInstanceStep =
+        cursorPosition === instanceStepCursor &&
+        workspaceCursor.status === 'failed';
+
+      if (!isAtBarrierAndCompleted && !isAtFailedAttemptOfInstanceStep) {
         throw new Error(
           `Cannot run instance step: workspace ${workspaceId} ` +
             `has not completed "${previousWorkspaceStep.name}" ` +
