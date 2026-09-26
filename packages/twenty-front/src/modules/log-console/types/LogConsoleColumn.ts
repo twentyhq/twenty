@@ -11,5 +11,4 @@ export type LogConsoleColumn = {
   renderCell: (entry: EventLogRecord, color?: ChipProps['color']) => ReactNode;
   align?: 'right';
   hiddenWhenPanelOpen?: boolean;
-  hiddenInDetails?: boolean;
 };

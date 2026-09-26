@@ -27,6 +27,5 @@ export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
     gridTrack: 'minmax(0, 1fr)',
     renderCell: (entry) => <Text truncate>{entry.properties?.message}</Text>,
     hiddenWhenPanelOpen: true,
-    hiddenInDetails: true,
   },
 ];

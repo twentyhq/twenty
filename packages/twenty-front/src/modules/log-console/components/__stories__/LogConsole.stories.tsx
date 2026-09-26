@@ -261,7 +261,7 @@ export const RecordChangeDiff: Story = {
     );
 
     await canvas.findByRole('button', { name: 'Close details' });
-    await canvas.findByText('Proposal');
+    await canvas.findByText('Close date');
   },
 };
 
@@ -328,14 +328,24 @@ export const AppLogDetail: Story = {
 
     await userEvent.click(typeErrorMessage);
 
-    await canvas.findByText(/at mapInvoiceToOpportunity/, { selector: 'pre' });
+    await canvas.findByText(
+      'at mapInvoiceToOpportunity (src/logic-functions/sync-stripe-invoices.ts:48:31)',
+    );
+
+    await userEvent.click(canvas.getByRole('button', { name: 'More (3)' }));
+
+    await canvas.findByText(
+      'at async executeLogicFunction (runtime/executor.js:112:18)',
+    );
 
     await userEvent.click(
       canvas.getByRole('button', { name: 'Close details' }),
     );
 
     expect(
-      canvas.queryByText(/at mapInvoiceToOpportunity/, { selector: 'pre' }),
+      canvas.queryByText(
+        'at async executeLogicFunction (runtime/executor.js:112:18)',
+      ),
     ).not.toBeInTheDocument();
   },
 };

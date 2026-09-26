@@ -362,7 +362,7 @@ export const mockedEventLogRecordsByTable: Partial<
     buildApplicationLogRecord({
       timestamp: '2026-09-24T12:00:07.555Z',
       logicFunction: SYNC_STRIPE_INVOICES,
-      executionId: SYNC_STRIPE_INVOICES_EXECUTION_ID,
+      executionId: '90a4b3dc-df85-48ec-8050-a56078f897da',
       level: 'ERROR',
       message: AMOUNT_DUE_TYPE_ERROR,
     }),

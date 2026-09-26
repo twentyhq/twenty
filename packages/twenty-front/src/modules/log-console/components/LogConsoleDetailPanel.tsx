@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconButton,
@@ -9,45 +10,38 @@ import {
   LightButton,
   Section,
 } from 'twenty-ui/components';
-import { IconCopy, IconLayoutSidebarRightCollapse } from 'twenty-ui/icon';
-import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import {
+  IconCopy,
+  IconId,
+  IconLayoutSidebarRightCollapse,
+} from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
+import { StyledLogConsoleFieldsCard } from '@/log-console/components/StyledLogConsoleFieldsCard';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
-import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
-import {
-  SettingsTableCard,
-  type TableItem,
-} from '@/settings/components/SettingsTableCard';
-import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
+import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
+import { BillingFieldRow } from '@/settings/billing/components/internal/SettingsBillingCardField';
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const MESSAGE_COLORS_BY_SEVERITY: Record<
-  LogConsoleSeverity,
-  { background: string; text: string }
-> = {
-  error: {
-    background: themeCssVariables.tag.background.red,
-    text: themeCssVariables.tag.text.red,
-  },
-  warning: {
-    background: themeCssVariables.tag.background.orange,
-    text: themeCssVariables.tag.text.orange,
-  },
-};
+const COLLAPSED_MESSAGE_STACK_LINE_COUNT = 1;
 
 const StyledPanel = styled.aside`
   border-left: 1px solid ${themeCssVariables.border.color.medium};
@@ -67,13 +61,13 @@ const StyledPanel = styled.aside`
 
 const StyledTopBar = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[1]};
-  min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.betweenSiblingsGap};
+  height: ${APP_HEADER_HEIGHT}px;
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContent = styled.div`
@@ -84,51 +78,27 @@ const StyledContent = styled.div`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHeader = styled.div`
+const StyledMessageCard = styled(Card.Root)`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTitle = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  gap: ${themeCssVariables.spacing[2]};
-  overflow-wrap: anywhere;
-`;
-
-const StyledTimestamp = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledSubtitle = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledMessage = styled.pre<{ severity?: LogConsoleSeverity }>`
-  background-color: ${({ severity }) =>
-    isDefined(severity)
-      ? MESSAGE_COLORS_BY_SEVERITY[severity].background
-      : themeCssVariables.background.secondary};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${({ severity }) =>
-    isDefined(severity)
-      ? MESSAGE_COLORS_BY_SEVERITY[severity].text
-      : themeCssVariables.font.color.primary};
-  font-family: ${themeCssVariables.code.font.family};
-  font-size: ${themeCssVariables.font.size.sm};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  margin: 0;
+const StyledMessageFirstLine = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
   overflow-wrap: anywhere;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-  white-space: pre-wrap;
+`;
+
+const StyledMessageStackLine = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledCopyableId = styled.div`
+  cursor: pointer;
+  min-width: 0;
 `;
 
 const StyledRawEvent = styled.div`
@@ -137,6 +107,7 @@ const StyledRawEvent = styled.div`
 
 export const LogConsoleDetailPanel = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const timeZone = useLogConsoleTimeZone();
   const { dateFormat, timeFormat } = useDateTimeFormat();
@@ -147,6 +118,11 @@ export const LogConsoleDetailPanel = () => {
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
+  const allowRequestsToTwentyIcons = useAtomStateValue(
+    allowRequestsToTwentyIconsState,
+  );
+  const [entryWithExpandedMessage, setEntryWithExpandedMessage] =
+    useState<EventLogRecord>();
 
   if (!isDefined(logConsoleSelectedLog)) {
     return null;
@@ -154,55 +130,73 @@ export const LogConsoleDetailPanel = () => {
 
   const { source, entry } = logConsoleSelectedLog;
   const { __typename, ...rawEvent } = entry;
-  const level = LOG_CONSOLE_LEVELS[entry.properties?.level];
-  const message = entry.properties?.message ?? entry.properties?.error;
+  const message: string | undefined =
+    entry.properties?.message ?? entry.properties?.error;
   const objectMetadataItem = objectMetadataItemsByIdMap.get(
     entry.objectMetadataId ?? '',
   );
+  const recordSnapshot = entry.properties?.after ?? entry.properties?.before;
+
+  const recordIdentifier =
+    isDefined(objectMetadataItem) && isDefined(recordSnapshot)
+      ? getObjectRecordIdentifier({
+          objectMetadataItem,
+          record: recordSnapshot,
+          allowRequestsToTwentyIcons,
+        })
+      : undefined;
+
+  const DetailIcon = source.DetailIcon ?? source.Icon;
+
+  const title = isDefined(recordIdentifier)
+    ? recordIdentifier.name
+    : source.getDetailTitle(entry, { objectMetadataItem });
 
   const timeWithMillisecondsFormat =
     timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
 
-  const detailItems: TableItem[] = [
-    ...(isDefined(objectMetadataItem)
-      ? [
-          {
-            label: t`Object`,
-            value: (
-              <Chip
-                startElement={
-                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-                }
-                style={{ paddingInlineStart: 0 }}
-              >
-                {objectMetadataItem.labelPlural}
-              </Chip>
-            ),
-          },
-        ]
-      : []),
-    ...[
-      ...source.columns.filter((column) => !column.hiddenInDetails),
-      ...(source.detailFields ?? []),
-    ].flatMap((field) => {
-      const value = field.renderCell(entry);
+  const formattedTimestamp = formatInTimeZone(
+    entry.timestamp,
+    timeZone,
+    `${timeWithMillisecondsFormat} · ${dateFormat}`,
+    { locale: localeCatalog },
+  );
 
-      return isDefined(value) ? [{ label: t(field.label), value }] : [];
+  const [firstMessageLine, ...messageStackLines] = (message ?? '').split('\n');
+
+  const displayedMessageStackLines =
+    entryWithExpandedMessage === entry
+      ? messageStackLines
+      : messageStackLines.slice(0, COLLAPSED_MESSAGE_STACK_LINE_COUNT);
+
+  const hiddenMessageStackLineCount =
+    messageStackLines.length - displayedMessageStackLines.length;
+
+  const detailItems = [
+    ...source.detailFields.flatMap(({ label, Icon, renderValue }) => {
+      const value = renderValue(entry, {
+        formattedTimestamp,
+        objectMetadataItem,
+      });
+
+      return isDefined(value) ? [{ Icon, label: t(label), value }] : [];
     }),
-    ...source.idFields.flatMap((idField) => {
-      const id = idField.getId(entry);
+    ...source.idFields.flatMap(({ label, Icon = IconId, getId }) => {
+      const id = getId(entry);
 
       return isNonEmptyString(id)
         ? [
             {
-              label: t(idField.label),
+              Icon,
+              label: t(label),
               value: (
-                <OverflowingTextWithTooltip
-                  text={<>{id}</>}
-                  tooltipContent={id}
-                />
+                <StyledCopyableId onClick={() => copyToClipboard(id)}>
+                  <OverflowingTextWithTooltip
+                    text={<>{id}</>}
+                    tooltipContent={id}
+                  />
+                </StyledCopyableId>
               ),
-              onClick: () => copyToClipboard(id),
             },
           ]
         : [];
@@ -223,35 +217,36 @@ export const LogConsoleDetailPanel = () => {
         >
           <IconLayoutSidebarRightCollapse />
         </IconButton>
-        <StyledTitle>
-          {source.renderDetailTitle?.(entry) ?? (
-            <>
-              {isDefined(level) && (
-                <Tag color={level.color}>{t(level.label)}</Tag>
-              )}
-              {entry.event}
-            </>
-          )}
-        </StyledTitle>
+        <HeaderIdentifier
+          avatar={
+            isDefined(recordIdentifier)
+              ? {
+                  src: getAbsoluteImageUrl(recordIdentifier.avatarUrl ?? ''),
+                  name: recordIdentifier.name,
+                  colorSeed: recordIdentifier.id,
+                  shape: recordIdentifier.avatarShape ?? undefined,
+                }
+              : undefined
+          }
+          icon={
+            isDefined(entry.objectMetadataId) ? (
+              <ObjectMetadataIcon
+                objectMetadataItem={objectMetadataItem}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            ) : (
+              <DetailIcon
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            )
+          }
+          iconColor={themeCssVariables.font.color.tertiary}
+          title={isNonEmptyString(title) ? title : t`Untitled`}
+        />
       </StyledTopBar>
       <StyledContent>
-        <StyledHeader>
-          <StyledTimestamp>
-            {formatInTimeZone(
-              entry.timestamp,
-              timeZone,
-              `EEE, ${dateFormat} · ${timeWithMillisecondsFormat} zzz`,
-              { locale: localeCatalog },
-            )}
-            {' · '}
-            {beautifyPastDateRelativeToNow(entry.timestamp, localeCatalog)}
-          </StyledTimestamp>
-          {isDefined(source.renderDetailSubtitle) && (
-            <StyledSubtitle>
-              {source.renderDetailSubtitle(entry)}
-            </StyledSubtitle>
-          )}
-        </StyledHeader>
         {isNonEmptyString(message) && (
           <Section.Root>
             <Section.Header
@@ -265,19 +260,36 @@ export const LogConsoleDetailPanel = () => {
                 </LightButton>
               }
             />
-            <StyledMessage severity={source.getSeverity?.(entry)}>
-              {message}
-            </StyledMessage>
+            <StyledMessageCard
+              backgroundColor={themeCssVariables.background.secondary}
+            >
+              <StyledMessageFirstLine>
+                {firstMessageLine}
+              </StyledMessageFirstLine>
+              {displayedMessageStackLines.map((messageStackLine, index) => (
+                <StyledMessageStackLine key={index}>
+                  <OverflowingTextWithTooltip text={messageStackLine.trim()} />
+                </StyledMessageStackLine>
+              ))}
+              {hiddenMessageStackLineCount > 0 && (
+                <FieldWidgetShowMoreButton
+                  remainingCount={hiddenMessageStackLineCount}
+                  onClick={() => setEntryWithExpandedMessage(entry)}
+                />
+              )}
+            </StyledMessageCard>
           </Section.Root>
         )}
         {source.renderDetailContent?.(entry)}
         <Section.Root>
           <Section.Header title={t`Details`} />
-          <SettingsTableCard
-            items={detailItems}
-            rounded
-            gridAutoColumns="minmax(0, 2fr) minmax(0, 3fr)"
-          />
+          <StyledLogConsoleFieldsCard>
+            {detailItems.map(({ Icon, label, value }) => (
+              <BillingFieldRow key={label} Icon={Icon} label={label}>
+                {value}
+              </BillingFieldRow>
+            ))}
+          </StyledLogConsoleFieldsCard>
         </Section.Root>
         <Section.Root>
           <Section.Header

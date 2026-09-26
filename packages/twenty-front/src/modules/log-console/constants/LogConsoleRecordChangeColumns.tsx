@@ -37,7 +37,6 @@ export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
     gridTrack: 'minmax(200px, 1fr)',
     renderCell: (entry) => <LogConsoleChangesCell entry={entry} />,
     hiddenWhenPanelOpen: true,
-    hiddenInDetails: true,
   },
   LOG_CONSOLE_RECORD_CHANGE_ACTOR_COLUMN,
 ];
