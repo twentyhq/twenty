@@ -6,6 +6,7 @@ export const GET_AI_CHAT_USAGE = gql`
       limitValue
       consumedValue
       periodEnd
+      isUsageLimit
     }
   }
 `;

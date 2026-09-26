@@ -55,8 +55,32 @@ describe('findAiChatCreditLimits', () => {
     expect(findLimits([memberPool])).toEqual([memberPool]);
   });
 
+  it('keeps the workspace-wide quota the send is billed against', () => {
+    const workspaceQuota = buildLimit({
+      spenderType: 'workspace',
+      spenderId: '',
+      operationType: UsageOperationType.ALL,
+    });
+
+    expect(findLimits([workspaceQuota])).toEqual([workspaceQuota]);
+  });
+
+  it('keeps both the workspace quota and the member quota', () => {
+    const workspaceQuota = buildLimit({
+      id: 'workspace-quota',
+      spenderType: 'workspace',
+      spenderId: '',
+    });
+
+    expect(findLimits([workspaceQuota, buildLimit()])).toEqual([
+      buildLimit(),
+      workspaceQuota,
+    ]);
+  });
+
   it.each<[string, Partial<FlatUsageLimit>]>([
     ['another member', { spenderId: 'other-member' }],
+    ['another spender type', { spenderType: 'agent', spenderId: '' }],
     ['another resource', { resourceType: UsageResourceType.WORKFLOW }],
     [
       'another operation',

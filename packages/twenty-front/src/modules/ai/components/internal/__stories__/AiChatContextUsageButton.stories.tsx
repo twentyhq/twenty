@@ -81,6 +81,7 @@ const UsageStory = ({
                                 limitValue: limit,
                                 consumedValue: consumed,
                                 periodEnd: null,
+                                isUsageLimit: false,
                               },
                       },
                     },
