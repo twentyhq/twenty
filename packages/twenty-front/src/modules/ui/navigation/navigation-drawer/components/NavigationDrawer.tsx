@@ -9,8 +9,6 @@ import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/const
 import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
@@ -86,24 +84,15 @@ export const NavigationDrawer = ({
   const isMobile = useIsMobile();
   const isExpanded = useNavigationDrawerExpanded();
 
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
+  const [isNavigationDrawerExpanded] = useAtomState(
+    isNavigationDrawerExpandedState,
+  );
   const [navigationDrawerWidth, setNavigationDrawerWidth] = useAtomState(
     navigationDrawerWidthState,
-  );
-  const setNavigationDrawerActiveTab = useSetAtomState(
-    navigationDrawerActiveTabState,
   );
   const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
   );
-
-  const handleCollapse = () => {
-    setIsNavigationDrawerExpanded(false);
-    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
-    setIsResizing(false);
-    setTableWidthResizeIsActive(true);
-  };
 
   const handleWidthChange = (width: number) => {
     setNavigationDrawerWidth(width);
@@ -136,7 +125,6 @@ export const NavigationDrawer = ({
             constraints={NAVIGATION_DRAWER_CONSTRAINTS}
             currentSize={navigationDrawerWidth}
             onSizeChange={handleWidthChange}
-            onCollapse={handleCollapse}
             showHandle={false}
             cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}
             onResizeStart={handleResizeStart}

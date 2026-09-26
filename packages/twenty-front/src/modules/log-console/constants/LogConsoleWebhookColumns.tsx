@@ -18,7 +18,6 @@ export const LOG_CONSOLE_WEBHOOK_COLUMNS: LogConsoleColumn[] = [
     label: msg`Endpoint`,
     gridTrack: 'minmax(0, 1fr)',
     renderCell: (entry) => <Text truncate>{entry.properties?.url}</Text>,
-    hiddenWhenPanelOpen: true,
   },
   LOG_CONSOLE_WEBHOOK_STATUS_COLUMN,
   {
@@ -28,6 +27,5 @@ export const LOG_CONSOLE_WEBHOOK_COLUMNS: LogConsoleColumn[] = [
     renderCell: (entry) => (
       <Text truncate>{entry.properties?.error ?? '—'}</Text>
     ),
-    hiddenWhenPanelOpen: true,
   },
 ];

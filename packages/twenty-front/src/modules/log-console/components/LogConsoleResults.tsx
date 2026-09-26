@@ -109,15 +109,8 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const isLive = !isDefined(dateRange.end);
   const isPaused = isDefined(pausedLiveRecords);
 
-  const {
-    records,
-    totalCount,
-    hasNextPage,
-    loading,
-    error,
-    loadMore,
-    refetch,
-  } = useEventLogs(getEventLogsInput(refreshedAt));
+  const { records, hasNextPage, loading, error, loadMore, refetch } =
+    useEventLogs(getEventLogsInput(refreshedAt));
 
   const { liveRecords, clearLiveRecords } = useEventLogsLiveStream({
     table: source.table,
@@ -230,6 +223,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         entries={[...liveEntries, ...records]}
         liveEntryCount={liveEntries.length}
         entriesSinceClear={entriesSinceClear}
+        searchQuery={logConsoleSearch}
         loading={loading}
         hasNextPage={hasNextPage}
         selectedEntry={logConsoleSelectedLog?.entry}
@@ -246,13 +240,15 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         filters={logConsoleFilters}
         onFiltersChange={changeFilters}
         search={
-          isDefined(source.searchPlaceholder) && (
-            <SearchInput
-              placeholder={t(source.searchPlaceholder)}
-              value={searchInput}
-              onChange={changeSearchInput}
-            />
-          )
+          <SearchInput
+            placeholder={
+              isDefined(source.searchPlaceholder)
+                ? t(source.searchPlaceholder)
+                : t`Search...`
+            }
+            value={searchInput}
+            onChange={changeSearchInput}
+          />
         }
         logsAction={logsAction}
       >

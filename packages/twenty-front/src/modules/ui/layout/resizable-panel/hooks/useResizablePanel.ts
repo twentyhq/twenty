@@ -13,7 +13,6 @@ type UseResizablePanelProps = {
   constraints: ResizablePanelConstraints;
   currentSize: number;
   onSizeChange: (size: number) => void;
-  onCollapse: () => void;
   cssVariableName?: string;
   onResizeStart?: (size: number) => void;
 };
@@ -26,7 +25,6 @@ export const useResizablePanel = ({
   constraints,
   currentSize,
   onSizeChange,
-  onCollapse,
   cssVariableName,
   onResizeStart,
 }: UseResizablePanelProps) => {
@@ -38,8 +36,7 @@ export const useResizablePanel = ({
   const [startSize, setStartSize] = useState<number>(0);
   const [hasDragged, setHasDragged] = useState(false);
 
-  // captured once per drag: reading computed style on every move would
-  // force a synchronous style recalc, and the zoom cannot change mid-drag
+  // reading computed style on every pointer move forces a synchronous style recalc; zoom cannot change mid-drag
   const [dragUiZoom, setDragUiZoom] = useState(1);
 
   const handleResizeMove = useCallback<PointerEventListener>(
@@ -93,9 +90,7 @@ export const useResizablePanel = ({
       const pointerDelta =
         ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
-      if (!hasDragged) {
-        onCollapse();
-      } else {
+      if (hasDragged) {
         const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
         const finalSize = clampSize(
           startSize + sizeDelta,
@@ -116,7 +111,6 @@ export const useResizablePanel = ({
       side,
       constraints.min,
       constraints.max,
-      onCollapse,
       onSizeChange,
     ],
   );

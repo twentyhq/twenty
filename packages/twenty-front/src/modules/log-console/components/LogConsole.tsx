@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton, useToast } from 'twenty-ui/components';
 import {
@@ -50,7 +50,16 @@ import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
 
+const LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE =
+  '--log-console-detail-panel-width';
+
 const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
+
+const LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS = {
+  min: 280,
+  max: 800,
+  default: 380,
+};
 
 const StyledContainer = styled.div<{ isFullScreen: boolean }>`
   ${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}: ${({ isFullScreen }) =>
@@ -133,6 +142,14 @@ const StyledUpgradeCardContainer = styled.div`
   width: 100%;
 `;
 
+const StyledDetailPanelWrapper = styled.div<{ detailPanelWidth: number }>`
+  position: relative;
+  width: var(
+    ${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE},
+    ${({ detailPanelWidth }) => detailPanelWidth}px
+  );
+`;
+
 export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -160,6 +177,10 @@ export const LogConsole = () => {
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
   );
+  const [detailPanelWidth, setDetailPanelWidth] = useState(
+    LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.default,
+  );
+
   const windowHeight = useSyncExternalStore(
     subscribeToWindowResize,
     getWindowHeight,
@@ -225,6 +246,15 @@ export const LogConsole = () => {
     if (height > 0) {
       openLogConsole();
     }
+  };
+
+  const handleDetailPanelWidthChange = (width: number) => {
+    document.documentElement.style.removeProperty(
+      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
+    );
+    setDetailPanelWidth(
+      Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min),
+    );
   };
 
   const handleHeightChange = (height: number) => {
@@ -358,7 +388,18 @@ export const LogConsole = () => {
             >
               {renderActiveSource()}
             </StyledActiveSource>
-            <LogConsoleDetailPanel />
+            {isDefined(logConsoleSelectedLog) && (
+              <StyledDetailPanelWrapper detailPanelWidth={detailPanelWidth}>
+                <ResizablePanelEdge
+                  side="left"
+                  constraints={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS}
+                  currentSize={detailPanelWidth}
+                  onSizeChange={handleDetailPanelWidthChange}
+                  cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
+                />
+                <LogConsoleDetailPanel />
+              </StyledDetailPanelWrapper>
+            )}
           </StyledBody>
         )}
       </TabListRoot>
@@ -368,7 +409,6 @@ export const LogConsole = () => {
           constraints={logConsoleResizeConstraints}
           currentSize={isOpen ? logConsoleBodyHeight : 0}
           onSizeChange={handleHeightChange}
-          onCollapse={toggleLogConsoleOpen}
           cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
           onResizeStart={handleResizeStart}
         />

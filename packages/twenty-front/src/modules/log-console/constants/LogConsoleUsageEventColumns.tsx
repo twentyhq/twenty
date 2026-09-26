@@ -24,7 +24,6 @@ export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
     gridTrack: '104px',
     renderCell: (entry) => formatNumber(entry.properties?.quantity),
     align: 'right',
-    hiddenWhenPanelOpen: true,
   },
   {
     id: 'usage',
@@ -36,6 +35,5 @@ export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
       />
     ),
     align: 'right',
-    hiddenWhenPanelOpen: true,
   },
 ];

@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -16,7 +16,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -40,6 +39,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 `;
 
 const StyledEntriesSinceClear = styled(TableBody)`
+  justify-content: flex-end;
   min-height: calc(100cqh - ${themeCssVariables.spacing[8]});
 `;
 
@@ -48,6 +48,7 @@ type LogConsoleTableProps = {
   entries: EventLogRecord[];
   liveEntryCount: number;
   entriesSinceClear?: EventLogRecord[];
+  searchQuery?: string;
   loading: boolean;
   hasNextPage: boolean;
   selectedEntry?: EventLogRecord;
@@ -55,11 +56,23 @@ type LogConsoleTableProps = {
   onEntryClick: (entry: EventLogRecord) => void;
 };
 
+const filterBySearchQuery = (
+  entriesToFilter: EventLogRecord[],
+  query: string,
+) => {
+  const lowerQuery = query.toLowerCase();
+
+  return entriesToFilter.filter((entry) =>
+    entry.event.toLowerCase().includes(lowerQuery),
+  );
+};
+
 export const LogConsoleTable = ({
   source,
   entries,
   liveEntryCount,
   entriesSinceClear,
+  searchQuery,
   loading,
   hasNextPage,
   selectedEntry,
@@ -68,7 +81,6 @@ export const LogConsoleTable = ({
 }: LogConsoleTableProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
@@ -84,14 +96,20 @@ export const LogConsoleTable = ({
     },
   });
 
-  const columns =
-    isDefined(selectedEntry) || isSidePanelOpened
-      ? source.columns.filter((column) => !column.hiddenWhenPanelOpen)
-      : source.columns;
+  const columns = source.columns;
 
   const gridTemplateColumns = columns
     .map((column) => column.gridTrack)
     .join(' ');
+
+  const filteredEntries = isNonEmptyString(searchQuery)
+    ? filterBySearchQuery(entries, searchQuery)
+    : entries;
+
+  const filteredEntriesSinceClear =
+    isDefined(entriesSinceClear) && isNonEmptyString(searchQuery)
+      ? filterBySearchQuery(entriesSinceClear, searchQuery)
+      : entriesSinceClear;
 
   const isInitialLoading = loading && entries.length === 0;
 
@@ -142,14 +160,17 @@ export const LogConsoleTable = ({
             </TableHeader>
           ))}
         </StyledHeaderRow>
-        {isDefined(entriesSinceClear) && (
+        {isDefined(filteredEntriesSinceClear) && (
           <StyledEntriesSinceClear>
-            {entriesSinceClear.map((entry, entryIndex) =>
-              renderEntryRow(entry, entriesSinceClear.length - entryIndex),
+            {filteredEntriesSinceClear.map((entry, entryIndex) =>
+              renderEntryRow(
+                entry,
+                filteredEntriesSinceClear.length - entryIndex,
+              ),
             )}
           </StyledEntriesSinceClear>
         )}
-        {entries.map((entry, entryIndex) =>
+        {filteredEntries.map((entry, entryIndex) =>
           renderEntryRow(entry, liveEntryCount - entryIndex),
         )}
         {hasNextPage && (

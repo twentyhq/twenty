@@ -10,5 +10,4 @@ export type LogConsoleColumn = {
   gridTrack: string;
   renderCell: (entry: EventLogRecord, color?: ChipProps['color']) => ReactNode;
   align?: 'right';
-  hiddenWhenPanelOpen?: boolean;
 };

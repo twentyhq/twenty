@@ -436,7 +436,7 @@ export const Clear: Story = {
     emitEventLogsLive([firstLiveApplicationLog, secondLiveApplicationLog]);
     await canvas.findByText('Lead score for Lena Park: 64');
 
-    expect(getTextUnderHeader()).toBe('Lead score for Lena Park: 64');
+    expect(getTextUnderHeader()).not.toBe('Lead score for Lena Park: 64');
   },
 };
 

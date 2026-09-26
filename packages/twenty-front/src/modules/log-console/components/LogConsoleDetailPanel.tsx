@@ -49,7 +49,7 @@ const StyledPanel = styled.aside`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  width: 400px;
+  width: 100%;
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
     border-left: none;
