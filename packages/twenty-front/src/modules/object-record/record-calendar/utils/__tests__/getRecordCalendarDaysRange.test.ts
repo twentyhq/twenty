@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { getRecordCalendarDaysRange } from '@/object-record/record-calendar/utils/getRecordCalendarDaysRange';
 import { Temporal } from 'temporal-polyfill';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
@@ -25,6 +26,7 @@ describe('getRecordCalendarDaysRange', () => {
         selectedDate: Temporal.PlainDate.from(selectedDate),
         calendarLayout,
         weekStartsOnDayIndex,
+        calendarSystem: CalendarSystem.GREGORIAN,
       });
 
       expect(range.firstDay.toString()).toBe(firstDay);
@@ -39,4 +41,17 @@ describe('getRecordCalendarDaysRange', () => {
       );
     },
   );
+
+  it('covers the Persian month containing the selected date in month layout', () => {
+    const range = getRecordCalendarDaysRange({
+      selectedDate: Temporal.PlainDate.from('2026-09-26'),
+      calendarLayout: ViewCalendarLayout.MONTH,
+      weekStartsOnDayIndex: 6,
+      calendarSystem: CalendarSystem.PERSIAN,
+    });
+
+    expect(range.firstDay.toString()).toBe('2026-09-19');
+    expect(range.lastDay.toString()).toBe('2026-10-23');
+    expect(range.days).toHaveLength(5);
+  });
 });

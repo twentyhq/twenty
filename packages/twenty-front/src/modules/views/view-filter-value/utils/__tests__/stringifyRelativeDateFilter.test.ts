@@ -336,6 +336,34 @@ describe('stringifyRelativeDateFilter', () => {
       );
     });
 
+    it('should append a non-Gregorian calendar system', () => {
+      const filter: RelativeDateFilter = {
+        direction: 'THIS',
+        unit: 'MONTH',
+        timezone: 'Asia/Tehran',
+        firstDayOfTheWeek: FirstDayOfTheWeek.SATURDAY,
+        calendarSystem: 'persian',
+      };
+
+      expect(stringifyRelativeDateFilter(filter)).toBe(
+        'THIS_1_MONTH;;Asia/Tehran;;SATURDAY;;persian;;',
+      );
+    });
+
+    it('should omit the Gregorian calendar system', () => {
+      const filter: RelativeDateFilter = {
+        direction: 'THIS',
+        unit: 'MONTH',
+        timezone: 'Europe/Paris',
+        firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
+        calendarSystem: 'gregory',
+      };
+
+      expect(stringifyRelativeDateFilter(filter)).toBe(
+        'THIS_1_MONTH;;Europe/Paris;;MONDAY;;',
+      );
+    });
+
     it('should handle large amount values', () => {
       const filter: RelativeDateFilter = {
         direction: 'PAST',

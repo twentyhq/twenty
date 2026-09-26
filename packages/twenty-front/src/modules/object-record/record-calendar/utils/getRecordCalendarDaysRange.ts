@@ -1,38 +1,53 @@
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { type Temporal } from 'temporal-polyfill';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { getCalendarMonthGridDays } from '~/utils/dates/getCalendarMonthGridDays';
 
 export const getRecordCalendarDaysRange = ({
   selectedDate,
   calendarLayout,
   weekStartsOnDayIndex,
+  calendarSystem,
 }: {
   selectedDate: Temporal.PlainDate;
   calendarLayout: ViewCalendarLayout;
   weekStartsOnDayIndex: number;
+  calendarSystem: CalendarSystem;
 }) => {
-  const isDayLayout = calendarLayout === ViewCalendarLayout.DAY;
-  const isMonthLayout = calendarLayout === ViewCalendarLayout.MONTH;
-  const periodStart = isMonthLayout
-    ? selectedDate.with({ day: 1 })
-    : selectedDate;
+  if (calendarLayout === ViewCalendarLayout.MONTH) {
+    const monthDays = getCalendarMonthGridDays({
+      date: selectedDate,
+      calendarSystem,
+      weekStartsOnDayIndex,
+    });
+
+    return {
+      firstDay: monthDays[0],
+      lastDay: monthDays[monthDays.length - 1],
+      days: Array.from({ length: monthDays.length / 7 }, (_, rowIndex) =>
+        monthDays.slice(rowIndex * 7, rowIndex * 7 + 7),
+      ),
+    };
+  }
+
+  if (calendarLayout === ViewCalendarLayout.DAY) {
+    return {
+      firstDay: selectedDate,
+      lastDay: selectedDate,
+      days: [[selectedDate]],
+    };
+  }
+
   const daysSinceStartOfWeek =
-    ((periodStart.dayOfWeek % 7) - weekStartsOnDayIndex + 7) % 7;
-  const firstDay = isDayLayout
-    ? selectedDate
-    : periodStart.subtract({ days: daysSinceStartOfWeek });
-  const daysPerRow = isDayLayout ? 1 : 7;
-  const rowCount = isMonthLayout
-    ? Math.ceil((daysSinceStartOfWeek + selectedDate.daysInMonth) / 7)
-    : 1;
-  const days = Array.from({ length: rowCount }, (_, rowIndex) =>
-    Array.from({ length: daysPerRow }, (_, dayIndex) =>
-      firstDay.add({ days: rowIndex * daysPerRow + dayIndex }),
-    ),
+    ((selectedDate.dayOfWeek % 7) - weekStartsOnDayIndex + 7) % 7;
+  const firstDay = selectedDate.subtract({ days: daysSinceStartOfWeek });
+  const weekDays = Array.from({ length: 7 }, (_, dayIndex) =>
+    firstDay.add({ days: dayIndex }),
   );
 
   return {
     firstDay,
-    lastDay: firstDay.add({ days: rowCount * daysPerRow - 1 }),
-    days,
+    lastDay: weekDays[6],
+    days: [weekDays],
   };
 };

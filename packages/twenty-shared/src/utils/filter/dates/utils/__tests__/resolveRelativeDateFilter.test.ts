@@ -176,4 +176,58 @@ describe('resolveRelativeDateFilter', () => {
       expect(result.end).toBe('2026-01-01');
     });
   });
+
+  describe('with a non-Gregorian calendar system', () => {
+    const tehranReferenceZdt = Temporal.ZonedDateTime.from(
+      '2026-09-26T12:00:00[Asia/Tehran]',
+    );
+
+    it('should compute THIS MONTH as the current Persian month', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'THIS', unit: 'MONTH', calendarSystem: 'persian' },
+        tehranReferenceZdt,
+      );
+
+      expect(result.start).toBe('2026-09-23');
+      expect(result.end).toBe('2026-10-23');
+    });
+
+    it('should compute PAST 1 YEAR as the previous Persian year', () => {
+      const result = resolveRelativeDateFilter(
+        {
+          direction: 'PAST',
+          amount: 1,
+          unit: 'YEAR',
+          calendarSystem: 'persian',
+        },
+        tehranReferenceZdt,
+      );
+
+      expect(result.start).toBe('2025-03-21');
+      expect(result.end).toBe('2026-03-21');
+    });
+
+    it('should compute NEXT 1 MONTH in the Islamic calendar', () => {
+      const result = resolveRelativeDateFilter(
+        {
+          direction: 'NEXT',
+          amount: 1,
+          unit: 'MONTH',
+          calendarSystem: 'islamic-umalqura',
+        },
+        referenceZdt,
+      );
+
+      expect(
+        Temporal.PlainDate.from(result.start)
+          .withCalendar('islamic-umalqura')
+          .day,
+      ).toBe(1);
+      expect(
+        Temporal.PlainDate.from(result.end)
+          .withCalendar('islamic-umalqura')
+          .day,
+      ).toBe(1);
+    });
+  });
 });

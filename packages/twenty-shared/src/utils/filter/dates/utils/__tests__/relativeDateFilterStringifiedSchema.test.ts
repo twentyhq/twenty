@@ -106,4 +106,30 @@ describe('relativeDateFilterStringifiedSchema', () => {
 
     expect(result.success).toBe(false);
   });
+
+  it('should parse the calendar system of a filter string', () => {
+    const result = relativeDateFilterStringifiedSchema.safeParse(
+      'THIS_1_MONTH;;Asia/Tehran;;SATURDAY;;persian;;',
+    );
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.timezone).toBe('Asia/Tehran');
+      expect(result.data.firstDayOfTheWeek).toBe('SATURDAY');
+      expect(result.data.calendarSystem).toBe('persian');
+    }
+  });
+
+  it('should leave the calendar system undefined when absent', () => {
+    const result = relativeDateFilterStringifiedSchema.safeParse(
+      'THIS_1_MONTH;;Europe/Paris;;MONDAY;;',
+    );
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.calendarSystem).toBeUndefined();
+    }
+  });
 });

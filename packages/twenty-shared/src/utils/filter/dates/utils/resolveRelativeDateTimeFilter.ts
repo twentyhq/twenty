@@ -10,7 +10,12 @@ export const resolveRelativeDateTimeFilter = (
   relativeDateFilter: RelativeDateFilter,
   referenceZonedDateTime: Temporal.ZonedDateTime,
 ) => {
-  const { direction, amount, unit, firstDayOfTheWeek } = relativeDateFilter;
+  const { direction, amount, unit, firstDayOfTheWeek, calendarSystem } =
+    relativeDateFilter;
+
+  const referenceInCalendar = referenceZonedDateTime.withCalendar(
+    calendarSystem ?? 'iso8601',
+  );
 
   switch (direction) {
     case 'NEXT': {
@@ -19,15 +24,17 @@ export const resolveRelativeDateTimeFilter = (
       }
 
       const startOfNextPeriod = getNextPeriodStart(
-        referenceZonedDateTime,
+        referenceInCalendar,
         unit,
         firstDayOfTheWeek,
       );
 
       return {
         ...relativeDateFilter,
-        start: startOfNextPeriod,
-        end: addUnitToZonedDateTime(startOfNextPeriod, unit, amount),
+        start: startOfNextPeriod.withCalendar('iso8601'),
+        end: addUnitToZonedDateTime(startOfNextPeriod, unit, amount).withCalendar(
+          'iso8601',
+        ),
       };
     }
     case 'PAST': {
@@ -36,26 +43,34 @@ export const resolveRelativeDateTimeFilter = (
       }
 
       const startOfCurrentPeriod = getPeriodStart(
-        referenceZonedDateTime,
+        referenceInCalendar,
         unit,
         firstDayOfTheWeek,
       );
 
       return {
         ...relativeDateFilter,
-        start: subUnitFromZonedDateTime(startOfCurrentPeriod, unit, amount),
-        end: startOfCurrentPeriod,
+        start: subUnitFromZonedDateTime(
+          startOfCurrentPeriod,
+          unit,
+          amount,
+        ).withCalendar('iso8601'),
+        end: startOfCurrentPeriod.withCalendar('iso8601'),
       };
     }
     case 'THIS':
       return {
         ...relativeDateFilter,
-        start: getPeriodStart(referenceZonedDateTime, unit, firstDayOfTheWeek),
-        end: getNextPeriodStart(
-          referenceZonedDateTime,
+        start: getPeriodStart(
+          referenceInCalendar,
           unit,
           firstDayOfTheWeek,
-        ),
+        ).withCalendar('iso8601'),
+        end: getNextPeriodStart(
+          referenceInCalendar,
+          unit,
+          firstDayOfTheWeek,
+        ).withCalendar('iso8601'),
       };
   }
 };

@@ -87,6 +87,8 @@ export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperat
 export type { DateTimePeriod } from './filter/dates/types/DateTimePeriod';
 export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
 export { addUnitToZonedDateTime } from './filter/dates/utils/addUnitToZonedDateTime';
+export type { CalendarSystemSchema } from './filter/dates/utils/calendarSystemSchema';
+export { calendarSystemSchema } from './filter/dates/utils/calendarSystemSchema';
 export { convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek } from './filter/dates/utils/convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek';
 export { convertFirstDayOfTheWeekToCalendarStartDayNumber } from './filter/dates/utils/convertFirstDayOfTheWeekToCalendarStartDayNumber';
 export type { FirstDayOfTheWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';

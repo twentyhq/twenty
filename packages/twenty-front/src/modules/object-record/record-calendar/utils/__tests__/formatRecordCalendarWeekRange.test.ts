@@ -1,3 +1,4 @@
+import { CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/utils/formatRecordCalendarWeekRange';
 import { enUS } from 'date-fns/locale';
 import { Temporal } from 'temporal-polyfill';
@@ -9,6 +10,7 @@ describe('formatRecordCalendarWeekRange', () => {
         firstDayOfWeek: Temporal.PlainDate.from('2026-07-06'),
         lastDayOfWeek: Temporal.PlainDate.from('2026-07-12'),
         locale: enUS,
+        calendarSystem: CalendarSystem.GREGORIAN,
       }),
     ).toBe('Jul 6 – 12, 2026');
   });
@@ -19,6 +21,7 @@ describe('formatRecordCalendarWeekRange', () => {
         firstDayOfWeek: Temporal.PlainDate.from('2026-06-29'),
         lastDayOfWeek: Temporal.PlainDate.from('2026-07-05'),
         locale: enUS,
+        calendarSystem: CalendarSystem.GREGORIAN,
       }),
     ).toBe('Jun 29 – Jul 5, 2026');
   });
@@ -29,7 +32,19 @@ describe('formatRecordCalendarWeekRange', () => {
         firstDayOfWeek: Temporal.PlainDate.from('2025-12-29'),
         lastDayOfWeek: Temporal.PlainDate.from('2026-01-04'),
         locale: enUS,
+        calendarSystem: CalendarSystem.GREGORIAN,
       }),
     ).toBe('Dec 29, 2025 – Jan 4, 2026');
+  });
+
+  it('formats a week spanning two Persian months', () => {
+    expect(
+      formatRecordCalendarWeekRange({
+        firstDayOfWeek: Temporal.PlainDate.from('2026-09-19'),
+        lastDayOfWeek: Temporal.PlainDate.from('2026-09-25'),
+        locale: enUS,
+        calendarSystem: CalendarSystem.PERSIAN,
+      }),
+    ).toBe('Shahrivar 28 – Mehr 3, 1405');
   });
 });

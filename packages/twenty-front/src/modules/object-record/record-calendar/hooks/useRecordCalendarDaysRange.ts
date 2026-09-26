@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { getRecordCalendarDaysRange } from '@/object-record/record-calendar/utils/getRecordCalendarDaysRange';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,6 +16,7 @@ export const useRecordCalendarDaysRange = (
 ) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const dateLocale = useAtomStateValue(dateLocaleState);
+  const { calendarSystem } = useDateTimeFormat();
   const calendarStartDay =
     currentWorkspaceMember?.calendarStartDay ?? CalendarStartDay.SYSTEM;
   const weekStartsOnDayIndex =
@@ -25,6 +27,7 @@ export const useRecordCalendarDaysRange = (
     selectedDate,
     calendarLayout,
     weekStartsOnDayIndex,
+    calendarSystem,
   });
 
   return {

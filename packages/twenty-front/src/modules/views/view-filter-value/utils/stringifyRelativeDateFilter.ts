@@ -26,6 +26,13 @@ export const stringifyRelativeDateFilter = (
 
     if (isNonEmptyString(firstDayOfTheWeek)) {
       relativeDateFilterStringified = `${relativeDateFilterStringified}${firstDayOfTheWeek};;`;
+
+      if (
+        isDefined(relativeDateFilter.calendarSystem) &&
+        relativeDateFilter.calendarSystem !== 'gregory'
+      ) {
+        relativeDateFilterStringified = `${relativeDateFilterStringified}${relativeDateFilter.calendarSystem};;`;
+      }
     }
   }
 

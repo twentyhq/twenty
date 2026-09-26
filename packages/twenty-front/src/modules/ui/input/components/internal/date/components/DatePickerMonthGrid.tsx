@@ -2,16 +2,16 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Temporal } from 'temporal-polyfill';
 import {
-  getFirstDayOfTheWeekAsISONumber,
+  convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
 } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
-import { getDatePickerMonthGridDays } from '@/ui/input/components/internal/date/utils/getDatePickerMonthGridDays';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { getCalendarMonthGridDays } from '~/utils/dates/getCalendarMonthGridDays';
 
 const DAY_CELL_SIZE = '34px';
 
@@ -91,13 +91,15 @@ export const DatePickerMonthGrid = ({
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const days = getDatePickerMonthGridDays({
-    visibleMonthDate,
+  const days = getCalendarMonthGridDays({
+    date: visibleMonthDate,
     calendarSystem,
-    firstDayOfTheWeekIsoNumber: getFirstDayOfTheWeekAsISONumber(
+    weekStartsOnDayIndex: convertFirstDayOfTheWeekToCalendarStartDayNumber(
       userFirstDayOfTheWeek,
     ),
   });
+  const visibleMonthCode =
+    visibleMonthDate.withCalendar(calendarSystem).monthCode;
 
   const today = Temporal.Now.plainDateISO();
 
@@ -120,12 +122,13 @@ export const DatePickerMonthGrid = ({
 
   return (
     <StyledGrid disabled={disabled}>
-      {days.slice(0, 7).map(({ plainDate }) => (
+      {days.slice(0, 7).map((plainDate) => (
         <StyledWeekdayName key={plainDate.dayOfWeek}>
           {weekdayFormatter.format(toJSDate(plainDate))}
         </StyledWeekdayName>
       ))}
-      {days.map(({ plainDate, dayOfMonth, isOutsideMonth }) => {
+      {days.map((plainDate) => {
+        const calendarPlainDate = plainDate.withCalendar(calendarSystem);
         const fullDate = fullDateFormatter.format(toJSDate(plainDate));
 
         return (
@@ -138,11 +141,11 @@ export const DatePickerMonthGrid = ({
               (isDefined(selectedDate) && plainDate.equals(selectedDate)) ||
               isInRange(plainDate)
             }
-            isOutsideMonth={isOutsideMonth}
+            isOutsideMonth={calendarPlainDate.monthCode !== visibleMonthCode}
             isToday={plainDate.equals(today)}
             onClick={() => onDateClick(plainDate)}
           >
-            {dayOfMonth}
+            {calendarPlainDate.day}
           </StyledDay>
         );
       })}

@@ -1,6 +1,9 @@
 import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 
-export const detectCalendarSystem = (): keyof typeof CalendarSystem => {
+export const detectCalendarSystem = (): Exclude<
+  keyof typeof CalendarSystem,
+  'SYSTEM'
+> => {
   try {
     const calendar = new Intl.DateTimeFormat(
       navigator?.language || 'en-US',

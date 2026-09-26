@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarCardDraggableContainer } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardDraggableContainer';
 import { RECORD_CALENDAR_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarVisibleRecordLimit';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
@@ -101,6 +102,7 @@ export const RecordCalendarGridDay = ({
   isOtherMonth,
 }: RecordCalendarGridDayProps) => {
   const { userTimezone } = useUserTimezone();
+  const { calendarSystem } = useDateTimeFormat();
 
   const dayKey = day.toString();
 
@@ -145,7 +147,9 @@ export const RecordCalendarGridDay = ({
       <StyledDayHeader>
         {hovered && <RecordCalendarAddNew cardDate={day} />}
         <StyledDayHeaderDayContainer>
-          <StyledDayHeaderDay isToday={isToday}>{day.day}</StyledDayHeaderDay>
+          <StyledDayHeaderDay isToday={isToday}>
+            {day.withCalendar(calendarSystem).day}
+          </StyledDayHeaderDay>
         </StyledDayHeaderDayContainer>
       </StyledDayHeader>
       <StyledCardsContainer isDraggedOver={isDropTarget}>

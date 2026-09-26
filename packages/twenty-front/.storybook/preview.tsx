@@ -24,7 +24,10 @@ import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 // oxlint-disable-next-line no-restricted-imports
 import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
 // oxlint-disable-next-line no-restricted-imports
-import { UserContext } from '../src/modules/users/contexts/UserContext';
+import {
+  UserContext,
+  type UserContextType,
+} from '../src/modules/users/contexts/UserContext';
 // Stories rendering CodeEditor / GraphiQL need Monaco's worker factory, which
 // the app normally sets up in src/index.tsx.
 // oxlint-disable-next-line no-restricted-imports
@@ -102,7 +105,7 @@ initialize(
 // date-aware component (DateTimeDisplay, etc.) sees a real IANA timeZone
 // instead of UserContext's default `{}`. Stories needing a specific timezone
 // can still override by nesting their own UserContext.Provider.
-const STORYBOOK_DEFAULT_USER_CONTEXT = {
+const STORYBOOK_DEFAULT_USER_CONTEXT: UserContextType = {
   dateFormat: DateFormat.DAY_FIRST,
   calendarSystem: CalendarSystem.GREGORIAN,
   timeFormat: TimeFormat.HOUR_24,

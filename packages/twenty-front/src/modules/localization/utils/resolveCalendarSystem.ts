@@ -3,7 +3,7 @@ import { detectCalendarSystem } from '@/localization/utils/detection/detectCalen
 
 export const resolveCalendarSystem = (
   calendarSystem: CalendarSystem,
-): CalendarSystem => {
+): Exclude<CalendarSystem, CalendarSystem.SYSTEM> => {
   if (calendarSystem === CalendarSystem.SYSTEM) {
     return CalendarSystem[detectCalendarSystem()];
   }
