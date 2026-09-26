@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconFilter } from 'twenty-ui/icon';
@@ -31,6 +32,7 @@ export const CoreWorkflowsFilterBar = () => {
   const [coreWorkflowsFilterSettings, setCoreWorkflowsFilterSettings] =
     useAtomState(coreWorkflowsFilterSettingsState);
   const { userTimezone } = useUserTimezone();
+  const { calendarSystem } = useDateTimeFormat();
 
   const appliedStepFilters = (coreWorkflowsFilterSettings.stepFilters ?? [])
     .filter(isUsableCoreWorkflowFilterRule)
@@ -45,6 +47,7 @@ export const CoreWorkflowsFilterBar = () => {
           labelValue={getCoreWorkflowFilterChipLabel({
             stepFilter,
             timezone: userTimezone,
+            calendarSystem,
           })}
           Icon={findCoreWorkflowFilterField(stepFilter.stepOutputKey)?.Icon}
           testId={`core-workflow-filter-${stepFilter.id}`}

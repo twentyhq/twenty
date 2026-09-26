@@ -6,6 +6,7 @@ import {
   safeParseRelativeDateFilterJsonStringified,
 } from 'twenty-shared/utils';
 
+import { type CalendarSystem } from '@/localization/constants/CalendarSystem';
 import { type CoreWorkflowFilterFieldDefinition } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
@@ -15,10 +16,12 @@ const getReadableValue = ({
   stepFilter,
   selectedField,
   timezone,
+  calendarSystem,
 }: {
   stepFilter: StepFilter;
   selectedField: CoreWorkflowFilterFieldDefinition;
   timezone: string | undefined;
+  calendarSystem: CalendarSystem;
 }): string => {
   if (stepFilter.operand === ViewFilterOperand.IS_RELATIVE) {
     const relativeDateFilter = safeParseRelativeDateFilterJsonStringified(
@@ -59,6 +62,7 @@ const getReadableValue = ({
           dateStyle: 'medium',
           timeStyle: 'short',
           timeZone: timezone,
+          calendar: calendarSystem,
         }).format(date);
   }
 
@@ -68,9 +72,11 @@ const getReadableValue = ({
 export const getCoreWorkflowFilterChipLabel = ({
   stepFilter,
   timezone,
+  calendarSystem,
 }: {
   stepFilter: StepFilter;
   timezone?: string;
+  calendarSystem: CalendarSystem;
 }): string => {
   const selectedField = findCoreWorkflowFilterField(stepFilter.stepOutputKey);
 
@@ -82,6 +88,7 @@ export const getCoreWorkflowFilterChipLabel = ({
     stepFilter,
     selectedField,
     timezone,
+    calendarSystem,
   });
   const operandLabel = getOperandLabelShort(stepFilter.operand);
 
