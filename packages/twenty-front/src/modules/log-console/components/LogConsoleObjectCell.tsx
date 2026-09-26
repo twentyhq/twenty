@@ -30,7 +30,9 @@ export const LogConsoleObjectCell = ({
   return (
     <Chip
       color={color}
-      startElement={<ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />}
+      startElement={
+        <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+      }
       style={{ paddingInlineStart: 0 }}
     >
       {objectMetadataItem.labelSingular}
