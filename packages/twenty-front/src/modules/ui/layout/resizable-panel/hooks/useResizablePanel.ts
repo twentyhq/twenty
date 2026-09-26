@@ -93,9 +93,7 @@ export const useResizablePanel = ({
       const pointerDelta =
         ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
-      if (!hasDragged) {
-        onCollapse();
-      } else {
+      if (hasDragged) {
         const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
         const finalSize = clampSize(
           startSize + sizeDelta,
@@ -116,7 +114,6 @@ export const useResizablePanel = ({
       side,
       constraints.min,
       constraints.max,
-      onCollapse,
       onSizeChange,
     ],
   );
