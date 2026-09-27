@@ -238,8 +238,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       },
       { label: msg`Webhook ID`, getId: (entry) => entry.properties?.webhookId },
     ],
-    getSeverity: (entry) =>
-      entry.properties?.success ? undefined : 'error',
+    getSeverity: (entry) => (entry.properties?.success ? undefined : 'error'),
     getDetailTitle: (entry) => {
       const url = entry.properties?.url ?? '';
 
