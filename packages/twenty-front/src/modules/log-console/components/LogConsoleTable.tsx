@@ -5,6 +5,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
@@ -27,6 +28,33 @@ const StyledHeaderRow = styled(TableRow)`
   position: sticky;
   top: 0;
   z-index: 1;
+`;
+
+const StyledLiveEntryRow = styled(TableRow)`
+  animation:
+    logConsoleLiveEntryEntrance
+      calc(${themeCssVariables.animation.duration.normal} * 1s)
+      ${LOG_CONSOLE_ANIMATION_EASING},
+    logConsoleLiveEntryHighlight
+      calc(${themeCssVariables.animation.duration.slow} * 1s) ease-out;
+  overflow: hidden;
+
+  @keyframes logConsoleLiveEntryEntrance {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes logConsoleLiveEntryHighlight {
+    from {
+      background-color: ${themeCssVariables.accent.quaternary};
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
 const StyledLoadMoreTrigger = styled.div`
@@ -94,33 +122,45 @@ export const LogConsoleTable = ({
 
   const storedEntryCount = entries.length - liveEntryCount;
 
-  const renderEntryRow = (entry: EventLogRecord, key: number) => (
-    <TableRow
-      key={key}
-      gridTemplateColumns={gridTemplateColumns}
-      isExpanded={
-        isDefined(selectedEntry) && isDeeplyEqual(entry, selectedEntry)
-      }
-      onClick={() => onEntryClick(entry)}
-    >
-      {columns.map((column, columnIndex) => {
-        const isFirstColumn = columnIndex === 0;
-        const EntryCell = isFirstColumn ? StyledNameTableCell : TableCell;
+  const renderEntryRow = (
+    entry: EventLogRecord,
+    key: number,
+    isLiveEntry: boolean,
+  ) => {
+    const EntryRow = isLiveEntry ? StyledLiveEntryRow : TableRow;
 
-        return (
-          <EntryCell
-            key={column.id}
-            align={column.align}
-            gap={themeCssVariables.spacing[2]}
-            overflow="hidden"
-            whiteSpace="nowrap"
-          >
-            {column.renderCell(entry, isFirstColumn ? 'primary' : 'secondary')}
-          </EntryCell>
-        );
-      })}
-    </TableRow>
-  );
+    return (
+      <EntryRow
+        key={key}
+        gridTemplateColumns={gridTemplateColumns}
+        height={themeCssVariables.spacing[8]}
+        isExpanded={
+          isDefined(selectedEntry) && isDeeplyEqual(entry, selectedEntry)
+        }
+        onClick={() => onEntryClick(entry)}
+      >
+        {columns.map((column, columnIndex) => {
+          const isFirstColumn = columnIndex === 0;
+          const EntryCell = isFirstColumn ? StyledNameTableCell : TableCell;
+
+          return (
+            <EntryCell
+              key={column.id}
+              align={column.align}
+              gap={themeCssVariables.spacing[2]}
+              overflow="hidden"
+              whiteSpace="nowrap"
+            >
+              {column.renderCell(
+                entry,
+                isFirstColumn ? 'primary' : 'secondary',
+              )}
+            </EntryCell>
+          );
+        })}
+      </EntryRow>
+    );
+  };
 
   return (
     <StyledScrollWrapper
@@ -140,12 +180,20 @@ export const LogConsoleTable = ({
         {isDefined(entriesSinceClear) && (
           <StyledEntriesSinceClear>
             {entriesSinceClear.map((entry, entryIndex) =>
-              renderEntryRow(entry, entriesSinceClear.length - entryIndex),
+              renderEntryRow(
+                entry,
+                entriesSinceClear.length - entryIndex,
+                true,
+              ),
             )}
           </StyledEntriesSinceClear>
         )}
         {entries.map((entry, entryIndex) =>
-          renderEntryRow(entry, liveEntryCount - entryIndex),
+          renderEntryRow(
+            entry,
+            liveEntryCount - entryIndex,
+            entryIndex < liveEntryCount,
+          ),
         )}
         {hasNextPage && (
           <StyledLoadMoreTrigger

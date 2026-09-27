@@ -1,6 +1,12 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useSyncExternalStore, useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
+import {
+  type TransitionEvent,
+  useEffect,
+  useSyncExternalStore,
+  useState,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton, useToast } from 'twenty-ui/components';
 import {
@@ -18,6 +24,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
 import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
+import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
@@ -54,27 +61,106 @@ const LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE =
 
 const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
+const LOG_CONSOLE_TOP_BORDER_WIDTH = '1px';
+
+const LOG_CONSOLE_TRANSITION_TIMING = `calc(${themeCssVariables.animation.duration.normal} * 1s) ${LOG_CONSOLE_ANIMATION_EASING}`;
+
 const LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS = {
   min: 280,
   max: 800,
   default: 380,
 };
 
-const StyledContainer = styled.div<{ isFullScreen: boolean }>`
+type LogConsoleLayout = {
+  isOpen: boolean;
+  isFullScreen: boolean;
+};
+
+const getLogConsoleTransition = (isResizing: boolean, properties: string[]) =>
+  isResizing
+    ? 'none'
+    : properties
+        .map((property) => `${property} ${LOG_CONSOLE_TRANSITION_TIMING}`)
+        .join(', ');
+
+const StyledSpacer = styled.div<{
+  isResizing: boolean;
+  spacerHeight: string;
+}>`
+  flex: none;
+  height: ${({ spacerHeight }) => spacerHeight};
+  transition: ${({ isResizing }) =>
+    getLogConsoleTransition(isResizing, ['height'])};
+
+  @media (prefers-reduced-motion: no-preference) {
+    &[data-animate-entrance='true'] {
+      animation: logConsoleSpacerEntrance ${LOG_CONSOLE_TRANSITION_TIMING};
+    }
+  }
+
+  @keyframes logConsoleSpacerEntrance {
+    from {
+      height: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  @media print {
+    display: none;
+  }
+`;
+
+const StyledPanel = styled.div<{
+  isExiting: boolean;
+  isFullScreen: boolean;
+  isResizing: boolean;
+  panelHeight: string;
+}>`
   ${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}: ${({ isFullScreen }) =>
     isFullScreen ? `${APP_HEADER_HEIGHT}px` : TAB_LIST_HEIGHT};
 
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
   border-top: ${({ isFullScreen }) =>
-    isFullScreen
-      ? 'none'
-      : `1px solid ${themeCssVariables.border.color.medium}`};
+      isFullScreen ? '0px' : LOG_CONSOLE_TOP_BORDER_WIDTH}
+    solid ${themeCssVariables.border.color.medium};
+  bottom: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  inset: 0;
-  position: ${({ isFullScreen }) => (isFullScreen ? 'absolute' : 'relative')};
+  height: ${({ panelHeight }) => panelHeight};
+  left: 0;
+  opacity: ${({ isExiting }) => (isExiting ? 0 : 1)};
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  transition: ${({ isResizing }) =>
+    getLogConsoleTransition(isResizing, [
+      'height',
+      'border-top-width',
+      'opacity',
+    ])};
   z-index: ${RootStackingContextZIndices.LogConsole};
+
+  @media (prefers-reduced-motion: no-preference) {
+    &[data-animate-entrance='true'] {
+      animation: logConsolePanelEntrance ${LOG_CONSOLE_TRANSITION_TIMING};
+    }
+  }
+
+  @keyframes logConsolePanelEntrance {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   @media print {
     display: none;
@@ -84,8 +170,16 @@ const StyledContainer = styled.div<{ isFullScreen: boolean }>`
 const StyledTabList = styled(TabList)`
   && {
     background-color: ${themeCssVariables.background.secondary};
+    flex-shrink: 0;
     height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE});
     padding-left: ${themeCssVariables.spacing[2]};
+    transition: height ${LOG_CONSOLE_TRANSITION_TIMING};
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    && {
+      transition: none;
+    }
   }
 
   &&::after {
@@ -99,16 +193,12 @@ const StyledBarActions = styled.div`
   padding-right: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
+const StyledBody = styled.div`
   container-name: log-console-body;
   container-type: inline-size;
   display: flex;
-  flex: ${({ isFullScreen }) => (isFullScreen ? '1' : 'none')};
-  height: var(
-    ${LOG_CONSOLE_HEIGHT_CSS_VARIABLE},
-    ${({ bodyHeight }) => bodyHeight}px
-  );
-  min-height: ${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px;
+  flex: 1;
+  min-height: 0;
   position: relative;
 `;
 
@@ -149,9 +239,7 @@ const StyledDetailPanelWrapper = styled.div<{
   overflow: hidden;
   position: relative;
   transition: ${({ isResizing }) =>
-    isResizing
-      ? 'none'
-      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
+    getLogConsoleTransition(isResizing, ['width'])};
   width: ${({ isOpen, detailPanelWidth }) =>
     isOpen
       ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
@@ -162,6 +250,7 @@ export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { enqueueToast } = useToast();
+  const shouldReduceMotion = useReducedMotion() === true;
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -188,6 +277,40 @@ export const LogConsole = () => {
     LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.default,
   );
   const [isDetailPanelResizing, setIsDetailPanelResizing] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+
+  const isOpen = logConsoleDisplayMode === 'open';
+  const isFullScreen = isOpen && isLogConsoleFullScreen;
+  const isVisible = isLogConsoleAllowed && logConsoleDisplayMode !== 'closed';
+
+  const [renderedLayout, setRenderedLayout] = useState<LogConsoleLayout | null>(
+    isVisible ? { isOpen, isFullScreen } : null,
+  );
+  const [shouldAnimateEntrance, setShouldAnimateEntrance] = useState(false);
+  const [isBodyMounted, setIsBodyMounted] = useState(isVisible && isOpen);
+
+  if (
+    isVisible &&
+    (renderedLayout?.isOpen !== isOpen ||
+      renderedLayout?.isFullScreen !== isFullScreen)
+  ) {
+    if (!isDefined(renderedLayout)) {
+      setShouldAnimateEntrance(true);
+    }
+    setRenderedLayout({ isOpen, isFullScreen });
+  }
+
+  if (!isVisible && isDefined(renderedLayout) && shouldReduceMotion) {
+    setRenderedLayout(null);
+    setIsBodyMounted(false);
+  }
+
+  const displayedLayout = isVisible ? { isOpen, isFullScreen } : renderedLayout;
+  const isExiting = !isVisible && isDefined(renderedLayout);
+
+  if (displayedLayout?.isOpen === true && !isBodyMounted) {
+    setIsBodyMounted(true);
+  }
 
   useEffect(() => {
     if (!isDefined(logConsoleSelectedLog)) {
@@ -217,12 +340,26 @@ export const LogConsole = () => {
     logConsoleResizeConstraints.max,
   );
 
-  if (!isLogConsoleAllowed || logConsoleDisplayMode === 'closed') {
+  if (!isDefined(displayedLayout)) {
     return null;
   }
 
-  const isOpen = logConsoleDisplayMode === 'open';
-  const isFullScreen = isOpen && isLogConsoleFullScreen;
+  const isBodyRendered =
+    displayedLayout.isOpen || (isBodyMounted && !shouldReduceMotion);
+
+  const resizedBodyHeight = isResizing
+    ? `var(${LOG_CONSOLE_HEIGHT_CSS_VARIABLE}, ${logConsoleBodyHeight}px)`
+    : `${logConsoleBodyHeight}px`;
+  const bodyHeight = `max(${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px, ${resizedBodyHeight})`;
+  const collapsedHeight = `calc(${TAB_LIST_HEIGHT} + ${LOG_CONSOLE_TOP_BORDER_WIDTH})`;
+  const openHeight = `calc(${TAB_LIST_HEIGHT} + ${LOG_CONSOLE_TOP_BORDER_WIDTH} + ${bodyHeight})`;
+  const spacerHeight = isExiting
+    ? '0px'
+    : displayedLayout.isOpen
+      ? openHeight
+      : collapsedHeight;
+  const panelHeight =
+    !isExiting && displayedLayout.isFullScreen ? '100%' : spacerHeight;
 
   const hasAuditLogsEntitlement =
     currentWorkspace?.billingEntitlements?.some(
@@ -263,6 +400,8 @@ export const LogConsole = () => {
   };
 
   const handleResizeStart = (height: number) => {
+    setIsResizing(true);
+
     if (height > 0) {
       openLogConsole();
     }
@@ -279,9 +418,7 @@ export const LogConsole = () => {
   };
 
   const handleHeightChange = (height: number) => {
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
-    );
+    setIsResizing(false);
 
     if (height === 0) {
       setLogConsoleDisplayMode('collapsed');
@@ -330,8 +467,29 @@ export const LogConsole = () => {
     });
   };
 
-  const openOrCollapseLabel = isOpen ? t`Collapse` : t`Open`;
-  const fullScreenLabel = isFullScreen ? t`Exit full screen` : t`Full screen`;
+  const handlePanelTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
+    if (
+      event.target !== event.currentTarget ||
+      event.propertyName !== 'height'
+    ) {
+      return;
+    }
+
+    if (isExiting) {
+      setRenderedLayout(null);
+      setIsBodyMounted(false);
+      return;
+    }
+
+    if (!displayedLayout.isOpen) {
+      setIsBodyMounted(false);
+    }
+  };
+
+  const openOrCollapseLabel = displayedLayout.isOpen ? t`Collapse` : t`Open`;
+  const fullScreenLabel = displayedLayout.isFullScreen
+    ? t`Exit full screen`
+    : t`Full screen`;
   const closeLabel = t`Close`;
 
   const renderActiveSource = () => {
@@ -359,87 +517,106 @@ export const LogConsole = () => {
   };
 
   return (
-    <StyledContainer isFullScreen={isFullScreen}>
-      <TabListRoot componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}>
-        <StyledTabList
-          aria-label={t`Log sources`}
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
-          onClickTab={openLogConsole}
-          onChangeTab={changeSource}
-          rightComponent={
-            <StyledBarActions>
-              <LightIconButton
-                emphasis="subtle"
-                tooltip={openOrCollapseLabel}
-                aria-label={openOrCollapseLabel}
-                onClick={toggleLogConsoleOpen}
+    <>
+      <StyledSpacer
+        data-animate-entrance={shouldAnimateEntrance}
+        isResizing={isResizing}
+        spacerHeight={spacerHeight}
+      />
+      <StyledPanel
+        isExiting={isExiting}
+        isFullScreen={displayedLayout.isFullScreen}
+        isResizing={isResizing}
+        panelHeight={panelHeight}
+        data-animate-entrance={shouldAnimateEntrance}
+        onTransitionEnd={handlePanelTransitionEnd}
+      >
+        <TabListRoot componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}>
+          <StyledTabList
+            aria-label={t`Log sources`}
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
+            onClickTab={openLogConsole}
+            onChangeTab={changeSource}
+            rightComponent={
+              <StyledBarActions>
+                <LightIconButton
+                  emphasis="subtle"
+                  tooltip={openOrCollapseLabel}
+                  aria-label={openOrCollapseLabel}
+                  onClick={toggleLogConsoleOpen}
+                >
+                  {displayedLayout.isOpen ? (
+                    <IconChevronDown />
+                  ) : (
+                    <IconChevronUp />
+                  )}
+                </LightIconButton>
+                <LightIconButton
+                  emphasis="subtle"
+                  tooltip={fullScreenLabel}
+                  aria-label={fullScreenLabel}
+                  onClick={toggleLogConsoleFullScreen}
+                >
+                  {displayedLayout.isFullScreen ? (
+                    <IconMinimize />
+                  ) : (
+                    <IconMaximize />
+                  )}
+                </LightIconButton>
+                <IconButton
+                  size="sm"
+                  variant="outline"
+                  tooltip={closeLabel}
+                  aria-label={closeLabel}
+                  onClick={closeLogConsole}
+                >
+                  <IconX />
+                </IconButton>
+              </StyledBarActions>
+            }
+          />
+          {isBodyRendered && (
+            <StyledBody>
+              <StyledActiveSource
+                isDetailPanelOpen={isDefined(logConsoleSelectedLog)}
               >
-                {isOpen ? <IconChevronDown /> : <IconChevronUp />}
-              </LightIconButton>
-              <LightIconButton
-                emphasis="subtle"
-                tooltip={fullScreenLabel}
-                aria-label={fullScreenLabel}
-                onClick={toggleLogConsoleFullScreen}
+                {renderActiveSource()}
+              </StyledActiveSource>
+              <StyledDetailPanelWrapper
+                detailPanelWidth={detailPanelWidth}
+                isOpen={isDefined(logConsoleSelectedLog)}
+                isResizing={isDetailPanelResizing}
               >
-                {isFullScreen ? <IconMinimize /> : <IconMaximize />}
-              </LightIconButton>
-              <IconButton
-                size="sm"
-                variant="outline"
-                tooltip={closeLabel}
-                aria-label={closeLabel}
-                onClick={closeLogConsole}
-              >
-                <IconX />
-              </IconButton>
-            </StyledBarActions>
-          }
-        />
-        {isOpen && (
-          <StyledBody
-            bodyHeight={logConsoleBodyHeight}
-            isFullScreen={isFullScreen}
-          >
-            <StyledActiveSource
-              isDetailPanelOpen={isDefined(logConsoleSelectedLog)}
-            >
-              {renderActiveSource()}
-            </StyledActiveSource>
-            <StyledDetailPanelWrapper
-              detailPanelWidth={detailPanelWidth}
-              isOpen={isDefined(logConsoleSelectedLog)}
-              isResizing={isDetailPanelResizing}
-            >
-              {isDefined(logConsoleSelectedLog) && (
-                <ResizablePanelEdge
-                  side="left"
-                  constraints={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS}
-                  currentSize={detailPanelWidth}
-                  onSizeChange={handleDetailPanelWidthChange}
-                  cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
-                  showHandle={false}
-                  onResizeStart={() => setIsDetailPanelResizing(true)}
-                />
-              )}
-              <LogConsoleDetailPanel />
-            </StyledDetailPanelWrapper>
-          </StyledBody>
+                {isDefined(logConsoleSelectedLog) && (
+                  <ResizablePanelEdge
+                    side="left"
+                    constraints={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS}
+                    currentSize={detailPanelWidth}
+                    onSizeChange={handleDetailPanelWidthChange}
+                    cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
+                    showHandle={false}
+                    onResizeStart={() => setIsDetailPanelResizing(true)}
+                  />
+                )}
+                <LogConsoleDetailPanel />
+              </StyledDetailPanelWrapper>
+            </StyledBody>
+          )}
+        </TabListRoot>
+        {!displayedLayout.isFullScreen && (
+          <ResizablePanelEdge
+            side="top"
+            constraints={logConsoleResizeConstraints}
+            currentSize={isOpen ? logConsoleBodyHeight : 0}
+            onSizeChange={handleHeightChange}
+            cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
+            onResizeStart={handleResizeStart}
+            showHandle={false}
+          />
         )}
-      </TabListRoot>
-      {!isFullScreen && (
-        <ResizablePanelEdge
-          side="top"
-          constraints={logConsoleResizeConstraints}
-          currentSize={isOpen ? logConsoleBodyHeight : 0}
-          onSizeChange={handleHeightChange}
-          cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
-          onResizeStart={handleResizeStart}
-          showHandle={false}
-        />
-      )}
-    </StyledContainer>
+      </StyledPanel>
+    </>
   );
 };
