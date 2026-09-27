@@ -1,3 +1,10 @@
+import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790543745710-contract-chat-thread-owners.command';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import {
+  LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+  LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER,
+} from 'src/database/commands/agent-history/utils/compute-legacy-chat-owner-standard-metadata.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790541986177-link-chat-message-senders-to-workspace-members.command';
@@ -240,12 +247,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             workspaceId: string;
             threadId: string;
           }) => threads.findOne(workspaceId, { where: { id: threadId } }),
-          getAuthContext: jest
-            .fn()
-            .mockResolvedValue({
-              userWorkspaceId: OWNER_ID,
-              workspaceMemberId: MEMBER_ID,
-            }),
+          getAuthContext: jest.fn().mockResolvedValue({
+            userWorkspaceId: OWNER_ID,
+            workspaceMemberId: MEMBER_ID,
+          }),
           getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
         } as never,
       );
@@ -256,12 +261,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         threads,
         createChatService(messageRepository),
         {
-          resolveWorkspaceMember: jest
-            .fn()
-            .mockResolvedValue({
-              userWorkspaceId: OWNER_ID,
-              workspaceMemberId: MEMBER_ID,
-            }),
+          resolveWorkspaceMember: jest.fn().mockResolvedValue({
+            userWorkspaceId: OWNER_ID,
+            workspaceMemberId: MEMBER_ID,
+          }),
         } as never,
         {} as never,
         {} as never,
@@ -757,7 +760,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(message.parts[0].textContent).toBe('Hidden setup context');
       expect(message.parts[0].createdAt).toBeInstanceOf(Date);
       const created = await threads.insertAndReturnOne(WORKSPACE_ID, {
-        userWorkspaceId: OWNER_ID,
+        ...{ userWorkspaceId: OWNER_ID },
+        workspaceMemberId: MEMBER_ID,
         title: 'New workspace chat',
       });
       expect(created.createdAt).toBeInstanceOf(Date);
@@ -832,6 +836,187 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ]);
     });
 
+    it('contracts chat owners, removes orphan history and restores surviving legacy owners on rollback', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const commandMetadata = structuredClone(metadata);
+      const threadMetadata =
+        commandMetadata.flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier
+        ]!;
+      await dataSource.query(
+        `CREATE TABLE "${SCHEMA}"."recordShare" (id uuid DEFAULT public.uuid_generate_v4(), "objectMetadataId" uuid, "recordId" uuid, "principalId" uuid, "principalType" text, "accessLevel" text, "rowCause" text, "sourceId" uuid, UNIQUE ("recordId", "principalId"))`,
+      );
+      const orphanId = '20202020-9999-4999-8999-999999999999';
+      await dataSource.query(
+        `INSERT INTO "${SCHEMA}"."agentChatThread" (id, "userWorkspaceId") VALUES ($1, $1)`,
+        [orphanId],
+      );
+      await dataSource.query(
+        `INSERT INTO "${SCHEMA}"."recordShare" ("objectMetadataId", "recordId", "principalId") VALUES ($1, $2, $3)`,
+        [threadMetadata.id, orphanId, MEMBER_ID],
+      );
+      const applyMigration = jest.fn().mockImplementation(
+        async ({
+          allFlatEntityOperationByMetadataName,
+        }: {
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: FlatFieldMetadata[];
+              flatEntityToUpdate: FlatFieldMetadata[];
+              flatEntityToDelete: FlatFieldMetadata[];
+            };
+            index: {
+              flatEntityToCreate: FlatIndexMetadata[];
+              flatEntityToDelete: FlatIndexMetadata[];
+            };
+          };
+        }) => {
+          const fields = allFlatEntityOperationByMetadataName.fieldMetadata;
+          for (const field of fields?.flatEntityToDelete ?? []) {
+            await dataSource.query(
+              `ALTER TABLE "${SCHEMA}"."agentChatThread" DROP COLUMN "${field.name}"`,
+            );
+            delete commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+              field.universalIdentifier
+            ];
+          }
+          for (const field of fields?.flatEntityToCreate ?? []) {
+            await dataSource.query(
+              `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD COLUMN "${field.name}" uuid`,
+            );
+            commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+              field.universalIdentifier
+            ] = field;
+          }
+          for (const field of fields?.flatEntityToUpdate ?? []) {
+            const column =
+              field.name === 'workspaceMember'
+                ? 'workspaceMemberId'
+                : field.name;
+            await dataSource.query(
+              `ALTER TABLE "${SCHEMA}"."agentChatThread" ALTER COLUMN "${column}" ${field.isNullable ? 'DROP' : 'SET'} NOT NULL`,
+            );
+            commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+              field.universalIdentifier
+            ] = field;
+          }
+          for (const index of allFlatEntityOperationByMetadataName.index
+            ?.flatEntityToDelete ?? [])
+            delete commandMetadata.flatIndexMaps.byUniversalIdentifier[
+              index.universalIdentifier
+            ];
+          for (const index of allFlatEntityOperationByMetadataName.index
+            ?.flatEntityToCreate ?? [])
+            commandMetadata.flatIndexMaps.byUniversalIdentifier[
+              index.universalIdentifier
+            ] = index;
+          return { status: 'success' };
+        },
+      );
+      const command = new ContractChatThreadOwnersCommand(
+        {} as never,
+        {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+            .fn()
+            .mockResolvedValue({
+              twentyStandardFlatApplication: {
+                id: OWNER_ID,
+                universalIdentifier: OWNER_ID,
+              },
+            }),
+        } as never,
+        {
+          getOrRecompute: jest
+            .fn()
+            .mockImplementation(async () => commandMetadata),
+        } as never,
+        {
+          validateBuildAndRunLegacyWorkspaceMigration: applyMigration,
+        } as never,
+        dataSource,
+      );
+      await command.up({
+        workspaceId: WORKSPACE_ID,
+        index: 0,
+        total: 1,
+        options: { dryRun: true },
+      });
+      expect(applyMigration).not.toHaveBeenCalled();
+      expect(
+        await dataSource.query(
+          `SELECT id FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+          [orphanId],
+        ),
+      ).toHaveLength(1);
+      await command.up({
+        workspaceId: WORKSPACE_ID,
+        index: 0,
+        total: 1,
+        options: {},
+      });
+      await command.up({
+        workspaceId: WORKSPACE_ID,
+        index: 0,
+        total: 1,
+        options: {},
+      });
+      expect(
+        await dataSource.query(
+          `SELECT id, "workspaceMemberId" FROM "${SCHEMA}"."agentChatThread"`,
+        ),
+      ).toEqual([{ id: THREAD_ID, workspaceMemberId: MEMBER_ID }]);
+      expect(
+        await dataSource.query(
+          `SELECT "recordId", "principalId" FROM "${SCHEMA}"."recordShare"`,
+        ),
+      ).toEqual([{ recordId: THREAD_ID, principalId: MEMBER_ID }]);
+      expect(
+        commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+          LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
+        ],
+      ).toBeUndefined();
+      expect(
+        commandMetadata.flatIndexMaps.byUniversalIdentifier[
+          LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER
+        ],
+      ).toBeUndefined();
+      await expect(
+        dataSource.query(
+          `INSERT INTO "${SCHEMA}"."agentChatThread" (id) VALUES (public.uuid_generate_v4())`,
+        ),
+      ).rejects.toMatchObject({ code: '23502' });
+      await command.down({
+        workspaceId: WORKSPACE_ID,
+        index: 0,
+        total: 1,
+        options: {},
+      });
+      expect(
+        await dataSource.query(
+          `SELECT "userWorkspaceId" FROM "${SCHEMA}"."agentChatThread"`,
+        ),
+      ).toEqual([{ userWorkspaceId: OWNER_ID }]);
+      expect(
+        commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+          LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
+        ],
+      ).toMatchObject({ isNullable: false });
+      expect(
+        commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
+            .universalIdentifier
+        ],
+      ).toMatchObject({ isNullable: true });
+      expect(
+        commandMetadata.flatIndexMaps.byUniversalIdentifier[
+          LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER
+        ],
+      ).toBeDefined();
+    });
+
     it('persists senders for normal, queued and hidden kickoff messages after schema expansion', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
@@ -840,7 +1025,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const chat = createChatService(messages);
       const actors = createActorService(messages);
       const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
-        userWorkspaceId: OWNER_ID,
+        ...{ userWorkspaceId: OWNER_ID },
+        workspaceMemberId: MEMBER_ID,
       });
       const kickoff = await chat.ensureHiddenKickoffMessage({
         workspaceId: WORKSPACE_ID,

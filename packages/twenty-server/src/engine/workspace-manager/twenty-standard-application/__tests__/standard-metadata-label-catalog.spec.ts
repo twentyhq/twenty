@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { messages } from 'src/engine/core-modules/i18n/locales/generated/en';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-current-twenty-standard-application-all-flat-entity-maps.util';
 import { AUTHORED_STANDARD_METADATA_MESSAGE_IDS } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS } from 'src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant';
 

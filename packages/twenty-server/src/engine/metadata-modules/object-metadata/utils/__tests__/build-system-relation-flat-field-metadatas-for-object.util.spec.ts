@@ -2,7 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-current-twenty-standard-application-all-flat-entity-maps.util';
 
 const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   'a1a2a3a4-a5a6-4000-8000-000000000001';

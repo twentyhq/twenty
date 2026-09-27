@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-current-twenty-standard-application-all-flat-entity-maps.util';
 
 const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
   {
