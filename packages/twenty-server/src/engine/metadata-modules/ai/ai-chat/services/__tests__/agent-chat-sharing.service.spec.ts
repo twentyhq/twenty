@@ -16,7 +16,10 @@ const args = {
 };
 
 const buildService = () => {
-  const thread = { id: THREAD_ID, userWorkspaceId: 'owner' };
+  const thread: Record<string, unknown> = {
+    id: THREAD_ID,
+    userWorkspaceId: 'owner',
+  };
   const threadRepository = {
     findOne: jest.fn().mockResolvedValue(thread),
     find: jest.fn().mockResolvedValue([thread]),
@@ -42,6 +45,9 @@ const buildService = () => {
     id: 'object',
     readability: MetadataReadability.PRIVATE,
   };
+  const flatFieldMetadataMaps = {
+    byUniversalIdentifier: {} as Record<string, unknown>,
+  };
   const cache = {
     getOrRecompute: jest.fn().mockResolvedValue({
       flatObjectMetadataMaps: {
@@ -50,6 +56,7 @@ const buildService = () => {
             objectMetadata,
         },
       },
+      flatFieldMetadataMaps,
     }),
   };
   const aiPermissions = {
@@ -78,6 +85,8 @@ const buildService = () => {
   );
   return {
     service,
+    thread,
+    flatFieldMetadataMaps,
     threadRepository,
     userAuthContextService,
     repository,
@@ -229,5 +238,34 @@ describe('Conversation common record access', () => {
     ]);
     await service.getPermissionsForThreads({ ...args, threadIds: [THREAD_ID] });
     expect(sharing.getPermissionsForRecords).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['update', 'delete', 'soft-delete', 'restore'] as const)(
+    'refuses %s on a workflow run conversation while still letting its readers read it',
+    async (operation) => {
+      const { service, thread } = buildService();
+      thread.workflowRunId = 'workflow-run';
+      await expect(service.getReadableThread(args)).resolves.toBeDefined();
+      await expect(
+        service.getThreadWithAccess({ ...args, operationType: operation }),
+      ).rejects.toMatchObject({ code: 'WORKFLOW_RUN_THREAD_READ_ONLY' });
+    },
+  );
+
+  it('leaves workflow run conversations out of the chat list once threads can name a run', async () => {
+    const { service, repository, flatFieldMetadataMaps } = buildService();
+    await service.getReadableThreadIds(args);
+    expect(repository.find).toHaveBeenLastCalledWith(
+      expect.objectContaining({ where: undefined }),
+    );
+    flatFieldMetadataMaps.byUniversalIdentifier[
+      STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier
+    ] = {};
+    await service.getReadableThreadIds(args);
+    expect(repository.find).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        where: { workflowRunId: expect.objectContaining({ _type: 'isNull' }) },
+      }),
+    );
   });
 });

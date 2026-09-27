@@ -53,7 +53,11 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.PRIVATE,
+        // A conversation outside a workflow run has no parent and is read only
+        // through its own grants, as a PRIVATE record is. One held by a run's
+        // agent step is read by whoever reads the run.
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'id',
       },

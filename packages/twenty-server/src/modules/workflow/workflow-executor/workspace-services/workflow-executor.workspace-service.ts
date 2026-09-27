@@ -694,12 +694,14 @@ export class WorkflowExecutorWorkspaceService {
         [stepId]: {
           status: StepStatus.PENDING,
           error,
+          threadId: undefined,
           history: [
             ...(stepInfo?.history ?? []),
             {
               status: StepStatus.FAILED,
               error,
               retryAttempt: getStepRetryAttempt({ stepInfo }) + 1,
+              threadId: stepInfo?.threadId,
             },
           ],
         },

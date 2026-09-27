@@ -1418,6 +1418,9 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
+      workflowRunIndex: {
+        universalIdentifier: 'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b',
+      },
     },
   },
   agentChatThreadTarget: {

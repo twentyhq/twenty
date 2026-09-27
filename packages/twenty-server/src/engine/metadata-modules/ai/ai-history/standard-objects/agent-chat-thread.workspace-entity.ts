@@ -6,6 +6,7 @@ import { type AgentChatThreadTargetWorkspaceEntity } from 'src/engine/metadata-m
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   messages: EntityRelation<AgentMessageWorkspaceEntity[]>;
@@ -13,10 +14,13 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   recordTargets: EntityRelation<AgentChatThreadTargetWorkspaceEntity[]>;
+  workflowRun: EntityRelation<WorkflowRunWorkspaceEntity> | null;
 
   archivedAt: string | null;
-  userWorkspaceId: string;
+  userWorkspaceId: string | null;
   workspaceMemberId: string | null;
+  workflowRunId: string | null;
+  workflowStepId: string | null;
   title: string | null;
   totalInputTokens: number;
   totalOutputTokens: number;

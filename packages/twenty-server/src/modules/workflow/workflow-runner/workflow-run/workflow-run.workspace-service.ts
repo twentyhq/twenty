@@ -325,6 +325,44 @@ export class WorkflowRunWorkspaceService {
   }
 
   @WithLock('workflowRunId')
+  async setStepThreadId({
+    stepId,
+    threadId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    threadId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+
+    if (!isDefined(currentStepInfo)) {
+      return;
+    }
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...workflowRunToUpdate.state?.stepInfos,
+            [stepId]: { ...currentStepInfo, threadId },
+          },
+        },
+      },
+    });
+  }
+
+  @WithLock('workflowRunId')
   async updateWorkflowRunStep({
     workflowRunId,
     step,
