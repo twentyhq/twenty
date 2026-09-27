@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -34,7 +34,7 @@ export const useResizablePanel = ({
     number | null
   >(null);
   const [startSize, setStartSize] = useState<number>(0);
-  const [hasDragged, setHasDragged] = useState(false);
+  const hasDraggedRef = useRef(false);
 
   // reading computed style on every pointer move forces a synchronous style recalc; zoom cannot change mid-drag
   const [dragUiZoom, setDragUiZoom] = useState(1);
@@ -46,7 +46,9 @@ export const useResizablePanel = ({
       const pointerDelta =
         ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
-      if (Math.abs(pointerDelta) <= RESIZE_DRAG_THRESHOLD_PX) return;
+      if (Math.abs(pointerDelta) <= RESIZE_DRAG_THRESHOLD_PX) {
+        return;
+      }
 
       const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
       const clampedSize = clampSize(
@@ -55,8 +57,8 @@ export const useResizablePanel = ({
         constraints.max,
       );
 
-      if (!hasDragged) {
-        setHasDragged(true);
+      if (!hasDraggedRef.current) {
+        hasDraggedRef.current = true;
         onResizeStart?.(clampedSize);
       }
 
@@ -71,7 +73,6 @@ export const useResizablePanel = ({
       dragUiZoom,
       startPointerPosition,
       startSize,
-      hasDragged,
       side,
       constraints.min,
       constraints.max,
@@ -90,7 +91,7 @@ export const useResizablePanel = ({
       const pointerDelta =
         ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
-      if (hasDragged) {
+      if (hasDraggedRef.current) {
         const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
         const finalSize = clampSize(
           startSize + sizeDelta,
@@ -107,13 +108,20 @@ export const useResizablePanel = ({
       dragUiZoom,
       startPointerPosition,
       startSize,
-      hasDragged,
       side,
       constraints.min,
       constraints.max,
       onSizeChange,
     ],
   );
+
+  useEffect(() => {
+    return () => {
+      if (cssVariableName !== undefined) {
+        document.documentElement.style.removeProperty(cssVariableName);
+      }
+    };
+  }, [cssVariableName]);
 
   useTrackPointer({
     shouldTrackPointer: isResizing,
@@ -127,7 +135,7 @@ export const useResizablePanel = ({
       setDragUiZoom(getUiZoom());
       setStartPointerPosition(side === 'top' ? event.clientY : event.clientX);
       setStartSize(currentSize);
-      setHasDragged(false);
+      hasDraggedRef.current = false;
       setIsResizing(true);
     },
     [side, currentSize],

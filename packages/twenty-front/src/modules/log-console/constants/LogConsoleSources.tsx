@@ -218,7 +218,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         label: msg`Status`,
         Icon: IconStatusChange,
         renderValue: (entry) => (
-          <Tag color={entry.properties?.success === true ? 'green' : 'red'}>
+          <Tag color={entry.properties?.success ? 'green' : 'red'}>
             {entry.properties?.status ?? t`Network error`}
           </Tag>
         ),
@@ -239,7 +239,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       { label: msg`Webhook ID`, getId: (entry) => entry.properties?.webhookId },
     ],
     getSeverity: (entry) =>
-      entry.properties?.success === true ? undefined : 'error',
+      entry.properties?.success ? undefined : 'error',
     getDetailTitle: (entry) => {
       const url = entry.properties?.url ?? '';
 

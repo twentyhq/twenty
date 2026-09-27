@@ -9,7 +9,7 @@ export const LOG_CONSOLE_WEBHOOK_STATUS_COLUMN: LogConsoleColumn = {
   gridTrack: '120px',
   renderCell: (entry) => (
     <Tag
-      color={entry.properties?.success === true ? 'green' : 'red'}
+      color={entry.properties?.success ? 'green' : 'red'}
       style={{ flexShrink: 0 }}
     >
       {entry.properties?.status ?? t`Network error`}

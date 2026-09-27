@@ -217,7 +217,7 @@ export const LogConsole = () => {
       (entitlement) =>
         entitlement.key === BillingEntitlementKey.AUDIT_LOGS &&
         entitlement.value,
-    ) === true;
+    ) ?? false;
 
   const isSourceLocked = (source: LogConsoleSource) =>
     source.requiresAuditLogs && !hasAuditLogsEntitlement;

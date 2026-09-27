@@ -31,7 +31,7 @@ export const getLogConsoleRecordChangeFieldDiffs = ({
       key,
     );
 
-    if (!isDefined(fieldMetadataItem) || fieldMetadataItem.isSystem === true) {
+    if (!isDefined(fieldMetadataItem) || fieldMetadataItem.isSystem) {
       return [];
     }
 

@@ -18,7 +18,9 @@ export const useSetAdvancedMode = () => {
     if (isEnabled) {
       setLogConsoleSelectedLog(null);
       setIsLogConsoleFullScreen(false);
-      setLogConsoleDisplayMode('collapsed');
+      setLogConsoleDisplayMode((current) =>
+        current === 'closed' ? 'closed' : 'collapsed',
+      );
     }
   };
 
