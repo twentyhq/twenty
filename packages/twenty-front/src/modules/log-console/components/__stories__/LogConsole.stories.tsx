@@ -781,7 +781,7 @@ export const LockedTab: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('tab', { name: 'Record changes' }),
+      await canvas.findByRole('tab', { name: 'Security' }),
     );
     await canvas.findByText('Upgrade to access audit logs');
   },
