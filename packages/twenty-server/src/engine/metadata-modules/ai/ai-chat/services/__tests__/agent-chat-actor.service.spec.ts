@@ -16,7 +16,9 @@ const build = () => {
   };
   const messages = { findOne: jest.fn().mockResolvedValue(message) };
   const threads = {
-    findOneOrFail: jest.fn().mockResolvedValue({ userWorkspaceId: 'owner' }),
+    findOneOrFail: jest
+      .fn()
+      .mockResolvedValue({ workspaceMemberId: 'owner-member' }),
   };
   const chat = {
     getWritableThread: jest
@@ -24,12 +26,16 @@ const build = () => {
       .mockResolvedValue({ id: threadId, deletedAt: null }),
   };
   const auth = {
+    resolveWorkspaceMember: jest
+      .fn()
+      .mockResolvedValue({ userWorkspaceId: 'owner' }),
     resolve: jest
       .fn()
       .mockImplementation(async ({ userWorkspaceId, applicationId }) => ({
         type: 'user',
         workspace: { id: workspaceId },
         userWorkspaceId,
+        workspaceMemberId: userWorkspaceId + '-member',
         user: { id: 'user' },
         workspaceMember: { id: 'member' },
         ...(applicationId
@@ -79,7 +85,7 @@ describe('Chat execution sender', () => {
     expect(chat.getWritableThread).toHaveBeenCalledWith({
       workspaceId,
       threadId,
-      userWorkspaceId: 'sender',
+      workspaceMemberId: 'sender-member',
     });
   });
   it('rejects a job attempting to execute another participant’s message', async () => {

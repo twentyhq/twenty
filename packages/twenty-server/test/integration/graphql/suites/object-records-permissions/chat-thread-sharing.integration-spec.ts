@@ -109,6 +109,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const owner = {
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
       await chatService.createThread({
         ...owner,
@@ -252,10 +253,12 @@ describe('Conversation sharing through the authenticated API', () => {
       const owner = {
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
       const sender = {
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       };
       const principal =
         audience === 'member'
@@ -449,6 +452,7 @@ describe('Conversation sharing through the authenticated API', () => {
     const owner = {
       workspaceId,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     const options = { workspaceId, options: { dryRun: false } } as never;
@@ -494,7 +498,7 @@ describe('Conversation sharing through the authenticated API', () => {
         archived.archivedAt,
       );
       expect(
-        (await chatService.getThreadsForUser(owner)).some(
+        (await chatService.getThreadsForMember(owner)).some(
           ({ id }) => id === owner.threadId,
         ),
       ).toBe(true);
@@ -523,11 +527,13 @@ describe('Conversation sharing through the authenticated API', () => {
     const owner = {
       workspaceId,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     const writer = {
       ...owner,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     };
     await chat.createThread({
       ...owner,
@@ -588,6 +594,7 @@ describe('Conversation sharing through the authenticated API', () => {
     const owner = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     const cleanup = jest
@@ -611,6 +618,7 @@ describe('Conversation sharing through the authenticated API', () => {
     const owner = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     await chat.createThread({ ...owner, id: owner.threadId });

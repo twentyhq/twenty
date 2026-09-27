@@ -13,7 +13,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -23,7 +23,7 @@ import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-
 import { RunEvaluationInputJob } from 'src/engine/metadata-modules/ai/ai-agent-monitor/jobs/run-evaluation-input.job';
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 @UseGuards(
   WorkspaceAuthGuard,
@@ -37,8 +37,7 @@ export class AgentTurnResolver {
   constructor(
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly agentChatService: AgentChatService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly graderService: AgentTurnGraderService,
@@ -89,7 +88,7 @@ export class AgentTurnResolver {
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @Args('input') input: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
   ): Promise<AgentTurnWorkspaceEntity> {
     // Defense in depth: the job also re-fetches the agent through a
     // workspace-scoped repository.
@@ -98,13 +97,11 @@ export class AgentTurnResolver {
       workspaceId: workspace.id,
     });
 
-    const savedThread = await this.threadRepository.insertAndReturnOne(
-      workspace.id,
-      {
-        userWorkspaceId,
-        title: `Eval: ${input.substring(0, 50)}...`,
-      },
-    );
+    const savedThread = await this.agentChatService.createThread({
+      workspaceId: workspace.id,
+      workspaceMemberId,
+      title: `Eval: ${input.substring(0, 50)}...`,
+    });
 
     const savedTurn = await this.turnRepository.insertAndReturnOne(
       workspace.id,

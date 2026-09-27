@@ -12,21 +12,21 @@ const THREAD_ID = '20202020-0000-4000-8000-000000000002';
 const args = {
   workspaceId: WORKSPACE_ID,
   threadId: THREAD_ID,
-  userWorkspaceId: 'reader',
+  workspaceMemberId: 'reader',
 };
 
 const buildService = () => {
-  const thread = { id: THREAD_ID, userWorkspaceId: 'owner' };
+  const thread = { id: THREAD_ID, workspaceMemberId: 'owner' };
   const threadRepository = {
     findOne: jest.fn().mockResolvedValue(thread),
     find: jest.fn().mockResolvedValue([thread]),
   };
   const authContext = {
     workspace: { id: WORKSPACE_ID },
-    userWorkspaceId: 'reader',
+    workspaceMemberId: 'reader',
   };
   const userAuthContextService = {
-    resolve: jest.fn().mockResolvedValue(authContext),
+    resolveWorkspaceMember: jest.fn().mockResolvedValue(authContext),
   };
   const repository = {
     findRecordIdsAllowedForOperation: jest.fn().mockResolvedValue([THREAD_ID]),
@@ -115,7 +115,7 @@ describe('Conversation common record access', () => {
       await expect(
         service.getThreadWithAccess({
           ...args,
-          userWorkspaceId: 'owner',
+          workspaceMemberId: 'owner',
           operationType: operation,
         }),
       ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
@@ -144,13 +144,15 @@ describe('Conversation common record access', () => {
     await expect(service.getReadableThread(args)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
-    expect(userAuthContextService.resolve).toHaveBeenCalledTimes(2);
+    expect(userAuthContextService.resolveWorkspaceMember).toHaveBeenCalledTimes(
+      2,
+    );
   });
 
   it('hides history from removed members', async () => {
     const { service, userAuthContextService, threadRepository } =
       buildService();
-    userAuthContextService.resolve.mockRejectedValue(
+    userAuthContextService.resolveWorkspaceMember.mockRejectedValue(
       new AuthException('Removed', AuthExceptionCode.UNAUTHENTICATED),
     );
     await expect(service.getReadableThread(args)).rejects.toMatchObject({
@@ -161,7 +163,7 @@ describe('Conversation common record access', () => {
 
   it('does not hide infrastructure failures as missing records', async () => {
     const { service, userAuthContextService } = buildService();
-    userAuthContextService.resolve.mockRejectedValue(
+    userAuthContextService.resolveWorkspaceMember.mockRejectedValue(
       new Error('Database unavailable'),
     );
     await expect(service.getReadableThread(args)).rejects.toThrow(
@@ -185,7 +187,7 @@ describe('Conversation common record access', () => {
       code: 'THREAD_NOT_FOUND',
     });
     await expect(
-      service.getReadableThread({ ...args, userWorkspaceId: 'owner' }),
+      service.getReadableThread({ ...args, workspaceMemberId: 'owner' }),
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
     expect(repository.findRecordIdsAllowedForOperation).toHaveBeenCalledTimes(
       2,

@@ -13,7 +13,7 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -50,7 +50,7 @@ export class AgentChatSubscriptionResolver {
   async onAgentChatEvent(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
   ) {
     const authorize = createSubscriptionAuthorization({
       check: () =>
@@ -58,7 +58,7 @@ export class AgentChatSubscriptionResolver {
           .getReadableThread({
             workspaceId: workspace.id,
             threadId,
-            userWorkspaceId,
+            workspaceMemberId,
           })
           .catch(aiGraphqlApiExceptionHandler),
       maxAgeMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,

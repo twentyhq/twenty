@@ -3,7 +3,7 @@ import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
-import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
+import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -30,7 +30,7 @@ const MAX_CHAT_THREADS = 1000;
 
 type ThreadAccessArgs = {
   workspaceId: string;
-  userWorkspaceId: string;
+  workspaceMemberId: string;
   threadId: string;
 };
 
@@ -124,15 +124,13 @@ export class AgentChatSharingService {
 
   async createThread(args: {
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     id?: string;
     title?: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    const writesWorkspaceMember = await this.hasWorkspaceMemberOwnerField(
-      args.workspaceId,
-    );
+    const writesLegacyOwner = await this.hasLegacyOwnerField(args.workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -150,13 +148,13 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId"${writesWorkspaceMember ? ', "workspaceMemberId"' : ''})
-         VALUES ($1, $2, $3${writesWorkspaceMember ? ', $4' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${writesLegacyOwner ? ', "userWorkspaceId"' : ''})
+         VALUES ($1, $2, $3${writesLegacyOwner ? ', $4' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
-            args.userWorkspaceId,
-            ...(writesWorkspaceMember ? [authContext.workspaceMemberId] : []),
+            authContext.workspaceMemberId,
+            ...(writesLegacyOwner ? [authContext.userWorkspaceId] : []),
           ],
         );
         const record = records[0];
@@ -166,7 +164,7 @@ export class AgentChatSharingService {
           recordIds: [record.id],
           manager,
         });
-        const ownerGrantCount = await backfillChatThreadOwnerGrants({
+        const ownerGrantCount = await backfillWorkspaceChatThreadOwnerGrants({
           manager,
           workspaceId: args.workspaceId,
           threadTableExpression: table('agentChatThread'),
@@ -284,9 +282,9 @@ export class AgentChatSharingService {
     );
   }
 
-  private async getAuthContext(args: Omit<ThreadAccessArgs, 'threadId'>) {
+  async getAuthContext(args: Omit<ThreadAccessArgs, 'threadId'>) {
     const authContext = await this.userAuthContextService
-      .resolve(args)
+      .resolveWorkspaceMember(args)
       .catch((error: unknown) => {
         if (error instanceof AuthException) {
           return this.throwNotFound();
@@ -295,7 +293,8 @@ export class AgentChatSharingService {
       });
     if (
       !(await this.permissionsService.userHasWorkspaceSettingPermission({
-        ...args,
+        workspaceId: args.workspaceId,
+        userWorkspaceId: authContext.userWorkspaceId,
         setting: PermissionFlagType.AI,
         applicationId: authContext.application?.id,
       }))
@@ -305,21 +304,16 @@ export class AgentChatSharingService {
     return authContext;
   }
 
-  // TRANSITION(2.43 -> 2.44): workspaces gain the workspaceMember owner when
-  // the 2.43 link-chat-threads-to-workspace-members command reaches them, and
-  // this server can run before it does. Remove with the owner cleanup tracked
-  // in twentyhq/core-team-issues#2925.
-  private async hasWorkspaceMemberOwnerField(
-    workspaceId: string,
-  ): Promise<boolean> {
+  // The contract command removes the legacy column after this server starts.
+  // Keep its required value populated until that workspace has contracted.
+  private async hasLegacyOwnerField(workspaceId: string): Promise<boolean> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
     return isDefined(
       flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
-          .universalIdentifier
+        'bf830886-b6dc-46e9-a229-eecbb0e66032'
       ],
     );
   }

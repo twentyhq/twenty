@@ -77,8 +77,13 @@ export class AgentChatActorService {
     const userWorkspaceId =
       message.senderUserWorkspaceId ??
       (
-        await this.threads.findOneOrFail(workspaceId, {
-          where: { id: threadId },
+        await this.userAuthContextService.resolveWorkspaceMember({
+          workspaceId,
+          workspaceMemberId: (
+            await this.threads.findOneOrFail(workspaceId, {
+              where: { id: threadId },
+            })
+          ).workspaceMemberId,
         })
       ).userWorkspaceId;
     const sender: AgentChatSender = {
@@ -105,7 +110,7 @@ export class AgentChatActorService {
       this.chatService.getWritableThread({
         workspaceId,
         threadId,
-        userWorkspaceId: sender.userWorkspaceId,
+        workspaceMemberId: authContext.workspaceMemberId,
       }),
     );
     if (isDefined(thread.archivedAt)) {
