@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -19,8 +21,13 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-ask-questions-prompt.constant';
+import {
+  type RecordedConversation,
+  WorkflowAgentConversationWorkspaceService,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
@@ -34,6 +41,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
+    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -56,7 +64,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { agentId, prompt } = step.settings.input;
+    const { agentId, prompt, canAskQuestions } = step.settings.input;
     const workspaceId = runInfo.workspaceId;
 
     let agent: AgentEntity | null = null;
@@ -83,16 +91,40 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         : null;
 
     const resolvedPrompt = resolveInput(prompt, context) as string;
-    const recordConversation = (executionResult?: AgentExecutionResult) =>
+
+    // A step that already holds a conversation before running is one whose
+    // question has just been answered: fresh executions, loop iterations and
+    // retries all start without one.
+    const resumedThreadId = await this.findResumedThreadId({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId,
+      stepId: currentStepId,
+    });
+
+    const recordConversation = (
+      executionResult?: AgentExecutionResult,
+    ): Promise<RecordedConversation | null> =>
       this.recordConversation({
-        workspaceId,
         workflowRunId: runInfo.workflowRunId,
         stepId: currentStepId,
-        title: step.name,
-        agentId: agent?.id ?? null,
-        prompt: resolvedPrompt,
-        initiatorUserWorkspaceId: userWorkspaceId,
-        executionResult,
+        record: () =>
+          isDefined(resumedThreadId)
+            ? this.workflowAgentConversationService.recordContinuation({
+                workspaceId,
+                threadId: resumedThreadId,
+                agentId: agent?.id ?? null,
+                executionResult,
+              })
+            : this.workflowAgentConversationService.recordExecution({
+                workspaceId,
+                workflowRunId: runInfo.workflowRunId,
+                stepId: currentStepId,
+                title: step.name,
+                agentId: agent?.id ?? null,
+                prompt: resolvedPrompt,
+                initiatorUserWorkspaceId: userWorkspaceId,
+                executionResult,
+              }),
       });
 
     const startedAtMs = Date.now();
@@ -100,8 +132,28 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionResult = await this.aiAgentExecutionService
       .executeAgent({
         agent,
-        messages: [{ role: 'user', content: resolvedPrompt }],
-        baseSystemPrompt: WORKFLOW_BASE_SYSTEM_PROMPT,
+        ...(isDefined(resumedThreadId)
+          ? {
+              messages: [],
+              priorModelMessages:
+                await this.workflowAgentConversationService.loadModelMessages({
+                  workspaceId,
+                  threadId: resumedThreadId,
+                }),
+            }
+          : { messages: [{ role: 'user', content: resolvedPrompt }] }),
+        baseSystemPrompt:
+          canAskQuestions === true
+            ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT}`
+            : WORKFLOW_BASE_SYSTEM_PROMPT,
+        pausingTools:
+          canAskQuestions === true
+            ? {
+                [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
+                  isWorkspaceSetupThread: false,
+                }),
+              }
+            : {},
         actorContext: executionContext.isActingOnBehalfOfUser
           ? executionContext.initiator
           : undefined,
@@ -117,7 +169,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const durationMs = Date.now() - startedAtMs;
 
-    await recordConversation(executionResult);
+    const recordedConversation = await recordConversation(executionResult);
 
     await this.persistStepLog({
       workflowRunId: runInfo.workflowRunId,
@@ -133,26 +185,62 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       };
     }
 
+    if (executionResult.isPaused === true) {
+      // The conversation is where the question is answered, so without it the
+      // run would wait for an answer nobody can give.
+      if (recordedConversation?.isAwaitingAnswer !== true) {
+        return {
+          error: 'Agent asked a question that could not be recorded.',
+        };
+      }
+
+      return { pendingEvent: true };
+    }
+
     return {
       result: executionResult.result,
     };
   }
 
+  private async findResumedThreadId({
+    workflowRunId,
+    workspaceId,
+    stepId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+    stepId: string;
+  }): Promise<string | undefined> {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    return workflowRun.state?.stepInfos?.[stepId]?.threadId;
+  }
+
   // The conversation is a record of the step, not part of its outcome, so a
   // failure to write it must not fail a step whose agent did its work.
-  private async recordConversation(
-    args: Parameters<
-      WorkflowAgentConversationWorkspaceService['recordExecution']
-    >[0],
-  ): Promise<void> {
+  private async recordConversation({
+    workflowRunId,
+    stepId,
+    record,
+  }: {
+    workflowRunId: string;
+    stepId: string;
+    record: () => Promise<RecordedConversation | null>;
+  }): Promise<RecordedConversation | null> {
     try {
-      await this.workflowAgentConversationService.recordExecution(args);
+      return await record();
     } catch (error) {
       this.logger.warn(
-        `Failed to record the conversation for workflowRun=${args.workflowRunId} step=${args.stepId}: ${
+        `Failed to record the conversation for workflowRun=${workflowRunId} step=${stepId}: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
+
+      return null;
     }
   }
 

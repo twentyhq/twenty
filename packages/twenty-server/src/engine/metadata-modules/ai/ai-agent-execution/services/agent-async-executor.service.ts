@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   generateText,
+  hasToolCall,
   jsonSchema,
   type LanguageModelUsage,
+  type ModelMessage,
   Output,
   isStepCount,
   type StepResult,
@@ -271,9 +273,17 @@ export class AgentAsyncExecutorService {
     runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
+    priorModelMessages = [],
+    pausingTools = {},
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
+    // A conversation being continued, with its tool calls and results, which
+    // plain run messages cannot carry.
+    priorModelMessages?: ModelMessage[];
+    // Tools whose call ends the execution so that the caller can wait for
+    // something outside it, such as a person answering.
+    pausingTools?: ToolSet;
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
@@ -283,7 +293,7 @@ export class AgentAsyncExecutorService {
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
-    if (!isNonEmptyArray(messages)) {
+    if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorModelMessages)) {
       throw new AiException(
         'Provide at least one message to run an agent',
         AiExceptionCode.INVALID_AGENT_INPUT,
@@ -395,13 +405,16 @@ export class AgentAsyncExecutorService {
           )?.modalities,
         });
 
+      const pausingToolNames = Object.keys(pausingTools);
+
       const textResponse = await generateText({
         instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
-        tools,
+        tools: { ...tools, ...pausingTools },
         model: registeredModel.model,
-        messages: modelMessages,
+        messages: [...priorModelMessages, ...modelMessages],
         stopWhen: (step) =>
           isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
+          pausingToolNames.some((toolName) => hasToolCall(toolName)(step)) ||
           hasNoMoreAvailableCredits,
         providerOptions,
         ...buildAiTelemetry({
@@ -506,7 +519,15 @@ export class AgentAsyncExecutorService {
 
       let result: object = { response: textResponse.text };
 
-      if (agentSchema) {
+      const isPaused =
+        textResponse.steps
+          .at(-1)
+          ?.toolCalls.some((toolCall) =>
+            pausingToolNames.includes(toolCall.toolName),
+          ) ?? false;
+
+      // A paused execution has no final answer yet to structure.
+      if (isDefined(agentSchema) && !isPaused) {
         const structuredResult = await generateText({
           instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
           model: registeredModel.model,
@@ -581,6 +602,7 @@ export class AgentAsyncExecutorService {
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
+        isPaused,
         steps: executionSteps,
         modelId: resolvedModelId,
         totalCostInDollars,

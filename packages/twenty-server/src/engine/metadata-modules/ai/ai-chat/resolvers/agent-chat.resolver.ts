@@ -1,5 +1,7 @@
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatWorkflowQuestionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-workflow-question.service';
+import { isWorkflowRunThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
@@ -83,6 +85,7 @@ export class AgentChatResolver {
     private readonly aiBillingService: AiBillingService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
+    private readonly agentChatWorkflowQuestionService: AgentChatWorkflowQuestionService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
@@ -436,6 +439,26 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    const readableThread = await this.sharingService.getReadableThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
+
+    // A workflow agent's conversation is otherwise read-only: its answer
+    // resumes the run rather than a chat stream, so no chat model is involved.
+    if (isWorkflowRunThread(readableThread)) {
+      await this.agentChatWorkflowQuestionService.answer({
+        thread: readableThread,
+        messageId,
+        answers,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+      return { messageId, queued: false };
+    }
+
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',

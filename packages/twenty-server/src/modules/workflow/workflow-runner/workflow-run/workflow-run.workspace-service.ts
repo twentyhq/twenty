@@ -324,6 +324,54 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
+  // Hands a step whose agent asked a question back to the executor, once and
+  // only for that question: a stop, a retry or another loop iteration has
+  // moved the step on or replaced its conversation.
+  @WithLock('workflowRunId')
+  async releaseStepAwaitingAnswer({
+    stepId,
+    threadId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    threadId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
+      currentStepInfo?.status !== StepStatus.PENDING ||
+      currentStepInfo.threadId !== threadId ||
+      isDefined(currentStepInfo.error)
+    ) {
+      return false;
+    }
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...workflowRunToUpdate.state?.stepInfos,
+            [stepId]: { ...currentStepInfo, status: StepStatus.NOT_STARTED },
+          },
+        },
+      },
+    });
+
+    return true;
+  }
+
   @WithLock('workflowRunId')
   async setStepThreadId({
     stepId,
