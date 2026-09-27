@@ -137,26 +137,33 @@ export class ImapGetMessageListService {
         mailbox,
       );
 
-      const { messageUids } = await this.imapSyncService.syncFolder(
-        client,
-        folderPath,
-        previousCursor,
-        mailboxState,
-      );
+      const { messageUids, expungedUids, currentUids } =
+        await this.imapSyncService.syncFolder(
+          client,
+          folderPath,
+          previousCursor,
+          mailboxState,
+        );
 
       const nextCursor = createSyncCursor(
         messageUids,
         previousCursor,
         mailboxState,
+        currentUids,
       );
 
       const messageExternalIds = messageUids
         .sort((a, b) => b - a)
         .map((uid) => `${messageExternalIdPrefix}:${uid}`);
 
+      // Map expunged UIDs to external IDs for downstream deletion cascade (Issue #26099)
+      const messageExternalIdsToDelete = expungedUids
+        .sort((a, b) => b - a)
+        .map((uid) => `${messageExternalIdPrefix}:${uid}`);
+
       return {
         messageExternalIds,
-        messageExternalIdsToDelete: [],
+        messageExternalIdsToDelete,
         nextSyncCursor: JSON.stringify(nextCursor),
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,
@@ -191,6 +198,7 @@ export class ImapGetMessageListService {
       const supportsCondstore = client.capabilities.has('CONDSTORE');
 
       const status = await client.status(folderPath, {
+        messages: true,
         uidNext: true,
         uidValidity: true,
         ...(supportsCondstore && { highestModseq: true }),
@@ -218,6 +226,37 @@ export class ImapGetMessageListService {
       if (previousCursor.uidValidity !== uidValidity) {
         this.logger.debug(
           `Folder ${folderPath}: UIDVALIDITY changed (${previousCursor.uidValidity} → ${uidValidity}). Full sync required.`,
+        );
+
+        return false;
+      }
+
+      // Upgrade legacy cursors lacking knownUids or messageCount (Issue #26099)
+      if (
+        !isDefined(previousCursor.knownUids) ||
+        !isDefined(previousCursor.messageCount)
+      ) {
+        this.logger.debug(
+          `Folder ${folderPath}: Legacy cursor missing knownUids or messageCount. Sync required.`,
+        );
+
+        return false;
+      }
+
+      if (!isDefined(status.messages)) {
+        this.logger.debug(
+          `Folder ${folderPath}: Server missing MESSAGES count in status. Sync required.`,
+        );
+
+        return false;
+      }
+
+      const messages = Number(status.messages);
+
+      // Force sync if message count changed (e.g. draft expunged/discarded) even if uidNext hasn't advanced (Issue #26099)
+      if (previousCursor.messageCount !== messages) {
+        this.logger.debug(
+          `Folder ${folderPath}: Message count changed (${previousCursor.messageCount} → ${messages}). Sync required.`,
         );
 
         return false;

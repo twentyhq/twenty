@@ -11,6 +11,8 @@ import { type ImapSyncCursor } from 'src/modules/messaging/message-import-manage
 
 type SyncResult = {
   messageUids: number[];
+  expungedUids: number[];
+  currentUids: number[];
 };
 
 @Injectable()
@@ -25,13 +27,22 @@ export class ImapSyncService {
   ): Promise<SyncResult> {
     this.validateUidValidity(previousCursor, mailboxState, folderPath);
 
-    const messageUids = await this.fetchNewMessageUids(
-      client,
-      previousCursor,
-      mailboxState,
+    // Fetch live UIDs to discover new arrivals and expunged messages (Issue #26099)
+    const currentLiveUids = await this.fetchLiveUids(client, mailboxState);
+
+    const lastSyncedUid = previousCursor?.highestUid ?? 0;
+    const messageUids = currentLiveUids.filter((uid) => uid > lastSyncedUid);
+
+    const currentLiveUidSet = new Set(currentLiveUids);
+    const expungedUids = (previousCursor?.knownUids ?? []).filter(
+      (uid) => !currentLiveUidSet.has(uid),
     );
 
-    return { messageUids };
+    return {
+      messageUids,
+      expungedUids,
+      currentUids: currentLiveUids,
+    };
   }
 
   private validateUidValidity(
@@ -54,25 +65,21 @@ export class ImapSyncService {
     }
   }
 
-  private async fetchNewMessageUids(
+  // Live UID search short-circuits on empty mailboxes and safely handles non-array responses (Issue #26099)
+  private async fetchLiveUids(
     client: ImapFlow,
-    previousCursor: ImapSyncCursor | null,
     mailboxState: MailboxState,
   ): Promise<number[]> {
-    const lastSyncedUid = previousCursor?.highestUid ?? 0;
-    const { maxUid } = mailboxState;
-
-    if (lastSyncedUid >= maxUid) {
+    if (mailboxState.messageCount === 0 || mailboxState.maxUid === 0) {
       return [];
     }
 
-    const uidRange = `${lastSyncedUid + 1}:${maxUid}`;
-    const uids = await client.search({ uid: uidRange }, { uid: true });
+    const uids = await client.search({ all: true }, { uid: true });
 
     if (!Array.isArray(uids)) {
       return [];
     }
 
-    return uids;
+    return uids.sort((a, b) => a - b);
   }
 }

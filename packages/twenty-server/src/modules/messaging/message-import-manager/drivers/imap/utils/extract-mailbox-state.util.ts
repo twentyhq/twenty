@@ -6,6 +6,7 @@ export type MailboxState = {
   uidNext: number;
   maxUid: number;
   highestModSeq?: bigint;
+  messageCount?: number;
 };
 
 // David.fx and other non-RFC servers omit the required UIDNEXT on SELECT;
@@ -50,5 +51,9 @@ export const resolveMailboxState = async (
     uidNext,
     maxUid: Math.max(0, uidNext - 1),
     highestModSeq: mailbox.highestModseq,
+    // Preserve message count (including 0) to detect expunges when messages are removed (Issue #26099)
+    ...(typeof mailbox.exists === 'number'
+      ? { messageCount: mailbox.exists }
+      : {}),
   };
 };
