@@ -369,7 +369,7 @@ export const AppLogsLive: Story = {
     );
 
     expect([...eventLogsLiveSubscriptions.values()]).toEqual([
-      { table: EventLogTable.APPLICATION_LOG, fieldFilters: [], search: '' },
+      { table: EventLogTable.APPLICATION_LOG, fieldFilters: [] },
     ]);
 
     emitEventLogsLive([firstLiveApplicationLog]);
