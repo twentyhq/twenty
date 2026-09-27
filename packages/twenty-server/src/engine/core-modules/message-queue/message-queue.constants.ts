@@ -4,6 +4,7 @@ export const QUEUE_DRIVER = Symbol('message-queue:queue_driver');
 
 export enum MessageQueue {
   recordExportQueue = 'record-export-queue',
+  recordImportQueue = 'record-import-queue',
   taskAssignedQueue = 'task-assigned-queue',
   messagingQueue = 'messaging-queue',
   webhookQueue = 'webhook-queue',

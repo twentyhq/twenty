@@ -18,6 +18,8 @@ export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.EmailImage,
   FileFolder.AppTarball,
   FileFolder.Dpa,
+  // Only import reports are ever signed in this folder
+  FileFolder.RecordImport,
 ] as const;
 
 export type SupportedFileFolder = (typeof SUPPORTED_FILE_FOLDERS)[number];

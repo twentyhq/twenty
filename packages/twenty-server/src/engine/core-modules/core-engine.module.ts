@@ -87,6 +87,7 @@ import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileApiModule } from './file/file-api.module';
+import { RecordImportModule } from 'src/engine/core-modules/record-import/record-import.module';
 
 @Module({
   imports: [
@@ -102,6 +103,7 @@ import { FileApiModule } from './file/file-api.module';
     ClientConfigModule,
     FeatureFlagModule,
     FileApiModule,
+    RecordImportModule,
     RecordShareModule,
     RowLevelPermissionModule,
     OpenApiModule,

@@ -1669,7 +1669,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED'
+export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_ASYNC_CSV_IMPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2571,7 +2571,7 @@ export interface ApplicationFileUploadTarget {
     __typename: 'ApplicationFileUploadTarget'
 }
 
-export type FileFolder = 'RecordExport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
+export type FileFolder = 'RecordExport' | 'RecordImport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
 export interface ApplicationFileUploadError {
     fileFolder: FileFolder
@@ -3014,6 +3014,39 @@ export interface RecordExport {
     __typename: 'RecordExport'
 }
 
+export interface RecordImportColumnSamples {
+    headerValues: Scalars['String'][]
+    exampleRows: Scalars['JSON']
+    distinctValuesByColumn: Scalars['JSON']
+    __typename: 'RecordImportColumnSamples'
+}
+
+export interface RecordImport {
+    id: Scalars['UUID']
+    version: Scalars['Int']
+    status: Scalars['String']
+    fileName: Scalars['String']
+    sheetNames: Scalars['String'][]
+    sheetName?: Scalars['String']
+    rowCount?: Scalars['Int']
+    isMapped: Scalars['Boolean']
+    progress: Scalars['Int']
+    processedRowCount: Scalars['Int']
+    totalRowCount: Scalars['Int']
+    importedRecordCount: Scalars['Int']
+    skippedRowCount: Scalars['Int']
+    failedRowCount: Scalars['Int']
+    hasReport: Scalars['Boolean']
+    errorMessage?: Scalars['String']
+    __typename: 'RecordImport'
+}
+
+export interface RecordImportPreview {
+    recordImport: RecordImport
+    rows: Scalars['JSON']
+    __typename: 'RecordImportPreview'
+}
+
 export interface AiChatUsage {
     limitValue: Scalars['BigInt']
     consumedValue?: Scalars['BigInt']
@@ -3454,6 +3487,10 @@ export interface Query {
     exportApplication: ApplicationExport
     applicationCoreGraphqlSchema: Scalars['String']
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
+    recordImportPreview: RecordImportPreview
+    recordImportColumnSamples: RecordImportColumnSamples
+    recordImport: RecordImport
+    recordImportReportUrl: Scalars['String']
     __typename: 'Query'
 }
 
@@ -3736,6 +3773,11 @@ export interface Mutation {
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
     revokeApplicationAuthorization: Scalars['Boolean']
     renewApplicationToken: ApplicationTokenPair
+    createRecordImport: RecordImportPreview
+    prepareRecordImport: RecordImport
+    setRecordImportMapping: RecordImport
+    startRecordImport: RecordImport
+    cancelRecordImport: Scalars['Boolean']
     __typename: 'Mutation'
 }
 
@@ -3750,6 +3792,7 @@ export interface Subscription {
     logicFunctionLogs: LogicFunctionLogs
     onAgentChatEvent: AgentChatEvent
     eventLogsLive?: EventLogRecord[]
+    recordImportProgress: RecordImport
     exportRecords: RecordExport
     __typename: 'Subscription'
 }
@@ -6899,6 +6942,42 @@ export interface RecordExportGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface RecordImportColumnSamplesGenqlSelection{
+    headerValues?: boolean | number
+    exampleRows?: boolean | number
+    distinctValuesByColumn?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordImportGenqlSelection{
+    id?: boolean | number
+    version?: boolean | number
+    status?: boolean | number
+    fileName?: boolean | number
+    sheetNames?: boolean | number
+    sheetName?: boolean | number
+    rowCount?: boolean | number
+    isMapped?: boolean | number
+    progress?: boolean | number
+    processedRowCount?: boolean | number
+    totalRowCount?: boolean | number
+    importedRecordCount?: boolean | number
+    skippedRowCount?: boolean | number
+    failedRowCount?: boolean | number
+    hasReport?: boolean | number
+    errorMessage?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordImportPreviewGenqlSelection{
+    recordImport?: RecordImportGenqlSelection
+    rows?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AiChatUsageGenqlSelection{
     limitValue?: boolean | number
     consumedValue?: boolean | number
@@ -7358,6 +7437,10 @@ export interface QueryGenqlSelection{
     exportApplication?: (ApplicationExportGenqlSelection & { __args: {universalIdentifier: Scalars['UUID']} })
     applicationCoreGraphqlSchema?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
+    recordImportPreview?: (RecordImportPreviewGenqlSelection & { __args: {input: PreviewRecordImportSheetInput} })
+    recordImportColumnSamples?: (RecordImportColumnSamplesGenqlSelection & { __args: {input: RecordImportSessionInput} })
+    recordImport?: (RecordImportGenqlSelection & { __args: {input: RecordImportSessionInput} })
+    recordImportReportUrl?: { __args: {input: RecordImportSessionInput} }
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7403,6 +7486,10 @@ export interface PieChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface LineChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
 
 export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
+
+export interface PreviewRecordImportSheetInput {id: Scalars['UUID'],sheetName?: (Scalars['String'] | null)}
+
+export interface RecordImportSessionInput {id: Scalars['UUID']}
 
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
@@ -7681,6 +7768,11 @@ export interface MutationGenqlSelection{
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
+    createRecordImport?: (RecordImportPreviewGenqlSelection & { __args: {input: CreateRecordImportInput} })
+    prepareRecordImport?: (RecordImportGenqlSelection & { __args: {input: PrepareRecordImportInput} })
+    setRecordImportMapping?: (RecordImportGenqlSelection & { __args: {input: SetRecordImportMappingInput} })
+    startRecordImport?: (RecordImportGenqlSelection & { __args: {input: RecordImportVersionedInput} })
+    cancelRecordImport?: { __args: {input: RecordImportSessionInput} }
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8125,11 +8217,20 @@ export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['St
 
 export interface ApplicationFileUploadRequestInput {fileFolder: FileFolder,filePath: Scalars['String'],size: Scalars['Int']}
 
+export interface CreateRecordImportInput {fileId: Scalars['UUID'],objectMetadataId: Scalars['UUID'],timeZone: Scalars['String'],fileName: Scalars['String']}
+
+export interface PrepareRecordImportInput {id: Scalars['UUID'],version: Scalars['Int'],sheetName?: (Scalars['String'] | null),headerRowIndex: Scalars['Int']}
+
+export interface SetRecordImportMappingInput {id: Scalars['UUID'],version: Scalars['Int'],columns: Scalars['JSON']}
+
+export interface RecordImportVersionedInput {id: Scalars['UUID'],version: Scalars['Int']}
+
 export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable} })
+    recordImportProgress?: (RecordImportGenqlSelection & { __args: {input: RecordImportSessionInput} })
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -10380,6 +10481,30 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const RecordImportColumnSamples_possibleTypes: string[] = ['RecordImportColumnSamples']
+    export const isRecordImportColumnSamples = (obj?: { __typename?: any } | null): obj is RecordImportColumnSamples => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordImportColumnSamples"')
+      return RecordImportColumnSamples_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RecordImport_possibleTypes: string[] = ['RecordImport']
+    export const isRecordImport = (obj?: { __typename?: any } | null): obj is RecordImport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordImport"')
+      return RecordImport_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RecordImportPreview_possibleTypes: string[] = ['RecordImportPreview']
+    export const isRecordImportPreview = (obj?: { __typename?: any } | null): obj is RecordImportPreview => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordImportPreview"')
+      return RecordImportPreview_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AiChatUsage_possibleTypes: string[] = ['AiChatUsage']
     export const isAiChatUsage = (obj?: { __typename?: any } | null): obj is AiChatUsage => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUsage"')
@@ -11189,6 +11314,7 @@ export const enumEmailConnectionSecurity = {
 
 export const enumFeatureFlagKey = {
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
+   IS_ASYNC_CSV_IMPORT_ENABLED: 'IS_ASYNC_CSV_IMPORT_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
@@ -11314,6 +11440,7 @@ export const enumApplicationExportCoverageStatus = {
 
 export const enumFileFolder = {
    RecordExport: 'RecordExport' as const,
+   RecordImport: 'RecordImport' as const,
    CorePicture: 'CorePicture' as const,
    AgentChat: 'AgentChat' as const,
    BuiltLogicFunction: 'BuiltLogicFunction' as const,

@@ -14,6 +14,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Async CSV export`,
     description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
   },
+  [FeatureFlagKey.IS_ASYNC_CSV_IMPORT_ENABLED]: {
+    label: msg`Async CSV import`,
+    description: msg`Parse, validate and import CSV and Excel files on the server, with progress that survives closing the tab.`,
+  },
   [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: {
     label: msg`Unique indexes`,
     description: msg`Allow unique indexes to prevent duplicate field values.`,

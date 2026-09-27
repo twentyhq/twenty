@@ -6,6 +6,7 @@ import { type ImportedRow } from '@/spreadsheet-import/types/SpreadsheetImportIm
 import { type ImportedStructuredRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedStructuredRow';
 import { type SpreadsheetImportRowHook } from '@/spreadsheet-import/types/SpreadsheetImportRowHook';
 import { type SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
+import { type SpreadsheetImportServerAdapter } from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions = {
@@ -51,4 +52,6 @@ export type SpreadsheetImportDialogOptions = {
   rtl?: boolean;
   selectHeader?: boolean;
   availableFieldMetadataItems: FieldMetadataItem[];
+  // When set, the file is parsed, validated and imported on the server
+  serverImport?: SpreadsheetImportServerAdapter;
 };

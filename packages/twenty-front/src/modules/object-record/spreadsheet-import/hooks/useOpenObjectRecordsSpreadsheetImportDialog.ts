@@ -13,6 +13,9 @@ import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types'
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { buildRecordFromImportedStructuredRow } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useCreateRecordImportServerAdapter } from '@/record-import/hooks/useCreateRecordImportServerAdapter';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -47,6 +50,12 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     skipPostOptimisticEffect: true,
   });
 
+  const isAsyncCsvImportEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ASYNC_CSV_IMPORT_ENABLED,
+  );
+  const { createRecordImportServerAdapter } =
+    useCreateRecordImportServerAdapter(objectMetadataItem);
+
   const openObjectRecordsSpreadsheetImportDialog = (
     options?: Omit<
       SpreadsheetImportDialogOptions,
@@ -62,8 +71,14 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       availableFieldMetadataItemsToImport,
     );
 
+    // The browser import stays as the fallback while the flag is off
+    const serverImport = isAsyncCsvImportEnabled
+      ? createRecordImportServerAdapter()
+      : undefined;
+
     openSpreadsheetImportDialog({
       ...options,
+      serverImport,
       onSubmit: async (data) => {
         const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -94,6 +109,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       availableFieldMetadataItems: availableFieldMetadataItemsToImport,
       onAbortSubmit: () => {
         abortController.abort();
+        serverImport?.close();
       },
       tableHook: spreadsheetImportGetUnicityTableHook(objectMetadataItem),
     });

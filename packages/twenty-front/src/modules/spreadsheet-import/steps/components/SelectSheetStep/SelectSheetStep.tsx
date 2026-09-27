@@ -13,7 +13,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { useLingui } from '@lingui/react/macro';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type WorkBook } from 'xlsx-ugnis';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledRadioContainer = styled.div`
   display: flex;
@@ -30,10 +30,10 @@ type SelectSheetStepProps = {
   setCurrentStepState: (data: SpreadsheetImportStep) => void;
   onError: (message: string) => void;
   setPreviousStepState: (data: SpreadsheetImportStep) => void;
-  currentStepState: {
-    type: SpreadsheetImportStepType.selectSheet;
-    workbook: WorkBook;
-  };
+  currentStepState: Extract<
+    SpreadsheetImportStep,
+    { type: SpreadsheetImportStepType.selectSheet }
+  >;
 };
 
 export const SelectSheetStep = ({
@@ -49,16 +49,31 @@ export const SelectSheetStep = ({
 
   const [value, setValue] = useState(sheetNames[0]);
 
-  const { maxRecords, uploadStepHook } = useSpreadsheetImportInternal();
+  const { maxRecords, uploadStepHook, serverImport } =
+    useSpreadsheetImportInternal();
 
   const handleContinue = useCallback(
     async (sheetName: string) => {
+      if (isDefined(serverImport)) {
+        try {
+          setCurrentStepState({
+            type: SpreadsheetImportStepType.selectHeader,
+            data: await serverImport.previewSheet(sheetName),
+            sheetName,
+          });
+          setPreviousStepState(currentStepState);
+        } catch (error) {
+          onError((error as Error).message);
+        }
+        return;
+      }
+      if (!isDefined(currentStepState.workbook)) {
+        return;
+      }
+      const workbook = currentStepState.workbook;
       if (
         maxRecords > 0 &&
-        exceedsMaxRecords(
-          currentStepState.workbook.Sheets[sheetName],
-          maxRecords,
-        )
+        exceedsMaxRecords(workbook.Sheets[sheetName], maxRecords)
       ) {
         const maxRecordsString = maxRecords.toString();
         onError(t`Too many records. Up to ${maxRecordsString} allowed`);
@@ -66,7 +81,7 @@ export const SelectSheetStep = ({
       }
       try {
         const mappedWorkbook = await uploadStepHook(
-          mapWorkbook(currentStepState.workbook, sheetName),
+          mapWorkbook(workbook, sheetName),
         );
         setCurrentStepState({
           type: SpreadsheetImportStepType.selectHeader,
@@ -84,6 +99,7 @@ export const SelectSheetStep = ({
       setPreviousStepState,
       setCurrentStepState,
       uploadStepHook,
+      serverImport,
       t,
     ],
   );

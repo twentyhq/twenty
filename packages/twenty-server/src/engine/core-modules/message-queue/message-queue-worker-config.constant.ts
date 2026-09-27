@@ -31,6 +31,16 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.recordImportQueue]: {
+    priority: 7,
+    workerOptions: {
+      concurrency: 2,
+      lockDuration: 60_000,
+      // A retried import would insert rows without a unique key twice
+      maxStalledCount: 0,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.taskAssignedQueue]: {
     priority: 4,
     workerOptions: {

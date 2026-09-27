@@ -1544,6 +1544,13 @@ export type CreateRecordExportInput = {
   orderBy?: InputMaybe<Scalars['JSON']['input']>;
 };
 
+export type CreateRecordImportInput = {
+  fileId: Scalars['UUID']['input'];
+  fileName: Scalars['String']['input'];
+  objectMetadataId: Scalars['UUID']['input'];
+  timeZone: Scalars['String']['input'];
+};
+
 export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2109,6 +2116,7 @@ export type FeatureFlag = {
 export enum FeatureFlagKey {
   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED = 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED',
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
+  IS_ASYNC_CSV_IMPORT_ENABLED = 'IS_ASYNC_CSV_IMPORT_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
   IS_EXECUTION_QUOTA_ENABLED = 'IS_EXECUTION_QUOTA_ENABLED',
@@ -2290,6 +2298,7 @@ export enum FileFolder {
   GeneratedSdkClient = 'GeneratedSdkClient',
   PublicAsset = 'PublicAsset',
   RecordExport = 'RecordExport',
+  RecordImport = 'RecordImport',
   Source = 'Source',
   Workflow = 'Workflow'
 }
@@ -3033,6 +3042,7 @@ export type Mutation = {
   attachChatThreadToRecord: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   cancelMessageCampaign: CancelMessageCampaignOutputDto;
+  cancelRecordImport: Scalars['Boolean']['output'];
   cancelSwitchBillingInterval: BillingUpdate;
   cancelSwitchBillingPlan: BillingUpdate;
   cancelSwitchResourceCreditPrice: BillingUpdate;
@@ -3081,6 +3091,7 @@ export type Mutation = {
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
   createPublicDomain: PublicDomain;
+  createRecordImport: RecordImportPreview;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
@@ -3175,6 +3186,7 @@ export type Mutation = {
   installApplication: Application;
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
+  prepareRecordImport: RecordImport;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
@@ -3207,6 +3219,7 @@ export type Mutation = {
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
+  setRecordImportMapping: RecordImport;
   setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
@@ -3216,6 +3229,7 @@ export type Mutation = {
   signUpInWorkspace: SignUp;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   startChannelSync: ChannelSyncSuccess;
+  startRecordImport: RecordImport;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
   stopImpersonation: StopImpersonation;
@@ -3362,6 +3376,11 @@ export type MutationAuthorizeAppArgs = {
 
 export type MutationCancelMessageCampaignArgs = {
   input: CancelMessageCampaignInput;
+};
+
+
+export type MutationCancelRecordImportArgs = {
+  input: RecordImportSessionInput;
 };
 
 
@@ -3590,6 +3609,11 @@ export type MutationCreatePageLayoutWidgetArgs = {
 export type MutationCreatePublicDomainArgs = {
   applicationId: Scalars['String']['input'];
   domain: Scalars['String']['input'];
+};
+
+
+export type MutationCreateRecordImportArgs = {
+  input: CreateRecordImportInput;
 };
 
 
@@ -4036,6 +4060,11 @@ export type MutationInstallMarketplaceAppArgs = {
 };
 
 
+export type MutationPrepareRecordImportArgs = {
+  input: PrepareRecordImportInput;
+};
+
+
 export type MutationRemoveQueryFromEventStreamArgs = {
   input: RemoveQueryFromEventStreamInput;
 };
@@ -4193,6 +4222,11 @@ export type MutationSetEnterpriseKeyArgs = {
 };
 
 
+export type MutationSetRecordImportMappingArgs = {
+  input: SetRecordImportMappingInput;
+};
+
+
 export type MutationSetRecordShareArgs = {
   accessLevel?: InputMaybe<RecordShareAccessLevel>;
   enabled: Scalars['Boolean']['input'];
@@ -4253,6 +4287,11 @@ export type MutationSkipSyncEmailOnboardingStepArgs = {
 
 export type MutationStartChannelSyncArgs = {
   connectedAccountId: Scalars['UUID']['input'];
+};
+
+
+export type MutationStartRecordImportArgs = {
+  input: RecordImportVersionedInput;
 };
 
 
@@ -5112,9 +5151,21 @@ export type PlaceDetailsResult = {
   street?: Maybe<Scalars['String']['output']>;
 };
 
+export type PrepareRecordImportInput = {
+  headerRowIndex: Scalars['Int']['input'];
+  id: Scalars['UUID']['input'];
+  sheetName?: InputMaybe<Scalars['String']['input']>;
+  version: Scalars['Int']['input'];
+};
+
 export type PreviewMessageCampaignAudienceInput = {
   listId: Scalars['String']['input'];
   unsubscribeTopicId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PreviewRecordImportSheetInput = {
+  id: Scalars['UUID']['input'];
+  sheetName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PublicApplicationRegistration = {
@@ -5305,6 +5356,10 @@ export type Query = {
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   publicMarketplaceAppDetail: MarketplaceAppDetail;
   publicMarketplaceApps: Array<MarketplaceApp>;
+  recordImport: RecordImport;
+  recordImportColumnSamples: RecordImportColumnSamples;
+  recordImportPreview: RecordImportPreview;
+  recordImportReportUrl: Scalars['String']['output'];
   recordPermissions: Array<RecordPermissionsResult>;
   recordSharing: RecordSharingDto;
   skill?: Maybe<Skill>;
@@ -5782,6 +5837,26 @@ export type QueryPublicMarketplaceAppsArgs = {
 };
 
 
+export type QueryRecordImportArgs = {
+  input: RecordImportSessionInput;
+};
+
+
+export type QueryRecordImportColumnSamplesArgs = {
+  input: RecordImportSessionInput;
+};
+
+
+export type QueryRecordImportPreviewArgs = {
+  input: PreviewRecordImportSheetInput;
+};
+
+
+export type QueryRecordImportReportUrlArgs = {
+  input: RecordImportSessionInput;
+};
+
+
 export type QueryRecordPermissionsArgs = {
   targets: Array<RecordPermissionsTargetInput>;
 };
@@ -5831,6 +5906,48 @@ export type RecordIdentifier = {
   id: Scalars['UUID']['output'];
   imageIdentifier?: Maybe<Scalars['String']['output']>;
   labelIdentifier: Scalars['String']['output'];
+};
+
+export type RecordImport = {
+  __typename?: 'RecordImport';
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  failedRowCount: Scalars['Int']['output'];
+  fileName: Scalars['String']['output'];
+  hasReport: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
+  importedRecordCount: Scalars['Int']['output'];
+  isMapped: Scalars['Boolean']['output'];
+  processedRowCount: Scalars['Int']['output'];
+  progress: Scalars['Int']['output'];
+  rowCount?: Maybe<Scalars['Int']['output']>;
+  sheetName?: Maybe<Scalars['String']['output']>;
+  sheetNames: Array<Scalars['String']['output']>;
+  skippedRowCount: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+  totalRowCount: Scalars['Int']['output'];
+  version: Scalars['Int']['output'];
+};
+
+export type RecordImportColumnSamples = {
+  __typename?: 'RecordImportColumnSamples';
+  distinctValuesByColumn: Scalars['JSON']['output'];
+  exampleRows: Scalars['JSON']['output'];
+  headerValues: Array<Scalars['String']['output']>;
+};
+
+export type RecordImportPreview = {
+  __typename?: 'RecordImportPreview';
+  recordImport: RecordImport;
+  rows: Scalars['JSON']['output'];
+};
+
+export type RecordImportSessionInput = {
+  id: Scalars['UUID']['input'];
+};
+
+export type RecordImportVersionedInput = {
+  id: Scalars['UUID']['input'];
+  version: Scalars['Int']['input'];
 };
 
 export type RecordPermissionsDto = {
@@ -6200,6 +6317,12 @@ export type SetAppKeyValueInput = {
   value?: InputMaybe<Scalars['JSON']['input']>;
 };
 
+export type SetRecordImportMappingInput = {
+  columns: Scalars['JSON']['input'];
+  id: Scalars['UUID']['input'];
+  version: Scalars['Int']['input'];
+};
+
 export type SettingsMenuItem = {
   __typename?: 'SettingsMenuItem';
   applicationId: Scalars['UUID']['output'];
@@ -6303,6 +6426,7 @@ export type Subscription = {
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
   onEventSubscription?: Maybe<EventSubscription>;
+  recordImportProgress: RecordImport;
 };
 
 
@@ -6328,6 +6452,11 @@ export type SubscriptionOnAgentChatEventArgs = {
 
 export type SubscriptionOnEventSubscriptionArgs = {
   eventStreamId: Scalars['String']['input'];
+};
+
+
+export type SubscriptionRecordImportProgressArgs = {
+  input: RecordImportSessionInput;
 };
 
 export enum SubscriptionInterval {
@@ -9300,6 +9429,71 @@ export type ExportRecordsSubscriptionVariables = Exact<{
 
 export type ExportRecordsSubscription = { __typename?: 'Subscription', exportRecords: { __typename?: 'RecordExport', id: string, filename: string, progress: number, errorMessage?: string | null, downloadPath?: string | null } };
 
+export type CancelRecordImportMutationVariables = Exact<{
+  input: RecordImportSessionInput;
+}>;
+
+
+export type CancelRecordImportMutation = { __typename?: 'Mutation', cancelRecordImport: boolean };
+
+export type CreateRecordImportMutationVariables = Exact<{
+  input: CreateRecordImportInput;
+}>;
+
+
+export type CreateRecordImportMutation = { __typename?: 'Mutation', createRecordImport: { __typename?: 'RecordImportPreview', rows: any, recordImport: { __typename?: 'RecordImport', id: string, version: number, status: string, fileName: string, sheetNames: Array<string>, sheetName?: string | null, rowCount?: number | null, isMapped: boolean, progress: number, processedRowCount: number, totalRowCount: number, importedRecordCount: number, skippedRowCount: number, failedRowCount: number, hasReport: boolean, errorMessage?: string | null } } };
+
+export type PrepareRecordImportMutationVariables = Exact<{
+  input: PrepareRecordImportInput;
+}>;
+
+
+export type PrepareRecordImportMutation = { __typename?: 'Mutation', prepareRecordImport: { __typename?: 'RecordImport', id: string, version: number, status: string, fileName: string, sheetNames: Array<string>, sheetName?: string | null, rowCount?: number | null, isMapped: boolean, progress: number, processedRowCount: number, totalRowCount: number, importedRecordCount: number, skippedRowCount: number, failedRowCount: number, hasReport: boolean, errorMessage?: string | null } };
+
+export type RecordImportColumnSamplesQueryVariables = Exact<{
+  input: RecordImportSessionInput;
+}>;
+
+
+export type RecordImportColumnSamplesQuery = { __typename?: 'Query', recordImportColumnSamples: { __typename?: 'RecordImportColumnSamples', headerValues: Array<string>, exampleRows: any, distinctValuesByColumn: any } };
+
+export type RecordImportFieldsFragment = { __typename?: 'RecordImport', id: string, version: number, status: string, fileName: string, sheetNames: Array<string>, sheetName?: string | null, rowCount?: number | null, isMapped: boolean, progress: number, processedRowCount: number, totalRowCount: number, importedRecordCount: number, skippedRowCount: number, failedRowCount: number, hasReport: boolean, errorMessage?: string | null };
+
+export type RecordImportPreviewQueryVariables = Exact<{
+  input: PreviewRecordImportSheetInput;
+}>;
+
+
+export type RecordImportPreviewQuery = { __typename?: 'Query', recordImportPreview: { __typename?: 'RecordImportPreview', rows: any, recordImport: { __typename?: 'RecordImport', id: string, version: number, status: string, fileName: string, sheetNames: Array<string>, sheetName?: string | null, rowCount?: number | null, isMapped: boolean, progress: number, processedRowCount: number, totalRowCount: number, importedRecordCount: number, skippedRowCount: number, failedRowCount: number, hasReport: boolean, errorMessage?: string | null } } };
+
+export type RecordImportProgressSubscriptionVariables = Exact<{
+  input: RecordImportSessionInput;
+}>;
+
+
+export type RecordImportProgressSubscription = { __typename?: 'Subscription', recordImportProgress: { __typename?: 'RecordImport', id: string, version: number, status: string, fileName: string, sheetNames: Array<string>, sheetName?: string | null, rowCount?: number | null, isMapped: boolean, progress: number, processedRowCount: number, totalRowCount: number, importedRecordCount: number, skippedRowCount: number, failedRowCount: number, hasReport: boolean, errorMessage?: string | null } };
+
+export type RecordImportReportUrlQueryVariables = Exact<{
+  input: RecordImportSessionInput;
+}>;
+
+
+export type RecordImportReportUrlQuery = { __typename?: 'Query', recordImportReportUrl: string };
+
+export type SetRecordImportMappingMutationVariables = Exact<{
+  input: SetRecordImportMappingInput;
+}>;
+
+
+export type SetRecordImportMappingMutation = { __typename?: 'Mutation', setRecordImportMapping: { __typename?: 'RecordImport', id: string, version: number, status: string, fileName: string, sheetNames: Array<string>, sheetName?: string | null, rowCount?: number | null, isMapped: boolean, progress: number, processedRowCount: number, totalRowCount: number, importedRecordCount: number, skippedRowCount: number, failedRowCount: number, hasReport: boolean, errorMessage?: string | null } };
+
+export type StartRecordImportMutationVariables = Exact<{
+  input: RecordImportVersionedInput;
+}>;
+
+
+export type StartRecordImportMutation = { __typename?: 'Mutation', startRecordImport: { __typename?: 'RecordImport', id: string, version: number, status: string, fileName: string, sheetNames: Array<string>, sheetName?: string | null, rowCount?: number | null, isMapped: boolean, progress: number, processedRowCount: number, totalRowCount: number, importedRecordCount: number, skippedRowCount: number, failedRowCount: number, hasReport: boolean, errorMessage?: string | null } };
+
 export type CreateEmailGroupChannelMutationVariables = Exact<{
   input: CreateEmailGroupChannelInput;
 }>;
@@ -10440,6 +10634,7 @@ export const MarketplaceAppDetailFieldsFragmentDoc = {"kind":"Document","definit
 export const MarketplaceAppFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MarketplaceAppFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MarketplaceApp"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"author"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"isVetted"}}]}}]} as unknown as DocumentNode<MarketplaceAppFieldsFragment, unknown>;
 export const NavigationMenuItemFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NavigationMenuItemFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"NavigationMenuItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"targetRecordId"}},{"kind":"Field","name":{"kind":"Name","value":"targetObjectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"folderId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"pageLayoutId"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<NavigationMenuItemFieldsFragment, unknown>;
 export const NavigationMenuItemQueryFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NavigationMenuItemQueryFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"NavigationMenuItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"NavigationMenuItemFields"}},{"kind":"Field","name":{"kind":"Name","value":"targetRecordIdentifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labelIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"imageIdentifier"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NavigationMenuItemFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"NavigationMenuItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"targetRecordId"}},{"kind":"Field","name":{"kind":"Name","value":"targetObjectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"folderId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"pageLayoutId"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<NavigationMenuItemQueryFieldsFragment, unknown>;
+export const RecordImportFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordImportFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImport"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"sheetNames"}},{"kind":"Field","name":{"kind":"Name","value":"sheetName"}},{"kind":"Field","name":{"kind":"Name","value":"rowCount"}},{"kind":"Field","name":{"kind":"Name","value":"isMapped"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"processedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"totalRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"importedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"skippedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasReport"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]} as unknown as DocumentNode<RecordImportFieldsFragment, unknown>;
 export const ApplicationRegistrationFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"galleryImagesUrls"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isVetted"}},{"kind":"Field","name":{"kind":"Name","value":"isPreInstalled"}},{"kind":"Field","name":{"kind":"Name","value":"isConfigured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ApplicationRegistrationFragmentFragment, unknown>;
 export const ApplicationRegistrationListItemFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationListItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}}]}}]} as unknown as DocumentNode<ApplicationRegistrationListItemFragment, unknown>;
 export const BillingPriceLicensedFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingPriceLicensedFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPriceLicensed"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"recurringInterval"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageType"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"isSellable"}}]}}]} as unknown as DocumentNode<BillingPriceLicensedFragmentFragment, unknown>;
@@ -10631,6 +10826,15 @@ export const BarChartDataDocument = {"kind":"Document","definitions":[{"kind":"O
 export const LineChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LineChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LineChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lineChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<LineChartDataQuery, LineChartDataQueryVariables>;
 export const PieChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PieChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PieChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pieChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"showCenterMetric"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<PieChartDataQuery, PieChartDataQueryVariables>;
 export const ExportRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"ExportRecords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRecordExportInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exportRecords"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"downloadPath"}}]}}]}}]} as unknown as DocumentNode<ExportRecordsSubscription, ExportRecordsSubscriptionVariables>;
+export const CancelRecordImportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CancelRecordImport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImportSessionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cancelRecordImport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<CancelRecordImportMutation, CancelRecordImportMutationVariables>;
+export const CreateRecordImportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRecordImport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRecordImportInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRecordImport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rows"}},{"kind":"Field","name":{"kind":"Name","value":"recordImport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordImportFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordImportFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImport"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"sheetNames"}},{"kind":"Field","name":{"kind":"Name","value":"sheetName"}},{"kind":"Field","name":{"kind":"Name","value":"rowCount"}},{"kind":"Field","name":{"kind":"Name","value":"isMapped"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"processedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"totalRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"importedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"skippedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasReport"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]} as unknown as DocumentNode<CreateRecordImportMutation, CreateRecordImportMutationVariables>;
+export const PrepareRecordImportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PrepareRecordImport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PrepareRecordImportInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prepareRecordImport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordImportFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordImportFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImport"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"sheetNames"}},{"kind":"Field","name":{"kind":"Name","value":"sheetName"}},{"kind":"Field","name":{"kind":"Name","value":"rowCount"}},{"kind":"Field","name":{"kind":"Name","value":"isMapped"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"processedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"totalRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"importedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"skippedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasReport"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]} as unknown as DocumentNode<PrepareRecordImportMutation, PrepareRecordImportMutationVariables>;
+export const RecordImportColumnSamplesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RecordImportColumnSamples"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImportSessionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordImportColumnSamples"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"headerValues"}},{"kind":"Field","name":{"kind":"Name","value":"exampleRows"}},{"kind":"Field","name":{"kind":"Name","value":"distinctValuesByColumn"}}]}}]}}]} as unknown as DocumentNode<RecordImportColumnSamplesQuery, RecordImportColumnSamplesQueryVariables>;
+export const RecordImportPreviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RecordImportPreview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PreviewRecordImportSheetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordImportPreview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rows"}},{"kind":"Field","name":{"kind":"Name","value":"recordImport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordImportFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordImportFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImport"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"sheetNames"}},{"kind":"Field","name":{"kind":"Name","value":"sheetName"}},{"kind":"Field","name":{"kind":"Name","value":"rowCount"}},{"kind":"Field","name":{"kind":"Name","value":"isMapped"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"processedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"totalRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"importedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"skippedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasReport"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]} as unknown as DocumentNode<RecordImportPreviewQuery, RecordImportPreviewQueryVariables>;
+export const RecordImportProgressDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RecordImportProgress"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImportSessionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordImportProgress"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordImportFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordImportFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImport"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"sheetNames"}},{"kind":"Field","name":{"kind":"Name","value":"sheetName"}},{"kind":"Field","name":{"kind":"Name","value":"rowCount"}},{"kind":"Field","name":{"kind":"Name","value":"isMapped"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"processedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"totalRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"importedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"skippedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasReport"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]} as unknown as DocumentNode<RecordImportProgressSubscription, RecordImportProgressSubscriptionVariables>;
+export const RecordImportReportUrlDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RecordImportReportUrl"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImportSessionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordImportReportUrl"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<RecordImportReportUrlQuery, RecordImportReportUrlQueryVariables>;
+export const SetRecordImportMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetRecordImportMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SetRecordImportMappingInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setRecordImportMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordImportFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordImportFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImport"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"sheetNames"}},{"kind":"Field","name":{"kind":"Name","value":"sheetName"}},{"kind":"Field","name":{"kind":"Name","value":"rowCount"}},{"kind":"Field","name":{"kind":"Name","value":"isMapped"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"processedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"totalRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"importedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"skippedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasReport"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]} as unknown as DocumentNode<SetRecordImportMappingMutation, SetRecordImportMappingMutationVariables>;
+export const StartRecordImportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartRecordImport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImportVersionedInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startRecordImport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordImportFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordImportFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RecordImport"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"sheetNames"}},{"kind":"Field","name":{"kind":"Name","value":"sheetName"}},{"kind":"Field","name":{"kind":"Name","value":"rowCount"}},{"kind":"Field","name":{"kind":"Name","value":"isMapped"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"processedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"totalRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"importedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"skippedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRowCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasReport"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]} as unknown as DocumentNode<StartRecordImportMutation, StartRecordImportMutationVariables>;
 export const CreateEmailGroupChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateEmailGroupChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEmailGroupChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createEmailGroupChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageChannel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isSyncEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"excludeGroupEmails"}},{"kind":"Field","name":{"kind":"Name","value":"contactAutoCreationPolicy"}}]}},{"kind":"Field","name":{"kind":"Name","value":"forwardingAddress"}}]}}]}}]} as unknown as DocumentNode<CreateEmailGroupChannelMutation, CreateEmailGroupChannelMutationVariables>;
 export const DeleteConnectedAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteConnectedAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteConnectedAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteConnectedAccountMutation, DeleteConnectedAccountMutationVariables>;
 export const DeleteEmailGroupChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteEmailGroupChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteEmailGroupChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteEmailGroupChannelMutation, DeleteEmailGroupChannelMutationVariables>;

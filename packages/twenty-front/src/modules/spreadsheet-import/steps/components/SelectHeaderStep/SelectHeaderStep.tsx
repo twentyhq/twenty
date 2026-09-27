@@ -13,6 +13,8 @@ import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/Spr
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useLingui } from '@lingui/react/macro';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
+import { type SpreadsheetImportServerAdapter } from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledHeadingContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[8]};
@@ -47,7 +49,7 @@ export const SelectHeaderStep = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { selectHeaderStepHook } = useSpreadsheetImportInternal();
+  const { selectHeaderStepHook, serverImport } = useSpreadsheetImportInternal();
 
   const computeColumnSuggestionsAndAutoMatch =
     useComputeColumnSuggestionsAndAutoMatch();
@@ -85,16 +87,62 @@ export const SelectHeaderStep = ({
     ],
   );
 
-  const handleOnContinue = useCallback(async () => {
-    // We consider data above header to be redundant
-    const trimmedData = importedRows.slice(selectedRowIndex + 1);
+  const handleServerContinue = useCallback(
+    async (adapter: SpreadsheetImportServerAdapter) => {
+      try {
+        const { headerValues, data, rowCount } = await adapter.prepareRows({
+          sheetName:
+            currentStepState.type === SpreadsheetImportStepType.selectHeader
+              ? currentStepState.sheetName
+              : undefined,
+          headerRowIndex: selectedRowIndex,
+        });
 
+        await computeColumnSuggestionsAndAutoMatch({ headerValues, data });
+
+        setCurrentStepState({
+          type: SpreadsheetImportStepType.matchColumns,
+          data,
+          headerValues,
+          rowCount,
+        });
+        setPreviousStepState(currentStepState);
+        nextStep();
+      } catch (error) {
+        onError((error as Error).message);
+      }
+    },
+    [
+      computeColumnSuggestionsAndAutoMatch,
+      currentStepState,
+      nextStep,
+      onError,
+      selectedRowIndex,
+      setCurrentStepState,
+      setPreviousStepState,
+    ],
+  );
+
+  const handleOnContinue = useCallback(async () => {
     setIsLoading(true);
 
-    await handleContinue(importedRows[selectedRowIndex], trimmedData);
+    if (isDefined(serverImport)) {
+      await handleServerContinue(serverImport);
+    } else {
+      // We consider data above header to be redundant
+      const trimmedData = importedRows.slice(selectedRowIndex + 1);
+
+      await handleContinue(importedRows[selectedRowIndex], trimmedData);
+    }
 
     setIsLoading(false);
-  }, [handleContinue, importedRows, selectedRowIndex]);
+  }, [
+    handleContinue,
+    handleServerContinue,
+    importedRows,
+    selectedRowIndex,
+    serverImport,
+  ]);
 
   const { t } = useLingui();
 

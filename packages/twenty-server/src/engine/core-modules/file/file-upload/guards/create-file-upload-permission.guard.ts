@@ -36,10 +36,7 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
       return true;
     }
 
-    const acceptedPermissionFlags =
-      fileFolder === FileFolder.CorePicture
-        ? CORE_PICTURE_UPLOAD_PERMISSION_FLAGS
-        : [PermissionFlagType.UPLOAD_FILE];
+    const acceptedPermissionFlags = this.getAcceptedPermissionFlags(fileFolder);
 
     for (const permissionFlag of acceptedPermissionFlags) {
       const hasPermission =
@@ -63,5 +60,20 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
         userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
       },
     );
+  }
+
+  // An import file is only ever read by the import, so importing records
+  // does not require the general file upload permission (SEC-1).
+  private getAcceptedPermissionFlags(
+    fileFolder: FileFolder,
+  ): readonly PermissionFlagType[] {
+    switch (fileFolder) {
+      case FileFolder.CorePicture:
+        return CORE_PICTURE_UPLOAD_PERMISSION_FLAGS;
+      case FileFolder.RecordImport:
+        return [PermissionFlagType.IMPORT_CSV];
+      default:
+        return [PermissionFlagType.UPLOAD_FILE];
+    }
   }
 }

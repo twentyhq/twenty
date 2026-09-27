@@ -2052,6 +2052,7 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_ASYNC_CSV_EXPORT_ENABLED
+  IS_ASYNC_CSV_IMPORT_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2955,6 +2956,7 @@ type ApplicationFileUploadTarget {
 
 enum FileFolder {
   RecordExport
+  RecordImport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -3422,6 +3424,36 @@ type RecordExport {
   progress: Int!
   errorMessage: String
   downloadPath: String
+}
+
+type RecordImportColumnSamples {
+  headerValues: [String!]!
+  exampleRows: JSON!
+  distinctValuesByColumn: JSON!
+}
+
+type RecordImport {
+  id: UUID!
+  version: Int!
+  status: String!
+  fileName: String!
+  sheetNames: [String!]!
+  sheetName: String
+  rowCount: Int
+  isMapped: Boolean!
+  progress: Int!
+  processedRowCount: Int!
+  totalRowCount: Int!
+  importedRecordCount: Int!
+  skippedRowCount: Int!
+  failedRowCount: Int!
+  hasReport: Boolean!
+  errorMessage: String
+}
+
+type RecordImportPreview {
+  recordImport: RecordImport!
+  rows: JSON!
 }
 
 type AiChatUsage {
@@ -3927,6 +3959,10 @@ type Query {
   exportApplication(universalIdentifier: UUID!): ApplicationExport!
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
+  recordImportPreview(input: PreviewRecordImportSheetInput!): RecordImportPreview!
+  recordImportColumnSamples(input: RecordImportSessionInput!): RecordImportColumnSamples!
+  recordImport(input: RecordImportSessionInput!): RecordImport!
+  recordImportReportUrl(input: RecordImportSessionInput!): String!
 }
 
 input RecordSharingTargetInput {
@@ -4053,6 +4089,15 @@ input LineChartDataInput {
 input BarChartDataInput {
   objectMetadataId: UUID!
   configuration: JSON!
+}
+
+input PreviewRecordImportSheetInput {
+  id: UUID!
+  sheetName: String
+}
+
+input RecordImportSessionInput {
+  id: UUID!
 }
 
 type Mutation {
@@ -4324,6 +4369,11 @@ type Mutation {
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
+  createRecordImport(input: CreateRecordImportInput!): RecordImportPreview!
+  prepareRecordImport(input: PrepareRecordImportInput!): RecordImport!
+  setRecordImportMapping(input: SetRecordImportMappingInput!): RecordImport!
+  startRecordImport(input: RecordImportVersionedInput!): RecordImport!
+  cancelRecordImport(input: RecordImportSessionInput!): Boolean!
 }
 
 input AddQuerySubscriptionInput {
@@ -5678,11 +5728,37 @@ input ApplicationFileUploadRequestInput {
   size: Int!
 }
 
+input CreateRecordImportInput {
+  fileId: UUID!
+  objectMetadataId: UUID!
+  timeZone: String!
+  fileName: String!
+}
+
+input PrepareRecordImportInput {
+  id: UUID!
+  version: Int!
+  sheetName: String
+  headerRowIndex: Int!
+}
+
+input SetRecordImportMappingInput {
+  id: UUID!
+  version: Int!
+  columns: JSON!
+}
+
+input RecordImportVersionedInput {
+  id: UUID!
+  version: Int!
+}
+
 type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  recordImportProgress(input: RecordImportSessionInput!): RecordImport!
   exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 

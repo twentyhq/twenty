@@ -10,6 +10,8 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { DropZone } from './components/DropZone';
+import { type SpreadsheetImportServerAdapter } from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
+import { isDefined } from 'twenty-shared/utils';
 
 type UploadStepProps = {
   setUploadedFile: (file: File) => void;
@@ -29,11 +31,64 @@ export const UploadStep = ({
   currentStepState,
 }: UploadStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { maxRecords, uploadStepHook, selectHeaderStepHook, selectHeader } =
-    useSpreadsheetImportInternal();
+  const {
+    maxRecords,
+    uploadStepHook,
+    selectHeaderStepHook,
+    selectHeader,
+    serverImport,
+  } = useSpreadsheetImportInternal();
 
   const computeColumnSuggestionsAndAutoMatch =
     useComputeColumnSuggestionsAndAutoMatch();
+
+  const handleServerContinue = useCallback(
+    async (file: File, adapter: SpreadsheetImportServerAdapter) => {
+      try {
+        const { sheetNames, rows } = await adapter.uploadFile(file);
+
+        if (sheetNames.length > 1) {
+          setCurrentStepState({
+            type: SpreadsheetImportStepType.selectSheet,
+            sheetNames,
+          });
+        } else if (selectHeader) {
+          setCurrentStepState({
+            type: SpreadsheetImportStepType.selectHeader,
+            data: rows,
+            sheetName: sheetNames[0],
+          });
+        } else {
+          const { headerValues, data, rowCount } = await adapter.prepareRows({
+            sheetName: sheetNames[0],
+            headerRowIndex: 0,
+          });
+
+          await computeColumnSuggestionsAndAutoMatch({ headerValues, data });
+
+          setCurrentStepState({
+            type: SpreadsheetImportStepType.matchColumns,
+            data,
+            headerValues,
+            rowCount,
+          });
+        }
+        setPreviousStepState(currentStepState);
+        nextStep();
+      } catch (error) {
+        onError((error as Error).message);
+      }
+    },
+    [
+      onError,
+      nextStep,
+      selectHeader,
+      setPreviousStepState,
+      setCurrentStepState,
+      currentStepState,
+      computeColumnSuggestionsAndAutoMatch,
+    ],
+  );
 
   const handleContinue = useCallback(
     async (workbook: WorkBook, file: File) => {
@@ -79,6 +134,7 @@ export const UploadStep = ({
       } else {
         setCurrentStepState({
           type: SpreadsheetImportStepType.selectSheet,
+          sheetNames: workbook.SheetNames,
           workbook,
         });
       }
@@ -101,12 +157,16 @@ export const UploadStep = ({
   );
 
   const handleOnContinue = useCallback(
-    async (data: WorkBook, file: File) => {
+    async (file: File, workbook?: WorkBook) => {
       setIsLoading(true);
-      await handleContinue(data, file);
+      if (isDefined(serverImport)) {
+        await handleServerContinue(file, serverImport);
+      } else if (isDefined(workbook)) {
+        await handleContinue(workbook, file);
+      }
       setIsLoading(false);
     },
-    [handleContinue],
+    [handleContinue, handleServerContinue, serverImport],
   );
 
   return (
