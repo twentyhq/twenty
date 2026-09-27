@@ -100,7 +100,7 @@ export const NavigationDrawer = ({
     setTableWidthResizeIsActive(true);
   };
 
-  const handleResizeStart = () => {
+  const handleResizeStart = (_size: number) => {
     setIsResizing(true);
     setTableWidthResizeIsActive(false);
   };
