@@ -27,7 +27,6 @@ import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFu
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
-import { logConsoleSearchState } from '@/log-console/states/logConsoleSearchState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -118,7 +117,7 @@ const StyledActiveSource = styled.div<{ isDetailPanelOpen: boolean }>`
   flex: 1;
   flex-direction: column;
   min-width: 0;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  padding-inline: ${themeCssVariables.spacing[3]};
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
     visibility: ${({ isDetailPanelOpen }) =>
@@ -182,7 +181,6 @@ export const LogConsole = () => {
     logConsoleHeightState,
   );
   const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
-  const setLogConsoleSearch = useSetAtomState(logConsoleSearchState);
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
   );
@@ -308,7 +306,6 @@ export const LogConsole = () => {
         ),
       ),
     );
-    setLogConsoleSearch('');
   };
 
   const closeLogConsole = () => {
