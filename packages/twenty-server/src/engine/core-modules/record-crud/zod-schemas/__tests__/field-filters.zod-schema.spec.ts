@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
+import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -46,6 +47,30 @@ describe('generateFieldFilterZodSchema', () => {
       // Root-level operators are stripped (unknown keys), so the malformed
       // `{ ilike }` filter never reaches the query runner.
       expect(schema!.parse({ ilike: '%hello%' })).toEqual({});
+    });
+  });
+
+  describe('MULTI_SELECT', () => {
+    it('advertises the containsAny operator accepted by the query layer', () => {
+      const schema = generateFieldFilterZodSchema({
+        type: FieldMetadataType.MULTI_SELECT,
+        name: 'tags',
+        options: [{ value: 'CUSTOMER' }, { value: 'PARTNER' }],
+      } as FieldMetadataEntity);
+
+      expect(schema).not.toBeNull();
+      const jsonSchema = toToolJsonSchema(schema!);
+
+      expect(jsonSchema).toMatchObject({
+        properties: {
+          containsAny: {
+            description: 'Contains any of these values',
+            items: { enum: ['CUSTOMER', 'PARTNER'] },
+            type: 'array',
+          },
+        },
+      });
+      expect(jsonSchema).not.toHaveProperty('properties.in');
     });
   });
 
