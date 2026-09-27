@@ -184,9 +184,6 @@ export class AuthService {
       }
     }
 
-    if (targetWorkspace) {
-      await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
-    }
 
     if (!user.passwordHash) {
       throw new AuthException(
@@ -209,6 +206,9 @@ export class AuthService {
         },
       );
     }
+        if (targetWorkspace) {
+          await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
+        }
 
     await this.checkIsEmailVerified(user.isEmailVerified);
 
