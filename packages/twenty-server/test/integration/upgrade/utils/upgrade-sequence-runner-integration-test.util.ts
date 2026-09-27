@@ -258,6 +258,7 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
               fail: [] as any[],
               success: [] as any[],
               interrupted: false,
+              skipped: [],
             };
 
             for (const [index, workspaceId] of ids.entries()) {
