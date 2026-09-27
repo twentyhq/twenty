@@ -17,7 +17,6 @@ import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFu
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
-import { logConsoleSearchState } from '@/log-console/states/logConsoleSearchState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -173,7 +172,6 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
-    jotaiStore.set(logConsoleSearchState.atom, '');
   },
   parameters: {
     layout: 'fullscreen',
@@ -667,7 +665,6 @@ export const Search: Story = {
       }),
       'app-logs',
     );
-    jotaiStore.set(logConsoleSearchState.atom, 'stripe');
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

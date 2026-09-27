@@ -140,10 +140,7 @@ export const LogConsoleTable = ({
         {isDefined(entriesSinceClear) && (
           <StyledEntriesSinceClear>
             {entriesSinceClear.map((entry, entryIndex) =>
-              renderEntryRow(
-                entry,
-                entriesSinceClear.length - entryIndex,
-              ),
+              renderEntryRow(entry, entriesSinceClear.length - entryIndex),
             )}
           </StyledEntriesSinceClear>
         )}
