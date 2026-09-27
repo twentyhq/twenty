@@ -780,9 +780,7 @@ export const LockedTab: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('tab', { name: 'Security' }),
-    );
+    await userEvent.click(await canvas.findByRole('tab', { name: 'Security' }));
     await canvas.findByText('Upgrade to access audit logs');
   },
 };
