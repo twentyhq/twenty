@@ -24,6 +24,7 @@ type ResizablePanelGapProps = {
   constraints: ResizablePanelConstraints;
   currentSize: number;
   onSizeChange: (size: number) => void;
+  onCollapse?: () => void;
   gapWidth: number;
   cssVariableName?: string;
   onResizeStart?: () => void;
@@ -34,6 +35,7 @@ export const ResizablePanelGap = ({
   constraints,
   currentSize,
   onSizeChange,
+  onCollapse,
   gapWidth,
   cssVariableName,
   onResizeStart,
@@ -44,6 +46,7 @@ export const ResizablePanelGap = ({
       constraints,
       currentSize,
       onSizeChange,
+      onCollapse,
       cssVariableName,
       onResizeStart,
     });

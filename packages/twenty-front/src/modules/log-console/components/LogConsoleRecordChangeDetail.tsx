@@ -70,14 +70,19 @@ export const LogConsoleRecordChangeDetail = ({
   const displayedSnapshot = action.valuesSnapshot ?? 'after';
 
   const renderFieldValue = ({
-    fieldMetadataItem,
-    value,
+    fieldDiff,
     recordStoreId,
   }: {
-    fieldMetadataItem: FieldMetadataItem;
-    value: unknown;
+    fieldDiff: {
+      fieldMetadataItem: FieldMetadataItem;
+      before?: unknown;
+      after?: unknown;
+    };
     recordStoreId: string;
   }) => {
+    const { fieldMetadataItem } = fieldDiff;
+    const value = fieldDiff[displayedSnapshot];
+
     if (
       isFieldValueEmpty({
         fieldDefinition: fieldMetadataItem,
@@ -90,7 +95,11 @@ export const LogConsoleRecordChangeDetail = ({
     if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
       return (
         <EventRelationFieldDiffValues
-          fieldDiff={{ before: value, after: value }}
+          fieldDiff={
+            isDefined(action.valuesSnapshot)
+              ? { before: value, after: value }
+              : { before: fieldDiff.before, after: fieldDiff.after }
+          }
           fieldMetadataItem={fieldMetadataItem}
         />
       );
@@ -136,8 +145,7 @@ export const LogConsoleRecordChangeDetail = ({
                   >
                     <ErrorBoundary fallbackRender={() => null}>
                       {renderFieldValue({
-                        fieldMetadataItem: fieldDiff.fieldMetadataItem,
-                        value: fieldDiff[displayedSnapshot],
+                        fieldDiff,
                         recordStoreId: `${diffId}-${fieldDiff.key}`,
                       })}
                     </ErrorBoundary>

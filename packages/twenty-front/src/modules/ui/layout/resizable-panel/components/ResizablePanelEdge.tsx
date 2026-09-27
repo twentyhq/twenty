@@ -61,6 +61,7 @@ type ResizablePanelEdgeProps = {
   constraints: ResizablePanelConstraints;
   currentSize: number;
   onSizeChange: (size: number) => void;
+  onCollapse?: () => void;
   showHandle?: boolean;
   cssVariableName?: string;
   onResizeStart?: (size: number) => void;
@@ -71,6 +72,7 @@ export const ResizablePanelEdge = ({
   constraints,
   currentSize,
   onSizeChange,
+  onCollapse,
   showHandle = true,
   cssVariableName,
   onResizeStart,
@@ -86,6 +88,7 @@ export const ResizablePanelEdge = ({
     constraints,
     currentSize,
     onSizeChange,
+    onCollapse,
     cssVariableName,
     onResizeStart,
   });

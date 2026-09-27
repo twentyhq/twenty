@@ -13,6 +13,7 @@ type UseResizablePanelProps = {
   constraints: ResizablePanelConstraints;
   currentSize: number;
   onSizeChange: (size: number) => void;
+  onCollapse?: () => void;
   cssVariableName?: string;
   onResizeStart?: (size: number) => void;
 };
@@ -25,6 +26,7 @@ export const useResizablePanel = ({
   constraints,
   currentSize,
   onSizeChange,
+  onCollapse,
   cssVariableName,
   onResizeStart,
 }: UseResizablePanelProps) => {
@@ -100,6 +102,8 @@ export const useResizablePanel = ({
           constraints.max,
         );
         onSizeChange(finalSize);
+      } else {
+        onCollapse?.();
       }
 
       setStartPointerPosition(null);
@@ -113,6 +117,7 @@ export const useResizablePanel = ({
       constraints.min,
       constraints.max,
       onSizeChange,
+      onCollapse,
     ],
   );
 

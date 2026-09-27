@@ -203,11 +203,17 @@ export const LogConsole = () => {
   const appHeight = windowHeight / getUiZoom();
   const logConsoleResizeConstraints = {
     min: 0,
-    max: appHeight - APP_HEADER_HEIGHT - LOG_CONSOLE_MIN_PAGE_HEIGHT,
+    max: Math.max(
+      appHeight - APP_HEADER_HEIGHT - LOG_CONSOLE_MIN_PAGE_HEIGHT,
+      LOG_CONSOLE_HEIGHT_CONSTRAINTS.min,
+    ),
     default: appHeight / 2,
   };
   const logConsoleBodyHeight = Math.min(
-    logConsoleHeight ?? logConsoleResizeConstraints.default,
+    Math.max(
+      logConsoleHeight ?? logConsoleResizeConstraints.default,
+      LOG_CONSOLE_HEIGHT_CONSTRAINTS.min,
+    ),
     logConsoleResizeConstraints.max,
   );
 
@@ -342,7 +348,7 @@ export const LogConsole = () => {
         <StyledUpgradeCardContainer>
           <SettingsEnterpriseFeatureGateCard
             title={t`Upgrade to access audit logs`}
-            description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
+            description={t`Record changes and app logs are available on your current plan. Other log types require an Organization subscription.`}
             buttonTitle={t`Upgrade`}
           />
         </StyledUpgradeCardContainer>

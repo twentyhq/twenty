@@ -48,13 +48,6 @@ export class EventLogsService {
   ): Promise<EventLogQueryResult> {
     await this.validateAccess(workspaceId, input.table);
 
-    if (!ALLOWED_TABLES.includes(input.table)) {
-      throw new EventLogsException(
-        `Invalid table: ${input.table}`,
-        EventLogsExceptionCode.INVALID_TABLE,
-      );
-    }
-
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
     const tableName = getClickHouseTableName(input.table);
     const eventFieldName = EVENT_LOG_TYPES[input.table].eventFieldName;
@@ -173,6 +166,13 @@ export class EventLogsService {
     workspaceId: string,
     table: EventLogTable,
   ): Promise<void> {
+    if (!ALLOWED_TABLES.includes(table)) {
+      throw new EventLogsException(
+        `Invalid table: ${table}`,
+        EventLogsExceptionCode.INVALID_TABLE,
+      );
+    }
+
     if (!this.clickHouseService.getMainClient()) {
       throw new EventLogsException(
         'Audit logs require ClickHouse to be configured. Please set the CLICKHOUSE_URL environment variable.',
