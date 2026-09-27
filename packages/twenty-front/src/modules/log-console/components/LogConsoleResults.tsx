@@ -2,15 +2,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, SearchInput } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import {
   IconEraser,
   IconPlayerPause,
   IconPlayerPlay,
   IconRefresh,
 } from 'twenty-ui/icon';
-import { useDebouncedCallback } from 'use-debounce';
-
 import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
 import { LogConsoleTimeRangeDropdown } from '@/log-console/components/LogConsoleTimeRangeDropdown';
 import { LogConsoleToolbar } from '@/log-console/components/LogConsoleToolbar';
@@ -18,7 +16,6 @@ import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/Log
 import { useLogConsoleRetention } from '@/log-console/hooks/useLogConsoleRetention';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
-import { logConsoleSearchState } from '@/log-console/states/logConsoleSearchState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { type LogConsoleFilter } from '@/log-console/types/LogConsoleFilter';
@@ -36,8 +33,6 @@ import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 const RECORDS_PER_PAGE = 100;
-
-const SEARCH_DEBOUNCE_IN_MILLISECONDS = 300;
 
 const sortNewestFirst = (eventLogRecords: EventLogRecord[]) =>
   eventLogRecords.toSorted(sortByProperty('timestamp')).toReversed();
@@ -67,10 +62,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const [logConsoleFilters, setLogConsoleFilters] = useAtomState(
     logConsoleFiltersState,
   );
-  const [logConsoleSearch, setLogConsoleSearch] = useAtomState(
-    logConsoleSearchState,
-  );
-  const [searchInput, setSearchInput] = useState(logConsoleSearch);
   const [refreshedAt, setRefreshedAt] = useState(() =>
     new Date().toISOString(),
   );
@@ -91,17 +82,13 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     filters: logConsoleFilters,
   });
 
-  const search = isDefined(source.searchPlaceholder)
-    ? logConsoleSearch
-    : undefined;
-
   const getDateRange = (now: string) =>
     getLogConsoleTimeRangeBounds({ timeRange, now, timeZone });
 
   const getEventLogsInput = (now: string) => ({
     table: source.table,
     first: RECORDS_PER_PAGE,
-    filters: { dateRange: getDateRange(now), fieldFilters, search },
+    filters: { dateRange: getDateRange(now), fieldFilters },
   });
 
   const dateRange = getDateRange(refreshedAt);
@@ -115,7 +102,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const { liveRecords, clearLiveRecords } = useEventLogsLiveStream({
     table: source.table,
     fieldFilters,
-    search,
     enabled: isLive,
   });
 
@@ -178,21 +164,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     setLogConsoleFilters(filters);
   };
 
-  const applySearch = useDebouncedCallback((trimmedSearch: string) => {
-    if (trimmedSearch !== logConsoleSearch) {
-      scrollToTop();
-      clearLiveRecords();
-      setPausedLiveRecords(isPaused ? [] : undefined);
-      setClearedLiveRecordCount(undefined);
-      setLogConsoleSearch(trimmedSearch);
-    }
-  }, SEARCH_DEBOUNCE_IN_MILLISECONDS);
-
-  const changeSearchInput = (value: string) => {
-    setSearchInput(value);
-    applySearch(value.trim());
-  };
-
   const openLog = (entry: EventLogRecord) => {
     setLogConsoleSelectedLog({ source, entry });
   };
@@ -226,7 +197,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         entries={[...liveEntries, ...records]}
         liveEntryCount={liveEntries.length}
         entriesSinceClear={entriesSinceClear}
-        searchQuery={logConsoleSearch}
         loading={loading}
         hasNextPage={hasNextPage}
         selectedEntry={logConsoleSelectedLog?.entry}
@@ -242,15 +212,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         filterFields={source.filterFields ?? []}
         filters={logConsoleFilters}
         onFiltersChange={changeFilters}
-        search={
-          isDefined(source.searchPlaceholder) ? (
-            <SearchInput
-              placeholder={t(source.searchPlaceholder)}
-              value={searchInput}
-              onChange={changeSearchInput}
-            />
-          ) : undefined
-        }
         logsAction={logsAction}
       >
         {isStreaming && (

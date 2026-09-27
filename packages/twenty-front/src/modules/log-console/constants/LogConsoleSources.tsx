@@ -158,7 +158,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       },
     ],
     idFields: [{ label: msg`User ID`, getId: (entry) => entry.userId }],
-    searchPlaceholder: msg`Search events`,
     getSeverity: (entry) => getLogConsoleSecurityEvent(entry)?.severity,
     getDetailTitle: (entry) => {
       const securityEvent = getLogConsoleSecurityEvent(entry);
@@ -196,7 +195,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         getId: (entry) => entry.properties?.executionId,
       },
     ],
-    searchPlaceholder: msg`Search logs`,
     getSeverity: (entry) =>
       LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
     getDetailTitle: (entry) => entry.event,
@@ -240,7 +238,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       },
       { label: msg`Webhook ID`, getId: (entry) => entry.properties?.webhookId },
     ],
-    searchPlaceholder: msg`Search deliveries`,
     getSeverity: (entry) =>
       entry.properties?.success === true ? undefined : 'error',
     getDetailTitle: (entry) => {
