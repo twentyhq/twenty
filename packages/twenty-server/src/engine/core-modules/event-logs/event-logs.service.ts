@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EventLogTable } from 'twenty-shared/types';
@@ -49,7 +49,10 @@ export class EventLogsService {
     await this.validateAccess(workspaceId, input.table);
 
     if (!ALLOWED_TABLES.includes(input.table)) {
-      throw new BadRequestException(`Invalid table: ${input.table}`);
+      throw new EventLogsException(
+        `Invalid table: ${input.table}`,
+        EventLogsExceptionCode.INVALID_TABLE,
+      );
     }
 
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
