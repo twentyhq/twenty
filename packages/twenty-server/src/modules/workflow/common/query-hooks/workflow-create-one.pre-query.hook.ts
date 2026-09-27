@@ -3,12 +3,13 @@ import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { withNewWorkflowShareWith } from 'src/modules/workflow/common/utils/with-new-workflow-share-with.util';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @WorkspaceQueryHook(`workflow.createOne`)
 export class WorkflowCreateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(
-    _authContext: WorkspaceAuthContext,
+    authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: CreateOneResolverArgs<WorkflowWorkspaceEntity>,
   ): Promise<CreateOneResolverArgs<WorkflowWorkspaceEntity>> {
@@ -19,9 +20,12 @@ export class WorkflowCreateOnePreQueryHook implements WorkspacePreQueryHookInsta
       ...dataWithoutStatuses
     } = payload.data; // silent not to break creation from view with filter
 
-    return {
-      ...payload,
-      data: dataWithoutStatuses as WorkflowWorkspaceEntity,
-    };
+    return withNewWorkflowShareWith({
+      authContext,
+      payload: {
+        ...payload,
+        data: dataWithoutStatuses as WorkflowWorkspaceEntity,
+      },
+    });
   }
 }

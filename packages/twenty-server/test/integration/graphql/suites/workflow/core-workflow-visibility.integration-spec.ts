@@ -11,6 +11,8 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
@@ -124,6 +126,119 @@ const listCoreWorkflowIds = async (
   expect(response.body.errors).toBeUndefined();
 
   return response.body.data.coreWorkflows.edges.map(
+    ({ node }: { node: { id: string } }) => node.id,
+  );
+};
+
+const DESTROY_WORKFLOW_MUTATION = `
+  mutation DestroyWorkflow($id: UUID!) {
+    destroyWorkflow(id: $id) {
+      id
+    }
+  }
+`;
+
+const createActiveManualWorkflow = async (name: string) => {
+  const createResponse = await workflowGraphqlRequest(
+    CREATE_CORE_WORKFLOW_MUTATION,
+    { input: { name } },
+  );
+
+  expect(createResponse.body.errors).toBeUndefined();
+
+  const coreWorkflowId: string = createResponse.body.data.createCoreWorkflow.id;
+  const workspaceWorkflowId: string =
+    createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
+
+  const versions = await pollWorkflowGraphqlRequest<
+    {
+      coreWorkflowVersions: { workspaceWorkflowVersionId: string | null }[];
+    },
+    { workspaceWorkflowVersionId: string | null }[] | undefined
+  >({
+    query: `
+      query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
+        coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+          workspaceWorkflowVersionId
+        }
+      }
+    `,
+    variables: { workspaceWorkflowId },
+    extract: (data) => data?.coreWorkflowVersions,
+    until: (coreWorkflowVersions) =>
+      isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
+  });
+
+  const workspaceWorkflowVersionId = versions![0].workspaceWorkflowVersionId!;
+
+  await updateWorkflowVersionTrigger({
+    workflowVersionId: workspaceWorkflowVersionId,
+    trigger: {
+      name: 'Manual Trigger',
+      type: 'MANUAL',
+      settings: { outputSchema: {} },
+      nextStepIds: [],
+      position: { x: 0, y: 0 },
+    },
+  });
+
+  const stepResponse = await workflowGraphqlRequest(
+    `
+      mutation CreateWorkflowVersionStep(
+        $input: CreateWorkflowVersionStepInput!
+      ) {
+        createWorkflowVersionStep(input: $input) {
+          stepsDiff
+        }
+      }
+    `,
+    {
+      input: {
+        workflowVersionId: workspaceWorkflowVersionId,
+        stepType: 'FIND_RECORDS',
+        parentStepId: 'trigger',
+        position: { x: 200, y: 0 },
+      },
+    },
+  );
+
+  expect(stepResponse.body.errors).toBeUndefined();
+
+  const activateResponse = await workflowGraphqlRequest(
+    ACTIVATE_VERSION_MUTATION,
+    { workflowVersionId: workspaceWorkflowVersionId },
+  );
+
+  expect(activateResponse.body.errors).toBeUndefined();
+
+  return { coreWorkflowId, workspaceWorkflowId, workspaceWorkflowVersionId };
+};
+
+// The generic record API, which the run and version pages read, rather than
+// the core workflow API that #26243 already gates.
+const findRecordIds = async (
+  requester: (query: string, variables?: object) => request.Test,
+  objectNamePlural: 'workflows' | 'workflowRuns' | 'workflowVersions',
+  id: string,
+) => {
+  const response = await requester(
+    `
+      query FindRecords($id: UUID!) {
+        ${objectNamePlural}(filter: { id: { eq: $id } }) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `,
+    { id },
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data[objectNamePlural].edges.map(
     ({ node }: { node: { id: string } }) => node.id,
   );
 };
@@ -511,77 +626,11 @@ describe('core workflow visibility (e2e)', () => {
     };
 
     beforeAll(async () => {
-      const createResponse = await workflowGraphqlRequest(
-        CREATE_CORE_WORKFLOW_MUTATION,
-        { input: { name: 'Manual Trigger Workflow' } },
-      );
-
-      expect(createResponse.body.errors).toBeUndefined();
-      manualCoreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
-      manualWorkspaceWorkflowId =
-        createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
-
-      const versions = await pollWorkflowGraphqlRequest<
-        {
-          coreWorkflowVersions: { workspaceWorkflowVersionId: string | null }[];
-        },
-        { workspaceWorkflowVersionId: string | null }[] | undefined
-      >({
-        query: `
-          query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
-            coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
-              workspaceWorkflowVersionId
-            }
-          }
-        `,
-        variables: { workspaceWorkflowId: manualWorkspaceWorkflowId },
-        extract: (data) => data?.coreWorkflowVersions,
-        until: (coreWorkflowVersions) =>
-          isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
-      });
-
-      manualWorkspaceWorkflowVersionId =
-        versions![0].workspaceWorkflowVersionId!;
-
-      await updateWorkflowVersionTrigger({
-        workflowVersionId: manualWorkspaceWorkflowVersionId,
-        trigger: {
-          name: 'Manual Trigger',
-          type: 'MANUAL',
-          settings: { outputSchema: {} },
-          nextStepIds: [],
-          position: { x: 0, y: 0 },
-        },
-      });
-
-      const stepResponse = await workflowGraphqlRequest(
-        `
-          mutation CreateWorkflowVersionStep(
-            $input: CreateWorkflowVersionStepInput!
-          ) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        {
-          input: {
-            workflowVersionId: manualWorkspaceWorkflowVersionId,
-            stepType: 'FIND_RECORDS',
-            parentStepId: 'trigger',
-            position: { x: 200, y: 0 },
-          },
-        },
-      );
-
-      expect(stepResponse.body.errors).toBeUndefined();
-
-      const activateResponse = await workflowGraphqlRequest(
-        ACTIVATE_VERSION_MUTATION,
-        { workflowVersionId: manualWorkspaceWorkflowVersionId },
-      );
-
-      expect(activateResponse.body.errors).toBeUndefined();
+      ({
+        coreWorkflowId: manualCoreWorkflowId,
+        workspaceWorkflowId: manualWorkspaceWorkflowId,
+        workspaceWorkflowVersionId: manualWorkspaceWorkflowVersionId,
+      } = await createActiveManualWorkflow('Manual Trigger Workflow'));
     });
 
     afterAll(async () => {
@@ -626,6 +675,185 @@ describe('core workflow visibility (e2e)', () => {
           APPLE_JANE_ADMIN_ACCESS_TOKEN,
         ),
       ).toContain(manualWorkspaceWorkflowVersionId);
+    });
+  });
+
+  // A run holds the workflow's inputs and step outputs, so it has to be as
+  // private as the workflow even when read through the generic record API.
+  describe('the runs and versions of a workflow', () => {
+    let runsCoreWorkflowId: string;
+    let runsWorkspaceWorkflowId: string;
+    let runsWorkspaceWorkflowVersionId: string;
+    let workflowRunId: string;
+
+    beforeAll(async () => {
+      ({
+        coreWorkflowId: runsCoreWorkflowId,
+        workspaceWorkflowId: runsWorkspaceWorkflowId,
+        workspaceWorkflowVersionId: runsWorkspaceWorkflowVersionId,
+      } = await createActiveManualWorkflow('Workflow With Runs'));
+
+      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
+        input: { workflowVersionId: runsWorkspaceWorkflowVersionId },
+      });
+
+      expect(runResponse.body.errors).toBeUndefined();
+      workflowRunId = runResponse.body.data.runWorkflowVersion.workflowRunId;
+    });
+
+    afterAll(async () => {
+      if (isDefined(runsWorkspaceWorkflowId)) {
+        await setVisibility(runsCoreWorkflowId, WorkflowVisibility.WORKSPACE);
+        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
+          id: runsWorkspaceWorkflowId,
+        });
+      }
+    });
+
+    it('lets another member read them while the workflow is visible to the workspace', async () => {
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
+      ).toEqual([workflowRunId]);
+      expect(
+        await findRecordIds(
+          asOtherMember,
+          'workflowVersions',
+          runsWorkspaceWorkflowVersionId,
+        ),
+      ).toEqual([runsWorkspaceWorkflowVersionId]);
+    });
+
+    it('hides the workflow, its runs and its versions from another member once private', async () => {
+      const response = await setVisibility(
+        runsCoreWorkflowId,
+        WorkflowVisibility.PRIVATE,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      expect(
+        await findRecordIds(
+          asOtherMember,
+          'workflows',
+          runsWorkspaceWorkflowId,
+        ),
+      ).toEqual([]);
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
+      ).toEqual([]);
+      expect(
+        await findRecordIds(
+          asOtherMember,
+          'workflowVersions',
+          runsWorkspaceWorkflowVersionId,
+        ),
+      ).toEqual([]);
+    });
+
+    it('keeps them readable by its creator while private', async () => {
+      expect(
+        await findRecordIds(
+          workflowGraphqlRequest,
+          'workflowRuns',
+          workflowRunId,
+        ),
+      ).toEqual([workflowRunId]);
+      expect(
+        await findRecordIds(
+          workflowGraphqlRequest,
+          'workflows',
+          runsWorkspaceWorkflowId,
+        ),
+      ).toEqual([runsWorkspaceWorkflowId]);
+    });
+
+    it('gives them back to another member once the workflow is visible to the workspace again', async () => {
+      const response = await setVisibility(
+        runsCoreWorkflowId,
+        WorkflowVisibility.WORKSPACE,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
+      ).toEqual([workflowRunId]);
+    });
+  });
+
+  // An API key has to name whom a new private record is shared with, and the
+  // workflow create hook names everyone on its behalf. That grant is not the
+  // one the visibility sync writes, so the sync has to withdraw it as well.
+  describe('a workflow created by an API key through the record API', () => {
+    const apiKeyWorkflowId = randomUUID();
+    let apiKeyCoreWorkflowId: string;
+
+    beforeAll(async () => {
+      const createResponse = await makeGraphqlApiRequestWithApiKey(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'workflow',
+          gqlFields: 'id coreWorkflowId',
+          data: { id: apiKeyWorkflowId, name: 'API Key Workflow' },
+        }),
+      );
+
+      expect(createResponse.body.errors).toBeUndefined();
+      expect(createResponse.body.data.createWorkflow.id).toBe(apiKeyWorkflowId);
+
+      // The core workflow is written by the create post-query hook, after the
+      // record has been returned.
+      apiKeyCoreWorkflowId = (await pollWorkflowGraphqlRequest<
+        { workflows: { edges: { node: { coreWorkflowId: string | null } }[] } },
+        string | null | undefined
+      >({
+        query: `
+          query ApiKeyWorkflow($id: UUID!) {
+            workflows(filter: { id: { eq: $id } }) {
+              edges {
+                node {
+                  coreWorkflowId
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: apiKeyWorkflowId },
+        extract: (data) => data?.workflows.edges[0]?.node.coreWorkflowId,
+        until: (coreWorkflowId) => isDefined(coreWorkflowId),
+      }))!;
+    });
+
+    afterAll(async () => {
+      if (isDefined(apiKeyCoreWorkflowId)) {
+        await setVisibility(apiKeyCoreWorkflowId, WorkflowVisibility.WORKSPACE);
+      }
+      await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
+        id: apiKeyWorkflowId,
+      });
+    });
+
+    it('is visible to every member', async () => {
+      expect(
+        await findRecordIds(asOtherMember, 'workflows', apiKeyWorkflowId),
+      ).toEqual([apiKeyWorkflowId]);
+    });
+
+    it('is hidden from another member once whoever claims it makes it private', async () => {
+      const response = await setVisibility(
+        apiKeyCoreWorkflowId,
+        WorkflowVisibility.PRIVATE,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        await findRecordIds(asOtherMember, 'workflows', apiKeyWorkflowId),
+      ).toEqual([]);
+      expect(
+        await findRecordIds(
+          workflowGraphqlRequest,
+          'workflows',
+          apiKeyWorkflowId,
+        ),
+      ).toEqual([apiKeyWorkflowId]);
     });
   });
 });

@@ -1506,6 +1506,10 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconSettingsAutomation',
         isSearchable: true,
         shortcut: 'W',
+        // Who may read a workflow is decided on the core workflow and mirrored
+        // here as grants (syncWorkflowRecordShares), so that its runs and
+        // versions can inherit it rather than every reader re-checking core.
+        readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -1596,6 +1600,10 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        // A run carries its workflow's inputs and outputs, so it is exactly as
+        // private as the workflow that produced it.
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['workflow'],
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -1643,6 +1651,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconVersions',
         isSystem: true,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['workflow'],
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -7,7 +8,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-import { Equal, In, IsNull, Or } from 'typeorm';
+import { DataSource, Equal, In, IsNull, Or } from 'typeorm';
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,6 +30,7 @@ import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
+import { syncWorkflowRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-record-shares.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -75,6 +77,8 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -503,6 +507,12 @@ export class CoreWorkflowMutationWorkspaceService {
         workspaceId,
         workspaceWorkflowId,
       );
+
+      await syncWorkflowRecordShares({
+        manager: this.coreDataSource.manager,
+        workspaceId,
+        workspaceWorkflowIds: [workspaceWorkflowId],
+      });
     } catch (error) {
       try {
         await this.rollbackCreatedWorkflow(
@@ -875,13 +885,31 @@ export class CoreWorkflowMutationWorkspaceService {
     // cannot both pass it and have the later write silently take the workflow.
     // A workspace-visible workflow is already editable and deletable by every
     // member, so claiming one grants no access the claimer did not have.
-    const claimResult = await this.coreWorkflowRepository.update(
-      workspaceId,
-      {
-        id: coreWorkflowId,
-        createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
+    // The grants its runs inherit are rewritten in the same transaction, so a
+    // workflow never reads as private in core while its runs stay shared.
+    const claimResult = await this.coreDataSource.transaction(
+      async (manager) => {
+        const result = await this.coreWorkflowRepository
+          .withManager(manager)
+          .update(
+            workspaceId,
+            {
+              id: coreWorkflowId,
+              createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
+            },
+            { visibility, createdByUserWorkspaceId: userWorkspaceId },
+          );
+
+        if ((result.affected ?? 0) > 0) {
+          await syncWorkflowRecordShares({
+            manager,
+            workspaceId,
+            coreWorkflowIds: [coreWorkflowId],
+          });
+        }
+
+        return result;
       },
-      { visibility, createdByUserWorkspaceId: userWorkspaceId },
     );
 
     if (claimResult.affected === 0) {

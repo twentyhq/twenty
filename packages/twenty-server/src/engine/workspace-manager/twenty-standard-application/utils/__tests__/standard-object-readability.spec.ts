@@ -23,6 +23,8 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
   agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
+  workflowRun: STANDARD_OBJECT_FIELDS.workflowRun.workflow,
+  workflowVersion: STANDARD_OBJECT_FIELDS.workflowVersion.workflow,
 } as const;
 
 describe('Standard object readability', () => {
@@ -73,6 +75,7 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.messageSuppression.universalIdentifier,
 
     STANDARD_OBJECTS.recordShare.universalIdentifier,
+    STANDARD_OBJECTS.workflow.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
     ),
@@ -84,6 +87,30 @@ describe('Standard object readability', () => {
         flatObjectMetadata.universalIdentifier,
       ),
   );
+
+  // Its grants carry the core workflow's visibility, which its runs and
+  // versions then inherit.
+  it('declares workflow PRIVATE and resolves it as the only parent of its runs and versions', () => {
+    expect(findStandardFlatObjectMetadata('workflow')).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+    });
+
+    for (const objectName of ['workflowRun', 'workflowVersion'] as const) {
+      expect(
+        resolveParents(objectName).map((parent) =>
+          parent.kind === 'column'
+            ? {
+                joinColumnName: parent.joinColumnName,
+                parentNameSingular:
+                  parent.parentFlatObjectMetadata.nameSingular,
+              }
+            : parent.kind,
+        ),
+      ).toEqual([
+        { joinColumnName: 'workflowId', parentNameSingular: 'workflow' },
+      ]);
+    }
+  });
 
   it('declares recordShare SYSTEM for readability and writability', () => {
     expect(findStandardFlatObjectMetadata('recordShare')).toMatchObject({
