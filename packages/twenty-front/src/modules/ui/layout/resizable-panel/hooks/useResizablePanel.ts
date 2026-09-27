@@ -34,6 +34,7 @@ export const useResizablePanel = ({
     number | null
   >(null);
   const [startSize, setStartSize] = useState<number>(0);
+  // eslint-disable-next-line twenty/no-state-useref -- pointer callbacks read this synchronously; useState causes stale closures
   const hasDraggedRef = useRef(false);
 
   // reading computed style on every pointer move forces a synchronous style recalc; zoom cannot change mid-drag
