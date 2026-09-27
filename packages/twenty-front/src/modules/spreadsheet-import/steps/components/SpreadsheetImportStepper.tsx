@@ -65,7 +65,7 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.selectSheet:
       return (
         <SelectSheetStep
-          sheetNames={currentStepState.workbook.SheetNames}
+          sheetNames={currentStepState.sheetNames}
           setCurrentStepState={setCurrentStepState}
           currentStepState={currentStepState}
           onError={handleError}

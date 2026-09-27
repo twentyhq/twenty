@@ -10,6 +10,7 @@ import {
 } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import {
+  isDefined,
   normalizeSpreadsheetImportRows,
   type SpreadsheetColumn,
   type SpreadsheetColumns,
@@ -18,6 +19,7 @@ import {
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
+import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
@@ -83,7 +85,9 @@ export const MatchColumnsStep = ({
     headerValues,
   );
 
-  const { matchColumnsStepHook } = useSpreadsheetImportInternal();
+  const { matchColumnsStepHook, serverImport, onClose } =
+    useSpreadsheetImportInternal();
+  const hideStepBar = useHideStepBar();
 
   const { t } = useLingui();
 
@@ -146,6 +150,24 @@ export const MatchColumnsStep = ({
       rawData: ImportedRow[],
       columns: SpreadsheetColumns,
     ) => {
+      if (isDefined(serverImport)) {
+        setCurrentStepState({
+          type: SpreadsheetImportStepType.importData,
+          recordsToImportCount:
+            currentStepState.type === SpreadsheetImportStepType.matchColumns
+              ? (currentStepState.rowCount ?? 0)
+              : 0,
+        });
+        hideStepBar();
+        try {
+          await serverImport.importRows(columns);
+          onClose();
+        } catch (error) {
+          onError((error as Error).message);
+          setCurrentStepState(currentStepState);
+        }
+        return;
+      }
       try {
         setIsLoading(true);
         const data = await matchColumnsStepHook(values, rawData, columns);
@@ -167,6 +189,9 @@ export const MatchColumnsStep = ({
       setPreviousStepState,
       setCurrentStepState,
       currentStepState,
+      serverImport,
+      hideStepBar,
+      onClose,
     ],
   );
 

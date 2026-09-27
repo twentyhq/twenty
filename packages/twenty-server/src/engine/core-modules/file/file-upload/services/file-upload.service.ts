@@ -49,6 +49,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.EmailImage,
   FileFolder.AppTarball,
   FileFolder.CorePicture,
+  FileFolder.RecordImport,
 ] as const;
 
 // A tarball leaves quarantine through completeAppTarballUpload only, behind
@@ -57,6 +58,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
 export const DEDICATED_COMPLETION_FILE_FOLDERS = [
   FileFolder.AppTarball,
   FileFolder.CorePicture,
+  FileFolder.RecordImport,
 ] as const;
 
 @Injectable()

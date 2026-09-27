@@ -1,21 +1,25 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, Like, Not, Repository } from 'typeorm';
+import { IsNull, LessThan, Like, MoreThan, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
   PENDING_FILE_MAX_AGE_MS,
   RECORD_EXPORT_FILE_MAX_AGE_MS,
+  RECORD_IMPORT_FILE_MIN_AGE_MS,
 } from 'src/engine/core-modules/file/file-upload/crons/constants/pending-file-cleanup.constants';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { getRecordImportSessionCacheKey } from 'src/engine/core-modules/record-import/utils/get-record-import-session-cache-key.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -30,6 +34,8 @@ export class PendingFileCleanupService {
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly fileStorageService: FileStorageService,
+    @Inject(CacheStorageNamespace.EngineRecordImport)
+    private readonly recordImportCacheStorageService: CacheStorageService,
   ) {}
 
   async cleanupStaleFiles(): Promise<number> {
@@ -104,7 +110,72 @@ export class PendingFileCleanupService {
       }
     }
 
+    return deletedCount + (await this.cleanupExpiredRecordImportFiles());
+  }
+
+  // Import files outlive their upload: they are kept while their session
+  // exists, however long mapping and review take, and reaped once it expired.
+  private async cleanupExpiredRecordImportFiles(): Promise<number> {
+    const threshold = new Date(Date.now() - RECORD_IMPORT_FILE_MIN_AGE_MS);
+    let deletedCount = 0;
+    let lastFileId: string | undefined;
+    let files: FileEntity[];
+
+    do {
+      files = await this.fileRepository.find({
+        where: {
+          path: Like(`${FileFolder.RecordImport}/%`),
+          status: FILE_STATUS.UPLOADED,
+          createdAt: LessThan(threshold),
+          workspaceId: Not(IsNull()),
+          ...(isDefined(lastFileId) ? { id: MoreThan(lastFileId) } : {}),
+        },
+        order: { id: 'ASC' },
+        take: PENDING_FILE_CLEANUP_BATCH_SIZE,
+      });
+
+      if (files.length === 0) {
+        break;
+      }
+
+      lastFileId = files[files.length - 1].id;
+
+      const sessions = await this.recordImportCacheStorageService.mget(
+        files.map((file) =>
+          getRecordImportSessionCacheKey({
+            workspaceId: file.workspaceId ?? '',
+            id: this.getRecordImportSessionId(file.path),
+          }),
+        ),
+      );
+
+      for (const [index, file] of files.entries()) {
+        if (isDefined(sessions[index]) || !isDefined(file.workspaceId)) {
+          continue;
+        }
+
+        try {
+          await this.fileStorageService.deleteByFileId({
+            fileId: file.id,
+            workspaceId: file.workspaceId,
+            fileFolder: FileFolder.RecordImport,
+          });
+          deletedCount++;
+        } catch (error) {
+          this.logger.warn(
+            `Failed to clean up import file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
+          );
+        }
+      }
+    } while (files.length === PENDING_FILE_CLEANUP_BATCH_SIZE);
+
     return deletedCount;
+  }
+
+  // Import paths start with the session id, a UUID: "<id>.csv" for the
+  // upload, "<id>-working/..." for the files derived from it
+  private getRecordImportSessionId(path: string): string {
+    return removeFileFolderFromFileEntityPath(path).slice(0, 36);
   }
 
   // The row has already been removed, so this only tidies the (possibly

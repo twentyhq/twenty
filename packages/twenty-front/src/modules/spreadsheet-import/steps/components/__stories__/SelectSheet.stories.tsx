@@ -52,6 +52,7 @@ export const Default = () => (
           setPreviousStepState={() => {}}
           currentStepState={{
             type: SpreadsheetImportStepType.selectSheet,
+            sheetNames,
             workbook: {
               SheetNames: sheetNames,
               Sheets: {

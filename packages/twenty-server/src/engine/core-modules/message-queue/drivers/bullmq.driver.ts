@@ -577,6 +577,19 @@ export class BullMQDriver
     };
   }
 
+  async getWaitingJobCount(queueName: MessageQueue): Promise<number> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(
+        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
+      );
+    }
+
+    return this.queueMap[queueName].getJobCountByTypes(
+      'waiting',
+      'prioritized',
+    );
+  }
+
   async getInFlightJobs<T extends MessageQueueJobData>(
     queueName: MessageQueue,
   ): Promise<InFlightQueueJob<T>[]> {

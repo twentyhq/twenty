@@ -33,6 +33,18 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     cacheControl: 'private, no-store',
     allowedMimeTypes: ['text/csv'],
   },
+  [FileFolder.RecordImport]: {
+    ignoreExpirationToken: false,
+    cacheControl: 'private, no-store',
+    // Completion only screens the upload; the parser re-detects the format
+    allowedMimeTypes: [
+      'text/csv',
+      'text/plain',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'application/x-cfb',
+    ],
+  },
   [FileFolder.CorePicture]: {
     ignoreExpirationToken: true,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,

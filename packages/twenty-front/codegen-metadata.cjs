@@ -43,6 +43,7 @@ module.exports = {
     './src/modules/page-layout/graphql/**/*.{ts,tsx}',
     './src/modules/marketplace/graphql/**/*.{ts,tsx}',
     './src/modules/record-export/graphql/**/*.{ts,tsx}',
+    './src/modules/record-import/graphql/**/*.{ts,tsx}',
     './src/modules/metadata-store/graphql/**/*.{ts,tsx}',
     './src/modules/sse-db-event/graphql/**/*.{ts,tsx}',
     './src/modules/geo-map/graphql-query/*.{ts,tsx}',

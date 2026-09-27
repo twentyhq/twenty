@@ -6,6 +6,7 @@ import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useDropzone } from 'react-dropzone';
 import { MainButton, useToast } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -105,12 +106,14 @@ const StyledButtonsContainer = styled.div`
 `;
 
 type DropZoneProps = {
-  onContinue: (data: WorkBook, file: File) => void;
+  // The workbook is only read in the browser when the server does not parse
+  onContinue: (file: File, workbook?: WorkBook) => void;
   isLoading: boolean;
 };
 
 export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
-  const { maxFileSize, dateFormat, parseRaw } = useSpreadsheetImportInternal();
+  const { maxFileSize, dateFormat, parseRaw, serverImport } =
+    useSpreadsheetImportInternal();
   const { formatNumber } = useNumberFormat();
 
   const [loading, setLoading] = useState(false);
@@ -144,6 +147,11 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
     },
     onDropAccepted: async ([file]) => {
       setLoading(true);
+      if (isDefined(serverImport)) {
+        await onContinue(file);
+        setLoading(false);
+        return;
+      }
       const arrayBuffer = await readFileAsync(file);
       const workbook = read(arrayBuffer, {
         cellDates: true,
@@ -153,7 +161,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
         dense: true,
       });
       setLoading(false);
-      onContinue(workbook, file);
+      onContinue(file, workbook);
     },
   });
 
@@ -194,9 +202,11 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
               variant="outline"
             >{t`Download sample`}</MainButton>
           </StyledButtonsContainer>
-          <StyledFooterText>
-            {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}
-          </StyledFooterText>
+          {!isDefined(serverImport) && (
+            <StyledFooterText>
+              {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}
+            </StyledFooterText>
+          )}
         </>
       )}
     </StyledContainer>

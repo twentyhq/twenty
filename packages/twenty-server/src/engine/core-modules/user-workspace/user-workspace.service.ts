@@ -24,11 +24,15 @@ import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-p
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
@@ -503,6 +507,46 @@ export class UserWorkspaceService {
         },
       });
     }, authContext);
+  }
+
+  // Rebuilds a user's auth context outside a request, e.g. in a worker acting
+  // for them. Undefined once they left the workspace or it was re-joined
+  // under another user workspace.
+  async buildUserAuthContextForWorkspaceMember({
+    workspaceId,
+    workspaceMemberId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+    userWorkspaceId: string;
+  }): Promise<UserWorkspaceAuthContext | undefined> {
+    const workspaceMember = await this.getWorkspaceMember({
+      workspaceId,
+      workspaceMemberId,
+    });
+
+    if (!isDefined(workspaceMember)) {
+      return undefined;
+    }
+
+    const userWorkspace = await this.getUserWorkspaceForUser({
+      userId: workspaceMember.userId,
+      workspaceId,
+      relations: ['user', 'workspace'],
+    });
+
+    if (!isDefined(userWorkspace) || userWorkspace.id !== userWorkspaceId) {
+      return undefined;
+    }
+
+    return buildUserAuthContext({
+      workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
+      user: fromUserEntityToFlat(userWorkspace.user),
+      userWorkspaceId: userWorkspace.id,
+      workspaceMember,
+      workspaceMemberId: workspaceMember.id,
+    });
   }
 
   async getWorkspaceMemberOrThrow({

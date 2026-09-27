@@ -58,6 +58,14 @@ export class MessageQueueService {
     return this.driver.getJobs(this.queueName, jobIds);
   }
 
+  getWaitingJobCount(): Promise<number> {
+    if (typeof this.driver.getWaitingJobCount !== 'function') {
+      return Promise.resolve(0);
+    }
+
+    return this.driver.getWaitingJobCount(this.queueName);
+  }
+
   getInFlightJobs<T extends MessageQueueJobData>(): Promise<
     InFlightQueueJob<T>[]
   > {

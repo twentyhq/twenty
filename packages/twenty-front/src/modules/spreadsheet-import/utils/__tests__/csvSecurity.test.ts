@@ -2,9 +2,11 @@ import {
   CSV_DANGEROUS_CHARACTERS,
   CSV_INJECTION_PREVENTION_ZWJ,
 } from 'twenty-shared/constants';
-import { cleanZWJFromImportedValue } from '@/spreadsheet-import/utils/cleanZWJFromImportedValue';
 import { containsCSVProtectionZWJ } from '@/spreadsheet-import/utils/containsCSVProtectionZWJ';
-import { sanitizeValueForCSVExport } from 'twenty-shared/utils';
+import {
+  cleanZWJFromImportedValue,
+  sanitizeValueForCSVExport,
+} from 'twenty-shared/utils';
 
 describe('csvSecurity', () => {
   describe('CSV_DANGEROUS_CHARACTERS regex', () => {

@@ -1,5 +1,6 @@
 export enum FileFolder {
   RecordExport = 'record-export',
+  RecordImport = 'record-import',
   CorePicture = 'core-picture',
   AgentChat = 'agent-chat',
   BuiltLogicFunction = 'built-logic-function',

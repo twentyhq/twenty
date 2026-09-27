@@ -9,16 +9,21 @@ export type SpreadsheetImportStep =
     }
   | {
       type: SpreadsheetImportStepType.selectSheet;
-      workbook: WorkBook;
+      sheetNames: string[];
+      // Absent when the server parses the file
+      workbook?: WorkBook;
     }
   | {
       type: SpreadsheetImportStepType.selectHeader;
       data: ImportedRow[];
+      sheetName?: string;
     }
   | {
       type: SpreadsheetImportStepType.matchColumns;
       data: ImportedRow[];
       headerValues: ImportedRow;
+      // Rows in the whole file when the server holds it, as data is a sample
+      rowCount?: number;
     }
   | {
       type: SpreadsheetImportStepType.validateData;

@@ -5,4 +5,8 @@ export const PENDING_FILE_CLEANUP_CRON_PATTERN = '0 * * * *';
 export const PENDING_FILE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 export const RECORD_EXPORT_FILE_MAX_AGE_MS = 60 * 60 * 1000;
 
+// Import files are reaped once their session expired; the minimum age keeps
+// files written just before their session is saved.
+export const RECORD_IMPORT_FILE_MIN_AGE_MS = 60 * 60 * 1000;
+
 export const PENDING_FILE_CLEANUP_BATCH_SIZE = 200;

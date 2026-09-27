@@ -29,7 +29,6 @@ import {
   type WorkspaceAuthContext,
   type UserWorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -57,8 +56,6 @@ import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
-import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -493,42 +490,18 @@ export class RecordExportWorkspaceService {
       'workspaceId' | 'userWorkspaceId' | 'workspaceMemberId'
     >,
   ): Promise<UserWorkspaceAuthContext> {
-    const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
-      workspaceId: recordExport.workspaceId,
-      workspaceMemberId: recordExport.workspaceMemberId,
-    });
+    const requester =
+      await this.userWorkspaceService.buildUserAuthContextForWorkspaceMember(
+        recordExport,
+      );
 
-    if (!isDefined(workspaceMember)) {
+    if (!isDefined(requester)) {
       throw new ForbiddenException(
         t`The export requester is no longer a workspace member.`,
       );
     }
 
-    const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUser({
-        userId: workspaceMember.userId,
-        workspaceId: recordExport.workspaceId,
-        relations: ['user', 'workspace'],
-      });
-
-    if (
-      !isDefined(userWorkspace) ||
-      userWorkspace.id !== recordExport.userWorkspaceId
-    ) {
-      throw new ForbiddenException(
-        t`The export requester is no longer a workspace member.`,
-      );
-    }
-
-    return this.assertCanExport(
-      buildUserAuthContext({
-        workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
-        user: fromUserEntityToFlat(userWorkspace.user),
-        userWorkspaceId: userWorkspace.id,
-        workspaceMember,
-        workspaceMemberId: workspaceMember.id,
-      }),
-    );
+    return this.assertCanExport(requester);
   }
 
   async buildContext({

@@ -30,7 +30,7 @@ type ImportDataStepProps = {
 export const ImportDataStep = ({
   recordsToImportCount,
 }: ImportDataStepProps) => {
-  const { onClose } = useSpreadsheetImportInternal();
+  const { onClose, serverImport } = useSpreadsheetImportInternal();
   const spreadsheetImportCreatedRecordsProgress = useAtomStateValue(
     spreadsheetImportCreatedRecordsProgressState,
   );
@@ -57,7 +57,14 @@ export const ImportDataStep = ({
         <StyledDescription>{t`${formattedCreatedRecordsProgress} out of ${formattedRecordsToImportCount} records imported.`}</StyledDescription>
         <Loader />
       </Dialog.Body>
-      <StepNavigationButton onBack={onClose} backTitle={t`Cancel`} />
+      <StepNavigationButton
+        onBack={async () => {
+          // Closing the dialog leaves a server import running; Cancel stops it
+          await serverImport?.cancelImport();
+          onClose();
+        }}
+        backTitle={t`Cancel`}
+      />
     </>
   );
 };
