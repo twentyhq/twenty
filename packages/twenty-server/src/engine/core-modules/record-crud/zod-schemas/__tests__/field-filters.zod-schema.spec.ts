@@ -69,4 +69,21 @@ describe('generateFieldFilterZodSchema', () => {
       expect(schema!.parse({ ilike: '%Tom%' })).toEqual({});
     });
   });
+
+  describe('MULTI_SELECT', () => {
+    it('declares containsAny operator matching server validation (#26744)', () => {
+      const schema = generateFieldFilterZodSchema({
+        type: FieldMetadataType.MULTI_SELECT,
+        name: 'tags',
+        options: [{ value: 'TAG_A' }, { value: 'TAG_B' }],
+      } as unknown as FieldMetadataEntity);
+
+      expect(schema).not.toBeNull();
+      expect(schema!.parse({ containsAny: ['TAG_A'] })).toEqual({
+        containsAny: ['TAG_A'],
+      });
+      // The invalid 'in' operator should not be accepted
+      expect(schema!.parse({ in: ['TAG_A'] })).toEqual({});
+    });
+  });
 });
