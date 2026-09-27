@@ -50,6 +50,10 @@ export class RecordImportDTO {
   @Field(() => Int, { nullable: true })
   errorRowCount: number | null;
 
+  // Rows removed in the review grid; they are not imported
+  @Field(() => Int)
+  deletedRowCount: number;
+
   @Field(() => Boolean)
   hasReport: boolean;
 

@@ -3448,6 +3448,7 @@ type RecordImport {
   skippedRowCount: Int!
   failedRowCount: Int!
   errorRowCount: Int
+  deletedRowCount: Int!
   hasReport: Boolean!
   errorMessage: String
 }
@@ -4386,6 +4387,7 @@ type Mutation {
   createRecordImport(input: CreateRecordImportInput!): RecordImportPreview!
   prepareRecordImport(input: PrepareRecordImportInput!): RecordImport!
   setRecordImportMapping(input: SetRecordImportMappingInput!): RecordImport!
+  editRecordImportRows(input: EditRecordImportRowsInput!): RecordImport!
   startRecordImport(input: RecordImportVersionedInput!): RecordImport!
   cancelRecordImport(input: RecordImportSessionInput!): Boolean!
 }
@@ -5760,6 +5762,18 @@ input SetRecordImportMappingInput {
   id: UUID!
   version: Int!
   columns: JSON!
+}
+
+input EditRecordImportRowsInput {
+  id: UUID!
+  version: Int!
+  edits: [RecordImportRowEditInput!]!
+}
+
+input RecordImportRowEditInput {
+  rowNumber: Int!
+  values: JSON
+  isDeleted: Boolean
 }
 
 input RecordImportVersionedInput {

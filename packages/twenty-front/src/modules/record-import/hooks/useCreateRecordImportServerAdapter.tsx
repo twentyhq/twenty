@@ -8,7 +8,11 @@ import { parseRecordImportRows } from '@/record-import/utils/parseRecordImportRo
 import { buildRecordImportMatchColumnsData } from '@/record-import/utils/buildRecordImportMatchColumnsData';
 import { watchRecordImport } from '@/record-import/utils/watchRecordImport';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
-import { type SpreadsheetImportServerAdapter } from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
+import {
+  type SpreadsheetImportServerAdapter,
+  type SpreadsheetImportServerRowEdit,
+} from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
+import { RECORD_IMPORT_MAX_EDITS_PER_REQUEST } from '@/record-import/constants/RecordImportMaxEditsPerRequest';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -18,6 +22,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import {
   CancelRecordImportDocument,
   CreateRecordImportDocument,
+  EditRecordImportRowsDocument,
   FileFolder,
   PrepareRecordImportDocument,
   RecordImportColumnSamplesDocument,
@@ -48,12 +53,35 @@ export const useCreateRecordImportServerAdapter = (
     (): SpreadsheetImportServerAdapter => {
       let session: RecordImportFieldsFragment | undefined;
       let stopWatchingImport: (() => void) | undefined;
+      // Edits the server has not confirmed yet, merged by row, and the chain
+      // that sends them one request at a time
+      const unsavedEdits = new Map<number, SpreadsheetImportServerRowEdit>();
+      let editsQueue: Promise<unknown> = Promise.resolve();
 
       const getSession = () => {
         if (!isDefined(session)) {
           throw new Error(t`Upload a file first.`);
         }
         return session;
+      };
+
+      const waitForValidation = async () => {
+        const validated = await watchRecordImport({
+          id: getSession().id,
+          isSettled: (recordImport) => recordImport.status !== 'VALIDATING',
+        }).promise;
+        session = validated;
+
+        if (validated.status !== 'VALIDATED') {
+          throw new Error(
+            validated.errorMessage ?? t`The rows could not be checked.`,
+          );
+        }
+
+        return {
+          rowCount: (validated.rowCount ?? 0) - validated.deletedRowCount,
+          errorRowCount: validated.errorRowCount ?? 0,
+        };
       };
 
       const refreshRecords = async () => {
@@ -231,22 +259,7 @@ export const useCreateRecordImportServerAdapter = (
           });
           session = data?.setRecordImportMapping ?? session;
 
-          const validated = await watchRecordImport({
-            id: getSession().id,
-            isSettled: (recordImport) => recordImport.status !== 'VALIDATING',
-          }).promise;
-          session = validated;
-
-          if (validated.status !== 'VALIDATED') {
-            throw new Error(
-              validated.errorMessage ?? t`The rows could not be checked.`,
-            );
-          }
-
-          return {
-            rowCount: validated.rowCount ?? 0,
-            errorRowCount: validated.errorRowCount ?? 0,
-          };
+          return waitForValidation();
         },
 
         loadRows: async ({ offset, limit, onlyErrors }) => {
@@ -264,6 +277,67 @@ export const useCreateRecordImportServerAdapter = (
             rows: parseRecordImportRows(page?.rows),
           };
         },
+
+        saveEdits: (edits) => {
+          for (const edit of edits) {
+            const previous = unsavedEdits.get(edit.rowNumber);
+
+            unsavedEdits.set(edit.rowNumber, {
+              rowNumber: edit.rowNumber,
+
+              values: { ...previous?.values, ...edit.values },
+
+              isDeleted:
+                previous?.isDeleted === true || edit.isDeleted === true,
+            });
+          }
+
+          const save = editsQueue.then(async () => {
+            const batch = [...unsavedEdits.values()];
+
+            for (
+              let start = 0;
+              start < batch.length;
+              start += RECORD_IMPORT_MAX_EDITS_PER_REQUEST
+            ) {
+              const { data } = await apolloClient.mutate({
+                mutation: EditRecordImportRowsDocument,
+
+                variables: {
+                  input: {
+                    id: getSession().id,
+
+                    version: getSession().version,
+
+                    edits: batch.slice(
+                      start,
+
+                      start + RECORD_IMPORT_MAX_EDITS_PER_REQUEST,
+                    ),
+                  },
+                },
+              });
+
+              session = data?.editRecordImportRows ?? session;
+            }
+
+            // Keeps edits made while this batch was being saved
+
+            for (const edit of batch) {
+              if (unsavedEdits.get(edit.rowNumber) === edit) {
+                unsavedEdits.delete(edit.rowNumber);
+              }
+            }
+
+            return waitForValidation();
+          });
+
+          editsQueue = save.catch(() => undefined);
+
+          return save;
+        },
+
+        getUnsavedEdits: () => [...unsavedEdits.values()],
 
         importRows: async () => {
           const { data } = await apolloClient.mutate({

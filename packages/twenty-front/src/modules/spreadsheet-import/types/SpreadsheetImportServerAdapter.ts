@@ -8,6 +8,12 @@ export type SpreadsheetImportServerRowsPage = {
   rows: (ImportedStructuredRow & ImportedStructuredRowMetadata)[];
 };
 
+export type SpreadsheetImportServerRowEdit = {
+  rowNumber: number;
+  values?: Record<string, string | boolean | null>;
+  isDeleted?: boolean;
+};
+
 // Lets the dialog run parsing, validation and writes on the server. The
 // browser then only holds previews, samples and one page of rows.
 export type SpreadsheetImportServerAdapter = {
@@ -33,6 +39,13 @@ export type SpreadsheetImportServerAdapter = {
     limit: number;
     onlyErrors: boolean;
   }) => Promise<SpreadsheetImportServerRowsPage>;
+  // Queues edits made in the review grid and saves every edit not saved
+  // yet, in order; resolves once all rows have been checked again. Call it
+  // with no edits to retry after a failure.
+  saveEdits: (
+    edits: SpreadsheetImportServerRowEdit[],
+  ) => Promise<{ rowCount: number; errorRowCount: number }>;
+  getUnsavedEdits: () => SpreadsheetImportServerRowEdit[];
   importRows: () => Promise<void>;
   cancelImport: () => Promise<void>;
   // Called when the dialog closes: a running import keeps going

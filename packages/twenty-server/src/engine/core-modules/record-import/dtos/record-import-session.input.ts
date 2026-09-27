@@ -1,9 +1,14 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
+
 import GraphQLJSON from 'graphql-type-json';
 import {
+  ArrayMaxSize,
   IsArray,
   IsBoolean,
+  IsObject,
+  ValidateNested,
   Max,
   IsInt,
   IsOptional,
@@ -13,6 +18,7 @@ import {
   Min,
 } from 'class-validator';
 
+import { RECORD_IMPORT_MAX_EDITS_PER_REQUEST } from 'src/engine/core-modules/record-import/constants/record-import.constants';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
@@ -78,4 +84,34 @@ export class RecordImportRowsInput extends RecordImportSessionInput {
   @Field(() => Boolean)
   @IsBoolean()
   onlyErrors: boolean;
+}
+
+@InputType()
+export class RecordImportRowEditInput {
+  // Original spreadsheet row number, as the review grid shows it
+  @Field(() => Int)
+  @IsInt()
+  @Min(1)
+  rowNumber: number;
+
+  // New values by field key; each is checked against the mapping
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
+  @IsObject()
+  values?: Record<string, string | boolean | null>;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isDeleted?: boolean;
+}
+
+@InputType()
+export class EditRecordImportRowsInput extends RecordImportVersionedInput {
+  @Field(() => [RecordImportRowEditInput])
+  @IsArray()
+  @ArrayMaxSize(RECORD_IMPORT_MAX_EDITS_PER_REQUEST)
+  @ValidateNested({ each: true })
+  @Type(() => RecordImportRowEditInput)
+  edits: RecordImportRowEditInput[];
 }

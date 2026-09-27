@@ -58,8 +58,13 @@ export class PrepareRecordImportJob {
     }
 
     try {
-      const { headerValues, rowCount, chunkCount, columnSamples } =
-        await this.writeRowChunks(session, updateProgress);
+      const {
+        headerValues,
+        rowCount,
+        chunkCount,
+        chunkFirstRowNumbers,
+        columnSamples,
+      } = await this.writeRowChunks(session, updateProgress);
 
       await this.recordImportStorageService.writeColumnSamples(
         session,
@@ -68,7 +73,15 @@ export class PrepareRecordImportJob {
 
       await this.recordImportSessionService.update(session, (current) =>
         current.status === 'PREPARING'
-          ? { ...current, status: 'READY', headerValues, rowCount, chunkCount }
+          ? {
+              ...current,
+              status: 'READY',
+              headerValues,
+              rowCount,
+              chunkCount,
+              chunkFirstRowNumbers,
+              deletedRowCount: 0,
+            }
           : undefined,
       );
     } catch (error) {
@@ -106,6 +119,7 @@ export class PrepareRecordImportJob {
     let rowCount = 0;
     let chunkCount = 0;
     let chunk: RecordImportRow[] = [];
+    const chunkFirstRowNumbers: number[] = [];
     const exampleRows: string[][] = [];
     const distinctValuesByColumn: Set<string>[] = [];
 
@@ -119,6 +133,7 @@ export class PrepareRecordImportJob {
         chunkCount,
         chunk,
       );
+      chunkFirstRowNumbers.push(chunk[0].rowNumber);
       chunkCount++;
       chunk = [];
 
@@ -200,6 +215,12 @@ export class PrepareRecordImportJob {
       ]),
     };
 
-    return { headerValues, rowCount, chunkCount, columnSamples };
+    return {
+      headerValues,
+      rowCount,
+      chunkCount,
+      chunkFirstRowNumbers,
+      columnSamples,
+    };
   }
 }
