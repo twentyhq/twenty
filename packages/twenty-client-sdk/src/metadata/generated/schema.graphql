@@ -4036,7 +4036,6 @@ input EventLogFiltersInput {
   recordId: String
   objectMetadataId: String
   fieldFilters: [EventLogFieldFilterInput!]
-  search: String
 }
 
 input EventLogDateRangeInput {
@@ -5710,7 +5709,7 @@ type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
-  eventLogsLive(table: EventLogTable!, fieldFilters: [EventLogFieldFilterInput!], search: String): [EventLogRecord!]
+  eventLogsLive(table: EventLogTable!, fieldFilters: [EventLogFieldFilterInput!]): [EventLogRecord!]
   exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 

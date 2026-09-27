@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,7 +47,6 @@ type LogConsoleTableProps = {
   entries: EventLogRecord[];
   liveEntryCount: number;
   entriesSinceClear?: EventLogRecord[];
-  searchQuery?: string;
   loading: boolean;
   hasNextPage: boolean;
   selectedEntry?: EventLogRecord;
@@ -56,23 +54,11 @@ type LogConsoleTableProps = {
   onEntryClick: (entry: EventLogRecord) => void;
 };
 
-const filterBySearchQuery = (
-  entriesToFilter: EventLogRecord[],
-  query: string,
-) => {
-  const lowerQuery = query.toLowerCase();
-
-  return entriesToFilter.filter((entry) =>
-    entry.event.toLowerCase().includes(lowerQuery),
-  );
-};
-
 export const LogConsoleTable = ({
   source,
   entries,
   liveEntryCount,
   entriesSinceClear,
-  searchQuery,
   loading,
   hasNextPage,
   selectedEntry,
@@ -101,15 +87,6 @@ export const LogConsoleTable = ({
   const gridTemplateColumns = columns
     .map((column) => column.gridTrack)
     .join(' ');
-
-  const filteredEntries = isNonEmptyString(searchQuery)
-    ? filterBySearchQuery(entries, searchQuery)
-    : entries;
-
-  const filteredEntriesSinceClear =
-    isDefined(entriesSinceClear) && isNonEmptyString(searchQuery)
-      ? filterBySearchQuery(entriesSinceClear, searchQuery)
-      : entriesSinceClear;
 
   const isInitialLoading = loading && entries.length === 0;
 
@@ -160,17 +137,14 @@ export const LogConsoleTable = ({
             </TableHeader>
           ))}
         </StyledHeaderRow>
-        {isDefined(filteredEntriesSinceClear) && (
+        {isDefined(entriesSinceClear) && (
           <StyledEntriesSinceClear>
-            {filteredEntriesSinceClear.map((entry, entryIndex) =>
-              renderEntryRow(
-                entry,
-                filteredEntriesSinceClear.length - entryIndex,
-              ),
+            {entriesSinceClear.map((entry, entryIndex) =>
+              renderEntryRow(entry, entriesSinceClear.length - entryIndex),
             )}
           </StyledEntriesSinceClear>
         )}
-        {filteredEntries.map((entry, entryIndex) =>
+        {entries.map((entry, entryIndex) =>
           renderEntryRow(entry, liveEntryCount - entryIndex),
         )}
         {hasNextPage && (

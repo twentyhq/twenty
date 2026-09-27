@@ -37,17 +37,12 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { EventLogFilterOperand } from '~/generated-metadata/graphql';
 
 const LOG_CONSOLE_MENU_DROPDOWN_ID = 'log-console-menu';
-
-const LOG_CONSOLE_SEARCH_FOCUS_ID = 'log-console-search';
 
 const FILTER_CHIPS_SCROLL_WRAPPER_ID = 'log-console-filter-chips';
 
@@ -72,12 +67,8 @@ const StyledToolbar = styled.div`
   flex-wrap: nowrap;
   gap: ${themeCssVariables.spacing[2]};
   height: ${APP_HEADER_HEIGHT}px;
+  justify-content: flex-end;
   overflow: hidden;
-`;
-
-const StyledSearch = styled.div`
-  flex: 1;
-  min-width: 0;
 `;
 
 const StyledActions = styled.div`
@@ -103,7 +94,6 @@ type LogConsoleToolbarProps = {
   filterFields: LogConsoleFilterField[];
   filters: LogConsoleFilter[];
   onFiltersChange: (filters: LogConsoleFilter[]) => void;
-  search?: ReactNode;
   logsAction: { label: string; Icon: IconComponent; onClick: () => void };
   children: ReactNode;
 };
@@ -112,15 +102,11 @@ export const LogConsoleToolbar = ({
   filterFields,
   filters,
   onFiltersChange,
-  search,
   logsAction,
   children,
 }: LogConsoleToolbarProps) => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -402,23 +388,6 @@ export const LogConsoleToolbar = ({
     );
   };
 
-  const pushSearchFocusItem = () =>
-    pushFocusItemToFocusStack({
-      focusId: LOG_CONSOLE_SEARCH_FOCUS_ID,
-      component: {
-        type: FocusComponentType.TEXT_INPUT,
-        instanceId: LOG_CONSOLE_SEARCH_FOCUS_ID,
-      },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-
-  const removeSearchFocusItem = () =>
-    removeFocusItemFromFocusStackById({
-      focusId: LOG_CONSOLE_SEARCH_FOCUS_ID,
-    });
-
   const runLogsAction = () => {
     closeDropdown(LOG_CONSOLE_MENU_DROPDOWN_ID);
     logsAction.onClick();
@@ -461,12 +430,6 @@ export const LogConsoleToolbar = ({
   return (
     <StyledContainer>
       <StyledToolbar>
-        <StyledSearch
-          onFocus={isDefined(search) ? pushSearchFocusItem : undefined}
-          onBlur={isDefined(search) ? removeSearchFocusItem : undefined}
-        >
-          {search}
-        </StyledSearch>
         {isNonEmptyArray(filterFieldsWithChip) && (
           <StyledFilterChips>
             <ScrollWrapper

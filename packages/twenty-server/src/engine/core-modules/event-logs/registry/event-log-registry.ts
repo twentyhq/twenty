@@ -23,7 +23,6 @@ export type EventLogTypeDefinition = {
   requiresEntitlement: BillingEntitlementKey | null;
   eventFieldName: string;
   filterableFields: string[];
-  searchableFields: string[];
   // The shared dispatcher stamps `timestamp`; each type maps only its own fields.
   normalize: (
     row: Record<string, unknown>,
@@ -51,13 +50,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'event',
     filterableFields: ['event', 'userId'],
-    searchableFields: [
-      'properties.message',
-      'properties.status',
-      'properties.eventName',
-      'properties.url',
-      'properties.error',
-    ],
     normalize: normalizeGenericEvent('event'),
   },
   [EventLogTable.PAGEVIEW]: {
@@ -65,7 +57,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'name',
     filterableFields: ['userId'],
-    searchableFields: ['properties.pathname'],
     normalize: normalizeGenericEvent('name'),
   },
   [EventLogTable.OBJECT_EVENT]: {
@@ -73,7 +64,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'event',
     filterableFields: ['event', 'objectMetadataId', 'recordId', 'userId'],
-    searchableFields: ['recordId', 'properties'],
     normalize: normalizeGenericEvent('event'),
   },
   [EventLogTable.USAGE_EVENT]: {
@@ -81,7 +71,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'resourceType',
     filterableFields: [],
-    searchableFields: [],
     normalize: (row) => {
       const record = row as StoredRow<UsageEventRow>;
 
@@ -110,7 +99,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
       'applicationId',
       'executionId',
     ],
-    searchableFields: ['logicFunctionName', 'message'],
     normalize: (row) => {
       const record = row as StoredRow<ApplicationLogRow>;
 

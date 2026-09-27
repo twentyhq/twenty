@@ -27,7 +27,6 @@ export type LogConsoleSource = {
   columns: LogConsoleColumn[];
   detailFields: LogConsoleDetailField[];
   idFields: LogConsoleIdField[];
-  searchPlaceholder?: MessageDescriptor;
   getCountLabel?: (input: { count: number; formattedCount: string }) => string;
   getSeverity?: (entry: EventLogRecord) => LogConsoleSeverity | undefined;
   getDetailTitle: (

@@ -30,7 +30,4 @@ export class EventLogFiltersInput {
 
   @Field(() => [EventLogFieldFilterInput], { nullable: true })
   fieldFilters?: EventLogFieldFilterInput[];
-
-  @Field(() => String, { nullable: true })
-  search?: string;
 }
