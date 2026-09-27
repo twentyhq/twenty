@@ -850,8 +850,10 @@ describe('core workflow visibility (e2e)', () => {
         prompt: 'Summarize the lead',
         initiatorUserWorkspaceId: null,
         executionResult: {
-          steps: [{ content: [{ type: 'text', text: 'A warm lead.' }] }],
-        } as unknown as AgentExecutionResult,
+          steps: [
+            { content: [{ type: 'text', text: 'A warm lead.' }] },
+          ] as AgentExecutionResult['steps'],
+        },
       });
 
       expect(recordedThreadId).not.toBeNull();

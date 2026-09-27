@@ -60,7 +60,7 @@ export class WorkflowAgentConversationWorkspaceService {
     initiatorUserWorkspaceId: string | null;
     // Absent when the agent failed before replying; the prompt is still
     // recorded so the run shows what the agent was asked.
-    executionResult?: AgentExecutionResult;
+    executionResult?: Pick<AgentExecutionResult, 'steps'>;
   }): Promise<string | null> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
