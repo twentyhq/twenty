@@ -17,6 +17,10 @@ export const RECORD_IMPORT_EXAMPLE_ROW_COUNT = 2;
 
 export const RECORD_IMPORT_BATCH_SIZE = 200;
 
+// Bounds the edit overlay kept next to the session
+export const RECORD_IMPORT_MAX_EDITED_ROW_COUNT = 50_000;
+export const RECORD_IMPORT_MAX_EDITS_PER_REQUEST = 500;
+
 // Sessions live through mapping and review, which can take hours
 export const RECORD_IMPORT_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 export const RECORD_IMPORT_LEASE_TTL_MS = 2 * 60 * 1000;

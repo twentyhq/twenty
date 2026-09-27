@@ -12,15 +12,19 @@ import {
   type SpreadsheetImportValidationMessage,
 } from 'twenty-shared/utils';
 
+import { RecordImportSessionService } from 'src/engine/core-modules/record-import/services/record-import-session.service';
 import { RecordImportStorageService } from 'src/engine/core-modules/record-import/services/record-import-storage.service';
 import { type RecordImportContext } from 'src/engine/core-modules/record-import/services/record-import.workspace-service';
 import {
   type RecordImportRow,
+  type RecordImportRowEdit,
   type RecordImportSession,
 } from 'src/engine/core-modules/record-import/types/record-import-session.type';
 
 export type RecordImportRowValidation = {
   rowNumber: number;
+  // Deleted in the review grid: never validated, shown or imported
+  isDeleted: boolean;
   structuredRow: ImportedStructuredRow;
   errors: SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>;
 };
@@ -32,6 +36,7 @@ export type RecordImportRowValidation = {
 export class RecordImportValidationWorkspaceService {
   constructor(
     private readonly recordImportStorageService: RecordImportStorageService,
+    private readonly recordImportSessionService: RecordImportSessionService,
   ) {}
 
   async *validateChunks(
@@ -39,7 +44,12 @@ export class RecordImportValidationWorkspaceService {
     context: RecordImportContext,
   ): AsyncGenerator<{ chunkIndex: number; rows: RecordImportRowValidation[] }> {
     const { spreadsheetImportFields } = context.metadata;
-    const duplicateCells = await this.findDuplicateCells(session, context);
+    const edits = await this.recordImportSessionService.findEdits(session);
+    const duplicateCells = await this.findDuplicateCells(
+      session,
+      context,
+      edits,
+    );
 
     for (
       let chunkIndex = 0;
@@ -50,7 +60,7 @@ export class RecordImportValidationWorkspaceService {
         session,
         chunkIndex,
       );
-      const structuredRows = this.normalizeRows(session, context, rows);
+      const structuredRows = this.normalizeRows(session, context, rows, edits);
       const { errors } =
         computeSpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>({
           rows: structuredRows,
@@ -59,28 +69,49 @@ export class RecordImportValidationWorkspaceService {
 
       yield {
         chunkIndex,
-        rows: rows.map(({ rowNumber }, rowIndex) => ({
-          rowNumber,
-          structuredRow: structuredRows[rowIndex],
-          errors: {
-            ...errors[rowIndex],
-            ...duplicateCells.get(rowNumber),
-          },
-        })),
+        rows: rows.map(({ rowNumber }, rowIndex) => {
+          const isDeleted = edits.get(rowNumber)?.isDeleted === true;
+
+          return {
+            rowNumber,
+            isDeleted,
+            structuredRow: structuredRows[rowIndex],
+            errors: isDeleted
+              ? {}
+              : { ...errors[rowIndex], ...duplicateCells.get(rowNumber) },
+          };
+        }),
       };
     }
   }
 
+  // Applies the mapping, then the values edited in the review grid
   normalizeRows(
     session: RecordImportSession,
     context: RecordImportContext,
     rows: RecordImportRow[],
+    edits: Map<number, RecordImportRowEdit>,
   ): ImportedStructuredRow[] {
     return normalizeSpreadsheetImportRows(
       session.columns ?? [],
       rows.map(({ cells }) => cells),
       context.metadata.spreadsheetImportFields,
-    );
+    ).map((structuredRow, rowIndex) => {
+      const edit = edits.get(rows[rowIndex].rowNumber);
+
+      if (!isDefined(edit)) {
+        return structuredRow;
+      }
+
+      const editedRow = { ...structuredRow };
+
+      for (const [fieldKey, value] of Object.entries(edit.values)) {
+        editedRow[fieldKey] =
+          value === null || value === '' ? undefined : value;
+      }
+
+      return editedRow;
+    });
   }
 
   // Only the first row number per value is kept in memory, so the check
@@ -88,6 +119,7 @@ export class RecordImportValidationWorkspaceService {
   private async findDuplicateCells(
     session: RecordImportSession,
     context: RecordImportContext,
+    edits: Map<number, RecordImportRowEdit>,
   ) {
     const uniqueConstraints = getSpreadsheetImportUniqueConstraints(
       context.metadata.objectMetadataItem,
@@ -108,13 +140,17 @@ export class RecordImportValidationWorkspaceService {
         session,
         chunkIndex,
       );
-      const structuredRows = this.normalizeRows(session, context, rows);
+      const structuredRows = this.normalizeRows(session, context, rows, edits);
 
       uniqueConstraints.forEach((uniqueConstraint, constraintIndex) => {
         const firstRowNumbers = firstRowNumberByValue[constraintIndex];
         const duplicates = duplicateRowNumbersByConstraint[constraintIndex];
 
         structuredRows.forEach((structuredRow, rowIndex) => {
+          if (edits.get(rows[rowIndex].rowNumber)?.isDeleted === true) {
+            return;
+          }
+
           const uniqueValue = getSpreadsheetImportUniqueValue(
             structuredRow,
             uniqueConstraint,

@@ -9,10 +9,7 @@ import {
   type ImportedStructuredRow,
   type SpreadsheetImportImportValidationResult,
 } from '@/spreadsheet-import/types';
-import {
-  isDefined,
-  type SpreadsheetColumns,
-} from 'twenty-shared/utils';
+import { isDefined, type SpreadsheetColumns } from 'twenty-shared/utils';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { filterImportedColumns } from '@/spreadsheet-import/utils/filterImportedColumns';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';

@@ -77,7 +77,7 @@ export class RecordImportRunnerWorkspaceService {
     { updateProgress, abortSignal }: MessageQueueJobProgressContext,
   ): Promise<void> {
     const result: RecordImportResult = {
-      totalRowCount: session.rowCount ?? 0,
+      totalRowCount: (session.rowCount ?? 0) - (session.deletedRowCount ?? 0),
       processedRowCount: 0,
       importedRecordCount: 0,
       skippedRowCount: 0,
@@ -238,7 +238,11 @@ export class RecordImportRunnerWorkspaceService {
     )) {
       const pendingRecords: PendingRecord[] = [];
 
-      for (const { rowNumber, structuredRow, errors } of rows) {
+      for (const { rowNumber, structuredRow, errors, isDeleted } of rows) {
+        if (isDeleted) {
+          continue;
+        }
+
         // Warnings do not block a row, as in the browser import (EDIT-7)
         const blockingMessages = Object.values(errors)
           .filter(({ level }) => level === 'error')
@@ -263,7 +267,9 @@ export class RecordImportRunnerWorkspaceService {
         });
       }
 
-      result.processedRowCount += rows.length - pendingRecords.length;
+      result.processedRowCount +=
+        rows.filter(({ isDeleted }) => !isDeleted).length -
+        pendingRecords.length;
 
       for (
         let batchStart = 0;

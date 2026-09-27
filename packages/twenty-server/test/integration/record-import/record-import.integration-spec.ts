@@ -14,6 +14,7 @@ import { v4 } from 'uuid';
 
 const RECORD_IMPORT_FIELDS = `
   id version status fileName sheetNames rowCount isMapped progress
+  errorRowCount deletedRowCount
   processedRowCount totalRowCount importedRecordCount skippedRowCount
   failedRowCount hasReport errorMessage
 `;
@@ -64,6 +65,12 @@ const recordImportRowsQuery = gql`
   }
 `;
 
+const editRecordImportRowsMutation = gql`
+  mutation EditRecordImportRows($input: EditRecordImportRowsInput!) {
+    editRecordImportRows(input: $input) { ${RECORD_IMPORT_FIELDS} }
+  }
+`;
+
 const startRecordImportMutation = gql`
   mutation StartRecordImport($input: RecordImportVersionedInput!) {
     startRecordImport(input: $input) { ${RECORD_IMPORT_FIELDS} }
@@ -85,6 +92,8 @@ const recordImportReportUrlQuery = gql`
 type RecordImport = {
   id: string;
   version: number;
+  errorRowCount: number | null;
+  deletedRowCount: number;
   status: string;
   rowCount: number | null;
   importedRecordCount: number;
@@ -353,6 +362,142 @@ describe('record import (integration)', () => {
         ({ node }: { node: { name: string } }) => node.name,
       ),
     ).toEqual(['Valid company']);
+  });
+
+  it('imports cells fixed and rows deleted in the review grid', async () => {
+    const [firstId, duplicateId, fixedId] = [v4(), v4(), v4()];
+
+    createdCompanyIds.push(firstId, duplicateId, fixedId);
+
+    const { ready } = await createAndPrepare(
+      Buffer.from(
+        [
+          'Name,Employees,Id',
+          `First,1,${firstId}`,
+          `Duplicate,2,${firstId}`,
+          `Fixed,many,${fixedId}`,
+        ].join('\n'),
+      ),
+    );
+
+    const mapped = await request<{ setRecordImportMapping: RecordImport }>(
+      setRecordImportMappingMutation,
+      {
+        id: ready.id,
+        version: ready.version,
+        columns: [
+          matched(0, 'name'),
+          matched(1, 'employees'),
+          matched(2, 'id'),
+        ],
+      },
+    );
+
+    expect(mapped.errors).toBeUndefined();
+    expect(await waitForStatus(ready.id, ['VALIDATED'])).toMatchObject({
+      errorRowCount: 3,
+    });
+
+    const current = await getRecordImport(ready.id);
+
+    const unmappedEdit = await request(editRecordImportRowsMutation, {
+      id: ready.id,
+      version: current.version,
+      edits: [{ rowNumber: 4, values: { __proto__: 'x', jobTitle: 'x' } }],
+    });
+
+    expect(unmappedEdit.errors).toBeDefined();
+
+    const missingRow = await request(editRecordImportRowsMutation, {
+      id: ready.id,
+      version: current.version,
+      edits: [{ rowNumber: 99, values: { employees: '3' } }],
+    });
+
+    expect(missingRow.errors).toBeDefined();
+
+    const edited = await request<{ editRecordImportRows: RecordImport }>(
+      editRecordImportRowsMutation,
+      {
+        id: ready.id,
+        version: current.version,
+        edits: [
+          { rowNumber: 4, values: { employees: '6' } },
+          { rowNumber: 3, isDeleted: true },
+        ],
+      },
+    );
+
+    expect(edited.errors).toBeUndefined();
+
+    const stale = await request(editRecordImportRowsMutation, {
+      id: ready.id,
+      version: current.version,
+      edits: [{ rowNumber: 4, values: { employees: '7' } }],
+    });
+
+    expect(stale.errors?.[0].message).toMatch(/changed in another tab/);
+
+    const revalidated = await waitForStatus(ready.id, ['VALIDATED']);
+
+    expect(revalidated).toMatchObject({ errorRowCount: 0, deletedRowCount: 1 });
+
+    const page = await request<{
+      recordImportRows: {
+        totalCount: number;
+        rows: { rowNumber: number; values: Record<string, string> }[];
+      };
+    }>(recordImportRowsQuery, {
+      id: ready.id,
+      offset: 0,
+      limit: 10,
+      onlyErrors: false,
+    });
+
+    expect(page.data.recordImportRows.totalCount).toBe(2);
+    expect(
+      page.data.recordImportRows.rows.map(({ rowNumber, values }) => [
+        rowNumber,
+        values.employees,
+      ]),
+    ).toEqual([
+      [2, '1'],
+      [4, '6'],
+    ]);
+
+    await request(startRecordImportMutation, {
+      id: ready.id,
+      version: revalidated.version,
+    });
+
+    expect(
+      await waitForStatus(ready.id, ['COMPLETED', 'FAILED']),
+    ).toMatchObject({
+      status: 'COMPLETED',
+      importedRecordCount: 2,
+      skippedRowCount: 0,
+    });
+
+    const companies = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id name employees',
+        filter: { id: { in: [firstId, fixedId] } },
+      }),
+    );
+
+    expect(
+      companies.body.data.companies.edges
+        .map(({ node }: { node: { name: string; employees: number } }) => [
+          node.name,
+          node.employees,
+        ])
+        .sort(),
+    ).toEqual([
+      ['First', 1],
+      ['Fixed', 6],
+    ]);
   });
 
   it('reads Windows-1252 files saved by Excel', async () => {

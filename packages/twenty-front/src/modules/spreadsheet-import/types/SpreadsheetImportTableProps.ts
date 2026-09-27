@@ -17,4 +17,5 @@ export type SpreadsheetImportTableProps<
   | 'onRowsChange'
   | 'selectedRows'
   | 'onSelectedRowsChange'
+  | 'rowClass'
 >;

@@ -12,7 +12,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import {
   isDefined,
-  normalizeSpreadsheetImportRows,
+  type SpreadsheetImportFieldDescriptor,
   type SpreadsheetImportRowErrors,
   type SpreadsheetImportValidationMessage,
 } from 'twenty-shared/utils';
@@ -50,8 +50,14 @@ import { type RecordImportPreviewDTO } from 'src/engine/core-modules/record-impo
 import { type RecordImportDTO } from 'src/engine/core-modules/record-import/dtos/record-import.dto';
 import { RecordImportSessionService } from 'src/engine/core-modules/record-import/services/record-import-session.service';
 import { RecordImportStorageService } from 'src/engine/core-modules/record-import/services/record-import-storage.service';
+import { RecordImportValidationWorkspaceService } from 'src/engine/core-modules/record-import/services/record-import-validation.workspace-service';
+import { getPagePositionsSkipping } from 'src/engine/core-modules/record-import/utils/get-page-positions-skipping.util';
+import { isValidRecordImportEditValue } from 'src/engine/core-modules/record-import/utils/is-valid-record-import-edit-value.util';
+import { type RecordImportRowEditInput } from 'src/engine/core-modules/record-import/dtos/record-import-session.input';
 import {
   type RecordImportJobProgress,
+  type RecordImportRow,
+  type RecordImportRowEdit,
   type RecordImportSession,
   type RecordImportStatus,
 } from 'src/engine/core-modules/record-import/types/record-import-session.type';
@@ -107,6 +113,7 @@ export class RecordImportWorkspaceService {
   constructor(
     private readonly recordImportSessionService: RecordImportSessionService,
     private readonly recordImportStorageService: RecordImportStorageService,
+    private readonly recordImportValidationWorkspaceService: RecordImportValidationWorkspaceService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileUrlService: FileUrlService,
     private readonly permissionsService: PermissionsService,
@@ -282,6 +289,8 @@ export class RecordImportWorkspaceService {
       }),
     );
 
+    await this.recordImportSessionService.deleteEdits(preparing);
+
     const jobId = await this.messageQueueService.add(
       'PrepareRecordImportJob',
       { workspaceId: preparing.workspaceId, id: preparing.id },
@@ -356,25 +365,9 @@ export class RecordImportWorkspaceService {
       }),
     );
 
-    const jobId = await this.messageQueueService.add(
-      'ValidateRecordImportJob',
-      {
-        workspaceId: validating.workspaceId,
-        id: validating.id,
-        validationRunId: validating.validationRunId,
-      },
-      { id: validating.id },
-    );
+    await this.recordImportSessionService.deleteEdits(validating);
 
-    const updated = await this.recordImportSessionService.update(
-      validating,
-      (current) =>
-        current.validationRunId === validating.validationRunId
-          ? { ...current, jobId }
-          : undefined,
-    );
-
-    return this.toDTO(updated ?? validating);
+    return this.toDTO(await this.enqueueValidation(validating));
   }
 
   async getRows({
@@ -396,18 +389,24 @@ export class RecordImportWorkspaceService {
       throw new BadRequestException(t`The rows are still being checked.`);
     }
 
-    const { metadata } = await this.buildContext(session);
-    const rowCount = session.rowCount ?? 0;
+    const context = await this.buildContext(session);
+    const edits = await this.recordImportSessionService.findEdits(session);
+    const deletedPositions = [...edits.values()]
+      .filter(({ isDeleted }) => isDeleted)
+      .map(({ position }) => position)
+      .sort((positionA, positionB) => positionA - positionB);
+    const rowCount = (session.rowCount ?? 0) - deletedPositions.length;
     const pageSize = limit;
     const { errorRowPositions } = onlyErrors
       ? await this.recordImportStorageService.readErrorIndex(session)
       : { errorRowPositions: [] };
     const positions = onlyErrors
       ? errorRowPositions.slice(offset, offset + pageSize)
-      : Array.from(
-          { length: Math.max(0, Math.min(pageSize, rowCount - offset)) },
-          (_, index) => offset + index,
-        );
+      : getPagePositionsSkipping({
+          offset,
+          pageSize: Math.max(0, Math.min(pageSize, rowCount - offset)),
+          skippedPositions: deletedPositions,
+        });
     const i18n = this.i18nService.getI18nInstance(session.locale);
     const rows: RecordImportRowDTO[] = [];
 
@@ -423,11 +422,13 @@ export class RecordImportWorkspaceService {
           SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>
         >(session, chunkIndex),
       ]);
-      const structuredRows = normalizeSpreadsheetImportRows(
-        session.columns ?? [],
-        chunkRows.map(({ cells }) => cells),
-        metadata.spreadsheetImportFields,
-      );
+      const structuredRows =
+        this.recordImportValidationWorkspaceService.normalizeRows(
+          session,
+          context,
+          chunkRows,
+          edits,
+        );
 
       for (const position of positions) {
         const indexInChunk =
@@ -461,6 +462,84 @@ export class RecordImportWorkspaceService {
       totalCount: onlyErrors ? errorRowPositions.length : rowCount,
       rows,
     };
+  }
+
+  // Saves cell edits and row deletions made in the review grid, then
+  // re-validates every row, since one edit can clear or create a duplicate
+  // elsewhere (EDIT-1 to EDIT-4)
+  async editRows({
+    authContext,
+    id,
+    version,
+    edits,
+  }: {
+    authContext: WorkspaceAuthContext;
+    id: string;
+    version: number;
+    edits: RecordImportRowEditInput[];
+  }): Promise<RecordImportDTO> {
+    const session = await this.findOwnedSessionOrThrow(authContext, id);
+
+    if (session.version !== version) {
+      throw new ConflictException(
+        t`This import was changed in another tab. Reload it to continue.`,
+      );
+    }
+
+    if (session.status !== 'VALIDATED' && session.status !== 'VALIDATING') {
+      throw new ConflictException(
+        t`This import cannot be changed in its current state.`,
+      );
+    }
+
+    const { metadata } = await this.buildContext(session);
+    const existingEdits =
+      await this.recordImportSessionService.findEdits(session);
+    const rowEdits = await this.buildRowEdits({
+      session,
+      edits,
+      existingEdits,
+      fields: metadata.spreadsheetImportFields,
+    });
+
+    const deletedRowNumbers = new Set(
+      [...existingEdits.values()]
+        .filter(({ isDeleted }) => isDeleted)
+        .map(({ rowNumber }) => rowNumber),
+    );
+
+    for (const rowEdit of rowEdits) {
+      if (rowEdit.isDeleted) {
+        deletedRowNumbers.add(rowEdit.rowNumber);
+      }
+    }
+
+    const saved = await this.recordImportSessionService.saveEdits(
+      session,
+      (current) => ({
+        ...current,
+        status: 'VALIDATING',
+        validationRunId: v4(),
+        errorRowCount: undefined,
+        deletedRowCount: deletedRowNumbers.size,
+        errorMessage: undefined,
+      }),
+      rowEdits,
+    );
+
+    if (saved === 'TOO_MANY_EDITS') {
+      throw new BadRequestException(
+        t`Too many rows were edited. Fix the file and upload it again.`,
+      );
+    }
+
+    if (!isDefined(saved)) {
+      throw new ConflictException(
+        t`This import was changed in another tab. Reload it to continue.`,
+      );
+    }
+
+    return this.toDTO(await this.enqueueValidation(saved));
   }
 
   async start({
@@ -514,7 +593,8 @@ export class RecordImportWorkspaceService {
           ...current,
           status: 'IMPORTING',
           result: {
-            totalRowCount: current.rowCount ?? 0,
+            totalRowCount:
+              (current.rowCount ?? 0) - (current.deletedRowCount ?? 0),
             processedRowCount: 0,
             importedRecordCount: 0,
             skippedRowCount: 0,
@@ -750,9 +830,129 @@ export class RecordImportWorkspaceService {
       failedRowCount:
         jobProgress?.failedRowCount ?? result?.failedRowCount ?? 0,
       errorRowCount: session.errorRowCount ?? null,
+      deletedRowCount: session.deletedRowCount ?? 0,
       hasReport: isDefined(session.reportFileId),
       errorMessage: session.errorMessage ?? null,
     };
+  }
+
+  private async enqueueValidation(
+    validating: RecordImportSession,
+  ): Promise<RecordImportSession> {
+    const jobId = await this.messageQueueService.add(
+      'ValidateRecordImportJob',
+      {
+        workspaceId: validating.workspaceId,
+        id: validating.id,
+        validationRunId: validating.validationRunId,
+      },
+      { id: validating.id },
+    );
+
+    const updated = await this.recordImportSessionService.update(
+      validating,
+      (current) =>
+        current.validationRunId === validating.validationRunId
+          ? { ...current, jobId }
+          : undefined,
+    );
+
+    return updated ?? validating;
+  }
+
+  // Edits come from the browser: rows must exist, keys must be mapped
+  // fields, option values must exist and cells respect the parser cap
+  // (EDIT-4). Values are merged into the row's earlier edit.
+  private async buildRowEdits({
+    session,
+    edits,
+    existingEdits,
+    fields,
+  }: {
+    session: RecordImportSession;
+    edits: RecordImportRowEditInput[];
+    existingEdits: Map<number, RecordImportRowEdit>;
+    fields: SpreadsheetImportFieldDescriptor[];
+  }): Promise<RecordImportRowEdit[]> {
+    const mappedKeys = new Set(
+      (session.mappedFields ?? []).map(({ key }) => key),
+    );
+    const fieldByKey = new Map(fields.map((field) => [field.key, field]));
+    const chunkCache = new Map<number, RecordImportRow[]>();
+    const rowEdits = new Map<number, RecordImportRowEdit>();
+
+    for (const edit of edits) {
+      const values = edit.values ?? {};
+
+      for (const [fieldKey, value] of Object.entries(values)) {
+        const field = fieldByKey.get(fieldKey);
+
+        if (!mappedKeys.has(fieldKey) || !isDefined(field)) {
+          throw new BadRequestException(
+            t`Only imported columns can be edited.`,
+          );
+        }
+
+        if (!isValidRecordImportEditValue(value, field)) {
+          throw new BadRequestException(t`An edited value is invalid.`);
+        }
+      }
+
+      const position = await this.findRowPosition(
+        session,
+        edit.rowNumber,
+        chunkCache,
+      );
+
+      if (!isDefined(position)) {
+        throw new BadRequestException(t`An edited row does not exist.`);
+      }
+
+      const previous =
+        rowEdits.get(edit.rowNumber) ?? existingEdits.get(edit.rowNumber);
+
+      rowEdits.set(edit.rowNumber, {
+        rowNumber: edit.rowNumber,
+        position,
+        isDeleted: previous?.isDeleted === true || edit.isDeleted === true,
+        values: { ...previous?.values, ...values },
+      });
+    }
+
+    return [...rowEdits.values()];
+  }
+
+  private async findRowPosition(
+    session: RecordImportSession,
+    rowNumber: number,
+    chunkCache: Map<number, RecordImportRow[]>,
+  ): Promise<number | undefined> {
+    const chunkFirstRowNumbers = session.chunkFirstRowNumbers ?? [];
+    let chunkIndex = -1;
+
+    // Rows are stored in file order, so chunks are sorted by row number
+    for (const [index, firstRowNumber] of chunkFirstRowNumbers.entries()) {
+      if (firstRowNumber > rowNumber) {
+        break;
+      }
+      chunkIndex = index;
+    }
+
+    if (chunkIndex === -1) {
+      return undefined;
+    }
+
+    const rows =
+      chunkCache.get(chunkIndex) ??
+      (await this.recordImportStorageService.readRowChunk(session, chunkIndex));
+
+    chunkCache.set(chunkIndex, rows);
+
+    const indexInChunk = rows.findIndex((row) => row.rowNumber === rowNumber);
+
+    return indexInChunk === -1
+      ? undefined
+      : chunkIndex * RECORD_IMPORT_ROWS_PER_CHUNK + indexInChunk;
   }
 
   private async getLiveDTO(

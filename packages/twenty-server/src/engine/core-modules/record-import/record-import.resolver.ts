@@ -14,6 +14,7 @@ import { CreateRecordImportInput } from 'src/engine/core-modules/record-import/d
 import { RecordImportColumnSamplesDTO } from 'src/engine/core-modules/record-import/dtos/record-import-column-samples.dto';
 import { RecordImportPreviewDTO } from 'src/engine/core-modules/record-import/dtos/record-import-preview.dto';
 import {
+  EditRecordImportRowsInput,
   PrepareRecordImportInput,
   PreviewRecordImportSheetInput,
   RecordImportRowsInput,
@@ -97,6 +98,16 @@ export class RecordImportResolver {
     @Args('input') input: RecordImportRowsInput,
   ): Promise<RecordImportRowsPageDTO> {
     return this.recordImportWorkspaceService.getRows({
+      ...input,
+      authContext: await this.getAuthContextIfEnabled(),
+    });
+  }
+
+  @Mutation(() => RecordImportDTO)
+  async editRecordImportRows(
+    @Args('input') input: EditRecordImportRowsInput,
+  ): Promise<RecordImportDTO> {
+    return this.recordImportWorkspaceService.editRows({
       ...input,
       authContext: await this.getAuthContextIfEnabled(),
     });

@@ -55,6 +55,9 @@ export type RecordImportSession = {
   headerValues?: string[];
   rowCount?: number;
   chunkCount?: number;
+  // Row number of the first row of each chunk, to find a row's chunk
+  chunkFirstRowNumbers?: number[];
+  deletedRowCount?: number;
   columns?: SpreadsheetColumns;
   mappedFields?: RecordImportMappedField[];
   // Identifies the validation of the current mapping; a validation job that
@@ -79,6 +82,16 @@ export type RecordImportColumnSamples = {
   headerValues: string[];
   exampleRows: string[][];
   distinctValuesByColumn: string[][];
+};
+
+// A change the user made in the review grid, kept apart from the stored
+// rows and applied over them whenever rows are read (P1)
+export type RecordImportRowEdit = {
+  rowNumber: number;
+  position: number;
+  isDeleted: boolean;
+  // Values by field key, as the grid shows them
+  values: Record<string, string | boolean | null>;
 };
 
 // Positions are indexes among the stored rows, in file order

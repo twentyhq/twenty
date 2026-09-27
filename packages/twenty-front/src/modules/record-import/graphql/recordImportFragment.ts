@@ -17,6 +17,7 @@ export const RECORD_IMPORT_FRAGMENT = gql`
     skippedRowCount
     failedRowCount
     errorRowCount
+    deletedRowCount
     hasReport
     errorMessage
   }

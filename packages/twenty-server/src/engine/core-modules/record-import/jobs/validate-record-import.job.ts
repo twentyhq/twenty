@@ -107,8 +107,12 @@ export class ValidateRecordImportJob {
     )) {
       const rowErrors: [number, unknown][] = [];
 
-      rows.forEach(({ errors }, indexInChunk) => {
+      rows.forEach(({ errors, isDeleted }, indexInChunk) => {
         const cellErrors = Object.values(errors);
+
+        if (isDeleted) {
+          return;
+        }
 
         if (cellErrors.length === 0) {
           return;

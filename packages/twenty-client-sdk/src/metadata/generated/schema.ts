@@ -3037,6 +3037,7 @@ export interface RecordImport {
     skippedRowCount: Scalars['Int']
     failedRowCount: Scalars['Int']
     errorRowCount?: Scalars['Int']
+    deletedRowCount: Scalars['Int']
     hasReport: Scalars['Boolean']
     errorMessage?: Scalars['String']
     __typename: 'RecordImport'
@@ -3784,6 +3785,7 @@ export interface Mutation {
     createRecordImport: RecordImportPreview
     prepareRecordImport: RecordImport
     setRecordImportMapping: RecordImport
+    editRecordImportRows: RecordImport
     startRecordImport: RecordImport
     cancelRecordImport: Scalars['Boolean']
     __typename: 'Mutation'
@@ -6974,6 +6976,7 @@ export interface RecordImportGenqlSelection{
     skippedRowCount?: boolean | number
     failedRowCount?: boolean | number
     errorRowCount?: boolean | number
+    deletedRowCount?: boolean | number
     hasReport?: boolean | number
     errorMessage?: boolean | number
     __typename?: boolean | number
@@ -7790,6 +7793,7 @@ export interface MutationGenqlSelection{
     createRecordImport?: (RecordImportPreviewGenqlSelection & { __args: {input: CreateRecordImportInput} })
     prepareRecordImport?: (RecordImportGenqlSelection & { __args: {input: PrepareRecordImportInput} })
     setRecordImportMapping?: (RecordImportGenqlSelection & { __args: {input: SetRecordImportMappingInput} })
+    editRecordImportRows?: (RecordImportGenqlSelection & { __args: {input: EditRecordImportRowsInput} })
     startRecordImport?: (RecordImportGenqlSelection & { __args: {input: RecordImportVersionedInput} })
     cancelRecordImport?: { __args: {input: RecordImportSessionInput} }
     __typename?: boolean | number
@@ -8241,6 +8245,10 @@ export interface CreateRecordImportInput {fileId: Scalars['UUID'],objectMetadata
 export interface PrepareRecordImportInput {id: Scalars['UUID'],version: Scalars['Int'],sheetName?: (Scalars['String'] | null),headerRowIndex: Scalars['Int']}
 
 export interface SetRecordImportMappingInput {id: Scalars['UUID'],version: Scalars['Int'],columns: Scalars['JSON']}
+
+export interface EditRecordImportRowsInput {id: Scalars['UUID'],version: Scalars['Int'],edits: RecordImportRowEditInput[]}
+
+export interface RecordImportRowEditInput {rowNumber: Scalars['Int'],values?: (Scalars['JSON'] | null),isDeleted?: (Scalars['Boolean'] | null)}
 
 export interface RecordImportVersionedInput {id: Scalars['UUID'],version: Scalars['Int']}
 

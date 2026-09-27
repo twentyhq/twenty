@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type Key } from 'react';
 import { type SpreadsheetImportTableProps } from '@/spreadsheet-import/types/SpreadsheetImportTableProps';
+import { SPREADSHEET_IMPORT_UNSAVED_ROW_CLASS_NAME } from '@/spreadsheet-import/constants/SpreadsheetImportUnsavedRowClassName';
 import { DataGrid } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -32,6 +33,11 @@ const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
     border: none;
     block-size: 100%;
     width: 100%;
+  }
+
+  .${SPREADSHEET_IMPORT_UNSAVED_ROW_CLASS_NAME} .rdg-cell {
+    color: ${themeCssVariables.font.color.tertiary};
+    font-style: italic;
   }
 
   .rdg-header-row .rdg-cell {
@@ -118,6 +124,7 @@ export const SpreadsheetImportTable = <TData, TRowKey extends Key = Key>({
   onSelectedCellChange,
   selectedRows,
   onSelectedRowsChange,
+  rowClass,
 }: SpreadsheetImportTableProps<TData, TRowKey>) => {
   const colorScheme = useThemeColorScheme();
   const { rtl } = useSpreadsheetImportInternal();
@@ -141,6 +148,7 @@ export const SpreadsheetImportTable = <TData, TRowKey extends Key = Key>({
         onSelectedCellChange={onSelectedCellChange}
         selectedRows={selectedRows}
         onSelectedRowsChange={onSelectedRowsChange}
+        rowClass={rowClass}
       />
     </StyledDataGridContainer>
   );

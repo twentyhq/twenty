@@ -4,12 +4,22 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { RECORD_IMPORT_SESSION_TTL_MS } from 'src/engine/core-modules/record-import/constants/record-import.constants';
+import {
+  RECORD_IMPORT_MAX_EDITED_ROW_COUNT,
+  RECORD_IMPORT_SESSION_TTL_MS,
+} from 'src/engine/core-modules/record-import/constants/record-import.constants';
+import { SAVE_RECORD_IMPORT_EDITS_SCRIPT } from 'src/engine/core-modules/record-import/constants/save-record-import-edits-script.constant';
 import { SAVE_RECORD_IMPORT_SESSION_SCRIPT } from 'src/engine/core-modules/record-import/constants/save-record-import-session-script.constant';
 import { TOUCH_RECORD_IMPORT_SESSION_SCRIPT } from 'src/engine/core-modules/record-import/constants/touch-record-import-session-script.constant';
 import { UPDATE_RECORD_IMPORT_LEASE_SCRIPT } from 'src/engine/core-modules/record-import/constants/update-record-import-lease-script.constant';
-import { type RecordImportSession } from 'src/engine/core-modules/record-import/types/record-import-session.type';
-import { getRecordImportSessionCacheKey } from 'src/engine/core-modules/record-import/utils/get-record-import-session-cache-key.util';
+import {
+  type RecordImportRowEdit,
+  type RecordImportSession,
+} from 'src/engine/core-modules/record-import/types/record-import-session.type';
+import {
+  getRecordImportEditsCacheKey,
+  getRecordImportSessionCacheKey,
+} from 'src/engine/core-modules/record-import/utils/get-record-import-session-cache-key.util';
 
 const MAX_UPDATE_ATTEMPTS = 5;
 
@@ -102,7 +112,10 @@ export class RecordImportSessionService {
   async touch(key: Pick<RecordImportSession, 'workspaceId' | 'id'>) {
     await this.cacheStorageService.runScript<number>({
       script: TOUCH_RECORD_IMPORT_SESSION_SCRIPT,
-      keys: [getRecordImportSessionCacheKey(key)],
+      keys: [
+        getRecordImportSessionCacheKey(key),
+        getRecordImportEditsCacheKey(key),
+      ],
       args: [String(RECORD_IMPORT_SESSION_TTL_MS)],
     });
   }
@@ -110,7 +123,66 @@ export class RecordImportSessionService {
   async delete(
     key: Pick<RecordImportSession, 'workspaceId' | 'id'>,
   ): Promise<void> {
-    await this.cacheStorageService.del(getRecordImportSessionCacheKey(key));
+    await this.cacheStorageService.mdel([
+      getRecordImportSessionCacheKey(key),
+      getRecordImportEditsCacheKey(key),
+    ]);
+  }
+
+  async deleteEdits(
+    key: Pick<RecordImportSession, 'workspaceId' | 'id'>,
+  ): Promise<void> {
+    await this.cacheStorageService.del(getRecordImportEditsCacheKey(key));
+  }
+
+  async findEdits(
+    key: Pick<RecordImportSession, 'workspaceId' | 'id'>,
+  ): Promise<Map<number, RecordImportRowEdit>> {
+    const edits = (
+      await this.cacheStorageService.hashGetValues(
+        getRecordImportEditsCacheKey(key),
+      )
+    ).map((edit) => JSON.parse(edit) as RecordImportRowEdit);
+
+    return new Map(edits.map((edit) => [edit.rowNumber, edit]));
+  }
+
+  // Saves the edits with the session they were made on; undefined on a
+  // version conflict, 'TOO_MANY_EDITS' when the overlay is full.
+  async saveEdits(
+    session: RecordImportSession,
+    update: (current: RecordImportSession) => RecordImportSession,
+    edits: RecordImportRowEdit[],
+  ): Promise<RecordImportSession | 'TOO_MANY_EDITS' | undefined> {
+    const saved = {
+      ...update(session),
+      version: session.version + 1,
+      updatedAt: Date.now(),
+    };
+
+    const result = await this.cacheStorageService.runScript<number>({
+      script: SAVE_RECORD_IMPORT_EDITS_SCRIPT,
+      keys: [
+        getRecordImportSessionCacheKey(session),
+        getRecordImportEditsCacheKey(session),
+      ],
+      args: [
+        String(session.version),
+        JSON.stringify(saved),
+        String(RECORD_IMPORT_SESSION_TTL_MS),
+        String(RECORD_IMPORT_MAX_EDITED_ROW_COUNT),
+        ...edits.flatMap((edit) => [
+          String(edit.rowNumber),
+          JSON.stringify(edit),
+        ]),
+      ],
+    });
+
+    if (result === -1) {
+      return 'TOO_MANY_EDITS';
+    }
+
+    return result === 1 ? saved : undefined;
   }
 
   async acquireWorkspaceLease({
@@ -150,7 +222,10 @@ export class RecordImportSessionService {
     return (
       (await this.cacheStorageService.runScript<number>({
         script: SAVE_RECORD_IMPORT_SESSION_SCRIPT,
-        keys: [getRecordImportSessionCacheKey(session)],
+        keys: [
+          getRecordImportSessionCacheKey(session),
+          getRecordImportEditsCacheKey(session),
+        ],
         args: [
           isDefined(expectedVersion) ? String(expectedVersion) : '',
           JSON.stringify(session),

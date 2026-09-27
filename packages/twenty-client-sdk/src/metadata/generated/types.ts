@@ -6810,6 +6810,9 @@ export default {
             "errorRowCount": [
                 30
             ],
+            "deletedRowCount": [
+                30
+            ],
             "hasReport": [
                 8
             ],
@@ -11587,11 +11590,20 @@ export default {
                     ]
                 }
             ],
-            "startRecordImport": [
+            "editRecordImportRows": [
                 379,
                 {
                     "input": [
                         614,
+                        "EditRecordImportRowsInput!"
+                    ]
+                }
+            ],
+            "startRecordImport": [
+                379,
+                {
+                    "input": [
+                        616,
                         "RecordImportVersionedInput!"
                     ]
                 }
@@ -14697,6 +14709,34 @@ export default {
                 1
             ]
         },
+        "EditRecordImportRowsInput": {
+            "id": [
+                3
+            ],
+            "version": [
+                30
+            ],
+            "edits": [
+                615
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RecordImportRowEditInput": {
+            "rowNumber": [
+                30
+            ],
+            "values": [
+                9
+            ],
+            "isDeleted": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "RecordImportVersionedInput": {
             "id": [
                 3
@@ -14722,7 +14762,7 @@ export default {
                 284,
                 {
                     "input": [
-                        616,
+                        618,
                         "LogicFunctionLogsInput!"
                     ]
                 }
@@ -14758,7 +14798,7 @@ export default {
                 377,
                 {
                     "input": [
-                        617,
+                        619,
                         "CreateRecordExportInput!"
                     ]
                 }

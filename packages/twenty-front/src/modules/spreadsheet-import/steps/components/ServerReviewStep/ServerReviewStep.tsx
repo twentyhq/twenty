@@ -1,5 +1,6 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
+import { SPREADSHEET_IMPORT_UNSAVED_ROW_CLASS_NAME } from '@/spreadsheet-import/constants/SpreadsheetImportUnsavedRowClassName';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -10,6 +11,7 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { type ImportedStructuredRow } from '@/spreadsheet-import/types';
 import {
   type SpreadsheetImportServerAdapter,
+  type SpreadsheetImportServerRowEdit,
   type SpreadsheetImportServerRowsPage,
 } from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
 import { filterImportedColumns } from '@/spreadsheet-import/utils/filterImportedColumns';
@@ -17,8 +19,9 @@ import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogMa
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
+import { type RowsChangeData } from 'react-data-grid';
 import { type SpreadsheetColumns } from 'twenty-shared/utils';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
+import { IconChevronLeft, IconChevronRight, IconTrash } from 'twenty-ui/icon';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -71,6 +74,8 @@ const StyledNoRowsContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[8]};
 `;
 
+type SaveStatus = 'idle' | 'saving' | 'failed';
+
 type ServerReviewStepProps = {
   serverImport: SpreadsheetImportServerAdapter;
   importedColumns: SpreadsheetColumns;
@@ -83,12 +88,13 @@ type ServerReviewStepProps = {
 };
 
 // Reviews rows the server validated, one page at a time: the browser never
-// holds the whole file.
+// holds the whole file. Edits and deletions are saved to the server, which
+// checks every row again before the import can start (EDIT-1, EDIT-5).
 export const ServerReviewStep = ({
   serverImport,
   importedColumns,
-  rowCount,
-  errorRowCount,
+  rowCount: initialRowCount,
+  errorRowCount: initialErrorRowCount,
   initialPage,
   onBack,
   onError,
@@ -105,22 +111,120 @@ export const ServerReviewStep = ({
   const [offset, setOffset] = useState(0);
   const [onlyErrors, setOnlyErrors] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [counts, setCounts] = useState({
+    rowCount: initialRowCount,
+    errorRowCount: initialErrorRowCount,
+  });
+  const [selectedRows, setSelectedRows] = useState<ReadonlySet<string>>(
+    new Set(),
+  );
+  const [unsavedRowNumbers, setUnsavedRowNumbers] = useState<
+    ReadonlySet<number>
+  >(new Set());
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const { rowCount, errorRowCount } = counts;
 
   const columns = useMemo(
     () => filterImportedColumns(generateColumns(fields), importedColumns),
     [fields, importedColumns],
   );
 
+  const saveEdits = async (edits: SpreadsheetImportServerRowEdit[]) => {
+    setUnsavedRowNumbers(
+      (current) =>
+        new Set([...current, ...edits.map(({ rowNumber }) => rowNumber)]),
+    );
+    setSaveStatus('saving');
+
+    try {
+      const savedCounts = await serverImport.saveEdits(edits);
+      const unsavedEdits = serverImport.getUnsavedEdits();
+
+      setCounts(savedCounts);
+      setUnsavedRowNumbers(
+        new Set(unsavedEdits.map(({ rowNumber }) => rowNumber)),
+      );
+
+      if (unsavedEdits.length === 0) {
+        setSaveStatus('idle');
+        await loadPage(offset, onlyErrors);
+      }
+    } catch (error) {
+      setSaveStatus('failed');
+      onError((error as Error).message);
+    }
+  };
+
+  const handleRowsChange = (
+    rows: (ImportedStructuredRow & ImportedStructuredRowMetadata)[],
+    {
+      indexes,
+    }: RowsChangeData<ImportedStructuredRow & ImportedStructuredRowMetadata>,
+  ) => {
+    saveEdits(
+      indexes.map((index) => {
+        const row = rows[index];
+        const previousRow = page.rows[index];
+        const values: Record<string, string | boolean | null> = {};
+
+        for (const [fieldKey, value] of Object.entries(row)) {
+          if (
+            fieldKey.startsWith('__') ||
+            typeof value === 'object' ||
+            value === previousRow?.[fieldKey]
+          ) {
+            continue;
+          }
+          values[fieldKey] = value ?? null;
+        }
+
+        return { rowNumber: Number(row.__index), values };
+      }),
+    );
+    setPage({ ...page, rows });
+  };
+
+  const deleteSelectedRows = () => {
+    saveEdits(
+      [...selectedRows].map((rowIndex) => ({
+        rowNumber: Number(rowIndex),
+        isDeleted: true,
+      })),
+    );
+    setPage({
+      totalCount: page.totalCount - selectedRows.size,
+      rows: page.rows.filter((row) => !selectedRows.has(row.__index)),
+    });
+    setSelectedRows(new Set());
+  };
+
   const loadPage = async (nextOffset: number, nextOnlyErrors: boolean) => {
     setIsLoading(true);
     try {
-      setPage(
-        await serverImport.loadRows({
-          offset: nextOffset,
-          limit: SERVER_REVIEW_PAGE_SIZE,
-          onlyErrors: nextOnlyErrors,
-        }),
+      const nextPage = await serverImport.loadRows({
+        offset: nextOffset,
+        limit: SERVER_REVIEW_PAGE_SIZE,
+        onlyErrors: nextOnlyErrors,
+      });
+
+      const unsavedEditByRowNumber = new Map(
+        serverImport.getUnsavedEdits().map((edit) => [edit.rowNumber, edit]),
       );
+
+      // Edits still waiting to be saved stay visible over the saved rows
+      setPage({
+        ...nextPage,
+        rows: nextPage.rows
+          .filter(
+            (row) =>
+              unsavedEditByRowNumber.get(Number(row.__index))?.isDeleted !==
+              true,
+          )
+          .map((row) => ({
+            ...row,
+            ...unsavedEditByRowNumber.get(Number(row.__index))?.values,
+          })) as typeof nextPage.rows,
+      });
       setOffset(nextOffset);
       setOnlyErrors(nextOnlyErrors);
     } catch (error) {
@@ -179,6 +283,8 @@ export const ServerReviewStep = ({
     });
   };
 
+  // Saving reloads the page it started on, so paging waits for it
+  const isPagingDisabled = isLoading || saveStatus === 'saving';
   const firstRowPosition = page.totalCount === 0 ? 0 : offset + 1;
   const lastRowPosition = offset + page.rows.length;
   const formattedFirstRowPosition = formatNumber(firstRowPosition);
@@ -208,6 +314,14 @@ export const ServerReviewStep = ({
               rowKeyGetter={rowKeyGetter}
               rows={page.rows}
               columns={columns}
+              onRowsChange={handleRowsChange}
+              selectedRows={selectedRows}
+              onSelectedRowsChange={setSelectedRows}
+              rowClass={(row) =>
+                unsavedRowNumbers.has(Number(row.__index))
+                  ? SPREADSHEET_IMPORT_UNSAVED_ROW_CLASS_NAME
+                  : undefined
+              }
               renderers={{
                 noRowsFallback: (
                   <StyledNoRowsContainer>
@@ -222,14 +336,28 @@ export const ServerReviewStep = ({
               <Switch
                 aria-label={t`Show only rows with errors`}
                 checked={onlyErrors}
-                disabled={isLoading}
+                disabled={isPagingDisabled}
                 onCheckedChange={() => loadPage(0, !onlyErrors)}
                 size="sm"
               />
               <StyledToolbarText>
                 <Trans>Show only rows with errors</Trans>
               </StyledToolbarText>
+              <Button
+                startIcon={<IconTrash />}
+                onClick={deleteSelectedRows}
+                disabled={selectedRows.size === 0}
+              >{t`Remove`}</Button>
             </StyledToolbarGroup>
+            {saveStatus === 'saving' && (
+              <StyledToolbarText>{t`Saving changes…`}</StyledToolbarText>
+            )}
+            {saveStatus === 'failed' && (
+              <StyledToolbarGroup>
+                <StyledToolbarText>{t`Changes not saved`}</StyledToolbarText>
+                <Button onClick={() => saveEdits([])}>{t`Retry`}</Button>
+              </StyledToolbarGroup>
+            )}
             <StyledToolbarGroup>
               <StyledToolbarText>
                 {t`${formattedFirstRowPosition}–${formattedLastRowPosition} of ${formattedTotalCount}`}
@@ -237,7 +365,7 @@ export const ServerReviewStep = ({
               <Button
                 aria-label={t`Previous page`}
                 startIcon={<IconChevronLeft />}
-                disabled={isLoading || offset === 0}
+                disabled={isPagingDisabled || offset === 0}
                 onClick={() =>
                   loadPage(
                     Math.max(0, offset - SERVER_REVIEW_PAGE_SIZE),
@@ -248,7 +376,9 @@ export const ServerReviewStep = ({
               <Button
                 aria-label={t`Next page`}
                 startIcon={<IconChevronRight />}
-                disabled={isLoading || lastRowPosition >= page.totalCount}
+                disabled={
+                  isPagingDisabled || lastRowPosition >= page.totalCount
+                }
                 onClick={() =>
                   loadPage(offset + SERVER_REVIEW_PAGE_SIZE, onlyErrors)
                 }
@@ -261,6 +391,8 @@ export const ServerReviewStep = ({
         onContinue={handleContinue}
         onBack={onBack}
         continueTitle={t`Confirm`}
+        // The import must read exactly the rows shown (EDIT-5, EDIT-6)
+        isContinueDisabled={saveStatus !== 'idle' || unsavedRowNumbers.size > 0}
       />
     </>
   );
