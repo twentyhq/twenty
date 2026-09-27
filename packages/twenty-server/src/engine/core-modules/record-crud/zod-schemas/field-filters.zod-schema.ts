@@ -65,7 +65,7 @@ export const generateFieldFilterZodSchema = (
         .object({
           eq: selectEnum.optional().describe('Equals'),
           neq: selectEnum.optional().describe('Not equals'),
-          in: z.array(selectEnum).optional().describe('In array of values'),
+          containsAny: z.array(selectEnum).optional().describe('In array of values'),
           is: NullCheckEnum.optional(),
         })
         .optional();
@@ -83,7 +83,7 @@ export const generateFieldFilterZodSchema = (
 
       return z
         .object({
-          in: z
+          containsAny: z
             .array(multiSelectEnum)
             .optional()
             .describe('Contains any of these values'),
@@ -106,7 +106,7 @@ export const generateFieldFilterZodSchema = (
       return z
         .object({
           eq: ratingEnum.optional().describe('Equals'),
-          in: z.array(ratingEnum).optional().describe('In array of values'),
+          containsAny: z.array(ratingEnum).optional().describe('In array of values'),
           is: NullCheckEnum.optional(),
         })
         .optional();
