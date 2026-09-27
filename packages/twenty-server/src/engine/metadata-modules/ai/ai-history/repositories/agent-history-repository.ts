@@ -1,3 +1,4 @@
+import { addAgentMessageSenderWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-history/utils/add-agent-message-sender-workspace-member.util';
 import {
   mapAgentHistorySelectToWorkspace,
   mapAgentHistoryValuesToWorkspace,
@@ -178,9 +179,9 @@ export class AgentHistoryRepository<
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(workspaceId, (repository) =>
+    return this.run(workspaceId, async (repository, context) =>
       repository.insert(
-        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
+        await this.addSenderRelation(values, workspaceId, context),
       ),
     );
   }
@@ -189,9 +190,9 @@ export class AgentHistoryRepository<
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
-    return this.run(workspaceId, async (repository) => {
+    return this.run(workspaceId, async (repository, context) => {
       const result = await repository.insert(
-        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
+        await this.addSenderRelation(values, workspaceId, context),
       );
       return normalizeAgentHistoryRecord({
         record: result.raw[0],
@@ -199,6 +200,24 @@ export class AgentHistoryRepository<
         objectName: this.name,
       }) as TRecord;
     });
+  }
+
+  private async addSenderRelation(
+    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
+    workspaceId: string,
+    context: AgentHistoryStorageContext,
+  ) {
+    const mappedValues = mapAgentHistoryValuesToWorkspace<TRecord>(
+      this.name,
+      values,
+    );
+    return this.name === 'agentMessage'
+      ? await addAgentMessageSenderWorkspaceMember(
+          mappedValues,
+          workspaceId,
+          context,
+        )
+      : mappedValues;
   }
 
   update(
@@ -259,7 +278,11 @@ export class AgentHistoryRepository<
         ],
       );
       return repository.upsert(
-        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
+        (await this.addSenderRelation(
+          values,
+          workspaceId,
+          context,
+        )) as QueryDeepPartialEntity<TRecord>,
         conflictPaths,
       );
     });

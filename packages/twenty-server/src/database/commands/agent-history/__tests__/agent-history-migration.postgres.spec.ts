@@ -1,3 +1,4 @@
+import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790541986177-link-chat-message-senders-to-workspace-members.command';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -52,6 +53,7 @@ const OWNER_ID = '20202020-2222-4222-8222-222222222222';
 const THREAD_ID = '20202020-3333-4333-8333-333333333333';
 const TURN_ID = '20202020-4444-4444-8444-444444444444';
 const MESSAGE_ID = '20202020-5555-4555-8555-555555555555';
+const MEMBER_ID = '20202020-7777-4777-8777-777777777777';
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
 (DATABASE_URL ? describe : describe.skip)(
@@ -282,6 +284,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await dataSource.query(
         'INSERT INTO core."userWorkspace" (id, "workspaceId") VALUES ($1, $2)',
         [OWNER_ID, WORKSPACE_ID],
+      );
+      await dataSource.query(
+        `CREATE TABLE "${SCHEMA}"."workspaceMember" (id uuid PRIMARY KEY, "userId" uuid, "deletedAt" timestamptz)`,
+      );
+      await dataSource.query(
+        'UPDATE core."userWorkspace" SET "userId" = $1 WHERE id = $1',
+        [OWNER_ID],
+      );
+      await dataSource.query(
+        `INSERT INTO "${SCHEMA}"."workspaceMember" (id, "userId") VALUES ($1, $2)`,
+        [MEMBER_ID, OWNER_ID],
       );
       await dataSource.query(
         'CREATE UNIQUE INDEX global_state_key ON core."keyValuePair" (key) WHERE "workspaceId" IS NULL AND "userId" IS NULL AND "applicationId" IS NULL',
@@ -782,6 +795,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         relations: { parts: true },
       });
       expect(saved.senderUserWorkspaceId).toBe(OWNER_ID);
+      expect(
+        await dataSource.query(
+          `SELECT "senderWorkspaceMemberId" FROM "${SCHEMA}"."agentMessage" WHERE id = ANY($1::uuid[])`,
+          [[kickoff.id, message.id, queued.id]],
+        ),
+      ).toEqual([
+        { senderWorkspaceMemberId: MEMBER_ID },
+        { senderWorkspaceMemberId: MEMBER_ID },
+        { senderWorkspaceMemberId: MEMBER_ID },
+      ]);
       expect(saved.parts[0].textContent).toBe('Live message after upgrade');
       expect(
         await messages.findOneOrFail(WORKSPACE_ID, {
@@ -848,6 +871,85 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).resolves.toMatchObject({
         sender: { userWorkspaceId: TURN_ID, applicationId: MESSAGE_ID },
       });
+    });
+
+    it('backfills sender members idempotently and retains legacy attribution when a member is deleted', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      await dataSource.query(
+        `UPDATE "${SCHEMA}"."agentMessage" SET "senderUserWorkspaceId" = $1`,
+        [OWNER_ID],
+      );
+      const command = new LinkChatMessageSendersToWorkspaceMembersCommand(
+        {} as never,
+        {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: async () => ({
+            twentyStandardFlatApplication: {
+              id: OWNER_ID,
+              universalIdentifier: OWNER_ID,
+            },
+          }),
+        } as never,
+        { getOrRecompute: async () => metadata } as never,
+        {} as never,
+        dataSource,
+      );
+      await command.up({
+        workspaceId: WORKSPACE_ID,
+        options: { dryRun: true },
+        index: 0,
+        total: 1,
+      });
+      expect(
+        await dataSource.query(
+          `SELECT "senderWorkspaceMemberId" FROM "${SCHEMA}"."agentMessage"`,
+        ),
+      ).toEqual([{ senderWorkspaceMemberId: null }]);
+      await command.up({
+        workspaceId: WORKSPACE_ID,
+        options: {},
+        index: 0,
+        total: 1,
+      });
+      await command.up({
+        workspaceId: WORKSPACE_ID,
+        options: {},
+        index: 0,
+        total: 1,
+      });
+      expect(
+        await dataSource.query(
+          `SELECT "senderWorkspaceMemberId" FROM "${SCHEMA}"."agentMessage"`,
+        ),
+      ).toEqual([{ senderWorkspaceMemberId: MEMBER_ID }]);
+      await dataSource.query(
+        `ALTER TABLE "${SCHEMA}"."agentMessage" ADD CONSTRAINT sender_member FOREIGN KEY ("senderWorkspaceMemberId") REFERENCES "${SCHEMA}"."workspaceMember" (id) ON DELETE SET NULL`,
+      );
+      await dataSource.query(
+        `DELETE FROM "${SCHEMA}"."workspaceMember" WHERE id = $1`,
+        [MEMBER_ID],
+      );
+      await command.up({
+        workspaceId: WORKSPACE_ID,
+        options: {},
+        index: 0,
+        total: 1,
+      });
+      await command.down({
+        workspaceId: WORKSPACE_ID,
+        options: {},
+        index: 0,
+        total: 1,
+      });
+      expect(
+        await dataSource.query(
+          `SELECT "senderUserWorkspaceId", "senderWorkspaceMemberId" FROM "${SCHEMA}"."agentMessage"`,
+        ),
+      ).toEqual([
+        { senderUserWorkspaceId: OWNER_ID, senderWorkspaceMemberId: null },
+      ]);
     });
 
     it('preserves the owner fallback for historical null-sender messages', async () => {
