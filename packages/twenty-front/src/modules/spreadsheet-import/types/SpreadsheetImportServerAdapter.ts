@@ -40,11 +40,14 @@ export type SpreadsheetImportServerAdapter = {
     onlyErrors: boolean;
   }) => Promise<SpreadsheetImportServerRowsPage>;
   // Queues edits made in the review grid and saves every edit not saved
-  // yet, in order; resolves once all rows have been checked again. Call it
-  // with no edits to retry after a failure.
-  saveEdits: (
-    edits: SpreadsheetImportServerRowEdit[],
-  ) => Promise<{ rowCount: number; errorRowCount: number }>;
+  // yet, in order; resolves once all rows have been checked again. Edits the
+  // server rejects are dropped and reported. Call it with no edits to retry
+  // after a failure.
+  saveEdits: (edits: SpreadsheetImportServerRowEdit[]) => Promise<{
+    rowCount: number;
+    errorRowCount: number;
+    rejectedEditsErrorMessage?: string;
+  }>;
   getUnsavedEdits: () => SpreadsheetImportServerRowEdit[];
   importRows: () => Promise<void>;
   cancelImport: () => Promise<void>;

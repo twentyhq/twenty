@@ -39,9 +39,12 @@ export class RecordImportValidationWorkspaceService {
     private readonly recordImportSessionService: RecordImportSessionService,
   ) {}
 
+  // assertIsCurrent runs after each chunk of the unique check, so a run
+  // replaced by a newer edit stops before reading the whole file
   async *validateChunks(
     session: RecordImportSession,
     context: RecordImportContext,
+    assertIsCurrent?: () => Promise<void>,
   ): AsyncGenerator<{ chunkIndex: number; rows: RecordImportRowValidation[] }> {
     const { spreadsheetImportFields } = context.metadata;
     const edits = await this.recordImportSessionService.findEdits(session);
@@ -49,6 +52,7 @@ export class RecordImportValidationWorkspaceService {
       session,
       context,
       edits,
+      assertIsCurrent,
     );
 
     for (
@@ -120,6 +124,7 @@ export class RecordImportValidationWorkspaceService {
     session: RecordImportSession,
     context: RecordImportContext,
     edits: Map<number, RecordImportRowEdit>,
+    assertIsCurrent?: () => Promise<void>,
   ) {
     const uniqueConstraints = getSpreadsheetImportUniqueConstraints(
       context.metadata.objectMetadataItem,
@@ -171,6 +176,8 @@ export class RecordImportValidationWorkspaceService {
           }
         });
       });
+
+      await assertIsCurrent?.();
     }
 
     const duplicateCells = new Map<

@@ -500,6 +500,88 @@ describe('record import (integration)', () => {
     ]);
   });
 
+  it('checks back-to-back edits and drops them when columns are matched again', async () => {
+    const { ready } = await createAndPrepare(
+      Buffer.from(
+        ['Name,Employees', 'First,1', 'Second,2', 'Third,3'].join('\n'),
+      ),
+    );
+    const columns = [matched(0, 'name'), matched(1, 'employees')];
+
+    const mapped = await request<{ setRecordImportMapping: RecordImport }>(
+      setRecordImportMappingMutation,
+      { id: ready.id, version: ready.version, columns },
+    );
+
+    expect(mapped.errors).toBeUndefined();
+
+    const validated = await waitForStatus(ready.id, ['VALIDATED']);
+
+    const deleted = await request<{ editRecordImportRows: RecordImport }>(
+      editRecordImportRowsMutation,
+      {
+        id: ready.id,
+        version: validated.version,
+        edits: [{ rowNumber: 2, isDeleted: true }],
+      },
+    );
+
+    expect(deleted.errors).toBeUndefined();
+
+    // Sent while the first check may still be queued
+    const edited = await request<{ editRecordImportRows: RecordImport }>(
+      editRecordImportRowsMutation,
+      {
+        id: ready.id,
+        version: deleted.data.editRecordImportRows.version,
+        edits: [{ rowNumber: 3, values: { employees: '20' } }],
+      },
+    );
+
+    expect(edited.errors).toBeUndefined();
+    expect(await waitForStatus(ready.id, ['VALIDATED'])).toMatchObject({
+      deletedRowCount: 1,
+    });
+
+    const remapped = await request<{ setRecordImportMapping: RecordImport }>(
+      setRecordImportMappingMutation,
+      {
+        id: ready.id,
+        version: (await getRecordImport(ready.id)).version,
+        columns,
+      },
+    );
+
+    expect(remapped.errors).toBeUndefined();
+    expect(await waitForStatus(ready.id, ['VALIDATED'])).toMatchObject({
+      deletedRowCount: 0,
+    });
+
+    const page = await request<{
+      recordImportRows: {
+        totalCount: number;
+        rows: { rowNumber: number; values: Record<string, string> }[];
+      };
+    }>(recordImportRowsQuery, {
+      id: ready.id,
+      offset: 0,
+      limit: 10,
+      onlyErrors: false,
+    });
+
+    expect(page.data.recordImportRows.totalCount).toBe(3);
+    expect(
+      page.data.recordImportRows.rows.map(({ rowNumber, values }) => [
+        rowNumber,
+        values.employees,
+      ]),
+    ).toEqual([
+      [2, '1'],
+      [3, '2'],
+      [4, '3'],
+    ]);
+  });
+
   it('reads Windows-1252 files saved by Excel', async () => {
     const id = v4();
 

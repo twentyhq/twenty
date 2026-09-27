@@ -98,12 +98,24 @@ export class ValidateRecordImportJob {
     let errorRowCount = 0;
     let processedRowCount = 0;
 
+    const assertIsCurrentRun = async () => {
+      if (
+        !this.isCurrentRun(
+          await this.recordImportSessionService.find(session),
+          validationRunId,
+        )
+      ) {
+        throw new RecordImportValidationSuperseded();
+      }
+    };
+
     for await (const {
       chunkIndex,
       rows,
     } of this.recordImportValidationWorkspaceService.validateChunks(
       session,
       context,
+      assertIsCurrentRun,
     )) {
       const rowErrors: [number, unknown][] = [];
 
@@ -140,14 +152,7 @@ export class ValidateRecordImportJob {
         totalRowCount: session.rowCount ?? 0,
       });
 
-      if (
-        !this.isCurrentRun(
-          await this.recordImportSessionService.find(session),
-          validationRunId,
-        )
-      ) {
-        throw new RecordImportValidationSuperseded();
-      }
+      await assertIsCurrentRun();
     }
 
     await this.recordImportStorageService.writeErrorIndex(session, {

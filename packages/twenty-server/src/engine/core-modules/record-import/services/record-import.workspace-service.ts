@@ -285,11 +285,11 @@ export class RecordImportWorkspaceService {
         mappedFields: undefined,
         validationRunId: undefined,
         errorRowCount: undefined,
+        deletedRowCount: undefined,
         errorMessage: undefined,
       }),
+      { shouldDeleteEdits: true },
     );
-
-    await this.recordImportSessionService.deleteEdits(preparing);
 
     const jobId = await this.messageQueueService.add(
       'PrepareRecordImportJob',
@@ -361,11 +361,11 @@ export class RecordImportWorkspaceService {
         ),
         validationRunId: v4(),
         errorRowCount: undefined,
+        deletedRowCount: 0,
         errorMessage: undefined,
       }),
+      { shouldDeleteEdits: true },
     );
-
-    await this.recordImportSessionService.deleteEdits(validating);
 
     return this.toDTO(await this.enqueueValidation(validating));
   }
@@ -480,17 +480,7 @@ export class RecordImportWorkspaceService {
   }): Promise<RecordImportDTO> {
     const session = await this.findOwnedSessionOrThrow(authContext, id);
 
-    if (session.version !== version) {
-      throw new ConflictException(
-        t`This import was changed in another tab. Reload it to continue.`,
-      );
-    }
-
-    if (session.status !== 'VALIDATED' && session.status !== 'VALIDATING') {
-      throw new ConflictException(
-        t`This import cannot be changed in its current state.`,
-      );
-    }
+    this.assertCanChange(session, version, ['VALIDATED', 'VALIDATING']);
 
     const { metadata } = await this.buildContext(session);
     const existingEdits =
@@ -846,7 +836,9 @@ export class RecordImportWorkspaceService {
         id: validating.id,
         validationRunId: validating.validationRunId,
       },
-      { id: validating.id },
+      // A waiting run of an older mapping or edit must not swallow this one:
+      // it discards itself once it sees the newer validationRunId
+      { id: validating.id, allowDuplicatedPrefixes: true },
     );
 
     const updated = await this.recordImportSessionService.update(
@@ -879,6 +871,7 @@ export class RecordImportWorkspaceService {
     );
     const fieldByKey = new Map(fields.map((field) => [field.key, field]));
     const chunkCache = new Map<number, RecordImportRow[]>();
+    const chunkFirstRowNumbers = await this.getChunkFirstRowNumbers(session);
     const rowEdits = new Map<number, RecordImportRowEdit>();
 
     for (const edit of edits) {
@@ -898,11 +891,12 @@ export class RecordImportWorkspaceService {
         }
       }
 
-      const position = await this.findRowPosition(
+      const position = await this.findRowPosition({
         session,
-        edit.rowNumber,
+        rowNumber: edit.rowNumber,
+        chunkFirstRowNumbers,
         chunkCache,
-      );
+      });
 
       if (!isDefined(position)) {
         throw new BadRequestException(t`An edited row does not exist.`);
@@ -922,12 +916,44 @@ export class RecordImportWorkspaceService {
     return [...rowEdits.values()];
   }
 
-  private async findRowPosition(
+  // Sessions prepared before chunkFirstRowNumbers was stored live up to the
+  // session TTL, so it is read back from the chunks for them
+  private async getChunkFirstRowNumbers(
     session: RecordImportSession,
-    rowNumber: number,
-    chunkCache: Map<number, RecordImportRow[]>,
-  ): Promise<number | undefined> {
-    const chunkFirstRowNumbers = session.chunkFirstRowNumbers ?? [];
+  ): Promise<number[]> {
+    if (isDefined(session.chunkFirstRowNumbers)) {
+      return session.chunkFirstRowNumbers;
+    }
+
+    const chunkFirstRowNumbers: number[] = [];
+
+    for (
+      let chunkIndex = 0;
+      chunkIndex < (session.chunkCount ?? 0);
+      chunkIndex++
+    ) {
+      const [firstRow] = await this.recordImportStorageService.readRowChunk(
+        session,
+        chunkIndex,
+      );
+
+      chunkFirstRowNumbers.push(firstRow.rowNumber);
+    }
+
+    return chunkFirstRowNumbers;
+  }
+
+  private async findRowPosition({
+    session,
+    rowNumber,
+    chunkFirstRowNumbers,
+    chunkCache,
+  }: {
+    session: RecordImportSession;
+    rowNumber: number;
+    chunkFirstRowNumbers: number[];
+    chunkCache: Map<number, RecordImportRow[]>;
+  }): Promise<number | undefined> {
     let chunkIndex = -1;
 
     // Rows are stored in file order, so chunks are sorted by row number
@@ -1137,12 +1163,11 @@ export class RecordImportWorkspaceService {
     );
   }
 
-  private async compareAndUpdateOrThrow(
+  private assertCanChange(
     session: RecordImportSession,
     version: number,
     allowedStatuses: RecordImportStatus[],
-    update: (current: RecordImportSession) => RecordImportSession,
-  ): Promise<RecordImportSession> {
+  ) {
     if (session.version !== version) {
       throw new ConflictException(
         t`This import was changed in another tab. Reload it to continue.`,
@@ -1154,10 +1179,21 @@ export class RecordImportWorkspaceService {
         t`This import cannot be changed in its current state.`,
       );
     }
+  }
+
+  private async compareAndUpdateOrThrow(
+    session: RecordImportSession,
+    version: number,
+    allowedStatuses: RecordImportStatus[],
+    update: (current: RecordImportSession) => RecordImportSession,
+    options?: { shouldDeleteEdits?: boolean },
+  ): Promise<RecordImportSession> {
+    this.assertCanChange(session, version, allowedStatuses);
 
     const updated = await this.recordImportSessionService.compareAndUpdate(
       session,
       update,
+      options,
     );
 
     if (!isDefined(updated)) {

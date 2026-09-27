@@ -20,7 +20,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { type RowsChangeData } from 'react-data-grid';
-import { type SpreadsheetColumns } from 'twenty-shared/utils';
+import { isDefined, type SpreadsheetColumns } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight, IconTrash } from 'twenty-ui/icon';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
@@ -137,8 +137,13 @@ export const ServerReviewStep = ({
     setSaveStatus('saving');
 
     try {
-      const savedCounts = await serverImport.saveEdits(edits);
+      const { rejectedEditsErrorMessage, ...savedCounts } =
+        await serverImport.saveEdits(edits);
       const unsavedEdits = serverImport.getUnsavedEdits();
+
+      if (isDefined(rejectedEditsErrorMessage)) {
+        onError(rejectedEditsErrorMessage);
+      }
 
       setCounts(savedCounts);
       setUnsavedRowNumbers(
@@ -212,19 +217,22 @@ export const ServerReviewStep = ({
       );
 
       // Edits still waiting to be saved stay visible over the saved rows
-      setPage({
-        ...nextPage,
-        rows: nextPage.rows
-          .filter(
-            (row) =>
-              unsavedEditByRowNumber.get(Number(row.__index))?.isDeleted !==
-              true,
-          )
-          .map((row) => ({
-            ...row,
-            ...unsavedEditByRowNumber.get(Number(row.__index))?.values,
-          })) as typeof nextPage.rows,
-      });
+      const rows = nextPage.rows
+        .filter(
+          (row) =>
+            unsavedEditByRowNumber.get(Number(row.__index))?.isDeleted !== true,
+        )
+        .map((row) => ({
+          ...row,
+          ...unsavedEditByRowNumber.get(Number(row.__index))?.values,
+        })) as typeof nextPage.rows;
+      const rowKeys = new Set(rows.map((row) => row.__index));
+
+      setPage({ ...nextPage, rows });
+      // Remove only acts on selected rows the user can see
+      setSelectedRows(
+        (current) => new Set([...current].filter((key) => rowKeys.has(key))),
+      );
       setOffset(nextOffset);
       setOnlyErrors(nextOnlyErrors);
     } catch (error) {

@@ -64,6 +64,7 @@ export class RecordImportSessionService {
   async compareAndUpdate(
     session: RecordImportSession,
     update: (current: RecordImportSession) => RecordImportSession | undefined,
+    { shouldDeleteEdits = false }: { shouldDeleteEdits?: boolean } = {},
   ): Promise<RecordImportSession | undefined> {
     const next = update(session);
 
@@ -77,7 +78,9 @@ export class RecordImportSessionService {
       updatedAt: Date.now(),
     };
 
-    return (await this.save(saved, session.version)) ? saved : undefined;
+    return (await this.save(saved, session.version, shouldDeleteEdits))
+      ? saved
+      : undefined;
   }
 
   // Re-reads and retries on conflicts, for writers such as the job that do
@@ -127,12 +130,6 @@ export class RecordImportSessionService {
       getRecordImportSessionCacheKey(key),
       getRecordImportEditsCacheKey(key),
     ]);
-  }
-
-  async deleteEdits(
-    key: Pick<RecordImportSession, 'workspaceId' | 'id'>,
-  ): Promise<void> {
-    await this.cacheStorageService.del(getRecordImportEditsCacheKey(key));
   }
 
   async findEdits(
@@ -218,6 +215,7 @@ export class RecordImportSessionService {
   private async save(
     session: RecordImportSession,
     expectedVersion: number | undefined,
+    shouldDeleteEdits = false,
   ): Promise<boolean> {
     return (
       (await this.cacheStorageService.runScript<number>({
@@ -230,6 +228,7 @@ export class RecordImportSessionService {
           isDefined(expectedVersion) ? String(expectedVersion) : '',
           JSON.stringify(session),
           String(RECORD_IMPORT_SESSION_TTL_MS),
+          shouldDeleteEdits ? '1' : '0',
         ],
       })) === 1
     );

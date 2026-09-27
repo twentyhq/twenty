@@ -14,6 +14,7 @@ import {
 } from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
 import { RECORD_IMPORT_MAX_EDITS_PER_REQUEST } from '@/record-import/constants/RecordImportMaxEditsPerRequest';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,6 +37,12 @@ import {
 
 const RUNNING_STATUSES = ['PREPARING', 'IMPORTING', 'CANCELLING'];
 
+const isRejectedEditsError = (error: unknown) =>
+  CombinedGraphQLErrors.is(error) &&
+  error.errors.some(
+    (graphQLError) => graphQLError.extensions?.code === 'BAD_USER_INPUT',
+  );
+
 export const useCreateRecordImportServerAdapter = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
@@ -54,7 +61,7 @@ export const useCreateRecordImportServerAdapter = (
       let session: RecordImportFieldsFragment | undefined;
       let stopWatchingImport: (() => void) | undefined;
       // Edits the server has not confirmed yet, merged by row, and the chain
-      // that sends them one request at a time
+      // that sends them one request at a time without waiting for validation
       const unsavedEdits = new Map<number, SpreadsheetImportServerRowEdit>();
       let editsQueue: Promise<unknown> = Promise.resolve();
 
@@ -70,7 +77,11 @@ export const useCreateRecordImportServerAdapter = (
           id: getSession().id,
           isSettled: (recordImport) => recordImport.status !== 'VALIDATING',
         }).promise;
-        session = validated;
+
+        // An edit saved while watching already moved the session further
+        if (validated.version >= getSession().version) {
+          session = validated;
+        }
 
         if (validated.status !== 'VALIDATED') {
           throw new Error(
@@ -216,6 +227,7 @@ export const useCreateRecordImportServerAdapter = (
             },
           });
           session = data?.prepareRecordImport ?? session;
+          unsavedEdits.clear();
 
           const prepared = await watchRecordImport({
             id: getSession().id,
@@ -258,6 +270,7 @@ export const useCreateRecordImportServerAdapter = (
             },
           });
           session = data?.setRecordImportMapping ?? session;
+          unsavedEdits.clear();
 
           return waitForValidation();
         },
@@ -278,63 +291,88 @@ export const useCreateRecordImportServerAdapter = (
           };
         },
 
-        saveEdits: (edits) => {
+        saveEdits: async (edits) => {
           for (const edit of edits) {
             const previous = unsavedEdits.get(edit.rowNumber);
 
             unsavedEdits.set(edit.rowNumber, {
               rowNumber: edit.rowNumber,
-
               values: { ...previous?.values, ...edit.values },
-
               isDeleted:
                 previous?.isDeleted === true || edit.isDeleted === true,
             });
           }
 
-          const save = editsQueue.then(async () => {
+          const send = editsQueue.then(async () => {
             const batch = [...unsavedEdits.values()];
+            let rejectedEditsErrorMessage: string | undefined;
 
             for (
               let start = 0;
               start < batch.length;
               start += RECORD_IMPORT_MAX_EDITS_PER_REQUEST
             ) {
-              const { data } = await apolloClient.mutate({
-                mutation: EditRecordImportRowsDocument,
+              const requestEdits = batch.slice(
+                start,
+                start + RECORD_IMPORT_MAX_EDITS_PER_REQUEST,
+              );
 
-                variables: {
-                  input: {
-                    id: getSession().id,
-
-                    version: getSession().version,
-
-                    edits: batch.slice(
-                      start,
-
-                      start + RECORD_IMPORT_MAX_EDITS_PER_REQUEST,
-                    ),
+              try {
+                const { data } = await apolloClient.mutate({
+                  mutation: EditRecordImportRowsDocument,
+                  variables: {
+                    input: {
+                      id: getSession().id,
+                      version: getSession().version,
+                      edits: requestEdits,
+                    },
                   },
-                },
-              });
+                });
 
-              session = data?.editRecordImportRows ?? session;
-            }
+                session = data?.editRecordImportRows ?? session;
+              } catch (error) {
+                if (!isRejectedEditsError(error)) {
+                  throw error;
+                }
 
-            // Keeps edits made while this batch was being saved
+                // The server rejects the same edits on every retry, and a
+                // later edit of the row still carries the rejected value
+                rejectedEditsErrorMessage = (error as Error).message;
 
-            for (const edit of batch) {
-              if (unsavedEdits.get(edit.rowNumber) === edit) {
-                unsavedEdits.delete(edit.rowNumber);
+                for (const edit of requestEdits) {
+                  unsavedEdits.delete(edit.rowNumber);
+                }
+
+                continue;
+              }
+
+              // Keeps edits made while this request was being sent
+              for (const edit of requestEdits) {
+                if (unsavedEdits.get(edit.rowNumber) === edit) {
+                  unsavedEdits.delete(edit.rowNumber);
+                }
               }
             }
 
-            return waitForValidation();
+            return rejectedEditsErrorMessage;
           });
 
-          editsQueue = save.catch(() => undefined);
+          editsQueue = send.catch(() => undefined);
 
-          return save;
+          const rejectedEditsErrorMessage = await send;
+
+          // Resolves on the validation of the last edit sent, not of this one
+          for (;;) {
+            const queue = editsQueue;
+
+            await queue;
+
+            const counts = await waitForValidation();
+
+            if (queue === editsQueue) {
+              return { ...counts, rejectedEditsErrorMessage };
+            }
+          }
         },
 
         getUnsavedEdits: () => [...unsavedEdits.values()],
