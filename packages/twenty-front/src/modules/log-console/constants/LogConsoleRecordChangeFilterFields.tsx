@@ -11,6 +11,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 const LOGGED_RECORD_CHANGE_EVENTS = [
   'Object Record Created',
   'Object Record Updated',
+  'Object Record Upserted',
   'Object Record Deleted',
   'Object Record Restored',
   'Object Record Destroyed',
