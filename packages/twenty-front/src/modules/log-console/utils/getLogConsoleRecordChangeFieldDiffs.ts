@@ -2,8 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
+import { isLogConsoleFieldValueEmpty } from '@/log-console/utils/isLogConsoleFieldValueEmpty';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 
 export const getLogConsoleRecordChangeFieldDiffs = ({
@@ -45,10 +45,7 @@ export const getLogConsoleRecordChangeFieldDiffs = ({
     }
 
     const isEmpty = (value: unknown) =>
-      isFieldValueEmpty({
-        fieldDefinition: fieldMetadataItem,
-        fieldValue: value,
-      });
+      isLogConsoleFieldValueEmpty({ fieldMetadataItem, value });
 
     if (isEmpty(before) && isEmpty(after)) {
       return [];

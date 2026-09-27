@@ -245,6 +245,10 @@ const StyledDetailPanelWrapper = styled.div<{
     isOpen
       ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
       : '0px'};
+
+  @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
+    position: static;
+  }
 `;
 
 export const LogConsole = () => {
