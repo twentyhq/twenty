@@ -1,12 +1,14 @@
 import { type MatchColumnsStepProps } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
 import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
-import { spreadsheetImportParseMultiSelectOptionsOrThrow } from '@/spreadsheet-import/utils/spreadsheetImportParseMultiSelectOptionsOrThrow';
+import {
+  isDefined,
+  parseSpreadsheetImportMultiSelectOptionsOrThrow,
+  type SpreadsheetColumn,
+  SpreadsheetColumnType,
+  type SpreadsheetMatchedOptions,
+} from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { uniqueEntries } from './uniqueEntries';
 
 export const setColumn = (
@@ -55,7 +57,7 @@ export const setColumn = (
             ?.flatMap((row) => {
               const value = row[oldColumn.index];
               if (!isDefined(value)) return [];
-              return spreadsheetImportParseMultiSelectOptionsOrThrow(value);
+              return parseSpreadsheetImportMultiSelectOptionsOrThrow(value);
             })
             .filter((entry) => typeof entry === 'string'),
         ),

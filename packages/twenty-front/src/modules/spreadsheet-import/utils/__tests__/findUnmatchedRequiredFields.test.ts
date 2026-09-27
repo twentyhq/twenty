@@ -2,8 +2,10 @@ import {
   type SpreadsheetImportField,
   type SpreadsheetImportFieldValidationDefinition,
 } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import {
+  type SpreadsheetColumn,
+  SpreadsheetColumnType,
+} from 'twenty-shared/utils';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import { FieldMetadataType } from 'twenty-shared/types';
 

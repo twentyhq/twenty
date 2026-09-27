@@ -1,55 +1,33 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
-import {
-  type ImportedStructuredRow,
-  type SpreadsheetImportField,
-} from '@/spreadsheet-import/types';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { RelationType } from '@/types/RelationType';
+import { buildRecordFromImportedStructuredRow } from '@/utils/spreadsheet-import/buildRecordFromImportedStructuredRow';
+import { type ImportedStructuredRow } from '@/utils/spreadsheet-import/types/ImportedStructuredRow';
 
 describe('buildRecordFromImportedStructuredRow', () => {
-  const fields: FieldMetadataItem[] = [
+  const fields = [
     {
       id: '3',
-      universalIdentifier: '3',
       name: 'booleanField',
       label: 'Boolean Field',
       type: FieldMetadataType.BOOLEAN,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconCheck',
-      description: null,
     },
     {
       id: '4',
-      universalIdentifier: '4',
       name: 'numberField',
       label: 'Number Field',
       type: FieldMetadataType.NUMBER,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconNumber',
-      description: null,
     },
     {
       id: '5',
-      universalIdentifier: '5',
       name: 'multiSelectField',
       label: 'Multi-Select Field',
       type: FieldMetadataType.MULTI_SELECT,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconTag',
-      description: null,
       options: [
         {
           id: '1',
@@ -76,76 +54,47 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '6',
-      universalIdentifier: '6',
       name: 'relationField',
       label: 'Relation Field',
       type: FieldMetadataType.RELATION,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconBuilding',
-      description: null,
       relation: {
         type: RelationType.MANY_TO_ONE,
-      } as FieldMetadataItemRelation,
+        targetObjectMetadata: { id: 'target-object' },
+      },
     },
     {
       id: '7',
-      universalIdentifier: '7',
       name: 'fullNameField',
       label: 'Full Name Field',
       type: FieldMetadataType.FULL_NAME,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconUser',
-      description: null,
     },
     {
       id: '8',
-      universalIdentifier: '8',
       name: 'currencyField',
       label: 'Currency Field',
       type: FieldMetadataType.CURRENCY,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconCurrencyDollar',
-      description: null,
     },
     {
       id: '9',
-      universalIdentifier: '9',
       name: 'addressField',
       label: 'Address Field',
       type: FieldMetadataType.ADDRESS,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconMap',
-      description: null,
     },
     {
       id: '10',
-      universalIdentifier: '10',
       name: 'selectField',
       label: 'Select Field',
       type: FieldMetadataType.SELECT,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconTag',
-      description: null,
       options: [
         {
           id: '1',
@@ -165,143 +114,83 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '11',
-      universalIdentifier: '11',
       name: 'arrayField',
       label: 'Array Field',
       type: FieldMetadataType.ARRAY,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconBracketsContain',
-      description: null,
     },
     {
       id: '12',
-      universalIdentifier: '12',
       name: 'jsonField',
       label: 'JSON Field',
       type: FieldMetadataType.RAW_JSON,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconBraces',
-      description: null,
     },
     {
       id: '13',
-      universalIdentifier: '13',
       name: 'phoneField',
       label: 'Phone Field',
       type: FieldMetadataType.PHONES,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconPhone',
-      description: null,
     },
     {
       id: '14',
-      universalIdentifier: '14',
       name: 'linksField',
       label: 'Links Field',
       type: FieldMetadataType.LINKS,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconWorld',
-      description: null,
     },
     {
       id: '15',
-      universalIdentifier: '15',
       name: 'createdBy',
       label: 'Created by',
       type: FieldMetadataType.ACTOR,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconUsers',
-      description: null,
     },
     {
       id: '16',
-      universalIdentifier: '16',
       name: 'richTextField',
       label: 'Rich Text Field',
       type: FieldMetadataType.RICH_TEXT,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconTextEditor',
-      description: null,
     },
     {
       id: '17',
-      universalIdentifier: '17',
       name: 'dateField',
       label: 'Date Field',
       type: FieldMetadataType.DATE,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconCalendarEvent',
-      description: null,
     },
     {
       id: '18',
-      universalIdentifier: '18',
       name: 'dateTimeField',
       label: 'Date Time Field',
       type: FieldMetadataType.DATE_TIME,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconCalendarClock',
-      description: null,
     },
     {
       id: '19',
-      universalIdentifier: '19',
       name: 'ratingField',
       label: 'Rating Field',
       type: FieldMetadataType.RATING,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconStar',
-      description: null,
     },
     {
       id: '20',
-      universalIdentifier: '20',
       name: 'emailField',
       label: 'Email Field',
       type: FieldMetadataType.EMAILS,
-      isNullable: true,
       isActive: true,
       isSystem: false,
-      createdAt: '2023-01-01',
-      updatedAt: '2023-01-01',
-      icon: 'IconMail',
-      description: null,
     },
   ];
   it('should successfully build a record from imported structured row', () => {
@@ -356,12 +245,13 @@ describe('buildRecordFromImportedStructuredRow', () => {
           type: FieldMetadataType.TEXT,
         },
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const result = buildRecordFromImportedStructuredRow({
       importedStructuredRow,
       fieldMetadataItems: fields,
       spreadsheetImportFields,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({
@@ -443,6 +333,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
       importedStructuredRow,
       fieldMetadataItems: fields,
       spreadsheetImportFields: [],
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({
@@ -469,6 +360,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
       importedStructuredRow,
       fieldMetadataItems: fields,
       spreadsheetImportFields: [],
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({
@@ -522,6 +414,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
         importedStructuredRow: { dateField: importedDate },
         fieldMetadataItems: fields,
         spreadsheetImportFields: [],
+        timeZone: 'UTC',
       });
 
       expect(result.dateField).toBe(expectedDate);
@@ -547,12 +440,13 @@ describe('buildRecordFromImportedStructuredRow', () => {
         },
         compositeSubFieldKey: 'primaryEmail',
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const result = buildRecordFromImportedStructuredRow({
       importedStructuredRow,
       fieldMetadataItems: fields,
       spreadsheetImportFields,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({
@@ -591,12 +485,13 @@ describe('buildRecordFromImportedStructuredRow', () => {
         },
         compositeSubFieldKey: 'primaryEmail',
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const result = buildRecordFromImportedStructuredRow({
       importedStructuredRow,
       fieldMetadataItems: fields,
       spreadsheetImportFields,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({
@@ -635,12 +530,13 @@ describe('buildRecordFromImportedStructuredRow', () => {
         },
         compositeSubFieldKey: 'primaryLinkUrl',
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const result = buildRecordFromImportedStructuredRow({
       importedStructuredRow,
       fieldMetadataItems: fields,
       spreadsheetImportFields,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({
@@ -676,12 +572,13 @@ describe('buildRecordFromImportedStructuredRow', () => {
           type: FieldMetadataType.TEXT,
         },
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const result = buildRecordFromImportedStructuredRow({
       importedStructuredRow,
       fieldMetadataItems: fields,
       spreadsheetImportFields,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({

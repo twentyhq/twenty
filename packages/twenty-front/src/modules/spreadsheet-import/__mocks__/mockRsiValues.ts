@@ -3,7 +3,7 @@ import {
   SpreadsheetImportDialogOptions,
   SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { SpreadsheetColumns } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { sleep } from '~/utils/sleep';
 

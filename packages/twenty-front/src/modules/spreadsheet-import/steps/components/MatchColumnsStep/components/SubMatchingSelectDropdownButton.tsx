@@ -1,11 +1,11 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SubMatchingSelectControlContainer } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectControlContainer';
 import {
+  type SpreadsheetMatchedOptions,
   type SpreadsheetMatchedSelectColumn,
   type SpreadsheetMatchedSelectOptionsColumn,
-} from '@/spreadsheet-import/types/SpreadsheetColumn';
+} from 'twenty-shared/utils';
 
-import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { styled } from '@linaria/react';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';

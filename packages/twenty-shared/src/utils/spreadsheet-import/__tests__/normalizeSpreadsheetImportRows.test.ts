@@ -1,11 +1,11 @@
-import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { normalizeSpreadsheetImportRows } from '@/utils/spreadsheet-import/normalizeSpreadsheetImportRows';
+import {
+  type SpreadsheetColumn,
+  SpreadsheetColumnType,
+  type SpreadsheetColumns,
+} from '@/utils/spreadsheet-import/types/SpreadsheetImportColumn';
 
-describe('normalizeTableData', () => {
+describe('normalizeSpreadsheetImportRows', () => {
   const columns: SpreadsheetColumn[] = [
     {
       index: 0,
@@ -31,27 +31,21 @@ describe('normalizeTableData', () => {
     {
       key: 'name',
       label: 'Name',
-      fieldType: { type: 'input' },
-      fieldMetadataType: FieldMetadataType.TEXT,
-      Icon: null,
+      fieldType: { type: 'input' as const },
     },
     {
       key: 'age',
       label: 'Age',
-      fieldType: { type: 'input' },
-      fieldMetadataType: FieldMetadataType.NUMBER,
-      Icon: null,
+      fieldType: { type: 'input' as const },
     },
     {
       key: 'active',
       label: 'Active',
       fieldType: {
-        type: 'checkbox',
+        type: 'checkbox' as const,
       },
-      fieldMetadataType: FieldMetadataType.BOOLEAN,
-      Icon: null,
     },
-  ] as SpreadsheetImportField[];
+  ];
 
   const rawData = [
     ['John', '30', 'Yes'],
@@ -60,7 +54,7 @@ describe('normalizeTableData', () => {
   ];
 
   it('should normalize table data according to columns and fields', () => {
-    const result = normalizeTableData(columns, rawData, fields);
+    const result = normalizeSpreadsheetImportRows(columns, rawData, fields);
 
     expect(result).toStrictEqual([
       { name: 'John', age: '30', active: true },
@@ -84,19 +78,17 @@ describe('normalizeTableData', () => {
         key: 'active',
         label: 'Active',
         fieldType: {
-          type: 'checkbox',
+          type: 'checkbox' as const,
           booleanMatches: { yes: true, no: false },
         },
-        fieldMetadataType: FieldMetadataType.BOOLEAN,
-        Icon: null,
         fieldMetadataItemId: '1',
         isNestedField: false,
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const rawData = [['Yes'], ['No'], ['OtherValue']];
 
-    const result = normalizeTableData(columns, rawData, fields);
+    const result = normalizeSpreadsheetImportRows(columns, rawData, fields);
 
     expect(result).toStrictEqual([{ active: true }, { active: false }, {}]);
   });
@@ -120,20 +112,18 @@ describe('normalizeTableData', () => {
         key: 'number',
         label: 'Number',
         fieldType: {
-          type: 'select',
+          type: 'select' as const,
           options: [
             { label: 'One', value: '1' },
             { label: 'Two', value: '2' },
           ],
         },
-        fieldMetadataType: FieldMetadataType.SELECT,
-        Icon: null,
       },
-    ] as SpreadsheetImportField[];
+    ];
 
     const rawData = [['One'], ['Two'], ['OtherValue']];
 
-    const result = normalizeTableData(columns, rawData, fields);
+    const result = normalizeSpreadsheetImportRows(columns, rawData, fields);
 
     expect(result).toStrictEqual([
       { number: '1' },
@@ -150,7 +140,7 @@ describe('normalizeTableData', () => {
 
     const rawData = [['Value1', 'Value2']];
 
-    const result = normalizeTableData(columns, rawData, []);
+    const result = normalizeSpreadsheetImportRows(columns, rawData, []);
 
     expect(result).toStrictEqual([{}]);
   });
@@ -167,7 +157,7 @@ describe('normalizeTableData', () => {
 
     const rawData = [['Value']];
 
-    const result = normalizeTableData(columns, rawData, []);
+    const result = normalizeSpreadsheetImportRows(columns, rawData, []);
 
     expect(result).toStrictEqual([{}]);
   });

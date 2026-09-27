@@ -1,5 +1,7 @@
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import {
+  type SpreadsheetColumn,
+  SpreadsheetColumnType,
+} from 'twenty-shared/utils';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 
 describe('setSubColumn', () => {

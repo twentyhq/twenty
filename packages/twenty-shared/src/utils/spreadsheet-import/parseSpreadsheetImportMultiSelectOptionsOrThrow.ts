@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { parseJson } from 'twenty-shared/utils';
 
-export const spreadsheetImportParseMultiSelectOptionsOrThrow = (
+import { parseJson } from '@/utils/parseJson';
+
+export const parseSpreadsheetImportMultiSelectOptionsOrThrow = (
   value: unknown,
 ) => {
   const stringValue = z.string().parse(value);

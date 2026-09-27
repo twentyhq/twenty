@@ -1,7 +1,7 @@
 import uniqBy from 'lodash.uniqby';
 
 import { type MatchColumnsStepProps } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+import { type SpreadsheetMatchedOptions } from 'twenty-shared/utils';
 
 export const uniqueEntries = (
   data: MatchColumnsStepProps['data'],

@@ -219,6 +219,71 @@ export { resolveRichTextVariables } from './rich-text-variable-resolver';
 export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
+export { buildRecordFromImportedStructuredRow } from './spreadsheet-import/buildRecordFromImportedStructuredRow';
+export { buildSpreadsheetImportFields } from './spreadsheet-import/buildSpreadsheetImportFields';
+export { computeSpreadsheetImportRowErrors } from './spreadsheet-import/computeSpreadsheetImportRowErrors';
+export type { SpreadsheetImportCompositeSubField } from './spreadsheet-import/constants/SpreadsheetImportCompositeSubFields';
+export { SPREADSHEET_IMPORT_COMPOSITE_SUB_FIELDS } from './spreadsheet-import/constants/SpreadsheetImportCompositeSubFields';
+export { getSpreadsheetImportCompositeSubFieldKey } from './spreadsheet-import/getSpreadsheetImportCompositeSubFieldKey';
+export { getSpreadsheetImportFieldValidationDefinitions } from './spreadsheet-import/getSpreadsheetImportFieldValidationDefinitions';
+export { getSpreadsheetImportLinksVariant } from './spreadsheet-import/getSpreadsheetImportLinksVariant';
+export { getSpreadsheetImportRelationConnectSubFieldKey } from './spreadsheet-import/getSpreadsheetImportRelationConnectSubFieldKey';
+export { getSpreadsheetImportRelationConnectSubFieldLabel } from './spreadsheet-import/getSpreadsheetImportRelationConnectSubFieldLabel';
+export { getSpreadsheetImportUnicityTableHook } from './spreadsheet-import/getSpreadsheetImportUnicityTableHook';
+export type { SpreadsheetImportUniqueConstraintColumn } from './spreadsheet-import/getSpreadsheetImportUniqueConstraints';
+export {
+  getSpreadsheetImportUniqueConstraints,
+  getSpreadsheetImportUniqueValue,
+} from './spreadsheet-import/getSpreadsheetImportUniqueConstraints';
+export type { SpreadsheetImportCompositeFieldType } from './spreadsheet-import/isSpreadsheetImportCompositeFieldType';
+export { isSpreadsheetImportCompositeFieldType } from './spreadsheet-import/isSpreadsheetImportCompositeFieldType';
+export { normalizeSpreadsheetImportCheckboxValue } from './spreadsheet-import/normalizeSpreadsheetImportCheckboxValue';
+export { normalizeSpreadsheetImportRows } from './spreadsheet-import/normalizeSpreadsheetImportRows';
+export {
+  parseSpreadsheetImportDateTime,
+  parseSpreadsheetImportPlainDate,
+} from './spreadsheet-import/parseSpreadsheetImportDate';
+export { parseSpreadsheetImportMultiSelectOptionsOrThrow } from './spreadsheet-import/parseSpreadsheetImportMultiSelectOptionsOrThrow';
+export type { ImportedRow } from './spreadsheet-import/types/ImportedRow';
+export type { ImportedStructuredRow } from './spreadsheet-import/types/ImportedStructuredRow';
+export type {
+  SpreadsheetMatchedOptions,
+  SpreadsheetMatchedSelectColumn,
+  SpreadsheetMatchedSelectOptionsColumn,
+  SpreadsheetErrorColumn,
+  SpreadsheetColumn,
+  SpreadsheetColumns,
+} from './spreadsheet-import/types/SpreadsheetImportColumn';
+export { SpreadsheetColumnType } from './spreadsheet-import/types/SpreadsheetImportColumn';
+export type { SpreadsheetImportErrorLevel } from './spreadsheet-import/types/SpreadsheetImportErrorLevel';
+export type { SpreadsheetImportFieldDescriptor } from './spreadsheet-import/types/SpreadsheetImportFieldDescriptor';
+export type { SpreadsheetImportFieldMetadata } from './spreadsheet-import/types/SpreadsheetImportFieldMetadata';
+export type {
+  SpreadsheetImportSelectOption,
+  SpreadsheetImportFieldType,
+} from './spreadsheet-import/types/SpreadsheetImportFieldType';
+export type {
+  SpreadsheetImportRequiredValidation,
+  SpreadsheetImportUniqueValidation,
+  SpreadsheetImportRegexValidation,
+  SpreadsheetImportFunctionValidation,
+  SpreadsheetImportFieldValidationDefinition,
+} from './spreadsheet-import/types/SpreadsheetImportFieldValidationDefinition';
+export type { SpreadsheetImportObjectMetadata } from './spreadsheet-import/types/SpreadsheetImportObjectMetadata';
+export type {
+  SpreadsheetImportCellError,
+  SpreadsheetImportRowErrors,
+  SpreadsheetImportErrorsByRowIndex,
+} from './spreadsheet-import/types/SpreadsheetImportRowErrors';
+export type {
+  SpreadsheetImportAddError,
+  SpreadsheetImportTableHook,
+  SpreadsheetImportRowHook,
+} from './spreadsheet-import/types/SpreadsheetImportTableHook';
+export type {
+  SpreadsheetImportValidationMessageCode,
+  SpreadsheetImportValidationMessage,
+} from './spreadsheet-import/types/SpreadsheetImportValidationMessage';
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';

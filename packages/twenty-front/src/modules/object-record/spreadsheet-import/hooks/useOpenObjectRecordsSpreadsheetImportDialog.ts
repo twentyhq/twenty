@@ -4,7 +4,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
-import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
 import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
 import { SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
@@ -12,6 +11,7 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { buildRecordFromImportedStructuredRow } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
@@ -65,16 +65,16 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     openSpreadsheetImportDialog({
       ...options,
       onSubmit: async (data) => {
-        const createInputs = data.validStructuredRows.map((record) => {
-          const fieldMapping: Record<string, any> =
-            buildRecordFromImportedStructuredRow({
-              importedStructuredRow: record,
-              fieldMetadataItems: availableFieldMetadataItemsToImport,
-              spreadsheetImportFields,
-            });
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-          return fieldMapping;
-        });
+        const createInputs = data.validStructuredRows.map((record) =>
+          buildRecordFromImportedStructuredRow({
+            importedStructuredRow: record,
+            fieldMetadataItems: availableFieldMetadataItemsToImport,
+            spreadsheetImportFields,
+            timeZone,
+          }),
+        );
 
         try {
           await batchCreateManyRecords({

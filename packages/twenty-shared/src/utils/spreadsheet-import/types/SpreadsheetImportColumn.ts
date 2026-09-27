@@ -1,5 +1,18 @@
-import { type SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+// Numeric values are persisted in server-side import sessions: append only.
+export enum SpreadsheetColumnType {
+  empty,
+  ignored,
+  matched,
+  matchedCheckbox,
+  matchedSelect,
+  matchedSelectOptions,
+  matchedError,
+}
+
+export type SpreadsheetMatchedOptions = {
+  entry: string;
+  value?: string;
+};
 
 type SpreadsheetEmptyColumn = {
   type: SpreadsheetColumnType.empty;
@@ -59,3 +72,5 @@ export type SpreadsheetColumn =
   | SpreadsheetMatchedSelectColumn
   | SpreadsheetMatchedSelectOptionsColumn
   | SpreadsheetErrorColumn;
+
+export type SpreadsheetColumns = SpreadsheetColumn[];

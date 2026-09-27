@@ -5,10 +5,10 @@ import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { SubMatchingSelectDropdownButton } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectDropdownButton';
 import { SubMatchingSelectInput } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput';
 import {
+  type SpreadsheetMatchedOptions,
   type SpreadsheetMatchedSelectColumn,
   type SpreadsheetMatchedSelectOptionsColumn,
-} from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+} from 'twenty-shared/utils';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';

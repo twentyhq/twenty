@@ -3,8 +3,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type ImportedRow } from '@/spreadsheet-import/types';
 
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, type SpreadsheetColumn } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;

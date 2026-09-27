@@ -1,6 +1,8 @@
 import { type ImportedRow } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import {
+  type SpreadsheetColumns,
+  SpreadsheetColumnType,
+} from 'twenty-shared/utils';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { createAtomWritableFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomWritableFamilySelector';
 

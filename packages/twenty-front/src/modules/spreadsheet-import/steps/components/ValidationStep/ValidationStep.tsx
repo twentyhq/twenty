@@ -9,8 +9,11 @@ import {
   type ImportedStructuredRow,
   type SpreadsheetImportImportValidationResult,
 } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import {
+  isDefined,
+  type SpreadsheetColumns,
+  SpreadsheetColumnType,
+} from 'twenty-shared/utils';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { styled } from '@linaria/react';
@@ -24,7 +27,6 @@ import {
 } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type RowsChangeData } from 'react-data-grid';
-import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { generateColumns } from './components/columns';

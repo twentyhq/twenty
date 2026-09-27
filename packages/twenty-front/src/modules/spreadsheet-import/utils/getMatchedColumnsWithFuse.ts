@@ -4,12 +4,14 @@ import {
   type SpreadsheetImportField,
   type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import {
+  isDefined,
+  type SpreadsheetColumn,
+  type SpreadsheetColumns,
+  SpreadsheetColumnType,
+} from 'twenty-shared/utils';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import Fuse from 'fuse.js';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getMatchedColumnsWithFuse = ({
   columns,

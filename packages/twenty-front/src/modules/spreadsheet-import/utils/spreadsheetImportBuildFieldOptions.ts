@@ -1,6 +1,6 @@
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { type SpreadsheetImportFields } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetColumns } from 'twenty-shared/utils';
 import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 import { getShortNestedFieldLabel } from '@/spreadsheet-import/utils/getShortNestedFieldLabel';
 import { type ReadonlyDeep } from 'type-fest';

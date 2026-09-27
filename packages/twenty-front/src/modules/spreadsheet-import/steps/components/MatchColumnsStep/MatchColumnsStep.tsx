@@ -9,7 +9,12 @@ import {
   type ImportedStructuredRow,
 } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
-import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
+import {
+  normalizeSpreadsheetImportRows,
+  type SpreadsheetColumn,
+  type SpreadsheetColumns,
+  SpreadsheetColumnType,
+} from 'twenty-shared/utils';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
@@ -23,9 +28,6 @@ import { UserTableColumn } from '@/spreadsheet-import/steps/components/MatchColu
 import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { type SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetImportField';
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -188,7 +190,7 @@ export const MatchColumnsStep = ({
   const handleAlertOnContinue = useCallback(async () => {
     setIsLoading(true);
     await handleContinue(
-      normalizeTableData(columns, data, fields),
+      normalizeSpreadsheetImportRows(columns, data, fields),
       data,
       columns,
     );
@@ -223,7 +225,7 @@ export const MatchColumnsStep = ({
     } else {
       setIsLoading(true);
       await handleContinue(
-        normalizeTableData(columns, data, fields),
+        normalizeSpreadsheetImportRows(columns, data, fields),
         data,
         columns,
       );

@@ -1,6 +1,6 @@
-import { normalizeCheckboxValue } from '@/spreadsheet-import/utils/normalizeCheckboxValue';
+import { normalizeSpreadsheetImportCheckboxValue } from '@/utils/spreadsheet-import/normalizeSpreadsheetImportCheckboxValue';
 
-describe('normalizeCheckboxValue', () => {
+describe('normalizeSpreadsheetImportCheckboxValue', () => {
   const testCases = [
     { value: 'yes', expected: true },
     { value: 'Yes', expected: true },
@@ -16,7 +16,7 @@ describe('normalizeCheckboxValue', () => {
 
   testCases.forEach(({ value, expected }) => {
     it(`should return ${expected} for value "${value}"`, () => {
-      const result = normalizeCheckboxValue(value);
+      const result = normalizeSpreadsheetImportCheckboxValue(value);
       expect(result).toBe(expected);
     });
   });

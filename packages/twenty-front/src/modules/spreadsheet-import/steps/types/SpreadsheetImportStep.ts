@@ -1,6 +1,6 @@
 import { type SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { type ImportedRow } from '@/spreadsheet-import/types';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetColumns } from 'twenty-shared/utils';
 import { type WorkBook } from 'xlsx-ugnis';
 
 export type SpreadsheetImportStep =

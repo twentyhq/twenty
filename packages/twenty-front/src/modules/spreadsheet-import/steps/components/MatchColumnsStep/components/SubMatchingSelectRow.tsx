@@ -1,10 +1,10 @@
 import { SubMatchingSelectRowLeftSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowLeftSelect';
 import { SubMatchingSelectRowRightDropdown } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown';
 import {
+  type SpreadsheetMatchedOptions,
   type SpreadsheetMatchedSelectColumn,
   type SpreadsheetMatchedSelectOptionsColumn,
-} from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+} from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 

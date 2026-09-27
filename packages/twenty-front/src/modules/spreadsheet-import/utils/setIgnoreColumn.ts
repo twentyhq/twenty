@@ -1,5 +1,7 @@
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import {
+  type SpreadsheetColumn,
+  SpreadsheetColumnType,
+} from 'twenty-shared/utils';
 
 export const setIgnoreColumn = ({
   header,
