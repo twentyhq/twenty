@@ -132,8 +132,7 @@ export const LogConsoleDetailPanel = () => {
 
   const { source, entry } = logConsoleSelectedLog;
   const { __typename, ...rawEvent } = entry;
-  const rawMessage =
-    entry.properties?.message ?? entry.properties?.error;
+  const rawMessage = entry.properties?.message ?? entry.properties?.error;
   const message: string | undefined = isString(rawMessage)
     ? rawMessage
     : undefined;
