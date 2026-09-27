@@ -1,3 +1,4 @@
+import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { registerEnumType } from '@nestjs/graphql';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -77,6 +78,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   >;
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
   agentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
+  inputAsks: Relation<InputAskWorkspaceEntity[]>;
   ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;

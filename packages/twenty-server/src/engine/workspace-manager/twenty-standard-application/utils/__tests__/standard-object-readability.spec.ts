@@ -76,6 +76,7 @@ describe('Standard object readability', () => {
 
     STANDARD_OBJECTS.recordShare.universalIdentifier,
     STANDARD_OBJECTS.workflow.universalIdentifier,
+    STANDARD_OBJECTS.inputAsk.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
     ),
@@ -110,6 +111,27 @@ describe('Standard object readability', () => {
         { joinColumnName: 'workflowId', parentNameSingular: 'workflow' },
       ]);
     }
+  });
+
+  // A question reads as what asked it does: its run, or for a question asked
+  // outside a run, its conversation.
+  it('resolves its run and its conversation as the parents of an inputAsk', () => {
+    expect(findStandardFlatObjectMetadata('inputAsk')).toMatchObject({
+      readability: MetadataReadability.INHERITED,
+    });
+    expect(
+      resolveParents('inputAsk').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'workflowRunId', parentNameSingular: 'workflowRun' },
+      { joinColumnName: 'threadId', parentNameSingular: 'agentChatThread' },
+    ]);
   });
 
   it('declares recordShare SYSTEM for readability and writability', () => {

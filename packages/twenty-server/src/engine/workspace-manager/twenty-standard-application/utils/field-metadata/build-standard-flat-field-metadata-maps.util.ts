@@ -1,3 +1,4 @@
+import { buildInputAskStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-input-ask-standard-flat-field-metadata.util';
 import { buildCampaignDeliveryStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util';
 import { buildMessageSuppressionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util';
 import { buildAgentTurnEvaluationStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util';
@@ -92,6 +93,7 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workflow: buildWorkflowStandardFlatFieldMetadatas,
   workflowAutomatedTrigger:
     buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas,
+  inputAsk: buildInputAskStandardFlatFieldMetadatas,
   workflowRun: buildWorkflowRunStandardFlatFieldMetadatas,
   workflowVersion: buildWorkflowVersionStandardFlatFieldMetadatas,
   workspaceMember: buildWorkspaceMemberStandardFlatFieldMetadatas,

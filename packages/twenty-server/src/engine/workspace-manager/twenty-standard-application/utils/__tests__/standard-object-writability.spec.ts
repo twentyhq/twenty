@@ -19,6 +19,7 @@ const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
 
   'calendarChannelEventAssociation',
   'campaignDelivery',
+  'inputAsk',
   'messageChannelMessageAssociation',
   'messageChannelMessageAssociationMessageFolder',
   'messageSuppression',
