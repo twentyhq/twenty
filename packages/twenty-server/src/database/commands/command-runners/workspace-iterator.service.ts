@@ -118,7 +118,7 @@ export class WorkspaceIteratorService {
         });
 
         if (!isDefined(workspace)) {
-          this.recordDeletedWorkspace(report, workspaceId);
+          this.recordDeletedWorkspace({ report, workspaceId });
 
           continue;
         }
@@ -126,7 +126,7 @@ export class WorkspaceIteratorService {
         const authContext = buildSystemAuthContext(workspaceId);
 
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const dataSource = isNonEmptyString(workspace?.databaseSchema)
+          const dataSource = isNonEmptyString(workspace.databaseSchema)
             ? this.coreDataSource
             : undefined;
 
@@ -134,14 +134,13 @@ export class WorkspaceIteratorService {
             this.logger.warn(
               `Could not retrieve a workspace data source for workspace ${workspaceId} ` +
                 `(index ${index + 1}/${workspaceIdsToProcess.length}): ` +
-                `workspaceRowFound=${isDefined(workspace)}, ` +
-                `databaseSchema=${JSON.stringify(workspace?.databaseSchema ?? null)}`,
+                `databaseSchema=${JSON.stringify(workspace.databaseSchema ?? null)}`,
             );
           }
 
           await callback({
             workspaceId,
-            databaseSchema: workspace?.databaseSchema ?? undefined,
+            databaseSchema: workspace.databaseSchema ?? undefined,
             dataSource,
             index,
             total: workspaceIdsToProcess.length,
@@ -156,7 +155,7 @@ export class WorkspaceIteratorService {
         });
 
         if (!workspaceStillExists) {
-          this.recordDeletedWorkspace(report, workspaceId);
+          this.recordDeletedWorkspace({ report, workspaceId });
 
           continue;
         }
@@ -202,10 +201,13 @@ export class WorkspaceIteratorService {
     return report;
   }
 
-  private recordDeletedWorkspace(
-    report: WorkspaceIteratorReport,
-    workspaceId: string,
-  ): void {
+  private recordDeletedWorkspace({
+    report,
+    workspaceId,
+  }: {
+    report: WorkspaceIteratorReport;
+    workspaceId: string;
+  }): void {
     this.logger.warn(
       `Skipping workspace ${workspaceId}: it has been deleted or no longer exists.`,
     );
