@@ -61,7 +61,7 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
   },
   [EventLogTable.OBJECT_EVENT]: {
     clickHouseTable: 'objectEvent',
-    requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
+    requiresEntitlement: null,
     eventFieldName: 'event',
     filterableFields: ['event', 'objectMetadataId', 'recordId', 'userId'],
     normalize: normalizeGenericEvent('event'),

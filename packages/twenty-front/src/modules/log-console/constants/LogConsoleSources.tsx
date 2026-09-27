@@ -68,7 +68,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     Icon: IconAddressBook,
     table: EventLogTable.OBJECT_EVENT,
     filterFields: LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS,
-    requiresAuditLogs: true,
+    requiresAuditLogs: false,
     columns: LOG_CONSOLE_RECORD_CHANGE_COLUMNS,
     detailFields: [
       {
