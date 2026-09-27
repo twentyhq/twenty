@@ -178,7 +178,7 @@ msgstr "{0, plural, other {# 件のジョブを削除できませんでした}}"
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, other {# 件のジョブを再試行できませんでした}})"
+msgstr "{0, plural, other {# 件のジョブを再試行できませんでした}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
