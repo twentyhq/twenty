@@ -86,8 +86,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
-        isRecordSharingEnforced:
-          this.isRecordSharingEnforced(queryRunnerContext),
+        isRecordSharingEnforced: true,
         shareWith: args.shareWith,
       });
     }
@@ -619,7 +618,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
-      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
+      isRecordSharingEnforced: true,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       shareWith,
@@ -633,20 +632,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     switch (queryRunnerContext.flatObjectMetadata.readability) {
       case MetadataReadability.PRIVATE:
         return true;
-      // Legacy inherited records must keep following their parent after
-      // activation instead of receiving an EVERYONE compatibility grant.
       case MetadataReadability.INHERITED:
-        return this.isRecordSharingEnforced(queryRunnerContext);
+        return true;
       default:
         return false;
     }
-  }
-
-  private isRecordSharingEnforced(
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): boolean {
-    return !queryRunnerContext.repository.internalContext
-      .isLegacyRecordAccessOpen;
   }
 
   private resolveNestedRelationsForCreate({
