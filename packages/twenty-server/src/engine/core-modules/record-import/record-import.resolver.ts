@@ -16,10 +16,12 @@ import { RecordImportPreviewDTO } from 'src/engine/core-modules/record-import/dt
 import {
   PrepareRecordImportInput,
   PreviewRecordImportSheetInput,
+  RecordImportRowsInput,
   RecordImportSessionInput,
   RecordImportVersionedInput,
   SetRecordImportMappingInput,
 } from 'src/engine/core-modules/record-import/dtos/record-import-session.input';
+import { RecordImportRowsPageDTO } from 'src/engine/core-modules/record-import/dtos/record-import-rows.dto';
 import { RecordImportDTO } from 'src/engine/core-modules/record-import/dtos/record-import.dto';
 import { RecordImportWorkspaceService } from 'src/engine/core-modules/record-import/services/record-import.workspace-service';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -85,6 +87,16 @@ export class RecordImportResolver {
     @Args('input') input: SetRecordImportMappingInput,
   ): Promise<RecordImportDTO> {
     return this.recordImportWorkspaceService.setMapping({
+      ...input,
+      authContext: await this.getAuthContextIfEnabled(),
+    });
+  }
+
+  @Query(() => RecordImportRowsPageDTO)
+  async recordImportRows(
+    @Args('input') input: RecordImportRowsInput,
+  ): Promise<RecordImportRowsPageDTO> {
+    return this.recordImportWorkspaceService.getRows({
       ...input,
       authContext: await this.getAuthContextIfEnabled(),
     });

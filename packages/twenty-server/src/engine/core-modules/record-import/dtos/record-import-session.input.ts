@@ -3,6 +3,8 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
   IsArray,
+  IsBoolean,
+  Max,
   IsInt,
   IsOptional,
   IsString,
@@ -58,4 +60,22 @@ export class SetRecordImportMappingInput extends RecordImportVersionedInput {
   @Field(() => GraphQLJSON)
   @IsArray()
   columns: unknown[];
+}
+
+@InputType()
+export class RecordImportRowsInput extends RecordImportSessionInput {
+  @Field(() => Int)
+  @IsInt()
+  @Min(0)
+  offset: number;
+
+  @Field(() => Int)
+  @IsInt()
+  @Min(1)
+  @Max(500)
+  limit: number;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  onlyErrors: boolean;
 }

@@ -8,6 +8,8 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { PrepareRecordImportJob } from 'src/engine/core-modules/record-import/jobs/prepare-record-import.job';
 import { RunRecordImportJob } from 'src/engine/core-modules/record-import/jobs/run-record-import.job';
+import { ValidateRecordImportJob } from 'src/engine/core-modules/record-import/jobs/validate-record-import.job';
+import { RecordImportValidationWorkspaceService } from 'src/engine/core-modules/record-import/services/record-import-validation.workspace-service';
 import { RecordImportResolver } from 'src/engine/core-modules/record-import/record-import.resolver';
 import { RecordImportRunnerWorkspaceService } from 'src/engine/core-modules/record-import/services/record-import-runner.workspace-service';
 import { RecordImportSessionService } from 'src/engine/core-modules/record-import/services/record-import-session.service';
@@ -41,6 +43,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     RecordImportRunnerWorkspaceService,
     PrepareRecordImportJob,
     RunRecordImportJob,
+    RecordImportValidationWorkspaceService,
+    ValidateRecordImportJob,
   ],
 })
 export class RecordImportModule {}

@@ -8,6 +8,8 @@ export type RecordImportStatus =
   | 'UPLOADED'
   | 'PREPARING'
   | 'READY'
+  | 'VALIDATING'
+  | 'VALIDATED'
   | 'IMPORTING'
   | 'CANCELLING'
   | 'COMPLETED'
@@ -55,6 +57,10 @@ export type RecordImportSession = {
   chunkCount?: number;
   columns?: SpreadsheetColumns;
   mappedFields?: RecordImportMappedField[];
+  // Identifies the validation of the current mapping; a validation job that
+  // finishes after the mapping changed is discarded
+  validationRunId?: string;
+  errorRowCount?: number;
   jobId?: string;
   result?: RecordImportResult;
   reportFileId?: string;
@@ -73,6 +79,11 @@ export type RecordImportColumnSamples = {
   headerValues: string[];
   exampleRows: string[][];
   distinctValuesByColumn: string[][];
+};
+
+// Positions are indexes among the stored rows, in file order
+export type RecordImportErrorIndex = {
+  errorRowPositions: number[];
 };
 
 export type RecordImportJobProgress = {

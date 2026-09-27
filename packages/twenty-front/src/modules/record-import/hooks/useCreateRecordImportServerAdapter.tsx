@@ -4,6 +4,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { parseRecordImportRows } from '@/record-import/utils/parseRecordImportRows';
 import { buildRecordImportMatchColumnsData } from '@/record-import/utils/buildRecordImportMatchColumnsData';
 import { watchRecordImport } from '@/record-import/utils/watchRecordImport';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
@@ -23,6 +24,7 @@ import {
   type RecordImportFieldsFragment,
   RecordImportPreviewDocument,
   RecordImportReportUrlDocument,
+  RecordImportRowsDocument,
   SetRecordImportMappingDocument,
   StartRecordImportDocument,
 } from '~/generated-metadata/graphql';
@@ -216,8 +218,8 @@ export const useCreateRecordImportServerAdapter = (
           };
         },
 
-        importRows: async (columns) => {
-          const { data: mappingData } = await apolloClient.mutate({
+        validateRows: async (columns) => {
+          const { data } = await apolloClient.mutate({
             mutation: SetRecordImportMappingDocument,
             variables: {
               input: {
@@ -227,15 +229,50 @@ export const useCreateRecordImportServerAdapter = (
               },
             },
           });
-          session = mappingData?.setRecordImportMapping ?? session;
+          session = data?.setRecordImportMapping ?? session;
 
-          const { data: startData } = await apolloClient.mutate({
+          const validated = await watchRecordImport({
+            id: getSession().id,
+            isSettled: (recordImport) => recordImport.status !== 'VALIDATING',
+          }).promise;
+          session = validated;
+
+          if (validated.status !== 'VALIDATED') {
+            throw new Error(
+              validated.errorMessage ?? t`The rows could not be checked.`,
+            );
+          }
+
+          return {
+            rowCount: validated.rowCount ?? 0,
+            errorRowCount: validated.errorRowCount ?? 0,
+          };
+        },
+
+        loadRows: async ({ offset, limit, onlyErrors }) => {
+          const { data } = await apolloClient.query({
+            query: RecordImportRowsDocument,
+            variables: {
+              input: { id: getSession().id, offset, limit, onlyErrors },
+            },
+            fetchPolicy: 'network-only',
+          });
+          const page = data?.recordImportRows;
+
+          return {
+            totalCount: page?.totalCount ?? 0,
+            rows: parseRecordImportRows(page?.rows),
+          };
+        },
+
+        importRows: async () => {
+          const { data } = await apolloClient.mutate({
             mutation: StartRecordImportDocument,
             variables: {
               input: { id: getSession().id, version: getSession().version },
             },
           });
-          session = startData?.startRecordImport ?? session;
+          session = data?.startRecordImport ?? session;
           setSpreadsheetImportCreatedRecordsProgress(0);
 
           const recordImport = await followImport(getSession().id);

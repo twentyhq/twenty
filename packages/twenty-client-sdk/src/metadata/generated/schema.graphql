@@ -3447,12 +3447,18 @@ type RecordImport {
   importedRecordCount: Int!
   skippedRowCount: Int!
   failedRowCount: Int!
+  errorRowCount: Int
   hasReport: Boolean!
   errorMessage: String
 }
 
 type RecordImportPreview {
   recordImport: RecordImport!
+  rows: JSON!
+}
+
+type RecordImportRowsPage {
+  totalCount: Int!
   rows: JSON!
 }
 
@@ -3961,6 +3967,7 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
   recordImportPreview(input: PreviewRecordImportSheetInput!): RecordImportPreview!
   recordImportColumnSamples(input: RecordImportSessionInput!): RecordImportColumnSamples!
+  recordImportRows(input: RecordImportRowsInput!): RecordImportRowsPage!
   recordImport(input: RecordImportSessionInput!): RecordImport!
   recordImportReportUrl(input: RecordImportSessionInput!): String!
 }
@@ -4098,6 +4105,13 @@ input PreviewRecordImportSheetInput {
 
 input RecordImportSessionInput {
   id: UUID!
+}
+
+input RecordImportRowsInput {
+  id: UUID!
+  offset: Int!
+  limit: Int!
+  onlyErrors: Boolean!
 }
 
 type Mutation {

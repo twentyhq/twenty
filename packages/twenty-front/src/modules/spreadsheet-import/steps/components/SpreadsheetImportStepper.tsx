@@ -1,5 +1,7 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
+import { ServerReviewStep } from '@/spreadsheet-import/steps/components/ServerReviewStep/ServerReviewStep';
+import { isDefined } from 'twenty-shared/utils';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useCallback, useState } from 'react';
@@ -23,7 +25,7 @@ export const SpreadsheetImportStepper = ({
   prevStep,
 }: SpreadsheetImportStepperProps) => {
   const theme = useTheme();
-  const { initialStepState } = useSpreadsheetImportInternal();
+  const { initialStepState, serverImport } = useSpreadsheetImportInternal();
 
   const [currentStepState, setCurrentStepState] =
     useState<SpreadsheetImportStep>(
@@ -114,6 +116,22 @@ export const SpreadsheetImportStepper = ({
               initialStepState ?? { type: SpreadsheetImportStepType.upload },
             );
           }}
+        />
+      );
+    case SpreadsheetImportStepType.reviewServerRows:
+      if (!isDefined(serverImport)) {
+        throw new Error('Server import not configured');
+      }
+      return (
+        <ServerReviewStep
+          serverImport={serverImport}
+          importedColumns={currentStepState.importedColumns}
+          rowCount={currentStepState.rowCount}
+          errorRowCount={currentStepState.errorRowCount}
+          initialPage={currentStepState.initialPage}
+          setCurrentStepState={setCurrentStepState}
+          onError={handleError}
+          onBack={handleBack}
         />
       );
     case SpreadsheetImportStepType.importData:

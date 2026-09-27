@@ -3036,6 +3036,7 @@ export interface RecordImport {
     importedRecordCount: Scalars['Int']
     skippedRowCount: Scalars['Int']
     failedRowCount: Scalars['Int']
+    errorRowCount?: Scalars['Int']
     hasReport: Scalars['Boolean']
     errorMessage?: Scalars['String']
     __typename: 'RecordImport'
@@ -3045,6 +3046,12 @@ export interface RecordImportPreview {
     recordImport: RecordImport
     rows: Scalars['JSON']
     __typename: 'RecordImportPreview'
+}
+
+export interface RecordImportRowsPage {
+    totalCount: Scalars['Int']
+    rows: Scalars['JSON']
+    __typename: 'RecordImportRowsPage'
 }
 
 export interface AiChatUsage {
@@ -3489,6 +3496,7 @@ export interface Query {
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     recordImportPreview: RecordImportPreview
     recordImportColumnSamples: RecordImportColumnSamples
+    recordImportRows: RecordImportRowsPage
     recordImport: RecordImport
     recordImportReportUrl: Scalars['String']
     __typename: 'Query'
@@ -6965,6 +6973,7 @@ export interface RecordImportGenqlSelection{
     importedRecordCount?: boolean | number
     skippedRowCount?: boolean | number
     failedRowCount?: boolean | number
+    errorRowCount?: boolean | number
     hasReport?: boolean | number
     errorMessage?: boolean | number
     __typename?: boolean | number
@@ -6973,6 +6982,13 @@ export interface RecordImportGenqlSelection{
 
 export interface RecordImportPreviewGenqlSelection{
     recordImport?: RecordImportGenqlSelection
+    rows?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordImportRowsPageGenqlSelection{
+    totalCount?: boolean | number
     rows?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7439,6 +7455,7 @@ export interface QueryGenqlSelection{
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     recordImportPreview?: (RecordImportPreviewGenqlSelection & { __args: {input: PreviewRecordImportSheetInput} })
     recordImportColumnSamples?: (RecordImportColumnSamplesGenqlSelection & { __args: {input: RecordImportSessionInput} })
+    recordImportRows?: (RecordImportRowsPageGenqlSelection & { __args: {input: RecordImportRowsInput} })
     recordImport?: (RecordImportGenqlSelection & { __args: {input: RecordImportSessionInput} })
     recordImportReportUrl?: { __args: {input: RecordImportSessionInput} }
     __typename?: boolean | number
@@ -7490,6 +7507,8 @@ export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface PreviewRecordImportSheetInput {id: Scalars['UUID'],sheetName?: (Scalars['String'] | null)}
 
 export interface RecordImportSessionInput {id: Scalars['UUID']}
+
+export interface RecordImportRowsInput {id: Scalars['UUID'],offset: Scalars['Int'],limit: Scalars['Int'],onlyErrors: Scalars['Boolean']}
 
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
@@ -10501,6 +10520,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isRecordImportPreview = (obj?: { __typename?: any } | null): obj is RecordImportPreview => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordImportPreview"')
       return RecordImportPreview_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RecordImportRowsPage_possibleTypes: string[] = ['RecordImportRowsPage']
+    export const isRecordImportRowsPage = (obj?: { __typename?: any } | null): obj is RecordImportRowsPage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordImportRowsPage"')
+      return RecordImportRowsPage_possibleTypes.includes(obj.__typename)
     }
     
 

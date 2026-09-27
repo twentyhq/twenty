@@ -1,6 +1,7 @@
 import { type SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { type ImportedRow } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumns } from 'twenty-shared/utils';
+import { type SpreadsheetImportServerRowsPage } from '@/spreadsheet-import/types/SpreadsheetImportServerAdapter';
 import { type WorkBook } from 'xlsx-ugnis';
 
 export type SpreadsheetImportStep =
@@ -29,6 +30,13 @@ export type SpreadsheetImportStep =
       type: SpreadsheetImportStepType.validateData;
       data: any[];
       importedColumns: SpreadsheetColumns;
+    }
+  | {
+      type: SpreadsheetImportStepType.reviewServerRows;
+      importedColumns: SpreadsheetColumns;
+      rowCount: number;
+      errorRowCount: number;
+      initialPage: SpreadsheetImportServerRowsPage;
     }
   | {
       type: SpreadsheetImportStepType.loading;

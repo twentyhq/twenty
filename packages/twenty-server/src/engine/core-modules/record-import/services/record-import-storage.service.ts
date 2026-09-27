@@ -10,6 +10,7 @@ import { RECORD_IMPORT_MAX_WORKBOOK_BYTES } from 'src/engine/core-modules/record
 import { RecordImportException } from 'src/engine/core-modules/record-import/record-import.exception';
 import {
   type RecordImportColumnSamples,
+  type RecordImportErrorIndex,
   type RecordImportRow,
   type RecordImportSession,
 } from 'src/engine/core-modules/record-import/types/record-import-session.type';
@@ -157,6 +158,53 @@ export class RecordImportStorageService {
       await this.readWorkingFile(
         session,
         `${this.getWorkingFolderPath(session)}/columns.json`,
+      ),
+    );
+  }
+
+  async writeErrorChunk(
+    session: SessionKey,
+    chunkIndex: number,
+    rowErrors: [number, unknown][],
+  ): Promise<void> {
+    await this.writeWorkingFile(
+      session,
+      `${this.getWorkingFolderPath(session)}/errors/${chunkIndex}.json`,
+      JSON.stringify(rowErrors),
+    );
+  }
+
+  // Errors of the rows of a chunk that have any, by index in the chunk
+  async readErrorChunk<TRowErrors>(
+    session: SessionKey,
+    chunkIndex: number,
+  ): Promise<Map<number, TRowErrors>> {
+    return new Map(
+      JSON.parse(
+        await this.readWorkingFile(
+          session,
+          `${this.getWorkingFolderPath(session)}/errors/${chunkIndex}.json`,
+        ),
+      ),
+    );
+  }
+
+  async writeErrorIndex(
+    session: SessionKey,
+    errorIndex: RecordImportErrorIndex,
+  ): Promise<void> {
+    await this.writeWorkingFile(
+      session,
+      `${this.getWorkingFolderPath(session)}/errors/index.json`,
+      JSON.stringify(errorIndex),
+    );
+  }
+
+  async readErrorIndex(session: SessionKey): Promise<RecordImportErrorIndex> {
+    return JSON.parse(
+      await this.readWorkingFile(
+        session,
+        `${this.getWorkingFolderPath(session)}/errors/index.json`,
       ),
     );
   }
