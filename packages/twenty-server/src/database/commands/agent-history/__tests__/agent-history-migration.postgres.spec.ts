@@ -4,13 +4,13 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
-import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
-import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import {
-  AgentMessageEntity,
   AgentMessageRole,
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
@@ -34,7 +34,7 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { DataSource, IsNull, type Repository } from 'typeorm';
 import { Pool } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
@@ -150,12 +150,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       };
     };
     const orm = createOrm();
-    const threads = new AgentHistoryRepository<AgentChatThreadEntity>(
+    const threads = new AgentHistoryRepository<AgentChatThreadWorkspaceEntity>(
       'agentChatThread',
       storage,
       orm,
     );
-    const messages = new AgentHistoryRepository<AgentMessageEntity>(
+    const messages = new AgentHistoryRepository<AgentMessageWorkspaceEntity>(
       'agentMessage',
       storage,
       orm,
@@ -196,7 +196,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           `ALTER TABLE "${SCHEMA}"."agentMessage" DROP COLUMN "${name}"`,
         );
       }
-      return new AgentHistoryRepository<AgentMessageEntity>(
+      return new AgentHistoryRepository<AgentMessageWorkspaceEntity>(
         'agentMessage',
         storage,
         createOrm(legacyMetadata),
@@ -216,9 +216,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
-        new AgentHistoryRepository<AgentTurnEntity>('agentTurn', storage, orm),
+        new AgentHistoryRepository<AgentTurnWorkspaceEntity>(
+          'agentTurn',
+          storage,
+          orm,
+        ),
         messageRepository,
-        new AgentHistoryRepository<AgentMessagePartEntity>(
+        new AgentHistoryRepository<AgentMessagePartWorkspaceEntity>(
           'agentMessagePart',
           storage,
           orm,
@@ -633,7 +637,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
     it('preserves the legacy upgrade fence for history still stored in core', async () => {
       await expect(
-        threads.find(WORKSPACE_ID, { where: { id: THREAD_ID } }),
+        storage.run(WORKSPACE_ID, async () => undefined),
       ).rejects.toBeInstanceOf(ServiceUnavailableException);
       expect(
         (
@@ -688,35 +692,35 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         target: 'workspace',
       });
       expect(
-        await threads.find(WORKSPACE_ID, { where: { deletedAt: IsNull() } }),
+        await threads.find(WORKSPACE_ID, { where: { archivedAt: IsNull() } }),
       ).toEqual([]);
       const archived = await threads.findOneOrFail(WORKSPACE_ID, {
         where: { id: THREAD_ID },
       });
-      expect(archived.deletedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
+      expect(archived.archivedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
       expect(archived.createdAt).toBeInstanceOf(Date);
-      expect(archived.activeStreamId).toBeNull();
+      expect(archived.activeStreamId).toBe('');
       expect(archived.pendingQuestionMessageId).toBeNull();
       const selected = await threads.findOneOrFail(WORKSPACE_ID, {
         where: { id: THREAD_ID },
-        select: ['id', 'deletedAt', 'activeStreamId'],
+        select: ['id', 'archivedAt', 'activeStreamId'],
       });
-      expect(selected.deletedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
-      expect(selected.activeStreamId).toBeNull();
+      expect(selected.archivedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
+      expect(selected.activeStreamId).toBe('');
       const selectedWithObject = await threads.findOneOrFail(WORKSPACE_ID, {
         where: { id: THREAD_ID },
-        select: { id: true, deletedAt: true },
+        select: { id: true, archivedAt: true },
       });
-      expect(selectedWithObject.deletedAt).toEqual(
+      expect(selectedWithObject.archivedAt).toEqual(
         new Date('2026-01-01T00:00:00Z'),
       );
       await threads.update(
         WORKSPACE_ID,
         { id: THREAD_ID },
-        { deletedAt: null },
+        { archivedAt: null },
       );
       expect(
-        await threads.count(WORKSPACE_ID, { where: { deletedAt: IsNull() } }),
+        await threads.count(WORKSPACE_ID, { where: { archivedAt: IsNull() } }),
       ).toBe(1);
       const results = await Promise.all(
         ['first', 'second'].map((stream) =>
@@ -744,8 +748,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       expect(created.createdAt).toBeInstanceOf(Date);
       expect(created.activeStreamId).toBeNull();
-      expect(created.totalInputCredits).toBe(0);
-      expect(created.workspaceId).toBe(WORKSPACE_ID);
+      expect(created.totalInputCredits).toBe('0');
+      expect(created).not.toHaveProperty('workspaceId');
       const checkpointId = '20202020-8888-4888-8888-888888888888';
       await Promise.all(
         [1, 2].map(() =>
@@ -755,7 +759,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
               id: checkpointId,
               threadId: THREAD_ID,
               turnId: TURN_ID,
-              role: 'assistant' as AgentMessageEntity['role'],
+              role: 'assistant' as AgentMessageWorkspaceEntity['role'],
             },
             ['id'],
           ),
@@ -1005,7 +1009,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
     });
 
-    it('loads messages chronologically and finds the latest processed message with TypeORM ordering', async () => {
+    it('loads messages chronologically and finds the latest processed message with native workspace ordering', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -1017,20 +1021,20 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         {
           id: laterId,
           threadId: THREAD_ID,
-          role: 'assistant' as AgentMessageEntity['role'],
-          processedAt: new Date('2026-09-20T12:00:00Z'),
+          role: 'assistant' as AgentMessageWorkspaceEntity['role'],
+          processedAt: '2026-09-20T12:00:00Z',
         },
         {
           id: earlierId,
           threadId: THREAD_ID,
-          role: 'user' as AgentMessageEntity['role'],
-          processedAt: new Date('2026-09-20T11:00:00Z'),
+          role: 'user' as AgentMessageWorkspaceEntity['role'],
+          processedAt: '2026-09-20T11:00:00Z',
         },
       ]);
 
       const chronological = await messages.find(WORKSPACE_ID, {
         where: { threadId: THREAD_ID },
-        order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
+        order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
         relations: { parts: true },
       });
 
@@ -1047,7 +1051,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           await messages.findOneOrFail(WORKSPACE_ID, {
             where: { threadId: THREAD_ID },
             order: {
-              processedAt: { direction: 'DESC', nulls: 'LAST' },
+              processedAt: { order: 'DESC', nulls: 'NULLS LAST' },
               createdAt: 'DESC',
               id: 'DESC',
             },
@@ -1059,7 +1063,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         (
           await messages.find(WORKSPACE_ID, {
             where: { threadId: THREAD_ID },
-            order: { processedAt: { direction: 'desc', nulls: 'first' } },
+            order: { processedAt: { order: 'DESC', nulls: 'NULLS FIRST' } },
           })
         ).map(({ id }) => id),
       ).toEqual([MESSAGE_ID, laterId, earlierId]);
@@ -1543,7 +1547,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).rejects.toMatchObject({ code: 'INVALID_WORKSPACE' });
       await expect(
         threads.find(WORKSPACE_ID, { where: { workspaceId: WORKSPACE_ID } }),
-      ).rejects.toMatchObject({ code: 'INVALID_CRITERIA' });
+      ).rejects.toMatchObject({ code: 'UNKNOWN_COLUMN' });
     });
 
     it('previews abort without discarding destination rows or changing the route', async () => {

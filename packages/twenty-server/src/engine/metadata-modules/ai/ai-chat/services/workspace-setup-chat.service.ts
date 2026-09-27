@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import {
   type WorkspaceCompanyEnrichment,
   type WorkspacePersonEnrichment,
@@ -15,7 +15,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -34,7 +34,7 @@ type StartWorkspaceSetupChatServiceResult =
       outcome:
         | WorkspaceSetupChatOutcome.STARTED
         | WorkspaceSetupChatOutcome.ALREADY_STARTED;
-      thread: AgentChatThreadEntity;
+      thread: AgentChatThreadWorkspaceEntity;
     }
   | {
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE;
@@ -110,7 +110,7 @@ export class WorkspaceSetupChatService {
     });
 
     if (isDefined(thread)) {
-      if (isDefined(thread.deletedAt)) {
+      if (isDefined(thread.archivedAt)) {
         thread = await this.agentChatService.unarchiveThread({
           threadId,
           userWorkspaceId,
@@ -118,7 +118,7 @@ export class WorkspaceSetupChatService {
         });
       }
 
-      if (isDefined(thread.activeStreamId)) {
+      if (isNonEmptyString(thread.activeStreamId)) {
         const interruptedError =
           await this.agentChatStreamingService.reapDeadStream({
             thread,
@@ -202,7 +202,7 @@ export class WorkspaceSetupChatService {
     userWorkspaceId: string;
     workspaceId: string;
     locale: string;
-  }): Promise<AgentChatThreadEntity> {
+  }): Promise<AgentChatThreadWorkspaceEntity> {
     const safeLocale = (locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE;
     const title = this.i18nService
       .getI18nInstance(safeLocale)

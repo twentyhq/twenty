@@ -3,9 +3,9 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import {
   AgentMessageRole,
   AgentMessageStatus,
-  type AgentMessageEntity,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
@@ -22,7 +22,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       message: 'Provider timed out',
       failedAt: '2026-01-01T00:00:00.000Z',
     },
-  } as unknown as AgentChatThreadEntity;
+  } as unknown as AgentChatThreadWorkspaceEntity;
 
   const userMessageEntity = {
     id: 'user-message-id',
@@ -30,7 +30,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     status: AgentMessageStatus.SENT,
     parts: [{ type: 'text', textContent: 'hello', orderIndex: 0 }],
     createdAt: new Date('2026-01-01T00:00:00.000Z'),
-  } as unknown as AgentMessageEntity;
+  } as unknown as AgentMessageWorkspaceEntity;
 
   const buildService = ({
     thread = failedThread,
@@ -160,7 +160,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       ...userMessageEntity,
       id: 'newer-message-id',
       role: AgentMessageRole.ASSISTANT,
-    } as unknown as AgentMessageEntity;
+    } as unknown as AgentMessageWorkspaceEntity;
     const { service, threadRepository, messageQueueService } = buildService({
       threadMessages: [userMessageEntity, newerAssistantMessage],
     });
@@ -220,7 +220,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       status: AgentMessageStatus.SENT,
       isHidden: true,
       parts: [{ type: 'text', textContent: 'kickoff prompt', orderIndex: 0 }],
-    } as unknown as AgentMessageEntity;
+    } as unknown as AgentMessageWorkspaceEntity;
     const { service, threadRepository, messageQueueService, agentChatService } =
       buildService({
         lastUserMessage: {
