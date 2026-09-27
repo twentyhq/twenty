@@ -83,6 +83,7 @@ const buildResolver = () => {
       .mockResolvedValue({ chunks: [], maxSeq: 0 }),
   };
   const redis = { getClient: jest.fn() };
+  const workflowQuestions = { answer: jest.fn() };
   const resolver = new AgentChatResolver(
     chatService,
     {} as never,
@@ -96,6 +97,7 @@ const buildResolver = () => {
       validateModelAvailability: jest.fn(),
     } as never,
     redis as never,
+    workflowQuestions as never,
     threadRepository as never,
   );
   return {

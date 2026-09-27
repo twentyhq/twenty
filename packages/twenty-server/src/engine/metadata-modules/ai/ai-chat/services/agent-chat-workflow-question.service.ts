@@ -55,10 +55,11 @@ export class AgentChatWorkflowQuestionService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const { workflowRunId, workflowStepId } = thread as AgentChatThreadEntity & {
-      workflowRunId?: string | null;
-      workflowStepId?: string | null;
-    };
+    const { workflowRunId, workflowStepId } =
+      thread as AgentChatThreadEntity & {
+        workflowRunId?: string | null;
+        workflowStepId?: string | null;
+      };
 
     if (!isNonEmptyString(workflowRunId) || !isNonEmptyString(workflowStepId)) {
       throw new AiException(
@@ -73,6 +74,7 @@ export class AgentChatWorkflowQuestionService {
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.WORKFLOWS,
+        applicationId: undefined,
       });
 
     if (!canAnswer) {

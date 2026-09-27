@@ -25,6 +25,7 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { useToast } from 'twenty-ui/components';
+import { type AnswerAgentChatQuestionMutation } from '~/generated-metadata/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useSubmitQuestionAnswer = () => {
@@ -91,18 +92,19 @@ export const useSubmitQuestionAnswer = () => {
       store.set(agentChatUploadedFilesState.atom, []);
 
       try {
-        const { data } = await apolloClient.mutate({
-          mutation: ANSWER_AGENT_CHAT_QUESTION,
-          variables: {
-            threadId,
-            messageId,
-            answers,
-            modelId: modelIdForRequest,
-            fileAttachments: isNonEmptyArray(fileAttachments)
-              ? fileAttachments
-              : undefined,
-          },
-        });
+        const { data } =
+          await apolloClient.mutate<AnswerAgentChatQuestionMutation>({
+            mutation: ANSWER_AGENT_CHAT_QUESTION,
+            variables: {
+              threadId,
+              messageId,
+              answers,
+              modelId: modelIdForRequest,
+              fileAttachments: isNonEmptyArray(fileAttachments)
+                ? fileAttachments
+                : undefined,
+            },
+          });
 
         // A workflow agent's answer resumes its run, not a chat stream, so
         // no first chunk will arrive.

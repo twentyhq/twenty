@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { convertToModelMessages, type ModelMessage } from 'ai';
-import { type ExtendedUIMessage, type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessage,
+  type ExtendedUIMessagePart,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 

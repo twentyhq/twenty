@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   generateText,
-  hasToolCall,
   jsonSchema,
   type LanguageModelUsage,
   type ModelMessage,
@@ -406,6 +405,10 @@ export class AgentAsyncExecutorService {
         });
 
       const pausingToolNames = Object.keys(pausingTools);
+      const endsOnPausingToolCall = (steps: StepResult<ToolSet>[]) =>
+        steps[steps.length - 1]?.toolCalls.some((toolCall) =>
+          pausingToolNames.includes(toolCall.toolName),
+        ) ?? false;
 
       const textResponse = await generateText({
         instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
@@ -414,7 +417,7 @@ export class AgentAsyncExecutorService {
         messages: [...priorModelMessages, ...modelMessages],
         stopWhen: (step) =>
           isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-          pausingToolNames.some((toolName) => hasToolCall(toolName)(step)) ||
+          endsOnPausingToolCall(step.steps) ||
           hasNoMoreAvailableCredits,
         providerOptions,
         ...buildAiTelemetry({
@@ -519,12 +522,7 @@ export class AgentAsyncExecutorService {
 
       let result: object = { response: textResponse.text };
 
-      const isPaused =
-        textResponse.steps
-          .at(-1)
-          ?.toolCalls.some((toolCall) =>
-            pausingToolNames.includes(toolCall.toolName),
-          ) ?? false;
+      const isPaused = endsOnPausingToolCall(textResponse.steps);
 
       // A paused execution has no final answer yet to structure.
       if (isDefined(agentSchema) && !isPaused) {
