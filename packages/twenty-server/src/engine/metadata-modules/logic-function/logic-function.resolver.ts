@@ -6,12 +6,17 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -46,6 +51,7 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  ApplicationExceptionFilter,
   AuthGraphqlApiExceptionFilter,
 )
 export class LogicFunctionResolver {
@@ -58,7 +64,12 @@ export class LogicFunctionResolver {
 
   @Query(() => LogicFunctionDTO)
   async findOneLogicFunction(
-    @Args('input') { id }: LogicFunctionIdInput,
+    @ApplicationTargetArg<LogicFunctionIdInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+    })
+    { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
@@ -85,6 +96,8 @@ export class LogicFunctionResolver {
   @AllowSuspendedWorkspace()
   async findManyLogicFunctions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<LogicFunctionDTO[]> {
     try {
       const { flatLogicFunctionMaps } =
@@ -99,7 +112,11 @@ export class LogicFunctionResolver {
         .filter(
           (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
             isDefined(flatLogicFunction) &&
-            !isDefined(flatLogicFunction.deletedAt),
+            !isDefined(flatLogicFunction.deletedAt) &&
+            canCallerReachApplication({
+              callingApplication,
+              applicationId: flatLogicFunction.applicationId,
+            }),
         )
         .map((flatLogicFunction) =>
           fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
@@ -183,7 +200,12 @@ export class LogicFunctionResolver {
   @Mutation(() => LogicFunctionExecutionResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async executeOneLogicFunction(
-    @Args('input') { id, payload }: ExecuteOneLogicFunctionInput,
+    @ApplicationTargetArg<ExecuteOneLogicFunctionInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+    })
+    { id, payload }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -204,7 +226,12 @@ export class LogicFunctionResolver {
   @Query(() => String, { nullable: true })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async getLogicFunctionSourceCode(
-    @Args('input') { id }: LogicFunctionIdInput,
+    @ApplicationTargetArg<LogicFunctionIdInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+    })
+    { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
@@ -220,7 +247,11 @@ export class LogicFunctionResolver {
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async updateOneLogicFunction(
-    @Args('input')
+    @ApplicationTargetArg<UpdateLogicFunctionFromSourceInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+    })
     updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
@@ -274,6 +305,8 @@ export class LogicFunctionResolver {
   async logicFunctionLogs(
     @Args('input') _: LogicFunctionLogsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
     // Register CLI presence (refreshed by the heartbeat) so the executor only publishes when watched.
     await this.eventLogLiveService.markWatched(
@@ -281,9 +314,18 @@ export class LogicFunctionResolver {
       SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
     );
 
-    const iterator = await this.subscriptionService.subscribe({
+    const iterator = await this.subscriptionService.subscribe<{
+      logicFunctionLogs: LogicFunctionLogsDTO;
+    }>({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
       workspaceId: workspace.id,
+      mapPayload: (payload) =>
+        canCallerReachApplication({
+          callingApplication,
+          applicationId: payload.logicFunctionLogs.applicationId,
+        })
+          ? payload
+          : undefined,
     });
 
     return wrapAsyncIteratorWithLifecycle(() => iterator, {

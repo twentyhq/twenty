@@ -13,7 +13,6 @@ import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
 import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
-import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
 import { SendMessageCampaignTestInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-test.input';
@@ -37,7 +36,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
-import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
@@ -64,7 +62,6 @@ export class EmailingSendResolver {
   private readonly logger = new Logger(EmailingSendResolver.name);
 
   constructor(
-    private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
     private readonly messageCampaignScheduleService: MessageCampaignScheduleService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
@@ -73,38 +70,6 @@ export class EmailingSendResolver {
     private readonly emailBillingService: EmailBillingService,
     private readonly billingService: BillingService,
   ) {}
-
-  @Mutation(() => SendEmailViaDomainOutputDTO)
-  async sendEmailViaEmailingDomain(
-    @Args('input') input: SendEmailViaDomainInput,
-    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-  ): Promise<SendEmailViaDomainOutputDTO> {
-    const spenders = { userWorkspaceId };
-
-    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailSendOrThrow({
-      workspaceId: currentWorkspace.id,
-      spenders,
-      emailCount: countDeliveredRecipients(input),
-    });
-
-    const { emailingDomainId, ...content } = input;
-    const result = await this.emailingDomainSenderService.sendEmail(
-      currentWorkspace.id,
-      emailingDomainId,
-      { ...content, sendKind: 'TRANSACTIONAL' },
-    );
-
-    await this.billAcceptedSend({
-      workspaceId: currentWorkspace.id,
-      spenders,
-      result,
-    });
-
-    return { messageId: result.messageId };
-  }
 
   @Mutation(() => SendMessageCampaignOutputDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)

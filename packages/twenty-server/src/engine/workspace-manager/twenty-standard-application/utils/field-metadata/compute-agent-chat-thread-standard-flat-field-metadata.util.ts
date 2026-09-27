@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
   MetadataWritability,
+  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
@@ -492,6 +493,39 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         settings: {
           relationType: RelationType.ONE_TO_MANY,
           joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  workspaceMember: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'workspaceMember',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Workspace Member', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workspace member who owns the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isUIEditable: false,
+        // Becomes required with the owner contract step
+        // (twentyhq/core-team-issues#2925).
+        isNullable: true,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'agentChatThreads',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'workspaceMemberId',
         },
       },
     }),
