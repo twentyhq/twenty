@@ -1,11 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/database/commands/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
+
 type CoreWorkflowReverseRow = {
   workspaceWorkflowId: string;
   id: string;
 };
 
-export const resolveCoreWorkflowIdsByWorkspaceWorkflowId = async ({
+export const resolveLegacyCoreWorkflowIdsByWorkspaceWorkflowId = async ({
   executeQuery,
   workspaceId,
   workspaceWorkflowIds,
@@ -20,6 +22,10 @@ export const resolveCoreWorkflowIdsByWorkspaceWorkflowId = async ({
   const coreWorkflowIdByWorkspaceWorkflowId = new Map<string, string>();
 
   if (workspaceWorkflowIds.length === 0) {
+    return coreWorkflowIdByWorkspaceWorkflowId;
+  }
+
+  if (!(await hasCoreWorkflowWorkspaceWorkflowIdColumn(executeQuery))) {
     return coreWorkflowIdByWorkspaceWorkflowId;
   }
 

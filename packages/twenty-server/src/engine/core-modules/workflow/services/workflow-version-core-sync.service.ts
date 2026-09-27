@@ -25,8 +25,7 @@ import {
   CoreWorkflowMetadataExceptionCode,
 } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { hasCoreWorkflowWorkspaceVersionIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-version-id-column.util';
-import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
+import { resolveLegacyCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/database/commands/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -483,14 +482,10 @@ export class WorkflowVersionCoreSyncService {
     const resolvedApplicationId =
       applicationId ?? (await this.getCustomApplicationIdOrThrow(workspaceId));
 
-    const hasWorkspaceVersionMapping =
-      await hasCoreWorkflowWorkspaceVersionIdColumn((query) =>
-        transactionScope.executeRawQuery(query),
-      );
     const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
     const candidateRows = isNonEmptyString(candidateCoreVersionId)
       ? ((await transactionScope.executeRawQuery(
-          `SELECT "id", "workspaceId", "workflowId", "coreWorkflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''} FROM core."workflowVersion" WHERE id = $1 FOR UPDATE`,
+          `SELECT "id", "workspaceId", "workflowId", "coreWorkflowId", "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE id = $1 FOR UPDATE`,
           [candidateCoreVersionId],
         )) as {
           id: string;
@@ -514,12 +509,10 @@ export class WorkflowVersionCoreSyncService {
       );
     }
 
-    const reverseRows = hasWorkspaceVersionMapping
-      ? ((await transactionScope.executeRawQuery(
-          `SELECT id, "coreWorkflowId" FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 FOR UPDATE`,
-          [workspaceId, workflowVersion.id],
-        )) as { id: string; coreWorkflowId: string | null }[])
-      : [];
+    const reverseRows = (await transactionScope.executeRawQuery(
+      `SELECT id, "coreWorkflowId" FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 FOR UPDATE`,
+      [workspaceId, workflowVersion.id],
+    )) as { id: string; coreWorkflowId: string | null }[];
 
     if (
       reverseRows.length > 1 ||
@@ -558,10 +551,10 @@ export class WorkflowVersionCoreSyncService {
     // and steps overwritten.
     const mirroredRows = await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
-         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''})
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9${hasWorkspaceVersionMapping ? ', $10' : ''})
+         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId", "workspaceWorkflowVersionId")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        ON CONFLICT ("id") DO UPDATE SET
-         ${hasWorkspaceVersionMapping ? '"workspaceWorkflowVersionId" = EXCLUDED."workspaceWorkflowVersionId",' : ''}
+         "workspaceWorkflowVersionId" = EXCLUDED."workspaceWorkflowVersionId",
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
          "status" = EXCLUDED."status",
@@ -581,7 +574,7 @@ export class WorkflowVersionCoreSyncService {
         uuidv4(),
         resolvedApplicationId,
         coreWorkflowId,
-        ...(hasWorkspaceVersionMapping ? [workflowVersion.id] : []),
+        workflowVersion.id,
       ],
     );
 
@@ -653,7 +646,7 @@ export class WorkflowVersionCoreSyncService {
     );
 
     const reverseMappedCoreWorkflowIds =
-      await resolveCoreWorkflowIdsByWorkspaceWorkflowId({
+      await resolveLegacyCoreWorkflowIdsByWorkspaceWorkflowId({
         executeQuery: (query, parameters) =>
           this.workspaceRepository.manager.query(query, parameters),
         workspaceId,
@@ -688,14 +681,6 @@ export class WorkflowVersionCoreSyncService {
       .findOne({ where: { id: workflowId }, withDeleted: true });
 
     const pointedCoreWorkflowId = workflow?.coreWorkflowId ?? null;
-
-    const isColumnAvailable = await hasCoreWorkflowWorkspaceWorkflowIdColumn(
-      (query) => transactionScope.executeRawQuery(query),
-    );
-
-    if (!isColumnAvailable) {
-      return pointedCoreWorkflowId;
-    }
 
     if (isNonEmptyString(pointedCoreWorkflowId)) {
       const pointedRows = (await transactionScope.executeRawQuery(
