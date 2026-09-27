@@ -25,7 +25,7 @@ import {
   IconUsers,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
 import { LogConsoleCreditsCell } from '@/log-console/components/LogConsoleCreditsCell';
 import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberCell';
@@ -78,7 +78,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
           const action = LOG_CONSOLE_RECORD_ACTIONS[entry.event];
 
           return isDefined(action) ? (
-            <Tag color={action.color}>{t(action.label)}</Tag>
+            <Status color={action.color}>{t(action.label)}</Status>
           ) : null;
         },
       },

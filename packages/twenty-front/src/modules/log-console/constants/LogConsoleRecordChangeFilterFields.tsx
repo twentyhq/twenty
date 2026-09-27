@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, IconTimelineEvent } from 'twenty-ui/icon';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 
 import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
@@ -33,11 +33,7 @@ export const LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS: LogConsoleFilterField[] =
                 {
                   label: t(action.label),
                   values: [event],
-                  tag: (
-                    <Tag color={action.color} startIcon={<action.Icon />}>
-                      {t(action.label)}
-                    </Tag>
-                  ),
+                  tag: <Status color={action.color}>{t(action.label)}</Status>,
                 },
               ]
             : [];
