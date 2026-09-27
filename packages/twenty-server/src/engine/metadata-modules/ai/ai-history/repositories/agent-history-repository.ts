@@ -4,7 +4,6 @@ import {
   mapAgentHistoryWhereToWorkspace,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/agent-history-workspace-mapping.util';
 import { normalizeAgentHistoryRecord } from 'src/engine/metadata-modules/ai/ai-history/utils/normalize-agent-history-record.util';
-import { prepareAgentMessageSenderValues } from 'src/engine/metadata-modules/ai/ai-history/utils/prepare-agent-message-sender-values.util';
 import { mapAgentHistoryOrderToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-order-to-workspace.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
@@ -175,23 +174,14 @@ export class AgentHistoryRepository<
     );
   }
 
-  private async prepareWorkspaceInsert(
-    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
-    context: AgentHistoryStorageContext,
-  ): Promise<ObjectLiteral | ObjectLiteral[]> {
-    const mapped = mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values);
-
-    return this.name === 'agentMessage'
-      ? prepareAgentMessageSenderValues(mapped, context)
-      : mapped;
-  }
-
   insert(
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(workspaceId, async (repository, context) =>
-      repository.insert(await this.prepareWorkspaceInsert(values, context)),
+    return this.run(workspaceId, (repository) =>
+      repository.insert(
+        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
+      ),
     );
   }
 
@@ -199,9 +189,9 @@ export class AgentHistoryRepository<
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
-    return this.run(workspaceId, async (repository, context) => {
+    return this.run(workspaceId, async (repository) => {
       const result = await repository.insert(
-        await this.prepareWorkspaceInsert(values, context),
+        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
       );
       return normalizeAgentHistoryRecord({
         record: result.raw[0],
