@@ -50,6 +50,14 @@
             }
           }
         },
+        "emailCampaigns": {
+          "label": "Email Campaigns",
+          "groups": {
+            "emailCampaignsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
         "workflows": {
           "label": "Workflows",
           "groups": {
