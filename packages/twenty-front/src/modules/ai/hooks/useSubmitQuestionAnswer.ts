@@ -91,7 +91,7 @@ export const useSubmitQuestionAnswer = () => {
       store.set(agentChatUploadedFilesState.atom, []);
 
       try {
-        await apolloClient.mutate({
+        const { data } = await apolloClient.mutate({
           mutation: ANSWER_AGENT_CHAT_QUESTION,
           variables: {
             threadId,
@@ -103,6 +103,12 @@ export const useSubmitQuestionAnswer = () => {
               : undefined,
           },
         });
+
+        // A workflow agent's answer resumes its run, not a chat stream, so
+        // no first chunk will arrive.
+        if (!isDefined(data?.answerAgentChatQuestion.streamId)) {
+          store.set(isAwaitingFirstChunkAtom, false);
+        }
 
         dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
       } catch (error) {
