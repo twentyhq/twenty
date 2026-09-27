@@ -7,11 +7,11 @@ import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-hi
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
-import { AGENT_HISTORY_STORAGE_KEY } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-storage-key.constant';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
-import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
+import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
+import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
+import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
 
-type Storage = AgentHistoryStorageState['storage'];
+type Storage = AgentHistoryMigrationState['storage'];
 
 @Injectable()
 export class AgentHistoryMigrationService {
@@ -19,7 +19,7 @@ export class AgentHistoryMigrationService {
 
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
-    private readonly storageService: AgentHistoryStorageService,
+    private readonly storageService: AgentHistoryMigrationStateService,
     private readonly dataService: AgentHistoryMigrationDataService,
     private readonly validationService: AgentHistoryMigrationValidationService,
   ) {}
@@ -38,7 +38,7 @@ export class AgentHistoryMigrationService {
     }
     const runner = this.dataSource.createQueryRunner('master');
     let ownsRunnerLock = false;
-    const runnerKey = `${AGENT_HISTORY_STORAGE_KEY}:runner:${workspaceId}`;
+    const runnerKey = `${AGENT_HISTORY_MIGRATION_STORAGE_KEY}:runner:${workspaceId}`;
     try {
       await runner.connect();
       const [{ acquired }]: { acquired: boolean }[] = await runner.query(
@@ -95,7 +95,7 @@ export class AgentHistoryMigrationService {
                 workspaceId,
               });
             }
-            const next: AgentHistoryStorageState = {
+            const next: AgentHistoryMigrationState = {
               ...current,
               migration: {
                 phase: 'clearing',
@@ -119,7 +119,7 @@ export class AgentHistoryMigrationService {
           runner,
           workspaceId,
           work: async () => {
-            const next: AgentHistoryStorageState = {
+            const next: AgentHistoryMigrationState = {
               ...state,
               migration: {
                 phase: 'copying',
@@ -159,7 +159,7 @@ export class AgentHistoryMigrationService {
               lastId: progress.lastId,
               batchSize,
             });
-            const next: AgentHistoryStorageState = {
+            const next: AgentHistoryMigrationState = {
               ...current,
               migration: {
                 phase: 'copying',
@@ -218,7 +218,7 @@ export class AgentHistoryMigrationService {
     dryRun: boolean;
   }): Promise<void> {
     const runner = this.dataSource.createQueryRunner('master');
-    const key = `${AGENT_HISTORY_STORAGE_KEY}:runner:${workspaceId}`;
+    const key = `${AGENT_HISTORY_MIGRATION_STORAGE_KEY}:runner:${workspaceId}`;
     let ownsLock = false;
     try {
       await runner.connect();
@@ -318,7 +318,7 @@ export class AgentHistoryMigrationService {
       throw new Error('Retention must be at least one day');
     }
     const runner = this.dataSource.createQueryRunner('master');
-    const key = `${AGENT_HISTORY_STORAGE_KEY}:runner:${workspaceId}`;
+    const key = `${AGENT_HISTORY_MIGRATION_STORAGE_KEY}:runner:${workspaceId}`;
     let ownsLock = false;
     try {
       await runner.connect();
@@ -390,7 +390,7 @@ export class AgentHistoryMigrationService {
     try {
       await runner.query(
         'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [`${AGENT_HISTORY_STORAGE_KEY}:${workspaceId}`],
+        [`${AGENT_HISTORY_MIGRATION_STORAGE_KEY}:${workspaceId}`],
       );
       const result = await work();
       await runner.commitTransaction();
