@@ -4,7 +4,6 @@ import { AgentHistoryCleanupCommand } from 'src/database/commands/agent-history/
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { AgentHistoryMigrateCommand } from 'src/database/commands/agent-history/agent-history-migrate.command';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
@@ -22,7 +21,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AgentHistoryCleanupCommand,
-    AgentHistoryMigrateCommand,
     AgentHistoryMigrationService,
     AgentHistoryMigrationStateService,
     AgentHistoryMigrationDataService,

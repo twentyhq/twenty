@@ -1,7 +1,6 @@
 import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -62,8 +61,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class DevSeederService {
   constructor(
-    private readonly agentHistoryLifecycleService: AgentHistoryLifecycleService,
-    private readonly agentHistoryStorageService: AgentHistoryStorageService,
+    private readonly agentHistoryStorageService: AgentHistoryWorkspaceStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceSchemaService: WorkspaceSchemaService,
@@ -135,8 +133,6 @@ export class DevSeederService {
         workspaceId,
       },
     );
-
-    await this.agentHistoryLifecycleService.initializeWorkspace(workspaceId);
 
     await this.sdkClientGenerationService.generateSdkClientForApplication({
       workspaceId,

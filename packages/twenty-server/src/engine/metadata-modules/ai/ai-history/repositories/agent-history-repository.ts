@@ -24,9 +24,9 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type AgentHistoryStorageService,
+  type AgentHistoryWorkspaceStorageService,
   type AgentHistoryStorageContext,
-} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
@@ -40,7 +40,10 @@ export class AgentHistoryRepository<
 > {
   constructor(
     private readonly name: AgentHistoryObjectName,
-    private readonly storageService: AgentHistoryStorageService,
+    private readonly storageService: Pick<
+      AgentHistoryWorkspaceStorageService,
+      'run'
+    >,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
       'executeInWorkspaceContext' | 'getRepository'

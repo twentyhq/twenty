@@ -20,7 +20,7 @@ export class AgentHistoryMigrationStateService {
     return (await this.readStates(runner, [workspaceId])).get(workspaceId)!;
   }
 
-  private async readStates(
+  protected async readStates(
     runner: QueryRunner,
     workspaceIds: string[],
   ): Promise<Map<string, AgentHistoryMigrationState>> {
