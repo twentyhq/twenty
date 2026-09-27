@@ -147,7 +147,7 @@ export const LogConsoleRecordChangeDetail = ({
             )}
           </Section.Root>
         )}
-      {isDefined(recordSnapshot) && (
+      {isDefined(recordSnapshot) && isDefined(recordSnapshot.id) && (
         <StyledOpenRecordButton
           size="sm"
           startIcon={<IconArrowUpRight />}
