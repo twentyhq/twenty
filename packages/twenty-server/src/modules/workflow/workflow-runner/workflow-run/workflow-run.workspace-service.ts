@@ -280,6 +280,50 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
+  // A step waiting on a person must move on exactly once. This shares the lock
+  // every step-info write takes, so of two concurrent callers the second finds
+  // the step no longer PENDING, and endWorkflowRun turns a pending step into
+  // FAILED, so a caller racing a stop is refused as well.
+  @WithLock('workflowRunId')
+  async updateStepInfoIfPending({
+    stepId,
+    stepInfo,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    stepInfo: Partial<WorkflowRunStepInfo>;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+
+    if (currentStepInfo?.status !== StepStatus.PENDING) {
+      return false;
+    }
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...workflowRunToUpdate.state?.stepInfos,
+            [stepId]: { ...currentStepInfo, ...stepInfo },
+          },
+        },
+      },
+    });
+
+    return true;
+  }
+
   @WithLock('workflowRunId')
   async updateWorkflowRunStep({
     workflowRunId,

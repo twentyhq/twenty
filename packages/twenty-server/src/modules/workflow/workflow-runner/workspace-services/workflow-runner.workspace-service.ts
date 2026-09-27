@@ -145,15 +145,28 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      workspaceId,
-      workflowRunId,
-    });
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId,
+        stepInfo: {
+          status: StepStatus.SUCCESS,
+          result: enrichedResponse,
+        },
+        workspaceId,
+        workflowRunId,
+      });
+
+    // Without this, a second submission would resume the run a second time,
+    // and a submission to a stopped run would mark its step done and resume it.
+    if (!hasCompletedStep) {
+      throw new WorkflowVersionStepException(
+        'Form is no longer awaiting a submission',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`This form is no longer awaiting a submission`,
+        },
+      );
+    }
 
     await this.resume({
       workspaceId,
