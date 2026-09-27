@@ -113,7 +113,8 @@ export class WorkspaceIteratorService {
 
       try {
         const workspace = await this.workspaceRepository.findOne({
-          select: ['databaseSchema'],
+          // TypeORM discards a row when every explicitly selected value is null.
+          select: ['id', 'databaseSchema'],
           where: { id: workspaceId },
         });
 

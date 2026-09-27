@@ -204,6 +204,28 @@ describe('UpgradeSequenceRunnerService — workspace deletion (integration)', ()
     },
   );
 
+  it('does not treat an existing workspace with a null database schema as deleted', async () => {
+    await context.dataSource.getRepository(WorkspaceEntity).update(WS_4, {
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      databaseSchema: null,
+    });
+    const error = new Error('No workspace data source');
+    const callback = jest.fn(async () => {
+      throw error;
+    });
+
+    const report = await context.module.get(WorkspaceIteratorService).iterate({
+      workspaceIds: [WS_4],
+      callback,
+    });
+
+    expect(callback).toHaveBeenCalledWith(
+      expect.objectContaining({ workspaceId: WS_4, dataSource: undefined }),
+    );
+    expect(report.fail).toEqual([{ workspaceId: WS_4, error }]);
+    expect(report.skipped).toEqual([]);
+  });
+
   it('keeps an empty cohort empty after every target is deleted', async () => {
     const iterator = context.module.get(WorkspaceIteratorService);
     const iterate = iterator.iterate.bind(iterator);
