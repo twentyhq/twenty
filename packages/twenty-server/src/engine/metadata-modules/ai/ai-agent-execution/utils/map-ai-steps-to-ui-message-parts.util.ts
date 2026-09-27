@@ -5,7 +5,7 @@ import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 // results. Rebuilding the parts a chat stream would have produced lets that
 // run be stored and read back as an ordinary conversation.
 export const mapAiStepsToUiMessageParts = (
-  steps: StepResult<ToolSet>[],
+  steps: Pick<StepResult<ToolSet>, 'content'>[],
 ): ExtendedUIMessagePart[] => {
   const parts: ExtendedUIMessagePart[] = [];
   const toolPartIndexByCallId = new Map<string, number>();

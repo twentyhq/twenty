@@ -2,8 +2,9 @@ import { type StepResult, type ToolSet } from 'ai';
 
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 
-const buildStep = (content: unknown[]): StepResult<ToolSet> =>
-  ({ content }) as unknown as StepResult<ToolSet>;
+const buildStep = (
+  content: StepResult<ToolSet>['content'],
+): Pick<StepResult<ToolSet>, 'content'> => ({ content });
 
 describe('mapAiStepsToUiMessageParts', () => {
   it('turns each step into the parts a chat stream would have stored', () => {

@@ -26,6 +26,8 @@ import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-hi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
+type RecordedExecutionResult = Pick<AgentExecutionResult, 'steps' | 'isPaused'>;
+
 export type RecordedConversation = {
   threadId: string;
   isAwaitingAnswer: boolean;
@@ -69,7 +71,7 @@ export class WorkflowAgentConversationWorkspaceService {
     initiatorUserWorkspaceId: string | null;
     // Absent when the agent failed before replying; the prompt is still
     // recorded so the run shows what the agent was asked.
-    executionResult?: AgentExecutionResult;
+    executionResult?: RecordedExecutionResult;
   }): Promise<RecordedConversation | null> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -131,7 +133,7 @@ export class WorkflowAgentConversationWorkspaceService {
     workspaceId: string;
     threadId: string;
     agentId: string | null;
-    executionResult?: AgentExecutionResult;
+    executionResult?: RecordedExecutionResult;
   }): Promise<RecordedConversation> {
     const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
 
@@ -184,7 +186,7 @@ export class WorkflowAgentConversationWorkspaceService {
     threadId: string;
     turnId: string;
     agentId: string | null;
-    executionResult?: AgentExecutionResult;
+    executionResult?: RecordedExecutionResult;
   }): Promise<boolean> {
     const replyParts = mapAiStepsToUiMessageParts(executionResult?.steps ?? []);
 
