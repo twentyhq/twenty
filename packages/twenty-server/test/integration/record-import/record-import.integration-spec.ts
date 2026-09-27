@@ -55,6 +55,15 @@ const setRecordImportMappingMutation = gql`
   }
 `;
 
+const recordImportRowsQuery = gql`
+  query RecordImportRows($input: RecordImportRowsInput!) {
+    recordImportRows(input: $input) {
+      totalCount
+      rows
+    }
+  }
+`;
+
 const startRecordImportMutation = gql`
   mutation StartRecordImport($input: RecordImportVersionedInput!) {
     startRecordImport(input: $input) { ${RECORD_IMPORT_FIELDS} }
@@ -250,9 +259,54 @@ describe('record import (integration)', () => {
 
     expect(mapped.errors).toBeUndefined();
 
+    const validated = await waitForStatus(ready.id, ['VALIDATED']);
+
+    type RowsPage = {
+      recordImportRows: {
+        totalCount: number;
+        rows: {
+          rowNumber: number;
+          values: Record<string, string>;
+          errors: Record<string, { level: string; message: string }>;
+        }[];
+      };
+    };
+
+    const allRows = await request<RowsPage>(recordImportRowsQuery, {
+      id: ready.id,
+      offset: 1,
+      limit: 2,
+      onlyErrors: false,
+    });
+
+    expect(allRows.data.recordImportRows.totalCount).toBe(4);
+    expect(
+      allRows.data.recordImportRows.rows.map(({ rowNumber }) => rowNumber),
+    ).toEqual([4, 5]);
+
+    const errorRows = await request<RowsPage>(recordImportRowsQuery, {
+      id: ready.id,
+      offset: 0,
+      limit: 10,
+      onlyErrors: true,
+    });
+
+    expect(errorRows.data.recordImportRows.totalCount).toBe(3);
+    expect(errorRows.data.recordImportRows.rows).toMatchObject([
+      { rowNumber: 4, errors: { id: { level: 'error' } } },
+      { rowNumber: 5, errors: { id: { level: 'error' } } },
+      {
+        rowNumber: 6,
+        values: { employees: 'many' },
+        errors: {
+          employees: { level: 'error', message: 'Employees must be a number' },
+        },
+      },
+    ]);
+
     const started = await request<{ startRecordImport: RecordImport }>(
       startRecordImportMutation,
-      { id: ready.id, version: mapped.data.setRecordImportMapping.version },
+      { id: ready.id, version: validated.version },
     );
 
     expect(started.errors).toBeUndefined();
@@ -325,9 +379,11 @@ describe('record import (integration)', () => {
 
     expect(mapped.errors).toBeUndefined();
 
+    const validated = await waitForStatus(ready.id, ['VALIDATED']);
+
     await request(startRecordImportMutation, {
       id: ready.id,
-      version: mapped.data.setRecordImportMapping.version,
+      version: validated.version,
     });
 
     expect(

@@ -1,8 +1,15 @@
+import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import { type ImportedRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedRow';
+import { type ImportedStructuredRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedStructuredRow';
 import { type SpreadsheetColumns } from 'twenty-shared/utils';
 
+export type SpreadsheetImportServerRowsPage = {
+  totalCount: number;
+  rows: (ImportedStructuredRow & ImportedStructuredRowMetadata)[];
+};
+
 // Lets the dialog run parsing, validation and writes on the server. The
-// browser then only holds previews and samples, never the whole file.
+// browser then only holds previews, samples and one page of rows.
 export type SpreadsheetImportServerAdapter = {
   uploadFile: (
     file: File,
@@ -18,7 +25,15 @@ export type SpreadsheetImportServerAdapter = {
     data: ImportedRow[];
     rowCount: number;
   }>;
-  importRows: (columns: SpreadsheetColumns) => Promise<void>;
+  validateRows: (
+    columns: SpreadsheetColumns,
+  ) => Promise<{ rowCount: number; errorRowCount: number }>;
+  loadRows: (args: {
+    offset: number;
+    limit: number;
+    onlyErrors: boolean;
+  }) => Promise<SpreadsheetImportServerRowsPage>;
+  importRows: () => Promise<void>;
   cancelImport: () => Promise<void>;
   // Called when the dialog closes: a running import keeps going
   close: () => void;

@@ -19,7 +19,7 @@ import {
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
-import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
+import { SERVER_REVIEW_PAGE_SIZE } from '@/spreadsheet-import/steps/components/ServerReviewStep/ServerReviewStep';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
@@ -85,9 +85,7 @@ export const MatchColumnsStep = ({
     headerValues,
   );
 
-  const { matchColumnsStepHook, serverImport, onClose } =
-    useSpreadsheetImportInternal();
-  const hideStepBar = useHideStepBar();
+  const { matchColumnsStepHook, serverImport } = useSpreadsheetImportInternal();
 
   const { t } = useLingui();
 
@@ -151,20 +149,28 @@ export const MatchColumnsStep = ({
       columns: SpreadsheetColumns,
     ) => {
       if (isDefined(serverImport)) {
-        setCurrentStepState({
-          type: SpreadsheetImportStepType.importData,
-          recordsToImportCount:
-            currentStepState.type === SpreadsheetImportStepType.matchColumns
-              ? (currentStepState.rowCount ?? 0)
-              : 0,
-        });
-        hideStepBar();
         try {
-          await serverImport.importRows(columns);
-          onClose();
+          setIsLoading(true);
+          const { rowCount, errorRowCount } =
+            await serverImport.validateRows(columns);
+          const initialPage = await serverImport.loadRows({
+            offset: 0,
+            limit: SERVER_REVIEW_PAGE_SIZE,
+            onlyErrors: false,
+          });
+          setCurrentStepState({
+            type: SpreadsheetImportStepType.reviewServerRows,
+            importedColumns: columns,
+            rowCount,
+            errorRowCount,
+            initialPage,
+          });
+          setPreviousStepState(currentStepState);
+          nextStep();
         } catch (error) {
           onError((error as Error).message);
-          setCurrentStepState(currentStepState);
+        } finally {
+          setIsLoading(false);
         }
         return;
       }
@@ -190,8 +196,6 @@ export const MatchColumnsStep = ({
       setCurrentStepState,
       currentStepState,
       serverImport,
-      hideStepBar,
-      onClose,
     ],
   );
 

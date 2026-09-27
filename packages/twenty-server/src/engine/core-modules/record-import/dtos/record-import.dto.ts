@@ -46,6 +46,10 @@ export class RecordImportDTO {
   @Field(() => Int)
   failedRowCount: number;
 
+  // Rows with at least one blocking error, once validated
+  @Field(() => Int, { nullable: true })
+  errorRowCount: number | null;
+
   @Field(() => Boolean)
   hasReport: boolean;
 

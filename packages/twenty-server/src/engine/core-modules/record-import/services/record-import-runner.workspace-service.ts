@@ -2,18 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { setTimeout } from 'node:timers/promises';
 import {
   buildRecordFromImportedStructuredRow,
-  computeSpreadsheetImportRowErrors,
   formatValueForCSV,
-  getSpreadsheetImportUniqueConstraints,
-  getSpreadsheetImportUniqueValue,
   isDefined,
-  normalizeSpreadsheetImportRows,
   sanitizeValueForCSVExport,
-  type SpreadsheetImportValidationMessage,
 } from 'twenty-shared/utils';
 
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
@@ -34,6 +28,7 @@ import {
 import { RecordImportException } from 'src/engine/core-modules/record-import/record-import.exception';
 import { RecordImportSessionService } from 'src/engine/core-modules/record-import/services/record-import-session.service';
 import { RecordImportStorageService } from 'src/engine/core-modules/record-import/services/record-import-storage.service';
+import { RecordImportValidationWorkspaceService } from 'src/engine/core-modules/record-import/services/record-import-validation.workspace-service';
 import {
   type RecordImportContext,
   RecordImportWorkspaceService,
@@ -68,6 +63,7 @@ export class RecordImportRunnerWorkspaceService {
   constructor(
     private readonly recordImportSessionService: RecordImportSessionService,
     private readonly recordImportStorageService: RecordImportStorageService,
+    private readonly recordImportValidationWorkspaceService: RecordImportValidationWorkspaceService,
     private readonly recordImportWorkspaceService: RecordImportWorkspaceService,
     private readonly commonCreateManyQueryRunnerService: CommonCreateManyQueryRunnerService,
     private readonly i18nService: I18nService,
@@ -185,7 +181,6 @@ export class RecordImportRunnerWorkspaceService {
     abortSignal?: AbortSignal;
   }) {
     const { spreadsheetImportFields } = context.metadata;
-    const duplicateCells = await this.findDuplicateCells(session, context);
     let lastProgressAt = 0;
     let lastRequesterRefreshAt = Date.now();
 
@@ -242,35 +237,17 @@ export class RecordImportRunnerWorkspaceService {
       }
     };
 
-    for (
-      let chunkIndex = 0;
-      chunkIndex < (session.chunkCount ?? 0);
-      chunkIndex++
-    ) {
-      const rows = await this.recordImportStorageService.readRowChunk(
-        session,
-        chunkIndex,
-      );
-      const structuredRows = normalizeSpreadsheetImportRows(
-        session.columns ?? [],
-        rows.map(({ cells }) => cells),
-        spreadsheetImportFields,
-      );
-      const { errors } =
-        computeSpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>({
-          rows: structuredRows,
-          fields: spreadsheetImportFields,
-        });
-
+    for await (const {
+      rows,
+    } of this.recordImportValidationWorkspaceService.validateChunks(
+      session,
+      context,
+    )) {
       const pendingRecords: PendingRecord[] = [];
 
-      rows.forEach(({ rowNumber }, rowIndex) => {
-        const rowErrors = {
-          ...errors[rowIndex],
-          ...duplicateCells.get(rowNumber),
-        };
+      for (const { rowNumber, structuredRow, errors } of rows) {
         // Warnings do not block a row, as in the browser import (EDIT-7)
-        const blockingMessages = Object.values(rowErrors)
+        const blockingMessages = Object.values(errors)
           .filter(({ level }) => level === 'error')
           .map(({ message }) =>
             getRecordImportValidationMessageDescriptor(message),
@@ -279,20 +256,19 @@ export class RecordImportRunnerWorkspaceService {
         if (blockingMessages.length > 0) {
           result.skippedRowCount++;
           reportedRows.push({ rowNumber, messages: blockingMessages });
-
-          return;
+          continue;
         }
 
         pendingRecords.push({
           rowNumber,
           record: buildRecordFromImportedStructuredRow({
-            importedStructuredRow: structuredRows[rowIndex],
+            importedStructuredRow: structuredRow,
             fieldMetadataItems: context.metadata.importableFieldMetadataItems,
             spreadsheetImportFields,
             timeZone: session.timeZone,
           }),
         });
-      });
+      }
 
       result.processedRowCount += rows.length - pendingRecords.length;
 
@@ -324,92 +300,6 @@ export class RecordImportRunnerWorkspaceService {
         );
       }
     }
-  }
-
-  // The in-file unique check needs every row, so it runs as a first pass
-  // over the stored chunks; only the first row number per value is kept.
-  private async findDuplicateCells(
-    session: RecordImportSession,
-    context: RecordImportContext,
-  ) {
-    const uniqueConstraints = getSpreadsheetImportUniqueConstraints(
-      context.metadata.objectMetadataItem,
-    );
-    const firstRowNumberByValue = uniqueConstraints.map(
-      () => new Map<string, number>(),
-    );
-    const duplicateRowNumbersByConstraint = uniqueConstraints.map(
-      () => new Set<number>(),
-    );
-
-    for (
-      let chunkIndex = 0;
-      chunkIndex < (session.chunkCount ?? 0);
-      chunkIndex++
-    ) {
-      const rows = await this.recordImportStorageService.readRowChunk(
-        session,
-        chunkIndex,
-      );
-      const structuredRows = normalizeSpreadsheetImportRows(
-        session.columns ?? [],
-        rows.map(({ cells }) => cells),
-        context.metadata.spreadsheetImportFields,
-      );
-
-      uniqueConstraints.forEach((uniqueConstraint, constraintIndex) => {
-        const firstRowNumbers = firstRowNumberByValue[constraintIndex];
-        const duplicates = duplicateRowNumbersByConstraint[constraintIndex];
-
-        structuredRows.forEach((structuredRow, rowIndex) => {
-          const uniqueValue = getSpreadsheetImportUniqueValue(
-            structuredRow,
-            uniqueConstraint,
-          );
-
-          if (!isNonEmptyString(uniqueValue)) {
-            return;
-          }
-
-          const rowNumber = rows[rowIndex].rowNumber;
-          const firstRowNumber = firstRowNumbers.get(uniqueValue);
-
-          if (isDefined(firstRowNumber)) {
-            duplicates.add(firstRowNumber);
-            duplicates.add(rowNumber);
-          } else {
-            firstRowNumbers.set(uniqueValue, rowNumber);
-          }
-        });
-      });
-    }
-
-    const duplicateCells = new Map<
-      number,
-      Record<
-        string,
-        { level: 'error'; message: SpreadsheetImportValidationMessage }
-      >
-    >();
-
-    uniqueConstraints.forEach((uniqueConstraint, constraintIndex) => {
-      for (const rowNumber of duplicateRowNumbersByConstraint[
-        constraintIndex
-      ]) {
-        const cells = duplicateCells.get(rowNumber) ?? {};
-
-        for (const { columnName } of uniqueConstraint) {
-          cells[columnName] = {
-            level: 'error',
-            message: { code: 'DUPLICATE_IN_IMPORT', fieldName: columnName },
-          };
-        }
-
-        duplicateCells.set(rowNumber, cells);
-      }
-    });
-
-    return duplicateCells;
   }
 
   // One database error fails a whole batch, so failing batches are split

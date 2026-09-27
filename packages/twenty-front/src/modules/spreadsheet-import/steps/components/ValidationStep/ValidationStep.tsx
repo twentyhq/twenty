@@ -12,9 +12,9 @@ import {
 import {
   isDefined,
   type SpreadsheetColumns,
-  SpreadsheetColumnType,
 } from 'twenty-shared/utils';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
+import { filterImportedColumns } from '@/spreadsheet-import/utils/filterImportedColumns';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -179,28 +179,7 @@ export const ValidationStep = ({
   );
 
   const columns = useMemo(
-    () =>
-      generateColumns(fields)
-        .map((column) => {
-          const hasBeenImported =
-            importedColumns.filter(
-              (importColumn) =>
-                (importColumn.type === SpreadsheetColumnType.matched &&
-                  importColumn.value === column.key) ||
-                (importColumn.type === SpreadsheetColumnType.matchedSelect &&
-                  importColumn.value === column.key) ||
-                (importColumn.type ===
-                  SpreadsheetColumnType.matchedSelectOptions &&
-                  importColumn.value === column.key) ||
-                (importColumn.type === SpreadsheetColumnType.matchedCheckbox &&
-                  importColumn.value === column.key) ||
-                column.key === 'select-row',
-            ).length > 0;
-
-          if (!hasBeenImported) return null;
-          return column;
-        })
-        .filter(isDefined),
+    () => filterImportedColumns(generateColumns(fields), importedColumns),
     [fields, importedColumns],
   );
 

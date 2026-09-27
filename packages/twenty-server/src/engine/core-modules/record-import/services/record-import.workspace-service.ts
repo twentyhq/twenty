@@ -10,8 +10,14 @@ import { t } from '@lingui/core/macro';
 import { setTimeout } from 'node:timers/promises';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  normalizeSpreadsheetImportRows,
+  type SpreadsheetImportRowErrors,
+  type SpreadsheetImportValidationMessage,
+} from 'twenty-shared/utils';
 import { Like } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -23,6 +29,7 @@ import {
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -32,8 +39,13 @@ import {
   RECORD_IMPORT_MAX_WORKBOOK_BYTES,
   RECORD_IMPORT_PREVIEW_ROW_COUNT,
   RECORD_IMPORT_PROGRESS_INTERVAL_MS,
+  RECORD_IMPORT_ROWS_PER_CHUNK,
 } from 'src/engine/core-modules/record-import/constants/record-import.constants';
 import { type RecordImportColumnSamplesDTO } from 'src/engine/core-modules/record-import/dtos/record-import-column-samples.dto';
+import {
+  type RecordImportRowDTO,
+  type RecordImportRowsPageDTO,
+} from 'src/engine/core-modules/record-import/dtos/record-import-rows.dto';
 import { type RecordImportPreviewDTO } from 'src/engine/core-modules/record-import/dtos/record-import-preview.dto';
 import { type RecordImportDTO } from 'src/engine/core-modules/record-import/dtos/record-import.dto';
 import { RecordImportSessionService } from 'src/engine/core-modules/record-import/services/record-import-session.service';
@@ -47,6 +59,7 @@ import {
   buildRecordImportMetadata,
   type RecordImportMetadata,
 } from 'src/engine/core-modules/record-import/utils/build-record-import-metadata.util';
+import { getRecordImportValidationMessageDescriptor } from 'src/engine/core-modules/record-import/utils/get-record-import-validation-message-descriptor.util';
 import { detectRecordImportFileType } from 'src/engine/core-modules/record-import/utils/detect-record-import-file-type.util';
 import {
   buildRecordImportMappedFields,
@@ -66,8 +79,16 @@ const FILE_TYPE_SNIFF_BYTE_COUNT = 4096;
 
 const RUNNING_STATUSES: RecordImportStatus[] = [
   'PREPARING',
+  'VALIDATING',
   'IMPORTING',
   'CANCELLING',
+];
+
+// Statuses in which the prepared rows can be mapped and reviewed
+const PREPARED_STATUSES: RecordImportStatus[] = [
+  'READY',
+  'VALIDATING',
+  'VALIDATED',
 ];
 
 export type RecordImportContext = {
@@ -91,6 +112,7 @@ export class RecordImportWorkspaceService {
     private readonly permissionsService: PermissionsService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly i18nService: I18nService,
     @InjectMessageQueue(MessageQueue.recordImportQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -243,7 +265,7 @@ export class RecordImportWorkspaceService {
     const preparing = await this.compareAndUpdateOrThrow(
       session,
       version,
-      ['UPLOADED', 'READY'],
+      ['UPLOADED', ...PREPARED_STATUSES],
       (current) => ({
         ...current,
         status: 'PREPARING',
@@ -254,6 +276,8 @@ export class RecordImportWorkspaceService {
         chunkCount: undefined,
         columns: undefined,
         mappedFields: undefined,
+        validationRunId: undefined,
+        errorRowCount: undefined,
         errorMessage: undefined,
       }),
     );
@@ -281,7 +305,7 @@ export class RecordImportWorkspaceService {
   }): Promise<RecordImportColumnSamplesDTO> {
     const session = await this.findOwnedSessionOrThrow(authContext, id);
 
-    if (session.status !== 'READY') {
+    if (!PREPARED_STATUSES.includes(session.status)) {
       throw new BadRequestException(t`The file is not ready yet.`);
     }
 
@@ -314,21 +338,129 @@ export class RecordImportWorkspaceService {
       );
     }
 
-    const updated = await this.compareAndUpdateOrThrow(
+    const validating = await this.compareAndUpdateOrThrow(
       session,
       version,
-      ['READY'],
+      PREPARED_STATUSES,
       (current) => ({
         ...current,
+        status: 'VALIDATING',
         columns: parsedColumns,
         mappedFields: buildRecordImportMappedFields(
           parsedColumns,
           metadata.spreadsheetImportFields,
         ),
+        validationRunId: v4(),
+        errorRowCount: undefined,
+        errorMessage: undefined,
       }),
     );
 
-    return this.toDTO(updated);
+    const jobId = await this.messageQueueService.add(
+      'ValidateRecordImportJob',
+      {
+        workspaceId: validating.workspaceId,
+        id: validating.id,
+        validationRunId: validating.validationRunId,
+      },
+      { id: validating.id },
+    );
+
+    const updated = await this.recordImportSessionService.update(
+      validating,
+      (current) =>
+        current.validationRunId === validating.validationRunId
+          ? { ...current, jobId }
+          : undefined,
+    );
+
+    return this.toDTO(updated ?? validating);
+  }
+
+  async getRows({
+    authContext,
+    id,
+    offset,
+    limit,
+    onlyErrors,
+  }: {
+    authContext: WorkspaceAuthContext;
+    id: string;
+    offset: number;
+    limit: number;
+    onlyErrors: boolean;
+  }): Promise<RecordImportRowsPageDTO> {
+    const session = await this.findOwnedSessionOrThrow(authContext, id);
+
+    if (session.status !== 'VALIDATED') {
+      throw new BadRequestException(t`The rows are still being checked.`);
+    }
+
+    const { metadata } = await this.buildContext(session);
+    const rowCount = session.rowCount ?? 0;
+    const pageSize = limit;
+    const { errorRowPositions } = onlyErrors
+      ? await this.recordImportStorageService.readErrorIndex(session)
+      : { errorRowPositions: [] };
+    const positions = onlyErrors
+      ? errorRowPositions.slice(offset, offset + pageSize)
+      : Array.from(
+          { length: Math.max(0, Math.min(pageSize, rowCount - offset)) },
+          (_, index) => offset + index,
+        );
+    const i18n = this.i18nService.getI18nInstance(session.locale);
+    const rows: RecordImportRowDTO[] = [];
+
+    // A page spans at most two chunks, each read once
+    for (const chunkIndex of new Set(
+      positions.map((position) =>
+        Math.floor(position / RECORD_IMPORT_ROWS_PER_CHUNK),
+      ),
+    )) {
+      const [chunkRows, chunkErrors] = await Promise.all([
+        this.recordImportStorageService.readRowChunk(session, chunkIndex),
+        this.recordImportStorageService.readErrorChunk<
+          SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>
+        >(session, chunkIndex),
+      ]);
+      const structuredRows = normalizeSpreadsheetImportRows(
+        session.columns ?? [],
+        chunkRows.map(({ cells }) => cells),
+        metadata.spreadsheetImportFields,
+      );
+
+      for (const position of positions) {
+        const indexInChunk =
+          position - chunkIndex * RECORD_IMPORT_ROWS_PER_CHUNK;
+
+        if (indexInChunk < 0 || indexInChunk >= chunkRows.length) {
+          continue;
+        }
+
+        rows.push({
+          rowNumber: chunkRows[indexInChunk].rowNumber,
+          values: structuredRows[indexInChunk],
+          errors: Object.fromEntries(
+            Object.entries(chunkErrors.get(indexInChunk) ?? {}).map(
+              ([fieldKey, { level, message }]) => [
+                fieldKey,
+                {
+                  level,
+                  message: i18n._(
+                    getRecordImportValidationMessageDescriptor(message),
+                  ),
+                },
+              ],
+            ),
+          ),
+        });
+      }
+    }
+
+    return {
+      totalCount: onlyErrors ? errorRowPositions.length : rowCount,
+      rows,
+    };
   }
 
   async start({
@@ -342,6 +474,10 @@ export class RecordImportWorkspaceService {
   }): Promise<RecordImportDTO> {
     const session = await this.findOwnedSessionOrThrow(authContext, id);
     const { metadata } = await this.buildContext(session);
+
+    if (session.status !== 'VALIDATED') {
+      throw new BadRequestException(t`The rows are still being checked.`);
+    }
 
     if (
       !isDefined(session.columns) ||
@@ -373,7 +509,7 @@ export class RecordImportWorkspaceService {
       const importing = await this.compareAndUpdateOrThrow(
         session,
         version,
-        ['READY'],
+        ['VALIDATED'],
         (current) => ({
           ...current,
           status: 'IMPORTING',
@@ -413,7 +549,7 @@ export class RecordImportWorkspaceService {
       });
       await this.recordImportSessionService.update(session, (current) =>
         current.status === 'IMPORTING'
-          ? { ...current, status: 'READY' }
+          ? { ...current, status: 'VALIDATED' }
           : undefined,
       );
 
@@ -613,6 +749,7 @@ export class RecordImportWorkspaceService {
         jobProgress?.skippedRowCount ?? result?.skippedRowCount ?? 0,
       failedRowCount:
         jobProgress?.failedRowCount ?? result?.failedRowCount ?? 0,
+      errorRowCount: session.errorRowCount ?? null,
       hasReport: isDefined(session.reportFileId),
       errorMessage: session.errorMessage ?? null,
     };
@@ -658,6 +795,14 @@ export class RecordImportWorkspaceService {
           };
         }
 
+        if (current.status === 'VALIDATING') {
+          return {
+            ...current,
+            status: 'READY',
+            errorMessage: t`Checking the rows was interrupted. Please try again.`,
+          };
+        }
+
         const processedRowCount = jobProgress?.processedRowCount ?? 0;
         const totalRowCount = current.result?.totalRowCount ?? 0;
         const remainingRowCount = Math.max(
@@ -680,7 +825,7 @@ export class RecordImportWorkspaceService {
       },
     );
 
-    if (session.status !== 'PREPARING') {
+    if (session.status === 'IMPORTING' || session.status === 'CANCELLING') {
       await this.recordImportSessionService.updateWorkspaceLease({
         workspaceId: session.workspaceId,
         id: session.id,

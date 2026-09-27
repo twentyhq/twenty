@@ -17,6 +17,7 @@ export const useSpreadsheetImportInitialStep = (
       case SpreadsheetImportStepType.matchColumns:
         return 2;
       case SpreadsheetImportStepType.validateData:
+      case SpreadsheetImportStepType.reviewServerRows:
         return 3;
       default:
         return 0;
