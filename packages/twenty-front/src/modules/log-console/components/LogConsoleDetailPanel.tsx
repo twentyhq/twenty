@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -132,8 +132,11 @@ export const LogConsoleDetailPanel = () => {
 
   const { source, entry } = logConsoleSelectedLog;
   const { __typename, ...rawEvent } = entry;
-  const message: string | undefined =
+  const rawMessage =
     entry.properties?.message ?? entry.properties?.error;
+  const message: string | undefined = isString(rawMessage)
+    ? rawMessage
+    : undefined;
   const objectMetadataItem = objectMetadataItemsByIdMap.get(
     entry.objectMetadataId ?? '',
   );

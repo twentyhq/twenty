@@ -11,12 +11,16 @@ export const isLogConsoleTimeRangeWithinRetention = ({
   timeRange: LogConsoleTimeRange;
   retentionInDays: number;
 }) => {
-  if (
-    !isString(timeRange) ||
-    timeRange === 'today' ||
-    timeRange === 'yesterday'
-  ) {
+  if (!isString(timeRange)) {
     return true;
+  }
+
+  if (timeRange === 'today') {
+    return retentionInDays >= 1;
+  }
+
+  if (timeRange === 'yesterday') {
+    return retentionInDays >= 2;
   }
 
   return (

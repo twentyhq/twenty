@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useSyncExternalStore, useState } from 'react';
+import { useEffect, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton, useToast } from 'twenty-ui/components';
 import {
@@ -188,6 +188,12 @@ export const LogConsole = () => {
     LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.default,
   );
   const [isDetailPanelResizing, setIsDetailPanelResizing] = useState(false);
+
+  useEffect(() => {
+    if (!isDefined(logConsoleSelectedLog)) {
+      setIsDetailPanelResizing(false);
+    }
+  }, [logConsoleSelectedLog]);
 
   const windowHeight = useSyncExternalStore(
     subscribeToWindowResize,

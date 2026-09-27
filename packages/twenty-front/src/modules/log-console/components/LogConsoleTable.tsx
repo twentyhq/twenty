@@ -161,7 +161,7 @@ export const LogConsoleTable = ({
           >
             {Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
               <TableRow
-                key={rowIndex}
+                key={`skel-${rowIndex}`}
                 gridTemplateColumns={gridTemplateColumns}
               >
                 {columns.map((column) => (
