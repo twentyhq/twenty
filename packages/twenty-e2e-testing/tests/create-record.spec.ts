@@ -1,6 +1,17 @@
 import { expect, test } from '../lib/fixtures/screenshot';
 import { postBackendGraphQL } from '../lib/requests/post-backend-graphql';
 
+type FindOnePersonData = {
+  person: {
+    name: { firstName: string; lastName: string };
+    emails: { primaryEmail: string };
+    intro: string;
+    linkedinLink: { primaryLinkUrl: string };
+    phones: { primaryPhoneNumber: string };
+    workPreference: string[];
+  };
+};
+
 const query = `query FindOnePerson($objectRecordId: UUID!) {
   person(
     filter: {or: [{deletedAt: {is: NULL}}, {deletedAt: {is: NOT_NULL}}], id: {eq: $objectRecordId}}
@@ -147,7 +158,7 @@ test('Create and update record', async ({ page }) => {
   const newPersonId = page.url().match(/\/object\/person\/([a-f0-9-]+)/)?.[1];
 
   // Check data was saved
-  const findOnePersonResponse = await postBackendGraphQL({
+  const findOnePersonResponse = await postBackendGraphQL<FindOnePersonData>({
     page,
     data: {
       operationName: 'FindOnePerson',
@@ -158,21 +169,14 @@ test('Create and update record', async ({ page }) => {
     },
   });
 
-  const findOnePersonReponseBody = await findOnePersonResponse.json();
-
-  expect(findOnePersonReponseBody.data.person.name.firstName).toBe('John');
-  expect(findOnePersonReponseBody.data.person.name.lastName).toBe('Doe');
-  expect(findOnePersonReponseBody.data.person.emails.primaryEmail).toBe(
-    randomEmail,
-  );
-  expect(findOnePersonReponseBody.data.person.intro).toBe('This is an intro');
-  expect(findOnePersonReponseBody.data.person.linkedinLink.primaryLinkUrl).toBe(
-    'linkedin.com/johndoe',
-  );
-  expect(findOnePersonReponseBody.data.person.phones.primaryPhoneNumber).toBe(
-    '611223344',
-  );
-  expect(findOnePersonReponseBody.data.person.workPreference).toEqual([
-    'HYBRID',
-  ]);
+  expect(findOnePersonResponse.status).toBe(200);
+  expect(findOnePersonResponse.body.errors).toBeUndefined();
+  expect(findOnePersonResponse.body.data?.person).toMatchObject({
+    name: { firstName: 'John', lastName: 'Doe' },
+    emails: { primaryEmail: randomEmail },
+    intro: 'This is an intro',
+    linkedinLink: { primaryLinkUrl: 'linkedin.com/johndoe' },
+    phones: { primaryPhoneNumber: '611223344' },
+    workPreference: ['HYBRID'],
+  });
 });
