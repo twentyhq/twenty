@@ -128,6 +128,7 @@ const StyledPanel = styled.div<{
       isFullScreen ? '0px' : LOG_CONSOLE_TOP_BORDER_WIDTH}
     solid ${themeCssVariables.border.color.medium};
   bottom: 0;
+  box-shadow: ${themeCssVariables.boxShadow.bottomPanel};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

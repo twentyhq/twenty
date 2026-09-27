@@ -4,7 +4,7 @@ import { type ExecutionResult, print } from 'graphql';
 import { type RequestParams, type Sink } from 'graphql-sse';
 import { http, HttpResponse } from 'msw';
 import { type ReactNode, useEffect } from 'react';
-import { expect, screen, userEvent, within } from 'storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -423,12 +423,18 @@ export const Clear: Story = {
     await userEvent.click(canvas.getByLabelText('More options'));
     await userEvent.click(await screen.findByText('Clear'));
 
-    expect(getTextUnderHeader()).toBe('');
+    expect(
+      canvas.queryByText('Received 9 invoices from Stripe'),
+    ).not.toBeInTheDocument();
 
     emitEventLogsLive([firstLiveApplicationLog, secondLiveApplicationLog]);
-    await canvas.findByText('Lead score for Lena Park: 64');
 
-    expect(getTextUnderHeader()).not.toBe('Lead score for Lena Park: 64');
+    await waitFor(() =>
+      expect(getTextUnderHeader()).toBe('Lead score for Lena Park: 64'),
+    );
+    expect(
+      canvas.queryByText('Received 9 invoices from Stripe'),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -565,22 +571,6 @@ export const TimeRangeMenu: Story = {
     expect(
       await screen.findByRole('option', { name: 'Last 90 days' }),
     ).toHaveAttribute('aria-disabled', 'true');
-  },
-};
-
-export const CustomTimeRange: Story = {
-  beforeEach: () => {
-    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.click(
-      await canvas.findByText('Last 24 hours', {}, { timeout: 5000 }),
-    );
-    await userEvent.click(await screen.findByText('Custom range...'));
-
-    expect(await screen.findByRole('button', { name: 'Apply' })).toBeEnabled();
   },
 };
 

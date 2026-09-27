@@ -9,6 +9,7 @@ import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -91,6 +92,7 @@ export const useCommandMenuAppActions = () => {
       id: 'turn-on-developer-mode',
       section: 'DEVELOPER',
       label: t`Turn on developer mode`,
+      searchKeywords: t`logs`,
       Icon: IconCode,
       onClick: () => setAdvancedMode(true),
       isAvailable: isLogsSettingsSectionEnabled && !isAdvancedModeEnabled,
@@ -107,14 +109,16 @@ export const useCommandMenuAppActions = () => {
       id: 'open-log-console',
       section: 'DEVELOPER',
       label: t`Open logs console`,
+      searchKeywords: t`developer`,
       Icon: IconTerminal,
       onClick: () => setLogConsoleDisplayMode('open'),
-      isAvailable: isLogConsoleAllowed && logConsoleDisplayMode === 'closed',
+      isAvailable: isLogConsoleAllowed && logConsoleDisplayMode !== 'open',
     },
     {
       id: 'close-log-console',
       section: 'DEVELOPER',
       label: t`Close logs console`,
+      searchKeywords: t`developer`,
       Icon: IconTerminal,
       onClick: closeLogConsole,
       isAvailable: isLogConsoleAllowed && logConsoleDisplayMode !== 'closed',
@@ -128,7 +132,10 @@ export const useCommandMenuAppActions = () => {
       (item) =>
         !isInPreviewMode &&
         item.isAvailable &&
-        normalizeSearchText(item.label).includes(normalizedSearch),
+        isSelectOptionMatchingSearch({
+          option: item,
+          normalizedSearchInputValue: normalizedSearch,
+        }),
     ),
   };
 };

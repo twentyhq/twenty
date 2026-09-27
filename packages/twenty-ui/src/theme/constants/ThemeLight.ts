@@ -160,6 +160,8 @@ export const THEME_LIGHT = {
     light:
       '0px 2px 4px 0px color(display-p3 0 0 0 / 0.039), 0px 0px 4px 0px color(display-p3 0 0 0 / 0.078)',
     sidebar: '-4px 4px 4px 0px rgba(0, 0, 0, 0.005)',
+    bottomPanel:
+      '0px -4px 16px 0px color(display-p3 0 0 0 / 0.078), 0px -2px 4px 0px color(display-p3 0 0 0 / 0.039)',
     strong:
       '2px 4px 16px 0px color(display-p3 0 0 0 / 0.161), 0px 2px 4px 0px color(display-p3 0 0 0 / 0.078)',
     underline: '0px 1px 0px 0px color(display-p3 0 0 0 / 0.361)',

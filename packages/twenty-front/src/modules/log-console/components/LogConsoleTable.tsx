@@ -10,7 +10,6 @@ import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/Log
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -61,20 +60,10 @@ const StyledLoadMoreTrigger = styled.div`
   height: 1px;
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
-  container-type: size;
-`;
-
-const StyledEntriesSinceClear = styled(TableBody)`
-  justify-content: flex-end;
-  min-height: calc(100cqh - ${themeCssVariables.spacing[8]});
-`;
-
 type LogConsoleTableProps = {
   source: LogConsoleSource;
   entries: EventLogRecord[];
   liveEntryCount: number;
-  entriesSinceClear?: EventLogRecord[];
   loading: boolean;
   hasNextPage: boolean;
   selectedEntry?: EventLogRecord;
@@ -86,7 +75,6 @@ export const LogConsoleTable = ({
   source,
   entries,
   liveEntryCount,
-  entriesSinceClear,
   loading,
   hasNextPage,
   selectedEntry,
@@ -163,9 +151,7 @@ export const LogConsoleTable = ({
   };
 
   return (
-    <StyledScrollWrapper
-      componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}
-    >
+    <ScrollWrapper componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}>
       <Table>
         <StyledHeaderRow
           gridTemplateColumns={gridTemplateColumns}
@@ -177,17 +163,6 @@ export const LogConsoleTable = ({
             </TableHeader>
           ))}
         </StyledHeaderRow>
-        {isDefined(entriesSinceClear) && (
-          <StyledEntriesSinceClear>
-            {entriesSinceClear.map((entry, entryIndex) =>
-              renderEntryRow(
-                entry,
-                entriesSinceClear.length - entryIndex,
-                true,
-              ),
-            )}
-          </StyledEntriesSinceClear>
-        )}
         {entries.map((entry, entryIndex) =>
           renderEntryRow(
             entry,
@@ -222,6 +197,6 @@ export const LogConsoleTable = ({
           </SkeletonTheme>
         )}
       </Table>
-    </StyledScrollWrapper>
+    </ScrollWrapper>
   );
 };

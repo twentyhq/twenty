@@ -1,5 +1,6 @@
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -11,6 +12,7 @@ export const useSetAdvancedMode = () => {
     isLogConsoleFullScreenState,
   );
   const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
+  const setLogConsoleHeight = useSetAtomState(logConsoleHeightState);
 
   const setAdvancedMode = (isEnabled: boolean) => {
     setIsAdvancedModeEnabled(isEnabled);
@@ -18,9 +20,8 @@ export const useSetAdvancedMode = () => {
     if (isEnabled) {
       setLogConsoleSelectedLog(null);
       setIsLogConsoleFullScreen(false);
-      setLogConsoleDisplayMode((current) =>
-        current === 'closed' ? 'closed' : 'collapsed',
-      );
+      setLogConsoleHeight(null);
+      setLogConsoleDisplayMode('open');
     }
   };
 

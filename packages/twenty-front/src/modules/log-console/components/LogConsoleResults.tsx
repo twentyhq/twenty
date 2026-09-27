@@ -108,17 +108,16 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const displayedLiveRecords = pausedLiveRecords ?? liveRecords;
 
-  const liveRecordCountSinceClear = isDefined(clearedLiveRecordCount)
-    ? displayedLiveRecords.length - clearedLiveRecordCount
-    : 0;
+  const isCleared = isDefined(clearedLiveRecordCount);
 
   const liveEntries = sortNewestFirst(
-    displayedLiveRecords.slice(liveRecordCountSinceClear),
+    isCleared
+      ? displayedLiveRecords.slice(
+          0,
+          displayedLiveRecords.length - clearedLiveRecordCount,
+        )
+      : displayedLiveRecords,
   );
-
-  const entriesSinceClear = isDefined(clearedLiveRecordCount)
-    ? sortNewestFirst(displayedLiveRecords.slice(0, liveRecordCountSinceClear))
-    : undefined;
 
   const displayedEntryCount = records.length + displayedLiveRecords.length;
 
@@ -195,11 +194,10 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     return (
       <LogConsoleTable
         source={source}
-        entries={[...liveEntries, ...records]}
+        entries={isCleared ? liveEntries : [...liveEntries, ...records]}
         liveEntryCount={liveEntries.length}
-        entriesSinceClear={entriesSinceClear}
-        loading={loading}
-        hasNextPage={hasNextPage}
+        loading={loading && !isCleared}
+        hasNextPage={hasNextPage && !isCleared}
         selectedEntry={logConsoleSelectedLog?.entry}
         onLoadMore={loadMore}
         onEntryClick={openLog}

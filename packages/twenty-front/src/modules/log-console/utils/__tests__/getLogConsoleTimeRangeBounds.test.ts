@@ -32,19 +32,4 @@ describe('getLogConsoleTimeRangeBounds', () => {
       }),
     ).toEqual({ start: '2026-10-24T22:00:00Z', end: '2026-10-25T23:00:00Z' });
   });
-
-  it('should keep a custom range as it is', () => {
-    const customRange = {
-      start: '2026-09-20T08:00:00Z',
-      end: '2026-09-21T18:00:00Z',
-    };
-
-    expect(
-      getLogConsoleTimeRangeBounds({
-        timeRange: customRange,
-        now: NOW,
-        timeZone: 'UTC',
-      }),
-    ).toEqual(customRange);
-  });
 });

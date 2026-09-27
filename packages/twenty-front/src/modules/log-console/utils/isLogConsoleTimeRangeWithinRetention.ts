@@ -1,4 +1,3 @@
-import { isString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 
 import { LOG_CONSOLE_TIME_RANGE_PRESETS } from '@/log-console/constants/LogConsoleTimeRangePresets';
@@ -11,10 +10,6 @@ export const isLogConsoleTimeRangeWithinRetention = ({
   timeRange: LogConsoleTimeRange;
   retentionInDays: number;
 }) => {
-  if (!isString(timeRange)) {
-    return true;
-  }
-
   if (timeRange === 'today') {
     return retentionInDays >= 1;
   }

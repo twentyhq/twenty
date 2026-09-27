@@ -3,5 +3,4 @@ import { type LogConsoleTimeRangePreset } from '@/log-console/types/LogConsoleTi
 export type LogConsoleTimeRange =
   | LogConsoleTimeRangePreset
   | 'today'
-  | 'yesterday'
-  | { start: string; end: string };
+  | 'yesterday';

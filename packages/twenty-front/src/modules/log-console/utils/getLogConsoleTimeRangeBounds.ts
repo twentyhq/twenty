@@ -1,4 +1,3 @@
-import { isString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 
 import { LOG_CONSOLE_TIME_RANGE_PRESETS } from '@/log-console/constants/LogConsoleTimeRangePresets';
@@ -13,10 +12,6 @@ export const getLogConsoleTimeRangeBounds = ({
   now: string;
   timeZone: string;
 }): { start: string; end?: string } => {
-  if (!isString(timeRange)) {
-    return timeRange;
-  }
-
   const zonedNow = Temporal.Instant.from(now).toZonedDateTimeISO(timeZone);
   const startOfToday = zonedNow.startOfDay();
 
