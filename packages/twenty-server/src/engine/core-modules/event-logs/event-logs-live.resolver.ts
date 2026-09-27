@@ -40,6 +40,18 @@ type EventLogsLiveVariables = {
   fieldFilters?: EventLogFieldFilterInput[];
 };
 
+const isRowMatchingVariables = ({
+  row,
+  variables,
+}: {
+  row: Record<string, unknown>;
+  variables: EventLogsLiveVariables;
+}): boolean =>
+  isEventLogRowMatchingFieldFilters({
+    row,
+    fieldFilters: variables.fieldFilters ?? [],
+  });
+
 @MetadataResolver()
 @UseFilters(
   ForbiddenExceptionGraphqlFilter,
@@ -67,22 +79,14 @@ export class EventLogsLiveResolver {
       variables: EventLogsLiveVariables,
     ) =>
       getClickHouseTableName(variables.table) === payload.table &&
-      payload.rows.some((row) =>
-        isEventLogRowMatchingFieldFilters({
-          row,
-          fieldFilters: variables.fieldFilters ?? [],
-        }),
-      ),
+      payload.rows.some((row) => isRowMatchingVariables({ row, variables })),
     resolve: (
       payload: WorkspaceEventLivePayload,
       variables: EventLogsLiveVariables,
     ) =>
       normalizeEventLogRecords(
         payload.rows.filter((row) =>
-          isEventLogRowMatchingFieldFilters({
-            row,
-            fieldFilters: variables.fieldFilters ?? [],
-          }),
+          isRowMatchingVariables({ row, variables }),
         ),
         variables.table,
       ),

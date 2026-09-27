@@ -67,13 +67,13 @@ const StyledToolbar = styled.div`
   flex-wrap: nowrap;
   gap: ${themeCssVariables.spacing[2]};
   height: ${APP_HEADER_HEIGHT}px;
-  justify-content: flex-end;
   overflow: hidden;
 `;
 
 const StyledActions = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  margin-left: auto;
 `;
 
 const StyledFilterChips = styled.div`
