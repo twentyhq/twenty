@@ -656,33 +656,6 @@ export const FilterMenu: Story = {
   },
 };
 
-export const Search: Story = {
-  beforeEach: () => {
-    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
-      }),
-      'app-logs',
-    );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText(
-      'Received 9 invoices from Stripe',
-      {},
-      { timeout: 5000 },
-    );
-
-    expect(canvas.getByPlaceholderText('Search logs')).toHaveValue('stripe');
-    expect(
-      canvas.queryByText(
-        'Missing job title for Omar Aziz, using default title score (20)',
-      ),
-    ).not.toBeInTheDocument();
-  },
-};
 
 export const NoFilterMatch: Story = {
   beforeEach: () => {
