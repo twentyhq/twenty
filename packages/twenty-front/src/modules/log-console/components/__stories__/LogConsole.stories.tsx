@@ -656,7 +656,6 @@ export const FilterMenu: Story = {
   },
 };
 
-
 export const NoFilterMatch: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
