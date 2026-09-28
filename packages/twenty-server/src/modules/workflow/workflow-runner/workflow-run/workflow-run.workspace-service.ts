@@ -1,4 +1,3 @@
-import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { Injectable } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -12,6 +11,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import {
   WorkflowRunStatus,
   type WorkflowRunState,
@@ -191,6 +191,7 @@ export class WorkflowRunWorkspaceService {
     await this.inputAskWorkspaceService.cancelPendingForWorkflowRun({
       workspaceId,
       workflowRunId,
+      stepInfos: updatedStepInfos,
     });
 
     const metricKey =
