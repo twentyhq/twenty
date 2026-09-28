@@ -17,6 +17,7 @@ import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
 import { type EnrichChunkResult } from 'src/types/enrich-chunk-result';
 import { type EnrichResult } from 'src/types/enrich-result';
+import { type MinLikelihoods } from 'src/types/min-likelihoods';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 import { isDefined } from 'src/utils/is-defined';
 import { toErrorMessage } from 'src/utils/to-error-message';
@@ -180,6 +181,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   client,
   recordIds,
   input,
+  minLikelihoods,
   adapter,
   resultById,
   companyIdByMatchKeyCache,
@@ -187,6 +189,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   client: CoreApiClient;
   recordIds: string[];
   input: BulkEnrichInput;
+  minLikelihoods: MinLikelihoods;
   adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
   resultById: Map<string, EnrichResult>;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
@@ -229,7 +232,10 @@ export const enrichChunk = async <TNode, TData, TParams>({
       continue;
     }
 
-    const matchParams = adapter.extractParams({ node: recordNode, input });
+    const matchParams = adapter.extractParams({
+      node: recordNode,
+      minLikelihoods,
+    });
     if (!isDefined(matchParams)) {
       resultById.set(
         recordId,

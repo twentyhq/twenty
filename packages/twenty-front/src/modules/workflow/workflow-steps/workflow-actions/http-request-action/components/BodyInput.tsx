@@ -22,7 +22,7 @@ import {
   type BodyType,
 } from 'twenty-shared/workflow';
 import { IconFileText, IconKey } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
 

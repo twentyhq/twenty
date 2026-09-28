@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { Tabs } from 'twenty-ui/primitives/navigation';
-import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const StyledRecordPanel = styled.section`
   height: 320px;

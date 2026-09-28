@@ -111,6 +111,10 @@ import { CreateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
 import { DeleteSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/delete-search-field-metadata-action-handler.service';
 import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/update-search-field-metadata-action-handler.service';
 
+import { BuildIndexDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/build-index-deferred-action-handler.service';
+import { DeleteLogicFunctionResourcesDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-logic-function-resources-deferred-action-handler.service';
+import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/validate-foreign-key-deferred-action-handler.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity]),
@@ -256,6 +260,10 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     CreateSearchFieldMetadataActionHandlerService,
     UpdateSearchFieldMetadataActionHandlerService,
     DeleteSearchFieldMetadataActionHandlerService,
+
+    BuildIndexDeferredActionHandlerService,
+    ValidateForeignKeyDeferredActionHandlerService,
+    DeleteLogicFunctionResourcesDeferredActionHandlerService,
   ],
   exports: [UpdateLogicFunctionActionHandlerService],
 })

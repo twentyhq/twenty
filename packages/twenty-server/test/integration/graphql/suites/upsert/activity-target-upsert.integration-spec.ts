@@ -6,7 +6,7 @@ import { createOneOperation } from 'test/integration/graphql/utils/create-one-op
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('activity target upsert', () => {
   it('keeps one live task target and restores it after deletion', async () => {
@@ -30,7 +30,7 @@ describe('activity target upsert', () => {
       });
 
       const createTaskTarget = () =>
-        makeGraphqlAPIRequest(
+        makeGraphqlApiRequest(
           createManyOperationFactory({
             objectMetadataSingularName: 'taskTarget',
             objectMetadataPluralName: 'taskTargets',
@@ -52,7 +52,7 @@ describe('activity target upsert', () => {
         expect.objectContaining({ id: createdTaskTargetId, deletedAt: null }),
       );
 
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         deleteOneOperationFactory({
           objectMetadataSingularName: 'taskTarget',
           gqlFields: 'id',
@@ -66,7 +66,7 @@ describe('activity target upsert', () => {
         expect.objectContaining({ id: createdTaskTargetId, deletedAt: null }),
       );
 
-      const findResponse = await makeGraphqlAPIRequest(
+      const findResponse = await makeGraphqlApiRequest(
         findManyOperationFactory({
           objectMetadataSingularName: 'taskTarget',
           objectMetadataPluralName: 'taskTargets',
@@ -81,7 +81,7 @@ describe('activity target upsert', () => {
       expect(findResponse.body.data.taskTargets.edges).toHaveLength(1);
     } finally {
       if (isDefined(taskTargetId)) {
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           destroyOneOperationFactory({
             objectMetadataSingularName: 'taskTarget',
             gqlFields: 'id',
@@ -90,14 +90,14 @@ describe('activity target upsert', () => {
         );
       }
 
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'task',
           gqlFields: 'id',
           recordId: taskId,
         }),
       );
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',

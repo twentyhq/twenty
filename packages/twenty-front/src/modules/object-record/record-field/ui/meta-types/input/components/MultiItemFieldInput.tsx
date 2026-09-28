@@ -6,7 +6,7 @@ import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -313,7 +313,7 @@ export const MultiItemFieldInput = <T,>({
   });
 
   return (
-    <DropdownContent ref={containerRef}>
+    <LegacyDropdownContent ref={containerRef}>
       {shouldShowSearch && !isInputDisplayed && (
         <>
           <DropdownMenuSearchInput
@@ -386,6 +386,6 @@ export const MultiItemFieldInput = <T,>({
           </ListItem>
         </DropdownMenuItemsContainer>
       ) : null}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

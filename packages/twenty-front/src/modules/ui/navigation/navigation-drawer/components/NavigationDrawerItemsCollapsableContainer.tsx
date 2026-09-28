@@ -1,13 +1,13 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import {
   type AnimationControls,
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAnimationGroupContainerBase = styled.div<{
   isCollapsedGroup: boolean;
@@ -39,7 +39,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
   isGroup = false,
   children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
   const animate: AnimationControls | TargetAndTransition = isExpanded

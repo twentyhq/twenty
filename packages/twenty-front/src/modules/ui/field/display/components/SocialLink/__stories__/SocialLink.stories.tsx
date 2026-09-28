@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 import { LinkType } from '@/ui/field/display/components/SocialLink/LinkType';
 import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof SocialLink> = {
   title: 'UI/Navigation/Link/SocialLink',

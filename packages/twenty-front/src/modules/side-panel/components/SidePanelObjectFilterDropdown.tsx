@@ -1,12 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Dropdown, IconButton } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
 
 import { SidePanelObjectFilterDropdownContent } from '@/side-panel/components/SidePanelObjectFilterDropdownContent';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 
-export const OBJECT_FILTER_DROPDOWN_ID = 'side-panel-object-filter-dropdown';
+const OBJECT_FILTER_DROPDOWN_ID = 'side-panel-object-filter-dropdown';
 
 type SidePanelObjectFilterDropdownProps = {
   selectedObjectNameSingular: string | null;
@@ -21,25 +22,25 @@ export const SidePanelObjectFilterDropdown = ({
   const isFilterActive = isDefined(selectedObjectNameSingular);
 
   return (
-    <Dropdown
-      dropdownId={OBJECT_FILTER_DROPDOWN_ID}
-      dropdownPlacement="bottom-end"
-      clickableComponent={
-        <IconButton
-          variant="ghost"
-          color={isFilterActive ? 'accent' : 'neutral'}
-          size="sm"
-          aria-label={t`Filter by object type`}
-        >
-          <IconFilter />
-        </IconButton>
-      }
-      dropdownComponents={
+    <DropdownRoot dropdownId={OBJECT_FILTER_DROPDOWN_ID} type="picker">
+      <Dropdown.Trigger
+        render={
+          <IconButton
+            variant="ghost"
+            color={isFilterActive ? 'accent' : 'neutral'}
+            size="sm"
+            aria-label={t`Filter by object type`}
+          >
+            <IconFilter />
+          </IconButton>
+        }
+      />
+      <DropdownContent side="bottom" align="end">
         <SidePanelObjectFilterDropdownContent
           selectedObjectNameSingular={selectedObjectNameSingular}
           onSelectObject={onSelectObject}
         />
-      }
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

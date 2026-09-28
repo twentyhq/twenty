@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS } from 'test/integration/graphql/suites/query-complexity/constants/tooManyRootResolversQueryGqlFields.constant';
 import { generateGqlFields } from 'test/integration/graphql/suites/query-complexity/generate-gql-fields.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('Query Complexity', () => {
   it('should execute a simple query', async () => {
@@ -14,7 +14,7 @@ describe('Query Complexity', () => {
       gqlFields: gqlFields,
     });
 
-    const response = await makeGraphqlAPIRequest(findManyPeopleOperation);
+    const response = await makeGraphqlApiRequest(findManyPeopleOperation);
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.people).toBeDefined();
@@ -30,14 +30,14 @@ describe('Query Complexity', () => {
       gqlFields: gqlFields,
     });
 
-    const response = await makeGraphqlAPIRequest(findManyPeopleOperation);
+    const response = await makeGraphqlApiRequest(findManyPeopleOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toMatchSnapshot();
   });
 
   it.only('should fail to execute a query with too many root resolvers', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS,
     });
 
@@ -46,7 +46,7 @@ describe('Query Complexity', () => {
   });
 
   it('should fail to execute a query with duplicate root resolvers', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         query {
           people {

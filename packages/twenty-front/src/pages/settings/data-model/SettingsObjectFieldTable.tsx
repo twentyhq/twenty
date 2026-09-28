@@ -7,9 +7,8 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -26,9 +25,9 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { SearchInput, SettingsRow } from 'twenty-ui/components';
+import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -174,42 +173,45 @@ export const SettingsObjectFieldTable = ({
           value={searchTerm}
           onChange={setSearchTerm}
           filterDropdown={(filterButton) => (
-            <Dropdown
+            <DropdownRoot
               dropdownId="settings-fields-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+              >
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconArchive />}
+                    onCheckedChange={() => setShowInactive(!showInactive)}
+                    checked={showInactive}
+                  >{t`Inactive`}</SettingsRow>
+                  {(mostlyEmptyFieldMetadataIds.size > 0 ||
+                    showOnlyMostlyEmpty) && (
                     <SettingsRow
-                      startIcon={<IconArchive />}
-                      onCheckedChange={() => setShowInactive(!showInactive)}
-                      checked={showInactive}
-                    >{t`Inactive`}</SettingsRow>
-                    {(mostlyEmptyFieldMetadataIds.size > 0 ||
-                      showOnlyMostlyEmpty) && (
-                      <SettingsRow
-                        startIcon={<IconCircleDashed />}
-                        onCheckedChange={() =>
-                          setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
-                        }
-                        checked={showOnlyMostlyEmpty}
-                      >{t`Mostly empty`}</SettingsRow>
-                    )}
-                    {isAdvancedModeEnabled && (
-                      <SettingsRow
-                        startIcon={<IconSettings />}
-                        onCheckedChange={() =>
-                          setShowSystemFields(!showSystemFields)
-                        }
-                        checked={showSystemFields}
-                      >{t`System fields`}</SettingsRow>
-                    )}
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
+                      startIcon={<IconCircleDashed />}
+                      onCheckedChange={() =>
+                        setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
+                      }
+                      checked={showOnlyMostlyEmpty}
+                    >{t`Mostly empty`}</SettingsRow>
+                  )}
+                  {isAdvancedModeEnabled && (
+                    <SettingsRow
+                      startIcon={<IconSettings />}
+                      onCheckedChange={() =>
+                        setShowSystemFields(!showSystemFields)
+                      }
+                      checked={showSystemFields}
+                    >{t`System fields`}</SettingsRow>
+                  )}
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           )}
         />
       </StyledSearchContainer>

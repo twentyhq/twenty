@@ -232,6 +232,10 @@ export const Catalog: CatalogStory<
     await userEvent.click(optionsButtons[firstActionStepIndex]);
 
     await canvasBody.findByText('Duplicate node');
+    const changeNodeAction = await canvasBody.findByRole('menuitem', {
+      name: 'Change node',
+    });
+    await waitFor(() => expect(changeNodeAction).toHaveFocus());
 
     await userEvent.keyboard('{ArrowDown}{Enter}');
 

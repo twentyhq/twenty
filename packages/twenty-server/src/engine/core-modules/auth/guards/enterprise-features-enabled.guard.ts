@@ -20,9 +20,9 @@ export class EnterpriseFeaturesEnabledGuard implements CanActivate {
     private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
-      if (!this.enterprisePlanService.isValid()) {
+      if (!(await this.enterprisePlanService.isValidWithFreshToken())) {
         throw new AuthException(
           'Enterprise features are not enabled',
           AuthExceptionCode.ENTERPRISE_VALIDITY_TOKEN_NOT_VALID,

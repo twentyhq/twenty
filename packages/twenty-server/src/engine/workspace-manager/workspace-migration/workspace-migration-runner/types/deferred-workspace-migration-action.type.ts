@@ -1,29 +1,26 @@
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { type WorkspaceMigrationActionHandlerKey } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
-import { type DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferrable-workspace-migration-actions.constant';
 
-export type DeferrableWorkspaceMigrationActionHandlerKey =
-  (typeof DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS)[number];
-
-type DeferredWorkspaceMigrationActionPayloadByHandlerKey = {
-  create_index: { indexMetadataId: string };
-  delete_logicFunction: { flatLogicFunction: FlatLogicFunction };
+type DeferredWorkspaceMigrationActionPayloadByName = {
+  build_index: { indexMetadataId: string };
+  validate_foreignKey: { fieldMetadataId: string };
+  delete_logicFunctionResources: { flatLogicFunction: FlatLogicFunction };
 };
 
+export type DeferredWorkspaceMigrationActionName =
+  keyof DeferredWorkspaceMigrationActionPayloadByName;
+
 export type DeferredWorkspaceMigrationActionPayload<
-  TActionHandlerKey extends WorkspaceMigrationActionHandlerKey,
-> = TActionHandlerKey extends DeferrableWorkspaceMigrationActionHandlerKey
-  ? DeferredWorkspaceMigrationActionPayloadByHandlerKey[TActionHandlerKey]
-  : never;
+  TName extends DeferredWorkspaceMigrationActionName,
+> = DeferredWorkspaceMigrationActionPayloadByName[TName];
 
 export type PersistedDeferredWorkspaceMigrationAction = {
-  actionHandlerKey: DeferrableWorkspaceMigrationActionHandlerKey;
-  payload: DeferredWorkspaceMigrationActionPayloadByHandlerKey[DeferrableWorkspaceMigrationActionHandlerKey];
+  name: DeferredWorkspaceMigrationActionName;
+  payload: DeferredWorkspaceMigrationActionPayloadByName[DeferredWorkspaceMigrationActionName];
 };
 
 export type DeferredWorkspaceMigrationAction = {
-  [TActionHandlerKey in DeferrableWorkspaceMigrationActionHandlerKey]: {
-    actionHandlerKey: TActionHandlerKey;
-    payload: DeferredWorkspaceMigrationActionPayloadByHandlerKey[TActionHandlerKey];
+  [TName in DeferredWorkspaceMigrationActionName]: {
+    name: TName;
+    payload: DeferredWorkspaceMigrationActionPayloadByName[TName];
   };
-}[DeferrableWorkspaceMigrationActionHandlerKey];
+}[DeferredWorkspaceMigrationActionName];

@@ -32,6 +32,7 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
         frontComponentId={context.frontComponentId}
         commandMenuItemId={commandMenuItemId}
         selectedRecordIds={selectedRecordIds}
+        objectNameSingular={context.objectMetadataItem?.nameSingular}
       />
     </Suspense>
   );

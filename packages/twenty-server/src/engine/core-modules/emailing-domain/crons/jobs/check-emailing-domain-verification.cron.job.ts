@@ -23,6 +23,9 @@ export class CheckEmailingDomainVerificationCronJob {
   );
 
   constructor(
+    // Instance-wide sweep: it enumerates domains across all workspaces and
+    // dispatches per-workspace work from what it finds.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainService: EmailingDomainService,

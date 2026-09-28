@@ -26,6 +26,7 @@ const IMPLEMENTATION_ONLY_PATTERN = /\/(internal|internals|parts)\//;
 const SUPPORT_DIRECTORY_PATTERN = /\/(contexts|hooks)\//;
 const TEST_DIRECTORY_PATTERN = /\/(testing|__tests__|__stories__|__mocks__)\//;
 const TEST_FILE_PATTERN = /\.(stories|test|spec)\.tsx?$/;
+const ROUTER_IMPORT_PATTERN = /^react-router(?:-dom)?(?:\/|$)/;
 const shouldUpdateSnapshot = process.argv.includes('--write');
 const actualOwnership: Record<keyof typeof ownership, string[]> = {
   primitives: [],
@@ -119,12 +120,11 @@ for (const file of globSync('**/*.{ts,tsx}', { cwd: SOURCE_ROOT })) {
   );
   for (const { fileName: moduleName } of importedFiles) {
     if (
-      !isTestOrDeclaration &&
-      (moduleName === 'react-router-dom' ||
-        moduleName === 'react-router' ||
-        moduleName.startsWith('twenty-front') ||
-        moduleName.startsWith('@/') ||
-        moduleName.startsWith('~/'))
+      ROUTER_IMPORT_PATTERN.test(moduleName) ||
+      (!isTestOrDeclaration &&
+        (moduleName.startsWith('twenty-front') ||
+          moduleName.startsWith('@/') ||
+          moduleName.startsWith('~/')))
     ) {
       errors.push(`${file} depends on application code: ${moduleName}`);
     }

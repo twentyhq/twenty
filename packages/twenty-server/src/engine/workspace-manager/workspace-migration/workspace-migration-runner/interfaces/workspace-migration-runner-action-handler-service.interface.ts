@@ -13,7 +13,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
-import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
+import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -24,22 +24,14 @@ import {
   buildActionHandlerKey,
   type AllFlatWorkspaceMigrationAction,
   type AllUniversalWorkspaceMigrationAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import {
-  DeferredWorkspaceMigrationActionException,
-  DeferredWorkspaceMigrationActionExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
-import {
-  type DeferredWorkspaceMigrationAction,
-  type DeferredWorkspaceMigrationActionPayload,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
-import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
-import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 import {
   WorkspaceMigrationActionRunnerContext,
   type WorkspaceMigrationActionRunnerArgs,
@@ -153,24 +145,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   protected getDeferredAction(
     _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
-  ):
-    | Extract<
-        DeferredWorkspaceMigrationAction,
-        { actionHandlerKey: `${TActionType}_${TMetadataName}` }
-      >
-    | undefined {
+  ): DeferredWorkspaceMigrationAction | undefined {
     return undefined;
-  }
-
-  executeDeferredAction(
-    _args: DeferredWorkspaceMigrationActionExecutionArgs<
-      DeferredWorkspaceMigrationActionPayload<`${TActionType}_${TMetadataName}`>
-    >,
-  ): Promise<void> {
-    throw new DeferredWorkspaceMigrationActionException(
-      `${this.actionType}_${this.metadataName} does not implement deferred execution`,
-      DeferredWorkspaceMigrationActionExceptionCode.HANDLER_NOT_FOUND,
-    );
   }
 
   private optimisticallyApplyActionOnAllFlatEntityMaps({

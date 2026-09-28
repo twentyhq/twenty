@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
 import { expectTypeOf, it, expect, vi } from 'vitest';
 
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Status } from '../Status';
 import styles from '../Status.module.scss';

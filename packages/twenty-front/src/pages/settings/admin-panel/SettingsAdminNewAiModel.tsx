@@ -22,7 +22,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Info, Section, useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Checkbox, Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const StyledComboInputContainer = styled.div`

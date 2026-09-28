@@ -1,4 +1,3 @@
-import os from 'os';
 import process from 'process';
 
 import { metrics as otelMetrics } from '@opentelemetry/api';
@@ -18,6 +17,7 @@ import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
+import { POD_NAME } from 'src/engine/core-modules/metrics/constants/pod-name.constant';
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
 
@@ -135,7 +135,7 @@ const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
 const meterProvider = new MeterProvider({
   resource: resourceFromAttributes({
     'service.name': process.env.OTEL_SERVICE_NAME ?? 'twenty-server',
-    'k8s.pod.name': process.env.HOSTNAME ?? os.hostname(),
+    'k8s.pod.name': POD_NAME,
   }),
   readers: [
     ...(meterDrivers.includes(MeterDriver.Console)

@@ -1,5 +1,5 @@
 import IconMicrosoftRaw from '@assets/icons/microsoft.svg?react';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 interface IconMicrosoftProps {
   size?: number | string;

@@ -1,3 +1,4 @@
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
 import { SettingsRoleAssignmentTable } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTable';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
@@ -8,7 +9,7 @@ import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
   type PartialWorkspaceMember,
@@ -27,7 +28,7 @@ type RoleAssignmentSectionProps = {
   roleTargetType: keyof typeof ROLE_TARGET_CONFIG;
   roleId: string;
   settingsDraftRole: RoleWithPartialMembers;
-  currentWorkspaceMember?: PartialWorkspaceMember;
+  currentWorkspaceMember?: CurrentWorkspaceMember;
   onSelect: (
     roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
     roleTargetType: keyof typeof ROLE_TARGET_CONFIG,

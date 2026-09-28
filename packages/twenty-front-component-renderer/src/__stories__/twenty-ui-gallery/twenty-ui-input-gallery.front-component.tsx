@@ -21,7 +21,7 @@ import {
   Slider,
   Switch,
 } from 'twenty-ui/primitives/input';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 import {
   ComponentGallery,
   type GalleryEntry,
@@ -142,9 +142,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     name: 'SegmentedControl',
     node: (
       <SegmentedControl
-        ariaLabel="Choose"
-        value="left"
-        onChange={() => {}}
+        aria-label="Choose"
+        defaultValue="left"
         options={[
           { value: 'left', label: 'Left' },
           { value: 'right', label: 'Right' },

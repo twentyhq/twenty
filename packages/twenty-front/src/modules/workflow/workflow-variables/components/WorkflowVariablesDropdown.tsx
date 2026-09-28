@@ -11,11 +11,11 @@ import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/Ste
 import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
   disabled?: boolean;
@@ -51,7 +51,7 @@ export const WorkflowVariablesDropdown = ({
   shouldDisplayRecordObjects: boolean;
   objectNameSingularsToSelect?: string[];
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({

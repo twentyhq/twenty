@@ -8,11 +8,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { msg } from '@lingui/core/macro';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  MAX_ALLOWED_IFRAME_ORIGINS,
+  PermissionFlagType,
+} from 'twenty-shared/constants';
 import {
   assertIsDefinedOrThrow,
   isAutoSelectModelId,
   isDefined,
+  normalizeAllowedIframeOrigin,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -61,6 +65,8 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { type UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
 import {
   WorkspaceDeletionApplicationUninstallJob,
@@ -280,13 +286,52 @@ export class WorkspaceService {
     }
   }
 
+  async updateWorkspaceAllowedIframeOrigins(
+    workspaceId: string,
+    input: UpdateWorkspaceAllowedIframeOriginsInput,
+  ): Promise<WorkspaceEntity> {
+    const updatedWorkspace = await this.workspaceRepository.manager.transaction(
+      async (manager) => {
+        const repository = manager.getRepository(WorkspaceEntity);
+        const workspace = await repository.findOne({
+          where: { id: workspaceId },
+          lock: { mode: 'pessimistic_write' },
+        });
+        assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+        const origin = normalizeAllowedIframeOrigin(input.origin);
+        assertIsDefinedOrThrow(origin);
+        const origins = workspace.allowedIframeOrigins ?? [];
+        const allowedIframeOrigins =
+          input.operation === 'add'
+            ? [...new Set([...origins, origin])]
+            : origins.filter((existingOrigin) => existingOrigin !== origin);
+
+        if (allowedIframeOrigins.length > MAX_ALLOWED_IFRAME_ORIGINS) {
+          throw new WorkspaceException(
+            'Too many embedding origins',
+            WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED,
+          );
+        }
+
+        await repository.update(workspaceId, { allowedIframeOrigins });
+        return { ...workspace, allowedIframeOrigins };
+      },
+    );
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
+    return updatedWorkspace;
+  }
+
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
     apiKey,
     application,
   }: {
-    payload: Partial<WorkspaceEntity> & { id: string };
+    payload: UpdateWorkspaceInput & { id: string };
     userWorkspaceId?: string;
     apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
@@ -401,10 +446,15 @@ export class WorkspaceService {
     let updatedWorkspace: WorkspaceEntity;
 
     try {
-      updatedWorkspace = await this.workspaceRepository.save({
-        ...workspace,
+      await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        ...(payload.customDomain === null
+          ? { isCustomDomainEnabled: false }
+          : {}),
         ...(payload.logo === null ? { logoFileId: null } : {}),
+      });
+      updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
+        id: workspace.id,
       });
     } catch (error) {
       if (payload.customDomain && customDomainRegistered) {

@@ -48,6 +48,7 @@ vi.mock('src/logic-functions/data/update-slack-user-link', () => ({
 const client = {} as CoreApiClient;
 
 const authTestMock = vi.fn();
+const SLACK_CONNECTION_ID = 'connection-1';
 const slackClient = { auth: { test: authTestMock } } as unknown as WebClient;
 
 const IDENTITY: SlackUserIdentity = {
@@ -91,7 +92,12 @@ const expectNoEmailMatchConsulted = () =>
   });
 
 const runAs = (identity: SlackUserIdentity = IDENTITY) =>
-  resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity });
+  resolveSlackRunAsWorkspaceMemberId({
+    client,
+    slackClient,
+    slackConnectionId: SLACK_CONNECTION_ID,
+    identity,
+  });
 
 describe('resolveSlackRunAsWorkspaceMemberId', () => {
   beforeEach(() => {

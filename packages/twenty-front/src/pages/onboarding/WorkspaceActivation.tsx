@@ -18,7 +18,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton, useToast } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';

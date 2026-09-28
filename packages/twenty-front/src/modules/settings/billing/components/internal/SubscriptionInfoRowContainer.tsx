@@ -1,8 +1,8 @@
 import { type IconComponent } from 'twenty-ui/icon';
-import React, { useContext } from 'react';
+import React from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;
@@ -54,7 +54,7 @@ export const SubscriptionInfoRowContainer = ({
   currentValue,
   nextValue,
 }: SubscriptionInfoRowContainerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledContainer>

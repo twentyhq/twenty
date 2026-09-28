@@ -7,7 +7,8 @@ import { BACKGROUND } from '@/ui/feedback/empty-state/components/AnimatedPlaceho
 import { DARK_BACKGROUND } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/MovingImage';
-import { useThemeColorScheme } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
+import { useThemeColorScheme } from 'twenty-ui/theme';
 
 const styles = {
   container: css`
@@ -82,17 +83,18 @@ export const AnimatedPlaceholder = ({
     };
 
     const handleMove = (event: MouseEvent | TouchEvent) => {
-      const clientX =
-        'touches' in event ? event.touches[0].clientX : event.clientX;
-      const clientY =
-        'touches' in event ? event.touches[0].clientY : event.clientY;
+      const point = 'touches' in event ? event.touches[0] : event;
+
+      if (!isDefined(point)) {
+        return;
+      }
 
       setParallax({
         offsetX:
-          (clientX / window.innerWidth) * 2 * PARALLAX_OFFSET_IN_PX -
+          (point.clientX / window.innerWidth) * 2 * PARALLAX_OFFSET_IN_PX -
           PARALLAX_OFFSET_IN_PX,
         offsetY:
-          (clientY / window.innerHeight) * 2 * PARALLAX_OFFSET_IN_PX -
+          (point.clientY / window.innerHeight) * 2 * PARALLAX_OFFSET_IN_PX -
           PARALLAX_OFFSET_IN_PX,
       });
     };

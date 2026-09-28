@@ -5,6 +5,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 
+const StyledContainer = styled.div`
+  display: contents;
+
+  // The collapsed panel unmounts but leaves its empty root, which would still
+  // take a gap in the parent's layout. It stays rendered, out of the flow, so
+  // the panel can measure its height when it opens again.
+  > :empty {
+    position: absolute;
+  }
+`;
+
 const StyledContent = styled.div`
   width: 100%;
 `;
@@ -27,19 +38,21 @@ export const AdvancedSettingsWrapper = ({
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   return (
-    <AnimatedExpandableContainer
-      isExpanded={isAdvancedModeEnabled}
-      dimension={animationDimension}
-      animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
-      mode="scroll-height"
-      containAnimation={false}
-    >
-      <AdvancedSettingsContentWrapperWithDot
-        hideDot={hideDot}
-        dotPosition={dotPosition}
+    <StyledContainer>
+      <AnimatedExpandableContainer
+        isExpanded={isAdvancedModeEnabled}
+        dimension={animationDimension}
+        animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
+        mode="scroll-height"
+        containAnimation={false}
       >
-        <StyledContent>{children}</StyledContent>
-      </AdvancedSettingsContentWrapperWithDot>
-    </AnimatedExpandableContainer>
+        <AdvancedSettingsContentWrapperWithDot
+          hideDot={hideDot}
+          dotPosition={dotPosition}
+        >
+          <StyledContent>{children}</StyledContent>
+        </AdvancedSettingsContentWrapperWithDot>
+      </AnimatedExpandableContainer>
+    </StyledContainer>
   );
 };

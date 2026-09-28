@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from '@ui/theme-constants';
+import { ThemeProvider } from '@ui/theme';
 
 import { JsonTree } from '../JsonTree';
 

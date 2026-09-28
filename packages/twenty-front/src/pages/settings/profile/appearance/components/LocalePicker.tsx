@@ -14,7 +14,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
 

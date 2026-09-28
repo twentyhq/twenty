@@ -9,7 +9,7 @@ import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
 const StyledImportHeader = styled(Dialog.Header)`

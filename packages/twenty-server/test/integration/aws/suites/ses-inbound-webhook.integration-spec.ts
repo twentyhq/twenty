@@ -3,10 +3,10 @@ import { randomUUID } from 'node:crypto';
 import { http, HttpResponse } from 'msw';
 import request from 'supertest';
 
-import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 import {
   snsNotification,
@@ -15,7 +15,6 @@ import {
 } from 'test/integration/aws/mocks/sns-payload.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 
 const ALLOWED_TOPIC_ARN =
@@ -54,9 +53,11 @@ describe('SES inbound webhook (integration)', () => {
   let unsubscribeTokenService: UnsubscribeTokenService;
 
   const findSuppressionReasons = async (emailAddress: string) => {
-    const suppressions = await getCoreRepository<MessageSuppressionEntity>(
-      MessageSuppressionEntity,
-    ).findBy({ workspaceId: SEED_APPLE_WORKSPACE_ID, emailAddress });
+    const suppressions: { reason: MessageSuppressionReason }[] =
+      await global.testDataSource.query(
+        `SELECT "reason" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."messageSuppression" WHERE "emailAddress" = $1`,
+        [emailAddress],
+      );
 
     return suppressions.map((suppression) => suppression.reason);
   };

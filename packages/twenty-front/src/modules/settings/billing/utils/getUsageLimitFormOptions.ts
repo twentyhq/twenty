@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
-import { USAGE_LIMIT_PERIOD_UNITS } from '@/settings/billing/constants/UsageLimitPeriodUnits';
+import { ANCHORED_USAGE_LIMIT_PERIOD_UNITS } from '@/settings/billing/constants/AnchoredUsageLimitPeriodUnits';
 import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypeLabels';
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { type UsageLimitMeter } from '@/settings/billing/types/UsageLimitMeter';
@@ -63,7 +63,7 @@ export const getUsageLimitFormOptions = ({
         meter === 'creditsUsedMicro',
     );
 
-  const periodUnits = USAGE_LIMIT_PERIOD_UNITS.filter(
+  const periodUnits = ANCHORED_USAGE_LIMIT_PERIOD_UNITS.filter(
     (periodUnit) =>
       periodUnit !== 'allowancePeriod' || definitions.hasAllowancePeriod,
   );

@@ -9,6 +9,7 @@ module.exports = {
     './src/modules/users/graphql/**/*.{ts,tsx}',
     './src/modules/views/graphql/**/*.{ts,tsx}',
     './src/modules/ai/graphql/**/*.{ts,tsx}',
+    './src/modules/object-record/record-sharing/graphql/**/*.{ts,tsx}',
     './src/modules/applications/graphql/**/*.{ts,tsx}',
 
     './src/modules/workspace/graphql/**/*.{ts,tsx}',
@@ -58,6 +59,7 @@ module.exports = {
       plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
       config: {
         skipTypename: false,
+        useTypeImports: true,
         defaultScalarType: 'any',
         scalars: {
           DateTime: 'string',

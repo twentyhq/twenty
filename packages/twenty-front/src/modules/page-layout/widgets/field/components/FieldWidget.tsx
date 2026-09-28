@@ -2,6 +2,10 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
+import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
@@ -11,6 +15,7 @@ import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/jun
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { FieldWidgetFilesPreview } from '@/page-layout/widgets/field/components/FieldWidgetFilesPreview';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
 import { FieldWidgetJunctionRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationCard';
 import { FieldWidgetJunctionRelationField } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationField';
@@ -29,6 +34,8 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -68,6 +75,10 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem?.name ?? '',
   });
+
+  const isAttachmentPreviewEnabled = useAtomStateValue(
+    isAttachmentPreviewEnabledState,
+  );
 
   if (!isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive) {
     return (
@@ -191,6 +202,23 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
         isInSidePanel={isInSidePanel}
       />
     );
+  }
+
+  if (
+    isFieldFiles(fieldDefinition) &&
+    fieldDisplayMode === FieldDisplayMode.CARD &&
+    isAttachmentPreviewEnabled
+  ) {
+    const previewableFile = isFieldFilesValue(record)
+      ? record.find(
+          (file): file is FieldFilesValue & { url: string } =>
+            !file.isDeleted && isNonEmptyString(file.url),
+        )
+      : undefined;
+
+    if (isDefined(previewableFile)) {
+      return <FieldWidgetFilesPreview file={previewableFile} />;
+    }
   }
 
   if (

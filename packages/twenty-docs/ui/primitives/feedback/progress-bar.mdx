@@ -1,0 +1,89 @@
+---
+title: ProgressBar
+description: Show measured progress or a visual countdown with a horizontal bar.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+`ProgressBar` displays a value from 0 to 100 and exposes progressbar semantics. Give it an `ariaLabel` that identifies the operation, and show a text status when users need the numeric value.
+
+<StoryEmbed
+  storyId="ui-feedback-progressbar-progressbar--default"
+  title="ProgressBar example"
+/>
+
+## Usage
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ImportProgressProps = { percentage: number };
+
+export const ImportProgress = ({ percentage }: ImportProgressProps) => (
+  <>
+    <Text>Importing records: {percentage}%</Text>
+    <ProgressBar
+      value={percentage}
+      ariaLabel="Importing records"
+      withBorderRadius
+    />
+  </>
+);
+```
+
+## State ownership
+
+`value` is required and controlled by the application. There is no `defaultValue` mode. The component does not start a request or advance numeric progress by itself. Use [Loader](/ui/primitives/feedback/loader) or [CircularProgressBar](/ui/primitives/feedback/circular-progress-bar) when progress is unknown.
+
+## Countdown
+
+```tsx
+import { useState } from 'react';
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PreviewCountdown = () => {
+  const [isPaused, setIsPaused] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+
+  return (
+    <>
+      <Text role="status">
+        {isComplete ? 'Preview ended' : 'Preview available'}
+      </Text>
+      {!isComplete && (
+        <>
+          <div aria-hidden="true">
+            <ProgressBar
+              value={100}
+              ariaLabel="Preview countdown"
+              countdownDurationInMs={10000}
+              isCountdownPaused={isPaused}
+              onCountdownComplete={() => setIsComplete(true)}
+            />
+          </div>
+          <Button onClick={() => setIsPaused((paused) => !paused)}>
+            {isPaused ? 'Resume countdown' : 'Pause countdown'}
+          </Button>
+        </>
+      )}
+    </>
+  );
+};
+```
+
+`countdownDurationInMs` animates the bar from full to empty. Pausing preserves the current animation position. Completion calls `onCountdownComplete`; mount a fresh instance to restart the animation.
+
+The animation does not change `value` or its accessible numeric value. This example hides the decorative bar from assistive technology and announces completion separately. If remaining time matters, track and display it in application state. Use application timing for deadlines, since the callback follows a visual animation.
+
+## Appearance
+
+`barColor` and `backgroundColor` accept CSS colors, including theme variables. `withBorderRadius` rounds the track and indicator. `className` styles the root; other native attributes are not forwarded.
+
+## Props
+
+<ProgressBarReference />

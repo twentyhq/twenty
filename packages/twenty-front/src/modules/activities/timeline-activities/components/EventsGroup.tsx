@@ -4,7 +4,7 @@ import { EventRow } from '@/activities/timeline-activities/components/EventRow';
 import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
 import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type EventsGroupProps = {
   group: EventGroup;

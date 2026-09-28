@@ -6,6 +6,7 @@ import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownC
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 
 type DropdownRootProps = Pick<
@@ -13,6 +14,7 @@ type DropdownRootProps = Pick<
   'children' | 'type' | 'multiple' | 'defaultPage' | 'onOpenChange'
 > & {
   dropdownId: string;
+  globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
 };
 
 export const DropdownRoot = ({
@@ -21,6 +23,7 @@ export const DropdownRoot = ({
   multiple,
   defaultPage,
   dropdownId,
+  globalHotkeysConfig,
   onOpenChange,
 }: DropdownRootProps) => {
   const store = useStore();
@@ -52,7 +55,10 @@ export const DropdownRoot = ({
       return;
     }
 
-    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: dropdownId,
+      globalHotkeysConfig,
+    });
   };
 
   return (

@@ -4,7 +4,7 @@ import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/S
 import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { msg } from '@lingui/core/macro';
 import { CalendarChannelVisibility } from '~/generated/graphql';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsAccountsEventVisibilitySettingsCardProps = {
   onChange: (nextValue: CalendarChannelVisibility) => void;

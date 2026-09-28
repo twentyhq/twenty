@@ -1,5 +1,5 @@
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 describe('getTriggerIconColor', () => {
   it('returns the blue9 css variable for DATABASE_EVENT', () => {

@@ -1,4 +1,4 @@
-import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '../../types/BaseOutputSchema';
 import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 // Pins the dispatcher to a non-record step type so it resolves through the base schema branch

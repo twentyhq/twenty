@@ -5,7 +5,7 @@ import { CONFIG_VARIABLE_SOURCE_OPTIONS } from '@/settings/admin-panel/config-va
 import { type ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
 import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -46,7 +46,7 @@ export const ConfigVariableOptionsDropdownContent = ({
 
   if (!selectedCategory) {
     return (
-      <DropdownContent>
+      <LegacyDropdownContent>
         <DropdownMenuItemsContainer>
           <ListItem
             onClick={() => onSelectCategory('source')}
@@ -86,12 +86,12 @@ export const ConfigVariableOptionsDropdownContent = ({
               : t`Show hidden groups`}
           </ListItem>
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     );
   }
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -151,6 +151,6 @@ export const ConfigVariableOptionsDropdownContent = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

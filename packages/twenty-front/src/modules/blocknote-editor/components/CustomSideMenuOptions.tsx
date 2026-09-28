@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div<{ Variant: Variants }>`
   align-items: center;
@@ -27,7 +26,7 @@ export const CustomSideMenuOptions = ({
   Variant,
   text,
 }: CustomSideMenuOptionsProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledContainer Variant={Variant}>

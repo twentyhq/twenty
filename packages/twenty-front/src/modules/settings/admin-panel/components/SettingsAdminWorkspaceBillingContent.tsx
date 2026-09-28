@@ -18,12 +18,12 @@ import {
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
+import { SettingsAdminWorkspaceUsageLimitsSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection';
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
@@ -161,6 +161,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             description={t`No billing data is available for this workspace.`}
           />
         </Section.Root>
+        <SettingsAdminWorkspaceUsageLimitsSection workspaceId={workspaceId} />
       </StyledContainer>
     );
   }
@@ -403,6 +404,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
           />
         )}
       </Section.Root>
+
+      <SettingsAdminWorkspaceUsageLimitsSection workspaceId={workspaceId} />
 
       <SettingsAdminWorkspaceCreditGrantsTable
         workspaceId={workspaceId}

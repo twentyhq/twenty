@@ -1,0 +1,49 @@
+---
+title: TextDirectionProvider
+description: Coordinate directional keyboard and pointer interactions with the document direction.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TextDirectionProviderReference from '/snippets/ui/generated/layout/text-direction-provider.mdx';
+
+`TextDirectionProvider` supplies `ltr` or `rtl` direction to Twenty UI controls. It does not render a DOM element or set an HTML `dir` attribute. Set both the provider direction and the matching document direction.
+
+<StoryEmbed
+  storyId="ui-input-segmentedcontrol--right-to-left"
+  title="TextDirectionProvider example"
+/>
+
+## Usage
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { TextDirectionProvider } from 'twenty-ui/primitives/layout';
+
+type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
+
+export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
+  <TextDirectionProvider direction={direction}>
+    <div dir={direction}>
+      <SegmentedControl
+        aria-label="Billing period"
+        defaultValue="annual"
+        options={[
+          { label: 'Annual', value: 'annual' },
+          { label: 'Monthly', value: 'monthly' },
+        ]}
+      />
+    </div>
+  </TextDirectionProvider>
+);
+```
+
+The host application supplies translated labels and chooses the direction. Direction context affects directional interactions; the HTML attribute handles text and layout. For example, [SegmentedControl](/ui/primitives/input/segmented-control) reverses horizontal arrow navigation, and [ResizeHandle](/ui/primitives/layout/resize-handle) reverses horizontal resizing.
+
+## Scope and state
+
+Place one provider around the controls that share a direction. Nested providers can override the direction for a subtree; pair each override with a matching `dir` attribute. `direction` is a required application-owned prop, with no uncontrolled mode. The provider does not translate content or choose direction from the locale automatically.
+
+## Props
+
+<TextDirectionProviderReference />

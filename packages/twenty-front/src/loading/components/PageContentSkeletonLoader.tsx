@@ -1,9 +1,9 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type PageContentSkeletonLoaderProps = {
   secondaryBar?: ReactNode;
@@ -12,7 +12,7 @@ type PageContentSkeletonLoaderProps = {
 export const PageContentSkeletonLoader = ({
   secondaryBar,
 }: PageContentSkeletonLoaderProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <SkeletonTheme

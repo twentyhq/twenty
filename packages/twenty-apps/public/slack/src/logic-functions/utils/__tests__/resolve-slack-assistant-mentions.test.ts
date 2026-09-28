@@ -14,6 +14,7 @@ vi.mock('src/logic-functions/utils/resolve-slack-mention-labels', () => ({
 }));
 
 const client = {} as CoreApiClient;
+const SLACK_CONNECTION_ID = 'connection-1';
 const slackClient = {} as WebClient;
 
 const ALICE: SlackMentionLabel = {
@@ -38,6 +39,7 @@ const resolve = (
     conversationMessages,
     client,
     slackClient,
+    slackConnectionId: SLACK_CONNECTION_ID,
     assistantBotUserId: 'UBOT',
   });
 
@@ -125,6 +127,7 @@ describe('resolveSlackAssistantMentions', () => {
       slackUserIds: ['U04ABC', 'U05DEF'],
       client,
       slackClient,
+      slackConnectionId: SLACK_CONNECTION_ID,
       assistantBotUserId: 'UBOT',
     });
   });

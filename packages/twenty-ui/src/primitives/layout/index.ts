@@ -14,6 +14,6 @@ export type { AnimationDurations } from './AnimatedExpandableContainer/types/Ani
 export type { AnimationMode } from './AnimatedExpandableContainer/types/AnimationMode';
 export type { AnimationSize } from './AnimatedExpandableContainer/types/AnimationSize';
 export { HorizontalSeparator } from './HorizontalSeparator/HorizontalSeparator';
-export { useResizeHandle } from './ResizeHandle/hooks/useResizeHandle';
 export { ResizeHandle } from './ResizeHandle/ResizeHandle';
+export type { ResizeHandleProps } from './ResizeHandle/types/ResizeHandleProps';
 export { TextDirectionProvider } from './TextDirectionProvider/TextDirectionProvider';

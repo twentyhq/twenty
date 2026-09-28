@@ -18,7 +18,9 @@ export const findObjectMetadataIdByName = async (
   )?.id;
 
   if (!isDefined(objectMetadataId)) {
-    throw new Error(`The ${nameSingular} object metadata is missing from the seed`);
+    throw new Error(
+      `The ${nameSingular} object metadata is missing from the seed`,
+    );
   }
 
   return objectMetadataId;

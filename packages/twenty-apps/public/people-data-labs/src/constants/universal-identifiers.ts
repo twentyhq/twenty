@@ -4,6 +4,13 @@ export const APPLICATION_UNIVERSAL_IDENTIFIER =
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'abb2aa9f-8e9c-4e8b-a336-f864ee78b7cd';
 
+export const PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS = {
+  personMinLikelihood: 'a45f04fd-ce7b-468a-bc79-5945041dc7e8',
+  companyMinLikelihood: '8301c260-5028-42f5-8f10-8b74d5d4d134',
+  personWeakIdentifierMinLikelihood: '4160c7ad-fc3f-405d-87ed-7950292fbe22',
+  companyWeakIdentifierMinLikelihood: '1f608910-8ab1-4546-b27f-44507eb3d6f8',
+} as const;
+
 export const PDL_LOGIC_FUNCTION_CONSTANTS = {
   enrichPeople: { universalIdentifier: '65356a82-6734-4fc9-8172-7d30ed1b7859', path: '/people-data-labs/enrich-people' },
   enrichPerson: { universalIdentifier:'864ad69b-ff9f-4635-9aed-16fd0c2ad210', path: '/people-data-labs/enrich-person' },

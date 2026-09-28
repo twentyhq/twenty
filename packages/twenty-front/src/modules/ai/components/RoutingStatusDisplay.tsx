@@ -1,12 +1,12 @@
 import { RoutingDebugDisplay } from '@/ai/components/RoutingDebugDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, IconCpu } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -62,7 +62,7 @@ export const RoutingStatusDisplay = ({
 }: {
   data: DataMessagePart['routing-status'];
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
   const isLoading = data.state === 'loading';
   const isDebugMode = process.env.IS_DEBUG_MODE === 'true';

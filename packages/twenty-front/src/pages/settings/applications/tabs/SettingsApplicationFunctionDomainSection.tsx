@@ -6,7 +6,7 @@ import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/use
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Section } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContent = styled.div`

@@ -1,0 +1,623 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse applicationConnectedAccounts on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse applicationConnectionProviders on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse applicationRegistrationTarballUrl on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse completeApplicationFileUploads on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse createApplicationFileUploads on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse exportApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse findApplicationRegistrationByUniversalIdentifier on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse findApplicationRegistrationStats on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse findApplicationRegistrationVariables on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse findOneAgent on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse findOneApplicationRegistration on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse findOneLogicFunction on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse getLogicFunctionSourceCode on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse installApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse installMarketplaceApp on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse runApplicationHealthCheck on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse skill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse syncApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse to run a workflow action of another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse triggerInstallApplicationJob on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse triggerUninstallApplicationJob on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse uninstallApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse updateApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse updateOneLogicFunction on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse upgradeApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse uploadApplicationFile on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse applicationConnectedAccounts on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse applicationConnectionProviders on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse applicationRegistrationTarballUrl on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse completeApplicationFileUploads on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse createApplicationFileUploads on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse exportApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse findApplicationRegistrationByUniversalIdentifier on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse findApplicationRegistrationStats on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse findApplicationRegistrationVariables on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse findOneAgent on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse findOneApplicationRegistration on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application registration",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse findOneLogicFunction on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse getLogicFunctionSourceCode on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse installApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse installMarketplaceApp on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse runApplicationHealthCheck on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse skill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse syncApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse to run a workflow action of another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse triggerInstallApplicationJob on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse triggerUninstallApplicationJob on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse uninstallApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse updateApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse updateOneLogicFunction on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse upgradeApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse uploadApplicationFile on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;

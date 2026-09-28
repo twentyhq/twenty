@@ -16,7 +16,7 @@ import { useMessageSuppressions } from '@/settings/unsubscribers/hooks/useMessag
 import { getMessageSuppressionReasonBadge } from '@/settings/unsubscribers/utils/getMessageSuppressionReasonBadge';
 import { SearchInput } from 'twenty-ui/components';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   MessageSuppressionReason,
   type MessageSuppressionsQuery,

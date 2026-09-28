@@ -1,1 +1,1 @@
-export type UsageLimitMeter = 'creditsUsedMicro' | 'quantity';
+export type UsageLimitMeter = 'creditsUsedMicro' | 'quantity' | 'bytes';

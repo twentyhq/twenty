@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
 

@@ -2,13 +2,14 @@ import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-type
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof FormMultiRecordPicker> = {
   title: 'UI/Data/Field/Form/Input/FormMultiRecordPicker',
@@ -23,7 +24,7 @@ const meta: Meta<typeof FormMultiRecordPicker> = {
     ComponentDecorator,
     WorkspaceDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
   ],
 };
 

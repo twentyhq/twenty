@@ -1,5 +1,5 @@
 import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -102,7 +102,7 @@ export const SelectInput = ({
   });
 
   return (
-    <DropdownContent ref={containerRef} selectDisabled>
+    <LegacyDropdownContent ref={containerRef} selectDisabled>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(e) => setSearchFilter(e.target.value)}
@@ -176,6 +176,6 @@ export const SelectInput = ({
           </DropdownMenuItemsContainer>
         </>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

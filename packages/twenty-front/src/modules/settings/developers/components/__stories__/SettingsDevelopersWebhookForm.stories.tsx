@@ -5,18 +5,19 @@ import { expect, within } from 'storybook/test';
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { Toaster } from 'twenty-ui/components';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   title: 'Modules/Settings/Developers/Components/SettingsDevelopersWebhookForm',
   component: SettingsDevelopersWebhookForm,
   decorators: [
     ComponentDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
   ],

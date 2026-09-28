@@ -1,4 +1,3 @@
-import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { Injectable } from '@nestjs/common';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -20,7 +19,6 @@ import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/w
 @Injectable()
 export class TwentyStandardApplicationService {
   constructor(
-    private readonly agentHistoryLifecycle: AgentHistoryLifecycleService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -104,8 +102,6 @@ export class TwentyStandardApplicationService {
         'Multiple validation errors occurred while synchronizing twenty-standard application',
       );
     }
-
-    await this.agentHistoryLifecycle.prepareCoreReferences(workspaceId);
 
     await this.seedStandardObjectInitialViewsOrThrow({
       workspaceId,

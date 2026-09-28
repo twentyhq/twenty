@@ -2,7 +2,7 @@ import {
   type CheckoutSessionFactoryInput,
   checkoutSessionQueryFactory,
 } from 'test/integration/graphql/suites/user-session/utils/checkout-session-query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
@@ -17,7 +17,7 @@ export const checkoutSession = async ({
 }: PerformMetadataQueryParams<CheckoutSessionFactoryInput>): CommonResponseBody<{
   checkoutSession: BillingSessionDTO;
 }> => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     checkoutSessionQueryFactory({ input }),
     token,
   );

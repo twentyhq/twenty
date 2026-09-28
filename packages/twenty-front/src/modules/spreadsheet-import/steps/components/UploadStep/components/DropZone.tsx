@@ -8,7 +8,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { MainButton, useToast } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { read, type WorkBook } from 'xlsx-ugnis';
 
 const StyledContainer = styled.div`

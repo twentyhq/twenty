@@ -11,13 +11,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/webhook/webhook-response';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   createWebhook,
   createWebhookReceiver,
   deleteWebhook,
 } from 'test/integration/metadata/suites/utils/webhook-test.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 
 const WEBHOOK_RECEIVER_PORT = 4319;
@@ -92,7 +92,7 @@ describe('Webhook response event write (integration)', () => {
       log: { level: ClickHouseLogLevel.OFF },
     });
 
-    await makeAdminPanelAPIRequest({
+    await makeAdminPanelApiRequest({
       query: CREATE_CONFIG_VARIABLE_MUTATION,
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
@@ -125,13 +125,13 @@ describe('Webhook response event write (integration)', () => {
     await deleteWebhook(unreachableWebhookId).catch(() => {});
 
     if (personId) {
-      await makeGraphqlAPIRequest({
+      await makeGraphqlApiRequest({
         query: DESTROY_PERSON_MUTATION,
         variables: { id: personId },
       }).catch(() => {});
     }
 
-    await makeAdminPanelAPIRequest({
+    await makeAdminPanelApiRequest({
       query: DELETE_CONFIG_VARIABLE_MUTATION,
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
     }).catch(() => {});
@@ -145,7 +145,7 @@ describe('Webhook response event write (integration)', () => {
   });
 
   it('records one response row per webhook call, successful and failed alike', async () => {
-    const createPersonResponse = await makeGraphqlAPIRequest({
+    const createPersonResponse = await makeGraphqlApiRequest({
       query: CREATE_PERSON_MUTATION,
       variables: {
         data: {

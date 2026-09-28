@@ -6,7 +6,7 @@ import {
   Loader,
   ProgressBar,
 } from 'twenty-ui/primitives/feedback';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,

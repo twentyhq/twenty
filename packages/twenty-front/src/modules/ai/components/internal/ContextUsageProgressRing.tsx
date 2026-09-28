@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
 

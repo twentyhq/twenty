@@ -9,7 +9,7 @@ import {
   TEST_PRIMARY_LINK_URL,
   TEST_PRIMARY_LINK_URL_AS_DOMAIN,
 } from 'test/integration/constants/test-primary-link-url.constant';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
@@ -25,7 +25,7 @@ describe('Core REST API Find Many endpoint', () => {
   beforeAll(async () => {
     await deleteAllRecords('person');
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/companies',
       body: {
@@ -43,7 +43,7 @@ describe('Core REST API Find Many endpoint', () => {
 
       testPersonJobTitles[personId] = jobTitle;
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'post',
         path: '/people',
         body: {
@@ -59,7 +59,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should retrieve all people with pagination metadata', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: '/people',
     });
@@ -93,7 +93,7 @@ describe('Core REST API Find Many endpoint', () => {
 
   it('should limit results based on the limit parameter', async () => {
     const limit = testPersonIds.length - 1;
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/people?limit=${limit}`,
     }).expect(200);
@@ -108,7 +108,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should return filtered totalCount', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/people?filter=position[lte]:1`,
     }).expect(200);
@@ -123,7 +123,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should filter results based on filter parameters', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: '/people?filter=position[lt]:2',
     }).expect(200);
@@ -136,7 +136,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should support cursor-based pagination with starting_after', async () => {
-    const initialResponse = await makeRestAPIRequest({
+    const initialResponse = await makeRestApiRequest({
       method: 'get',
       path: '/people?limit=2',
     }).expect(200);
@@ -148,7 +148,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(people.length).toBe(2);
     expect(startCursor).toBeDefined();
 
-    const nextPageResponse = await makeRestAPIRequest({
+    const nextPageResponse = await makeRestApiRequest({
       method: 'get',
       path: `/people?starting_after=${startCursor}&limit=1`,
     }).expect(200);
@@ -162,7 +162,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should support cursor-based pagination with ending_before', async () => {
-    const initialResponse = await makeRestAPIRequest({
+    const initialResponse = await makeRestApiRequest({
       method: 'get',
       path: '/people?limit=4',
     }).expect(200);
@@ -174,7 +174,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(people.length).toBe(4);
     expect(endCursor).toBeDefined();
 
-    const nextPageResponse = await makeRestAPIRequest({
+    const nextPageResponse = await makeRestApiRequest({
       method: 'get',
       path: `/people?ending_before=${endCursor}&limit=2`,
     }).expect(200);
@@ -189,7 +189,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should support ordering Asc of results', async () => {
-    const ascResponse = await makeRestAPIRequest({
+    const ascResponse = await makeRestApiRequest({
       method: 'get',
       path: '/people?order_by=position[AscNullsLast]',
     }).expect(200);
@@ -202,7 +202,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should support filtering on a relation field id', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/people?filter=companyId[in]:["${TEST_COMPANY_1_ID}"]`,
     }).expect(200);
@@ -226,7 +226,7 @@ describe('Core REST API Find Many endpoint', () => {
   //   });
 
   it('should support ordering Desc of results', async () => {
-    const descResponse = await makeRestAPIRequest({
+    const descResponse = await makeRestApiRequest({
       method: 'get',
       path: '/people?order_by=position[DescNullsLast]',
     }).expect(200);
@@ -239,7 +239,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should support pagination with ordering', async () => {
-    const descResponse = await makeRestAPIRequest({
+    const descResponse = await makeRestApiRequest({
       method: 'get',
       path: '/people?order_by=position[DescNullsLast]&limit=2',
     }).expect(200);
@@ -252,7 +252,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(descPeople.length).toEqual(2);
     expect(lastPosition).toEqual(2);
 
-    const descResponseWithPaginationResponse = await makeRestAPIRequest({
+    const descResponseWithPaginationResponse = await makeRestApiRequest({
       method: 'get',
       path: `/people?order_by=position[DescNullsLast]&limit=2&starting_after=${endingBefore}`,
     }).expect(200);
@@ -265,7 +265,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should handle invalid cursor gracefully', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: '/people?starting_after=invalid-cursor',
     });
@@ -275,7 +275,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should combine filtering, ordering, and pagination', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: '/people?filter=position[gt]:0&order_by=jobTitle[AscNullsFirst]&limit=2',
     }).expect(200);
@@ -294,7 +294,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should should throw an error when trying to order by a composite field', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: '/people?order_by=name[AscNullsLast]',
     }).expect(400);
@@ -336,7 +336,7 @@ describe('Core REST API Find Many endpoint', () => {
   //   ];
 
   it('should support depth 0 parameter', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: '/people?depth=0',
     }).expect(200);
@@ -353,7 +353,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should support depth 1 parameter', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: '/people?depth=1',
     }).expect(200);
@@ -371,7 +371,7 @@ describe('Core REST API Find Many endpoint', () => {
   });
 
   it('should not support depth 2 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: '/people?depth=2',
     }).expect(400);
@@ -386,7 +386,7 @@ describe('Core REST API Find Many endpoint', () => {
         const path: string =
           '/people?order_by=company.name[AscNullsLast]&limit=2&depth=1' +
           (startingAfter ? `&starting_after=${startingAfter}` : '');
-        const response = await makeRestAPIRequest({
+        const response = await makeRestApiRequest({
           method: 'get',
           path,
         }).expect(200);
@@ -418,7 +418,7 @@ describe('Core REST API Find Many endpoint', () => {
         const path: string =
           '/people?order_by=company.name[AscNullsLast]&limit=2&depth=0' +
           (startingAfter ? `&starting_after=${startingAfter}` : '');
-        const response = await makeRestAPIRequest({
+        const response = await makeRestApiRequest({
           method: 'get',
           path,
         }).expect(200);
@@ -453,7 +453,7 @@ describe('Core REST API Find Many endpoint', () => {
       await deleteAllRecords('opportunity');
 
       for (const [index, closeDate] of datedOpportunityCloseDates.entries()) {
-        await makeRestAPIRequest({
+        await makeRestApiRequest({
           method: 'post',
           path: '/opportunities',
           body: { name: `REST dated opportunity ${index + 1}`, closeDate },
@@ -461,7 +461,7 @@ describe('Core REST API Find Many endpoint', () => {
       }
 
       for (const index of [1, 2]) {
-        await makeRestAPIRequest({
+        await makeRestApiRequest({
           method: 'post',
           path: '/opportunities',
           body: { name: `REST undated opportunity ${index}` },
@@ -481,7 +481,7 @@ describe('Core REST API Find Many endpoint', () => {
         const path: string =
           '/opportunities?order_by=closeDate[AscNullsLast]&limit=2' +
           (startingAfter ? `&starting_after=${startingAfter}` : '');
-        const response = await makeRestAPIRequest({
+        const response = await makeRestApiRequest({
           method: 'get',
           path,
         }).expect(200);

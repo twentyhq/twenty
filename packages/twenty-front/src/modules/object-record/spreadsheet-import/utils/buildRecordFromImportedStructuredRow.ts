@@ -15,6 +15,8 @@ import {
   isEmptyObject,
   getLinkUrlNormalizer,
   normalizeUrlOrigin,
+  parseToPlainDateOrThrow,
+  turnJSDateToPlainDate,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -106,6 +108,14 @@ const buildRelationConnectFieldRecord = (
   return isEmptyObject(relationConnectFieldValue)
     ? undefined
     : { connect: { where: relationConnectFieldValue } };
+};
+
+const computeDateOnlyImportedValue = (value: string): string => {
+  try {
+    return parseToPlainDateOrThrow(value).toString();
+  } catch {
+    return turnJSDateToPlainDate(new Date(value)).toString();
+  }
 };
 
 export const buildRecordFromImportedStructuredRow = ({
@@ -378,6 +388,14 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       case FieldMetadataType.DATE:
+        if (
+          isDefined(importedFieldValue) &&
+          isNonEmptyString(importedFieldValue)
+        ) {
+          recordToBuild[field.name] =
+            computeDateOnlyImportedValue(importedFieldValue);
+        }
+        break;
       case FieldMetadataType.DATE_TIME:
         if (
           isDefined(importedFieldValue) &&

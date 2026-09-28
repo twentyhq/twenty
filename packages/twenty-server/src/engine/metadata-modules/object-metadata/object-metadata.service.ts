@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -34,6 +33,8 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const MAX_OBJECTS_PER_BATCH_UPDATE = 100;
 
@@ -46,8 +47,8 @@ const NON_BATCHABLE_UPDATE_PROPERTIES = [
 @Injectable()
 export class ObjectMetadataService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -662,17 +663,13 @@ export class ObjectMetadataService {
     workspaceId: string,
     options: FindOneOptions<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity | null> {
-    return this.objectMetadataRepository.findOne({
+    return this.objectMetadataRepository.findOne(workspaceId, {
       relations: [
         'fields',
         'indexMetadatas',
         'indexMetadatas.indexFieldMetadatas',
       ],
       ...options,
-      where: {
-        ...options.where,
-        workspaceId,
-      },
     });
   }
 
@@ -680,24 +677,16 @@ export class ObjectMetadataService {
     workspaceId: string,
     options?: FindManyOptions<ObjectMetadataEntity>,
   ): Promise<FlatObjectMetadata[]> {
-    const whereWithWorkspaceId = Array.isArray(options?.where)
-      ? options.where.map((whereCondition) => ({
-          ...whereCondition,
-          workspaceId,
-        }))
-      : {
-          ...options?.where,
-          workspaceId,
-        };
-
-    const objectMetadataEntities = await this.objectMetadataRepository.find({
-      ...options,
-      where: whereWithWorkspaceId,
-      order: {
-        ...options?.order,
+    const objectMetadataEntities = await this.objectMetadataRepository.find(
+      workspaceId,
+      {
+        ...options,
+        order: {
+          ...options?.order,
+        },
+        select: { id: true },
       },
-      select: { id: true },
-    });
+    );
 
     const objectMetadataIds = objectMetadataEntities.map(
       (objectMetadata) => objectMetadata.id,

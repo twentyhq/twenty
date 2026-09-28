@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   createWebhook,
   createWebhookReceiver,
@@ -8,7 +8,7 @@ import {
   getWebhooks,
   updateWebhook,
 } from 'test/integration/metadata/suites/utils/webhook-test.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -61,7 +61,7 @@ describe('webhooksResolver (e2e)', () => {
 
   afterEach(async () => {
     if (createdPersonId) {
-      await makeGraphqlAPIRequest({
+      await makeGraphqlApiRequest({
         query: DESTROY_PERSON_MUTATION,
         variables: { id: createdPersonId },
       }).catch(() => {});
@@ -246,7 +246,7 @@ describe('webhooksResolver (e2e)', () => {
         createdWebhookId = createWebhookResponse.body.data.createWebhook.id;
 
         const testId = uuidv4().slice(0, 8);
-        const createPersonResponse = await makeGraphqlAPIRequest({
+        const createPersonResponse = await makeGraphqlApiRequest({
           query: CREATE_PERSON_MUTATION,
           variables: {
             data: {
@@ -278,7 +278,7 @@ describe('webhooksResolver (e2e)', () => {
       const receiver = await createWebhookReceiver(WEBHOOK_RECEIVER_PORT);
 
       try {
-        const createConfigResponse = await makeAdminPanelAPIRequest({
+        const createConfigResponse = await makeAdminPanelApiRequest({
           query: CREATE_CONFIG_VARIABLE_MUTATION,
           variables: {
             key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS',
@@ -291,7 +291,7 @@ describe('webhooksResolver (e2e)', () => {
           createConfigResponse.body.data.createDatabaseConfigVariable,
         ).toBe(true);
 
-        const verifyConfig = await makeAdminPanelAPIRequest({
+        const verifyConfig = await makeAdminPanelApiRequest({
           query: GET_CONFIG_VARIABLE_QUERY,
           variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
         });
@@ -314,7 +314,7 @@ describe('webhooksResolver (e2e)', () => {
         createdWebhookId = createWebhookResponse.body.data.createWebhook.id;
 
         const testId = uuidv4().slice(0, 8);
-        const createPersonResponse = await makeGraphqlAPIRequest({
+        const createPersonResponse = await makeGraphqlApiRequest({
           query: CREATE_PERSON_MUTATION,
           variables: {
             data: {
@@ -344,7 +344,7 @@ describe('webhooksResolver (e2e)', () => {
         );
       } finally {
         await receiver.close();
-        await makeAdminPanelAPIRequest({
+        await makeAdminPanelApiRequest({
           query: DELETE_CONFIG_VARIABLE_MUTATION,
           variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
         }).catch(() => {});

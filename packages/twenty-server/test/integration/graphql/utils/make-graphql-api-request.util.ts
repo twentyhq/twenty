@@ -7,7 +7,7 @@ type GraphqlOperation = {
   variables?: Record<string, unknown>;
 };
 
-export const makeGraphqlAPIRequest = (
+export const makeGraphqlApiRequest = (
   graphqlOperation: GraphqlOperation,
   token: string | undefined = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) => {

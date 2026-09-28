@@ -11,8 +11,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { cx } from '@linaria/core';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDragDropHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
@@ -34,7 +33,7 @@ const StyledDragDropHeaderCell = styled.div<{
 `;
 
 export const RecordTableHeaderDragDropColumn = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,

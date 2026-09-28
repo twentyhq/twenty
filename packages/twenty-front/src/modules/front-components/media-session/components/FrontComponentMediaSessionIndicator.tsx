@@ -6,7 +6,7 @@ import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Popover } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTrigger = styled.button`
   align-items: center;

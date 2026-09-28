@@ -23,9 +23,12 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationEntity,
       ApplicationRegistrationEntity,
@@ -52,6 +55,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationLifecycleJobService,
     ApplicationUninstallRunnerService,
     InstallApplicationCommand,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [ApplicationInstallService, ApplicationUninstallRunnerService],
 })

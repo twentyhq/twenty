@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledClickableContainer = styled.div`
   align-items: center;

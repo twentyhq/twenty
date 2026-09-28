@@ -1,7 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
-import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
+
 import { expect, userEvent, within } from 'storybook/test';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof UndecoratedLink> = {
   title: 'UI/Navigation/UndecoratedLink',

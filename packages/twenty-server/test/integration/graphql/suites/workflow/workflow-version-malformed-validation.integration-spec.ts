@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -185,7 +185,7 @@ describe('Workflow version malformed validation (e2e)', () => {
       data: { steps: [] },
     });
 
-    const response = await makeGraphqlAPIRequest(operation);
+    const response = await makeGraphqlApiRequest(operation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');

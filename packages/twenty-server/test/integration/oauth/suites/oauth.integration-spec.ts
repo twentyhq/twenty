@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { assertIsDefinedOrThrow, base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
@@ -293,7 +293,7 @@ describe('OAuth (integration)', () => {
     it('should return an `iss` matching the advertised issuer alongside code and state', async () => {
       const state = 'integration-state-123';
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: authorizeAppMutation,
         variables: {
           clientId: testRegistration.oAuthClientId,
@@ -1148,7 +1148,7 @@ describe('OAuth (integration)', () => {
     const findListedAuthorization = async (
       token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
     ) => {
-      const res = await makeMetadataAPIRequest(
+      const res = await makeMetadataApiRequest(
         LIST_AUTHORIZATIONS_OPERATION,
         token,
       );
@@ -1165,7 +1165,7 @@ describe('OAuth (integration)', () => {
       applicationAuthorizationId: string,
       token: string,
     ) =>
-      makeMetadataAPIRequest(
+      makeMetadataApiRequest(
         revokeAuthorizationOperation(applicationAuthorizationId),
         token,
       );

@@ -10,7 +10,7 @@ import {
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';

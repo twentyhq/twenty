@@ -3,7 +3,7 @@ import { WorkflowDiagramHandleTargetEffect } from '@/workflow/workflow-diagram/w
 import { styled } from '@linaria/react';
 import { Handle, Position, useNodeId } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type WorkflowDiagramHandleTargetProps = {
   isConnectable?: boolean;

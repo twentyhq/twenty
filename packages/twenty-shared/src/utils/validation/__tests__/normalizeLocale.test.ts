@@ -39,6 +39,13 @@ describe('normalizeLocale', () => {
     expect(normalizeLocale('')).toBe(SOURCE_LOCALE);
   });
 
+  it('should not treat inherited Object prototype keys as valid locales', () => {
+    expect(normalizeLocale('toString')).toBe(SOURCE_LOCALE);
+    expect(normalizeLocale('constructor')).toBe(SOURCE_LOCALE);
+    expect(normalizeLocale('valueOf')).toBe(SOURCE_LOCALE);
+    expect(normalizeLocale('hasOwnProperty')).toBe(SOURCE_LOCALE);
+  });
+
   it('should handle SOURCE_LOCALE and its variants correctly', () => {
     expect(normalizeLocale(SOURCE_LOCALE)).toBe(SOURCE_LOCALE);
     // If SOURCE_LOCALE is 'en', test 'en-US', 'en-GB', etc.

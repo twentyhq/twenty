@@ -14,7 +14,7 @@ import {
   LIBERATION_SANS_BOLD_BASE64,
   LIBERATION_SANS_REGULAR_BASE64,
 } from 'src/engine/core-modules/dpa/pdf/fonts/liberation-sans.fonts';
-import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.type';
 
 // createElement (not JSX) because the twenty-server swc builder has tsx disabled (syntax: 'typescript').
 // Liberation Sans is embedded because react-pdf's built-in fonts only encode ASCII; the legal text's curly

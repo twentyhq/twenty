@@ -11,7 +11,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Section } from 'twenty-ui/components';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};

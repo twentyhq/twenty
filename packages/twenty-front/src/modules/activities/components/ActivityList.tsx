@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledListContainer = styled.div`
   width: 100%;
@@ -35,7 +35,7 @@ export const ActivityList = ({
 }: ActivityListProps) => {
   return (
     <StyledListContainer data-scrollable={isScrollable || undefined}>
-      <Card>{children}</Card>
+      <Card.Root>{children}</Card.Root>
     </StyledListContainer>
   );
 };

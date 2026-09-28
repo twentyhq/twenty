@@ -17,6 +17,11 @@
 
 .section {
   padding: var(--t-spacing-1);
+
+  &[data-scrollable] {
+    max-block-size: 176px;
+    overflow-y: auto;
+  }
 }
 
 .separator[data-dropdown-separator] {
@@ -64,4 +69,30 @@
   color: var(--t-font-color-secondary);
   font-size: var(--t-font-size-sm);
   padding: var(--t-spacing-2);
+}
+
+.header {
+  align-items: center;
+  border-bottom: 1px solid var(--t-border-color-light);
+  color: var(--t-font-color-primary);
+  display: flex;
+  flex: none;
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-medium);
+  gap: var(--t-spacing-1);
+  min-block-size: 33px;
+  padding-inline: var(--t-spacing-2);
+
+  &:dir(rtl) svg {
+    transform: rotate(180deg);
+  }
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

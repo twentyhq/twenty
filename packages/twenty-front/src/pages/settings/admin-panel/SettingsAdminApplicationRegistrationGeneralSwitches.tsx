@@ -5,7 +5,7 @@ import { IconArrowBarToDown, IconPinned, IconShield } from 'twenty-ui/icon';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { UpdateAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -33,7 +33,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
     <Section.Root>
       <Section.Header title={t`Installation`} />
       <StyledSwitchContainer>
-        <Card rounded fullWidth>
+        <Card.Root rounded fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconArrowBarToDown}
             title={t`Allow installation`}
@@ -50,8 +50,8 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
               })
             }
           />
-        </Card>
-        <Card rounded fullWidth>
+        </Card.Root>
+        <Card.Root rounded fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconShield}
             title={t`Vetted`}
@@ -68,8 +68,8 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
               })
             }
           />
-        </Card>
-        <Card rounded fullWidth>
+        </Card.Root>
+        <Card.Root rounded fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconPinned}
             title={t`Pre-install on new workspaces`}
@@ -86,7 +86,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
               })
             }
           />
-        </Card>
+        </Card.Root>
       </StyledSwitchContainer>
     </Section.Root>
   );

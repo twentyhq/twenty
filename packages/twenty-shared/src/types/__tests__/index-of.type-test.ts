@@ -1,6 +1,6 @@
 import { type Equal, type Expect } from '@/testing';
 
-import { type IndexOf } from '@/types/IndexOf.type';
+import { type IndexOf } from '@/types/IndexOf';
 
 type Versions = readonly ['1.20.0', '1.21.0', '1.22.0', '1.23.0'];
 

@@ -21,7 +21,7 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
 

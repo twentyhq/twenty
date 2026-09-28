@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -16,7 +16,7 @@ const APPLICATION_CORE_GRAPHQL_SCHEMA = gql`
 `;
 
 const getStandardApplicationSchema = async (token?: string) => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     {
       query: APPLICATION_CORE_GRAPHQL_SCHEMA,
       variables: {
@@ -54,7 +54,7 @@ describe('applicationCoreGraphqlSchema', () => {
   });
 
   it('fails for an unknown application', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: APPLICATION_CORE_GRAPHQL_SCHEMA,
       variables: {
         applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',

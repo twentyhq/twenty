@@ -26,7 +26,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   BillingEntitlementKey,
@@ -145,7 +145,7 @@ export const SettingsLogs = () => {
     isDefined(filters.dateRange?.start) ||
     isDefined(filters.dateRange?.end);
 
-  const liveRecords = useEventLogsLiveStream({
+  const { liveRecords } = useEventLogsLiveStream({
     table: selectedTable,
     enabled: !isPaused && !hasActiveFilters && canQuery,
   });
@@ -165,7 +165,7 @@ export const SettingsLogs = () => {
   };
 
   const renderUpgradeCard = () => (
-    <Card rounded backgroundColor={themeCssVariables.background.secondary}>
+    <Card.Root rounded backgroundColor={themeCssVariables.background.secondary}>
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
@@ -186,7 +186,7 @@ export const SettingsLogs = () => {
           >{t`Upgrade`}</Button>
         }
       />
-    </Card>
+    </Card.Root>
   );
 
   const renderResults = () => {
@@ -232,7 +232,7 @@ export const SettingsLogs = () => {
 
   return (
     <StyledRoot>
-      <Card
+      <Card.Root
         rounded
         fullWidth
         backgroundColor={themeCssVariables.background.secondary}
@@ -262,7 +262,7 @@ export const SettingsLogs = () => {
             onChange={handleFiltersChange}
           />
         </StyledCardContent>
-      </Card>
+      </Card.Root>
 
       {renderResults()}
     </StyledRoot>

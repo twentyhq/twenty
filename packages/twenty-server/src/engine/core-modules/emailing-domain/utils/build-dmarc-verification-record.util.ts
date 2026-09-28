@@ -2,7 +2,7 @@ import { DMARC_MONITORING_POLICY } from 'src/engine/core-modules/emailing-domain
 import { DMARC_RECORD_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/dmarc-record-prefix.constant';
 import { DMARC_REPORT_MAILBOX } from 'src/engine/core-modules/emailing-domain/constants/dmarc-report-mailbox.constant';
 import { DMARC_VERSION_TAG } from 'src/engine/core-modules/emailing-domain/constants/dmarc-version-tag.constant';
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
+import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 
 export const buildDmarcVerificationRecord = (
   domain: string,

@@ -12,7 +12,7 @@ import { CardPicker, MainButton, useToast } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCheckoutButton = styled(MainButton)`
   width: 200px;

@@ -10,14 +10,13 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-cell/components/RecordTableDragAndDropPlaceholderCell';
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
-import { useContext } from 'react';
 import {
   filterOutByProperty,
   findByProperty,
   sumByProperty,
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
@@ -100,7 +99,7 @@ export const RecordTableActionRow = ({
   text,
   onClick,
 }: RecordTableActionRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();

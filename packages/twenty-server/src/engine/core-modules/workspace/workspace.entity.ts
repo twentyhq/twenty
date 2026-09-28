@@ -301,6 +301,14 @@ export class WorkspaceEntity {
   isInternalMessagesImportEnabled: boolean;
 
   @Field(() => [String], { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.43.0_AddWorkspaceAllowedIframeOriginsFastInstanceCommand_1790232481570',
+  })
+  @Column({ type: 'varchar', array: true, default: '{}' })
+  allowedIframeOrigins: string[];
+
+  @Field(() => [String], { nullable: true })
   @Column({
     type: 'varchar',
     array: true,

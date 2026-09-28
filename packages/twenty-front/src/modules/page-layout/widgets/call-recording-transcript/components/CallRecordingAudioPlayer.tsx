@@ -11,7 +11,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button, Slider } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAudioBar = styled.div`
   align-items: center;

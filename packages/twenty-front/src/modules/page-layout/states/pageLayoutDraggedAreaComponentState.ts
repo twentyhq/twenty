@@ -1,6 +1,6 @@
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-import { type PageLayoutDraggedArea } from '@/page-layout/types/page-layout-dragged-area';
+import { type PageLayoutDraggedArea } from '@/page-layout/types/PageLayoutDraggedArea';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutDraggedAreaComponentState =

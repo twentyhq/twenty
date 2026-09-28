@@ -8,10 +8,9 @@ import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-a
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconSettingsAutomation, IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
   onChange: (field: WorkflowFormActionField) => void;
@@ -62,7 +61,7 @@ export const WorkflowEditActionFormFieldSettings = ({
   onChange,
   onClose,
 }: WorkflowEditActionFormFieldSettingsProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledFormFieldSettingsContainer>

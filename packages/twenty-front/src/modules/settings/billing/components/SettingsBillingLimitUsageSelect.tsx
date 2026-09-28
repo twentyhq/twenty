@@ -5,7 +5,7 @@ import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/U
 import { getUsageLimitOperationTypes } from '@/settings/billing/utils/getUsageLimitOperationTypes';
 import { USAGE_OPERATION_TYPE_LABELS } from '@/settings/usage/constants/UsageOperationTypeLabels';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -83,7 +83,7 @@ export const SettingsBillingLimitUsageSelect = ({
       onClose={() => setBrowsedResourceType(null)}
       dropdownComponents={
         isDefined(browsedResourceType) && isDefined(browsedDefinition) ? (
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuHeader
               StartComponent={
                 <DropdownMenuHeaderLeftComponent
@@ -121,9 +121,9 @@ export const SettingsBillingLimitUsageSelect = ({
                 ),
               )}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         ) : (
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuItemsContainer>
               {definitions.definitions.map((definition) => (
                 <ListItem
@@ -148,7 +148,7 @@ export const SettingsBillingLimitUsageSelect = ({
                 </ListItem>
               ))}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         )
       }
     />

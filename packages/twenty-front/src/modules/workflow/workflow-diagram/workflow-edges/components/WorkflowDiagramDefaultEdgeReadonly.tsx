@@ -5,8 +5,7 @@ import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/ge
 import { i18n } from '@lingui/core';
 import { BaseEdge, EdgeLabelRenderer } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { useTheme } from 'twenty-ui/theme';
 
 type WorkflowDiagramDefaultEdgeReadonlyProps =
   WorkflowDiagramEdgeComponentProps;
@@ -22,7 +21,7 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
   markerEnd,
   data,
 }: WorkflowDiagramDefaultEdgeReadonlyProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const {
     segments,
     overlayPosition: [labelX, labelY],

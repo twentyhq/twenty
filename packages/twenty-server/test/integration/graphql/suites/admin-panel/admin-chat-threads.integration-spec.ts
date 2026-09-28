@@ -8,8 +8,8 @@ import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-h
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { v5 } from 'uuid';
 
-import { makeAdminPanelAPIRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -119,15 +119,9 @@ describe('Admin panel global chat threads (integration)', () => {
     onConflict = '',
   ): Promise<void> => {
     await storage.run(SEED_APPLE_WORKSPACE_ID, async (context) => {
-      const scopedColumns = [...columns];
-      const scopedValues = [...values];
-      if (context.storage === 'core') {
-        scopedColumns.push('workspaceId');
-        scopedValues.push(SEED_APPLE_WORKSPACE_ID);
-      }
       await context.manager.query(
-        `INSERT INTO ${context.table(name)} (${scopedColumns.map(escapeIdentifier).join(', ')}) VALUES (${scopedValues.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
-        scopedValues,
+        `INSERT INTO ${context.table(name)} (${columns.map(escapeIdentifier).join(', ')}) VALUES (${values.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
+        values,
       );
     });
   };
@@ -245,7 +239,7 @@ describe('Admin panel global chat threads (integration)', () => {
   const fetchThreads = async (
     variables: Record<string, unknown>,
   ): Promise<ThreadsResult> => {
-    const response = await makeAdminPanelAPIRequest({
+    const response = await makeAdminPanelApiRequest({
       query: GET_ADMIN_CHAT_THREADS,
       variables,
     });
@@ -634,7 +628,7 @@ describe('Admin panel global chat threads (integration)', () => {
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelAPIRequestWithGuestRole({
+      const response = await makeAdminPanelApiRequestWithGuestRole({
         query: GET_ADMIN_CHAT_THREADS,
         variables: {},
       });
@@ -646,7 +640,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
   describe('getAdminChatThreadMessages', () => {
     it('returns the hidden kickoff first with enriched ordered parts', async () => {
-      const response = await makeAdminPanelAPIRequest({
+      const response = await makeAdminPanelApiRequest({
         query: GET_ADMIN_CHAT_THREAD_MESSAGES,
         variables: { threadId: kickoffThreadId },
       });

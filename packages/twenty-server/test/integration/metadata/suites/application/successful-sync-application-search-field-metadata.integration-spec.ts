@@ -72,10 +72,7 @@ describe('Application manifest sync search field metadata population', () => {
       objectMetadataSingularName: OBJECT_NAME_SINGULAR,
       objectMetadataPluralName: OBJECT_NAME_PLURAL,
       gqlFields: 'id name',
-      data: [
-        { name: RECORD_NAME_VALUE },
-        { name: OTHER_RECORD_NAME_VALUE },
-      ],
+      data: [{ name: RECORD_NAME_VALUE }, { name: OTHER_RECORD_NAME_VALUE }],
       expectToFail: false,
     });
 

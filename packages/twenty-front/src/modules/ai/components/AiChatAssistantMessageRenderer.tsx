@@ -22,7 +22,7 @@ import {
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
 } from 'twenty-shared/ai';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;

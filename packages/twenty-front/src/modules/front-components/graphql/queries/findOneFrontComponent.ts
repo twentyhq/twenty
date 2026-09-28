@@ -13,16 +13,6 @@ export const FIND_ONE_FRONT_COMPONENT = gql`
       usesSdkClient
       frontComponentSharedDependenciesChecksum
       applicationVariables
-      applicationTokenPair {
-        applicationAccessToken {
-          token
-          expiresAt
-        }
-        applicationRefreshToken {
-          token
-          expiresAt
-        }
-      }
     }
   }
 `;

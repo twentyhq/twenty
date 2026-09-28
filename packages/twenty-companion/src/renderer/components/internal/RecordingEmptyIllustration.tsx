@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { useEffect, useRef } from 'react';
 
-import { useThemeColorScheme } from '@ui/theme-constants';
+import { useThemeColorScheme } from '@ui/theme';
 
 import styles from './RecordingEmptyIllustration.module.scss';
 

@@ -1,7 +1,7 @@
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -87,7 +87,7 @@ export const EmailRecipientChipMenuContent = ({
     !isDefined(person) && !isDefined(workspaceMember) && !isInvalid;
 
   return (
-    <DropdownContent widthInPixels={280}>
+    <LegacyDropdownContent widthInPixels={280}>
       {(isDefined(person) || isDefined(workspaceMember) || showAddAsPerson) && (
         <>
           <DropdownMenuItemsContainer>
@@ -152,6 +152,6 @@ export const EmailRecipientChipMenuContent = ({
           onClick={handleRemove}
         >{t`Remove`}</ListItem>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

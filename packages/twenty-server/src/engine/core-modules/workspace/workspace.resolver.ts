@@ -44,6 +44,7 @@ import {
   PublicWorkspaceDataDTO,
   PublicWorkspaceDataSummaryDTO,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
+import { UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -72,7 +73,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
@@ -161,6 +161,25 @@ export class WorkspaceResolver {
     }
   }
 
+  @Mutation(() => WorkspaceEntity)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  )
+  async updateWorkspaceAllowedIframeOrigins(
+    @Args('data') data: UpdateWorkspaceAllowedIframeOriginsInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    try {
+      return await this.workspaceService.updateWorkspaceAllowedIframeOrigins(
+        workspace.id,
+        data,
+      );
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+    }
+  }
+
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
   async featureFlags(
     @Parent() workspace: WorkspaceEntity,
@@ -210,14 +229,7 @@ export class WorkspaceResolver {
       return null;
     }
 
-    const defaultRoleEntity = await this.roleService.getRoleById(
-      workspace.defaultRoleId,
-      workspace.id,
-    );
-
-    return isDefined(defaultRoleEntity)
-      ? fromRoleEntityToRoleDto(defaultRoleEntity)
-      : null;
+    return this.roleService.getRoleById(workspace.defaultRoleId, workspace.id);
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })

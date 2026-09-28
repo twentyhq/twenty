@@ -33,7 +33,7 @@ const MICROSOFT_GRAPH_RESOURCE_CONFIG_BY_CHANNEL_TYPE: Record<
 > = {
   [WebhookSubscriptionChannelType.MESSAGING]: {
     resource: '/me/messages',
-    changeType: 'created,updated',
+    changeType: 'created',
     notificationPath: `${ApiPath.Webhooks}/microsoft/messaging`,
   },
   [WebhookSubscriptionChannelType.CALENDAR]: {

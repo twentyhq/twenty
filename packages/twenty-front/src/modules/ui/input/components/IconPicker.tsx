@@ -15,8 +15,7 @@ import {
   type ButtonSize,
   type ButtonVariant,
 } from 'twenty-ui/primitives/input';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
@@ -26,7 +25,7 @@ import {
   iconPickerVisibleCountState,
 } from '@/ui/input/states/iconPickerVisibleCountState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -125,7 +124,7 @@ const IconPickerSearchRow = ({
             </LightIconButton>
           }
           dropdownComponents={
-            <DropdownContent
+            <LegacyDropdownContent
               widthInPixels={
                 dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
               }
@@ -137,7 +136,7 @@ const IconPickerSearchRow = ({
                   closeDropdown(iconColorPickerDropdownId);
                 }}
               />
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       </ClickOutsideListenerContext.Provider>
@@ -436,7 +435,7 @@ export const IconPicker = ({
         }
         dropdownComponents={
           <ScrollWrapper componentInstanceId="icon-picker-scroll">
-            <DropdownContent
+            <LegacyDropdownContent
               widthInPixels={
                 dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
               }
@@ -485,7 +484,7 @@ export const IconPicker = ({
                   </DropdownMenuItemsContainer>
                 </div>
               </SelectableList>
-            </DropdownContent>
+            </LegacyDropdownContent>
           </ScrollWrapper>
         }
         onClickOutside={onClickOutside}

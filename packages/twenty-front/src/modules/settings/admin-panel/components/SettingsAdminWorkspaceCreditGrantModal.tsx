@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Section, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 import { BillingCreditGrantType } from '~/generated-admin/graphql';
 
@@ -183,7 +183,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
                 label: t(CREDIT_GRANT_TYPE_LABELS[grantType]),
               }))}
               onChange={setType}
-              isDropdownInModal
               fullWidth
             />
 
@@ -196,7 +195,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
                 label: t(option.label),
               }))}
               onChange={setExpiresInDays}
-              isDropdownInModal
               fullWidth
             />
 

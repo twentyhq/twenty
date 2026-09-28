@@ -34,7 +34,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -54,7 +54,6 @@ import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-module
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -114,7 +113,6 @@ export class RecordExportWorkspaceService {
     private readonly messageQueueService: MessageQueueService,
     private readonly fileStorageService: FileStorageService,
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async stream(input: {
@@ -135,7 +133,7 @@ export class RecordExportWorkspaceService {
         if (signal.aborted) {
           return;
         }
-        downloadReady = isDefined(updated.downloadUrl);
+        downloadReady = isDefined(updated.downloadPath);
         yield updated;
         if (downloadReady || isDefined(updated.errorMessage)) {
           return;
@@ -276,7 +274,7 @@ export class RecordExportWorkspaceService {
       return {
         ...update,
         progress: 100,
-        downloadUrl: await this.getDownloadUrl(recordExport),
+        downloadPath: await this.getDownloadPath(recordExport),
       };
     }
     return update;
@@ -320,7 +318,7 @@ export class RecordExportWorkspaceService {
     return file;
   }
 
-  async getDownloadUrl(
+  async getDownloadPath(
     recordExport: Omit<RecordExport, 'parameters' | 'createdAt'>,
   ): Promise<string> {
     await this.resolveRequester(recordExport);
@@ -342,7 +340,7 @@ export class RecordExportWorkspaceService {
       expiresIn: RECORD_EXPORT_DOWNLOAD_TOKEN_TTL_SECONDS,
     });
     await this.assertPermissionsUnchanged(recordExport);
-    return `${this.twentyConfigService.get('SERVER_URL')}/file/record-export/${recordExport.id}?token=${token}`;
+    return `/file/record-export/${recordExport.id}?token=${token}`;
   }
 
   async openDownload({

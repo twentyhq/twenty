@@ -1,12 +1,12 @@
 import { Text } from 'twenty-ui/primitives/typography';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { Controller, useFormContext } from 'react-hook-form';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;

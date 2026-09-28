@@ -11,7 +11,7 @@ import {
 import { ProgressBar } from '@ui/primitives/feedback/ProgressBar/ProgressBar';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { HorizontalSeparator } from '@ui/primitives/layout/HorizontalSeparator/HorizontalSeparator';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Toast.module.scss';
