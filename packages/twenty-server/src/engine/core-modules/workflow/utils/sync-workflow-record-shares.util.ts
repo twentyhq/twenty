@@ -75,10 +75,13 @@ export const syncWorkflowRecordShares = async ({
         AND metadata."universalIdentifier" = $2
         AND share."recordId" IN (SELECT id FROM target)
         AND (
-          (
-            share."sourceId" = share."recordId"
-            AND share."rowCause" IN ('${RecordShareRowCause.OWNER}', '${RecordShareRowCause.RULE}')
-          )
+          -- Grants written on the record's own behalf rather than by a
+          -- person sharing it: the ones this sync derives, and the creator
+          -- role an API key's or an application's create writes, which would
+          -- otherwise keep everyone holding that role reading a private
+          -- workflow.
+          share."sourceId" = share."recordId"
+          OR share."rowCause" = '${RecordShareRowCause.APPLICATION}'
           -- Whatever wrote it, a grant to everyone on a workflow means
           -- workspace-visible, which only the core workflow decides.
           OR share."principalType" = '${RecordSharePrincipalType.EVERYONE}'
@@ -126,7 +129,7 @@ export const syncWorkflowRecordShares = async ({
     );
   };
 
-  if (manager.queryRunner?.isTransactionActive === true) {
+  if (manager.queryRunner?.isTransactionActive) {
     await sync(manager);
 
     return;

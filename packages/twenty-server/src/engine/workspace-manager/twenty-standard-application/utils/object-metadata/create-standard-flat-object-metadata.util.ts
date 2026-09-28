@@ -1602,7 +1602,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         isUIEditable: false,
         // A question shows what its run or conversation was doing, so it is
-        // read exactly as they are, never more widely.
+        // read exactly as they are, never more widely: assigning it to someone
+        // does not share it, so only a reader can be made its assignee.
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['workflowRun', 'thread'],
         // An Ask gates something parked on it, so a user token deleting the

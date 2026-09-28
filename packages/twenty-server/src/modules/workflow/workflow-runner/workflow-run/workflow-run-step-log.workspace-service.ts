@@ -25,6 +25,26 @@ export class WorkflowRunStepLogWorkspaceService {
     private readonly coreDataSource: DataSource,
   ) {}
 
+  async getStepLog({
+    workflowRunId,
+    workspaceId,
+    stepId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+    stepId: string;
+  }): Promise<WorkflowRunStepLog | null> {
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    const [row]: { stepLog: WorkflowRunStepLog | null }[] =
+      await this.coreDataSource.query(
+        `SELECT "stepLogs" -> $1 AS "stepLog" FROM ${schemaName}."workflowRun" WHERE "id" = $2`,
+        [stepId, workflowRunId],
+      );
+
+    return row?.stepLog ?? null;
+  }
+
   async setStepLog({
     workflowRunId,
     workspaceId,
