@@ -25,7 +25,7 @@ error and can allow additional known errors without requiring them to occur.
 | `twenty-ui-alert-dialog` | AlertDialog |
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
-| `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
+| `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, getUserDevice, getOsControlSymbol, getOsShortcutSeparator, Button hotkeys |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.

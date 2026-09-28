@@ -2,7 +2,9 @@
 
 Production JavaScript entries can be imported through ESM or CommonJS in Node without `window`, `document`, `navigator`, CSS APIs, or DOM observers. The package checks cover imports and representative `renderToString` calls; they do not imply that interactive browser controls run in Node.
 
-`getUserDevice()` from `twenty-ui/utilities` returns `unknown` when `navigator` or its string `userAgent` is unavailable. An empty or unrecognized user agent also returns `unknown`. Existing browser detection is unchanged. `getOsControlSymbol()` and `getOsShortcutSeparator()` keep their non-Mac defaults, `Ctrl` and a space. Device detection is presentation information, not a capability or security check. Server output uses these defaults; applications hydrating platform-specific labels must keep their initial client output consistent with the server.
+`getUserDevice()` from `twenty-ui/utilities` returns `unknown` when `navigator` or its string `userAgent` is unavailable. An empty or unrecognized user agent also returns `unknown`. iPhone and iPad user agents return `ios`, and Android user agents return `android`. `getOsControlSymbol()` and `getOsShortcutSeparator()` return `⌘` and no separator on Mac and iOS, and `Ctrl` and a space elsewhere, including on the server. Device detection is presentation information, not a capability or security check.
+
+`Button` hotkeys render with a space separator on the server and during hydration, then switch to the platform separator. Hotkey labels an application passes to `Button`, such as the result of `getOsControlSymbol()`, are rendered as given; applications hydrating platform-specific labels must keep their initial client output consistent with the server.
 
 `useIsMobile()` and `useIsTouchDevice()` retain their deterministic `false` server snapshots and existing missing-`matchMedia` behavior. In the worker renderer, neither result promises host viewport or input capability detection.
 
@@ -27,10 +29,6 @@ npx nx test:package:packed twenty-ui
 
 The first check imports built production entries in fresh Node processes and exercises shortcut buttons, responsive hooks, provider-less, scoped and explicit themes, Toaster, Tooltip, overflowing text, and the optional editor placeholder through ESM and CommonJS. `twenty-ui/testing` is development support and is excluded from this production check.
 
-The packed check creates a temporary standalone npm consumer outside the workspace, installs the tarball with React and React DOM peers, and runs the same checks with optional peers absent. It then installs the editor peers and checks that entry separately. It requires registry access and removes its temporary directory after completion. These checks intentionally cover runtime package resolution, not the broader release-tooling program or every component interaction.
+The packed check creates a temporary standalone npm consumer outside the workspace, installs the tarball with React and React DOM peers, and runs the same checks with optional peers absent. It then installs the editor peers and checks that entry separately. It requires registry access and removes its temporary directory after completion. CI runs both checks. They cover runtime package resolution, not every component interaction.
 
-The responsive renderer gallery exercises device labels, shortcut separators, shortcut buttons, and native media-query fallbacks in both React and Preact. Browser event handlers in Dropdown, focus handling in overflowing text, and DOM observer effects remain browser behavior. No polyfills are added by this cleanup.
-
-## Separately pinned apps
-
-Call-recorder and Granola still declare `twenty-ui@^1.0.0-alpha.1` and supply raw theme contexts. Their source and dependency upgrades remain separate. They must adopt `twenty-ui/theme` and the supported `ThemeProvider` configuration together when upgrading. The renderer theme gallery demonstrates that configuration; this utility change does not upgrade their pinned package.
+The responsive renderer gallery exercises device labels, shortcut separators, shortcut buttons, and native media-query fallbacks in both React and Preact. Browser event handlers in Dropdown, focus handling in overflowing text, and DOM observer effects remain browser behavior.

@@ -1,32 +1,40 @@
 import { isString } from '@sniptt/guards';
 
 export const getUserDevice = () => {
-  if (typeof navigator === 'undefined' || !isString(navigator?.userAgent)) {
+  const userAgent = globalThis.navigator?.userAgent;
+
+  if (!isString(userAgent)) {
     return 'unknown';
   }
 
-  const userAgent = navigator.userAgent.toLowerCase();
+  const normalizedUserAgent = userAgent.toLowerCase();
 
-  if (userAgent.includes('mac os x') || userAgent.includes('macos')) {
+  if (
+    normalizedUserAgent.includes('ios') ||
+    normalizedUserAgent.includes('iphone') ||
+    normalizedUserAgent.includes('ipad')
+  ) {
+    return 'ios';
+  }
+
+  if (
+    normalizedUserAgent.includes('mac os x') ||
+    normalizedUserAgent.includes('macos')
+  ) {
     return 'mac';
   }
 
-  if (userAgent.includes('windows')) {
+  if (normalizedUserAgent.includes('windows')) {
     return 'windows';
   }
 
-  if (userAgent.includes('linux')) {
-    return 'linux';
+  if (normalizedUserAgent.includes('android')) {
+    return 'android';
   }
 
-  if (userAgent.includes('android')) return 'android';
-
-  if (
-    userAgent.includes('ios') ||
-    userAgent.includes('iphone') ||
-    userAgent.includes('ipad')
-  )
-    return 'ios';
+  if (normalizedUserAgent.includes('linux')) {
+    return 'linux';
+  }
 
   return 'unknown';
 };

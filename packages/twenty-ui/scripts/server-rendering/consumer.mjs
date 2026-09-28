@@ -32,7 +32,12 @@ const EDITOR_ENTRY = './components/code-editor';
 const includeEditor = process.argv.includes('--editor');
 
 if (process.argv.includes('--without-optional-peers')) {
-  for (const dependency of Object.keys(packageJson.peerDependenciesMeta)) {
+  const optionalPeerDependencies = Object.entries(
+    packageJson.peerDependenciesMeta,
+  )
+    .filter(([, { optional }]) => optional)
+    .map(([dependency]) => dependency);
+  for (const dependency of optionalPeerDependencies) {
     assert.throws(() => require.resolve(`${dependency}/package.json`), {
       code: 'MODULE_NOT_FOUND',
     });

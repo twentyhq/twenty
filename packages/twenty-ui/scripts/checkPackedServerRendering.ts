@@ -1,10 +1,14 @@
-import { spawnSync } from 'node:child_process';
+import { isString } from '@sniptt/guards';
+import { spawnSync, type StdioOptions } from 'node:child_process';
 import { copyFileSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import packageJson from '../package.json';
+import { runServerRenderingConsumer } from './server-rendering/runServerRenderingConsumer';
+
+type PackedArchive = { filename: string };
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const consumerDirectory = mkdtempSync(
@@ -12,38 +16,51 @@ const consumerDirectory = mkdtempSync(
 );
 const consumerPath = join(consumerDirectory, 'consumer.mjs');
 
-const run = ({
-  command,
-  arguments: commandArguments,
+const runNpm = ({
+  arguments: npmArguments,
   cwd = consumerDirectory,
+  stdio = 'inherit',
 }: {
-  command: string;
   arguments: string[];
   cwd?: string;
+  stdio?: StdioOptions;
 }) => {
-  const result = spawnSync(command, commandArguments, {
+  const result = spawnSync('npm', npmArguments, {
     cwd,
-    stdio: 'inherit',
+    encoding: 'utf8',
+    stdio,
   });
   if (result.status !== 0) {
     throw new Error(
-      `${command} failed with exit code ${result.status ?? 1}: ${result.error?.message ?? ''}`,
+      `npm ${npmArguments[0]} failed (${result.signal ?? `exit code ${result.status}`}): ${result.error?.message ?? ''}`,
     );
   }
+  return result.stdout;
+};
+
+const packArchive = () => {
+  const packedArchives: PackedArchive[] = JSON.parse(
+    runNpm({
+      arguments: [
+        'pack',
+        '--ignore-scripts',
+        '--json',
+        '--pack-destination',
+        consumerDirectory,
+      ],
+      cwd: packageRoot,
+      stdio: ['ignore', 'pipe', 'inherit'],
+    }),
+  );
+  const archiveName = packedArchives[0]?.filename;
+  if (!isString(archiveName)) {
+    throw new Error('npm pack did not report an archive');
+  }
+  return archiveName;
 };
 
 try {
-  run({
-    command: 'npm',
-    arguments: [
-      'pack',
-      '--ignore-scripts',
-      '--pack-destination',
-      consumerDirectory,
-    ],
-    cwd: packageRoot,
-  });
-  const archiveName = `${packageJson.name}-${packageJson.version}.tgz`;
+  const archiveName = packArchive();
   writeFileSync(
     join(consumerDirectory, 'package.json'),
     JSON.stringify(
@@ -65,8 +82,7 @@ try {
     join(packageRoot, 'scripts/server-rendering/consumer.mjs'),
     consumerPath,
   );
-  run({
-    command: 'npm',
+  runNpm({
     arguments: [
       'install',
       '--ignore-scripts',
@@ -75,14 +91,11 @@ try {
       '--no-fund',
     ],
   });
-  for (const moduleFormat of ['esm', 'commonjs']) {
-    run({
-      command: process.execPath,
-      arguments: [consumerPath, moduleFormat, '--without-optional-peers'],
-    });
-  }
-  run({
-    command: 'npm',
+  runServerRenderingConsumer({
+    consumerPath,
+    flags: ['--without-optional-peers'],
+  });
+  runNpm({
     arguments: [
       'install',
       '--ignore-scripts',
@@ -90,15 +103,10 @@ try {
       '--no-audit',
       '--no-fund',
       `@monaco-editor/react@${packageJson.peerDependencies['@monaco-editor/react']}`,
-      `monaco-editor@${packageJson.devDependencies['monaco-editor']}`,
+      `monaco-editor@${packageJson.peerDependencies['monaco-editor']}`,
     ],
   });
-  for (const moduleFormat of ['esm', 'commonjs']) {
-    run({
-      command: process.execPath,
-      arguments: [consumerPath, moduleFormat, '--editor'],
-    });
-  }
+  runServerRenderingConsumer({ consumerPath, flags: ['--editor'] });
 } finally {
   rmSync(consumerDirectory, { recursive: true, force: true });
 }
