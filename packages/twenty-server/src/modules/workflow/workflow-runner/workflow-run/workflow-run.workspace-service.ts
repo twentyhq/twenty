@@ -282,8 +282,9 @@ export class WorkflowRunWorkspaceService {
 
   // A step waiting on a person must move on exactly once. This shares the lock
   // every step-info write takes, so of two concurrent callers the second finds
-  // the step no longer PENDING, and endWorkflowRun turns a pending step into
-  // FAILED, so a caller racing a stop is refused as well.
+  // the step no longer PENDING. A stop is refused too: endWorkflowRun turns a
+  // pending step into FAILED, and a stop still waiting on another branch
+  // leaves the run STOPPING with the step PENDING but nothing left to resume.
   @WithLock('workflowRunId')
   async updateStepInfoIfPending({
     stepId,
@@ -303,7 +304,10 @@ export class WorkflowRunWorkspaceService {
 
     const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
 
-    if (currentStepInfo?.status !== StepStatus.PENDING) {
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
+      currentStepInfo?.status !== StepStatus.PENDING
+    ) {
       return false;
     }
 
