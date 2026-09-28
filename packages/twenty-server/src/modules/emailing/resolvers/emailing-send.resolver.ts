@@ -28,10 +28,7 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
@@ -46,7 +43,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 
 @UseGuards(
   WorkspaceAuthGuard,
-  FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
 @UseFilters(
@@ -72,7 +68,7 @@ export class EmailingSendResolver {
   ) {}
 
   @Mutation(() => SendMessageCampaignOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
+  @UseGuards(FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED))
   async sendMessageCampaign(
     @Args('input') input: SendMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -113,7 +109,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => CancelMessageCampaignOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
+  @UseGuards(FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED))
   async cancelMessageCampaign(
     @Args('input') input: CancelMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -129,7 +125,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
+  @UseGuards(FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED))
   async sendMessageCampaignTest(
     @Args('input') input: SendMessageCampaignTestInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -161,7 +157,7 @@ export class EmailingSendResolver {
   }
 
   @Query(() => CampaignAudiencePreviewDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
+  @UseGuards(FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED))
   async previewMessageCampaignAudience(
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
