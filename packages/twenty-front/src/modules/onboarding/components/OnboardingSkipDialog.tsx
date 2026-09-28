@@ -97,17 +97,8 @@ export const OnboardingSkipDialog = ({
     />
   );
 
-  const [firstAction] = actions;
-
   return (
-    <DialogInstance
-      dialogId={dialogId}
-      dismissible
-      onEnter={
-        isDefined(firstAction) ? () => runAction(firstAction) : undefined
-      }
-      renderInDocumentBody
-    >
+    <DialogInstance dialogId={dialogId} dismissible renderInDocumentBody>
       {({ container, backdrop, viewportProps, onKeyDown }) => (
         <StyledPopup
           {...{ container, backdrop, viewportProps, onKeyDown, finalFocus }}

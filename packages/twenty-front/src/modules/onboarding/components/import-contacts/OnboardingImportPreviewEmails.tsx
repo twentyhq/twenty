@@ -10,6 +10,7 @@ import {
   IMPORT_CONTACTS_PREVIEW_EMAILS,
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const EMAIL_ROW_HEIGHT = 32;
@@ -190,7 +191,7 @@ const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (
     >
       {email.sender}
     </StyledEmailSender>
-    {email.subject !== undefined && (
+    {isDefined(email.subject) && (
       <StyledEmailSubject>{email.subject}</StyledEmailSubject>
     )}
   </StyledEmailRow>

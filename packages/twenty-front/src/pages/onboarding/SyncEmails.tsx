@@ -35,10 +35,9 @@ export const SyncEmails = () => {
   const { openDialog } = useDialog();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const currentUser = useAtomStateValue(currentUserState);
-  const importContactsCreditsReward =
-    currentUser?.isWorkspaceCreator === true
-      ? (onboardingConfig?.importContactsCreditsReward ?? 0)
-      : 0;
+  const importContactsCreditsReward = currentUser?.isWorkspaceCreator
+    ? (onboardingConfig?.importContactsCreditsReward ?? 0)
+    : 0;
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
