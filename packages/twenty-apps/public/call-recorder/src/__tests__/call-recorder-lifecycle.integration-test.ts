@@ -317,6 +317,7 @@ class FakeRecallApi {
   hasExpiredMedia = false;
   failNextDelete = false;
   failCalendarEventUpdates = false;
+  failCallRecordingReads = false;
   failRecallRemovals = false;
 
   seedBot(bot: FakeRecallBot): void {
@@ -477,6 +478,14 @@ class FakeRecallApi {
       this.failCalendarEventUpdates &&
       requestUrl === `${process.env.TWENTY_API_URL}/graphql` &&
       String(requestInit?.body ?? '').includes('updateCalendarEvents')
+    ) {
+      return jsonResponse(500, { errors: [{ message: 'Internal error' }] });
+    }
+
+    if (
+      this.failCallRecordingReads &&
+      requestUrl === `${process.env.TWENTY_API_URL}/graphql` &&
+      String(requestInit?.body ?? '').includes('callRecordings')
     ) {
       return jsonResponse(500, { errors: [{ message: 'Internal error' }] });
     }
@@ -1174,6 +1183,26 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventIds: [calendarEventId],
       });
 
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toEqual([]);
+    });
+
+    it('asks the queue to redeliver a batch whose reads fail, before writing anything', async () => {
+      const calendarEventId = await createCalendarEvent();
+
+      recall.failCallRecordingReads = true;
+
+      await expect(
+        deliverCalendarEventUpdates({
+          calendarEventId,
+          updatedFields: ['title'],
+          before: { title: 'Customer Sync' },
+          after: { title: 'Customer Sync (renamed)' },
+        }),
+      ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },

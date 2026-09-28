@@ -78,16 +78,6 @@ const handler = async (
     calendarEventIds,
     removedOccurrences: reconciliationPayload.removedOccurrences,
   });
-  const failedReconciliationCount = reconciliationResults.filter(
-    (reconciliationResult) => reconciliationResult.action === 'FAILED',
-  ).length;
-
-  if (failedReconciliationCount > 0) {
-    throw buildRetryableStepFailure(
-      'calendar event batch reconciliation',
-      `${failedReconciliationCount} of ${reconciliationResults.length} meetings failed`,
-    );
-  }
 
   return {
     reconciled: true,
