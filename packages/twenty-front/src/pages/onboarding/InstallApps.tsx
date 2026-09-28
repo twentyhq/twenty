@@ -46,7 +46,13 @@ export const InstallApps = () => {
 
   useOnboardingStepEnterHotkey({
     focusId: PageFocusId.InstallApps,
-    onEnter: () => void installSelectedAppsAndContinue(),
+    onEnter: () => {
+      if (isLoading) {
+        return;
+      }
+
+      void installSelectedAppsAndContinue();
+    },
   });
 
   const handleAutoSkipError = useCallback(() => {
