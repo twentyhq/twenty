@@ -989,7 +989,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 1_000_000;
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 2_500_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
@@ -1101,7 +1101,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsInt()
   @IsOptional()
-  ONBOARDING_INVITE_TEAM_MAX_INVITES = 10;
+  ONBOARDING_INVITE_TEAM_MAX_INVITES = 5;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
