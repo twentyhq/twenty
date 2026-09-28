@@ -2,6 +2,7 @@ import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
@@ -40,7 +41,8 @@ describe('AgentChatPrepromptEffect', () => {
       AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     );
     jotaiStore.set(agentChatPrepromptState.atom, {
-      text: 'What can you do?',
+      serializedDocument:
+        serializePlainTextAsAdvancedTextEditorDocument('What can you do?'),
       mode: 'SEND',
     });
 
@@ -61,7 +63,9 @@ describe('AgentChatPrepromptEffect', () => {
       AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     );
     jotaiStore.set(agentChatPrepromptState.atom, {
-      text: 'Create a workflow that ',
+      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
+        'Create a workflow that ',
+      ),
       mode: 'PREFILL',
     });
 

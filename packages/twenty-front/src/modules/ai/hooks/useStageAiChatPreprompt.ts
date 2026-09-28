@@ -15,6 +15,22 @@ export const useStageAiChatPreprompt = () => {
   );
   const setAgentChatPreprompt = useSetAtomState(agentChatPrepromptState);
 
+  const stageAiChatPrepromptDocument = ({
+    serializedDocument,
+    mode,
+    draftKey,
+  }: {
+    serializedDocument: string;
+    mode: AgentChatPrepromptMode;
+    draftKey: string;
+  }) => {
+    setAgentChatDraftsByThreadId((previousDrafts) => ({
+      ...previousDrafts,
+      [draftKey]: serializedDocument,
+    }));
+    setAgentChatPreprompt({ serializedDocument, mode });
+  };
+
   const stageAiChatPreprompt = ({
     text,
     mode,
@@ -23,13 +39,12 @@ export const useStageAiChatPreprompt = () => {
     text: string;
     mode: AgentChatPrepromptMode;
     draftKey: string;
-  }) => {
-    setAgentChatDraftsByThreadId((previousDrafts) => ({
-      ...previousDrafts,
-      [draftKey]: serializePlainTextAsAdvancedTextEditorDocument(text),
-    }));
-    setAgentChatPreprompt({ text, mode });
-  };
+  }) =>
+    stageAiChatPrepromptDocument({
+      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(text),
+      mode,
+      draftKey,
+    });
 
-  return { stageAiChatPreprompt };
+  return { stageAiChatPreprompt, stageAiChatPrepromptDocument };
 };
