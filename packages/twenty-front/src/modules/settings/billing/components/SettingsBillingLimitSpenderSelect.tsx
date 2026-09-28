@@ -19,6 +19,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -74,6 +75,7 @@ export const SettingsBillingLimitSpenderSelect = ({
   const workspaceAvatarUrl = getAbsoluteImageUrl(
     currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
   );
+  const workspaceAvatarColorSeed = getWorkspaceAvatarColorSeed(workspaceName);
 
   const resetNavigation = () => setBrowsedSpenderType(null);
 
@@ -110,6 +112,7 @@ export const SettingsBillingLimitSpenderSelect = ({
       return (
         <Avatar
           name={workspaceName}
+          colorSeed={workspaceAvatarColorSeed}
           src={workspaceAvatarUrl}
           shape="square"
           size="md"
@@ -251,6 +254,7 @@ export const SettingsBillingLimitSpenderSelect = ({
             startIcon={
               <Avatar
                 name={workspaceName}
+                colorSeed={workspaceAvatarColorSeed}
                 src={workspaceAvatarUrl}
                 shape="square"
                 size="md"
