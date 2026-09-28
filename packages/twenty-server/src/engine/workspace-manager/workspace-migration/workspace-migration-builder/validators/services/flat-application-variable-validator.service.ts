@@ -157,10 +157,6 @@ export class FlatApplicationVariableValidatorService {
     validationResult.errors.push(
       ...validateApplicationVariableScope({
         scope: flatEntityUpdate.scope ?? fromFlatApplicationVariable.scope,
-        isSecret:
-          flatEntityUpdate.isSecret ?? fromFlatApplicationVariable.isSecret,
-        isRequired:
-          flatEntityUpdate.isRequired ?? fromFlatApplicationVariable.isRequired,
       }),
     );
 

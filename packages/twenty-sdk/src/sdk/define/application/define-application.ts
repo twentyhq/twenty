@@ -61,18 +61,6 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
         )})`,
       );
     }
-
-    if (variable.scope === 'USER' && variable.isSecret) {
-      errors.push(
-        `Application variable "${variableName}" is a user variable and cannot be secret`,
-      );
-    }
-
-    if (variable.scope === 'USER' && variable.isRequired) {
-      errors.push(
-        `Application variable "${variableName}" is a user variable and cannot be required`,
-      );
-    }
   }
 
   const billableOperations = config.billing?.operations ?? {};
