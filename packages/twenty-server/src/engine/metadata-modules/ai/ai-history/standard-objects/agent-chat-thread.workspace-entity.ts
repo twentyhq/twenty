@@ -16,6 +16,7 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
 
   archivedAt: string | null;
   userWorkspaceId: string;
+
   workspaceMemberId: string | null;
   title: string | null;
   totalInputTokens: number;
