@@ -16,7 +16,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
-import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options.constant';
+import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
 import { buildOnboardingInviteTeamRewardLockKey } from 'src/engine/core-modules/onboarding/utils/build-onboarding-invite-team-reward-lock-key.util';
