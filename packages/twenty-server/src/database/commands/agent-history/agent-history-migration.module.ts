@@ -1,10 +1,10 @@
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
 import { AgentHistoryCleanupCommand } from 'src/database/commands/agent-history/agent-history-cleanup.command';
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { AgentHistoryMigrateCommand } from 'src/database/commands/agent-history/agent-history-migrate.command';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
@@ -14,6 +14,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   exports: [
+    AgentHistoryUpgradeStorageService,
     AgentHistorySchemaService,
     AgentHistoryMigrationService,
     AgentHistoryMigrationStateService,
@@ -25,8 +26,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AgentHistoryUpgradeStorageService,
     AgentHistoryCleanupCommand,
-    AgentHistoryMigrateCommand,
     AgentHistoryMigrationService,
     AgentHistoryMigrationStateService,
     AgentHistoryMigrationDataService,
