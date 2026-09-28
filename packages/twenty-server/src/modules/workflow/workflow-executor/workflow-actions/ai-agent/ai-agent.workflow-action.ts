@@ -164,7 +164,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       })
       .catch(async (error: unknown) => {
-        await recordConversation();
+        if (isDefined(resumedThreadId)) {
+          await recordConversation();
+        }
         throw error;
       });
 
@@ -172,11 +174,17 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     // A step that runs out of credits fails even if its agent asked something,
     // so its question must not be left open as though the run waited for it.
-    const recordedConversation = await recordConversation(
-      executionResult.hasNoMoreAvailableCredits
-        ? { ...executionResult, isPaused: false }
-        : executionResult,
-    );
+    const conversationResult = executionResult.hasNoMoreAvailableCredits
+      ? { ...executionResult, isPaused: false }
+      : executionResult;
+
+    // A conversation only exists to be answered in: an execution that never
+    // asks keeps its step log as its record, which saves a thread per
+    // execution for agents running in loops or on busy triggers.
+    const recordedConversation =
+      isDefined(resumedThreadId) || conversationResult.isPaused === true
+        ? await recordConversation(conversationResult)
+        : null;
 
     await this.persistStepLog({
       workflowRunId: runInfo.workflowRunId,

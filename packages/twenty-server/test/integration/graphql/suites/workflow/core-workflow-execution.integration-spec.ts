@@ -1015,6 +1015,36 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           },
         });
 
+    it('records no conversation for an agent that answers without asking', async () => {
+      jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(replyingResult);
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+      const runId = await runFixture(fixture);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(run.state.stepInfos[agent.id].threadId).toBeUndefined();
+
+      const threads = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."agentChatThread" WHERE "workflowRunId" = $1`,
+        [runId],
+      );
+
+      expect(threads).toEqual([]);
+    });
+
     it('pauses the run on the question and resumes the same conversation with the answer', async () => {
       const executeAgent = mockAgent();
       const { runId, agent, finalStep, threadId, questionMessageId } =
