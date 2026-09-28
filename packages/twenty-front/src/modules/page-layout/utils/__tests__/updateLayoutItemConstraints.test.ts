@@ -85,10 +85,10 @@ describe('updateLayoutItemConstraints', () => {
       minH: 6,
     });
 
-    expect(result.desktop?.[0].minW).toBe(5);
-    expect(result.desktop?.[0].minH).toBe(6);
-    expect(result.mobile?.[0].minW).toBe(5);
-    expect(result.mobile?.[0].minH).toBe(6);
+    expect(result.desktop?.[0]?.minW).toBe(5);
+    expect(result.desktop?.[0]?.minH).toBe(6);
+    expect(result.mobile?.[0]?.minW).toBe(5);
+    expect(result.mobile?.[0]?.minH).toBe(6);
   });
 
   it('should not modify layouts when layout item does not exist', () => {
@@ -117,8 +117,8 @@ describe('updateLayoutItemConstraints', () => {
     });
 
     expect(result.desktop).toBeUndefined();
-    expect(result.mobile?.[0].minW).toBe(3);
-    expect(result.mobile?.[0].minH).toBe(3);
+    expect(result.mobile?.[0]?.minW).toBe(3);
+    expect(result.mobile?.[0]?.minH).toBe(3);
   });
 
   it('should handle undefined mobile layout', () => {
@@ -131,8 +131,8 @@ describe('updateLayoutItemConstraints', () => {
       minH: 5,
     });
 
-    expect(result.desktop?.[0].minW).toBe(4);
-    expect(result.desktop?.[0].minH).toBe(5);
+    expect(result.desktop?.[0]?.minW).toBe(4);
+    expect(result.desktop?.[0]?.minH).toBe(5);
     expect(result.mobile).toBeUndefined();
   });
 
@@ -196,12 +196,12 @@ describe('updateLayoutItemConstraints', () => {
       minH: 4,
     });
 
-    expect(result.desktop?.[0].minW).toBe(2);
-    expect(result.desktop?.[0].minH).toBe(2);
-    expect(result.desktop?.[1].minW).toBe(6);
-    expect(result.desktop?.[1].minH).toBe(4);
-    expect(result.desktop?.[2].minW).toBe(3);
-    expect(result.desktop?.[2].minH).toBe(1);
+    expect(result.desktop?.[0]?.minW).toBe(2);
+    expect(result.desktop?.[0]?.minH).toBe(2);
+    expect(result.desktop?.[1]?.minW).toBe(6);
+    expect(result.desktop?.[1]?.minH).toBe(4);
+    expect(result.desktop?.[2]?.minW).toBe(3);
+    expect(result.desktop?.[2]?.minH).toBe(1);
   });
 
   it('should handle constraints with zero values', () => {
@@ -214,7 +214,7 @@ describe('updateLayoutItemConstraints', () => {
       minH: 0,
     });
 
-    expect(result.desktop?.[0].minW).toBe(0);
-    expect(result.desktop?.[0].minH).toBe(0);
+    expect(result.desktop?.[0]?.minW).toBe(0);
+    expect(result.desktop?.[0]?.minH).toBe(0);
   });
 });

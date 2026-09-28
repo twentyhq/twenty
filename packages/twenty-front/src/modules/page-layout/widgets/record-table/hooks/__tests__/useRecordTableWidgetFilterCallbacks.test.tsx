@@ -79,7 +79,7 @@ describe('useRecordTableWidgetFilterCallbacks', () => {
       }),
     );
 
-    expect(updatedDraft[WIDGET_ID].viewFilters).toEqual([
+    expect(updatedDraft[WIDGET_ID]?.viewFilters).toEqual([
       expect.objectContaining({
         id: relationTraversalRecordFilter.id,
         fieldMetadataId: SOURCE_FIELD_METADATA_ID,
@@ -131,7 +131,7 @@ describe('useRecordTableWidgetFilterCallbacks', () => {
       }),
     );
 
-    expect(updatedDraft[WIDGET_ID].viewFilters).toEqual([
+    expect(updatedDraft[WIDGET_ID]?.viewFilters).toEqual([
       expect.objectContaining({
         fieldMetadataId: SOURCE_FIELD_METADATA_ID,
         relationTargetFieldMetadataId: null,

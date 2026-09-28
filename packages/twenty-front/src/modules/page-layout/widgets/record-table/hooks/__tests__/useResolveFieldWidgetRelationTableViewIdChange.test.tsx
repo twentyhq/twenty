@@ -91,7 +91,7 @@ describe('useResolveFieldWidgetRelationTableViewIdChange', () => {
       }),
     );
 
-    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+    expect(draft[WIDGET_ID]?.view.objectMetadataId).toBe(
       opportunityObjectMetadataItem.id,
     );
   });
@@ -120,10 +120,10 @@ describe('useResolveFieldWidgetRelationTableViewIdChange', () => {
       }),
     );
 
-    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+    expect(draft[WIDGET_ID]?.view.objectMetadataId).toBe(
       opportunityObjectMetadataItem.id,
     );
-    expect(draft[WIDGET_ID].viewFilters).toEqual([
+    expect(draft[WIDGET_ID]?.viewFilters).toEqual([
       expect.objectContaining({
         fieldMetadataId:
           companyOpportunitiesField?.relation?.targetFieldMetadata.id,
@@ -155,10 +155,10 @@ describe('useResolveFieldWidgetRelationTableViewIdChange', () => {
       }),
     );
 
-    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+    expect(draft[WIDGET_ID]?.view.objectMetadataId).toBe(
       companyObjectMetadataItem.id,
     );
-    expect(draft[WIDGET_ID].viewFilters).toEqual([
+    expect(draft[WIDGET_ID]?.viewFilters).toEqual([
       expect.objectContaining({
         fieldMetadataId: companyPreviousEmployeesField?.id,
         relationTargetFieldMetadataId: employmentHistoryPersonField?.id,

@@ -33,13 +33,13 @@ describe('computeBarChartStackedLabels', () => {
     const result = computeBarChartStackedLabels(bars);
 
     expect(result).toHaveLength(1);
-    expect(result[0].key).toBe('total-Jan');
-    expect(result[0].value).toBe(175);
-    expect(result[0].verticalX).toBeCloseTo(65, 1);
-    expect(result[0].verticalY).toBe(50);
-    expect(result[0].horizontalX).toBe(80);
-    expect(result[0].horizontalY).toBeCloseTo(158.33, 1);
-    expect(result[0].shouldRenderBelow).toBe(false);
+    expect(result[0]?.key).toBe('total-Jan');
+    expect(result[0]?.value).toBe(175);
+    expect(result[0]?.verticalX).toBeCloseTo(65, 1);
+    expect(result[0]?.verticalY).toBe(50);
+    expect(result[0]?.horizontalX).toBe(80);
+    expect(result[0]?.horizontalY).toBeCloseTo(158.33, 1);
+    expect(result[0]?.shouldRenderBelow).toBe(false);
   });
 
   it('returns total for single index with all negative values', () => {
@@ -52,13 +52,13 @@ describe('computeBarChartStackedLabels', () => {
     const result = computeBarChartStackedLabels(bars);
 
     expect(result).toHaveLength(1);
-    expect(result[0].key).toBe('total-Jan');
-    expect(result[0].value).toBe(-175);
-    expect(result[0].verticalX).toBeCloseTo(65, 1);
-    expect(result[0].verticalY).toBe(625);
-    expect(result[0].horizontalX).toBe(50);
-    expect(result[0].horizontalY).toBeCloseTo(533.33, 1);
-    expect(result[0].shouldRenderBelow).toBe(true);
+    expect(result[0]?.key).toBe('total-Jan');
+    expect(result[0]?.value).toBe(-175);
+    expect(result[0]?.verticalX).toBeCloseTo(65, 1);
+    expect(result[0]?.verticalY).toBe(625);
+    expect(result[0]?.horizontalX).toBe(50);
+    expect(result[0]?.horizontalY).toBeCloseTo(533.33, 1);
+    expect(result[0]?.shouldRenderBelow).toBe(true);
   });
 
   it('returns total for single index with mixed positive/negative (net positive)', () => {
@@ -71,13 +71,13 @@ describe('computeBarChartStackedLabels', () => {
     const result = computeBarChartStackedLabels(bars);
 
     expect(result).toHaveLength(1);
-    expect(result[0].key).toBe('total-Jan');
-    expect(result[0].value).toBe(90);
-    expect(result[0].verticalX).toBeCloseTo(65, 1);
-    expect(result[0].verticalY).toBe(200);
-    expect(result[0].horizontalX).toBe(80);
-    expect(result[0].horizontalY).toBeCloseTo(310, 1);
-    expect(result[0].shouldRenderBelow).toBe(false);
+    expect(result[0]?.key).toBe('total-Jan');
+    expect(result[0]?.value).toBe(90);
+    expect(result[0]?.verticalX).toBeCloseTo(65, 1);
+    expect(result[0]?.verticalY).toBe(200);
+    expect(result[0]?.horizontalX).toBe(80);
+    expect(result[0]?.horizontalY).toBeCloseTo(310, 1);
+    expect(result[0]?.shouldRenderBelow).toBe(false);
   });
 
   it('returns total for single index with mixed positive/negative (net negative)', () => {
@@ -90,13 +90,13 @@ describe('computeBarChartStackedLabels', () => {
     const result = computeBarChartStackedLabels(bars);
 
     expect(result).toHaveLength(1);
-    expect(result[0].key).toBe('total-Jan');
-    expect(result[0].value).toBe(-50);
-    expect(result[0].verticalX).toBeCloseTo(65, 1);
-    expect(result[0].verticalY).toBe(500);
-    expect(result[0].horizontalX).toBe(50);
-    expect(result[0].horizontalY).toBeCloseTo(353.33, 1);
-    expect(result[0].shouldRenderBelow).toBe(true);
+    expect(result[0]?.key).toBe('total-Jan');
+    expect(result[0]?.value).toBe(-50);
+    expect(result[0]?.verticalX).toBeCloseTo(65, 1);
+    expect(result[0]?.verticalY).toBe(500);
+    expect(result[0]?.horizontalX).toBe(50);
+    expect(result[0]?.horizontalY).toBeCloseTo(353.33, 1);
+    expect(result[0]?.shouldRenderBelow).toBe(true);
   });
 
   it('returns multiple totals for multiple indices', () => {
@@ -183,13 +183,13 @@ describe('computeBarChartStackedLabels', () => {
     const result = computeBarChartStackedLabels(bars);
 
     expect(result).toHaveLength(1);
-    expect(result[0].key).toBe('total-Jan');
-    expect(result[0].value).toBe(0);
-    expect(result[0].verticalX).toBeCloseTo(65, 1);
-    expect(result[0].verticalY).toBe(200);
-    expect(result[0].horizontalX).toBe(80);
-    expect(result[0].horizontalY).toBeCloseTo(333.33, 1);
-    expect(result[0].shouldRenderBelow).toBe(false);
+    expect(result[0]?.key).toBe('total-Jan');
+    expect(result[0]?.value).toBe(0);
+    expect(result[0]?.verticalX).toBeCloseTo(65, 1);
+    expect(result[0]?.verticalY).toBe(200);
+    expect(result[0]?.horizontalX).toBe(80);
+    expect(result[0]?.horizontalY).toBeCloseTo(333.33, 1);
+    expect(result[0]?.shouldRenderBelow).toBe(false);
   });
 
   it('handles empty bars array', () => {
@@ -206,7 +206,7 @@ describe('computeBarChartStackedLabels', () => {
 
     const result = computeBarChartStackedLabels(bars);
 
-    expect(result[0].verticalY).toBe(150);
+    expect(result[0]?.verticalY).toBe(150);
   });
 
   it('tracks maximum bottom Y position correctly for negative totals', () => {
@@ -218,7 +218,7 @@ describe('computeBarChartStackedLabels', () => {
 
     const result = computeBarChartStackedLabels(bars);
 
-    expect(result[0].verticalY).toBe(500);
+    expect(result[0]?.verticalY).toBe(500);
   });
 
   it('calculates center positions correctly', () => {
@@ -229,7 +229,7 @@ describe('computeBarChartStackedLabels', () => {
 
     const result = computeBarChartStackedLabels(bars);
 
-    expect(result[0].verticalX).toBe(70);
-    expect(result[0].horizontalX).toBe(90);
+    expect(result[0]?.verticalX).toBe(70);
+    expect(result[0]?.horizontalX).toBe(90);
   });
 });

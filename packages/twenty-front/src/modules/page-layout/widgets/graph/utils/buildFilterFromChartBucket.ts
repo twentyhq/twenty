@@ -133,11 +133,11 @@ export const buildFilterFromChartBucket = ({
     subFieldName: subFieldName ?? undefined,
   });
 
-  if (availableOperands.length === 0) {
+  const [operand] = availableOperands;
+
+  if (!isDefined(operand)) {
     return [];
   }
-
-  const operand = availableOperands[0];
 
   const value = serializeChartBucketValueForFilter({
     fieldType: fieldMetadataItem.type,

@@ -166,7 +166,7 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
         type: 'placeholder',
       });
       for (let i = 0; i < result.length - 1; i++) {
-        expect(result[i].type).toBe('widget');
+        expect(result[i]?.type).toBe('widget');
       }
     });
   });
@@ -177,11 +177,11 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
       const result = prepareGridLayoutItemsWithPlaceholders([widget], false);
 
       const item = result[0];
-      expect(item.type).toBe('widget');
+      expect(item?.type).toBe('widget');
       expect(item).toHaveProperty('widget');
-      expect(item.id).toBe(widget.id);
-      if (item.type === 'widget') {
-        expect(item.widget).toBe(widget);
+      expect(item?.id).toBe(widget.id);
+      if (item?.type === 'widget') {
+        expect(item?.widget).toBe(widget);
       }
     });
 
@@ -189,9 +189,9 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
       const result = prepareGridLayoutItemsWithPlaceholders(undefined, false);
 
       const item = result[0];
-      expect(item.type).toBe('placeholder');
+      expect(item?.type).toBe('placeholder');
       expect(item).not.toHaveProperty('widget');
-      expect(item.id).toBe('empty-placeholder');
+      expect(item?.id).toBe('empty-placeholder');
     });
 
     it('should set correct types for pending placeholder', () => {
@@ -199,17 +199,21 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
       const result = prepareGridLayoutItemsWithPlaceholders([widget], true);
 
       const pendingPlaceholder = result[1];
-      expect(pendingPlaceholder.type).toBe('placeholder');
+      expect(pendingPlaceholder?.type).toBe('placeholder');
       expect(pendingPlaceholder).not.toHaveProperty('widget');
-      expect(pendingPlaceholder.id).toBe(PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY);
+      expect(pendingPlaceholder?.id).toBe(
+        PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
+      );
     });
 
     it('should preserve all widget properties', () => {
       const widget = createMockWidget('widget-1');
       const result = prepareGridLayoutItemsWithPlaceholders([widget], false);
 
-      if (result[0].type === 'widget') {
-        const resultWidget = result[0].widget;
+      const firstResult = result[0];
+
+      if (firstResult?.type === 'widget') {
+        const resultWidget = firstResult.widget;
         expect(resultWidget.id).toBe(widget.id);
         expect(resultWidget.pageLayoutTabId).toBe(widget.pageLayoutTabId);
         expect(resultWidget.title).toBe(widget.title);

@@ -79,8 +79,8 @@ describe('buildFieldsWidgetGroupsFromFlatViewData', () => {
       expect(result.editorMode).toBe('ungrouped');
       expect(result.groups).toEqual([]);
       expect(result.ungroupedFields).toHaveLength(2);
-      expect(result.ungroupedFields[0].fieldMetadataItem.id).toBe('fm-1');
-      expect(result.ungroupedFields[1].fieldMetadataItem.id).toBe('fm-2');
+      expect(result.ungroupedFields[0]?.fieldMetadataItem.id).toBe('fm-1');
+      expect(result.ungroupedFields[1]?.fieldMetadataItem.id).toBe('fm-2');
     });
 
     it('should assign sequential globalIndex based on sorted position', () => {
@@ -105,10 +105,10 @@ describe('buildFieldsWidgetGroupsFromFlatViewData', () => {
         fieldMetadataItems: [fm1, fm2],
       });
 
-      expect(result.ungroupedFields[0].globalIndex).toBe(0);
-      expect(result.ungroupedFields[0].fieldMetadataItem.id).toBe('fm-2');
-      expect(result.ungroupedFields[1].globalIndex).toBe(1);
-      expect(result.ungroupedFields[1].fieldMetadataItem.id).toBe('fm-1');
+      expect(result.ungroupedFields[0]?.globalIndex).toBe(0);
+      expect(result.ungroupedFields[0]?.fieldMetadataItem.id).toBe('fm-2');
+      expect(result.ungroupedFields[1]?.globalIndex).toBe(1);
+      expect(result.ungroupedFields[1]?.fieldMetadataItem.id).toBe('fm-1');
     });
 
     it('should skip fields whose fieldMetadataId has no matching metadata', () => {
@@ -134,7 +134,7 @@ describe('buildFieldsWidgetGroupsFromFlatViewData', () => {
       });
 
       expect(result.ungroupedFields).toHaveLength(1);
-      expect(result.ungroupedFields[0].fieldMetadataItem.id).toBe('fm-1');
+      expect(result.ungroupedFields[0]?.fieldMetadataItem.id).toBe('fm-1');
     });
 
     it('should return empty ungroupedFields when there are no view fields', () => {
@@ -188,11 +188,11 @@ describe('buildFieldsWidgetGroupsFromFlatViewData', () => {
       expect(result.editorMode).toBe('grouped');
       expect(result.ungroupedFields).toEqual([]);
       expect(result.groups).toHaveLength(2);
-      expect(result.groups[0].name).toBe('General');
-      expect(result.groups[0].fields).toHaveLength(1);
-      expect(result.groups[0].fields[0].fieldMetadataItem.id).toBe('fm-1');
-      expect(result.groups[1].name).toBe('Details');
-      expect(result.groups[1].fields[0].fieldMetadataItem.id).toBe('fm-2');
+      expect(result.groups[0]?.name).toBe('General');
+      expect(result.groups[0]?.fields).toHaveLength(1);
+      expect(result.groups[0]?.fields[0]?.fieldMetadataItem.id).toBe('fm-1');
+      expect(result.groups[1]?.name).toBe('Details');
+      expect(result.groups[1]?.fields[0]?.fieldMetadataItem.id).toBe('fm-2');
     });
 
     it('should sort fields within each group by position', () => {
@@ -229,7 +229,7 @@ describe('buildFieldsWidgetGroupsFromFlatViewData', () => {
       });
 
       expect(
-        result.groups[0].fields.map((f) => f.fieldMetadataItem.id),
+        result.groups[0]?.fields.map((f) => f.fieldMetadataItem.id),
       ).toEqual(['fm-1', 'fm-2', 'fm-3']);
     });
 
@@ -259,7 +259,7 @@ describe('buildFieldsWidgetGroupsFromFlatViewData', () => {
         fieldMetadataItems: [fm1],
       });
 
-      expect(result.groups[0].fields).toHaveLength(1);
+      expect(result.groups[0]?.fields).toHaveLength(1);
     });
 
     it('should preserve group visibility in the output', () => {
@@ -275,7 +275,7 @@ describe('buildFieldsWidgetGroupsFromFlatViewData', () => {
         fieldMetadataItems: [],
       });
 
-      expect(result.groups[0].isVisible).toBe(false);
+      expect(result.groups[0]?.isVisible).toBe(false);
     });
   });
 });

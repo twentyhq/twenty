@@ -30,9 +30,9 @@ describe('interpolateBars', () => {
 
       const result = interpolateBars(sourceBars, targetBars, 1, toBaselineBar);
 
-      expect(result[0].y).toBe(50);
-      expect(result[0].height).toBe(100);
-      expect(result[0].value).toBe(50);
+      expect(result[0]?.y).toBe(50);
+      expect(result[0]?.height).toBe(100);
+      expect(result[0]?.value).toBe(50);
     });
 
     it('should return source bars when t = 0', () => {
@@ -41,9 +41,9 @@ describe('interpolateBars', () => {
 
       const result = interpolateBars(sourceBars, targetBars, 0, toBaselineBar);
 
-      expect(result[0].y).toBe(100);
-      expect(result[0].height).toBe(50);
-      expect(result[0].value).toBe(25);
+      expect(result[0]?.y).toBe(100);
+      expect(result[0]?.height).toBe(50);
+      expect(result[0]?.value).toBe(25);
     });
 
     it('should interpolate values at t = 0.5', () => {
@@ -57,10 +57,10 @@ describe('interpolateBars', () => {
         toBaselineBar,
       );
 
-      expect(result[0].y).toBeGreaterThan(0);
-      expect(result[0].y).toBeLessThan(100);
-      expect(result[0].height).toBeGreaterThan(0);
-      expect(result[0].height).toBeLessThan(100);
+      expect(result[0]?.y).toBeGreaterThan(0);
+      expect(result[0]?.y).toBeLessThan(100);
+      expect(result[0]?.height).toBeGreaterThan(0);
+      expect(result[0]?.height).toBeLessThan(100);
     });
   });
 
@@ -98,8 +98,8 @@ describe('interpolateBars', () => {
       );
 
       expect(result).toHaveLength(1);
-      expect(result[0].height).toBeGreaterThan(0);
-      expect(result[0].height).toBeLessThan(100);
+      expect(result[0]?.height).toBeGreaterThan(0);
+      expect(result[0]?.height).toBeLessThan(100);
     });
   });
 
@@ -116,8 +116,8 @@ describe('interpolateBars', () => {
       );
 
       expect(result).toHaveLength(1);
-      expect(result[0].height).toBeGreaterThan(0);
-      expect(result[0].height).toBeLessThan(100);
+      expect(result[0]?.height).toBeGreaterThan(0);
+      expect(result[0]?.height).toBeLessThan(100);
     });
   });
 
@@ -133,7 +133,7 @@ describe('interpolateBars', () => {
         toBaselineBar,
       );
 
-      expect(result[0].color).toBe('green');
+      expect(result[0]?.color).toBe('green');
     });
 
     it('should handle bars with different seriesIds as different bars', () => {

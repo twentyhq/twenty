@@ -40,7 +40,7 @@ const readPieNewValue = (cache: InMemoryCache, filter: string) =>
   cache.readQuery<{ pieChartData: { data: Array<{ value: number }> } }>({
     query: PIE_CHART_DATA,
     variables: variablesForFilter(filter),
-  })?.pieChartData.data[0].value;
+  })?.pieChartData.data[0]?.value;
 
 const writeLine = (cache: InMemoryCache, filter: string, y: number) => {
   cache.writeQuery({
@@ -74,7 +74,7 @@ const readLineFirstY = (cache: InMemoryCache, filter: string) =>
   }>({
     query: LINE_CHART_DATA,
     variables: variablesForFilter(filter),
-  })?.lineChartData.series[0].data[0].y;
+  })?.lineChartData.series[0]?.data[0]?.y;
 
 const hasNormalizedEntry = (cache: InMemoryCache, typename: string) =>
   Object.keys(cache.extract()).some((cacheKey) =>

@@ -22,6 +22,7 @@ import {
   type UpsertViewWidgetInput,
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const PAGE_LAYOUT_ID = 'page-layout-id';
 const WIDGET_ID = 'widget-id';
@@ -131,7 +132,10 @@ describe('useSaveRecordTableWidgetViews', () => {
 
     expect(upsertViewWidgetResult).toHaveBeenCalledTimes(1);
 
-    const { input } = upsertViewWidgetResult.mock.calls[0][0];
+    const [firstCall] = upsertViewWidgetResult.mock.calls;
+    assertIsDefinedOrThrow(firstCall);
+
+    const [{ input }] = firstCall;
 
     expect(input.widgetId).toBe(WIDGET_ID);
     expect(input.viewFilters).toEqual([
@@ -179,9 +183,12 @@ describe('useSaveRecordTableWidgetViews', () => {
 
     expect(upsertViewWidgetResult).toHaveBeenCalledTimes(1);
 
-    const { input } = upsertViewWidgetResult.mock.calls[0][0];
+    const [firstCall] = upsertViewWidgetResult.mock.calls;
+    assertIsDefinedOrThrow(firstCall);
 
-    expect(input.viewFilters?.[0].relationTargetFieldMetadataId).toBe(
+    const [{ input }] = firstCall;
+
+    expect(input.viewFilters?.[0]?.relationTargetFieldMetadataId).toBe(
       undefined,
     );
   });

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 
@@ -12,10 +14,9 @@ export const getAdjacentFitContentWidgetIndex = ({
   widgetIndex,
   direction,
 }: GetAdjacentFitContentWidgetIndexParams): number | undefined => {
-  if (
-    !(widgetIndex in widgets) ||
-    isViewportFillingWidget(widgets[widgetIndex])
-  ) {
+  const widget = widgets[widgetIndex];
+
+  if (!isDefined(widget) || isViewportFillingWidget(widget)) {
     return undefined;
   }
 

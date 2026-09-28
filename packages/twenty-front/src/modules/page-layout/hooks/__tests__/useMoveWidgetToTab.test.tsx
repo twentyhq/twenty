@@ -57,10 +57,10 @@ describe('useMoveWidgetToTab', () => {
 
     const draft = store.get(getDraftAtom());
 
-    const tab1WidgetIds = draft.tabs[0].widgets.map((w) => w.id);
+    const tab1WidgetIds = draft.tabs[0]?.widgets.map((w) => w.id);
     expect(tab1WidgetIds).toEqual(['widget-b']);
 
-    const tab2WidgetIds = draft.tabs[1].widgets.map((w) => w.id);
+    const tab2WidgetIds = draft.tabs[1]?.widgets.map((w) => w.id);
     expect(tab2WidgetIds).toEqual(['widget-x', 'widget-a']);
   });
 
@@ -91,7 +91,7 @@ describe('useMoveWidgetToTab', () => {
 
     const draft = store.get(getDraftAtom());
 
-    const tab1Positions = draft.tabs[0].widgets.map((w) => {
+    const tab1Positions = draft.tabs[0]?.widgets.map((w) => {
       if (w.position && 'index' in w.position) {
         return w.position.index;
       }
@@ -127,7 +127,7 @@ describe('useMoveWidgetToTab', () => {
     });
 
     const draft = store.get(getDraftAtom());
-    const movedWidget = draft.tabs[1].widgets.find((w) => w.id === 'widget-a');
+    const movedWidget = draft.tabs[1]?.widgets.find((w) => w.id === 'widget-a');
 
     expect(movedWidget?.position).toEqual(
       expect.objectContaining({ index: 2 }),

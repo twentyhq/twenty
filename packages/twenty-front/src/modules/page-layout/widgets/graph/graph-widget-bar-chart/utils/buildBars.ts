@@ -3,6 +3,7 @@ import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graph-widg
 import { type BarPosition } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarPosition';
 import { type BarPositionContext } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/computeBarPositionContext';
 import { isNumber } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 type StackState = {
   positiveStackPixel: number;
@@ -47,6 +48,11 @@ export const buildBars = ({
 
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];
+
+    if (!isDefined(dataPoint)) {
+      continue;
+    }
+
     const indexValue = String(dataPoint[indexBy]);
     const effectiveIndex = isVertical ? dataIndex : dataLength - 1 - dataIndex;
     const categoryStart = outerPadding + effectiveIndex * categoryStep;
@@ -58,6 +64,11 @@ export const buildBars = ({
 
     for (let keyIndex = 0; keyIndex < keysLength; keyIndex++) {
       const key = keys[keyIndex];
+
+      if (!isDefined(key)) {
+        continue;
+      }
+
       const rawValue = dataPoint[key];
 
       if (!isNumber(rawValue) || (!includeZeroValues && rawValue === 0)) {

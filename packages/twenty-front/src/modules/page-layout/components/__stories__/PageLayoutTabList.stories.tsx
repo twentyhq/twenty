@@ -21,6 +21,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ containerWidth: number }>`
   border: 1px solid ${themeCssVariables.border.color.strong};
@@ -283,6 +284,7 @@ export const IdentifierBarNarrow: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     const [moreButton] = await canvas.findAllByRole('button', { name: /More/ });
+    assertIsDefinedOrThrow(moreButton);
 
     await userEvent.click(moreButton);
     await userEvent.click(await body.findByRole('option', { name: 'Revenue' }));

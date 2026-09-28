@@ -56,13 +56,13 @@ describe('useCreatePageLayoutTab', () => {
     });
 
     expect(result.current.pageLayoutDraft.tabs).toHaveLength(1);
-    expect(result.current.pageLayoutDraft.tabs[0].id).toBe('mock-uuid');
-    expect(result.current.pageLayoutDraft.tabs[0].title).toBe('Tab 1');
-    expect(result.current.pageLayoutDraft.tabs[0].position).toBe(0);
-    expect(result.current.pageLayoutDraft.tabs[0].layoutMode).toBe(
+    expect(result.current.pageLayoutDraft.tabs[0]?.id).toBe('mock-uuid');
+    expect(result.current.pageLayoutDraft.tabs[0]?.title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[0]?.position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0]?.layoutMode).toBe(
       PageLayoutTabLayoutMode.GRID,
     );
-    expect(result.current.pageLayoutDraft.tabs[0].widgets).toEqual([]);
+    expect(result.current.pageLayoutDraft.tabs[0]?.widgets).toEqual([]);
 
     expect(result.current.pageLayoutCurrentLayouts['mock-uuid']).toEqual({
       desktop: [],
@@ -96,7 +96,7 @@ describe('useCreatePageLayoutTab', () => {
       result.current.createTab.createPageLayoutTab('Custom Tab Name');
     });
 
-    expect(result.current.pageLayoutDraft.tabs[0].title).toBe(
+    expect(result.current.pageLayoutDraft.tabs[0]?.title).toBe(
       'Custom Tab Name',
     );
   });
@@ -134,12 +134,12 @@ describe('useCreatePageLayoutTab', () => {
     });
 
     expect(result.current.pageLayoutDraft.tabs).toHaveLength(2);
-    expect(result.current.pageLayoutDraft.tabs[0].id).toBe('mock-uuid-1');
-    expect(result.current.pageLayoutDraft.tabs[0].position).toBe(0);
-    expect(result.current.pageLayoutDraft.tabs[0].title).toBe('Tab 1');
-    expect(result.current.pageLayoutDraft.tabs[1].id).toBe('mock-uuid-2');
-    expect(result.current.pageLayoutDraft.tabs[1].position).toBe(1);
-    expect(result.current.pageLayoutDraft.tabs[1].title).toBe('Tab 2');
+    expect(result.current.pageLayoutDraft.tabs[0]?.id).toBe('mock-uuid-1');
+    expect(result.current.pageLayoutDraft.tabs[0]?.position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0]?.title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[1]?.id).toBe('mock-uuid-2');
+    expect(result.current.pageLayoutDraft.tabs[1]?.position).toBe(1);
+    expect(result.current.pageLayoutDraft.tabs[1]?.title).toBe('Tab 2');
   });
 
   it('should default icon to IconPerspective for new RECORD_PAGE tabs', () => {
@@ -184,7 +184,9 @@ describe('useCreatePageLayoutTab', () => {
       result.current.createTab.createPageLayoutTab();
     });
 
-    expect(result.current.pageLayoutDraft.tabs[0].icon).toBe('IconPerspective');
+    expect(result.current.pageLayoutDraft.tabs[0]?.icon).toBe(
+      'IconPerspective',
+    );
   });
 
   it('should leave icon as null for new DASHBOARD tabs', () => {
@@ -213,7 +215,7 @@ describe('useCreatePageLayoutTab', () => {
       result.current.createTab.createPageLayoutTab();
     });
 
-    expect(result.current.pageLayoutDraft.tabs[0].icon).toBeNull();
+    expect(result.current.pageLayoutDraft.tabs[0]?.icon).toBeNull();
   });
 
   it('should default layoutMode to VERTICAL_LIST for record page layouts', () => {
@@ -259,7 +261,7 @@ describe('useCreatePageLayoutTab', () => {
     });
 
     expect(result.current.pageLayoutDraft.tabs).toHaveLength(1);
-    expect(result.current.pageLayoutDraft.tabs[0].layoutMode).toBe(
+    expect(result.current.pageLayoutDraft.tabs[0]?.layoutMode).toBe(
       PageLayoutTabLayoutMode.VERTICAL_LIST,
     );
   });
@@ -404,8 +406,8 @@ describe('useCreatePageLayoutTab', () => {
     });
 
     expect(result.current.pageLayoutDraft.tabs).toHaveLength(2);
-    expect(result.current.pageLayoutDraft.tabs[1].id).toBe('mock-uuid-new');
-    expect(result.current.pageLayoutDraft.tabs[1].position).toBe(1);
-    expect(result.current.pageLayoutDraft.tabs[1].title).toBe('Tab 2');
+    expect(result.current.pageLayoutDraft.tabs[1]?.id).toBe('mock-uuid-new');
+    expect(result.current.pageLayoutDraft.tabs[1]?.position).toBe(1);
+    expect(result.current.pageLayoutDraft.tabs[1]?.title).toBe('Tab 2');
   });
 });

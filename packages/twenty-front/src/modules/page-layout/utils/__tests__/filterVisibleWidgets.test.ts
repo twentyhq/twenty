@@ -154,7 +154,7 @@ describe('filterVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('widget-2');
+      expect(result[0]?.id).toBe('widget-2');
     });
 
     it('should filter out a field widget referencing a hidden field by name', () => {

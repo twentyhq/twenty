@@ -7,6 +7,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const PAGE_LAYOUT_ID = 'page-layout-id';
 const WIDGET_ID = 'widget-id';
@@ -32,12 +33,16 @@ const initializeDraft = (store: ReturnType<typeof createStore>) => {
   return snapshot;
 };
 
-const getDraft = (store: ReturnType<typeof createStore>) =>
-  store.get(
+const getDraft = (store: ReturnType<typeof createStore>) => {
+  const draft = store.get(
     recordTableWidgetViewDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
     }),
   )[WIDGET_ID];
+  assertIsDefinedOrThrow(draft);
+
+  return draft;
+};
 
 describe('record table widget view metadata updates', () => {
   it('updates a column width in the widget draft', () => {
@@ -55,10 +60,10 @@ describe('record table widget view metadata updates', () => {
     );
 
     act(() => {
-      result.current.handleFieldUpdated(viewField.id ?? '', { size: 320 });
+      result.current.handleFieldUpdated(viewField?.id ?? '', { size: 320 });
     });
 
-    expect(getDraft(store).viewFields[0].size).toBe(320);
+    expect(getDraft(store).viewFields[0]?.size).toBe(320);
   });
 
   it('updates kanban width and aggregate settings in the widget draft', () => {

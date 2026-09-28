@@ -30,15 +30,17 @@ export const getFieldWidgetJunctionCreateThrough = ({
   | undefined => {
   const { sourceField, junctionObjectMetadata } = junctionConfig;
   const [junctionTargetField] = junctionConfig.targetFields;
-  const junctionTargetRelation = junctionTargetField?.relation;
 
   if (
     junctionConfig.isMorphRelation ||
     !isDefined(sourceField) ||
-    !isDefined(junctionTargetRelation)
+    !isDefined(junctionTargetField) ||
+    !isDefined(junctionTargetField.relation)
   ) {
     return undefined;
   }
+
+  const junctionTargetRelation = junctionTargetField.relation;
 
   const targetObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

@@ -25,7 +25,7 @@ describe('sortTabsByPosition', () => {
 
     sortTabsByPosition(tabs);
 
-    expect(tabs[0].id).toBe('b');
+    expect(tabs[0]?.id).toBe('b');
   });
 
   it('should handle single element', () => {

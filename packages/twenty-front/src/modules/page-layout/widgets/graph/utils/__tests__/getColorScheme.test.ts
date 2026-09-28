@@ -181,7 +181,7 @@ describe('getColorScheme', () => {
       });
 
       expect(result.name).toBe('blue');
-      expect(result.variations).toEqual(mockRegistry.blue.variations);
+      expect(result.variations).toEqual(mockRegistry.blue?.variations);
     });
 
     it('should use alphabetical rank for group color generation', () => {

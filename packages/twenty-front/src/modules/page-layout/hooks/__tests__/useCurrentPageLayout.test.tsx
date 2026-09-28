@@ -61,7 +61,7 @@ describe('useCurrentPageLayout', () => {
     const { result } = renderHook(() => useCurrentPageLayout(), { wrapper });
 
     expect(
-      result.current.currentPageLayout?.tabs[0].widgets.map(
+      result.current.currentPageLayout?.tabs[0]?.widgets.map(
         (widget) => widget.id,
       ),
     ).toEqual(['timeline', 'fields']);
@@ -71,7 +71,7 @@ describe('useCurrentPageLayout', () => {
     });
 
     expect(
-      result.current.currentPageLayout?.tabs[0].widgets.map(
+      result.current.currentPageLayout?.tabs[0]?.widgets.map(
         (widget) => widget.id,
       ),
     ).toEqual(['fields', 'timeline']);

@@ -1,4 +1,5 @@
 import { computeAllCategorySlices } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/computeAllCategorySlices';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 describe('computeAllCategorySlices', () => {
   const defaultMargins = { top: 20, right: 20, bottom: 40, left: 60 };
@@ -83,10 +84,10 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].bars).toHaveLength(1);
-      expect(result[0].bars[0].indexValue).toBe('A');
-      expect(result[1].bars).toHaveLength(1);
-      expect(result[1].bars[0].indexValue).toBe('B');
+      expect(result[0]?.bars).toHaveLength(1);
+      expect(result[0]?.bars[0]?.indexValue).toBe('A');
+      expect(result[1]?.bars).toHaveLength(1);
+      expect(result[1]?.bars[0]?.indexValue).toBe('B');
     });
 
     it('should calculate slice boundaries correctly', () => {
@@ -102,11 +103,14 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].sliceLeft).toBeDefined();
-      expect(result[0].sliceRight).toBeDefined();
-      expect(result[0].sliceCenter).toBeDefined();
-      expect(result[0].sliceLeft).toBeLessThan(result[0].sliceCenter);
-      expect(result[0].sliceCenter).toBeLessThan(result[0].sliceRight);
+      const [slice] = result;
+      assertIsDefinedOrThrow(slice);
+
+      expect(slice.sliceLeft).toBeDefined();
+      expect(slice.sliceRight).toBeDefined();
+      expect(slice.sliceCenter).toBeDefined();
+      expect(slice.sliceLeft).toBeLessThan(slice.sliceCenter);
+      expect(slice.sliceCenter).toBeLessThan(slice.sliceRight);
     });
   });
 
@@ -153,11 +157,15 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].bars).toHaveLength(1);
-      expect(result[0].bars[0].indexValue).toBe('A');
-      expect(result[1].bars).toHaveLength(1);
-      expect(result[1].bars[0].indexValue).toBe('B');
-      expect(result[0].sliceLeft).toBeGreaterThan(result[1].sliceLeft);
+      const [firstSlice, secondSlice] = result;
+      assertIsDefinedOrThrow(firstSlice);
+      assertIsDefinedOrThrow(secondSlice);
+
+      expect(firstSlice.bars).toHaveLength(1);
+      expect(firstSlice.bars[0]?.indexValue).toBe('A');
+      expect(secondSlice.bars).toHaveLength(1);
+      expect(secondSlice.bars[0]?.indexValue).toBe('B');
+      expect(firstSlice.sliceLeft).toBeGreaterThan(secondSlice.sliceLeft);
     });
   });
 
@@ -202,7 +210,7 @@ describe('computeAllCategorySlices', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].bars).toHaveLength(2);
+      expect(result[0]?.bars).toHaveLength(2);
     });
   });
 
@@ -238,9 +246,9 @@ describe('computeAllCategorySlices', () => {
       });
 
       expect(result).toHaveLength(2);
-      expect(result[0].bars).toHaveLength(1);
-      expect(result[1].bars).toHaveLength(0);
-      expect(result[1].indexValue).toBe('B');
+      expect(result[0]?.bars).toHaveLength(1);
+      expect(result[1]?.bars).toHaveLength(0);
+      expect(result[1]?.indexValue).toBe('B');
     });
   });
 
@@ -258,7 +266,7 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].indexValue).toBe('1');
+      expect(result[0]?.indexValue).toBe('1');
     });
   });
 });
