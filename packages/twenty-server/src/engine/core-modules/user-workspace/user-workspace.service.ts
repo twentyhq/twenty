@@ -3,11 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
-import {
-  assertIsDefinedOrThrow,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -29,7 +25,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { syncWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-run-record-shares.util';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -74,6 +70,7 @@ export class UserWorkspaceService {
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -369,22 +366,19 @@ export class UserWorkspaceService {
       // The delete sets the creator of this member's workflows to null, which
       // makes them workspace-visible in core, so their runs' grants have to
       // follow or nobody could read those runs.
-      const createdCoreWorkflows: { id: string }[] =
-        await this.userWorkspaceRepository.manager.query(
-          `SELECT id FROM core."workflow" WHERE "workspaceId" = $1 AND "createdByUserWorkspaceId" = $2`,
-          [workspaceId, userWorkspaceId],
-        );
+      const createdCoreWorkflowIds =
+        await this.workflowRunRecordShareService.findCoreWorkflowIdsCreatedBy({
+          workspaceId,
+          userWorkspaceId,
+        });
 
       await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
 
-      if (isNonEmptyArray(createdCoreWorkflows)) {
-        await syncWorkflowRunRecordShares({
-          manager: this.userWorkspaceRepository.manager,
-          workspaceId,
-          coreWorkflowIds: createdCoreWorkflows.map(({ id }) => id),
-        });
-      }
+      await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
+        workspaceId,
+        coreWorkflowIds: createdCoreWorkflowIds,
+      });
     }
   }
 

@@ -186,6 +186,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "senderUserWorkspaceId": {
         "universalIdentifier": "f4184c3a-b85c-4cef-8181-b2fefdf98fda",
       },
+      "senderWorkspaceMember": {
+        "universalIdentifier": "69bea8e1-451d-4c3c-9d34-505b5a67e06e",
+      },
       "status": {
         "universalIdentifier": "3845ccfa-9394-4cb9-a75c-4ca704414b83",
       },
@@ -205,6 +208,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "hiddenKickoffIndex": {
         "universalIdentifier": "1d423c31-007a-4fcd-8514-dcb1f7a8fa78",
+      },
+      "senderWorkspaceMemberIndex": {
+        "universalIdentifier": "8ecdac01-7bbe-411e-8461-6ff265c90759",
       },
       "threadIndex": {
         "universalIdentifier": "2054f1a5-554f-42ac-a41a-b8ccd6ba72ec",
@@ -4198,6 +4204,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "agentChatThreads": {
         "universalIdentifier": "fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1",
+      },
+      "agentMessages": {
+        "universalIdentifier": "211b2717-450a-4f5f-808f-39695c819319",
       },
       "assignedTasks": {
         "universalIdentifier": "20202020-61dc-4a1c-99e8-38ebf8d2bbeb",

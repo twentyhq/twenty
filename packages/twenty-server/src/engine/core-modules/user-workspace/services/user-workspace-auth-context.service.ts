@@ -24,8 +24,62 @@ export class UserWorkspaceAuthContextService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
+  async resolveWorkspaceMember({
+    workspaceId,
+    workspaceMemberId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+    applicationId?: string | null;
+  }) {
+    if (
+      !isNonEmptyString(workspaceId) ||
+      !isNonEmptyString(workspaceMemberId)
+    ) {
+      throw new AuthException(
+        'Workspace member required',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
+    if (!isDefined(member) || isDefined(member.deletedAt)) {
+      throw new AuthException(
+        'Workspace member not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    const membership = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId, userId: member.userId },
+      select: { id: true },
+    });
+    if (!isDefined(membership)) {
+      throw new AuthException(
+        'User workspace not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    const authContext = await this.resolve({
+      workspaceId,
+      userWorkspaceId: membership.id,
+      applicationId,
+    });
+    if (authContext.workspaceMemberId !== workspaceMemberId) {
+      throw new AuthException(
+        'Workspace member changed',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    return authContext;
+  }
+
   // Checking what someone other than the caller can do starts from their
-  // member record rather than a session.
+  // member record rather than a session. A member who can no longer sign in is
+  // not the caller's authentication failing, so it must not surface as one.
   async resolveForWorkspaceMember({
     workspaceId,
     workspaceMemberId,
@@ -33,31 +87,10 @@ export class UserWorkspaceAuthContextService {
     workspaceId: string;
     workspaceMemberId: string;
   }) {
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-    const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
-
-    if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
-      return null;
-    }
-
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId: workspaceMember.userId, workspaceId },
-      select: { id: true },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      return null;
-    }
-
-    // A member who can no longer sign in is not the caller's authentication
-    // failing, so it must not surface as one.
     try {
-      return await this.resolve({
+      return await this.resolveWorkspaceMember({
         workspaceId,
-        userWorkspaceId: userWorkspace.id,
+        workspaceMemberId,
       });
     } catch (error) {
       if (error instanceof AuthException) {

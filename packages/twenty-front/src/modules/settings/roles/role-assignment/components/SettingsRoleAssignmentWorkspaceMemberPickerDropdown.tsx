@@ -4,13 +4,9 @@ import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRec
 import { type SearchRecord } from '~/generated/graphql';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useState } from 'react';
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
@@ -43,34 +39,26 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
         !excludedWorkspaceMemberIds.includes(workspaceMember.recordId),
     ) ?? [];
 
-  const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchFilter(event.target.value);
-  };
   const { t } = useLingui();
 
   return (
     <>
       <ToastOnQueryErrorEffect error={error} />
-      <LegacyDropdownContent
-        widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-      >
-        <DropdownMenuSearchInput
-          value={searchFilter}
-          onChange={handleSearchFilterChange}
-          placeholder={t`Search`}
+      <Dropdown.Search
+        value={searchFilter}
+        onValueChange={setSearchFilter}
+        placeholder={t`Search`}
+        aria-label={t`Search`}
+      />
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        <SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent
+          loading={loading}
+          searchFilter={searchFilter}
+          filteredWorkspaceMembers={filteredWorkspaceMembers as SearchRecord[]}
+          onSelect={onSelect}
         />
-        <DropdownMenuSeparator />
-        <DropdownMenuItemsContainer hasMaxHeight>
-          <SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent
-            loading={loading}
-            searchFilter={searchFilter}
-            filteredWorkspaceMembers={
-              filteredWorkspaceMembers as SearchRecord[]
-            }
-            onSelect={onSelect}
-          />
-        </DropdownMenuItemsContainer>
-      </LegacyDropdownContent>
+      </Dropdown.Section>
     </>
   );
 };

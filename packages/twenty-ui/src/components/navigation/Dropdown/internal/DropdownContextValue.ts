@@ -23,10 +23,14 @@ export type DropdownContextValue = {
   setFocusOnOpen: (focusOnOpen: boolean) => void;
   setOpen: (open: boolean) => void;
   closeTree: () => void;
-  goToPage: (page: { id: string; trigger: DropdownFocusTarget }) => void;
+  goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;
   registerOpenNestedRoot: () => () => void;
   searchTargetId?: string;
   setSearchTargetId: (id: string | undefined) => void;
+  triggerId?: string;
+  registerTrigger: (id: string) => () => void;
+  titleId?: string;
+  registerTitle: (id: string) => () => void;
 };

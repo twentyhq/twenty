@@ -45,32 +45,31 @@ No stories are skipped or marked as expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| Field controls | Forwarded events lack the native event used for `composedPath`. React serializes boolean `aria-invalid` as an empty string; Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
+| Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
 | Tabs | React cannot mount without `compareDocumentPosition`; Preact activation fails on the missing native event for `composedPath`. |
-| Radio, RadioGroup | Unselected radios need `Element.matches(':disabled')`; React also orders radio groups with `compareDocumentPosition`. |
-| SegmentedControl | Ordering its radios needs `compareDocumentPosition`, so React cannot mount it. In the Preact input gallery the `Radio` failure skips that ordering at mount, so the control fails on first focus instead. Selecting would also need `PointerEvent` and native radio activation. |
+| RadioGroup | Ordering its radios needs `compareDocumentPosition`, which the sandbox DOM does not implement. |
+| SegmentedControl | Ordering its radios needs `compareDocumentPosition`, so React cannot mount it. In the Preact input gallery it mounts and fails on first focus instead. Selecting would also need `PointerEvent` and native radio activation. |
 | Popover, AlertDialog | Opening fails while reading unavailable viewport width data. |
 | Menu, Select | Opening fails on viewport data and/or missing `nativeEvent.pointerType`. |
 | Switch | Activation attempts to construct an unavailable `PointerEvent`. |
-| Tooltip | `TooltipReact` opens on hover but remains open after Escape because the SDK does not forward handlers added by `React.cloneElement`. `TooltipPreact` throws on hover because the sandbox lacks `Element.closest`. |
+| Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
 | Responsive hooks | The sandbox has no `window.matchMedia`, so `useIsMobile` and `useIsTouchDevice` return `false` whatever the host viewport or input. The fixture asserts that fallback and must assert host-derived values once a media-query bridge lands. |
 
-The tooltip stories assert these known failures and must be updated to assert
-successful interactions when compatibility is fixed. The surfaces gallery checks
-that the migrated tooltip mounts in both runtimes. Full tooltip interaction
-coverage remains in twenty-ui's own stories.
+The worker DOM now provides `Element.matches`, `closest`, `querySelector` backed
+by `css-select`, and property accessors for boolean ARIA attributes so React and
+Preact forward `true`/`false` instead of empty strings and remove the attribute
+when the prop is cleared. `getAttribute` and the selector engine read the remote
+properties React and Preact set, and the selector engine matches the sandbox's
+custom element tags by their HTML tag names. `TooltipPreact` therefore covers
+hover opening and Escape dismissal. Pointer leave still needs the `Node.contains`
+fix and document-level `mousemove` delivery for the safe polygon, and the
+compound tooltip's title and description are not covered yet.
 
-SDK event handling and sandbox DOM fixes are deferred from the tooltip migration.
-Further gaps found while investigating include forwarded events without
-`nativeEvent` and a `Node.contains` ancestor traversal bug that can hang pointer
-leave handling. After fixing those gaps, cover Escape dismissal, pointer leave,
-and the compound tooltip's title and description in both renderer runtimes.
-
-Once those gaps are fixed, extend the stories to verify selection, disabled
-items, keyboard navigation, and overlay content, dismissal, and focus restoration.
-The fixtures already include the controlled state, compound parts, and callback
-output for those checks. Passing display, ListItem, and Toast stories verify
-rendering/CSS or interaction behavior directly.
+Once the remaining gaps are fixed, extend the stories to verify selection,
+disabled items, keyboard navigation, and overlay content, dismissal, and focus
+restoration. The fixtures already include the controlled state, compound parts,
+and callback output for those checks. Passing display, ListItem, and Toast
+stories verify rendering/CSS or interaction behavior directly.
 
 ## Run
 

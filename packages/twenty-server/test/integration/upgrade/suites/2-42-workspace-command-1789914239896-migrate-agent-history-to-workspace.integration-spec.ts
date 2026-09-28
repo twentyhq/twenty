@@ -1,4 +1,6 @@
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
+import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
+import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790609051454-add-input-ask-object.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -218,18 +220,35 @@ describe('versioned agent history upgrade (integration)', () => {
         }),
       buildSystemAuthContext(WORKSPACE_ID),
     );
-    // The history objects were rebuilt as 2.42 leaves them; later upgrades
-    // have moved them on, so replay those for the suites that follow.
-    for (const laterCommandName of [
+    await dataSource.query(
+      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+      [threadId],
+    );
+    await dataSource.query('DELETE FROM core."agentChatThread" WHERE id = $1', [
+      threadId,
+    ]);
+    await getAppProviderByClassName<EnableCommonRecordSharingCommand>(
       'EnableCommonRecordSharingCommand',
-      'AddWorkflowRunToChatThreadsCommand',
-      'AddInputAskObjectCommand',
+    ).up({
+      workspaceId: WORKSPACE_ID,
+      dataSource,
+      index: 0,
+      total: 1,
+      options: {},
+    });
+    // The history objects were rebuilt as 2.42 leaves them; replay the later
+    // upgrades that link threads to runs and asks for the suites that follow.
+    for (const laterCommand of [
+      getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
+        'AddWorkflowRunToChatThreadsCommand',
+      ),
+      getAppProviderByClassName<AddInputAskObjectCommand>(
+        'AddInputAskObjectCommand',
+      ),
     ]) {
       await workspaceOrmManager.executeInWorkspaceContext(
         () =>
-          getAppProviderByClassName<{
-            up: (args: RunOnWorkspaceArgs) => Promise<void>;
-          }>(laterCommandName).up({
+          laterCommand.up({
             workspaceId: WORKSPACE_ID,
             index: 0,
             total: 1,
@@ -238,13 +257,6 @@ describe('versioned agent history upgrade (integration)', () => {
         buildSystemAuthContext(WORKSPACE_ID),
       );
     }
-    await dataSource.query(
-      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
-      [threadId],
-    );
-    await dataSource.query('DELETE FROM core."agentChatThread" WHERE id = $1', [
-      threadId,
-    ]);
     expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
       seededAgentChatThreadTarget,
     );

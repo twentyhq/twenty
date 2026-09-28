@@ -6309,70 +6309,6 @@ export default {
                 1
             ]
         },
-        "Webhook": {
-            "id": [
-                3
-            ],
-            "targetUrl": [
-                1
-            ],
-            "operations": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "secret": [
-                1
-            ],
-            "applicationId": [
-                3
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "deletedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ToolIndexEntry": {
-            "name": [
-                1
-            ],
-            "label": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "category": [
-                1
-            ],
-            "objectName": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "widgetName": [
-                1
-            ],
-            "frontComponentId": [
-                1
-            ],
-            "inputSchema": [
-                9
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "AgentMessagePart": {
             "id": [
                 3
@@ -6459,6 +6395,105 @@ export default {
                 1
             ]
         },
+        "AgentMessage": {
+            "id": [
+                3
+            ],
+            "threadId": [
+                3
+            ],
+            "turnId": [
+                3
+            ],
+            "agentId": [
+                3
+            ],
+            "senderUserWorkspaceId": [
+                3
+            ],
+            "role": [
+                1
+            ],
+            "status": [
+                1
+            ],
+            "parts": [
+                358
+            ],
+            "processedAt": [
+                4
+            ],
+            "createdAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "Webhook": {
+            "id": [
+                3
+            ],
+            "targetUrl": [
+                1
+            ],
+            "operations": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "secret": [
+                1
+            ],
+            "applicationId": [
+                3
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "deletedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ToolIndexEntry": {
+            "name": [
+                1
+            ],
+            "label": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "category": [
+                1
+            ],
+            "objectName": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "widgetName": [
+                1
+            ],
+            "frontComponentId": [
+                1
+            ],
+            "inputSchema": [
+                9
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "RunAgentResult": {
             "result": [
                 9
@@ -6523,7 +6558,7 @@ export default {
                 1
             ],
             "series": [
-                364
+                365
             ],
             "xAxisLabel": [
                 1
@@ -6572,7 +6607,7 @@ export default {
                 1
             ],
             "data": [
-                366
+                367
             ],
             "__typename": [
                 1
@@ -6580,7 +6615,7 @@ export default {
         },
         "LineChartData": {
             "series": [
-                367
+                368
             ],
             "xAxisLabel": [
                 1
@@ -6617,7 +6652,7 @@ export default {
         },
         "PieChartData": {
             "data": [
-                369
+                370
             ],
             "showLegend": [
                 8
@@ -6722,13 +6757,13 @@ export default {
         },
         "EventLogQueryResult": {
             "records": [
-                374
+                375
             ],
             "totalCount": [
                 30
             ],
             "pageInfo": [
-                375
+                376
             ],
             "__typename": [
                 1
@@ -6763,6 +6798,9 @@ export default {
             ],
             "periodEnd": [
                 4
+            ],
+            "kind": [
+                1
             ],
             "__typename": [
                 1
@@ -6803,41 +6841,6 @@ export default {
                 4
             ],
             "updatedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "AgentMessage": {
-            "id": [
-                3
-            ],
-            "threadId": [
-                3
-            ],
-            "turnId": [
-                3
-            ],
-            "agentId": [
-                3
-            ],
-            "senderUserWorkspaceId": [
-                3
-            ],
-            "role": [
-                1
-            ],
-            "status": [
-                1
-            ],
-            "parts": [
-                360
-            ],
-            "processedAt": [
-                4
-            ],
-            "createdAt": [
                 4
             ],
             "__typename": [
@@ -7023,7 +7026,7 @@ export default {
                 391
             ],
             "messages": [
-                380
+                359
             ],
             "createdAt": [
                 4
@@ -8062,7 +8065,7 @@ export default {
                 325
             ],
             "getToolIndex": [
-                359
+                361
             ],
             "getToolInputSchema": [
                 9,
@@ -8074,10 +8077,10 @@ export default {
                 }
             ],
             "webhooks": [
-                358
+                360
             ],
             "webhook": [
-                358,
+                360,
                 {
                     "id": [
                         3,
@@ -8149,7 +8152,7 @@ export default {
                 393
             ],
             "aiChatUsage": [
-                378
+                379
             ],
             "chatThreads": [
                 381
@@ -8164,7 +8167,7 @@ export default {
                 }
             ],
             "chatMessages": [
-                380,
+                359,
                 {
                     "threadId": [
                         3,
@@ -8206,10 +8209,10 @@ export default {
                 383
             ],
             "skills": [
-                379
+                380
             ],
             "skill": [
-                379,
+                380,
                 {
                     "id": [
                         3,
@@ -8305,7 +8308,7 @@ export default {
                 242
             ],
             "eventLogs": [
-                376,
+                377,
                 {
                     "input": [
                         430,
@@ -8314,7 +8317,7 @@ export default {
                 }
             ],
             "pieChartData": [
-                370,
+                371,
                 {
                     "input": [
                         436,
@@ -8323,7 +8326,7 @@ export default {
                 }
             ],
             "lineChartData": [
-                368,
+                369,
                 {
                     "input": [
                         437,
@@ -8332,7 +8335,7 @@ export default {
                 }
             ],
             "barChartData": [
-                365,
+                366,
                 {
                     "input": [
                         438,
@@ -10362,7 +10365,7 @@ export default {
                 }
             ],
             "runAgent": [
-                361,
+                362,
                 {
                     "input": [
                         569,
@@ -10371,7 +10374,7 @@ export default {
                 }
             ],
             "createWebhook": [
-                358,
+                360,
                 {
                     "input": [
                         573,
@@ -10380,7 +10383,7 @@ export default {
                 }
             ],
             "updateWebhook": [
-                358,
+                360,
                 {
                     "input": [
                         574,
@@ -10389,7 +10392,7 @@ export default {
                 }
             ],
             "deleteWebhook": [
-                358,
+                360,
                 {
                     "id": [
                         3,
@@ -10642,7 +10645,7 @@ export default {
                 }
             ],
             "createSkill": [
-                379,
+                380,
                 {
                     "input": [
                         588,
@@ -10651,7 +10654,7 @@ export default {
                 }
             ],
             "updateSkill": [
-                379,
+                380,
                 {
                     "input": [
                         589,
@@ -10660,7 +10663,7 @@ export default {
                 }
             ],
             "deleteSkill": [
-                379,
+                380,
                 {
                     "id": [
                         3,
@@ -10669,7 +10672,7 @@ export default {
                 }
             ],
             "activateSkill": [
-                379,
+                380,
                 {
                     "id": [
                         3,
@@ -10678,7 +10681,7 @@ export default {
                 }
             ],
             "deactivateSkill": [
-                379,
+                380,
                 {
                     "id": [
                         3,
@@ -11171,7 +11174,7 @@ export default {
                 }
             ],
             "createObjectEvent": [
-                373,
+                374,
                 {
                     "event": [
                         1,
@@ -11191,7 +11194,7 @@ export default {
                 }
             ],
             "trackAnalytics": [
-                373,
+                374,
                 {
                     "type": [
                         598,
@@ -11209,7 +11212,7 @@ export default {
                 }
             ],
             "duplicateDashboard": [
-                371,
+                372,
                 {
                     "id": [
                         3,
@@ -11234,7 +11237,7 @@ export default {
                 307
             ],
             "createCalendarEvent": [
-                363,
+                364,
                 {
                     "input": [
                         599,
@@ -11243,7 +11246,7 @@ export default {
                 }
             ],
             "sendEmail": [
-                372,
+                373,
                 {
                     "input": [
                         600,
@@ -11252,7 +11255,7 @@ export default {
                 }
             ],
             "startChannelSync": [
-                362,
+                363,
                 {
                     "connectedAccountId": [
                         3,
@@ -14482,7 +14485,7 @@ export default {
                 }
             ],
             "eventLogsLive": [
-                374,
+                375,
                 {
                     "table": [
                         431,
@@ -14495,7 +14498,7 @@ export default {
                 }
             ],
             "exportRecords": [
-                377,
+                378,
                 {
                     "input": [
                         608,

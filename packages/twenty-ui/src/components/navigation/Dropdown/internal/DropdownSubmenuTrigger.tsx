@@ -1,3 +1,4 @@
+import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useId } from 'react';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
@@ -8,6 +9,7 @@ import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTrigge
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
+import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
 
 export const DropdownSubmenuTrigger = ({
   color,
@@ -25,9 +27,10 @@ export const DropdownSubmenuTrigger = ({
   onKeyDown,
   onFocus,
   id,
+  ref,
   ...props
 }: DropdownSubmenuTriggerProps) => {
-  const { type, parentType, open, setOpen, setFocusOnOpen } =
+  const { type, parentType, open, setOpen, setFocusOnOpen, registerTrigger } =
     useDropdownContext();
   const generatedId = useId();
   const itemId = id ?? generatedId;
@@ -35,10 +38,14 @@ export const DropdownSubmenuTrigger = ({
     id: itemId,
     isSubmenuTrigger: true,
   });
+  const registerTriggerElement =
+    useRegisterDropdownLabelElement(registerTrigger);
+  const mergedRef = useMergedRefs(ref, registerTriggerElement);
 
   return (
     <Popover.Trigger
       {...props}
+      ref={mergedRef}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}

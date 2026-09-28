@@ -20,6 +20,7 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
 
   archivedAt: string | null;
   userWorkspaceId: string | null;
+
   workspaceMemberId: string | null;
   workflowRunId: string | null;
   workflowStepId: string | null;
