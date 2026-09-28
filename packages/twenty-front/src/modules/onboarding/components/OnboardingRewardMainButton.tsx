@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
 import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
@@ -19,6 +20,8 @@ export const OnboardingRewardMainButton = ({
   ref,
 }: OnboardingRewardMainButtonProps) => {
   const theme = useTheme();
+  const { formatNumber } = useNumberFormat();
+  const formattedCreditsReward = formatNumber(creditsReward, { decimals: 2 });
 
   return (
     <MainButton
@@ -30,12 +33,15 @@ export const OnboardingRewardMainButton = ({
       }
       endIcon={
         creditsReward > 0 ? (
-          <OnboardingCreditsRewardChip creditsReward={creditsReward} />
+          <OnboardingCreditsRewardChip
+            formattedCreditsReward={formattedCreditsReward}
+          />
         ) : undefined
       }
       aria-label={getOnboardingCreditsRewardAriaLabel({
         label,
         creditsReward,
+        formattedCreditsReward,
       })}
     >
       {label}
