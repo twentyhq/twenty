@@ -29,5 +29,7 @@
   &[data-color='inherit'] {
     background: color-mix(in srgb, currentColor 16%, transparent);
     color: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: inherit;
   }
 }
