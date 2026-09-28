@@ -964,6 +964,46 @@ export class AgentChatService {
       .catch(() => {});
   }
 
+  // For a question nothing can consume any more: its run ended, or the step
+  // moved on to another conversation. Restoring it would leave a card that
+  // every answer is refused on, so it is closed instead.
+  async closePendingQuestion({
+    threadId,
+    streamId,
+    workspaceId,
+    rollback,
+  }: {
+    threadId: string;
+    streamId: string;
+    workspaceId: string;
+    rollback: { partId: string; previousOutput: Record<string, unknown> };
+  }): Promise<void> {
+    const previousResult = rollback.previousOutput.result as
+      | AskQuestionsToolResult
+      | undefined;
+
+    await this.messagePartRepository
+      .update(
+        workspaceId,
+        { id: rollback.partId },
+        {
+          toolOutput: {
+            ...rollback.previousOutput,
+            result: { ...previousResult, status: 'skipped' },
+          },
+        },
+      )
+      .catch(() => {});
+
+    await this.threadRepository
+      .update(
+        workspaceId,
+        { id: threadId, activeStreamId: streamId },
+        { activeStreamId: null },
+      )
+      .catch(() => {});
+  }
+
   private validateQuestionAnswers(
     answers: AskQuestionAnswer[],
     questions: AskQuestionItem[],
