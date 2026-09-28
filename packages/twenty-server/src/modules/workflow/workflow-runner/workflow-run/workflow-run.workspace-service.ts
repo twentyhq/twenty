@@ -207,7 +207,7 @@ export class WorkflowRunWorkspaceService {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to close the Asks of workflow run ${workflowRunId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to close the Asks of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 
@@ -513,6 +513,7 @@ export class WorkflowRunWorkspaceService {
     // answer, so it never undoes a release the run already accepted.
     await this.runBestEffort({
       workflowRunId,
+      workspaceId,
       operation: 'record a released answer',
       callback: onReleased,
     });
@@ -568,6 +569,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.runBestEffort({
       workflowRunId,
+      workspaceId,
       operation: 'reopen a restored answer',
       callback: onRestored,
     });
@@ -577,10 +579,12 @@ export class WorkflowRunWorkspaceService {
 
   private async runBestEffort({
     workflowRunId,
+    workspaceId,
     operation,
     callback,
   }: {
     workflowRunId: string;
+    workspaceId: string;
     operation: string;
     callback?: () => Promise<void>;
   }): Promise<void> {
@@ -592,7 +596,7 @@ export class WorkflowRunWorkspaceService {
       await callback();
     } catch (error) {
       this.logger.error(
-        `Failed to ${operation} for workflow run ${workflowRunId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to ${operation} for workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
