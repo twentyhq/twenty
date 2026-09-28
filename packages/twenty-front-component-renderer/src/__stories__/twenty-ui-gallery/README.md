@@ -26,9 +26,13 @@ error and can allow additional known errors without requiring them to occur.
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
 | `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
+| `twenty-ui-reading-directions` | Callout, ColorSchemePicker, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
+`twenty-ui-reading-directions` imports the stylesheet directly instead: its dark
+stories rely on the provider-less CSS-variable theme, and its two directions do
+not fit the card's width.
 The story builder resolves that stylesheet to the individual build's CSS so
 class names match the JavaScript used by the sandbox. Importing CSS through the
 shared card also exercises the SDK's CSS injection and the renderer's style bridge.

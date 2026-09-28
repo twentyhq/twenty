@@ -1,6 +1,6 @@
-import { useDirection } from '@base-ui/react/direction-provider';
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
@@ -21,7 +21,7 @@ export const PopoverPopup = ({
   ...props
 }: PopoverPopupProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
 
   return (
     <PopoverPrimitive.Portal

@@ -1,7 +1,7 @@
-import { useDirection } from '@base-ui/react/direction-provider';
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { isNumber, isString } from '@sniptt/guards';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
@@ -33,7 +33,7 @@ export const TooltipPopup = ({
   ...props
 }: TooltipPopupProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
   const hasPlainTextContent = isString(children) || isNumber(children);
 
   return (

@@ -28,10 +28,10 @@ export const DirectionalMenusExample = ({
       >
         <Menu.Root>
           <Menu.Trigger render={<Button>Open menu</Button>} />
-          <Menu.Popup aria-label="Record menu">
+          <Menu.Popup>
             <Menu.SubmenuRoot>
               <Menu.SubmenuTrigger>Menu export</Menu.SubmenuTrigger>
-              <Menu.Popup aria-label="Menu export formats">
+              <Menu.Popup>
                 <Menu.Item>Menu CSV</Menu.Item>
               </Menu.Popup>
             </Menu.SubmenuRoot>
@@ -39,7 +39,7 @@ export const DirectionalMenusExample = ({
         </Menu.Root>
         <Dropdown.Root type="menu">
           <Dropdown.Trigger render={<Button>Open dropdown</Button>} />
-          <Dropdown.Content aria-label="Record dropdown">
+          <Dropdown.Content>
             <Dropdown.Header>
               <IconInfoCircle data-testid="header-icon" />
               <Dropdown.Title>Record options</Dropdown.Title>

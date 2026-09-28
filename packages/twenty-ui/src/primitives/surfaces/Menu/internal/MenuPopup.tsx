@@ -1,7 +1,7 @@
-import { useDirection } from '@base-ui/react/direction-provider';
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { useContext } from 'react';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
@@ -22,7 +22,7 @@ export const MenuPopup = ({
   ...props
 }: MenuPopupProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
   const { container = themeContainer ?? undefined, ...popupProps } = props;
   const isNested = useContext(MenuNestingContext);
   const defaults = MENU_POPUP_POSITION_DEFAULTS[isNested ? 'submenu' : 'root'];

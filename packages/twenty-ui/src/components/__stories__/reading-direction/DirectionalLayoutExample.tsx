@@ -74,7 +74,11 @@ export const DirectionalLayoutExample = ({
           ]}
         />
         {(['left', 'right'] as const).map((overlap) => (
-          <div key={overlap} data-testid={`avatars-${overlap}`}>
+          <div
+            key={overlap}
+            data-testid={`avatars-${overlap}`}
+            style={{ width: 'fit-content' }}
+          >
             <AvatarGroup
               overlap={overlap}
               avatars={['Ada', 'Bea', 'Cam'].map((name) => (

@@ -82,7 +82,11 @@ export const LeftToRight: Story = {
     await userEvent.click(
       await body.findByRole('menuitem', { name: 'Details page' }),
     );
-    await userEvent.click(await body.findByRole('menuitem', { name: 'Back' }));
+    const back = await body.findByRole('menuitem', { name: 'Back' });
+    expect(getComputedStyle(back.querySelector('svg')!).transform).toBe(
+      args.direction === 'rtl' ? 'matrix(-1, 0, 0, 1, 0, 0)' : 'none',
+    );
+    await userEvent.click(back);
     expect(
       await body.findByRole('menuitem', { name: 'Details page' }),
     ).toBeVisible();
@@ -106,4 +110,11 @@ export const RightToLeft: Story = {
 export const RightToLeftBodyPortal: Story = {
   ...LeftToRight,
   args: { direction: 'rtl', scoped: false },
+  beforeEach: () => {
+    const previousRootClassName = document.documentElement.className;
+
+    return () => {
+      document.documentElement.className = previousRootClassName;
+    };
+  },
 };

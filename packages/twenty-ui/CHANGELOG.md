@@ -21,7 +21,7 @@ Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when up
 
 ### Fixed
 
-- Reading-direction spacing, JSON disclosure arrows, theme picker corners, and avatar overlap now follow RTL layouts. Menu, Popover, and Tooltip portals preserve `TextDirectionProvider` direction. Dropdown uses that provider for submenu keys and keeps caller-supplied icons unchanged. Pair the provider with the matching HTML `dir` attribute.
+- Reading-direction spacing, JSON disclosure arrows, theme picker corners, avatar overlap, and the Dropdown Back chevron now follow RTL layouts. Menu, Popover, Tooltip, Select, Dialog, AlertDialog, and Toaster portals set the `TextDirectionProvider` direction as `dir`, and inherit their container's direction when no provider is present. A Base UI `DirectionProvider` on its own no longer sets `dir` on Select, Dialog, AlertDialog, or Toaster portals; use `TextDirectionProvider`. Dropdown uses the provider for submenu keys and keeps caller-supplied icons unchanged. Pair the provider with the matching HTML `dir` attribute.
 
 ### Added
 

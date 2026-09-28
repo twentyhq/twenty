@@ -44,6 +44,10 @@
   padding-inline: var(--t-spacing-2);
 }
 
+.backIcon:dir(rtl) {
+  transform: scaleX(-1);
+}
+
 .searchContainer {
   align-items: center;
   box-sizing: border-box;

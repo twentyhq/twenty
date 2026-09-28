@@ -46,7 +46,7 @@ Place one provider around the controls that share a direction. Nested providers 
 
 ## Portals and layout
 
-Menu, Dropdown, Popover, Tooltip, Select, Dialog, and Toast portals carry the provider direction even when their container is outside the element with `dir`. Keep the provider direction and the trigger's HTML direction consistent. A scoped `ThemeProvider` continues to own the default portal container.
+Menu, Dropdown, Popover, Tooltip, Select, Dialog, and Toast portals carry the provider direction even when their container is outside the element with `dir`. Without a provider they inherit the direction of their container. Keep the provider direction and the trigger's HTML direction consistent. A scoped `ThemeProvider` continues to own the default portal container.
 
 Submenus open toward `inline-end`. ArrowRight opens a submenu in LTR; ArrowLeft opens it in RTL. The opposite key returns to the parent. Explicit `left` and `right` popup placement still mean physical sides. Collision handling can move a popup when space is limited.
 

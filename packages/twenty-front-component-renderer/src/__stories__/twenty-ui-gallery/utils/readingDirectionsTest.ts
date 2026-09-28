@@ -22,12 +22,16 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       first.getBoundingClientRect().left > last.getBoundingClientRect().left,
     ).toBe(direction === 'rtl');
     expect(getComputedStyle(first).borderStartEndRadius).toBe('0px');
-    const description = content
-      .getByText('Review the information before continuing.')
-      .closest('[class*="descriptionWrapper"]')!;
-    await waitFor(() =>
-      expect(getComputedStyle(description).paddingInlineStart).toBe('24px'),
+    const title = content.getByText('Account details');
+    const description = content.getByText(
+      'Review the information before continuing.',
     );
+    await waitFor(() => {
+      const titleBox = title.getBoundingClientRect();
+      const descriptionBox = description.getBoundingClientRect();
+      expect(Math.abs(descriptionBox.left - titleBox.left)).toBeLessThan(1);
+      expect(Math.abs(descriptionBox.right - titleBox.right)).toBeLessThan(1);
+    });
     await userEvent.click(content.getByRole('button', { name: 'Dark' }));
     for (const variant of ['Light', 'Dark', 'System']) {
       const badge = content.getByRole('button', {
@@ -42,19 +46,17 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
     const row = content
       .getByText('A very long account name that must truncate')
       .closest('[data-indicator]')!;
-    expect(getComputedStyle(row.lastElementChild!).transform).toBe(
+    expect(getComputedStyle(row.querySelector(':scope > svg')!).transform).toBe(
       direction === 'rtl' ? 'matrix(-1, 0, 0, 1, 0, 0)' : 'none',
     );
     for (const overlap of ['left', 'right']) {
       const group = content.getByTestId(
         `avatars-${overlap}`,
       ).firstElementChild!;
-      const boxes = Array.from(group.children).map((child) =>
-        child.getBoundingClientRect(),
-      );
-      const physicalBoxes = boxes.sort(
-        (firstBox, secondBox) => firstBox.left - secondBox.left,
-      );
+      const groupBox = group.getBoundingClientRect();
+      const physicalBoxes = Array.from(group.children)
+        .map((child) => child.getBoundingClientRect())
+        .sort((firstBox, secondBox) => firstBox.left - secondBox.left);
       for (let index = 1; index < physicalBoxes.length; index++) {
         expect(
           Math.round(
@@ -62,6 +64,12 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
           ),
         ).toBe(3);
       }
+      expect(Math.abs(physicalBoxes[0]!.left - groupBox.left)).toBeLessThan(1);
+      expect(
+        Math.abs(
+          Math.max(...physicalBoxes.map((box) => box.right)) - groupBox.right,
+        ),
+      ).toBeLessThan(1);
     }
     const collapse = content.getAllByRole('button', {
       name: 'Collapse node',
@@ -69,7 +77,9 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
     await userEvent.click(collapse);
     const expand = await content.findByRole('button', { name: 'Expand node' });
     await waitFor(() =>
-      expect(getComputedStyle(expand.lastElementChild!).transform).toBe(
+      expect(
+        getComputedStyle(expand.querySelector('svg')!.parentElement!).transform,
+      ).toBe(
         direction === 'rtl'
           ? 'matrix(0, 1, -1, 0, 0, 0)'
           : 'matrix(0, -1, 1, 0, 0, 0)',

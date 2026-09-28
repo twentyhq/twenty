@@ -37,11 +37,14 @@ export const LeftToRight: Story = {
           canvas.getByText('Team plan'),
       ).textAlign,
     ).toBe('start');
-    const description = canvas.getByText(
-      'Review the information before continuing.',
-    ).parentElement!;
-    expect(getComputedStyle(description).paddingInlineStart).toBe('24px');
-    expect(getComputedStyle(description).paddingInlineEnd).toBe('0px');
+    const titleBox = canvas
+      .getByText('Account details')
+      .getBoundingClientRect();
+    const descriptionBox = canvas
+      .getByText('Review the information before continuing.')
+      .getBoundingClientRect();
+    expect(Math.abs(descriptionBox.left - titleBox.left)).toBeLessThan(1);
+    expect(Math.abs(descriptionBox.right - titleBox.right)).toBeLessThan(1);
     const soon = canvas.getByText('Soon');
     const upcoming = canvas.getByRole('button', { name: /Upcoming action/ });
     expect(
@@ -62,12 +65,10 @@ export const LeftToRight: Story = {
     await userEvent.click(dark);
     for (const overlap of ['left', 'right']) {
       const group = canvas.getByTestId(`avatars-${overlap}`).firstElementChild!;
-      const boxes = [...group.children].map((child) =>
-        child.getBoundingClientRect(),
-      );
-      const physicalBoxes = boxes.sort(
-        (firstBox, secondBox) => firstBox.left - secondBox.left,
-      );
+      const groupBox = group.getBoundingClientRect();
+      const physicalBoxes = [...group.children]
+        .map((child) => child.getBoundingClientRect())
+        .sort((firstBox, secondBox) => firstBox.left - secondBox.left);
       for (let index = 1; index < physicalBoxes.length; index++) {
         expect(
           Math.round(
@@ -75,9 +76,12 @@ export const LeftToRight: Story = {
           ),
         ).toBe(3);
       }
+      expect(Math.abs(physicalBoxes[0]!.left - groupBox.left)).toBeLessThan(1);
       expect(
-        Math.round(physicalBoxes[0]!.left - group.getBoundingClientRect().left),
-      ).toBeGreaterThanOrEqual(0);
+        Math.abs(
+          Math.max(...physicalBoxes.map((box) => box.right)) - groupBox.right,
+        ),
+      ).toBeLessThan(1);
     }
     const collapsed = canvas.getAllByRole('button', {
       name: 'Collapse node',
@@ -85,7 +89,10 @@ export const LeftToRight: Story = {
     await userEvent.click(collapsed);
     const expanded = canvas.getByRole('button', { name: 'Expand node' });
     await waitFor(() =>
-      expect(getComputedStyle(expanded.lastElementChild!).transform).toBe(
+      expect(
+        getComputedStyle(expanded.querySelector('svg')!.parentElement!)
+          .transform,
+      ).toBe(
         isRightToLeft
           ? 'matrix(0, 1, -1, 0, 0, 0)'
           : 'matrix(0, -1, 1, 0, 0, 0)',
