@@ -12,8 +12,6 @@ import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/co
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
-import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605732698-contract-chat-thread-owners.command';
-
 @Module({
   imports: [
     AgentHistoryMigrationModule,
@@ -29,7 +27,6 @@ import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-v
     DeleteFieldLessIndexMetadataCommand,
     FollowWorkflowVisibilityOnRunsCommand,
     LinkChatMessageSendersToWorkspaceMembersCommand,
-    ContractChatThreadOwnersCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

@@ -84,7 +84,7 @@ const seedChatThreads = async ({
     .into(`${schemaName}.${agentChatThreadTableName}`, [
       'id',
       ...(schemaName === 'core' ? ['workspaceId'] : ['workspaceMemberId']),
-      ...(schemaName === 'core' ? ['userWorkspaceId'] : []),
+      'userWorkspaceId',
       'title',
       'createdAt',
       'updatedAt',
@@ -94,7 +94,7 @@ const seedChatThreads = async ({
       {
         id: threadId,
         ...workspaceScope,
-        ...(schemaName === 'core' ? { userWorkspaceId } : {}),
+        userWorkspaceId,
         title,
         createdAt: now,
         updatedAt: now,
@@ -125,7 +125,7 @@ const seedChatThreads = async ({
       .into(`${schemaName}.${agentChatThreadTableName}`, [
         'id',
         ...(schemaName === 'core' ? ['workspaceId'] : ['workspaceMemberId']),
-        ...(schemaName === 'core' ? ['userWorkspaceId'] : []),
+        'userWorkspaceId',
         'title',
         'createdAt',
         'updatedAt',
@@ -144,7 +144,7 @@ const seedChatThreads = async ({
         ].map((thread) => ({
           id: thread.id,
           ...workspaceScope,
-          ...(schemaName === 'core' ? { userWorkspaceId } : {}),
+          userWorkspaceId,
           title: thread.title,
           createdAt: now,
           updatedAt: now,

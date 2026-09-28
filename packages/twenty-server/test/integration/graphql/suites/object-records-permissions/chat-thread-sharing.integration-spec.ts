@@ -1,4 +1,5 @@
-import { type ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605732698-contract-chat-thread-owners.command';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
@@ -457,11 +458,7 @@ describe('Conversation sharing through the authenticated API', () => {
       threadId: randomUUID(),
     };
     const options = { workspaceId, options: { dryRun: false } } as never;
-    const ownerContract =
-      getAppProviderByClassName<ContractChatThreadOwnersCommand>(
-        'ContractChatThreadOwnersCommand',
-      );
-    await ownerContract.down(options);
+
     const originalFlag =
       (await cache.getOrRecompute(workspaceId, ['featureFlagsMap']))
         .featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
@@ -513,7 +510,7 @@ describe('Conversation sharing through the authenticated API', () => {
     } finally {
       await command.up(options);
       await chatService.hardDeleteThread(owner);
-      await ownerContract.up(options);
+
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
         value: originalFlag,
@@ -619,7 +616,7 @@ describe('Conversation sharing through the authenticated API', () => {
     });
   });
 
-  it('stores the creator as the workspace member owner', async () => {
+  it('stores the member owner and preserves the legacy API identity', async () => {
     const chat =
       getAppProviderByClassName<AgentChatService>('AgentChatService');
     const owner = {
@@ -630,15 +627,29 @@ describe('Conversation sharing through the authenticated API', () => {
     };
     await chat.createThread({ ...owner, id: owner.threadId });
     try {
-      const rows: { workspaceMemberId: string }[] =
+      const response = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id userWorkspaceId',
+          filter: { id: { eq: owner.threadId } },
+        }),
+      );
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.agentChatThread).toEqual({
+        id: owner.threadId,
+        userWorkspaceId: owner.userWorkspaceId,
+      });
+
+      const rows: { workspaceMemberId: string; userWorkspaceId: string }[] =
         await global.testDataSource.query(
-          `SELECT "workspaceMemberId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
+          `SELECT "workspaceMemberId", "userWorkspaceId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
           [owner.threadId],
         );
 
       expect(rows).toEqual([
         {
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
         },
       ]);
     } finally {

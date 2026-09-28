@@ -26,6 +26,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
     ),
     archivedAt: { universalIdentifier: 'b42eaf6f-240f-41ef-af61-51d5ac9cde7d' },
+    userWorkspaceId: {
+      universalIdentifier: 'bf830886-b6dc-46e9-a229-eecbb0e66032',
+    },
     workspaceMember: {
       universalIdentifier: '6f3ed3b5-0642-4a2a-9558-98376adb60f4',
     },

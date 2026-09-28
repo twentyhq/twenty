@@ -15,6 +15,8 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   recordTargets: EntityRelation<AgentChatThreadTargetWorkspaceEntity[]>;
 
   archivedAt: string | null;
+  userWorkspaceId: string;
+
   workspaceMemberId: string | null;
   title: string | null;
   totalInputTokens: number;

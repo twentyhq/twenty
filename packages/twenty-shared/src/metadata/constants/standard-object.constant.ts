@@ -1412,6 +1412,9 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
     fields: STANDARD_OBJECT_FIELDS.agentChatThread,
     indexes: {
+      ownerIndex: {
+        universalIdentifier: 'c97a4c97-266b-490a-a4d6-76274f5de429',
+      },
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },

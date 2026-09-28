@@ -139,10 +139,17 @@ describe('Admin panel global chat threads (integration)', () => {
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      ['id', 'workspaceMemberId', 'title', 'lastStreamError'],
+      [
+        'id',
+        'workspaceMemberId',
+        'userWorkspaceId',
+        'title',
+        'lastStreamError',
+      ],
       [
         id,
         workspaceMemberId,
+        userWorkspaceId,
         title,
         lastStreamError ? JSON.stringify(lastStreamError) : null,
       ],

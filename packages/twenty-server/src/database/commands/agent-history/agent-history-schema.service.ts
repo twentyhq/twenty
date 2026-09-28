@@ -4,7 +4,7 @@ import { getAgentHistorySchemaAdditions } from 'src/database/commands/agent-hist
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeLegacyChatOwnerStandardMetadata as computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/database/commands/upgrade-version-command/2-44/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-44-chat-owner.util';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()

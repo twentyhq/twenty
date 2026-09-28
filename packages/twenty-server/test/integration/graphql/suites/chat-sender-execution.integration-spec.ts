@@ -1,4 +1,3 @@
-import { type ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605732698-contract-chat-thread-owners.command';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { randomUUID } from 'node:crypto';
@@ -155,43 +154,35 @@ describe('Persisted chat senders', () => {
       getCoreRepository<UserWorkspaceEntity>(UserWorkspaceEntity).manager
         .connection;
     const args = { workspaceId, dataSource, index: 0, total: 1, options: {} };
-    const ownerContract =
-      getAppProviderByClassName<ContractChatThreadOwnersCommand>(
-        'ContractChatThreadOwnersCommand',
-      );
-    await ownerContract.down(args);
-    try {
-      await expect(
-        actors.authorizeJob({
-          workspaceId,
-          threadId,
-          turnId: legacy.turnId!,
-          userWorkspaceId,
-        }),
-      ).resolves.toMatchObject({
-        sender: { userWorkspaceId, applicationId: null },
-      });
-      await command.up(args);
-      await command.up(args);
-      await command.down(args);
-      const storage = getAppProviderByClassName<AgentHistoryStorageService>(
-        'AgentHistoryUpgradeStorageService',
-      );
-      const records = await storage.run(workspaceId, ({ manager, table }) =>
-        manager.query(
-          `SELECT id, "senderUserWorkspaceId" FROM ${table('agentMessage')} WHERE id = ANY($1::uuid[])`,
-          [[legacy.id, explicit.id]],
-        ),
-      );
-      expect(records).toEqual(
-        expect.arrayContaining([
-          { id: legacy.id, senderUserWorkspaceId: userWorkspaceId },
-          { id: explicit.id, senderUserWorkspaceId: otherUserWorkspaceId },
-        ]),
-      );
-    } finally {
-      await ownerContract.up(args);
-    }
+
+    await expect(
+      actors.authorizeJob({
+        workspaceId,
+        threadId,
+        turnId: legacy.turnId!,
+        userWorkspaceId,
+      }),
+    ).resolves.toMatchObject({
+      sender: { userWorkspaceId, applicationId: null },
+    });
+    await command.up(args);
+    await command.up(args);
+    await command.down(args);
+    const storage = getAppProviderByClassName<AgentHistoryStorageService>(
+      'AgentHistoryUpgradeStorageService',
+    );
+    const records = await storage.run(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `SELECT id, "senderUserWorkspaceId" FROM ${table('agentMessage')} WHERE id = ANY($1::uuid[])`,
+        [[legacy.id, explicit.id]],
+      ),
+    );
+    expect(records).toEqual(
+      expect.arrayContaining([
+        { id: legacy.id, senderUserWorkspaceId: userWorkspaceId },
+        { id: explicit.id, senderUserWorkspaceId: otherUserWorkspaceId },
+      ]),
+    );
   });
   it('retains explicit core sender and application identities through rollback and re-upgrade', async () => {
     const dataSource =
