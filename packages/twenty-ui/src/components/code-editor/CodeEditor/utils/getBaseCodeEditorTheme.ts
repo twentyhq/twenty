@@ -1,4 +1,4 @@
-import { type ThemeType } from '@ui/theme-constants';
+import { type ThemeType } from '@ui/theme';
 import { type editor } from 'monaco-editor';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 

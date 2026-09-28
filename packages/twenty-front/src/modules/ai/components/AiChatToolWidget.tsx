@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Suspense, lazy } from 'react';
 
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { type ToolInput } from '@/ai/types/ToolInput';

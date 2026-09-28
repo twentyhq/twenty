@@ -8,7 +8,7 @@ import {
   updateApplicationRegistrationVariable,
 } from 'test/integration/metadata/suites/application-registration-variable/utils/application-registration-variable-api.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -142,7 +142,7 @@ describe('Application registration variable access outside the owner workspace s
       });
 
       it('should fail to reset one of its variables', async () => {
-        const response = await makeMetadataAPIRequest({
+        const response = await makeMetadataApiRequest({
           query: gql`
             mutation UpdateApplicationRegistrationVariable(
               $input: UpdateApplicationRegistrationVariableInput!

@@ -1,17 +1,24 @@
 import { createRecordExportConnection } from '@/record-export/utils/createRecordExportConnection';
-import { type ExecutionResult, type Sink } from 'graphql-sse';
+import { createClient, type ExecutionResult, type Sink } from 'graphql-sse';
 import { type ExportRecordsSubscription } from '~/generated-metadata/graphql';
 
 let mockSink: Sink<ExecutionResult<ExportRecordsSubscription>>;
 const mockDispose = jest.fn();
+let mockServerBaseUrl = 'https://workspace.example.test';
+
+jest.mock('~/config', () => ({
+  get REACT_APP_SERVER_BASE_URL() {
+    return mockServerBaseUrl;
+  },
+}));
 
 jest.mock('graphql-sse', () => ({
-  createClient: () => ({
+  createClient: jest.fn(() => ({
     dispose: mockDispose,
     subscribe: (_request: unknown, sink: typeof mockSink) => {
       mockSink = sink;
     },
-  }),
+  })),
 }));
 
 const input = { objectMetadataId: 'person', fieldMetadataIds: ['name'] };
@@ -28,7 +35,10 @@ const update = (values: Partial<ExportRecordsSubscription['exportRecords']>) =>
   });
 
 describe('createRecordExportConnection', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockServerBaseUrl = 'https://workspace.example.test';
+  });
   afterEach(() => jest.restoreAllMocks());
 
   it('reports server progress and automatically downloads the completed file once', async () => {
@@ -43,22 +53,86 @@ describe('createRecordExportConnection', () => {
     expect(click).not.toHaveBeenCalled();
     update({
       progress: 100,
-      downloadUrl: '/file/record-export/export?token=token',
+      downloadPath: '/file/record-export/export?token=token',
     });
     await expect(finished).resolves.toBeUndefined();
     expect(click).toHaveBeenCalledTimes(1);
     expect(click.mock.instances[0]).toHaveAttribute('download', 'person.csv');
     expect(click.mock.instances[0]).toHaveAttribute(
       'href',
-      '/file/record-export/export?token=token',
+      'https://workspace.example.test/file/record-export/export?token=token',
     );
     update({
       progress: 100,
-      downloadUrl: '/file/record-export/export?token=token',
+      downloadPath: '/file/record-export/export?token=token',
     });
     mockSink.complete();
     expect(click).toHaveBeenCalledTimes(1);
     expect(mockDispose).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(
+    [
+      'https://workspace.example.test',
+      'https://custom-domain.example.test',
+      'http://localhost:3000',
+      'https://workspace.example.test/twenty',
+      'http://localhost:3000/apps/twenty',
+    ].flatMap((baseUrl) => [
+      { serverBaseUrl: baseUrl, expectedBaseUrl: baseUrl },
+      { serverBaseUrl: `${baseUrl}/`, expectedBaseUrl: baseUrl },
+    ]),
+  )(
+    'downloads through the authenticated API at $serverBaseUrl',
+    async ({ serverBaseUrl, expectedBaseUrl }) => {
+      mockServerBaseUrl = serverBaseUrl;
+      const click = jest
+        .spyOn(HTMLAnchorElement.prototype, 'click')
+        .mockImplementation(() => {});
+      const finished = createRecordExportConnection().exportRecords({ input });
+
+      expect(createClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${expectedBaseUrl}/metadata`,
+          credentials: 'include',
+        }),
+      );
+      update({
+        progress: 100,
+        downloadPath: '/file/record-export/export?token=signed%2Btoken',
+      });
+
+      await expect(finished).resolves.toBeUndefined();
+      expect(click.mock.instances[0]).toHaveAttribute(
+        'href',
+        `${expectedBaseUrl}/file/record-export/export?token=signed%2Btoken`,
+      );
+      expect(click.mock.instances[0]).toHaveAttribute('download', 'person.csv');
+    },
+  );
+
+  it.each([
+    '/file/record-export/export',
+    '/downloads/generated/company%20export.csv',
+  ])('uses the server-provided download path %s', async (downloadPath) => {
+    mockServerBaseUrl = 'https://workspace.example.test/twenty/';
+    const click = jest
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+    const finished = createRecordExportConnection().exportRecords({ input });
+
+    update({
+      progress: 100,
+      downloadPath: `${downloadPath}?token=signed%2Btoken%2Fvalue%3D&expires=123`,
+    });
+
+    await expect(finished).resolves.toBeUndefined();
+    expect(click).toHaveBeenCalledTimes(1);
+    expect(click.mock.instances[0]).toHaveAttribute(
+      'href',
+      `https://workspace.example.test/twenty${downloadPath}?token=signed%2Btoken%2Fvalue%3D&expires=123`,
+    );
+    expect(click.mock.instances[0]).toHaveAttribute('download', 'person.csv');
   });
 
   it('surfaces the server failure and closes the connection', async () => {
@@ -94,7 +168,7 @@ describe('createRecordExportConnection', () => {
     await expect(finished).resolves.toBeUndefined();
     update({
       progress: 100,
-      downloadUrl: '/file/record-export/export?token=token',
+      downloadPath: '/file/record-export/export?token=token',
     });
     expect(click).not.toHaveBeenCalled();
     expect(mockDispose).toHaveBeenCalledTimes(1);

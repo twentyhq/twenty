@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconX } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 type SettingsAccountsBlocklistTableRowProps = {

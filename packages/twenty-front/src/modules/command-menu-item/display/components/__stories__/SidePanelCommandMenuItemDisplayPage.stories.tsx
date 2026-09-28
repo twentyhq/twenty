@@ -6,16 +6,22 @@ import {
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { HttpResponse, graphql } from 'msw';
-import { Context as ResponsiveContext } from 'react-responsive';
 import { MemoryRouter } from 'react-router-dom';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY } from 'twenty-ui/utilities';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -27,17 +33,24 @@ import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchem
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
+  PermissionFlagType,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
 import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const PINNED_ITEM_WIDTH = 100;
 
@@ -92,6 +105,56 @@ const NAVIGATION_ITEM = createCommandMenuItem({
   label: 'Go to People',
 });
 
+const SELECTION_ITEM = createCommandMenuItem({
+  id: 'story-update-records',
+  label: 'Update records',
+  icon: 'IconEdit',
+  engineComponentKey: EngineComponentKey.UPDATE_MULTIPLE_RECORDS,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+});
+
+const CURRENT_VIEW_ITEM = createCommandMenuItem({
+  id: 'story-export-view',
+  label: 'Export view',
+  icon: 'IconFileExport',
+  engineComponentKey: EngineComponentKey.EXPORT_VIEW,
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+});
+
+const PROSPECTS_VIEW: ViewWithRelations = {
+  ...mockedViews.find((view) => view.name === 'All Companies')!,
+  name: 'Prospects',
+};
+
+const SELECTED_COMPANIES = mockedCompanyRecords.slice(0, 5);
+
+const SelectedCompaniesInProspectsViewDecorator: Decorator = (Story) => {
+  for (const company of SELECTED_COMPANIES) {
+    jotaiStore.set(recordStoreFamilyState.atomFamily(company.id), company);
+  }
+
+  jotaiStore.set(
+    contextStoreTargetedRecordsRuleComponentState.atomFamily({
+      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
+    {
+      mode: 'selection',
+      selectedRecordIds: SELECTED_COMPANIES.map((company) => company.id),
+    },
+  );
+
+  setTestViewsInMetadataStore(jotaiStore, [PROSPECTS_VIEW]);
+
+  jotaiStore.set(
+    contextStoreCurrentViewIdComponentState.atomFamily({
+      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
+    PROSPECTS_VIEW.id,
+  );
+
+  return <Story />;
+};
+
 const FALLBACK_ITEM = createCommandMenuItem({
   id: 'story-search-records-fallback',
   label: 'Search records',
@@ -103,28 +166,34 @@ const FALLBACK_ITEM = createCommandMenuItem({
 type CreateDecoratorParams = {
   commandMenuItems: CommandMenuItemFieldsFragment[];
   sidePanelSearch: string;
+  commandMenuContextApi?: CommandMenuContextApi;
   pinnedItemsContainerWidth?: number;
   isNavigationDrawerExpanded?: boolean;
   isInPreviewMode?: boolean;
   pathname?: string;
-  viewportWidth?: number;
   colorScheme?: ColorScheme;
+  permissionFlags?: PermissionFlagType[];
 };
 
-const createDecorator =
-  ({
-    commandMenuItems,
-    sidePanelSearch,
-    pinnedItemsContainerWidth = 1000,
-    isNavigationDrawerExpanded = true,
-    isInPreviewMode = false,
-    pathname = '/objects/companies',
-    viewportWidth = 1280,
-    colorScheme = 'System',
-  }: CreateDecoratorParams): Decorator =>
-  (Story) => {
+const createDecorator = ({
+  commandMenuItems,
+  sidePanelSearch,
+  commandMenuContextApi = EMPTY_COMMAND_MENU_CONTEXT_API,
+  pinnedItemsContainerWidth = 1000,
+  isNavigationDrawerExpanded = true,
+  isInPreviewMode = false,
+  pathname = '/objects/companies',
+  colorScheme = 'System',
+  permissionFlags,
+}: CreateDecoratorParams): Decorator => {
+  const currentUserWorkspace = isDefined(permissionFlags)
+    ? { permissionFlags, objectsPermissions: [] }
+    : null;
+
+  return (Story) => {
     jotaiStore.set(sidePanelSearchState.atom, sidePanelSearch);
     jotaiStore.set(isSidePanelOpenedState.atom, true);
+    jotaiStore.set(currentUserWorkspaceState.atom, currentUserWorkspace);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       ...mockedWorkspaceMemberData,
       colorScheme,
@@ -163,36 +232,39 @@ const createDecorator =
 
     return (
       <JotaiProvider store={jotaiStore}>
-        <ResponsiveContext.Provider value={{ width: viewportWidth }}>
-          <MemoryRouter initialEntries={[pathname]}>
-            <CommandMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'story-command-menu' }}
+        <MemoryRouter initialEntries={[pathname]}>
+          <CommandMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'story-command-menu' }}
+          >
+            <CommandMenuContext.Provider
+              value={{
+                displayType: 'listItem',
+                containerType: CommandMenuItemContainerType.CommandMenuList,
+                commandMenuItems,
+                commandMenuContextApi,
+                isInPreviewMode,
+              }}
             >
-              <CommandMenuContext.Provider
-                value={{
-                  displayType: 'listItem',
-                  containerType: CommandMenuItemContainerType.CommandMenuList,
-                  commandMenuItems,
-                  commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
-                  isInPreviewMode,
-                }}
-              >
-                <BaseThemeProvider>
-                  <ToastStoryContainer>
-                    <Story />
-                  </ToastStoryContainer>
-                </BaseThemeProvider>
-              </CommandMenuContext.Provider>
-            </CommandMenuComponentInstanceContext.Provider>
-          </MemoryRouter>
-        </ResponsiveContext.Provider>
+              <BaseThemeProvider>
+                <ToastStoryContainer>
+                  <Story />
+                </ToastStoryContainer>
+              </BaseThemeProvider>
+            </CommandMenuContext.Provider>
+          </CommandMenuComponentInstanceContext.Provider>
+        </MemoryRouter>
       </JotaiProvider>
     );
   };
+};
 
 const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
   title: 'Modules/CommandMenu/SidePanelCommandMenuItemDisplayPage',
   component: SidePanelCommandMenuItemDisplayPage,
+  beforeEach: ({ parameters }) =>
+    overrideMediaQueryMatches({
+      [MOBILE_MEDIA_QUERY]: parameters.isMobile === true,
+    }),
   decorators: [
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
@@ -315,6 +387,24 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
   },
 };
 
+export const SearchWithoutMatchingItemsOffersAskAi: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, FALLBACK_ITEM],
+      sidePanelSearch: 'mike',
+      pinnedItemsContainerWidth: 1000,
+      permissionFlags: [PermissionFlagType.AI],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Use ‘mike’ with...')).toBeVisible();
+    expect(canvas.getByText('Search records')).toBeVisible();
+    expect(canvas.getByText('Ask AI')).toBeVisible();
+  },
+};
+
 export const NavigationSitsLastAtRest: Story = {
   decorators: [
     createDecorator({
@@ -330,14 +420,43 @@ export const NavigationSitsLastAtRest: Story = {
     expect(await canvas.findByText('Go to People')).toBeVisible();
 
     const headings = canvas.getAllByText(
-      /^(Pinned|This object|Workspace|Go to)$/,
+      /^(Selection|Object: Companies|Workspace|Go to)$/,
     );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
-      'Pinned',
-      'This object',
+      'Selection',
+      'Object: Companies',
       'Workspace',
       'Go to',
+    ]);
+  },
+};
+
+export const SectionHeadersShowTheirContext: Story = {
+  decorators: [
+    SelectedCompaniesInProspectsViewDecorator,
+    createDecorator({
+      commandMenuItems: [SELECTION_ITEM, CURRENT_VIEW_ITEM, OTHER_ITEM],
+      sidePanelSearch: '',
+      commandMenuContextApi: {
+        ...EMPTY_COMMAND_MENU_CONTEXT_API,
+        numberOfSelectedRecords: SELECTED_COMPANIES.length,
+      },
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Selection: 5 Companies')).toBeVisible();
+
+    const headings = canvas.getAllByText(
+      /^(Selection: 5 Companies|View: Prospects|Object: Companies)$/,
+    );
+
+    expect(headings.map((heading) => heading.textContent)).toEqual([
+      'Selection: 5 Companies',
+      'View: Prospects',
+      'Object: Companies',
     ]);
   },
 };
@@ -427,11 +546,11 @@ export const SearchSidebarWithCaseAndWhitespace: Story = {
 };
 
 export const HiddenOnMobile: Story = {
+  parameters: { isMobile: true },
   decorators: [
     createDecorator({
       commandMenuItems: [OTHER_ITEM],
       sidePanelSearch: 'sidebar',
-      viewportWidth: 375,
     }),
   ],
   play: SearchWithoutMatchingItemsAndWithoutFallback.play,

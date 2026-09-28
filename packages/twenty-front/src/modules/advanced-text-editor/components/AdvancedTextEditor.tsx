@@ -6,7 +6,7 @@ import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtens
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;

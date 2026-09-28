@@ -32,7 +32,6 @@ export const buildRecordShareGate = ({
   target,
   buildParentPolicy,
 }: RecordShareGateArgs): RowAccessPolicy => {
-  const { isRecordSharingEnabled } = context.environment;
   const isOwningApplication = context.subject.isOwningApplication(
     target.flatObjectMetadata,
   );
@@ -40,7 +39,7 @@ export const buildRecordShareGate = ({
   const gateKind = resolveRecordShareGateKind({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
-    isRecordSharingEnabled,
+    isLegacyRecordAccessOpen: context.environment.isLegacyRecordAccessOpen,
   });
   switch (gateKind) {
     case 'open':

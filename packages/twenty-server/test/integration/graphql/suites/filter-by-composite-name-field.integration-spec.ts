@@ -1,7 +1,7 @@
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 
@@ -52,7 +52,7 @@ describe('filter by composite name field (integration)', () => {
       ],
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.createPeople).toHaveLength(3);
   });

@@ -2,11 +2,10 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical } from 'twenty-ui/icon';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
   type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
-  useContext,
   useState,
 } from 'react';
 
@@ -39,7 +38,7 @@ type WidgetGripProps = {
 };
 
 export const WidgetGrip = ({ className }: WidgetGripProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   // Only pointerdown is tracked: the compatibility mousedown that touch fires
   // afterwards reports the release point, which would hide every drag.
   const [pointerDownPosition, setPointerDownPosition] = useState<{

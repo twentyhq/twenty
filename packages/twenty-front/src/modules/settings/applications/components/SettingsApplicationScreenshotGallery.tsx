@@ -3,7 +3,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationScreenshotGalleryProps = {
   screenshots: string[];

@@ -398,4 +398,130 @@ describe('Dropdown menu', () => {
     expect(duplicate).toHaveBeenCalledOnce();
     expect(activateRow).not.toHaveBeenCalled();
   });
+
+  it('opens from a trigger nested in a link without following the link', async () => {
+    const user = userEvent.setup();
+    const clickEvents: MouseEvent[] = [];
+    const recordClick = (event: MouseEvent) => clickEvents.push(event);
+
+    render(
+      <a href="#record">
+        <Dropdown.Root type="menu">
+          <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+          <Dropdown.Content aria-label="Record actions">
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      </a>,
+    );
+
+    document.addEventListener('click', recordClick, true);
+
+    try {
+      await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    } finally {
+      document.removeEventListener('click', recordClick, true);
+    }
+
+    expect(screen.getByRole('menu')).toBeVisible();
+    expect(clickEvents).toHaveLength(1);
+    expect(clickEvents[0].defaultPrevented).toBe(true);
+  });
+
+  it('lets unhandled modifier shortcuts leave the menu and keeps other keys inside', async () => {
+    const user = userEvent.setup();
+    const documentKeyDown = vi.fn();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          <Dropdown.ActionItem>Delete</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
+
+    document.addEventListener('keydown', documentKeyDown);
+
+    try {
+      await user.keyboard('{ArrowDown}x');
+      expect(screen.getByRole('menuitem', { name: 'Delete' })).toHaveFocus();
+      expect(documentKeyDown).not.toHaveBeenCalled();
+
+      await user.keyboard('{Control>}k{/Control}');
+    } finally {
+      document.removeEventListener('keydown', documentKeyDown);
+    }
+
+    expect(documentKeyDown).toHaveBeenCalledWith(
+      expect.objectContaining({ key: 'k', ctrlKey: true }),
+    );
+    expect(screen.getByRole('menu')).toBeVisible();
+  });
+
+  it('dismisses on an outside click without activating the clicked control', async () => {
+    const user = userEvent.setup();
+    const clickOutsideControl = vi.fn();
+
+    render(
+      <>
+        <Dropdown.Root type="menu">
+          <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+          <Dropdown.Content aria-label="Record actions">
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Root>
+        <Button onClick={clickOutsideControl}>Outside</Button>
+      </>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    expect(screen.getByRole('menu')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Outside' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(clickOutsideControl).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: 'Outside' }));
+    expect(clickOutsideControl).toHaveBeenCalledOnce();
+  });
+
+  it('dismisses on an outside row click without activating the row', async () => {
+    const user = userEvent.setup();
+    const activateRow = vi.fn();
+
+    render(
+      <>
+        <Dropdown.Root type="menu">
+          <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+          <Dropdown.Content aria-label="Record actions">
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Root>
+        <div role="row" onClick={activateRow} onKeyDown={activateRow}>
+          Attachment row
+        </div>
+      </>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    expect(screen.getByRole('menu')).toBeVisible();
+
+    await user.click(screen.getByRole('row'));
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(activateRow).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('row'));
+    expect(activateRow).toHaveBeenCalledOnce();
+  });
 });

@@ -5,7 +5,7 @@ import {
   TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('Core REST API Find Duplicates endpoint', () => {
@@ -13,7 +13,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
     await deleteAllRecords('person');
     await deleteAllRecords('company');
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/companies',
       body: {
@@ -24,7 +24,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
       },
     }).expect(201);
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/batch/people',
       body: [
@@ -57,7 +57,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should retrieve duplicates by object data', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates`,
       body: {
@@ -88,7 +88,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should retrieve duplicates by ids', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates`,
       body: {
@@ -110,7 +110,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should not provide wrong duplicates', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates`,
       body: {
@@ -135,7 +135,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should return 400 error when empty object data provided', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates`,
       body: {
@@ -150,7 +150,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should return empty result when empty ids provided', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates`,
       body: {
@@ -162,7 +162,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should return 400 error when ids and data are provided', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates`,
       body: {
@@ -178,7 +178,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should support depth 0 parameter', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates?depth=0`,
       body: {
@@ -208,7 +208,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should support depth 1 parameter', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates?depth=1`,
       body: {
@@ -241,7 +241,7 @@ describe('Core REST API Find Duplicates endpoint', () => {
   });
 
   it('should not support depth 2 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people/duplicates?depth=2`,
       body: {

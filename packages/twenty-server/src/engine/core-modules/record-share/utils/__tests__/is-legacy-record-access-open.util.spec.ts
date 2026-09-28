@@ -27,14 +27,14 @@ it.each([
       resolveRecordShareGateKind({
         readability: MetadataReadability.PRIVATE,
         isOwningApplication: false,
-        isRecordSharingEnabled: !legacyOpen,
+        isLegacyRecordAccessOpen: legacyOpen,
       }),
     ).toBe(expected ? 'open' : 'private');
     expect(
       resolveRecordShareGateKind({
         readability: MetadataReadability.SYSTEM,
         isOwningApplication: false,
-        isRecordSharingEnabled: !legacyOpen,
+        isLegacyRecordAccessOpen: legacyOpen,
       }),
     ).toBe('deny');
   },

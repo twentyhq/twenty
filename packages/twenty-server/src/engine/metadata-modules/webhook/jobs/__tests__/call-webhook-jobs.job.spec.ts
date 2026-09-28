@@ -3,7 +3,7 @@ import { MetadataReadability } from 'twenty-shared/types';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { CallWebhookJobsJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook-jobs.job';
@@ -36,7 +36,7 @@ describe('webhook mandatory visibility', () => {
           },
           { provide: WorkspaceCacheService, useValue: { getOrRecompute } },
           { provide: WorkspaceOrmManager, useValue: {} },
-          { provide: RecordShareService, useValue: {} },
+          { provide: RecordShareStorageService, useValue: {} },
           {
             provide: RecordSharingFeatureService,
             useValue: {

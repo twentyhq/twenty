@@ -1,7 +1,7 @@
 import { isDefined } from '@/utils';
 import { isIfElseStepInput } from '@/workflow/validation/guards/isIfElseStepInput';
 import { isIteratorStepInput } from '@/workflow/validation/guards/isIteratorStepInput';
-import { type ValidatableWorkflowStep } from '@/workflow/validation/types/workflow-validation.type';
+import { type ValidatableWorkflowStep } from '@/workflow/validation/types/WorkflowValidation';
 import { isObject } from '@sniptt/guards';
 
 export const getStepInput = (

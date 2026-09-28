@@ -1,4 +1,6 @@
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { AgentChatSharingService } from './services/agent-chat-sharing.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
@@ -38,6 +40,7 @@ import { WorkspaceSetupChatService } from './services/workspace-setup-chat.servi
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
+import { AgentChatThreadTargetService } from './services/agent-chat-thread-target.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
@@ -45,6 +48,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
+    RecordShareModule,
     AgentChatStreamStateModule,
     AgentHistoryModule,
     UsageLimitModule,
@@ -73,6 +77,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
   ],
   providers: [
     AgentChatActorService,
+    AgentChatSharingService,
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,
@@ -80,6 +85,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentChatService,
+    AgentChatThreadTargetService,
     AgentChatStreamingService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,
@@ -91,8 +97,10 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
+    AgentChatSharingService,
     AgentChatService,
     AgentChatStreamingService,
+    AgentChatThreadTargetService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
   ],
 })

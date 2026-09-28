@@ -2,10 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
-import { useContext } from 'react';
 import { type AskQuestionsToolResult } from 'twenty-shared/ai';
 import { IconHelpCircle } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 
@@ -66,7 +65,7 @@ export const AiChatQuestionStatusRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const result = (toolPart.output as { result?: AskQuestionsToolResult } | null)
     ?.result;

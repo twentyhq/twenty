@@ -13,7 +13,7 @@ import { Section } from 'twenty-ui/components';
 import { IconTool } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -68,7 +68,7 @@ export const SettingsRolePermissionsToolSection = ({
       <Section.Header title={t`Logic`} description={t`Logic permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconTool}
               title={t`Logic All Access`}
@@ -82,7 +82,7 @@ export const SettingsRolePermissionsToolSection = ({
                 });
               }}
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
       )}
       <AnimatedExpandableContainer

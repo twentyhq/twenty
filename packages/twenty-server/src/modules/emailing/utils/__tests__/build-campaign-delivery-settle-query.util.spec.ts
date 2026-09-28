@@ -19,7 +19,7 @@ const buildSettlement = (
 describe('buildCampaignDeliverySettleQuery', () => {
   it('keeps every settlement on its own row across the parallel arrays', () => {
     const { parameters } = buildCampaignDeliverySettleQuery({
-      workspaceId: 'workspace-1',
+      campaignDeliveryTableName: '"workspace_1"."campaignDelivery"',
       claimToken: 'claim-1',
       settlements: [
         buildSettlement({
@@ -35,14 +35,14 @@ describe('buildCampaignDeliverySettleQuery', () => {
       ],
     });
 
-    const [
+    const {
       deliveryIds,
       states,
       skipReasons,
       failureReasons,
       providerMessageIds,
       sentAtValues,
-    ] = parameters;
+    } = parameters;
 
     expect(deliveryIds).toEqual(['delivery-a', 'delivery-b']);
     expect(states).toEqual([
@@ -57,7 +57,7 @@ describe('buildCampaignDeliverySettleQuery', () => {
 
   it('settles two people who share an email address as two separate deliveries', () => {
     const { parameters } = buildCampaignDeliverySettleQuery({
-      workspaceId: 'workspace-1',
+      campaignDeliveryTableName: '"workspace_1"."campaignDelivery"',
       claimToken: 'claim-1',
       settlements: [
         buildSettlement({
@@ -73,26 +73,31 @@ describe('buildCampaignDeliverySettleQuery', () => {
       ],
     });
 
-    expect(parameters[0]).toEqual(['delivery-first', 'delivery-second']);
-    expect(parameters[4]).toEqual(['provider-first', 'provider-second']);
+    expect(parameters.deliveryIds).toEqual([
+      'delivery-first',
+      'delivery-second',
+    ]);
+    expect(parameters.providerMessageIds).toEqual([
+      'provider-first',
+      'provider-second',
+    ]);
   });
 
-  it('scopes the update to the workspace and the claim that is being settled', () => {
+  it('scopes the update to the workspace table and the claim that is being settled', () => {
     const { sql, parameters } = buildCampaignDeliverySettleQuery({
-      workspaceId: 'workspace-1',
+      campaignDeliveryTableName: '"workspace_1"."campaignDelivery"',
       claimToken: 'claim-1',
       settlements: [buildSettlement({ deliveryId: 'delivery-a' })],
     });
 
-    expect(sql).toContain('delivery."workspaceId" = $7');
-    expect(sql).toContain('delivery."claimToken" = $8');
-    expect(parameters[6]).toBe('workspace-1');
-    expect(parameters[7]).toBe('claim-1');
+    expect(sql).toContain('UPDATE "workspace_1"."campaignDelivery" delivery');
+    expect(sql).toContain('delivery."claimToken" = :claimToken');
+    expect(parameters.claimToken).toBe('claim-1');
   });
 
   it('returns the settled ids from a select so the driver reports rows rather than an update tuple', () => {
     const { sql } = buildCampaignDeliverySettleQuery({
-      workspaceId: 'workspace-1',
+      campaignDeliveryTableName: '"workspace_1"."campaignDelivery"',
       claimToken: 'claim-1',
       settlements: [buildSettlement({ deliveryId: 'delivery-a' })],
     });
@@ -103,7 +108,7 @@ describe('buildCampaignDeliverySettleQuery', () => {
 
   it('advances updatedAt so staleness checks see the settle', () => {
     const { sql } = buildCampaignDeliverySettleQuery({
-      workspaceId: 'workspace-1',
+      campaignDeliveryTableName: '"workspace_1"."campaignDelivery"',
       claimToken: 'claim-1',
       settlements: [buildSettlement({ deliveryId: 'delivery-a' })],
     });

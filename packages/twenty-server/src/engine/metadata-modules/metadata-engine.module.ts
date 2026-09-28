@@ -1,3 +1,4 @@
+import { RecordPermissionsModule } from 'src/engine/metadata-modules/record-permissions/record-permissions.module';
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
@@ -39,6 +40,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 
 @Module({
   imports: [
+    RecordPermissionsModule,
     FieldMetadataModule,
     FrontComponentModule,
     ObjectMetadataModule,

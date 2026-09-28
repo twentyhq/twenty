@@ -17,7 +17,7 @@ import { recordCreationFormRequestComponentState } from '@/side-panel/pages/reco
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -25,7 +25,7 @@ import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
@@ -75,7 +75,7 @@ const SidePanelRecordCreationForm = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
 

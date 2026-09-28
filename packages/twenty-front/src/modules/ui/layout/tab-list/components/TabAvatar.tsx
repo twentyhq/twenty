@@ -1,12 +1,11 @@
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const TabAvatar = ({ tab }: { tab: SingleTabProps }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   if (isDefined(tab.logo)) {
     return (

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledEventRow = styled.div`
   display: flex;

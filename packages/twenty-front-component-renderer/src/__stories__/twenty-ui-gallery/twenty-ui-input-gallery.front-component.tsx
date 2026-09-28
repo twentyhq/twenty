@@ -21,7 +21,7 @@ import {
   Slider,
   Switch,
 } from 'twenty-ui/primitives/input';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 import {
   ComponentGallery,
   type GalleryEntry,

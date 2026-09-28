@@ -11,7 +11,10 @@ import { EventLogsGraphqlApiExceptionFilter } from 'src/engine/core-modules/even
 import { ForbiddenExceptionGraphqlFilter } from 'src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -42,7 +45,11 @@ export class EventLogsResolver {
   async eventLogs(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input') input: EventLogQueryInput,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<EventLogQueryResult> {
-    return this.eventLogsService.queryEventLogs(workspace.id, input);
+    return this.eventLogsService.queryEventLogs(workspace.id, input, {
+      callingApplicationId: getScopedCallingApplication(callingApplication)?.id,
+    });
   }
 }

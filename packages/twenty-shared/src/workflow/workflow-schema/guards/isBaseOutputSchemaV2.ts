@@ -1,5 +1,5 @@
 import { isDefined } from '@/utils';
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/BaseOutputSchema';
 import { isBoolean, isObject } from 'class-validator';
 
 export const isBaseOutputSchemaV2 = (

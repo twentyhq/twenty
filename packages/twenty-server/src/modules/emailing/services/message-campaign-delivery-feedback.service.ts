@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-
-import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CampaignProviderOutcome } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
 import { buildCampaignDeliveryOutcomeUpdate } from 'src/engine/core-modules/emailing-domain/utils/build-campaign-delivery-outcome-update.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class MessageCampaignDeliveryFeedbackService {
   constructor(
-    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
-    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
@@ -40,18 +37,22 @@ export class MessageCampaignDeliveryFeedbackService {
     // update: providerMessageId is unique per workspace, so this settles the
     // same single row, halves the queries a webhook costs, and closes the
     // window where the row could change between the two.
-    const { raw } = await this.campaignDeliveryRepository
-      .createQueryBuilder()
-      .update()
-      .set(update as QueryDeepPartialEntity<CampaignDeliveryEntity>)
-      .where('"workspaceId" = :workspaceId', { workspaceId })
-      .andWhere('"providerMessageId" = :providerMessageId', {
-        providerMessageId,
-      })
-      .returning(['campaignId'])
-      .execute();
-
-    const [updatedDelivery] = raw as { campaignId: string }[];
+    const {
+      generatedMaps: [updatedDelivery],
+    } = await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignDeliveryRepository = this.workspaceOrmManager.getRepository(
+        CampaignDeliveryWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      );
+      return campaignDeliveryRepository
+        .createQueryBuilder()
+        .where({ providerMessageId })
+        .update()
+        .set(update)
+        .returning(['campaignId'])
+        .execute();
+    }, buildSystemAuthContext(workspaceId));
 
     if (!isDefined(updatedDelivery)) {
       return;

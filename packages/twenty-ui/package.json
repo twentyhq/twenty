@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.43.0",
+  "version": "2.44.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -77,7 +77,6 @@
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
-    "react-responsive": "^9.0.2",
     "type-fest": "^4.10.1",
     "zod": "^4.1.11"
   },
@@ -187,11 +186,6 @@
       "import": "./dist/theme.mjs",
       "require": "./dist/theme.cjs"
     },
-    "./theme-constants": {
-      "types": "./dist/theme-constants/index.d.ts",
-      "import": "./dist/theme-constants.mjs",
-      "require": "./dist/theme-constants.cjs"
-    },
     "./utilities": {
       "types": "./dist/utilities/index.d.ts",
       "import": "./dist/utilities.mjs",
@@ -247,9 +241,6 @@
       ],
       "theme": [
         "dist/theme/index.d.ts"
-      ],
-      "theme-constants": [
-        "dist/theme-constants/index.d.ts"
       ],
       "utilities": [
         "dist/utilities/index.d.ts"

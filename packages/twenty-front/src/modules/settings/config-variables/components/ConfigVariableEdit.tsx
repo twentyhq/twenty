@@ -7,7 +7,7 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSectionHeader = styled(Section.Header)`
   margin-block-end: 0;

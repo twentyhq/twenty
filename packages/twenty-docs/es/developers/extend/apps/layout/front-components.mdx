@@ -711,7 +711,7 @@ Importa desde la subruta correspondiente en lugar de la raíz del paquete, de mo
 | `twenty-ui/feedback`        | `Callout`, `Banner`, `Info`, y más              |
 | `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label`, y más |
 | `twenty-ui/icon`            | Componentes `Icon*` (p. ej., `IconCheck`)       |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`            |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`            |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Los componentes de Twenty UI coinciden automáticamente con el tema claro y oscu
 Para usar los mismos tokens de diseño en tus propios estilos en línea, llama al hook `useTheme()`. Devuelve los tokens de tema de Twenty (espaciado, colores, radios, fuentes) conectados al tema activo, sin necesidad de configurar `ThemeProvider` en tu componente:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

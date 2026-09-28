@@ -13,7 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -28,7 +28,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let workspaceOrmManager: jest.Mocked<WorkspaceOrmManager>;
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
-  let recordShareService: jest.Mocked<RecordShareService>;
+  let recordShareStorageService: jest.Mocked<RecordShareStorageService>;
   let recordSharingFeatureService: jest.Mocked<
     Pick<
       RecordSharingFeatureService,
@@ -111,9 +111,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       } as never),
     } as any;
 
-    recordShareService = {
+    recordShareStorageService = {
       findByRecordIds: jest.fn().mockResolvedValue([]),
-    } as unknown as jest.Mocked<RecordShareService>;
+    } as unknown as jest.Mocked<RecordShareStorageService>;
 
     recordSharingFeatureService = {
       isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(false),
@@ -136,8 +136,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           useValue: workspaceCacheService,
         },
         {
-          provide: RecordShareService,
-          useValue: recordShareService,
+          provide: RecordShareStorageService,
+          useValue: recordShareStorageService,
         },
         {
           provide: RecordSharingFeatureService,
@@ -484,7 +484,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
               },
         )) as never);
 
-      recordShareService.findByRecordIds.mockResolvedValue([
+      recordShareStorageService.findByRecordIds.mockResolvedValue([
         {
           id: 'record-share-1',
           recordId: 'test-record-2',
@@ -499,7 +499,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
       await listener.handleObjectRecordUpdateEvent(privatePayload);
 
-      expect(recordShareService.findByRecordIds).toHaveBeenCalledWith({
+      expect(recordShareStorageService.findByRecordIds).toHaveBeenCalledWith({
         workspaceId,
         objectMetadataId: privatePayload.objectMetadata.id,
         recordIds: ['test-record', 'test-record-2'],
@@ -564,7 +564,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
         await listener.handleObjectRecordUpdateEvent(systemPayload);
 
-        expect(recordShareService.findByRecordIds).not.toHaveBeenCalled();
+        expect(
+          recordShareStorageService.findByRecordIds,
+        ).not.toHaveBeenCalled();
         expect(messageQueueService.add).not.toHaveBeenCalled();
       },
     );

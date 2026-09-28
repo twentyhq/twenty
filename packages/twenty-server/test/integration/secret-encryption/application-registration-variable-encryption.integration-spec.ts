@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
@@ -24,7 +24,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
     dataSource = global.testDataSource;
     secretEncryption = buildSecretEncryptionServiceFromEnv();
 
-    const createRegistrationResponse = await makeMetadataAPIRequest({
+    const createRegistrationResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateRegistrationForEncryptionTest(
           $input: CreateApplicationRegistrationInput!
@@ -57,7 +57,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   });
 
   afterAll(async () => {
-    await makeMetadataAPIRequest({
+    await makeMetadataApiRequest({
       query: gql`
         mutation DeleteRegistrationForEncryptionTest($id: String!) {
           deleteApplicationRegistration(id: $id)
@@ -70,7 +70,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   it('encrypts the value on the API write path, persists ciphertext in Postgres, and decrypts back via the API read path', async () => {
     const plaintext = 'this-is-a-v2-encrypted-secret-value';
 
-    const createVariableResponse = await makeMetadataAPIRequest({
+    const createVariableResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateVariableForEncryptionTest(
           $input: CreateApplicationRegistrationVariableInput!
@@ -105,7 +105,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
     ).toBe(true);
     expect(dbRow.encryptedValue).toMatch(V2_ENVELOPE_REGEX);
 
-    const findResponse = await makeMetadataAPIRequest({
+    const findResponse = await makeMetadataApiRequest({
       query: gql`
         query FindVariablesForEncryptionTest(
           $applicationRegistrationId: String!
@@ -172,7 +172,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
         ],
       );
 
-      const findResponse = await makeMetadataAPIRequest({
+      const findResponse = await makeMetadataApiRequest({
         query: gql`
           query FindLegacyCtrVariablesForEncryptionTest(
             $applicationRegistrationId: String!

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import React, { useContext } from 'react';
+import React from 'react';
 import { IconCheck } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBenefitContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};
@@ -24,7 +24,7 @@ type SubscriptionBenefitProps = {
   children: React.ReactNode;
 };
 export const SubscriptionBenefit = ({ children }: SubscriptionBenefitProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledBenefitContainer>

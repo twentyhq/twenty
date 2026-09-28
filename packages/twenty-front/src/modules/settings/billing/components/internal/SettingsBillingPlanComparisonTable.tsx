@@ -16,7 +16,7 @@ import {
   SegmentedControl,
   type SegmentedControlOption,
 } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   BillingPlanKey,
   SubscriptionInterval,

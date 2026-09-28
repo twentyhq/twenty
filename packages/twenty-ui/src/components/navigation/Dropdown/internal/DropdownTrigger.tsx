@@ -17,6 +17,7 @@ export const DropdownTrigger = ({
       aria-haspopup={type === 'menu' ? 'menu' : 'dialog'}
       onClick={(event) => {
         event.stopPropagation();
+        event.preventDefault();
         onClick?.(event);
       }}
       onKeyDown={(event) => {

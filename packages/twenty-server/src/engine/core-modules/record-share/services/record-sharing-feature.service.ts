@@ -1,10 +1,9 @@
 /* @license Enterprise */
 
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type RecordSharingEntitlementProvider } from 'src/engine/core-modules/record-share/interfaces/record-sharing-entitlement-provider.service';
 import { NoRecordSharingEntitlementProvider } from 'src/engine/core-modules/record-share/services/no-record-sharing-entitlement-provider.service';
@@ -14,8 +13,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class RecordSharingFeatureService implements OnModuleInit {
-  private readonly logger = new Logger(RecordSharingFeatureService.name);
-
   private entitlementProvider: RecordSharingEntitlementProvider;
 
   constructor(
@@ -28,12 +25,6 @@ export class RecordSharingFeatureService implements OnModuleInit {
       this.discoveryService,
     );
 
-    if (!isDefined(discoveredProvider)) {
-      this.logger.warn(
-        'No record sharing entitlement provider is registered, record sharing stays off for every workspace on this instance.',
-      );
-    }
-
     this.entitlementProvider =
       discoveredProvider ?? new NoRecordSharingEntitlementProvider();
   }
@@ -43,12 +34,7 @@ export class RecordSharingFeatureService implements OnModuleInit {
       workspaceId,
       ['featureFlagsMap'],
     );
-
-    if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
-      return false;
-    }
-
-    return this.entitlementProvider.hasRecordSharingEntitlement(workspaceId);
+    return featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ?? false;
   }
 
   async isLegacyRecordAccessOpen(workspaceId: string): Promise<boolean> {
@@ -65,6 +51,9 @@ export class RecordSharingFeatureService implements OnModuleInit {
       return false;
     }
 
-    return !(await this.isRecordSharingEnabled(workspaceId));
+    return !(
+      (await this.isRecordSharingEnabled(workspaceId)) &&
+      (await this.entitlementProvider.hasRecordSharingEntitlement(workspaceId))
+    );
   }
 }

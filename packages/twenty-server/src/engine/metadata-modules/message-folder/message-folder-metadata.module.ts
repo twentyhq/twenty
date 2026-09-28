@@ -9,6 +9,7 @@ import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata
 import { MessageFolderMetadataService } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.service';
 import { MessageFolderResolver } from 'src/engine/metadata-modules/message-folder/resolvers/message-folder.resolver';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     MessageFolderMetadataService,
     MessageFolderResolver,
     MessageFolderGraphqlApiExceptionInterceptor,
+    provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
   exports: [MessageFolderMetadataService],
 })

@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -30,7 +29,7 @@ export const CurrencyDisplay = ({
   currencyValue,
   fieldDefinition,
 }: CurrencyDisplayProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const currencyCode = currencyValue?.currencyCode;
   const currencyMetadata = isDefined(currencyCode)

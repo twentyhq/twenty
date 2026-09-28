@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import { LightButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
   modalInstanceId: string;

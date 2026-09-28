@@ -1,3 +1,4 @@
+import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,25 +24,13 @@ const isWritePermittedByWritability = ({
   owningApplicationId: string | undefined;
   authContext: WorkspaceAuthContext | undefined;
 }): boolean => {
-  if (!isDefined(writability) || writability === MetadataWritability.OPEN) {
-    return true;
-  }
-
-  // A system context is only ever built server-side (sync jobs, listeners,
-  // internal services); no token strategy mints one, so it is the platform
-  // itself writing and neither ownership level applies to it.
-  if (isDefined(authContext) && authContext.type === 'system') {
-    return true;
-  }
-
-  if (writability === MetadataWritability.APPLICATION) {
-    return (
+  return isMetadataWritePermitted({
+    writability,
+    isSystemContext: authContext?.type === 'system',
+    isOwningApplication:
       isDefined(authContext) &&
-      isOwningApplicationAuthContext({ authContext, owningApplicationId })
-    );
-  }
-
-  return false;
+      isOwningApplicationAuthContext({ authContext, owningApplicationId }),
+  });
 };
 
 type ValidateWritabilityOrThrowArgs = {

@@ -10,7 +10,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Popover } from '../Popover';
 import { type PopoverPopupProps } from '../types/PopoverPopupProps';

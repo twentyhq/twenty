@@ -3,8 +3,7 @@ import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/Gra
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { styled } from '@linaria/react';
 import { ResponsivePie } from '@nivo/pie';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type UsagePieChartDatum = {
   id: string;
@@ -51,7 +50,7 @@ const StyledTooltipValue = styled.span`
 `;
 
 export const UsagePieChart = ({ data }: UsagePieChartProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatUsageValue } = useUsageValueFormatter();
 
   return (

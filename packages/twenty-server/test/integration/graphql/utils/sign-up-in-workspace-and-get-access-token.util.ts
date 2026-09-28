@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -58,7 +58,7 @@ export const signUpInWorkspaceAndGetAccessToken = async (
     }
   `;
 
-  const signUpResponse = await makeMetadataAPIRequest(
+  const signUpResponse = await makeMetadataApiRequest(
     {
       query: signUpInWorkspaceMutation,
       variables: {

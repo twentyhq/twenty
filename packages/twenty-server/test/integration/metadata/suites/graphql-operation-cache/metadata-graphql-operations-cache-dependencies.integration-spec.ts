@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ASTNode } from 'graphql';
@@ -239,7 +239,7 @@ describe('metadata GraphQL operations cache dependencies', () => {
     const spy = jest.spyOn(workspaceCacheService, 'getOrRecomputeWithHashes');
 
     try {
-      const response = await makeMetadataAPIRequest({ query });
+      const response = await makeMetadataApiRequest({ query });
 
       expect(response.body.errors).toBeUndefined();
 

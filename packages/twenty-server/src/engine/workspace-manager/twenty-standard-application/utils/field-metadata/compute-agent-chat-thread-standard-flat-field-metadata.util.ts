@@ -3,8 +3,10 @@ import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
   MetadataWritability,
+  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   type CreateStandardFieldArgs,
@@ -86,7 +88,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    writability: MetadataWritability.OPEN,
     isAuditLogged: false,
   },
   totalInputTokens: {
@@ -497,6 +499,39 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  workspaceMember: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'workspaceMember',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Workspace Member', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workspace member who owns the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isUIEditable: false,
+        // Becomes required with the owner contract step
+        // (twentyhq/core-team-issues#2925).
+        isNullable: true,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'agentChatThreads',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'workspaceMemberId',
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   messages: {
     ...createStandardRelationFieldFlatMetadata({
       ...args,
@@ -513,6 +548,68 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isUIEditable: false,
         isNullable: true,
         targetObjectName: 'agentMessage',
+        targetFieldName: 'thread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  attachments: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'attachments',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+            .label,
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Attachments linked to the chat thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+          .icon,
+        isUIEditable: false,
+        isNullable: true,
+        isSystemSideEffect: true,
+        targetObjectName: 'attachment',
+        targetFieldName: 'targetAgentChatThread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  recordTargets: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'recordTargets',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Record Targets', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Records this thread is attached to',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconRelationOneToMany',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'agentChatThreadTarget',
         targetFieldName: 'thread',
         morphId: null,
         settings: {

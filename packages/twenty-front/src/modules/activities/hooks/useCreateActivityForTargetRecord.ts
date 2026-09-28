@@ -1,3 +1,5 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useCanUpdateObjectRecords } from '@/object-record/hooks/useCanUpdateObjectRecords';
@@ -17,6 +19,9 @@ export const useCreateActivityForTargetRecord = ({
   targetRecord,
   activityObjectNameSingular,
 }: UseCreateActivityForTargetRecordParams) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+  });
   const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
     targetRecord.targetObjectNameSingular,
   );
@@ -29,7 +34,9 @@ export const useCreateActivityForTargetRecord = ({
     openCreateActivityDrawer({ targetableObjects: [targetRecord] });
 
   return {
-    canCreateActivity: canUpdateObjectRecords,
+    canCreateActivity:
+      canUpdateObjectRecords &&
+      !isObjectMetadataReadOnly({ objectMetadataItem }),
     createActivity,
   };
 };

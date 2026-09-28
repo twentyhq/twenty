@@ -16,18 +16,26 @@ import {
   MessageFolderExceptionCode,
 } from 'src/engine/metadata-modules/message-folder/message-folder.exception';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class MessageFolderMetadataService {
   constructor(
+    // The manager is only reachable from the raw repository, and every
+    // statement inside the transaction carries workspaceId itself.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(MessageFolderEntity)
-    private readonly repository: Repository<MessageFolderEntity>,
+    private readonly unscopedRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly repository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageFolderDTO[]> {
-    return this.repository.find({ where: { workspaceId } });
+    return this.repository.find(workspaceId);
   }
 
   async findByUserWorkspaceId({
@@ -82,8 +90,8 @@ export class MessageFolderMetadataService {
     messageChannelId: string;
     workspaceId: string;
   }): Promise<MessageFolderDTO[]> {
-    return this.repository.find({
-      where: { messageChannelId, workspaceId },
+    return this.repository.find(workspaceId, {
+      where: { messageChannelId },
     });
   }
 
@@ -98,8 +106,8 @@ export class MessageFolderMetadataService {
       return [];
     }
 
-    return this.repository.find({
-      where: { messageChannelId: In(messageChannelIds), workspaceId },
+    return this.repository.find(workspaceId, {
+      where: { messageChannelId: In(messageChannelIds) },
     });
   }
 
@@ -110,7 +118,7 @@ export class MessageFolderMetadataService {
     id: string;
     workspaceId: string;
   }): Promise<MessageFolderDTO | null> {
-    return this.repository.findOne({ where: { id, workspaceId } });
+    return this.repository.findOne(workspaceId, { where: { id } });
   }
 
   async verifyOwnership({
@@ -122,8 +130,8 @@ export class MessageFolderMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageFolderEntity> {
-    const messageFolder = await this.repository.findOne({
-      where: { id, workspaceId },
+    const messageFolder = await this.repository.findOne(workspaceId, {
+      where: { id },
     });
 
     if (!messageFolder) {
@@ -164,9 +172,10 @@ export class MessageFolderMetadataService {
       pendingSyncAction: MessageFolderPendingSyncAction;
     },
   ): Promise<MessageFolderDTO> {
-    const entity = this.repository.create(data);
-
-    return this.repository.save(entity);
+    return this.repository.insertAndReturnOne(
+      data.workspaceId,
+      data as QueryDeepPartialEntity<MessageFolderEntity>,
+    );
   }
 
   async update({
@@ -179,11 +188,12 @@ export class MessageFolderMetadataService {
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO> {
     await this.repository.update(
-      { id, workspaceId },
+      workspaceId,
+      { id },
       data as Record<string, unknown>,
     );
 
-    return this.repository.findOneOrFail({ where: { id, workspaceId } });
+    return this.repository.findOneOrFail(workspaceId, { where: { id } });
   }
 
   async setSyncStatus({
@@ -195,7 +205,7 @@ export class MessageFolderMetadataService {
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO[]> {
-    await this.repository.manager.transaction(async (manager) => {
+    await this.unscopedRepository.manager.transaction(async (manager) => {
       if (!data.isSynced) {
         await manager.update(
           MessageFolderEntity,
@@ -243,7 +253,7 @@ export class MessageFolderMetadataService {
       }
     });
 
-    return this.repository.find({ where: { id: In(ids), workspaceId } });
+    return this.repository.find(workspaceId, { where: { id: In(ids) } });
   }
 
   async delete({
@@ -253,11 +263,11 @@ export class MessageFolderMetadataService {
     id: string;
     workspaceId: string;
   }): Promise<MessageFolderDTO> {
-    const messageFolder = await this.repository.findOneOrFail({
-      where: { id, workspaceId },
+    const messageFolder = await this.repository.findOneOrFail(workspaceId, {
+      where: { id },
     });
 
-    await this.repository.delete({ id, workspaceId });
+    await this.repository.delete(workspaceId, { id });
 
     return messageFolder;
   }

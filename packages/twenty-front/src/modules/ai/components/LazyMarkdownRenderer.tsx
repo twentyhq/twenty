@@ -16,12 +16,11 @@ import {
   lazy,
   memo,
   Suspense,
-  useContext,
   useRef,
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const processChildrenForChatReferences = (
   children: React.ReactNode,
@@ -138,7 +137,7 @@ const MarkdownRenderer = lazy(async () => {
 });
 
 export const MarkdownLoadingSkeleton = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

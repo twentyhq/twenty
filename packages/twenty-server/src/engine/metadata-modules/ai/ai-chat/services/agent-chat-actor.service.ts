@@ -102,7 +102,7 @@ export class AgentChatActorService {
       ...sender,
     });
     const thread = await withWorkspaceAuthContext(authContext, () =>
-      this.chatService.getThreadById({
+      this.chatService.getWritableThread({
         workspaceId,
         threadId,
         userWorkspaceId: sender.userWorkspaceId,

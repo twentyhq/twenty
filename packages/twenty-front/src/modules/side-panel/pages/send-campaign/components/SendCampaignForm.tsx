@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconClock, IconSend } from 'twenty-ui/icon';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';

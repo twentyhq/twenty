@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import ClaudeLogo from '@/settings/mcp-and-apis/assets/mcp-clients/claude-color.png';
 import CursorLogo from '@/settings/mcp-and-apis/assets/mcp-clients/cursor.svg';

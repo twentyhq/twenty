@@ -7,7 +7,7 @@ import { BACKGROUND } from '@/ui/feedback/empty-state/components/AnimatedPlaceho
 import { DARK_BACKGROUND } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/MovingImage';
-import { useThemeColorScheme } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme } from 'twenty-ui/theme';
 
 const styles = {
   container: css`

@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { POD_NAME } from 'src/engine/core-modules/metrics/constants/pod-name.constant';
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
 import { type MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
@@ -38,11 +39,13 @@ export class MetricsService {
     options,
     callback,
     cacheValue = false,
+    perPod = false,
   }: {
     metricName: string;
     options: MetricOptions;
     callback: () => number | Promise<number>;
     cacheValue?: boolean;
+    perPod?: boolean;
   }): ObservableGauge {
     return this.createObservableGaugeInternal({
       metricName,
@@ -50,7 +53,10 @@ export class MetricsService {
       callback,
       cacheValue,
       observeResult: (observableResult, result) => {
-        observableResult.observe(result);
+        observableResult.observe(
+          result,
+          perPod ? { pod: POD_NAME } : undefined,
+        );
       },
     });
   }
@@ -60,11 +66,13 @@ export class MetricsService {
     options,
     callback,
     cacheValue = false,
+    perPod = false,
   }: {
     metricName: string;
     options: MetricOptions;
     callback: () => Promise<Array<{ value: number; attributes: Attributes }>>;
     cacheValue?: boolean;
+    perPod?: boolean;
   }): ObservableGauge {
     return this.createObservableGaugeInternal({
       metricName,
@@ -73,7 +81,12 @@ export class MetricsService {
       cacheValue,
       observeResult: (observableResult, observations) => {
         for (const observation of observations) {
-          observableResult.observe(observation.value, observation.attributes);
+          observableResult.observe(
+            observation.value,
+            perPod
+              ? { ...observation.attributes, pod: POD_NAME }
+              : observation.attributes,
+          );
         }
       },
     });

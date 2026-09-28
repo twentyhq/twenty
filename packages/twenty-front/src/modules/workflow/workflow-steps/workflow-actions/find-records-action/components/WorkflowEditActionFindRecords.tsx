@@ -35,7 +35,7 @@ import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-act
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.light};

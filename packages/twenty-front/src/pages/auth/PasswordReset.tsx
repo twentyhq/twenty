@@ -25,13 +25,13 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton, useToast } from 'twenty-ui/components';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 import {
   UpdatePasswordViaResetTokenDocument,
@@ -81,7 +81,7 @@ const StyledMainButtonContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 

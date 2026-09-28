@@ -42,7 +42,7 @@ export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
   extraSmart: [
     'openai/gpt-6-astra@xhigh',
     'google/gemini-3.8-flash@high',
-    'anthropic/claude-fable-5-1@xhigh',
+    'anthropic/claude-opus-5-5',
     'xai/grok-4.6@xhigh',
     'mistral/mistral-large-latest',
   ],

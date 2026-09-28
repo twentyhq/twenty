@@ -1,6 +1,6 @@
 import { isDefined } from '@/utils';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
-import { type ValidatableWorkflow } from '@/workflow/validation/types/workflow-validation.type';
+import { type ValidatableWorkflow } from '@/workflow/validation/types/WorkflowValidation';
 import { getStepOutgoingStepIds } from '@/workflow/validation/utils/get-step-outgoing-step-ids.util';
 
 export type WorkflowGraph = {

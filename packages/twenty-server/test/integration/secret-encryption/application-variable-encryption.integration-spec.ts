@@ -8,7 +8,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
@@ -81,7 +81,7 @@ describe('ApplicationVariable encryption (integration)', () => {
       expectToFail: false,
     });
 
-    const findResponse = await makeMetadataAPIRequest({
+    const findResponse = await makeMetadataApiRequest({
       query: gql`
         query FindAppForEncryptionTestSetup($universalIdentifier: UUID!) {
           findOneApplication(universalIdentifier: $universalIdentifier) {
@@ -112,7 +112,7 @@ describe('ApplicationVariable encryption (integration)', () => {
   it('encrypts the value on the API write path, persists a v2 envelope in Postgres, and returns the masked decrypted value via the API read path', async () => {
     const plaintext = 'v2-encrypted-application-variable-secret-value-here';
 
-    const updateResponse = await makeMetadataAPIRequest({
+    const updateResponse = await makeMetadataApiRequest({
       query: gql`
         mutation UpdateAppVariableForEncryptionTest(
           $key: String!
@@ -149,7 +149,7 @@ describe('ApplicationVariable encryption (integration)', () => {
     );
     expect(dbRow.value).toMatch(V2_ENVELOPE_REGEX);
 
-    const findResponse = await makeMetadataAPIRequest({
+    const findResponse = await makeMetadataApiRequest({
       query: gql`
         query FindAppVariablesForEncryptionTest($id: UUID!) {
           findOneApplication(id: $id) {
@@ -179,7 +179,7 @@ describe('ApplicationVariable encryption (integration)', () => {
   it('encrypts a non-secret variable on write, persists a v2 envelope, and returns the full decrypted plaintext (not masked) on read', async () => {
     const plaintext = 'https://public-url.example.com/webhook';
 
-    const updateResponse = await makeMetadataAPIRequest({
+    const updateResponse = await makeMetadataApiRequest({
       query: gql`
         mutation UpdateNonSecretAppVarForEncryptionTest(
           $key: String!
@@ -216,7 +216,7 @@ describe('ApplicationVariable encryption (integration)', () => {
     );
     expect(dbRow.value).toMatch(V2_ENVELOPE_REGEX);
 
-    const findResponse = await makeMetadataAPIRequest({
+    const findResponse = await makeMetadataApiRequest({
       query: gql`
         query FindNonSecretAppVarsForEncryptionTest($id: UUID!) {
           findOneApplication(id: $id) {
@@ -277,7 +277,7 @@ describe('ApplicationVariable encryption (integration)', () => {
         ],
       );
 
-      const findResponse = await makeMetadataAPIRequest({
+      const findResponse = await makeMetadataApiRequest({
         query: gql`
           query FindLegacyCtrAppVariablesForEncryptionTest($id: UUID!) {
             findOneApplication(id: $id) {

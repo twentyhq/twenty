@@ -2,7 +2,7 @@ import { SidePanelFooterWidthContext } from '@/ui/layout/side-panel/contexts/Sid
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
 import { Fragment, useCallback, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.secondary};

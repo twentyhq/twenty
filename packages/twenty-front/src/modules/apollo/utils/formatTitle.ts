@@ -1,4 +1,4 @@
-import { OperationType } from '@/apollo/types/operation-type';
+import { OperationType } from '@/apollo/types/OperationType';
 
 const operationTypeColors = {
   // oxlint-disable-next-line twenty/no-hardcoded-colors

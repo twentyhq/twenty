@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import fs from 'fs';
-import { readdir, readFile } from 'fs/promises';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
@@ -294,73 +293,6 @@ export class S3Driver implements StorageDriver {
     });
 
     await pipeline(fileStream, fs.createWriteStream(params.localPath));
-  }
-
-  async downloadFolder(params: {
-    onStoragePath: string;
-    localPath: string;
-  }): Promise<void> {
-    const listedObjects = await this.fetchS3FolderContents(
-      params.onStoragePath,
-    );
-
-    if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-      return;
-    }
-
-    for (const object of listedObjects.Contents) {
-      const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
-
-      if (!isDefined(folderAndFilePaths)) {
-        continue;
-      }
-
-      const { fromFolderPath, filename } = folderAndFilePaths;
-
-      const relativePath = fromFolderPath
-        .replace(params.onStoragePath + '/', '')
-        .replace(params.onStoragePath, '');
-
-      const localFolderPath = relativePath
-        ? join(params.localPath, relativePath)
-        : params.localPath;
-
-      await this.createFolder(localFolderPath);
-
-      const fileStream = await this.readFile({
-        filePath: `${fromFolderPath}/${filename}`,
-      });
-
-      const toPath = join(localFolderPath, filename);
-
-      await pipeline(fileStream, fs.createWriteStream(toPath));
-    }
-  }
-
-  async uploadFolder(params: {
-    localPath: string;
-    onStoragePath: string;
-  }): Promise<void> {
-    const entries = await readdir(params.localPath, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const localEntryPath = join(params.localPath, entry.name);
-
-      if (entry.isDirectory()) {
-        await this.uploadFolder({
-          localPath: localEntryPath,
-          onStoragePath: join(params.onStoragePath, entry.name),
-        });
-      } else {
-        const fileContent = await readFile(localEntryPath);
-
-        await this.writeFile({
-          filePath: `${params.onStoragePath}/${entry.name}`,
-          sourceFile: fileContent,
-          mimeType: undefined,
-        });
-      }
-    }
   }
 
   async delete(params: {

@@ -3,7 +3,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { destroyOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-view-group.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertMetadataRestListResponse,
   assertRestApiErrorNotFoundResponse,
@@ -113,7 +113,7 @@ describe('View Group REST API', () => {
 
   describe('GET /metadata/viewGroups', () => {
     it('should return all view groups for workspace when no viewId provided', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/viewGroups',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -123,7 +123,7 @@ describe('View Group REST API', () => {
     });
 
     it('should return view groups for a specific view after creating one', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewGroups?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -148,7 +148,7 @@ describe('View Group REST API', () => {
     });
 
     it('paginates the position-ordered result in both directions', async () => {
-      const firstResponse = await makeRestAPIRequest({
+      const firstResponse = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewGroups?viewId=${testViewId}&limit=2`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -163,7 +163,7 @@ describe('View Group REST API', () => {
         hasPreviousPage: false,
       });
 
-      const secondResponse = await makeRestAPIRequest({
+      const secondResponse = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewGroups?viewId=${testViewId}&limit=2&starting_after=${firstResponse.body.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -177,7 +177,7 @@ describe('View Group REST API', () => {
         hasPreviousPage: true,
       });
 
-      const previousResponse = await makeRestAPIRequest({
+      const previousResponse = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewGroups?viewId=${testViewId}&limit=2&ending_before=${secondResponse.body.pageInfo.startCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -193,7 +193,7 @@ describe('View Group REST API', () => {
 
   describe('GET /metadata/viewGroups/:id', () => {
     it('should return a specific view group by id', async () => {
-      const viewGroupsFromViewReponse = await makeRestAPIRequest({
+      const viewGroupsFromViewReponse = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewGroups?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -205,7 +205,7 @@ describe('View Group REST API', () => {
 
       jestExpectToBeDefined(viewGroup);
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewGroups/${viewGroup.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -232,7 +232,7 @@ describe('View Group REST API', () => {
         position: 5,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewGroups',
         body: viewGroupData,
@@ -257,7 +257,7 @@ describe('View Group REST API', () => {
         fieldValue: 'minimal-group',
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewGroups',
         body: viewGroupData,
@@ -280,7 +280,7 @@ describe('View Group REST API', () => {
         viewId: testViewId,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/viewGroups',
         body: invalidData,
@@ -315,7 +315,7 @@ describe('View Group REST API', () => {
         position: 2,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewGroups/${viewGroup.id}`,
         body: updateData,
@@ -347,7 +347,7 @@ describe('View Group REST API', () => {
         fieldValue: 'partially-updated',
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewGroups/${viewGroup.id}`,
         body: updateData,
@@ -368,7 +368,7 @@ describe('View Group REST API', () => {
         fieldValue: 'test-update',
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewGroups/20202020-9c8b-4a7e-9f2d-1a2b3c4d5e6f`,
         body: updateData,
@@ -389,7 +389,7 @@ describe('View Group REST API', () => {
 
       testViewGroupId = viewGroup.id;
 
-      const deleteResponse = await makeRestAPIRequest({
+      const deleteResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewGroups/${viewGroup.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -401,7 +401,7 @@ describe('View Group REST API', () => {
     });
 
     it('should return 404 for non-existent view group', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewGroups/20202020-9c8b-4a7e-9f2d-1a2b3c4d5e6f`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -417,7 +417,7 @@ describe('View Group REST API', () => {
         fieldValue: 'double-delete-test',
       });
 
-      const deleteResponse = await makeRestAPIRequest({
+      const deleteResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewGroups/${viewGroup.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -425,7 +425,7 @@ describe('View Group REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteResponse);
 
-      const secondDeleteResponse = await makeRestAPIRequest({
+      const secondDeleteResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewGroups/${viewGroup.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

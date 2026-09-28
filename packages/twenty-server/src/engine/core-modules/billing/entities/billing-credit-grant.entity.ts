@@ -11,7 +11,7 @@ import {
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { bigintColumnTransformer } from 'src/engine/core-modules/billing/utils/bigint-column-transformer.util';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 @Entity({ name: 'billingCreditGrant', schema: 'core' })
 @Index('IDX_BILLING_CREDIT_GRANT_WORKSPACE_ID_EXPIRES_AT', [

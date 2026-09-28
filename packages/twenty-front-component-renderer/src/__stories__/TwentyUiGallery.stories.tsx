@@ -1,3 +1,4 @@
+import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
 import { inputPreactTest } from '@/__stories__/twenty-ui-gallery/utils/inputPreactTest';
 import { inputReactTest } from '@/__stories__/twenty-ui-gallery/utils/inputReactTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
@@ -6,6 +7,7 @@ import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-galler
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
+import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
 import { type Meta } from '@storybook/react-vite';
@@ -34,7 +36,6 @@ import {
   codeEditorTest,
   displayHelpersTest,
   galleryRenderTest,
-  themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
   alertDialogTest,
@@ -449,6 +450,18 @@ export const ButtonControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-button-controls',
   runtime: 'preact',
   play: buttonControlsTest,
+});
+
+export const ResponsiveHooksReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-responsive-hooks',
+  runtime: 'react',
+  play: responsiveHooksTest,
+});
+
+export const ResponsiveHooksPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-responsive-hooks',
+  runtime: 'preact',
+  play: responsiveHooksTest,
 });
 
 export const AvatarControlsReact: Story = createGalleryStory({

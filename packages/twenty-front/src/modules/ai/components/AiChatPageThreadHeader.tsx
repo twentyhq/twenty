@@ -1,3 +1,6 @@
+import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { AiChatSharingDropdown } from '@/ai/components/AiChatSharingDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
@@ -6,7 +9,7 @@ import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
@@ -32,14 +35,16 @@ const StyledTitleDisplay = styled.div`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  cursor: pointer;
+  &[role='button'] {
+    cursor: pointer;
+  }
   display: flex;
   height: 24px;
   overflow: hidden;
   padding: 0 5px;
 
-  &:hover,
-  &:focus-visible {
+  &[role='button']:hover,
+  &[role='button']:focus-visible {
     background: ${themeCssVariables.background.transparent.light};
     outline: none;
   }
@@ -61,6 +66,10 @@ export const AiChatPageThreadHeader = ({
   thread,
 }: AiChatPageThreadHeaderProps) => {
   const { t } = useLingui();
+  const permissions = useAtomFamilySelectorValue(
+    agentChatThreadPermissionsFamilySelector,
+    thread.id,
+  );
   const { switchToNewChat } = useSwitchToNewAiChat();
   const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
     currentAiChatThreadTitleComponentFamilyState,
@@ -114,12 +123,15 @@ export const AiChatPageThreadHeader = ({
           />
         ) : (
           <StyledTitleDisplay
-            role="button"
-            tabIndex={0}
-            aria-label={t`Rename chat`}
-            onClick={startRename}
+            role={permissions?.canUpdate ? 'button' : undefined}
+            tabIndex={permissions?.canUpdate ? 0 : undefined}
+            aria-label={permissions?.canUpdate ? t`Rename chat` : undefined}
+            onClick={permissions?.canUpdate ? startRename : undefined}
             onKeyDown={(event) => {
-              if (event.key === Key.Enter || event.key === ' ') {
+              if (
+                permissions?.canUpdate &&
+                (event.key === Key.Enter || event.key === ' ')
+              ) {
                 event.preventDefault();
                 startRename();
               }
@@ -130,6 +142,7 @@ export const AiChatPageThreadHeader = ({
         )}
       </StyledTitle>
       <StyledActions>
+        <AiChatSharingDropdown threadId={thread.id} />
         {hasConversation && (
           <Button
             startIcon={<IconPlus />}

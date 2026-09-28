@@ -5,7 +5,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -80,7 +80,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const hasAvailableFields = availableFieldMetadataItemsToShow.length > 0;
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {hasAvailableFields && (
         <>
           <DropdownMenuSearchInput
@@ -131,6 +131,6 @@ export const RecordTableHeaderPlusButtonContent = () => {
           >{t`Customize fields`}</ListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

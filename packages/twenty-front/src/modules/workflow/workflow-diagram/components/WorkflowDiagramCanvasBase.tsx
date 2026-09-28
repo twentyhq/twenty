@@ -70,7 +70,11 @@ import React, {
 import { isDefined } from 'twenty-shared/utils';
 import { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from 'twenty-shared/workflow';
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  useTheme,
+  useThemeColorScheme,
+  themeCssVariables,
+} from 'twenty-ui/theme';
 const StyledResetReactflowStyles = styled.div`
   --xy-node-background-color: none;
   --xy-node-border: none;
@@ -171,7 +175,8 @@ export const WorkflowDiagramCanvasBase = ({
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
   }) => void;
 }) => {
-  const { theme, colorScheme } = useContext(ThemeContext);
+  const theme = useTheme();
+  const colorScheme = useThemeColorScheme();
   const allowPageScroll = useContext(WorkflowDiagramAllowPageScrollContext);
   const store = useStore();
   const reactflow = useReactFlow();

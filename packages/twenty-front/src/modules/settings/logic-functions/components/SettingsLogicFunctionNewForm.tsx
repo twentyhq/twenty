@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
 import { IconClockHour8 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -54,7 +54,7 @@ export const SettingsLogicFunctionNewForm = ({
           onChange={onChange('description')}
           readOnly={readonly}
         />
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentCounter
             Icon={IconClockHour8}
             title={t`Timeout`}
@@ -65,7 +65,7 @@ export const SettingsLogicFunctionNewForm = ({
             maxValue={900}
             disabled={readonly}
           />
-        </Card>
+        </Card.Root>
       </StyledInputsContainer>
     </Section.Root>
   );

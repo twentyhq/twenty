@@ -10,7 +10,7 @@ import {
   createAppTarballUpload,
 } from 'test/integration/metadata/suites/application/utils/create-app-tarball-upload.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
@@ -100,7 +100,7 @@ describe('Direct app tarball upload', () => {
   };
 
   const completeFileUploadGenerically = async (fileId: string) => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         mutation CompleteFileUpload($fileId: String!) {
           completeFileUpload(fileId: $fileId) {

@@ -5,7 +5,7 @@ import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjec
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -28,7 +28,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -220,7 +220,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             dropdownComponents={
               <>
                 {!triggerOptions.readonly && (
-                  <DropdownContent
+                  <LegacyDropdownContent
                     widthInPixels={GenericDropdownContentWidth.ExtraLarge}
                   >
                     <DropdownMenuSearchInput
@@ -256,7 +256,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                         ))}
                       </SelectableList>
                     </DropdownMenuItemsContainer>
-                  </DropdownContent>
+                  </LegacyDropdownContent>
                 )}
               </>
             }

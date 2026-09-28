@@ -14,7 +14,7 @@ import { Section, useToast } from 'twenty-ui/components';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistration,
   ClaimApplicationRegistrationOwnershipDocument,

@@ -6,7 +6,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
@@ -112,36 +112,17 @@ export const buildRecordShareInputsForCreatedRecords = ({
   objectMetadataId,
   authContext,
   apiKeyRoleMap,
-  isRecordSharingEnforced,
   shareWith,
+  isRecordSharingEnforced = true,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
-  isRecordSharingEnforced: boolean;
   shareWith?: ShareWithInput[] | null;
+  isRecordSharingEnforced?: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
-  // Records created under legacy open access must remain accessible after
-  // enforcement is activated, whoever created them.
-  const everyoneFullRows =
-    !isRecordSharingEnforced && !isNonEmptyArray(shareWithEntries)
-      ? recordIds.map((recordId) => ({
-          recordId,
-          objectMetadataId,
-          principalId: EVERYONE_PRINCIPAL_ID,
-          principalType: RecordSharePrincipalType.EVERYONE,
-          accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.APPLICATION,
-          sourceId: objectMetadataId,
-        }))
-      : [];
-
-  if (!isUserAuthContext(authContext) && isNonEmptyArray(everyoneFullRows)) {
-    return everyoneFullRows;
-  }
-
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
   const shareWithPrincipals = shareWithEntries
     .map(resolveShareWithPrincipalOrThrow)
@@ -153,6 +134,19 @@ export const buildRecordShareInputsForCreatedRecords = ({
 
   return [
     ...recordIds.flatMap((recordId) => [
+      ...(!isRecordSharingEnforced && shareWithEntries.length === 0
+        ? [
+            {
+              recordId,
+              objectMetadataId,
+              principalId: EVERYONE_PRINCIPAL_ID,
+              principalType: RecordSharePrincipalType.EVERYONE,
+              accessLevel: RecordShareAccessLevel.FULL,
+              rowCause: RecordShareRowCause.APPLICATION,
+              sourceId: objectMetadataId,
+            },
+          ]
+        : []),
       ...buildCreatorRows({
         authContext,
         apiKeyRoleMap,
@@ -166,6 +160,5 @@ export const buildRecordShareInputsForCreatedRecords = ({
         ...resolveShareWithRowOrigin({ authContext, recordId }),
       })),
     ]),
-    ...everyoneFullRows,
   ];
 };

@@ -21,6 +21,7 @@ const buildLimit = (
   meter: 'creditsUsedMicro',
   limitValue: 1000,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 

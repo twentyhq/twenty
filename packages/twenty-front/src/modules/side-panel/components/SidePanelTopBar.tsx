@@ -22,11 +22,11 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useRef } from 'react';
+import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { SidePanelPages } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -138,7 +138,7 @@ export const SidePanelTopBar = ({
   const sidePanelPage =
     sidePanelNavigationStack.at(-1)?.page ?? SidePanelPages.CommandMenuDisplay;
 
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { contextChips } = useSidePanelContextChips();
 

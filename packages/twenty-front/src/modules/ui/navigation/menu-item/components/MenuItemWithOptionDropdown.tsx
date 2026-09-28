@@ -1,11 +1,11 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { t } from '@lingui/core/macro';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { type MenuItemWithOptionDropdownProps } from './types/MenuItemWithOptionDropdownProps';
 
 // TODO: refactor this
@@ -26,7 +26,7 @@ export const MenuItemWithOptionDropdown = ({
   dropdownPlacement = 'bottom-end',
   selected = false,
 }: MenuItemWithOptionDropdownProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
