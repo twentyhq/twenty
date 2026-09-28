@@ -1,4 +1,5 @@
 import { VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE } from '@/constants/ValidationRuleEmptinessSubfieldsByCompositeType';
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
 import {
   validationRuleCompositeFieldTypeByValue,
@@ -14,7 +15,7 @@ export const isValidationRuleValueEmpty = (value: unknown): boolean => {
     return value.length === 0;
   }
 
-  if (typeof value !== 'object' || value instanceof Date) {
+  if (!isPlainObject(value) || value instanceof Date) {
     return false;
   }
 
@@ -29,9 +30,7 @@ export const isValidationRuleValueEmpty = (value: unknown): boolean => {
     : undefined;
 
   const subfieldValues = isDefined(emptinessSubfields)
-    ? emptinessSubfields.map(
-        (subfieldName) => (value as Record<string, unknown>)[subfieldName],
-      )
+    ? emptinessSubfields.map((subfieldName) => value[subfieldName])
     : Object.values(value);
 
   return subfieldValues.every(isValidationRuleValueEmpty);

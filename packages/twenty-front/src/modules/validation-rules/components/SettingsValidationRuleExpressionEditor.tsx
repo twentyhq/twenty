@@ -17,7 +17,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { SettingsValidationRuleHelperPanel } from '@/validation-rules/components/SettingsValidationRuleHelperPanel';
-import { VALIDATION_RULE_FIELD_NODE_NAME } from '@/validation-rules/constants/ValidationRuleFieldNodeName';
 import { VALIDATION_RULE_HIGHLIGHT_COLORS } from '@/validation-rules/constants/ValidationRuleHighlightColors';
 import { ValidationRuleExpressionExtension } from '@/validation-rules/extensions/ValidationRuleExpressionExtension';
 import { ValidationRuleFieldNode } from '@/validation-rules/extensions/ValidationRuleFieldNode';
@@ -28,13 +27,13 @@ import { type ValidationRuleHelperItem } from '@/validation-rules/types/Validati
 import { buildValidationRuleEditorParagraphContent } from '@/validation-rules/utils/buildValidationRuleEditorParagraphContent';
 import { computeValidationRuleEditorSegments } from '@/validation-rules/utils/computeValidationRuleEditorSegments';
 import { computeValidationRuleHelperContext } from '@/validation-rules/utils/computeValidationRuleHelperContext';
+import { computeValidationRuleHelperContextAtCursor } from '@/validation-rules/utils/computeValidationRuleHelperContextAtCursor';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
-import { getValidationRuleEditorPositionFromTextOffset } from '@/validation-rules/utils/getValidationRuleEditorPositionFromTextOffset';
 import { getValidationRuleEditorText } from '@/validation-rules/utils/getValidationRuleEditorText';
+import { handleValidationRuleEditorPaste } from '@/validation-rules/utils/handleValidationRuleEditorPaste';
+import { insertValidationRuleHelperItem } from '@/validation-rules/utils/insertValidationRuleHelperItem';
 
 const SingleParagraphDocument = Document.extend({ content: 'paragraph' });
-
-const LINE_BREAK_PATTERN = /\s*\n\s*/g;
 
 const StyledContainer = styled.div`
   display: flex;
@@ -145,22 +144,13 @@ export const SettingsValidationRuleExpressionEditor = ({
       : null;
   };
 
-  const computeHelperContextAtCursor = (
-    editor: Editor,
-  ): ValidationRuleHelperContext => {
-    const { doc, selection } = editor.state;
-
-    return computeValidationRuleHelperContext({
-      textBeforeCursor: getValidationRuleEditorText(doc, selection.from),
-      isCursorAfterField:
-        selection.$from.nodeBefore?.type.name ===
-        VALIDATION_RULE_FIELD_NODE_NAME,
-      fields: editorFields,
-    });
-  };
-
   const refreshHelperContext = (editor: Editor) => {
-    setHelperContext(computeHelperContextAtCursor(editor));
+    setHelperContext(
+      computeValidationRuleHelperContextAtCursor({
+        editor,
+        fields: editorFields,
+      }),
+    );
     setHighlightedIndex(0);
     setHasNavigatedHelper(false);
   };
@@ -209,15 +199,7 @@ export const SettingsValidationRuleExpressionEditor = ({
         spellcheck: 'false',
       },
       handleKeyDown: (_view, event) => handleEditorKeyDown(event),
-      handlePaste: (view, event) => {
-        const pastedText = event.clipboardData?.getData('text/plain') ?? '';
-
-        view.dispatch(
-          view.state.tr.insertText(pastedText.replace(LINE_BREAK_PATTERN, ' ')),
-        );
-
-        return true;
-      },
+      handlePaste: handleValidationRuleEditorPaste,
     },
     enableInputRules: false,
     enablePasteRules: false,
@@ -229,46 +211,15 @@ export const SettingsValidationRuleExpressionEditor = ({
       return;
     }
 
-    const { replaceFromOffset } = computeHelperContextAtCursor(editor);
-    const from = getValidationRuleEditorPositionFromTextOffset(
-      editor.state.doc,
-      replaceFromOffset,
-    );
-    const range = { from, to: editor.state.selection.from };
-
-    switch (item.kind) {
-      case 'field':
-        editor
-          .chain()
-          .focus()
-          .insertContentAt(range, [
-            {
-              type: VALIDATION_RULE_FIELD_NODE_NAME,
-              attrs: getFieldNodeAttributes(item.field.path),
-            },
-          ])
-          .run();
-        return;
-      case 'function':
-        editor
-          .chain()
-          .focus()
-          .insertContentAt(range, [
-            { type: 'text', text: `${item.definition.name}()` },
-          ])
-          .setTextSelection(from + item.definition.name.length + 1)
-          .run();
-        return;
-      case 'keyword':
-        editor
-          .chain()
-          .focus()
-          .insertContentAt(range, [
-            { type: 'text', text: `${item.definition.name} ` },
-          ])
-          .run();
-        return;
-    }
+    insertValidationRuleHelperItem({
+      editor,
+      item,
+      replaceFromOffset: computeValidationRuleHelperContextAtCursor({
+        editor,
+        fields: editorFields,
+      }).replaceFromOffset,
+      getFieldNodeAttributes,
+    });
   };
 
   const handleEditorKeyDown = (event: KeyboardEvent): boolean => {

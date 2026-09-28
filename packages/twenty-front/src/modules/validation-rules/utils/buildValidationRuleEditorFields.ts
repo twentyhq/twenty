@@ -22,15 +22,15 @@ const isRelationType = (type: FieldMetadataType) =>
   type === FieldMetadataType.RELATION ||
   type === FieldMetadataType.MORPH_RELATION;
 
+const COMPOSITE_SUBFIELD_LABELS_BY_FIELD_TYPE: Partial<
+  Record<FieldMetadataType, Record<string, string>>
+> = COMPOSITE_FIELD_SUB_FIELD_LABELS;
+
 const getCompositeSubfieldLabel = (
   type: FieldMetadataType,
   subfieldName: string,
 ): string =>
-  (
-    COMPOSITE_FIELD_SUB_FIELD_LABELS as Partial<
-      Record<FieldMetadataType, Record<string, string>>
-    >
-  )[type]?.[subfieldName] ?? subfieldName;
+  COMPOSITE_SUBFIELD_LABELS_BY_FIELD_TYPE[type]?.[subfieldName] ?? subfieldName;
 
 const buildScalarEditorFields = ({
   fieldMetadataItem,

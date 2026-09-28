@@ -2,8 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCode, IconFunction, useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
-import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
+import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
 
 type SettingsValidationRuleHelperItemIconProps = {
@@ -24,9 +24,9 @@ export const SettingsValidationRuleHelperItemIcon = ({
     return <IconCode size={theme.icon.size.md} />;
   }
 
-  const TypeIcon = getSettingsFieldTypeConfig(
-    item.field.type as SettingsFieldType,
-  )?.Icon;
+  const TypeIcon = isFieldTypeSupportedInSettings(item.field.type)
+    ? getSettingsFieldTypeConfig(item.field.type)?.Icon
+    : undefined;
 
   if (isDefined(TypeIcon)) {
     return <TypeIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;

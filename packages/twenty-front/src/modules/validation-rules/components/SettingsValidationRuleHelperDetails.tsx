@@ -4,8 +4,8 @@ import { useIcons } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
+import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
 import { SettingsValidationRuleHelperItemIcon } from '@/validation-rules/components/SettingsValidationRuleHelperItemIcon';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
@@ -81,9 +81,10 @@ export const SettingsValidationRuleHelperDetails = ({
   const renderSummary = () => {
     switch (item.kind) {
       case 'field': {
-        const typeLabel =
-          getSettingsFieldTypeConfig(item.field.type as SettingsFieldType)
-            ?.label ?? item.field.type;
+        const typeLabel = isFieldTypeSupportedInSettings(item.field.type)
+          ? (getSettingsFieldTypeConfig(item.field.type)?.label ??
+            item.field.type)
+          : item.field.type;
         const ObjectIcon = getIcon(item.field.objectIconName);
 
         return (

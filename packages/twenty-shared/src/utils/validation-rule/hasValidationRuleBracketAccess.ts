@@ -13,6 +13,6 @@ export const hasValidationRuleBracketAccess = (
     return (
       instruction.type === 'IEXPR' &&
       Array.isArray(instruction.value) &&
-      hasValidationRuleBracketAccess(instruction.value as Instruction[])
+      hasValidationRuleBracketAccess(instruction.value)
     );
   });

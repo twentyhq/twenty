@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const IGNORED_OBJECT_KEYS = ['__typename', 'id'];
 
@@ -15,17 +15,15 @@ export const formatValidationRulePreviewValue = (value: unknown): string => {
       .join(', ');
   }
 
-  if (typeof value !== 'object') {
+  if (!isPlainObject(value)) {
     return String(value);
   }
 
-  const objectValue = value as Record<string, unknown>;
-
-  if (isDefined(objectValue.name)) {
-    return formatValidationRulePreviewValue(objectValue.name);
+  if (isDefined(value.name)) {
+    return formatValidationRulePreviewValue(value.name);
   }
 
-  return Object.entries(objectValue)
+  return Object.entries(value)
     .filter(([key]) => !IGNORED_OBJECT_KEYS.includes(key))
     .map(([, subfieldValue]) => formatValidationRulePreviewValue(subfieldValue))
     .filter(isNonEmptyString)

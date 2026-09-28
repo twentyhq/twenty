@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
 export const getValidationRulePreviewValue = (
   record: Record<string, unknown>,
@@ -7,9 +7,6 @@ export const getValidationRulePreviewValue = (
   path
     .split('.')
     .reduce<unknown>(
-      (value, segment) =>
-        isDefined(value) && typeof value === 'object'
-          ? (value as Record<string, unknown>)[segment]
-          : undefined,
+      (value, segment) => (isPlainObject(value) ? value[segment] : undefined),
       record,
     );
