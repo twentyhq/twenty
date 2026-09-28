@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -23,18 +22,16 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton, LightIconButton } from 'twenty-ui/components';
+import { Dropdown, LightButton, LightIconButton } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconPencil,
@@ -194,7 +191,6 @@ export const SettingsDataModelFieldSelectForm = ({
 
   const OPTIONS_DROPDOWN_ID =
     'settings-data-model-field-select-options-dropdown';
-  const { closeDropdown: closeOptionsDropdown } = useCloseDropdown();
 
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
@@ -365,49 +361,45 @@ export const SettingsDataModelFieldSelectForm = ({
                     </StyledOptionsLabel>
                   </StyledLabelContainer>
                   {!disabled && (
-                    <Dropdown
-                      dropdownId={OPTIONS_DROPDOWN_ID}
-                      clickableComponent={
-                        <LightIconButton
-                          emphasis="subtle"
-                          aria-label={t`More options`}
-                        >
-                          <IconDotsVertical />
-                        </LightIconButton>
-                      }
-                      dropdownComponents={
-                        <LegacyDropdownContent
-                          widthInPixels={GenericDropdownContentWidth.Narrow}
-                        >
-                          <DropdownMenuItemsContainer>
-                            <ListItem
-                              startIcon={<IconPencil />}
-                              onClick={() => {
-                                if (!isBulkInputMode) {
-                                  setBulkInputText(
-                                    convertOptionsToBulkText(options),
-                                  );
-                                }
-                                setIsBulkInputMode(
-                                  (currentInputMode) => !currentInputMode,
+                    <DropdownRoot dropdownId={OPTIONS_DROPDOWN_ID} type="menu">
+                      <Dropdown.Trigger
+                        render={
+                          <LightIconButton
+                            emphasis="subtle"
+                            aria-label={t`More options`}
+                          >
+                            <IconDotsVertical />
+                          </LightIconButton>
+                        }
+                      />
+                      <DropdownContent
+                        width={GenericDropdownContentWidth.Narrow}
+                        align="end"
+                      >
+                        <Dropdown.Section>
+                          <Dropdown.ActionItem
+                            startIcon={<IconPencil />}
+                            onClick={() => {
+                              if (!isBulkInputMode) {
+                                setBulkInputText(
+                                  convertOptionsToBulkText(options),
                                 );
-                                closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
-                              }}
-                            >
-                              {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
-                            </ListItem>
-                            <ListItem
-                              color="danger"
-                              startIcon={<IconTrash />}
-                              onClick={() => {
-                                onChange([]);
-                                closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
-                              }}
-                            >{t`Remove all`}</ListItem>
-                          </DropdownMenuItemsContainer>
-                        </LegacyDropdownContent>
-                      }
-                    />
+                              }
+                              setIsBulkInputMode(
+                                (currentInputMode) => !currentInputMode,
+                              );
+                            }}
+                          >
+                            {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
+                          </Dropdown.ActionItem>
+                          <Dropdown.ActionItem
+                            color="danger"
+                            startIcon={<IconTrash />}
+                            onClick={() => onChange([])}
+                          >{t`Remove all`}</Dropdown.ActionItem>
+                        </Dropdown.Section>
+                      </DropdownContent>
+                    </DropdownRoot>
                   )}
                 </StyledOptionsHeaderContainer>
 
