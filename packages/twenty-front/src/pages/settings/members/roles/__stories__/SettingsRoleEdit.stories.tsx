@@ -7,6 +7,7 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { SettingsRoleEdit } from '~/pages/settings/members/roles/SettingsRoleEdit';
 
@@ -24,6 +25,9 @@ const meta: Meta<PageDecoratorArgs> = {
   },
   parameters: {
     msw: graphqlMocks,
+  },
+  beforeEach: async () => {
+    await mockedApolloClient.clearStore();
   },
 };
 
@@ -81,11 +85,9 @@ export const RoleAssignmentPickers: Story = {
   parameters: {
     msw: {
       handlers: [
-        metadataGraphql.query('FindManyAgents', async () => {
-          await delay(500);
-
-          return HttpResponse.json({ data: { findManyAgents: [] } });
-        }),
+        metadataGraphql.query('FindManyAgents', () =>
+          HttpResponse.json({ data: { findManyAgents: [] } }),
+        ),
         ...graphqlMocks.handlers,
       ],
     },
@@ -122,9 +124,10 @@ export const RoleAssignmentPickers: Story = {
       name: 'Assign to agent',
     });
 
-    expect(await within(agentPicker).findByText('Loading...')).toBeVisible();
     expect(
-      await within(agentPicker).findByText('No agents available'),
+      await within(agentPicker).findByText('No agents available', undefined, {
+        timeout: 3000,
+      }),
     ).toBeVisible();
     await userEvent.type(
       within(agentPicker).getByRole('searchbox', { name: 'Search agents' }),
@@ -167,5 +170,48 @@ export const RoleAssignmentPickers: Story = {
         canvasElement.ownerDocument.activeElement as HTMLElement,
       ),
     );
+  },
+};
+
+export const RoleAssignmentPickerLoading: Story = {
+  args: {
+    routeParams: {
+      ':roleId': OBJECT_RESTRICTED_ROLE_ID,
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query('FindManyAgents', async () => {
+          await delay('infinite');
+
+          return HttpResponse.json({ data: { findManyAgents: [] } });
+        }),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByRole(
+        'link',
+        { name: 'Assignment' },
+        { timeout: 5000 },
+      ),
+    );
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Assign to agent' }),
+    );
+    const agentPicker = await body.findByRole('dialog', {
+      name: 'Assign to agent',
+    });
+
+    expect(within(agentPicker).getByText('Loading...')).toBeVisible();
+    expect(
+      within(agentPicker).queryByText('No agents available'),
+    ).not.toBeInTheDocument();
   },
 };
