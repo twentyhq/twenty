@@ -1,3 +1,4 @@
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
 import { AgentHistoryCleanupCommand } from 'src/database/commands/agent-history/agent-history-cleanup.command';
@@ -12,7 +13,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
-  exports: [AgentHistorySchemaService, AgentHistoryMigrationService],
+  exports: [
+    AgentHistoryUpgradeStorageService,
+    AgentHistorySchemaService,
+    AgentHistoryMigrationService,
+    AgentHistoryMigrationStateService,
+  ],
   imports: [
     WorkspaceIteratorModule,
     ApplicationModule,
@@ -20,6 +26,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AgentHistoryUpgradeStorageService,
     AgentHistoryCleanupCommand,
     AgentHistoryMigrationService,
     AgentHistoryMigrationStateService,

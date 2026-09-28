@@ -541,6 +541,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(storage.run(WORKSPACE_ID, operation)).rejects.toThrow(
         'being migrated',
       );
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, operation),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
       expect(operation).not.toHaveBeenCalled();
       expect(
         (
@@ -598,7 +601,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(await readRoute()).toBe('core');
     });
 
-    it('serves workspace history after the legacy route is removed', async () => {
+    it('fails closed when the durable route is lost', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -608,14 +611,32 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceStorage.run(WORKSPACE_ID, ({ manager, table }) =>
           manager.query(`SELECT id FROM ${table('agentChatThread')}`),
         ),
-      ).resolves.toEqual([{ id: THREAD_ID }]);
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
       await expect(
         workspaceStorage.runReadOnlyReport(
           [WORKSPACE_ID],
           async ({ partitions }) =>
             partitions.map(({ workspaceIds }) => workspaceIds),
         ),
-      ).resolves.toEqual([[WORKSPACE_ID]]);
+      ).resolves.toEqual([]);
+    });
+
+    it('initializes empty new workspaces with a durable route for cleanup', async () => {
+      await dataSource.query('TRUNCATE core."agentChatThread" CASCADE');
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      expect(await readRoute()).toBe('workspace');
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, async () => 'ready'),
+      ).resolves.toBe('ready');
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      expect(await readRoute()).toBe('workspace');
+    });
+
+    it('does not mark legacy history as migrated during initialization', async () => {
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, jest.fn()),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
     });
 
     it('preserves the legacy upgrade fence for history still stored in core', async () => {

@@ -1,3 +1,4 @@
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -22,6 +23,7 @@ export class WorkspaceManagerService {
   private readonly logger = new Logger(WorkspaceManagerService.name);
 
   constructor(
+    private readonly agentHistoryStorageService: AgentHistoryWorkspaceStorageService,
     private readonly workspaceSchemaService: WorkspaceSchemaService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -69,7 +71,8 @@ export class WorkspaceManagerService {
       },
     );
 
-    // A route can select workspace storage only after its tables exist.
+    await this.agentHistoryStorageService.initializeWorkspace(workspaceId);
+
     const dataSourceMetadataCreationEnd = performance.now();
 
     this.logger.log(

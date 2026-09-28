@@ -1,4 +1,3 @@
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { Module } from '@nestjs/common';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
@@ -17,15 +16,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
 }));
 
 @Module({
-  providers: [
-    AgentHistoryStorageService,
-    AgentHistoryWorkspaceStorageService,
-    ...REPOSITORY_PROVIDERS,
-  ],
-  exports: [
-    AgentHistoryStorageService,
-    AgentHistoryWorkspaceStorageService,
-    ...REPOSITORY_PROVIDERS,
-  ],
+  providers: [AgentHistoryWorkspaceStorageService, ...REPOSITORY_PROVIDERS],
+  exports: [AgentHistoryWorkspaceStorageService, ...REPOSITORY_PROVIDERS],
 })
 export class AgentHistoryModule {}
