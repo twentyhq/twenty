@@ -109,19 +109,30 @@ export const NewlyEarned: Story = {
   beforeEach: () => {
     seedOnboardingFreeCredits({
       onboardingStatus: OnboardingStatus.PROFILE_CREATION,
-      onboardingFreeCredits: { importContacts: 1 },
     });
   },
   play: async ({ canvasElement }) => {
+    const freeCreditsLabel =
+      await within(canvasElement).findByText('free credits');
+
     await waitFor(() =>
-      expect(
-        jotaiStore.get(
-          onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-        ).seenCredits,
-      ).toBe(1),
+      expect(freeCreditsLabel.parentElement).toHaveTextContent('0/1.5'),
     );
-    await expect(
-      within(canvasElement).queryByText('+1'),
-    ).not.toBeInTheDocument();
+
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      (onboardingFreeCredits) => ({
+        ...onboardingFreeCredits,
+        importContacts: 1,
+      }),
+    );
+
+    await within(canvasElement).findByText('+1');
+    await waitFor(() =>
+      expect(freeCreditsLabel.parentElement).toHaveTextContent('1/1.5'),
+    );
+    await waitFor(() =>
+      expect(within(canvasElement).queryByText('+1')).not.toBeInTheDocument(),
+    );
   },
 };
