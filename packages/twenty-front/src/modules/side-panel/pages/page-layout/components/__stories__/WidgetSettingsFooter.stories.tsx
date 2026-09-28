@@ -126,7 +126,7 @@ export const ToggleWithShortcuts: Story = {
         pageLayoutDraftComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
         }),
-      ).tabs[0].widgets,
+      ).tabs[0]?.widgets,
     ).toHaveLength(1);
   },
 };
@@ -144,9 +144,9 @@ export const DuplicateAndDeletePreserveBackgroundSelection: Story = {
       await canvas.findByRole('menuitem', { name: 'Duplicate widget' }),
     );
 
-    expect(jotaiStore.get(draftState).tabs[0].widgets).toHaveLength(2);
+    expect(jotaiStore.get(draftState).tabs[0]?.widgets).toHaveLength(2);
     expect(
-      jotaiStore.get(draftState).tabs[0].widgets.map(({ title }) => title),
+      jotaiStore.get(draftState).tabs[0]?.widgets.map(({ title }) => title),
     ).toContain('revenue (Copy)');
     expect(onBackgroundClickOutside).not.toHaveBeenCalled();
     await waitFor(() => {
@@ -162,7 +162,7 @@ export const DuplicateAndDeletePreserveBackgroundSelection: Story = {
     await userEvent.keyboard('{ArrowDown}{Enter}');
 
     expect(
-      jotaiStore.get(draftState).tabs[0].widgets.map(({ id }) => id),
+      jotaiStore.get(draftState).tabs[0]?.widgets.map(({ id }) => id),
     ).toEqual([WIDGET_ID]);
     await waitFor(() => {
       expect(canvas.queryByRole('menu')).not.toBeInTheDocument();

@@ -10,6 +10,7 @@ import { useDropzone } from 'react-dropzone';
 import { MainButton, useToast } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { read, type WorkBook } from 'xlsx-ugnis';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -138,11 +139,15 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
         enqueueToast({
           variant: 'error',
           children: t`${fileName} upload rejected`,
-          description: fileRejection.errors[0].message,
+          description: fileRejection.errors[0]?.message,
         });
       });
     },
     onDropAccepted: async ([file]) => {
+      if (!isDefined(file)) {
+        return;
+      }
+
       setLoading(true);
       const arrayBuffer = await readFileAsync(file);
       const workbook = read(arrayBuffer, {

@@ -36,7 +36,13 @@ const renderHookConfig = {
 
 const mockOnclick = jest.fn();
 
-type DialogOptionsArray = Array<Omit<DialogOptions, 'id'>>;
+type DialogOptionsWithoutId = Omit<DialogOptions, 'id'>;
+
+type DialogOptionsArray = [
+  DialogOptionsWithoutId,
+  DialogOptionsWithoutId,
+  DialogOptionsWithoutId,
+];
 
 const dialogOptionsArray: DialogOptionsArray = [
   {

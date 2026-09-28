@@ -8,8 +8,9 @@ const booleanWhitelist: Record<string, boolean> = {
 };
 
 export const normalizeCheckboxValue = (value: string | undefined): boolean => {
-  if (isNonEmptyString(value) && value.toLowerCase() in booleanWhitelist) {
-    return booleanWhitelist[value.toLowerCase()];
+  if (!isNonEmptyString(value)) {
+    return false;
   }
-  return false;
+
+  return booleanWhitelist[value.toLowerCase()] ?? false;
 };

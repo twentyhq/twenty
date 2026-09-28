@@ -15,6 +15,7 @@ import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/com
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const setShare = fn();
 const refetch = fn().mockResolvedValue(undefined);
@@ -39,6 +40,10 @@ const MEMBERS = [
     userId: 'invite-user',
   },
 ];
+
+const [ownerMember] = MEMBERS;
+
+assertIsDefinedOrThrow(ownerMember);
 
 const SHARING = {
   isEnabled: true,
@@ -86,7 +91,7 @@ const SidePanelStoryProviders = ({ children }: { children: ReactNode }) => {
     const store = createStore();
     store.set(currentWorkspaceMembersState.atom, MEMBERS);
     store.set(currentWorkspaceMemberState.atom, {
-      ...MEMBERS[0],
+      ...ownerMember,
       colorScheme: 'Light',
       locale: 'en',
     });

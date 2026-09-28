@@ -41,8 +41,8 @@ export const calculateVisibleTabCount = ({
 
   let totalWidth = 0;
 
-  for (let i = 0; i < visibleTabs.length; i++) {
-    const tabWidth = tabWidthsById[visibleTabs[i].id] ?? unmeasuredTabWidth;
+  for (const [i, visibleTab] of visibleTabs.entries()) {
+    const tabWidth = tabWidthsById[visibleTab.id] ?? unmeasuredTabWidth;
 
     totalWidth += i > 0 ? TAB_LIST_GAP + tabWidth : tabWidth;
 

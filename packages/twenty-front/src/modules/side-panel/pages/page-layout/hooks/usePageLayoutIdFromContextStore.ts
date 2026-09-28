@@ -28,16 +28,15 @@ export const usePageLayoutIdFromContextStore = () => {
     objectId: contextStoreCurrentObjectMetadataItemId,
   });
 
-  if (
-    !(
-      contextStoreTargetedRecordsRule.mode === 'selection' &&
-      contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
-    )
-  ) {
+  const recordId =
+    contextStoreTargetedRecordsRule.mode === 'selection' &&
+    contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
+      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      : undefined;
+
+  if (!isDefined(recordId)) {
     throw new Error('Only one record should be selected');
   }
-
-  const recordId: string = contextStoreTargetedRecordsRule.selectedRecordIds[0];
 
   const isDashboardContext =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;

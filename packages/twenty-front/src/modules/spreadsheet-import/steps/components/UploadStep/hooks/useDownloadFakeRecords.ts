@@ -37,8 +37,8 @@ export const useDownloadFakeRecords = () => {
           const exampleValues =
             SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[field.type].exampleValues;
 
-          bodyRows.forEach((_, index) => {
-            bodyRows[index].push(exampleValues?.[index] || '');
+          bodyRows.forEach((bodyRow, index) => {
+            bodyRow.push(exampleValues?.[index] || '');
           });
 
           break;
@@ -67,13 +67,13 @@ export const useDownloadFakeRecords = () => {
             ),
           );
 
-          bodyRows.forEach((_, index) => {
+          bodyRows.forEach((bodyRow, index) => {
+            const exampleValue = exampleValues[index] as
+              | Record<string, string>
+              | undefined;
+
             subFields.forEach(({ subFieldName }) => {
-              bodyRows[index].push(
-                exampleValues?.[index]?.[
-                  subFieldName as keyof (typeof exampleValues)[typeof index]
-                ] || '',
-              );
+              bodyRow.push(exampleValue?.[subFieldName] || '');
             });
           });
 
@@ -87,8 +87,8 @@ export const useDownloadFakeRecords = () => {
             SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[FieldMetadataType.UUID]
               .exampleValues;
 
-          bodyRows.forEach((_, index) => {
-            bodyRows[index].push(exampleValues?.[index] || '');
+          bodyRows.forEach((bodyRow, index) => {
+            bodyRow.push(exampleValues?.[index] || '');
           });
 
           break;
@@ -97,8 +97,8 @@ export const useDownloadFakeRecords = () => {
         case FieldMetadataType.MULTI_SELECT:
           headerRow.push(field.label);
 
-          bodyRows.forEach((_, index) => {
-            bodyRows[index].push(
+          bodyRows.forEach((bodyRow, index) => {
+            bodyRow.push(
               JSON.stringify(
                 field?.options
                   ?.map((option) => option?.value)
@@ -112,8 +112,8 @@ export const useDownloadFakeRecords = () => {
         case FieldMetadataType.SELECT:
           headerRow.push(field.label);
 
-          bodyRows.forEach((_, index) => {
-            bodyRows[index].push(field?.options?.[index]?.value || '');
+          bodyRows.forEach((bodyRow, index) => {
+            bodyRow.push(field?.options?.[index]?.value || '');
           });
 
           break;

@@ -14,6 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type WorkBook } from 'xlsx-ugnis';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledRadioContainer = styled.div`
   display: flex;
@@ -90,6 +91,10 @@ export const SelectSheetStep = ({
 
   const handleOnContinue = useCallback(
     async (data: typeof value) => {
+      if (!isDefined(data)) {
+        return;
+      }
+
       setIsLoading(true);
       await handleContinue(data);
       setIsLoading(false);

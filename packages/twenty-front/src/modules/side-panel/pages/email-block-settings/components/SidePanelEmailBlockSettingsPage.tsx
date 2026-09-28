@@ -175,13 +175,20 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
     sides: CssBoxSides,
   ) => {
     const nextStyles = { ...styles };
-    const sideValues = [sides.top, sides.right, sides.bottom, sides.left];
+    const [topProperty, rightProperty, bottomProperty, leftProperty] =
+      sideProperties;
+    const sideValueByProperty: [string, string][] = [
+      [topProperty, sides.top],
+      [rightProperty, sides.right],
+      [bottomProperty, sides.bottom],
+      [leftProperty, sides.left],
+    ];
 
-    sideProperties.forEach((property, index) => {
-      if (sideValues[index].trim() === '') {
+    sideValueByProperty.forEach(([property, sideValue]) => {
+      if (sideValue.trim() === '') {
         delete nextStyles[property];
       } else {
-        nextStyles[property] = sideValues[index];
+        nextStyles[property] = sideValue;
       }
     });
 

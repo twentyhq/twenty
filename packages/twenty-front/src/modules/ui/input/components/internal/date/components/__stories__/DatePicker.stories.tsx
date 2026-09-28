@@ -2,7 +2,10 @@ import { DatePicker } from '@/ui/input/components/internal/date/components/DateP
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { type RelativeDateFilter } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  type RelativeDateFilter,
+} from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const INITIAL_PLAIN_DATE = '2023-01-01';
@@ -122,6 +125,8 @@ export const OpensOnlyItsOwnMonthSelect: Story = {
       {},
       { timeout: 10000 },
     );
+
+    assertIsDefinedOrThrow(firstMonthSelect);
 
     await userEvent.click(firstMonthSelect);
 

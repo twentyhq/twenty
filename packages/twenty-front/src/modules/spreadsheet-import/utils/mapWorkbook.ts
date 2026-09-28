@@ -1,8 +1,17 @@
 import { cleanZWJFromImportedValue } from '@/spreadsheet-import/utils/cleanZWJFromImportedValue';
 import { utils, type WorkBook } from 'xlsx-ugnis';
+import { isDefined } from 'twenty-shared/utils';
 
 export const mapWorkbook = (workbook: WorkBook, sheetName?: string) => {
-  const worksheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
+  const resolvedSheetName = sheetName || workbook.SheetNames[0];
+  const worksheet = isDefined(resolvedSheetName)
+    ? workbook.Sheets[resolvedSheetName]
+    : undefined;
+
+  if (!isDefined(worksheet)) {
+    return [];
+  }
+
   const data = utils.sheet_to_json(worksheet, {
     header: 1,
     blankrows: false,

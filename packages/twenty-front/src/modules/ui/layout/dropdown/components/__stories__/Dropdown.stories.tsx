@@ -22,6 +22,7 @@ import { IconChevronLeft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
@@ -82,8 +83,9 @@ export const Empty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
 
-    const buttons = await canvas.findAllByRole('button');
-    await userEvent.click(buttons[0]);
+    const [firstButton] = await canvas.findAllByRole('button');
+    assertIsDefinedOrThrow(firstButton);
+    await userEvent.click(firstButton);
 
     const fakeMenu = await canvas.findByTestId('dropdown-content');
 
@@ -91,14 +93,14 @@ export const Empty: Story = {
       expect(fakeMenu).toBeInTheDocument();
     });
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(firstButton);
 
     await waitFor(() => {
       const fakeMenuBis = canvas.queryByTestId('dropdown-content');
       expect(fakeMenuBis).not.toBeInTheDocument();
     });
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(firstButton);
     const fakeMenuTer = await canvas.findByTestId('dropdown-content');
 
     await waitFor(() => {
@@ -201,8 +203,9 @@ const optionsMock = [
 const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
   const canvas = within(canvasElement.ownerDocument.body);
 
-  const buttons = await canvas.findAllByRole('button');
-  await userEvent.click(buttons[0]);
+  const [firstButton] = await canvas.findAllByRole('button');
+  assertIsDefinedOrThrow(firstButton);
+  await userEvent.click(firstButton);
 
   await waitFor(() => {
     expect(canvas.getByText('Company A')).toBeInTheDocument();
@@ -258,15 +261,16 @@ export const SearchWithLoadingMenu: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
 
-    const buttons = await canvas.findAllByRole('button');
+    const [firstButton] = await canvas.findAllByRole('button');
+    assertIsDefinedOrThrow(firstButton);
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(firstButton);
 
     await waitFor(() => {
       expect(canvas.getByDisplayValue('query')).toBeInTheDocument();
     });
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(firstButton);
 
     await waitFor(() => {
       expect(canvas.queryByDisplayValue('query')).not.toBeInTheDocument();

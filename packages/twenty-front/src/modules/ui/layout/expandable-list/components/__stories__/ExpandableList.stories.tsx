@@ -19,11 +19,8 @@ const meta: Meta<typeof ExpandableList> = {
     ComponentDecorator,
   ],
   args: {
-    children: Array.from({ length: 7 }, (_, index) => (
-      <Tag
-        key={index}
-        color={MAIN_COLOR_NAMES[index]}
-      >{`Option ${index + 1}`}</Tag>
+    children: MAIN_COLOR_NAMES.slice(0, 7).map((color, index) => (
+      <Tag key={index} color={color}>{`Option ${index + 1}`}</Tag>
     )),
     isChipCountDisplayed: false,
   },
@@ -77,9 +74,11 @@ export const ClosesExpandedListOnClickOutside: Story = {
 const OPTIONS_COUNT = 7;
 const COLLAPSED_WIDTH_PX = 96;
 
-const optionTags = Array.from({ length: OPTIONS_COUNT }, (_, index) => (
-  <Tag key={index} color={MAIN_COLOR_NAMES[index]}>{`Option ${index + 1}`}</Tag>
-));
+const optionTags = MAIN_COLOR_NAMES.slice(0, OPTIONS_COUNT).map(
+  (color, index) => (
+    <Tag key={index} color={color}>{`Option ${index + 1}`}</Tag>
+  ),
+);
 
 const countRenderedOptions = (canvas: ReturnType<typeof within>) =>
   canvas.queryAllByText(/^Option \d+$/).length;

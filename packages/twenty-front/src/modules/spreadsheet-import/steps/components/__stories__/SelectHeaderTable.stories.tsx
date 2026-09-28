@@ -5,6 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -45,8 +46,10 @@ export const SingleRowSelection: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const radios = canvas.getAllByRole('radio', { name: 'Select' });
+    const [, secondRadio] = radios;
+    assertIsDefinedOrThrow(secondRadio);
     await expect(radios[0]).toBeChecked();
-    await userEvent.click(radios[1]);
+    await userEvent.click(secondRadio);
     await expect(radios[1]).toBeChecked();
     await expect(radios[0]).not.toBeChecked();
     await userEvent.keyboard('{ArrowDown}');

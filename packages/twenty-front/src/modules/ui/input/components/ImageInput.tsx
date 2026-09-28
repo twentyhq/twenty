@@ -145,8 +145,10 @@ export const ImageInput = ({
             ref={hiddenFileInput}
             accept="image/jpeg, image/png, image/gif" // to desired specification
             onChange={(event) => {
-              if (isDefined(onUpload) && isDefined(event.target.files)) {
-                onUpload(event.target.files[0]);
+              const file = event.target.files?.[0];
+
+              if (isDefined(onUpload) && isDefined(file)) {
+                onUpload(file);
               }
             }}
           />

@@ -89,7 +89,7 @@ describe('useFilterCommandMenuItemsWithSidePanelSearch', () => {
       );
 
     expect(filtered).toHaveLength(1);
-    expect(filtered[0].id).toBe('command-menu-item-1');
+    expect(filtered[0]?.id).toBe('command-menu-item-1');
   });
 
   it('should filter command menu items by hotkeys', () => {
@@ -106,7 +106,7 @@ describe('useFilterCommandMenuItemsWithSidePanelSearch', () => {
       );
 
     expect(filtered).toHaveLength(1);
-    expect(filtered[0].id).toBe('command-menu-item-2');
+    expect(filtered[0]?.id).toBe('command-menu-item-2');
   });
 
   it('should return empty array when no command menu items match', () => {

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { SelectColumn } from 'react-data-grid';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -98,9 +99,11 @@ export const SingleSelection: Story = {
     await expect(args.onSelectedRowChange).toHaveBeenLastCalledWith('row-1');
 
     const radios = canvas.getAllByRole('radio', { name: 'Select' });
+    const [, , thirdRadio] = radios;
+    assertIsDefinedOrThrow(thirdRadio);
     await expect(radios[1]).toBeChecked();
     await expect(radios[0]).not.toBeChecked();
-    await userEvent.click(radios[2]);
+    await userEvent.click(thirdRadio);
     await expect(args.onSelectedRowChange).toHaveBeenCalledTimes(2);
     await expect(args.onSelectedRowChange).toHaveBeenLastCalledWith('row-2');
 
@@ -150,7 +153,9 @@ export const VirtualizedArrowNavigation: Story = {
     await expect(
       canvas.queryByRole('gridcell', { name: 'Contact 60' }),
     ).not.toBeInTheDocument();
-    await userEvent.click(canvas.getAllByRole('radio', { name: 'Select' })[0]);
+    const [firstRowRadio] = canvas.getAllByRole('radio', { name: 'Select' });
+    assertIsDefinedOrThrow(firstRowRadio);
+    await userEvent.click(firstRowRadio);
     await userEvent.keyboard('{ArrowDown>59/}');
     await expect(
       within(canvas.getByRole('row', { name: /Contact 60/ })).getByRole(
@@ -181,13 +186,17 @@ export const MultipleSelection: Story = {
       'aria-multiselectable',
       'true',
     );
-    const checkboxes = canvas.getAllByRole('checkbox', { name: 'Select' });
-    await userEvent.click(checkboxes[0]);
-    await userEvent.click(checkboxes[1]);
-    await expect(checkboxes[0]).toBeChecked();
-    await expect(checkboxes[1]).toBeChecked();
-    await userEvent.click(checkboxes[0]);
-    await expect(checkboxes[0]).not.toBeChecked();
-    await expect(checkboxes[1]).toBeChecked();
+    const [firstCheckbox, secondCheckbox] = canvas.getAllByRole('checkbox', {
+      name: 'Select',
+    });
+    assertIsDefinedOrThrow(firstCheckbox);
+    assertIsDefinedOrThrow(secondCheckbox);
+    await userEvent.click(firstCheckbox);
+    await userEvent.click(secondCheckbox);
+    await expect(firstCheckbox).toBeChecked();
+    await expect(secondCheckbox).toBeChecked();
+    await userEvent.click(firstCheckbox);
+    await expect(firstCheckbox).not.toBeChecked();
+    await expect(secondCheckbox).toBeChecked();
   },
 };

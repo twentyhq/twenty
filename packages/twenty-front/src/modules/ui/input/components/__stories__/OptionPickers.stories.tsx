@@ -40,12 +40,13 @@ const ArrayExample = ({ disabled = false }: { disabled?: boolean }) => {
 };
 
 const InnerSelectExample = () => {
+  const firstOption = { value: 'first', label: 'First' };
   const options = [
-    { value: 'first', label: 'First' },
+    firstOption,
     { value: 'disabled', label: 'Disabled', disabled: true },
     { value: 'last', label: 'Last' },
   ];
-  const [option, setOption] = useState(options[0]);
+  const [option, setOption] = useState(firstOption);
   return (
     <DropdownMenuInnerSelect
       dropdownId="inner-select-story"

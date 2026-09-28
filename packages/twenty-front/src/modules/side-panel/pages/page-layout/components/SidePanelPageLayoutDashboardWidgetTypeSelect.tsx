@@ -208,10 +208,12 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       setPageLayoutEditingWidgetId(newRecordTableWidget.id);
 
-      addDraftViewForRecordTableWidget(
-        newRecordTableWidget.id,
-        firstAvailableObjectMetadataItem,
-      );
+      if (isDefined(firstAvailableObjectMetadataItem)) {
+        addDraftViewForRecordTableWidget(
+          newRecordTableWidget.id,
+          firstAvailableObjectMetadataItem,
+        );
+      }
     }
 
     navigatePageLayoutSidePanel({

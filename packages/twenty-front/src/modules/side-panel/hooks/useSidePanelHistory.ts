@@ -8,9 +8,8 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { sidePanelSubPageStackComponentState } from '@/side-panel/states/sidePanelSubPageStackComponentState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useSidePanelHistory = () => {
   const store = useStore();
@@ -173,6 +172,10 @@ export const useSidePanelHistory = () => {
             }),
             [],
           );
+
+          if (!isNonEmptyArray(morphItems)) {
+            continue;
+          }
 
           store.set(
             activeTabIdComponentState.atomFamily({

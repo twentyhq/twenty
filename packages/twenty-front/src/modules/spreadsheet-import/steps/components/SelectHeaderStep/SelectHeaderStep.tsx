@@ -13,6 +13,7 @@ import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/Spr
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useLingui } from '@lingui/react/macro';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledHeadingContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[8]};
@@ -86,12 +87,18 @@ export const SelectHeaderStep = ({
   );
 
   const handleOnContinue = useCallback(async () => {
+    const headerRow = importedRows[selectedRowIndex];
+
+    if (!isDefined(headerRow)) {
+      return;
+    }
+
     // We consider data above header to be redundant
     const trimmedData = importedRows.slice(selectedRowIndex + 1);
 
     setIsLoading(true);
 
-    await handleContinue(importedRows[selectedRowIndex], trimmedData);
+    await handleContinue(headerRow, trimmedData);
 
     setIsLoading(false);
   }, [handleContinue, importedRows, selectedRowIndex]);

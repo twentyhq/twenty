@@ -6,6 +6,7 @@ import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotIm
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/suggestedFieldsByColumnHeaderState';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { spreadsheetImportBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportBuildFieldOptions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -28,13 +29,13 @@ const StyledErrorMessage = styled.span`
 
 type TemplateColumnProps = {
   columns: SpreadsheetColumns;
-  columnIndex: number;
+  column: SpreadsheetColumn;
   onChange: (val: string, index: number) => void;
 };
 
 export const TemplateColumn = ({
   columns,
-  columnIndex,
+  column,
   onChange,
 }: TemplateColumnProps) => {
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
@@ -42,7 +43,6 @@ export const TemplateColumn = ({
     suggestedFieldsByColumnHeaderState,
   );
 
-  const column = columns[columnIndex];
   const isIgnored = column.type === SpreadsheetColumnType.ignored;
 
   const { t } = useLingui();

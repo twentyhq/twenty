@@ -163,7 +163,7 @@ export const ValidationStep = ({
         (acc: any, index: any) => {
           // when data is filtered val !== actual index in data
           const realIndex = data.findIndex(
-            (value) => value.__index === rows[index].__index,
+            (value) => value.__index === rows[index]?.__index,
           );
           acc[realIndex] = rows[index];
           return acc;
@@ -227,15 +227,14 @@ export const ValidationStep = ({
     const calculatedData = data.reduce(
       (acc, value) => {
         const { __index, __errors, ...values } = value;
-        if (isDefined(__errors)) {
-          for (const key in __errors) {
-            if (__errors[key].level === 'error') {
-              acc.invalidStructuredRows.push(
-                values as unknown as ImportedStructuredRow,
-              );
-              return acc;
-            }
-          }
+        if (
+          isDefined(__errors) &&
+          Object.values(__errors).some((error) => error.level === 'error')
+        ) {
+          acc.invalidStructuredRows.push(
+            values as unknown as ImportedStructuredRow,
+          );
+          return acc;
         }
         acc.validStructuredRows.push(
           values as unknown as ImportedStructuredRow,
