@@ -115,10 +115,12 @@ const UpgradeFreeTrialExpressCheckout = ({
             buttonHeight: EXPRESS_CHECKOUT_BUTTON_HEIGHT_PX,
             paymentMethods: { link: 'never' },
           }}
-          onReady={({ availablePaymentMethods }) =>
-            setHasExpressCheckout(isDefined(availablePaymentMethods))
-          }
-          onConfirm={handleSubmit}
+          onReady={({ availablePaymentMethods }) => {
+            setHasExpressCheckout(isDefined(availablePaymentMethods));
+          }}
+          onConfirm={() => {
+            void handleSubmit();
+          }}
         />
         <HorizontalSeparator text={t`Or`} noMargin />
       </StyledExpressCheckout>
@@ -144,7 +146,9 @@ const UpgradeFreeTrialSubmitButton = ({
 
   return (
     <MainButton
-      onClick={handleSubmit}
+      onClick={() => {
+        void handleSubmit();
+      }}
       fullWidth
       startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
