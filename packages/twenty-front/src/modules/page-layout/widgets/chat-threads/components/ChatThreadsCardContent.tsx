@@ -29,6 +29,7 @@ type ChatThreadsCardContentProps = {
   error?: unknown;
   widgetId: string;
   onRetry: () => void;
+  onDetachThread: (threadId: string) => void;
   threads: GetChatThreadsForRecordQuery['chatThreadsForRecord'];
 };
 
@@ -37,6 +38,7 @@ export const ChatThreadsCardContent = ({
   error,
   widgetId,
   onRetry,
+  onDetachThread,
   threads,
 }: ChatThreadsCardContentProps) => {
   const isThreadsEmpty = threads.length === 0;
@@ -94,6 +96,7 @@ export const ChatThreadsCardContent = ({
           key={thread.id}
           thread={thread}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.RECORD_PAGE}
+          onDetach={() => onDetachThread(thread.id)}
         />
       ))}
     </StyledThreadsContainer>

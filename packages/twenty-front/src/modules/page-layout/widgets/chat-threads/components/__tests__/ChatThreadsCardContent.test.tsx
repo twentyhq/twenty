@@ -40,6 +40,7 @@ const renderContent = ({
           error={error}
           widgetId={WIDGET_ID}
           onRetry={onRetry}
+          onDetachThread={jest.fn()}
           threads={[]}
         />
       </MemoryRouter>

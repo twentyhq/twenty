@@ -83,6 +83,7 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 type AiChatThreadListItemProps = {
   thread: AgentChatThread;
   surface?: AiChatThreadActionsSurface;
+  onDetach?: () => void;
 };
 
 // The surface keys the row's dropdown state, so rows for one thread on two
@@ -91,6 +92,7 @@ type AiChatThreadListItemProps = {
 export const AiChatThreadListItem = ({
   thread,
   surface = AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
+  onDetach,
 }: AiChatThreadListItemProps) => {
   const theme = useTheme();
   const { t } = useLingui();
@@ -165,6 +167,7 @@ export const AiChatThreadListItem = ({
           isArchived={isArchived}
           surface={surface}
           onRenameRequested={startRename}
+          onDetach={onDetach}
         />
       </StyledMenuTrigger>
     </StyledThreadItem>
