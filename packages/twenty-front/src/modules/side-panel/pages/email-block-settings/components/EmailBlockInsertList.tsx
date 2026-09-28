@@ -11,6 +11,7 @@ import {
   IconPhoto,
   IconVariable,
 } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
@@ -76,6 +77,7 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
   const renderDraggableItem = (
     key: string,
     Icon: IconComponent,
+    iconColor: string,
     label: string,
     content: JSONContent,
   ) => (
@@ -88,27 +90,28 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
     >
       <MenuItem
         withIconContainer
-        LeftIcon={Icon}
+        LeftIcon={() => <Icon color={iconColor} size={16} />}
         text={label}
         onClick={() => insertContent(content)}
       />
     </AdvancedTextEditorDraggableContent>
   );
 
-  const renderInsertionItem = ({
-    id,
-    title,
-    icon,
-    createContent,
-  }: Pick<
-    AdvancedTextEditorBlockInsertionItem,
-    'id' | 'title' | 'icon' | 'createContent'
-  >) =>
-    renderDraggableItem(
-      id,
-      icon,
-      i18n._(title),
-      createContent((message) => i18n._(message)),
+  const renderInsertionItems = (
+    items: Pick<
+      AdvancedTextEditorBlockInsertionItem,
+      'id' | 'title' | 'icon' | 'createContent'
+    >[],
+    iconColor: string,
+  ) =>
+    items.map(({ id, title, icon, createContent }) =>
+      renderDraggableItem(
+        id,
+        icon,
+        iconColor,
+        i18n._(title),
+        createContent((message) => i18n._(message)),
+      ),
     );
 
   return (
@@ -126,28 +129,39 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
       <SidePanelWorkflowSelectStepTitle>
         {t`Text`}
       </SidePanelWorkflowSelectStepTitle>
-      {ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS.map(renderInsertionItem)}
+      {renderInsertionItems(
+        ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS,
+        themeCssVariables.color.gray9,
+      )}
 
       <SidePanelWorkflowSelectStepTitle>
         {t`Layout`}
       </SidePanelWorkflowSelectStepTitle>
-      {ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(({ nodeType }) =>
-        LAYOUT_NODE_TYPES.includes(nodeType),
-      ).map(renderInsertionItem)}
+      {renderInsertionItems(
+        ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(({ nodeType }) =>
+          LAYOUT_NODE_TYPES.includes(nodeType),
+        ),
+        themeCssVariables.color.green9,
+      )}
 
       <SidePanelWorkflowSelectStepTitle>
         {t`Content`}
       </SidePanelWorkflowSelectStepTitle>
       <MenuItem
         withIconContainer
-        LeftIcon={IconPhoto}
+        LeftIcon={() => (
+          <IconPhoto color={themeCssVariables.color.orange9} size={16} />
+        )}
         text={isUploadingImage ? t`Uploading...` : t`Image`}
         disabled={isUploadingImage}
         onClick={() => imageFileInputRef.current?.click()}
       />
-      {ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(
-        ({ nodeType }) => !LAYOUT_NODE_TYPES.includes(nodeType),
-      ).map(renderInsertionItem)}
+      {renderInsertionItems(
+        ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(
+          ({ nodeType }) => !LAYOUT_NODE_TYPES.includes(nodeType),
+        ),
+        themeCssVariables.color.orange9,
+      )}
 
       {hasVariables && (
         <>
@@ -155,10 +169,16 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
             {t`Variables`}
           </SidePanelWorkflowSelectStepTitle>
           {variables.map(({ label, value }) =>
-            renderDraggableItem(value, IconVariable, label, {
-              type: TIPTAP_NODE_TYPES.VARIABLE_TAG,
-              attrs: { variable: value },
-            }),
+            renderDraggableItem(
+              value,
+              IconVariable,
+              themeCssVariables.color.blue9,
+              label,
+              {
+                type: TIPTAP_NODE_TYPES.VARIABLE_TAG,
+                attrs: { variable: value },
+              },
+            ),
           )}
         </>
       )}
@@ -168,7 +188,9 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
       </SidePanelWorkflowSelectStepTitle>
       <MenuItem
         withIconContainer
-        LeftIcon={IconPaint}
+        LeftIcon={() => (
+          <IconPaint color={themeCssVariables.color.purple9} size={16} />
+        )}
         text={t`Page style`}
         hasSubMenu
         onClick={handleOpenPageStyle}
