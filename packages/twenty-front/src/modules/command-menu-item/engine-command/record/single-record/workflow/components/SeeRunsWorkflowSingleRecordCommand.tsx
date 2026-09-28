@@ -11,6 +11,7 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
+  const workflowName = selectedRecords[0]?.name;
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',
   );
@@ -33,6 +34,9 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
                 },
               },
             },
+        filterDisplayValue: isCore
+          ? { coreWorkflowId: { [ViewFilterOperand.IS]: workflowName } }
+          : undefined,
       }}
     />
   );
