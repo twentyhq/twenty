@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EventLogTable } from 'twenty-shared/types';
@@ -25,6 +25,7 @@ import {
   EVENT_LOG_TYPES,
   getClickHouseTableName,
 } from './registry/event-log-registry';
+import { buildEventLogFieldFilterCondition } from './utils/build-event-log-field-filter-condition.util';
 import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
 
 const ALLOWED_TABLES = Object.values(EventLogTable);
@@ -46,10 +47,6 @@ export class EventLogsService {
     { callingApplicationId }: { callingApplicationId?: string } = {},
   ): Promise<EventLogQueryResult> {
     await this.validateAccess(workspaceId, input.table);
-
-    if (!ALLOWED_TABLES.includes(input.table)) {
-      throw new BadRequestException(`Invalid table: ${input.table}`);
-    }
 
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
     const tableName = getClickHouseTableName(input.table);
@@ -169,6 +166,13 @@ export class EventLogsService {
     workspaceId: string,
     table: EventLogTable,
   ): Promise<void> {
+    if (!ALLOWED_TABLES.includes(table)) {
+      throw new EventLogsException(
+        `Invalid table: ${table}`,
+        EventLogsExceptionCode.INVALID_TABLE,
+      );
+    }
+
     if (!this.clickHouseService.getMainClient()) {
       throw new EventLogsException(
         'Audit logs require ClickHouse to be configured. Please set the CLICKHOUSE_URL environment variable.',
@@ -256,6 +260,19 @@ export class EventLogsService {
         params.objectMetadataId = filters.objectMetadataId;
       }
     }
+
+    filters.fieldFilters?.forEach((fieldFilter, index) => {
+      const parameterName = `fieldFilter${index}`;
+
+      whereClauses.push(
+        buildEventLogFieldFilterCondition({
+          fieldFilter,
+          parameterName,
+          table,
+        }),
+      );
+      params[parameterName] = fieldFilter.values;
+    });
   }
 
   private encodeCursor(timestamp: Date): string {
