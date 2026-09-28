@@ -29,6 +29,21 @@ export class ValidationRuleDTO {
   @IsString()
   @IsNotEmpty()
   @Field()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  description: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  icon: string | null;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
   expression: string;
 
   @IsString()

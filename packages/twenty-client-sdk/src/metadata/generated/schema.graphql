@@ -3697,6 +3697,9 @@ type ValidationRule {
   id: UUID!
   objectMetadataId: UUID!
   errorFieldMetadataId: UUID
+  name: String!
+  description: String
+  icon: String
   expression: String!
   message: String!
   isActive: Boolean!
@@ -5597,6 +5600,9 @@ input UpdateSkillInput {
 input CreateValidationRuleInput {
   objectMetadataId: UUID!
   errorFieldMetadataId: UUID
+  name: String!
+  description: String
+  icon: String
   expression: String!
   message: String!
   isActive: Boolean
@@ -5609,6 +5615,9 @@ input UpdateValidationRuleInput {
 
 input UpdateValidationRuleInputUpdates {
   errorFieldMetadataId: UUID
+  name: String
+  description: String
+  icon: String
   expression: String
   message: String
   isActive: Boolean

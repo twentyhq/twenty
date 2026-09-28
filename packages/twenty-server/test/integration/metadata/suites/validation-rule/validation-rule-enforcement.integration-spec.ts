@@ -81,6 +81,7 @@ describe('Validation rules should be enforced on record writes', () => {
     const response = await createValidationRule({
       objectMetadataId: opportunityObjectMetadataId,
       errorFieldMetadataId: amountFieldMetadataId,
+      name: 'Customer needs an amount',
       expression: CUSTOMER_NEEDS_AMOUNT_EXPRESSION,
       message: RULE_MESSAGE,
     });
@@ -118,6 +119,7 @@ describe('Validation rules should be enforced on record writes', () => {
   it('should reject a rule expression that references an unknown field', async () => {
     const response = await createValidationRule({
       objectMetadataId: opportunityObjectMetadataId,
+      name: 'Customer needs an amount',
       expression: 'stage != "CUSTOMER" or not isEmpty(amont)',
       message: RULE_MESSAGE,
     });

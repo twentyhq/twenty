@@ -217,6 +217,9 @@ export class ValidationRuleService {
 
         const validationRule: ObjectValidationRule = {
           id: v4(),
+          name: input.name,
+          description: input.description ?? null,
+          icon: input.icon ?? null,
           expression: input.expression,
           bindings: compileValidationRuleExpressionOrThrow({
             expression: input.expression,
@@ -296,6 +299,15 @@ export class ValidationRuleService {
 
       const updatedValidationRule: ObjectValidationRule = {
         ...existingValidationRule,
+        name: input.update.name ?? existingValidationRule.name,
+        description:
+          input.update.description === undefined
+            ? existingValidationRule.description
+            : input.update.description,
+        icon:
+          input.update.icon === undefined
+            ? existingValidationRule.icon
+            : input.update.icon,
         expression,
         bindings:
           expression === existingValidationRule.expression

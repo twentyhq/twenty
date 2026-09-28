@@ -22,6 +22,14 @@ export const validateFlatObjectMetadataValidationRules = (
   }
 
   for (const validationRule of validationRules) {
+    if (!isNonEmptyString(validationRule.name.trim())) {
+      errors.push({
+        code: ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT,
+        message: t`Validation rule name is required`,
+        userFriendlyMessage: msg`Validation rule name is required`,
+      });
+    }
+
     if (!isNonEmptyString(validationRule.message.trim())) {
       errors.push({
         code: ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT,

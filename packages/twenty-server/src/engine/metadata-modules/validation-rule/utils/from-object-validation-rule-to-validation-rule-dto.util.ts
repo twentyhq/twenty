@@ -11,6 +11,9 @@ export const fromObjectValidationRuleToValidationRuleDto = ({
 }): ValidationRuleDTO => ({
   id: validationRule.id,
   objectMetadataId,
+  name: validationRule.name,
+  description: validationRule.description,
+  icon: validationRule.icon,
   errorFieldMetadataId: validationRule.errorFieldMetadataId,
   expression: validationRule.expression,
   message: validationRule.message,

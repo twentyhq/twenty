@@ -23,6 +23,21 @@ export class UpdateValidationRuleInputUpdates {
   @IsString()
   @ValidateIf((_, value) => value !== undefined)
   @Field({ nullable: true })
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  description?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  icon?: string | null;
+
+  @IsString()
+  @ValidateIf((_, value) => value !== undefined)
+  @Field({ nullable: true })
   expression?: string;
 
   @IsString()
