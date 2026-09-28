@@ -1,3 +1,4 @@
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { registerEnumType } from '@nestjs/graphql';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -76,6 +77,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     CalendarEventParticipantWorkspaceEntity[]
   >;
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  agentMessages: Relation<AgentMessageWorkspaceEntity[]>;
+
   agentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
   ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;

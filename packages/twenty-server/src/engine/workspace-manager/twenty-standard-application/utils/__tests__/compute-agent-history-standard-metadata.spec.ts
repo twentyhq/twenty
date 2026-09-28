@@ -126,6 +126,21 @@ describe('agent history workspace metadata', () => {
     });
   });
 
+  it('retains messages when a sender member is deleted', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
+          .universalIdentifier
+      ],
+    ).toMatchObject({
+      isNullable: true,
+      settings: {
+        onDelete: 'SET_NULL',
+        joinColumnName: 'senderWorkspaceMemberId',
+      },
+    });
+  });
+
   it('retains exact precision for credits and cache token counts', () => {
     for (const name of [
       'totalInputCredits',

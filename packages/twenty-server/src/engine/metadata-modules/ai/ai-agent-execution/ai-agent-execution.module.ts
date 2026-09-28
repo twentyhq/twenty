@@ -1,3 +1,4 @@
+import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -61,6 +62,7 @@ import { RunAgentAttachmentService } from './services/run-agent-attachment.servi
     AgentActorContextService,
     AiGraphqlApiExceptionInterceptor,
     AgentMessagePartResolver,
+    AgentMessageResolver,
     AgentRunResolver,
     AgentRunService,
     RunAgentAttachmentService,
