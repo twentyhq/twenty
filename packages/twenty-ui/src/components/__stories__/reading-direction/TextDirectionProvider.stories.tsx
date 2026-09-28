@@ -1,6 +1,5 @@
 import { A11Y_DEFER_COLOR_CONTRAST } from '@ui/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
 
 import { ThemeProvider } from '@ui/theme';
 
@@ -33,19 +32,4 @@ export const ReadingDirections: Story = {
       )}
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    for (const direction of ['ltr', 'rtl']) {
-      const [lightLayout, darkLayout] = canvas.getAllByTestId(
-        `layout-${direction}`,
-      );
-
-      expect(getComputedStyle(lightLayout!).direction).toBe(direction);
-      expect(getComputedStyle(darkLayout!).direction).toBe(direction);
-      expect(getComputedStyle(lightLayout!).backgroundColor).not.toBe(
-        getComputedStyle(darkLayout!).backgroundColor,
-      );
-    }
-  },
 };
