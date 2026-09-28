@@ -1333,14 +1333,6 @@ export type CreateApplicationRegistrationInput = {
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type CreateApplicationRegistrationVariableInput = {
-  applicationRegistrationId: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  isSecret?: InputMaybe<Scalars['Boolean']['input']>;
-  key: Scalars['String']['input'];
-  value: Scalars['String']['input'];
-};
-
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String']['input'];
   email: Scalars['String']['input'];
@@ -3066,7 +3058,6 @@ export type Mutation = {
   createAppMessageChannel: MessageChannel;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
-  createApplicationRegistrationVariable: ApplicationRegistrationVariable;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent;
   createCalendarEvent: CreateCalendarEventOutput;
@@ -3113,7 +3104,6 @@ export type Mutation = {
   deleteAppKeyValue: Scalars['Boolean']['output'];
   deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
-  deleteApplicationRegistrationVariable: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteChatThread: Scalars['Boolean']['output'];
   deleteCommandMenuItem: CommandMenuItem;
@@ -3457,11 +3447,6 @@ export type MutationCreateApplicationRegistrationArgs = {
 };
 
 
-export type MutationCreateApplicationRegistrationVariableArgs = {
-  input: CreateApplicationRegistrationVariableInput;
-};
-
-
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
 };
@@ -3694,11 +3679,6 @@ export type MutationDeleteAppMessageChannelArgs = {
 
 
 export type MutationDeleteApplicationRegistrationArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteApplicationRegistrationVariableArgs = {
   id: Scalars['String']['input'];
 };
 
