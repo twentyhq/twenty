@@ -9227,6 +9227,13 @@
         "description": "Class applied to the link."
       },
       {
+        "name": "color",
+        "type": "\"primary\" | \"secondary\"",
+        "required": false,
+        "defaultValue": "primary",
+        "description": "Label text color: primary or secondary."
+      },
+      {
         "name": "href",
         "type": "string",
         "required": true,

@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import {
   Parser,
   type ParserOptions,
@@ -29,15 +30,23 @@ const getDeclaredTypeOfTruncatedProp = ({
   const isTruncated =
     checker.typeToString(propType) !==
     checker.typeToString(propType, undefined, ts.TypeFormatFlags.NoTruncation);
-  const declaredTypes = (prop.declarations ?? []).flatMap((declaration) =>
+  const [declaredType, ...otherDeclaredTypes] = (
+    prop.declarations ?? []
+  ).flatMap((declaration) =>
     ts.isPropertySignature(declaration) && isDefined(declaration.type)
       ? [declaration.type]
       : [],
   );
 
-  return isTruncated && declaredTypes.length === 1
-    ? declaredTypes[0].getText()
-    : undefined;
+  if (
+    !isTruncated ||
+    !isDefined(declaredType) ||
+    isNonEmptyArray(otherDeclaredTypes)
+  ) {
+    return undefined;
+  }
+
+  return declaredType.getText();
 };
 
 export class DocumentationParser extends Parser {

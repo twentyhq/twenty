@@ -31,5 +31,7 @@ export const getIconDocumentationGroups = ({
 
   return [...groups.values()]
     .map((group) => ({ ...group, names: group.names.sort() }))
-    .sort((left, right) => left.names[0].localeCompare(right.names[0], 'en'));
+    .sort(({ names: [leftFirstName = ''] }, { names: [rightFirstName = ''] }) =>
+      leftFirstName.localeCompare(rightFirstName, 'en'),
+    );
 };
