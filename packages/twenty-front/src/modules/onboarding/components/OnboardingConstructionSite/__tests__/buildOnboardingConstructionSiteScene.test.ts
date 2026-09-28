@@ -239,4 +239,20 @@ describe('buildOnboardingConstructionSiteScene', () => {
 
     expect(instances.cube.count).toBe(8);
   });
+
+  it('should leave the scene empty when the buildings would reach the content', () => {
+    const instances = createInstances();
+
+    buildOnboardingConstructionSiteScene({
+      instances,
+      layout: { ...LAYOUT, halfWidth: 4 },
+      construction: {
+        builtStageIndex: ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX,
+        growingStageGrowths: [],
+      },
+      craneMotion: 0,
+    });
+
+    expect(getTotalCount(instances)).toBe(0);
+  });
 });

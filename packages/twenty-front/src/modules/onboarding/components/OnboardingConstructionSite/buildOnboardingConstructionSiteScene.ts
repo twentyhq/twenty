@@ -1149,6 +1149,14 @@ export const buildOnboardingConstructionSiteScene = ({
   const zoneInnerX = contentHalfWidth + CONTENT_GAP;
   const zoneOuterX = halfWidth - EDGE_MARGIN;
   const zoneWidth = zoneOuterX - zoneInnerX;
+
+  if (
+    zoneWidth <
+    Math.max(ROUND_TOWER_CLUSTER_WIDTH, BRACED_TOWER_CLUSTER_WIDTH) *
+      MINIMUM_CLUSTER_SCALE
+  ) {
+    return;
+  }
   const siteScale = Math.min(
     getClusterScale(
       zoneWidth,
