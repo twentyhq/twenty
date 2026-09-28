@@ -7,11 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 import { buildCampaignClickEvent } from 'src/modules/emailing/utils/build-campaign-click-event.util';
+import { getCampaignDeliveryTableName } from 'src/modules/emailing/utils/get-campaign-delivery-table-name.util';
 
 @Injectable()
 export class CampaignEngagementRecordingService {
@@ -21,6 +23,7 @@ export class CampaignEngagementRecordingService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
     private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
   async record(observation: CampaignEngagementObservation): Promise<void> {
@@ -63,5 +66,35 @@ export class CampaignEngagementRecordingService {
     }
 
     await this.campaignEngagementEventService.insertClickOrThrow(clickEvent);
+    await this.countClickOnDelivery(observation);
+    await this.messageCampaignStatisticsService.scheduleRefresh({
+      workspaceId: observation.workspaceId,
+      campaignId: delivery.campaignId,
+    });
+  }
+
+  private async countClickOnDelivery(
+    observation: CampaignEngagementObservation,
+  ): Promise<void> {
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepository(
+            CampaignDeliveryWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+            { shouldSkipEventEmission: true },
+          )
+          .executeRaw(
+            `UPDATE ${getCampaignDeliveryTableName(observation.workspaceId)}
+      SET "clickCount" = "clickCount" + 1,
+          "clickedAt" = COALESCE("clickedAt", :occurredAt)
+      WHERE "id" = :deliveryId`,
+            {
+              occurredAt: observation.occurredAt,
+              deliveryId: observation.deliveryId,
+            },
+          ),
+      buildSystemAuthContext(observation.workspaceId),
+    );
   }
 }

@@ -527,6 +527,46 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
+    clickedCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'clickedCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Clicked count`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Number of recipients who clicked a tracked link`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClick',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
+    clickCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'clickCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Click count`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Total clicks on tracked links`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClick',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
     unsubscribeTopicId: createStandardFieldFlatMetadata({
       ...base,
       context: {

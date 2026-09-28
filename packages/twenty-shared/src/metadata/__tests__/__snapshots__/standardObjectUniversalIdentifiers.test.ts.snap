@@ -1214,6 +1214,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "claimToken": {
         "universalIdentifier": "66b78eb0-7a53-4ad6-929a-156183490eb3",
       },
+      "clickCount": {
+        "universalIdentifier": "c8f3d0b5-4a2e-4d9f-8b7c-3e6a8f2d5b01",
+      },
+      "clickedAt": {
+        "universalIdentifier": "b7e2c9a4-3f1d-4c8e-9a6b-2d5f7e1c4a90",
+      },
       "complainedAt": {
         "universalIdentifier": "322301c5-62d6-428a-bc33-89f8eee75a47",
       },
@@ -1657,6 +1663,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "bouncedCount": {
         "universalIdentifier": "20d884a9-34dd-4667-8ecb-ceec224258e2",
+      },
+      "clickCount": {
+        "universalIdentifier": "ea05f2d7-6c4a-4f1b-8d9e-5a8c0b4f7d23",
+      },
+      "clickedCount": {
+        "universalIdentifier": "d9a4e1c6-5b3f-4e0a-9c8d-4f7b9a3e6c12",
       },
       "complainedCount": {
         "universalIdentifier": "82842cfa-f12a-4bab-bbde-b2cf587d0406",

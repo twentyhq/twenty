@@ -256,6 +256,10 @@ export const STANDARD_OBJECT_FIELDS = {
     renderingFailedAt: {
       universalIdentifier: 'eca2b84e-a8d0-4641-bf16-48005e1826bd',
     },
+    clickedAt: { universalIdentifier: 'b7e2c9a4-3f1d-4c8e-9a6b-2d5f7e1c4a90' },
+    clickCount: {
+      universalIdentifier: 'c8f3d0b5-4a2e-4d9f-8b7c-3e6a8f2d5b01',
+    },
   },
   messageSuppression: {
     ...buildStandardObjectBaseFields(
@@ -851,6 +855,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     skippedCount: {
       universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
+    },
+    clickedCount: {
+      universalIdentifier: 'd9a4e1c6-5b3f-4e0a-9c8d-4f7b9a3e6c12',
+    },
+    clickCount: {
+      universalIdentifier: 'ea05f2d7-6c4a-4f1b-8d9e-5a8c0b4f7d23',
     },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',

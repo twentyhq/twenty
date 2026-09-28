@@ -6,6 +6,7 @@ import { VerifyCommonRecordSharingCommand } from 'src/database/commands/upgrade-
 import { DeleteFieldLessIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790595494562-delete-field-less-index-metadata.command';
 import { FollowWorkflowVisibilityOnRunsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790595877162-follow-workflow-visibility-on-runs.command';
 import { SyncShortLinkObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790615265538-sync-short-link-object.command';
+import { SyncCampaignClickFieldsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790631584987-sync-campaign-click-fields.command';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
@@ -35,6 +36,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     SyncDeactivateWorkflowAvailabilityCommand,
     RemoveAddNodeWorkflowCommandMenuItemCommand,
     SyncShortLinkObjectCommand,
+    SyncCampaignClickFieldsCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

@@ -12,6 +12,8 @@ const EMPTY_CAMPAIGN_COUNTS: CampaignCounts = {
   skippedCount: 0,
   bouncedCount: 0,
   complainedCount: 0,
+  clickedCount: 0,
+  clickCount: 0,
 };
 
 const countFailedInGroup = (group: CampaignCountGroup): number =>
@@ -43,5 +45,7 @@ export const computeCampaignCounts = ({
       deliveredCount: counts.deliveredCount + Number(group.deliveredCount),
       bouncedCount: counts.bouncedCount + Number(group.bouncedCount),
       complainedCount: counts.complainedCount + Number(group.complainedCount),
+      clickedCount: counts.clickedCount + Number(group.clickedCount),
+      clickCount: counts.clickCount + Number(group.clickCount),
     };
   }, EMPTY_CAMPAIGN_COUNTS);
