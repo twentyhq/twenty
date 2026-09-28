@@ -7,13 +7,11 @@ export const backfillChatThreadOwnerGrants = async ({
   manager,
   workspaceId,
   threadTableExpression,
-  isCoreStorage,
   recordIds,
 }: {
   manager: EntityManager;
   workspaceId: string;
   threadTableExpression: string;
-  isCoreStorage: boolean;
   recordIds?: string[];
 }): Promise<number> => {
   const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
@@ -27,7 +25,7 @@ export const backfillChatThreadOwnerGrants = async ({
       AND membership."workspaceId" = $1 AND membership."deletedAt" IS NULL
     JOIN ${schema}."workspaceMember" member ON member."userId" = membership."userId" AND member."deletedAt" IS NULL
     JOIN core."objectMetadata" metadata ON metadata."workspaceId" = $1 AND metadata."universalIdentifier" = $2
-    WHERE ${isCoreStorage ? 'thread."workspaceId" = $1 AND' : ''} ($3::uuid[] IS NULL OR thread.id = ANY($3::uuid[]))
+    WHERE ($3::uuid[] IS NULL OR thread.id = ANY($3::uuid[]))
     ON CONFLICT DO NOTHING RETURNING id`,
     [
       workspaceId,

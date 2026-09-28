@@ -1,3 +1,5 @@
+import { ServiceUnavailableException } from '@nestjs/common';
+
 import { AGENT_CHAT_THREAD_TARGET_FLAT_ENTITY_MAPS_MOCK } from 'src/engine/metadata-modules/ai/ai-chat/__mocks__/agent-chat-thread-target-flat-entity-maps.mock';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import {
@@ -90,14 +92,12 @@ const buildService = () => {
       ),
   };
 
-  const storage = { storage: 'workspace' as 'workspace' | 'core' };
-
   const agentHistoryStorageService = {
     run: jest
       .fn()
       .mockImplementation(
         (_workspaceId: string, work: (context: unknown) => Promise<unknown>) =>
-          work({ storage: storage.storage }),
+          work({}),
       ),
   };
 
@@ -131,7 +131,7 @@ const buildService = () => {
     agentChatSharingService,
     recordRepository,
     workspaceOrmManager,
-    storage,
+    agentHistoryStorageService,
   };
 };
 
@@ -213,13 +213,18 @@ describe('Attaching a conversation to a record', () => {
   });
 
   it('refuses while the workspace history still routes to core', async () => {
-    const { service, targetRepository, storage } = buildService();
+    const { service, targetRepository, agentHistoryStorageService } =
+      buildService();
 
-    storage.storage = 'core';
+    agentHistoryStorageService.run.mockRejectedValueOnce(
+      new ServiceUnavailableException(
+        'AI history is unavailable until this workspace finishes upgrading.',
+      ),
+    );
 
-    await expect(service.attachThreadToRecord(args)).rejects.toMatchObject({
-      code: 'INVALID_AGENT_INPUT',
-    });
+    await expect(service.attachThreadToRecord(args)).rejects.toBeInstanceOf(
+      ServiceUnavailableException,
+    );
 
     expect(targetRepository.insert).not.toHaveBeenCalled();
   });
