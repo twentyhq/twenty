@@ -9,7 +9,7 @@ type GraphqlOperation = {
 
 // Pass null for an unauthenticated request: undefined falls back to the
 // default token because parameter defaults apply to undefined, not null.
-export const makeMetadataAPIRequest = (
+export const makeMetadataApiRequest = (
   graphqlOperation: GraphqlOperation,
   token: string | null | undefined = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) => {

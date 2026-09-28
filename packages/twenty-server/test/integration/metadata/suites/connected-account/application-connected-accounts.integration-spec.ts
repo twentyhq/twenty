@@ -4,8 +4,8 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -139,7 +139,7 @@ describe('applicationConnectedAccounts resolver (e2e)', () => {
   }, 120000);
 
   it('returns workspace-shared connections and the caller own private ones', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: APPLICATION_CONNECTED_ACCOUNTS_QUERY,
       variables: { applicationId: applicationDbId },
     });
@@ -160,7 +160,7 @@ describe('applicationConnectedAccounts resolver (e2e)', () => {
   });
 
   it('denies a member without the applications settings permission', async () => {
-    const response = await makeMetadataAPIRequestWithMemberRole({
+    const response = await makeMetadataApiRequestWithMemberRole({
       query: APPLICATION_CONNECTED_ACCOUNTS_QUERY,
       variables: { applicationId: applicationDbId },
     });
@@ -180,7 +180,7 @@ describe('applicationConnectedAccounts resolver (e2e)', () => {
   });
 
   it('returns nothing for an application without connections', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: APPLICATION_CONNECTED_ACCOUNTS_QUERY,
       variables: { applicationId: uuidv4() },
     });

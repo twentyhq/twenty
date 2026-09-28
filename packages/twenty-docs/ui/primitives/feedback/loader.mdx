@@ -1,0 +1,42 @@
+---
+title: Loader
+description: Display a compact animated loading indicator beside a status label.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import LoaderReference from '/snippets/ui/generated/feedback/loader.mdx';
+
+`Loader` shows an animated dot inside a small bordered capsule. Use it while an operation is in progress and the percentage is unknown. For numeric progress, use [ProgressBar](/ui/primitives/feedback/progress-bar).
+
+<StoryEmbed storyId="ui-feedback-loader--with-color" title="Loader example" />
+
+## Usage
+
+```tsx
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SaveFeedbackProps = { isSaving: boolean };
+
+export const SaveFeedback = ({ isSaving }: SaveFeedbackProps) => (
+  <div role="status">
+    {isSaving && (
+      <div aria-hidden="true">
+        <Loader color="blue" />
+      </div>
+    )}
+    <Text>{isSaving ? 'Saving changes' : 'Changes saved'}</Text>
+  </div>
+);
+```
+
+The application owns loading state. Keep the status wrapper mounted so text updates can be announced. The loader itself supplies no label or live region and accepts only `color`.
+
+## Color
+
+Pass a theme palette color to set both the border and dot. Without a color, the loader inherits a surrounding button color when available, otherwise it uses the tertiary text color. For a button action, prefer [Button's loading state](/ui/primitives/input/button#state-ownership), which keeps the feedback inside the control.
+
+## Props
+
+<LoaderReference />

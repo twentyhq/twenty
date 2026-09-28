@@ -17,6 +17,7 @@ export const buildLimitQuotaCounter = ({
   period: UsagePeriod;
 }): LimitQuotaCounter => ({
   kind: 'limit',
+  isDefault: false,
   key: buildQuotaCounterKey({
     workspaceId,
     resourceType: limit.resourceType,

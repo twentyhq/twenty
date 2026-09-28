@@ -14,7 +14,7 @@ type FileAttachment = {
   contentType: string;
 };
 
-export const makeMetadataAPIRequestWithFileUpload = (
+export const makeMetadataApiRequestWithFileUpload = (
   graphqlOperation: FileUploadOperation,
   fileAttachment: FileAttachment,
   token: string | undefined = APPLE_JANE_ADMIN_ACCESS_TOKEN,

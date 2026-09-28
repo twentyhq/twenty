@@ -138,6 +138,40 @@ describe('getAgentHistorySchemaAdditions', () => {
     );
   });
 
+  it('leaves agentChatThreadTarget and both legs of its thread relation out', () => {
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard: createStandardMetadata(),
+    });
+    const targetIdentifier =
+      STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier;
+
+    // The target is provisioned by its own command, later in the upgrade, so
+    // anything emitted here would land on an object that does not exist yet.
+    expect(
+      additions.fields
+        .filter(
+          (field) =>
+            field.objectMetadataUniversalIdentifier === targetIdentifier ||
+            field.relationTargetObjectMetadataUniversalIdentifier ===
+              targetIdentifier,
+        )
+        .map((field) => field.universalIdentifier),
+    ).toEqual([]);
+    expect(
+      additions.indexes
+        .filter(
+          (index) =>
+            index.objectMetadataUniversalIdentifier === targetIdentifier,
+        )
+        .map((index) => index.universalIdentifier),
+    ).toEqual([]);
+  });
+
   it('adds nothing when all history metadata already exists', () => {
     const standard = createStandardMetadata();
     expect(

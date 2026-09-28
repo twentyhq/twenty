@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider, useAtomValue } from 'jotai';
 import { act } from 'react';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -15,17 +16,13 @@ import {
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 
-jest.mock('react-responsive', () => ({
-  useMediaQuery: jest.fn(),
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsTouchDevice: jest.fn(),
 }));
 
-const mockUseMediaQuery = jest.requireMock('react-responsive')
-  .useMediaQuery as jest.Mock;
-
 const mockIsTouchDevice = (isTouchDevice: boolean) => {
-  mockUseMediaQuery.mockImplementation(({ query }: { query: string }) =>
-    query.includes('hover: none') ? isTouchDevice : false,
-  );
+  jest.mocked(useIsTouchDevice).mockReturnValue(isTouchDevice);
 };
 
 const createWrapper =

@@ -1,6 +1,6 @@
 import { type MessageParticipantRole } from 'twenty-shared/types';
 
-import { type ExplicitParticipantIdentity } from 'src/modules/messaging/message-import-manager/types/message';
+import { type ExplicitParticipantIdentity } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 export type GmailMessage = {
   historyId: string;

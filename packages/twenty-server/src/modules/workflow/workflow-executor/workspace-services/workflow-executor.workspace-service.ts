@@ -32,7 +32,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
-} from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+} from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';

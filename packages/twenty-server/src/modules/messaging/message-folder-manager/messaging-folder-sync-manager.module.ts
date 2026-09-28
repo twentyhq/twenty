@@ -14,6 +14,7 @@ import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-
 import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
 import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
 import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-import-manager/drivers/microsoft/messaging-microsoft-driver.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-im
     GmailFoldersErrorHandlerService,
     ImapGetAllFoldersService,
     MicrosoftGetAllFoldersService,
+    provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
   exports: [SyncMessageFoldersService],
 })

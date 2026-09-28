@@ -6,7 +6,10 @@ import {
   MetadataWritability,
 } from 'twenty-shared/types';
 
+import { ServiceUnavailableException } from '@nestjs/common';
+
 import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
+import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
 import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
 
 jest.mock(
@@ -15,6 +18,10 @@ jest.mock(
 
 jest.mock(
   'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util',
+);
+
+jest.mock(
+  'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util',
 );
 
 const args = {
@@ -41,11 +48,9 @@ const buildCommand = () => {
   };
   const context = {
     manager: { query: jest.fn().mockResolvedValue([]) },
-    storage: 'workspace',
     table: () => 'workspace.thread',
   };
   const storage = {
-    isEmptyUnprovisionedWorkspace: jest.fn().mockResolvedValue(false),
     run: jest
       .fn()
       .mockImplementation(async (_workspaceId, work) => work(context)),
@@ -103,9 +108,11 @@ describe('Common sharing upgrade', () => {
   it.each([true, false])(
     'only skips missing metadata when storage is unprovisioned and empty (%s)',
     async (isEmpty) => {
-      const { command, maps, migrations, storage } = buildCommand();
+      const { command, maps, migrations } = buildCommand();
       Object.assign(maps.flatObjectMetadataMaps, { byUniversalIdentifier: {} });
-      storage.isEmptyUnprovisionedWorkspace.mockResolvedValue(isEmpty);
+      jest
+        .mocked(isEmptyUnprovisionedAgentHistoryWorkspace)
+        .mockResolvedValue(isEmpty);
       const result = command.up(args);
       if (isEmpty) await expect(result).resolves.toBeUndefined();
       else
@@ -155,10 +162,14 @@ describe('Common sharing upgrade', () => {
   });
 
   it('requires history to have moved to workspace storage first', async () => {
-    const { command, context, migrations } = buildCommand();
-    context.storage = 'core';
-    await expect(command.up(args)).rejects.toThrow(
-      'Migrate agent history to workspace storage',
+    const { command, storage, migrations } = buildCommand();
+    storage.run.mockRejectedValue(
+      new ServiceUnavailableException(
+        'AI history is unavailable until this workspace finishes upgrading.',
+      ),
+    );
+    await expect(command.up(args)).rejects.toBeInstanceOf(
+      ServiceUnavailableException,
     );
     expect(preserveLegacyRecordAccess).toHaveBeenCalled();
     expect(backfillChatThreadOwnerGrants).not.toHaveBeenCalled();

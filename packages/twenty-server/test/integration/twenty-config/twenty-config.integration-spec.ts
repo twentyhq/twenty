@@ -13,7 +13,7 @@ import { createConfigVariable } from './utils/create-config-variable.util';
 import { deleteConfigVariable } from './utils/delete-config-variable.util';
 import { getConfigVariable } from './utils/get-config-variable.util';
 import { getConfigVariablesGrouped } from './utils/get-config-variables-grouped.util';
-import { makeUnauthenticatedAPIRequest } from './utils/make-unauthenticated-api-request.util';
+import { makeUnauthenticatedApiRequest } from './utils/make-unauthenticated-api-request.util';
 import { updateConfigVariable } from './utils/update-config-variable.util';
 
 describe('TwentyConfig Integration', () => {
@@ -403,7 +403,7 @@ describe('TwentyConfig Integration', () => {
         }
       `;
 
-      const response = await makeUnauthenticatedAPIRequest(graphqlQuery);
+      const response = await makeUnauthenticatedApiRequest(graphqlQuery);
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain(

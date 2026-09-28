@@ -4,7 +4,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 
 const createFileUploadMutation = gql`
@@ -54,14 +54,14 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
   const uploadedFileIds: string[] = [];
 
   const createFileUpload = async (variables: Record<string, unknown>) => {
-    return makeMetadataAPIRequest({
+    return makeMetadataApiRequest({
       query: createFileUploadMutation,
       variables,
     });
   };
 
   const completeFileUpload = async (fileId: string) => {
-    return makeMetadataAPIRequest({
+    return makeMetadataApiRequest({
       query: completeFileUploadMutation,
       variables: { fileId },
     });
@@ -124,7 +124,7 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
   afterAll(async () => {
     for (const fileId of uploadedFileIds) {
       try {
-        await makeMetadataAPIRequest({
+        await makeMetadataApiRequest({
           query: deleteFileMutation,
           variables: { fileId },
         });

@@ -4,7 +4,7 @@ import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-field
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   type AccountOwnerRlsRoleSetup,
   cleanupAccountOwnerRlsRole,
@@ -21,7 +21,7 @@ const FOREIGN_COMPANY_NAME = 'Uncompilable RLS Foreign Co';
 const PREDICATE_ID = randomUUID();
 
 const findCompanyIdsAsRestrictedRole = async (): Promise<string[]> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -54,7 +54,7 @@ describe('row-level permission predicates that compile to nothing', () => {
         accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       },
     ]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: COMPANY_GQL_FIELDS,
@@ -73,7 +73,7 @@ describe('row-level permission predicates that compile to nothing', () => {
     await cleanupAccountOwnerRlsRole(rlsRole);
 
     for (const recordId of [OWNED_COMPANY_ID, FOREIGN_COMPANY_ID]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: 'id',

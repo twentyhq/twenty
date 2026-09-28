@@ -1652,16 +1652,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
   });
 
-  it('rejects an unmapped pending run without partially updating its ids', async () => {
+  it('leaves a pending run without a workspace version untouched', async () => {
     const id = randomUUID();
     try {
       await global.testDataSource.query(
         `INSERT INTO "${schema}"."workflowRun" (id, name, status, position, state) VALUES ($1, 'B-Async unmapped', 'RUNNING', 0, '{}')`,
         [id],
       );
-      await expect(backfill()).rejects.toThrow(
-        'Pending workflow runs have no valid core mapping',
-      );
+      await backfill();
       expect((await getRun(id)).coreWorkflowId).toBeNull();
     } finally {
       await global.testDataSource.query(
@@ -1700,7 +1698,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const latestVersionId = randomUUID();
     await global.testDataSource.query(
       `INSERT INTO core."workflowVersion" (id, "workspaceId", "applicationId", "universalIdentifier", "coreWorkflowId", "workflowId", status, triggers, steps)
-       SELECT $2, "workspaceId", "applicationId", $2, "coreWorkflowId", NULL, 'ACTIVE', triggers, '[]'::jsonb FROM core."workflowVersion" WHERE id = $1`,
+       SELECT $2, "workspaceId", "applicationId", $2, "coreWorkflowId", NULL, 'DEACTIVATED', triggers, '[]'::jsonb FROM core."workflowVersion" WHERE id = $1`,
       [fixture.coreWorkflowVersionId, latestVersionId],
     );
     await global.testDataSource.query(

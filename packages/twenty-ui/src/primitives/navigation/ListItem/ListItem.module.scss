@@ -141,7 +141,7 @@
   block-size: calc(var(--t-icon-size-md) * 1px);
   flex: none;
   inline-size: calc(var(--t-icon-size-md) * 1px);
-  stroke-width: var(--t-icon-stroke-sm);
+  stroke-width: var(--t-icon-stroke-md);
 }
 
 .submenuIcon {
@@ -149,5 +149,5 @@
   color: var(--t-font-color-light);
   flex: none;
   inline-size: calc(var(--t-icon-size-sm) * 1px);
-  stroke-width: var(--t-icon-stroke-sm);
+  stroke-width: var(--t-icon-stroke-md);
 }

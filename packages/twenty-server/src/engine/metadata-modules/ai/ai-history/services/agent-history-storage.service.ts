@@ -1,5 +1,4 @@
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
+import { isDefined } from 'twenty-shared/utils';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
@@ -17,37 +16,16 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 export type AgentHistoryStorageContext = {
   manager: EntityManager;
-  storage: 'core' | 'workspace';
   table: (name: AgentHistoryObjectName) => string;
 };
+
+const getWorkspaceAgentHistoryTable =
+  (workspaceId: string) => (name: AgentHistoryObjectName) =>
+    `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(name)}`;
 
 @Injectable()
 export class AgentHistoryStorageService {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-
-  async isEmptyUnprovisionedWorkspace(workspaceId: string): Promise<boolean> {
-    const runner = this.dataSource.createQueryRunner('master');
-    try {
-      await runner.connect();
-      if (await runner.hasSchema(getWorkspaceSchemaName(workspaceId))) {
-        return false;
-      }
-      const state = await this.readState(runner, workspaceId);
-      if (state.storage === 'workspace' || isDefined(state.migration)) {
-        return false;
-      }
-      const history = await runner.query(
-        `SELECT 1 WHERE ${AGENT_HISTORY_OBJECT_NAMES.map(
-          (name) =>
-            `EXISTS (SELECT 1 FROM core."${name}" WHERE "workspaceId" = $1)`,
-        ).join(' OR ')}`,
-        [workspaceId],
-      );
-      return !isNonEmptyArray(history);
-    } finally {
-      await runner.release();
-    }
-  }
 
   async run<TResult>(
     workspaceId: string,
@@ -75,13 +53,17 @@ export class AgentHistoryStorageService {
           'AI history is being migrated. Please retry shortly.',
         );
       }
-      const schema =
-        state.storage === 'core' ? 'core' : getWorkspaceSchemaName(workspaceId);
+      // History still in core belongs to a workspace whose 2.42 upgrade has
+      // not finished. Serving the empty workspace tables would hide it, and
+      // writing to them would be wiped when the copy resumes.
+      if (state.storage !== 'workspace') {
+        throw new ServiceUnavailableException(
+          'AI history is unavailable until this workspace finishes upgrading.',
+        );
+      }
       const result = await work({
         manager: runner.manager,
-        storage: state.storage,
-        table: (name) =>
-          `${escapeIdentifier(schema)}.${escapeIdentifier(name)}`,
+        table: getWorkspaceAgentHistoryTable(workspaceId),
       });
       await runner.commitTransaction();
       return result;
@@ -167,7 +149,6 @@ export class AgentHistoryStorageService {
       manager: EntityManager;
       partitions: {
         workspaceIds: string[];
-        storage: 'core' | 'workspace';
         table: AgentHistoryStorageContext['table'];
       }[];
     }) => Promise<TResult>,
@@ -176,38 +157,19 @@ export class AgentHistoryStorageService {
     try {
       await runner.connect();
       // One MVCC snapshot sees both the route and its data before or after a
-      // cutover/cleanup. Reports need no per-workspace locks or second pool.
+      // cutover. Reports need no per-workspace locks or second pool.
       await runner.startTransaction('REPEATABLE READ');
       await runner.query('SET TRANSACTION READ ONLY');
       const states = await this.readStates(runner, workspaceIds);
-      const coreIds: string[] = [];
-      const partitions: {
-        workspaceIds: string[];
-        storage: 'core' | 'workspace';
-        table: AgentHistoryStorageContext['table'];
-      }[] = [];
-      for (const [workspaceId, state] of states) {
-        if (state.migration) {
-          continue;
-        }
-        if (state.storage === 'core') {
-          coreIds.push(workspaceId);
-        } else {
-          partitions.push({
-            workspaceIds: [workspaceId],
-            storage: 'workspace',
-            table: (name) =>
-              `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(name)}`,
-          });
-        }
-      }
-      if (coreIds.length) {
-        partitions.unshift({
-          workspaceIds: coreIds,
-          storage: 'core',
-          table: (name) => `core.${escapeIdentifier(name)}`,
-        });
-      }
+      const partitions = [...states]
+        .filter(
+          ([, state]) =>
+            state.storage === 'workspace' && !isDefined(state.migration),
+        )
+        .map(([workspaceId]) => ({
+          workspaceIds: [workspaceId],
+          table: getWorkspaceAgentHistoryTable(workspaceId),
+        }));
       const result = await work({ manager: runner.manager, partitions });
       await runner.commitTransaction();
       return result;

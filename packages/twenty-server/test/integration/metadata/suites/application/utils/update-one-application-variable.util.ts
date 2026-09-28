@@ -2,7 +2,7 @@ import {
   type UpdateOneApplicationVariableFactoryInput,
   updateOneApplicationVariableQueryFactory,
 } from 'test/integration/metadata/suites/application/utils/update-one-application-variable-query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
@@ -17,7 +17,7 @@ export const updateOneApplicationVariable = async ({
 }> => {
   const graphqlOperation = updateOneApplicationVariableQueryFactory({ input });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

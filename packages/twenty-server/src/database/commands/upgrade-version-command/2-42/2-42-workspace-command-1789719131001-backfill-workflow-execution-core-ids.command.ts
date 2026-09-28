@@ -79,6 +79,42 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
         );
       }
 
+      const [, relinkedCoreVersionCount] = await queryRunner.query(
+        `UPDATE core."workflowVersion" cv
+         SET "coreWorkflowId" = cw.id
+         FROM "${schema}"."workflow" w
+         JOIN core."workflow" cw
+           ON cw.id = w."coreWorkflowId" AND cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = w.id
+         WHERE cv."workspaceId" = $1 AND cv."coreWorkflowId" IS NULL AND cv."workflowId" = w.id
+           AND w."deletedAt" IS NULL`,
+        [workspaceId],
+      );
+
+      if (relinkedCoreVersionCount > 0) {
+        this.logger.log(
+          `${options.dryRun ? '[DRY RUN] Would relink' : 'Relinked'} ${relinkedCoreVersionCount} core workflow version(s) to their core workflow in workspace ${workspaceId}`,
+        );
+      }
+
+      const [, deletedCoreVersionCount] = await queryRunner.query(
+        `DELETE FROM core."workflowVersion" cv
+         WHERE cv."workspaceId" = $1
+           AND NOT EXISTS (
+             SELECT 1 FROM core."workflow" cw WHERE cw.id = cv."coreWorkflowId"
+           )
+           AND NOT EXISTS (
+             SELECT 1 FROM "${schema}"."workflowVersion" wv
+             WHERE wv."coreWorkflowVersionId" = cv.id AND wv."deletedAt" IS NULL
+           )`,
+        [workspaceId],
+      );
+
+      if (deletedCoreVersionCount > 0) {
+        this.logger.log(
+          `${options.dryRun ? '[DRY RUN] Would delete' : 'Deleted'} ${deletedCoreVersionCount} core workflow version(s) without a core workflow in workspace ${workspaceId}`,
+        );
+      }
+
       const [, createdCoreVersionCount] = await queryRunner.query(
         `WITH "createdCoreVersions" AS (
            INSERT INTO core."workflowVersion"
@@ -209,6 +245,10 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          LEFT JOIN core."workflow" cw ON cw.id = r."coreWorkflowId" AND cw."workspaceId" = $1
          WHERE r."deletedAt" IS NULL AND r.status IN ('NOT_STARTED', 'ENQUEUED', 'RUNNING')
            AND (cv.id IS NULL OR cw.id IS NULL OR cv."coreWorkflowId" <> cw.id)
+           AND EXISTS (
+             SELECT 1 FROM "${schema}"."workflowVersion" wv
+             WHERE wv.id = r."workflowVersionId" AND wv."deletedAt" IS NULL
+           )
          LIMIT 10`,
         [workspaceId],
       );

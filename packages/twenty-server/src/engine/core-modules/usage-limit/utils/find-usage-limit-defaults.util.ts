@@ -8,8 +8,12 @@ export const findUsageLimitDefaults = ({
 }: {
   resourceType: UsageResourceType;
 }): UsageLimitDefaultDefinition[] => {
-  const { speed, stock }: UsageLimitDefinitions =
+  const { speed, quota, stock }: UsageLimitDefinitions =
     USAGE_LIMIT_DEFINITIONS[resourceType];
 
-  return [...(speed?.defaults ?? []), ...(stock?.defaults ?? [])];
+  return [
+    ...(speed?.defaults ?? []),
+    ...(quota?.defaults ?? []),
+    ...(stock?.defaults ?? []),
+  ];
 };

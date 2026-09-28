@@ -7,7 +7,7 @@ export const EXPORT_RECORDS = gql`
       filename
       progress
       errorMessage
-      downloadUrl
+      downloadPath
     }
   }
 `;

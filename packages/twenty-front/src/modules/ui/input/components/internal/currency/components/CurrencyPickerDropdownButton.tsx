@@ -1,14 +1,15 @@
 import { styled } from '@linaria/react';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { CurrencyCode } from 'twenty-shared/constants';
+import { Dropdown } from 'twenty-ui/components';
 
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
@@ -50,13 +51,6 @@ export const CurrencyPickerDropdownButton = ({
   const theme = useTheme();
   const dropdownId = 'currency-picker-dropdown-id';
 
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleChange = (currency: Currency) => {
-    onChange(currency);
-    closeDropdown(dropdownId);
-  };
-
   const currency = CURRENCIES.find(
     ({ value }) => value === selectedCurrencyCode,
   );
@@ -64,24 +58,26 @@ export const CurrencyPickerDropdownButton = ({
   const currencyCode = currency?.value ?? CurrencyCode.USD;
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
         <StyledDropdownButtonContainer>
           <StyledIconContainer>
             {currencyCode}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
+      </Dropdown.Trigger>
+      <DropdownContent
+        side="bottom"
+        align="start"
+        sideOffset={4}
+        alignOffset={0}
+      >
         <CurrencyPickerDropdownSelect
           selectedCurrency={currency}
-          onChange={handleChange}
+          onChange={onChange}
         />
-      }
-      dropdownPlacement="bottom-start"
-      dropdownOffset={{ x: 0, y: 4 }}
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

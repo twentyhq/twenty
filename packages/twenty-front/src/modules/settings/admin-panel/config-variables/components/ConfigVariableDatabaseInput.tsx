@@ -1,19 +1,18 @@
+import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ConfigVariableType } from '~/generated-admin/graphql';
-import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
 const StyledJsonEditorContainer = styled.div`
   display: flex;
@@ -114,13 +113,16 @@ export const ConfigVariableDatabaseInput = ({
       return (
         <>
           {options && Array.isArray(options) ? (
-            <Dropdown
+            <DropdownRoot
               dropdownId="config-variable-array-dropdown"
-              dropdownPlacement="bottom-start"
-              dropdownOffset={{
-                y: 8,
-              }}
-              clickableComponent={
+              type="picker"
+              multiple
+            >
+              <Dropdown.Trigger
+                render={<div />}
+                nativeButton={false}
+                disabled={disabled}
+              >
                 <SelectControl
                   selectedOption={{
                     value: '',
@@ -133,28 +135,22 @@ export const ConfigVariableDatabaseInput = ({
                   hasRightElement={false}
                   selectSizeVariant="default"
                 />
-              }
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <DropdownMenuItemsContainer isMultiSelect>
-                    {selectOptions.map((option) => (
-                      <ListItem
-                        render={<button type="button" />}
-                        key={option.value}
-                        className="config-variable-array-menu-item-multi-select"
-                        role="option"
-                        aria-selected={isValueSelected(option.value)}
-                        selected={isValueSelected(option.value)}
-                        indicator="checkbox"
-                        onClick={() => handleMultiSelectChange(option.value)}
-                      >
-                        {option.label}
-                      </ListItem>
-                    ))}
-                  </DropdownMenuItemsContainer>
-                </LegacyDropdownContent>
-              }
-            />
+              </Dropdown.Trigger>
+              <DropdownContent side="bottom" align="start" sideOffset={8}>
+                <Dropdown.Section>
+                  {selectOptions.map((option) => (
+                    <Dropdown.OptionItem
+                      key={option.value}
+                      className="config-variable-array-menu-item-multi-select"
+                      selected={isValueSelected(option.value)}
+                      onSelect={() => handleMultiSelectChange(option.value)}
+                    >
+                      {option.label}
+                    </Dropdown.OptionItem>
+                  ))}
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           ) : (
             <TextArea
               textAreaId={jsonArrayTextAreaId}

@@ -4,7 +4,7 @@ import {
   createFileUploadMutation,
   type DirectUploadTarget,
 } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const completeWorkspaceLogoUploadMutation = gql`
   mutation CompleteWorkspaceLogoUpload($fileId: String!) {
@@ -47,7 +47,7 @@ export const createCorePictureUpload = async ({
   size: number;
   token?: string;
 }): Promise<DirectUploadTarget> => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     {
       query: createFileUploadMutation,
       variables: { filename, size, fileFolder: 'CorePicture' },
@@ -76,7 +76,7 @@ export const uploadWorkspaceLogoWithDirectUpload = async ({
     token,
   });
 
-  const completeResponse = await makeMetadataAPIRequest(
+  const completeResponse = await makeMetadataApiRequest(
     {
       query: completeWorkspaceLogoUploadMutation,
       variables: { fileId },
@@ -105,7 +105,7 @@ export const uploadWorkspaceMemberProfilePictureWithDirectUpload = async ({
     token,
   });
 
-  const completeResponse = await makeMetadataAPIRequest(
+  const completeResponse = await makeMetadataApiRequest(
     {
       query: completeWorkspaceMemberProfilePictureUploadMutation,
       variables: { fileId },

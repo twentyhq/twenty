@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { MESSAGING_FOLDER_MANAGER_ALWAYS_EXCLUDED_FOLDERS } from 'src/modules/messaging/message-folder-manager/utils/MESSAGING_FOLDER_MANAGER_ALWAYS_EXCLUDED_FOLDERS';
-import { type StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
+import { type StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder.type';
 
 export const shouldCreateFolderByDefault = (
   standardFolder?: StandardFolder | null,

@@ -3,19 +3,27 @@ import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDelet
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
-import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
+import {
+  type SettingsDataModelObjectAboutFormValues,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
+import { isEmptyObject } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -62,6 +70,26 @@ export const ObjectSettings = ({
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
+  const aboutFormConfig = useForm<SettingsDataModelObjectAboutFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
+    defaultValues: {
+      description: objectMetadataItem.description,
+      icon: objectMetadataItem.icon ?? undefined,
+      isLabelSyncedWithName: objectMetadataItem.isLabelSyncedWithName,
+      labelPlural: objectMetadataItem.labelPlural,
+      labelSingular: objectMetadataItem.labelSingular,
+      namePlural: objectMetadataItem.namePlural,
+      nameSingular: objectMetadataItem.nameSingular,
+      ...(getIsMetadataItemCustom(objectMetadataItem)
+        ? { color: getObjectColorWithFallback(objectMetadataItem) }
+        : {}),
+    },
+  });
+  const hasUnsavedAboutEdits = !isEmptyObject(
+    aboutFormConfig.formState.dirtyFields,
+  );
+
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
@@ -107,6 +135,7 @@ export const ObjectSettings = ({
           />
           <SettingsUpdateDataModelObjectAboutForm
             objectMetadataItem={objectMetadataItem}
+            formConfig={aboutFormConfig}
           />
         </Section.Root>
       </StyledFormSectionContainer>
@@ -127,12 +156,9 @@ export const ObjectSettings = ({
             title={t`Translations`}
             description={t`What each language displays for this object's labels`}
           />
-          <SettingsTranslationsButton
-            target={{
-              metadataName: 'objectMetadata',
-              recordId: objectMetadataItem.id,
-              label: objectMetadataItem.labelPlural,
-            }}
+          <SettingsTranslationsCard
+            objectNamePlural={objectMetadataItem.namePlural}
+            disabled={hasUnsavedAboutEdits}
           />
         </Section.Root>
       </StyledFormSectionContainer>

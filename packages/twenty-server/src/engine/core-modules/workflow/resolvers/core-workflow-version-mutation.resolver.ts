@@ -72,24 +72,6 @@ export class CoreWorkflowVersionMutationResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  async validateCoreWorkflowVersion(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @Args('coreWorkflowVersionId', { type: () => UUIDScalarType })
-    coreWorkflowVersionId: string,
-  ): Promise<boolean> {
-    return this.coreWorkflowLifecycleWorkspaceService.validateCoreWorkflowVersion(
-      {
-        workspaceId,
-
-        userWorkspaceId,
-        coreWorkflowVersionId,
-      },
-    );
-  }
-
-  @Mutation(() => Boolean)
   async activateCoreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })

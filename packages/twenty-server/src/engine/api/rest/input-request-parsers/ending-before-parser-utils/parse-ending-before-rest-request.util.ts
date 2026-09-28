@@ -1,4 +1,4 @@
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { type RequestContext } from 'src/engine/api/rest/types/request-context.type';
 
 export const parseEndingBeforeRestRequest = (

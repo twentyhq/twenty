@@ -9,7 +9,7 @@ import {
   getApplicationRegistrationClaimStateSecureCookieName,
 } from 'src/engine/core-modules/application/application-registration/constants/application-registration-claim-state-cookie-name.constant';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
 import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-sessions/constants/is-secure-deployment.constant';
@@ -56,7 +56,7 @@ describe('claim state cookie on a production-like secure deployment (integration
   });
 
   const startClaim = async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query GithubClaimAuthorizationUrl($applicationRegistrationId: String!) {
           githubClaimAuthorizationUrl(
@@ -81,7 +81,7 @@ describe('claim state cookie on a production-like secure deployment (integration
   };
 
   it('should deliver the production cookie: __Host- name, Secure, SameSite=Lax', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query GithubClaimAuthorizationUrl($applicationRegistrationId: String!) {
           githubClaimAuthorizationUrl(

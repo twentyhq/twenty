@@ -32,6 +32,8 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const APP_FETCHER_TMPDIR = join(tmpdir(), 'twenty-app-fetcher');
 const RESOLUTION_TIMEOUT_MS = 30_000;
@@ -60,8 +62,8 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -229,16 +231,17 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         },
       });
 
-      const application = await this.applicationRepository.findOneOrFail({
-        where: { id: file.applicationId },
-      });
-
       if (!isDefined(file.workspaceId)) {
         throw new ApplicationException(
           `Tarball file ${file.id} for app registration ${appRegistration.id} has no workspaceId`,
           ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
         );
       }
+
+      const application = await this.applicationRepository.findOneOrFail(
+        file.workspaceId,
+        { where: { id: file.applicationId } },
+      );
 
       const tarballStream = await this.fileStorageService.readFile({
         workspaceId: file.workspaceId,

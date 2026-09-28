@@ -4,7 +4,7 @@ import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-field
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
@@ -51,7 +51,7 @@ const ALL_COMPANY_IDS = [
 ];
 
 const findSeededCompanyIdsAsRestrictedMember = async (): Promise<string[]> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -74,7 +74,7 @@ const createCompanyInRegionAsRestrictedMember = (
   companyId: string,
   regionId: string,
 ) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: COMPANY_GQL_FIELDS,
@@ -199,7 +199,7 @@ describe('row-level permission predicates comparing two relation fields', () => 
       [MEMBER_REGION_ID, 'Member Region'],
       [OTHER_REGION_ID, 'Other Region'],
     ]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: REGION_OBJECT_SINGULAR,
           gqlFields: 'id',
@@ -212,7 +212,7 @@ describe('row-level permission predicates comparing two relation fields', () => 
       [MEMBER_REGION_COMPANY_ID, MEMBER_REGION_ID],
       [OTHER_REGION_COMPANY_ID, OTHER_REGION_ID],
     ]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: COMPANY_GQL_FIELDS,
@@ -225,7 +225,7 @@ describe('row-level permission predicates comparing two relation fields', () => 
       );
     }
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: 'id',
@@ -303,7 +303,7 @@ describe('row-level permission predicates comparing two relation fields', () => 
       input: { idToDelete: customRoleId },
     });
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -312,7 +312,7 @@ describe('row-level permission predicates comparing two relation fields', () => 
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: 'id',

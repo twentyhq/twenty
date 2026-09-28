@@ -1,5 +1,5 @@
-import { type FormatRecordSerializedRelationProperties } from '../FormatRecordSerializedRelationProperties.type';
-import { type SerializedRelation } from '../SerializedRelation.type';
+import { type FormatRecordSerializedRelationProperties } from '../FormatRecordSerializedRelationProperties';
+import { type SerializedRelation } from '../SerializedRelation';
 
 export type ChartRecordFilter = {
   fieldMetadataId: SerializedRelation;

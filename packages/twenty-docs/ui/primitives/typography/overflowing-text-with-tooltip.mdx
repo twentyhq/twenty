@@ -1,0 +1,88 @@
+---
+title: OverflowingTextWithTooltip
+description: Truncate long text and reveal its full value in a tooltip.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextWithTooltipReference from '/snippets/ui/generated/typography/overflowing-text-with-tooltip.mdx';
+
+`OverflowingTextWithTooltip` truncates content within the available width. It checks for overflow on pointer entry and focus, then shows a tooltip only when needed. It manages tooltip visibility internally and exposes no controlled or uncontrolled open-state props.
+
+<StoryEmbed
+  storyId="ui-surfaces-overflowingtextwithtooltip--single-line-overflowing"
+  title="OverflowingTextWithTooltip example"
+/>
+
+## Usage
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordTitle = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Quarterly account review and renewal preparation"
+      isFocusable
+    />
+  </Text>
+);
+```
+
+Constrain the width of the surrounding layout so truncation can occur. `isFocusable` gives the text a tab stop and opens the tooltip on focus or click. Keep essential information available to users who cannot hover.
+
+## Multiline content
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordDescription = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Review the account history, confirm the renewal date, and prepare the next conversation with the customer."
+      displayedMaxRows={2}
+      isTooltipMultiline
+      isFocusable
+    />
+  </Text>
+);
+```
+
+`displayedMaxRows` limits the displayed lines; use a positive integer. `isTooltipMultiline` preserves whitespace and line breaks inside the tooltip. Without a row limit, text truncates on one line.
+
+## Custom content and timing
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const ImportResult = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text={<strong>24 records imported successfully</strong>}
+      tooltipContent="24 records imported successfully"
+      tooltipPlace="top"
+      tooltipDelay={300}
+      isFocusable
+    />
+  </Text>
+);
+```
+
+React content requires a plain-string `tooltipContent`. With string text, that prop can override the tooltip label; otherwise the text itself is used. An empty or missing label does not open a tooltip. String text also recognizes links.
+
+`alwaysShowTooltip` allows the tooltip even without truncation. `tooltipDelay` controls the hover delay and defaults to 500 milliseconds. `tooltipPlace` defaults to `bottom`.
+
+The component supplies its text and tooltip parts internally; it does not accept children, native attributes, or a ref for its text element. Use [Text](/ui/primitives/typography/text) and [Tooltip](/ui/primitives/surfaces/tooltip) directly when you need custom composition. Interactive popup content belongs in [Popover](/ui/primitives/surfaces/popover).
+
+## Props
+
+<OverflowingTextWithTooltipReference />

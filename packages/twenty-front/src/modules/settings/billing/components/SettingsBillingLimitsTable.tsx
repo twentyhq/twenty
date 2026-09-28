@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/components';
@@ -210,7 +210,7 @@ export const SettingsBillingLimitsTable = ({
               value={searchText}
               onChange={setSearchText}
               filterButtonAriaLabel={t`Filter limits`}
-              filterDropdown={(filterButton: ReactNode) => (
+              filterDropdown={(filterButton) => (
                 <SettingsBillingLimitsFilterDropdown
                   filterButton={filterButton}
                   resourceTypes={resourceTypes}

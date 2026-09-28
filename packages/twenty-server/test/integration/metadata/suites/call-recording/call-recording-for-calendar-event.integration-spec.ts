@@ -6,7 +6,7 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +32,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
   const completedCallRecordingId = callRecordingIds[FIRST_PAGE_SIZE + 1];
 
   const queryCallRecordingIdForCalendarEvent = async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query CallRecordingIdForCalendarEvent($calendarEventId: UUID!) {
           callRecordingIdForCalendarEvent(calendarEventId: $calendarEventId)
@@ -123,7 +123,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
       },
     });
 
-    const createApiKeyResponse = await makeMetadataAPIRequest({
+    const createApiKeyResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateApiKey($input: CreateApiKeyInput!) {
           createApiKey(input: $input) {
@@ -247,7 +247,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
   it('denies selection without call recording read permission', async () => {
     jestExpectToBeDefined(restrictedApiKeyToken);
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: gql`
           query CallRecordingIdForCalendarEvent($calendarEventId: UUID!) {

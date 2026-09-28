@@ -53,7 +53,7 @@ describe('createRecordExportConnection', () => {
     expect(click).not.toHaveBeenCalled();
     update({
       progress: 100,
-      downloadUrl: '/file/record-export/export?token=token',
+      downloadPath: '/file/record-export/export?token=token',
     });
     await expect(finished).resolves.toBeUndefined();
     expect(click).toHaveBeenCalledTimes(1);
@@ -64,40 +64,73 @@ describe('createRecordExportConnection', () => {
     );
     update({
       progress: 100,
-      downloadUrl: '/file/record-export/export?token=token',
+      downloadPath: '/file/record-export/export?token=token',
     });
     mockSink.complete();
     expect(click).toHaveBeenCalledTimes(1);
     expect(mockDispose).toHaveBeenCalledTimes(1);
   });
 
+  it.each(
+    [
+      'https://workspace.example.test',
+      'https://custom-domain.example.test',
+      'http://localhost:3000',
+      'https://workspace.example.test/twenty',
+      'http://localhost:3000/apps/twenty',
+    ].flatMap((baseUrl) => [
+      { serverBaseUrl: baseUrl, expectedBaseUrl: baseUrl },
+      { serverBaseUrl: `${baseUrl}/`, expectedBaseUrl: baseUrl },
+    ]),
+  )(
+    'downloads through the authenticated API at $serverBaseUrl',
+    async ({ serverBaseUrl, expectedBaseUrl }) => {
+      mockServerBaseUrl = serverBaseUrl;
+      const click = jest
+        .spyOn(HTMLAnchorElement.prototype, 'click')
+        .mockImplementation(() => {});
+      const finished = createRecordExportConnection().exportRecords({ input });
+
+      expect(createClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${expectedBaseUrl}/metadata`,
+          credentials: 'include',
+        }),
+      );
+      update({
+        progress: 100,
+        downloadPath: '/file/record-export/export?token=signed%2Btoken',
+      });
+
+      await expect(finished).resolves.toBeUndefined();
+      expect(click.mock.instances[0]).toHaveAttribute(
+        'href',
+        `${expectedBaseUrl}/file/record-export/export?token=signed%2Btoken`,
+      );
+      expect(click.mock.instances[0]).toHaveAttribute('download', 'person.csv');
+    },
+  );
+
   it.each([
-    'https://workspace.example.test',
-    'https://custom-domain.example.test',
-    'http://localhost:3000',
-  ])('downloads through the authenticated API at %s', async (serverBaseUrl) => {
-    mockServerBaseUrl = serverBaseUrl;
+    '/file/record-export/export',
+    '/downloads/generated/company%20export.csv',
+  ])('uses the server-provided download path %s', async (downloadPath) => {
+    mockServerBaseUrl = 'https://workspace.example.test/twenty/';
     const click = jest
       .spyOn(HTMLAnchorElement.prototype, 'click')
       .mockImplementation(() => {});
     const finished = createRecordExportConnection().exportRecords({ input });
 
-    expect(createClient).toHaveBeenCalledWith(
-      expect.objectContaining({
-        url: `${serverBaseUrl}/metadata`,
-        credentials: 'include',
-      }),
-    );
     update({
       progress: 100,
-      downloadUrl:
-        'https://api.example.test/file/record-export/export?token=signed%2Btoken',
+      downloadPath: `${downloadPath}?token=signed%2Btoken%2Fvalue%3D&expires=123`,
     });
 
     await expect(finished).resolves.toBeUndefined();
+    expect(click).toHaveBeenCalledTimes(1);
     expect(click.mock.instances[0]).toHaveAttribute(
       'href',
-      `${serverBaseUrl}/file/record-export/export?token=signed%2Btoken`,
+      `https://workspace.example.test/twenty${downloadPath}?token=signed%2Btoken%2Fvalue%3D&expires=123`,
     );
     expect(click.mock.instances[0]).toHaveAttribute('download', 'person.csv');
   });
@@ -135,7 +168,7 @@ describe('createRecordExportConnection', () => {
     await expect(finished).resolves.toBeUndefined();
     update({
       progress: 100,
-      downloadUrl: '/file/record-export/export?token=token',
+      downloadPath: '/file/record-export/export?token=token',
     });
     expect(click).not.toHaveBeenCalled();
     expect(mockDispose).toHaveBeenCalledTimes(1);

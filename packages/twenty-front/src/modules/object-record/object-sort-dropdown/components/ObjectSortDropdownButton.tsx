@@ -1,40 +1,30 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useCloseSortDropdown';
 import { useResetRecordSortDropdownSearchInput } from '@/object-record/object-sort-dropdown/hooks/useResetRecordSortDropdownSearchInput';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
-import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
 import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/utils/getObjectSortDropdownId';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { findByProperty } from 'twenty-shared/utils';
-import { IconX, useIcons } from 'twenty-ui/icon';
+import { findByProperty, isNonEmptyArray } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
@@ -103,16 +93,14 @@ export const ObjectSortDropdownButton = () => {
     );
 
   const shouldShowSeparator =
-    visibleFieldMetadataItems.length > 0 &&
-    hiddenFieldMetadataItemsSorted.length > 0;
+    isNonEmptyArray(visibleFieldMetadataItems) &&
+    isNonEmptyArray(hiddenFieldMetadataItemsSorted);
 
-  const handleDropdownButtonClose = () => {
-    resetRecordSortDropdownSearchInput();
+  const handleOpenChange = (open: boolean) => {
     resetSortDropdown();
-  };
-
-  const handleDropdownOpen = () => {
-    resetSortDropdown();
+    if (!open) {
+      resetRecordSortDropdownSearchInput();
+    }
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -132,15 +120,6 @@ export const ObjectSortDropdownButton = () => {
   const [selectedRecordSortDirection, setSelectedRecordSortDirection] =
     useAtomComponentState(selectedRecordSortDirectionComponentState);
 
-  const setIsRecordSortDirectionDropdownMenuUnfolded = useSetAtomComponentState(
-    isRecordSortDirectionDropdownMenuUnfoldedComponentState,
-  );
-
-  const handleSortDirectionClick = (sortDirection: ViewSortDirection) => {
-    setSelectedRecordSortDirection(sortDirection);
-    setIsRecordSortDirectionDropdownMenuUnfolded(false);
-  };
-
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
@@ -148,149 +127,101 @@ export const ObjectSortDropdownButton = () => {
 
   const { t } = useLingui();
 
-  const selectableItemIdArray = [
-    ...visibleFieldMetadataItems.map((item) => item.id),
-    ...hiddenFieldMetadataItemsSorted.map((item) => item.id),
-  ];
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
+  const shouldShowHiddenFields = isNonEmptyArray(
+    hiddenFieldMetadataItemsSorted,
   );
-
-  const shouldShowHiddenFields = hiddenFieldMetadataItemsSorted.length > 0;
-  const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;
+  const shouldShowVisibleFields = isNonEmptyArray(visibleFieldMetadataItems);
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      dropdownOffset={{ y: 8 }}
-      onOpen={handleDropdownOpen}
-      clickableComponent={
-        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
-          <Trans>Sort</Trans>
-        </StyledHeaderDropdownButton>
-      }
-      dropdownComponents={
-        <LegacyDropdownContent
-          widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-        >
-          <DropdownMenuHeader
-            StartComponent={
-              <DropdownMenuHeaderLeftComponent
-                onClick={() => closeSortDropdown()}
-                Icon={IconX}
-              />
-            }
-          >
-            {t`Sort`}
-          </DropdownMenuHeader>
-          <DropdownMenuInnerSelect
-            dropdownId={`${dropdownId}-direction`}
-            options={[ViewSortDirection.ASC, ViewSortDirection.DESC].map(
-              (sortDirection) => ({
-                value: sortDirection,
-                label:
-                  sortDirection === ViewSortDirection.ASC
-                    ? t`Ascending`
-                    : t`Descending`,
-              }),
-            )}
-            selectedOption={{
-              value: selectedRecordSortDirection,
+      type="picker"
+      onOpenChange={handleOpenChange}
+    >
+      <Dropdown.Trigger
+        render={
+          <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+            <Trans>Sort</Trans>
+          </StyledHeaderDropdownButton>
+        }
+      />
+      <DropdownContent
+        width={GenericDropdownContentWidth.ExtraLarge}
+        align="end"
+        sideOffset={8}
+      >
+        <Dropdown.Header>
+          <Dropdown.Close aria-label={t`Close`} />
+          <Dropdown.Title>{t`Sort`}</Dropdown.Title>
+        </Dropdown.Header>
+        <DropdownMenuInnerSelect
+          dropdownId={`${dropdownId}-direction`}
+          options={[ViewSortDirection.ASC, ViewSortDirection.DESC].map(
+            (sortDirection) => ({
+              value: sortDirection,
               label:
-                selectedRecordSortDirection === ViewSortDirection.ASC
+                sortDirection === ViewSortDirection.ASC
                   ? t`Ascending`
                   : t`Descending`,
-            }}
-            onChange={(sortDirection) =>
-              handleSortDirectionClick(sortDirection.value as ViewSortDirection)
-            }
-            widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-          />
-          <DropdownMenuSeparator />
-          <DropdownMenuSearchInput
-            autoFocus
-            value={objectSortDropdownSearchInput}
-            placeholder={t`Search fields`}
-            onChange={(event) =>
-              setObjectSortDropdownSearchInput(event.target.value)
-            }
-          />
-          <SelectableList
-            selectableListInstanceId={dropdownId}
-            selectableItemIdArray={selectableItemIdArray}
-            focusId={dropdownId}
-          >
-            {shouldShowVisibleFields && (
-              <>
-                <DropdownMenuSectionLabel label={t`Visible fields`} />
-                <DropdownMenuItemsContainer>
-                  {visibleFieldMetadataItems.map(
-                    (visibleFieldMetadataItem, index) => (
-                      <SelectableListItem
-                        key={visibleFieldMetadataItem.id}
-                        itemId={visibleFieldMetadataItem.id}
-                        onEnter={() => handleAddSort(visibleFieldMetadataItem)}
-                      >
-                        <ListItem
-                          focused={
-                            selectedItemId === visibleFieldMetadataItem.id
-                          }
-                          data-testid={`visible-select-sort-${index}`}
-                          onClick={() =>
-                            handleAddSort(visibleFieldMetadataItem)
-                          }
-                          startIcon={
-                            <SelectOptionIcon
-                              Icon={getIcon(visibleFieldMetadataItem.icon)}
-                            />
-                          }
-                        >
-                          {visibleFieldMetadataItem.label}
-                        </ListItem>
-                      </SelectableListItem>
-                    ),
-                  )}
-                </DropdownMenuItemsContainer>
-              </>
-            )}
-            {shouldShowSeparator && <DropdownMenuSeparator />}
-            {shouldShowHiddenFields && (
-              <>
-                <DropdownMenuSectionLabel label={t`Hidden fields`} />
-                <DropdownMenuItemsContainer>
-                  {hiddenFieldMetadataItemsSorted.map(
-                    (hiddenFieldMetadataItem, index) => (
-                      <SelectableListItem
-                        key={hiddenFieldMetadataItem.id}
-                        itemId={hiddenFieldMetadataItem.id}
-                        onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
-                      >
-                        <ListItem
-                          focused={
-                            selectedItemId === hiddenFieldMetadataItem.id
-                          }
-                          data-testid={`hidden-select-sort-${index}`}
-                          onClick={() => handleAddSort(hiddenFieldMetadataItem)}
-                          startIcon={
-                            <SelectOptionIcon
-                              Icon={getIcon(hiddenFieldMetadataItem.icon)}
-                            />
-                          }
-                        >
-                          {hiddenFieldMetadataItem.label}
-                        </ListItem>
-                      </SelectableListItem>
-                    ),
-                  )}
-                </DropdownMenuItemsContainer>
-              </>
-            )}
-          </SelectableList>
-        </LegacyDropdownContent>
-      }
-      onClose={handleDropdownButtonClose}
-    />
+            }),
+          )}
+          selectedOption={{
+            value: selectedRecordSortDirection,
+            label:
+              selectedRecordSortDirection === ViewSortDirection.ASC
+                ? t`Ascending`
+                : t`Descending`,
+          }}
+          onChange={(sortDirection) =>
+            setSelectedRecordSortDirection(
+              sortDirection.value as ViewSortDirection,
+            )
+          }
+          widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+        />
+        <Dropdown.Separator />
+        <Dropdown.Search
+          value={objectSortDropdownSearchInput}
+          placeholder={t`Search fields`}
+          aria-label={t`Search fields`}
+          onValueChange={setObjectSortDropdownSearchInput}
+        />
+        {shouldShowVisibleFields && (
+          <Dropdown.Section label={t`Visible fields`}>
+            {visibleFieldMetadataItems.map((fieldMetadataItem, index) => (
+              <Dropdown.OptionItem
+                key={fieldMetadataItem.id}
+                selected={false}
+                data-testid={`visible-select-sort-${index}`}
+                onSelect={() => handleAddSort(fieldMetadataItem)}
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                }
+              >
+                {fieldMetadataItem.label}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.Section>
+        )}
+        {shouldShowSeparator && <Dropdown.Separator />}
+        {shouldShowHiddenFields && (
+          <Dropdown.Section label={t`Hidden fields`}>
+            {hiddenFieldMetadataItemsSorted.map((fieldMetadataItem, index) => (
+              <Dropdown.OptionItem
+                key={fieldMetadataItem.id}
+                selected={false}
+                data-testid={`hidden-select-sort-${index}`}
+                onSelect={() => handleAddSort(fieldMetadataItem)}
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                }
+              >
+                {fieldMetadataItem.label}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.Section>
+        )}
+      </DropdownContent>
+    </DropdownRoot>
   );
 };
