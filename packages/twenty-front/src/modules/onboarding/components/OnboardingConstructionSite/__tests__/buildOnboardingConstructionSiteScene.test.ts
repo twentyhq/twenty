@@ -5,6 +5,8 @@ import {
 } from '@/onboarding/components/OnboardingConstructionSite/buildOnboardingConstructionSiteScene';
 import { type OnboardingConstructionSiteConstruction } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteConstruction';
 import { type OnboardingConstructionSiteInstances } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteInstances';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { getValueOrThrow } from '@/onboarding/components/OnboardingConstructionSite/__tests__/utils/getValueOrThrow';
 
 const LAYOUT = {
   halfWidth: 5.5,
@@ -66,7 +68,7 @@ const getInstanceMatrices = (
 
 const getSuspendedLoads = ({ cube }: OnboardingConstructionSiteInstances) =>
   getInstanceMatrices(cube).filter(
-    (instance) => Math.abs(instance[16] - 0.8) < 0.001,
+    (instance) => Math.abs(getValueOrThrow(instance, 16) - 0.8) < 0.001,
   );
 
 describe('buildOnboardingConstructionSiteScene', () => {
@@ -84,7 +86,7 @@ describe('buildOnboardingConstructionSiteScene', () => {
 
     expect(counts[0]).toBeGreaterThan(0);
     counts.slice(1).forEach((count, index) => {
-      expect(count).toBeGreaterThan(counts[index]);
+      expect(count).toBeGreaterThan(getValueOrThrow(counts, index));
     });
   });
 
@@ -162,16 +164,18 @@ describe('buildOnboardingConstructionSiteScene', () => {
   });
 
   it('should accelerate toward the edge after completing the truck turn', () => {
-    const positions = [0.55, 0.7, 0.85, 1].map(
-      (growth) =>
+    const positions = [0.55, 0.7, 0.85, 1].map((growth) =>
+      getValueOrThrow(
         buildScene({ builtStageIndex: 0, growingStageGrowths: [growth] })
-          .mixerDrum.data[12],
+          .mixerDrum.data,
+        12,
+      ),
     );
     const distances = positions
       .slice(1)
-      .map((position, index) => position - positions[index]);
-    expect(distances[1]).toBeGreaterThan(distances[0]);
-    expect(distances[2]).toBeGreaterThan(distances[1]);
+      .map((position, index) => position - getValueOrThrow(positions, index));
+    expect(distances[1]).toBeGreaterThan(getValueOrThrow(distances, 0));
+    expect(distances[2]).toBeGreaterThan(getValueOrThrow(distances, 1));
   });
 
   it('should lower crane loads vertically over their buildings without swinging', () => {
@@ -185,10 +189,12 @@ describe('buildOnboardingConstructionSiteScene', () => {
     expect(raised).toHaveLength(2);
     expect(lowered).toHaveLength(2);
     lowered.forEach((load, index) => {
-      expect(load.slice(0, 12)).toEqual(raised[index].slice(0, 12));
-      expect(load[12]).toBe(raised[index][12]);
-      expect(load[14]).toBe(raised[index][14]);
-      expect(load[13]).toBeLessThan(raised[index][13]);
+      const raisedLoad = raised[index];
+      assertIsDefinedOrThrow(raisedLoad);
+      expect(load.slice(0, 12)).toEqual(raisedLoad.slice(0, 12));
+      expect(load[12]).toBe(raisedLoad[12]);
+      expect(load[14]).toBe(raisedLoad[14]);
+      expect(load[13]).toBeLessThan(getValueOrThrow(raisedLoad, 13));
     });
   });
 
@@ -207,17 +213,25 @@ describe('buildOnboardingConstructionSiteScene', () => {
       undefined,
       1,
     );
-    const load = getSuspendedLoads(scene)[0];
+    const [load] = getSuspendedLoads(scene);
+    assertIsDefinedOrThrow(load);
+    const loadX = getValueOrThrow(load, 12);
     const floorTops = getInstanceMatrices(scene.cylinder)
       .filter(
         (instance) =>
           instance[16] === 1 &&
-          Math.abs(instance[12] - load[12]) < instance[0] / 2,
+          Math.abs(getValueOrThrow(instance, 12) - loadX) <
+            getValueOrThrow(instance, 0) / 2,
       )
-      .map((instance) => instance[13] + instance[5] / 2);
+      .map(
+        (instance) =>
+          getValueOrThrow(instance, 13) + getValueOrThrow(instance, 5) / 2,
+      );
 
     expect(floorTops.length).toBeGreaterThan(0);
-    expect(load[13] - load[5] / 2).toBeCloseTo(Math.max(...floorTops));
+    expect(
+      getValueOrThrow(load, 13) - getValueOrThrow(load, 5) / 2,
+    ).toBeCloseTo(Math.max(...floorTops));
   });
 
   it('should fit the renderer instance buffers', () => {

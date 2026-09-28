@@ -1,4 +1,5 @@
 import { buildWelcomeHalftoneParticles } from '@/onboarding/components/WelcomeOverlay/buildWelcomeHalftoneParticles';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const CANVAS_WIDTH = 1280;
 const CANVAS_HEIGHT = 832;
@@ -15,10 +16,10 @@ describe('buildWelcomeHalftoneParticles', () => {
       CANVAS_HEIGHT,
     );
 
-    expect(particles[0].dashLength).toBeCloseTo(
+    expect(particles[0]?.dashLength).toBeCloseTo(
       2 * VIEWBOX_TO_CANVAS_SCALE * 1.452,
     );
-    expect(particles[0].strokeWidth).toBeCloseTo(2 * VIEWBOX_TO_CANVAS_SCALE);
+    expect(particles[0]?.strokeWidth).toBeCloseTo(2 * VIEWBOX_TO_CANVAS_SCALE);
   });
 
   it('should keep the dash length when the source dash is longer than the aspect ratio', () => {
@@ -28,7 +29,7 @@ describe('buildWelcomeHalftoneParticles', () => {
       CANVAS_HEIGHT,
     );
 
-    expect(particles[0].dashLength).toBeCloseTo(10 * VIEWBOX_TO_CANVAS_SCALE);
+    expect(particles[0]?.dashLength).toBeCloseTo(10 * VIEWBOX_TO_CANVAS_SCALE);
   });
 
   it('should keep the dash length proportional to the source stroke width when the minimum stroke width applies', () => {
@@ -48,13 +49,16 @@ describe('buildWelcomeHalftoneParticles', () => {
       smallCanvasWidth,
       smallCanvasHeight,
     );
+    const [fainterParticle, denserParticle] = particles;
+    assertIsDefinedOrThrow(fainterParticle);
+    assertIsDefinedOrThrow(denserParticle);
 
-    expect(particles[0].strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
-    expect(particles[1].strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
-    expect(particles[0].dashLength).toBeCloseTo(
+    expect(fainterParticle.strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
+    expect(denserParticle.strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
+    expect(fainterParticle.dashLength).toBeCloseTo(
       fainterSourceStrokeWidth * smallCanvasScale * 1.452,
     );
-    expect(particles[1].dashLength / particles[0].dashLength).toBeCloseTo(
+    expect(denserParticle.dashLength / fainterParticle.dashLength).toBeCloseTo(
       denserSourceStrokeWidth / fainterSourceStrokeWidth,
     );
   });
@@ -69,7 +73,7 @@ describe('buildWelcomeHalftoneParticles', () => {
       CANVAS_HEIGHT,
     );
 
-    expect(particles[0].burstDirectionX).toBeLessThan(0);
-    expect(particles[1].burstDirectionX).toBeGreaterThan(0);
+    expect(particles[0]?.burstDirectionX).toBeLessThan(0);
+    expect(particles[1]?.burstDirectionX).toBeGreaterThan(0);
   });
 });

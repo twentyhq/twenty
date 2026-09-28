@@ -42,4 +42,4 @@ export const BACKGROUND_MOCK_COLUMNS = [
     iconName: 'IconMap',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS.Address,
   },
-] satisfies BackgroundMockColumn[];
+] as const satisfies readonly BackgroundMockColumn[];

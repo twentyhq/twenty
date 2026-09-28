@@ -46,6 +46,12 @@ describe('parseOperationsFromStrings', () => {
     ]);
   });
 
+  it('should skip operations without an action', () => {
+    const result = parseOperationsFromStrings(['person', 'person.created']);
+
+    expect(result).toEqual([{ object: 'person', action: 'created' }]);
+  });
+
   it('should handle empty array', () => {
     const operations: string[] = [];
 

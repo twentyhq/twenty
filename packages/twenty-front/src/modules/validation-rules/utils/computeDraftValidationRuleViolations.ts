@@ -78,7 +78,7 @@ const canEvaluateOnDraft = ({
 
   const isEveryReferencedRelationLoaded = bindingPaths
     .filter((bindingPath) => bindingPath.includes('.'))
-    .map((bindingPath) => bindingPath.split('.')[0])
+    .map((bindingPath) => bindingPath.split('.')[0] ?? bindingPath)
     .every((relationFieldName) => {
       const relatedRecord = draftRecord[relationFieldName];
 
@@ -86,7 +86,7 @@ const canEvaluateOnDraft = ({
     });
 
   const isEveryServerFilledFieldInDraft = bindingPaths
-    .map((bindingPath) => bindingPath.split('.')[0])
+    .map((bindingPath) => bindingPath.split('.')[0] ?? bindingPath)
     .filter((fieldName) => serverFilledFieldNames.includes(fieldName))
     .every((fieldName) => fieldName in draftRecord);
 

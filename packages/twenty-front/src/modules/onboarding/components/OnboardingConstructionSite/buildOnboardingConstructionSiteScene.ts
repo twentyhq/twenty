@@ -188,10 +188,10 @@ export const buildOnboardingConstructionSiteScene = ({
       lowerStageIndex + 1,
       valuesByStage.length - 1,
     );
+    const lowerValue = valuesByStage[lowerStageIndex] ?? 0;
+    const upperValue = valuesByStage[upperStageIndex] ?? lowerValue;
     return (
-      valuesByStage[lowerStageIndex] +
-      (valuesByStage[upperStageIndex] - valuesByStage[lowerStageIndex]) *
-        (position - lowerStageIndex)
+      lowerValue + (upperValue - lowerValue) * (position - lowerStageIndex)
     );
   };
 
@@ -568,7 +568,7 @@ export const buildOnboardingConstructionSiteScene = ({
     } = {},
   ) => {
     const { box, round, worldY } = frame;
-    const floorCount = builtFloorsByStage[builtFloorsByStage.length - 1];
+    const floorCount = builtFloorsByStage.at(-1) ?? 0;
     let builtHeight = 0;
 
     for (let floorIndex = 0; floorIndex < floorCount; floorIndex++) {
@@ -1001,9 +1001,8 @@ export const buildOnboardingConstructionSiteScene = ({
     } = {},
   ) => {
     const { box, worldY } = frame;
-    const floorCount = builtFloorsByStage[builtFloorsByStage.length - 1];
-    const framedFloorCount =
-      framedFloorsByStage[framedFloorsByStage.length - 1];
+    const floorCount = builtFloorsByStage.at(-1) ?? 0;
+    const framedFloorCount = framedFloorsByStage.at(-1) ?? 0;
     const buildingWidth = EDGE_BUILDING_BAY_COUNT * EDGE_BUILDING_BAY_WIDTH;
     const buildingDepth = EDGE_BUILDING_FRONT_Z - EDGE_BUILDING_BACK_Z;
     const centerZ = (EDGE_BUILDING_FRONT_Z + EDGE_BUILDING_BACK_Z) / 2;

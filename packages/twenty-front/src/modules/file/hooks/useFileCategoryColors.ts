@@ -33,14 +33,12 @@ export const useFileCategoryColors = (): Record<
     fileCategoryField.options.forEach((option) => {
       const category = option.value as AttachmentFileCategory;
       const color = option.color as ThemeColor;
-      if (
-        isDefined(category) &&
-        isDefined(color) &&
-        isDefined((theme.color as unknown as Record<string, string>)[color])
-      ) {
-        colorMap[category] = (theme.color as unknown as Record<string, string>)[
-          color
-        ];
+      const themeColor = isDefined(color)
+        ? (theme.color as unknown as Record<string, string>)[color]
+        : undefined;
+
+      if (isDefined(category) && isDefined(themeColor)) {
+        colorMap[category] = themeColor;
       }
     });
   }

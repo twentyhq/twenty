@@ -82,8 +82,9 @@ export const FileBlock = createReactBlockSpec(
         inputFileRef?.current?.click?.();
       };
       const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (isDefined(e.target.files))
-          handleUploadAttachment?.(e.target.files[0]);
+        const file = e.target.files?.[0];
+
+        if (isDefined(file)) handleUploadAttachment?.(file);
       };
 
       const safeUrl = getSafeUrl(block.props.url);

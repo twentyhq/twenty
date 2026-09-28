@@ -9,12 +9,14 @@ import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { generateMockRecordConnection } from '~/testing/utils/generateMockRecordConnection';
 
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const flatPersonRecords = mockedPersonRecords.map((record) =>
   getRecordFromRecordNode({ recordNode: record }),
 );
 
-const personRecord = flatPersonRecords[0];
+const [personRecord] = flatPersonRecords;
+assertIsDefinedOrThrow(personRecord);
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
   component: RecordShowPage,

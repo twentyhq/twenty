@@ -62,6 +62,7 @@ import {
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getOperationName } from '~/utils/getOperationName';
 import { sleep } from '~/utils/sleep';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const WORKSPACE_WITH_LOGS_CONSOLE = {
   ...mockCurrentWorkspace,
@@ -71,8 +72,14 @@ const WORKSPACE_WITH_LOGS_CONSOLE = {
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
 
-const [firstLiveApplicationLog, secondLiveApplicationLog] =
-  mockedEventLogLiveApplicationLogs;
+const getLiveApplicationLogs = () => {
+  const [firstLiveApplicationLog, secondLiveApplicationLog] =
+    mockedEventLogLiveApplicationLogs;
+  assertIsDefinedOrThrow(firstLiveApplicationLog);
+  assertIsDefinedOrThrow(secondLiveApplicationLog);
+
+  return { firstLiveApplicationLog, secondLiveApplicationLog };
+};
 
 const eventLogsLiveSubscriptions = new Map<
   Sink<ExecutionResult<EventLogsLiveSubscription>>,
@@ -317,6 +324,7 @@ export const AppLogDetail: Story = {
     const [typeErrorMessage] = await canvas.findAllByText(
       "TypeError: Cannot read properties of undefined (reading 'amount_due')",
     );
+    assertIsDefinedOrThrow(typeErrorMessage);
 
     await userEvent.click(typeErrorMessage);
 
@@ -365,6 +373,9 @@ export const AppLogsLive: Story = {
     expect([...eventLogsLiveSubscriptions.values()]).toEqual([
       { table: EventLogTable.APPLICATION_LOG, fieldFilters: [] },
     ]);
+
+    const { firstLiveApplicationLog, secondLiveApplicationLog } =
+      getLiveApplicationLogs();
 
     emitEventLogsLive([firstLiveApplicationLog]);
 
@@ -426,6 +437,9 @@ export const Clear: Story = {
     expect(
       canvas.queryByText('Received 9 invoices from Stripe'),
     ).not.toBeInTheDocument();
+
+    const { firstLiveApplicationLog, secondLiveApplicationLog } =
+      getLiveApplicationLogs();
 
     emitEventLogsLive([firstLiveApplicationLog, secondLiveApplicationLog]);
 

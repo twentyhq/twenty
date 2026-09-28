@@ -35,11 +35,19 @@ const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
   updatedAt: '2026-09-07T00:00:00.000Z',
 });
 
-const THREADS = [
-  buildThread('6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60', 'First chat'),
-  buildThread('0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20', 'Second chat'),
-  buildThread('9d2a4c6e-8b1f-4e3a-8c5d-7f9b1a3c5e40', 'Third chat'),
-];
+const firstThread = buildThread(
+  '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60',
+  'First chat',
+);
+const secondThread = buildThread(
+  '0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20',
+  'Second chat',
+);
+const thirdThread = buildThread(
+  '9d2a4c6e-8b1f-4e3a-8c5d-7f9b1a3c5e40',
+  'Third chat',
+);
+const THREADS = [firstThread, secondThread, thirdThread];
 
 const chatObjectMetadataItemAtom = atom<Pick<EnrichedObjectMetadataItem, 'id'>>(
   { id: 'chat-object' },
@@ -123,8 +131,6 @@ jest.mock(
   '@/command-menu-item/display/components/PinnedCommandMenuItemButtons',
   () => ({ PinnedCommandMenuItemButtons: () => null }),
 );
-
-const [firstThread, secondThread, thirdThread] = THREADS;
 
 const renderInbox = () =>
   render(
