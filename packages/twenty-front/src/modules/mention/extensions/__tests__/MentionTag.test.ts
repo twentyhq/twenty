@@ -30,12 +30,12 @@ describe('MentionTag', () => {
       const mentionTagType = editor.schema.nodes.mentionTag;
 
       expect(mentionTagType).toBeDefined();
-      expect(mentionTagType.isInline).toBe(true);
-      expect(mentionTagType.isAtom).toBe(true);
+      expect(mentionTagType?.isInline).toBe(true);
+      expect(mentionTagType?.isAtom).toBe(true);
     });
 
     it('should define all required attributes with defaults', () => {
-      const attrs = editor.schema.nodes.mentionTag.spec.attrs;
+      const attrs = editor.schema.nodes.mentionTag!.spec.attrs;
 
       expect(attrs).toBeDefined();
     });

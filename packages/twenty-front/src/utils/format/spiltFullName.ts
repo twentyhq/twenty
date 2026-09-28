@@ -6,7 +6,7 @@ export const splitFullName = (name: string) => {
   }
 
   if (splittedName.length > 2) {
-    return [splittedName[0].trim(), splittedName[1].trim()];
+    return [splittedName[0]!.trim(), splittedName[1]!.trim()];
   }
 
   return [name.trim(), ''];

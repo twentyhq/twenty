@@ -81,7 +81,7 @@ const generateForObject = async (
     limit: RECORDS_LIMIT,
   })) as Record<string, { edges: { node: Record<string, unknown> }[] }>;
 
-  const records = data[objectMetadataItem.namePlural].edges.map(
+  const records = data[objectMetadataItem.namePlural]!.edges.map(
     (edge) => edge.node,
   );
 

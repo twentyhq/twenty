@@ -18,7 +18,7 @@ export const getDocumentationUrl = ({
   }
 
   // Extract language code from locale (e.g., 'fr' from 'fr-FR')
-  const langCode = locale.split('-')[0].toLowerCase();
+  const langCode = locale.split('-')[0]!.toLowerCase();
 
   // English content is served at root path (no /en/ prefix)
   if (langCode === DOCUMENTATION_DEFAULT_LANGUAGE) {

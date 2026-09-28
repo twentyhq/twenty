@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import { useMutation } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AnalyticsType,
   type MutationTrackAnalyticsArgs,
@@ -8,11 +9,13 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
-export const getSessionId = (): string => {
+export const getSessionId = (): string | undefined => {
   const cookie: { [key: string]: string } = {};
   document.cookie.split(';').forEach((el) => {
     const [key, value] = el.split('=');
-    cookie[key.trim()] = value;
+    if (isDefined(key) && isDefined(value)) {
+      cookie[key.trim()] = value;
+    }
   });
   return cookie[ANALYTICS_COOKIE_NAME];
 };

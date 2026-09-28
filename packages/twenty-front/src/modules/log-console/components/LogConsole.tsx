@@ -396,7 +396,7 @@ export const LogConsole = () => {
   ];
 
   const activeSource =
-    sources.find((source) => source.id === activeTabId) ?? sources[0];
+    sources.find((source) => source.id === activeTabId) ?? sources[0]!;
 
   const tabs = sources.map((source) => ({
     id: source.id,

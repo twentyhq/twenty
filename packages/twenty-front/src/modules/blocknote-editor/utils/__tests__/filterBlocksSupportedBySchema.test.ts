@@ -32,7 +32,7 @@ describe('filterBlocksSupportedBySchema', () => {
     const filtered = filterBlocksSupportedBySchema(blocks, blockSchema);
 
     expect(filtered).toHaveLength(1);
-    expect(filtered?.[0].type).toBe('paragraph');
+    expect(filtered?.[0]?.type).toBe('paragraph');
   });
 
   it('should drop a block with no type', () => {
@@ -51,7 +51,7 @@ describe('filterBlocksSupportedBySchema', () => {
 
     const filtered = filterBlocksSupportedBySchema(blocks, blockSchema);
 
-    expect(filtered?.[0].children).toEqual([
+    expect(filtered?.[0]?.children).toEqual([
       { type: 'paragraph', children: undefined },
     ]);
   });

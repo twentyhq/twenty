@@ -42,7 +42,7 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             objectMetadataItem,
             operation: {
               type: 'update-one',
-              result: { updateInput: updateInputs[0] },
+              result: { updateInput: updateInputs[0]! },
             },
           });
         } else {
@@ -80,7 +80,7 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             operation: {
               type: 'restore-one',
               restoredRecord:
-                objectRecordEventsForThisEventType[0].properties.after,
+                objectRecordEventsForThisEventType[0]!.properties.after,
             },
           });
         } else {
@@ -102,7 +102,7 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             operation: {
               type: 'create-one',
               createdRecord:
-                objectRecordEventsForThisEventType[0].properties.after,
+                objectRecordEventsForThisEventType[0]!.properties.after,
             },
           });
         } else {
@@ -119,7 +119,7 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             operation: {
               type: 'create-one',
               createdRecord:
-                objectRecordEventsForThisEventType[0].properties.after,
+                objectRecordEventsForThisEventType[0]!.properties.after,
             },
           });
         } else {
@@ -136,7 +136,7 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             operation: {
               type: 'delete-one',
               deletedRecordId:
-                objectRecordEventsForThisEventType[0].properties.before.id,
+                objectRecordEventsForThisEventType[0]!.properties.before.id,
             },
           });
         } else {

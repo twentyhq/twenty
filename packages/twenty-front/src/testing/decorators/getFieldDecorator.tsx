@@ -63,7 +63,7 @@ export const getFieldDecorator =
     const companies =
       objectNameSingular === 'company' && isDefined(fieldValue)
         ? [
-            { ...companiesMock[0], [fieldName]: fieldValue },
+            { ...companiesMock[0]!, [fieldName]: fieldValue },
             ...companiesMock.slice(1),
           ]
         : companiesMock;
@@ -73,7 +73,7 @@ export const getFieldDecorator =
     const people =
       objectNameSingular === 'person' && isDefined(fieldValue)
         ? [
-            { ...peopleMock[0], [fieldName]: fieldValue },
+            { ...peopleMock[0]!, [fieldName]: fieldValue },
             ...peopleMock.slice(1),
           ]
         : peopleMock;
@@ -82,15 +82,15 @@ export const getFieldDecorator =
 
     const tasks =
       objectNameSingular === 'task'
-        ? [{ ...tasksMock[0], [fieldName]: fieldValue }, ...tasksMock.slice(1)]
+        ? [{ ...tasksMock[0]!, [fieldName]: fieldValue }, ...tasksMock.slice(1)]
         : tasksMock;
 
     const record =
       objectNameSingular === 'company'
-        ? companies[0]
+        ? companies[0]!
         : objectNameSingular === 'person'
-          ? people[0]
-          : tasks[0];
+          ? people[0]!
+          : tasks[0]!;
 
     if (isDefined(fieldValue)) {
       (record as any)[fieldName] = fieldValue;

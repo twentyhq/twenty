@@ -189,7 +189,7 @@ export const BackgroundMockTable = () => {
         <StyledFooterRow>
           <StyledDragHandleColumn />
           <StyledFooterCheckboxColumn />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[0].width}>
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[0]!.width}>
             <StyledFooterLabel>
               <OverflowingTextWithTooltip text="Calculate" />
             </StyledFooterLabel>
@@ -198,22 +198,22 @@ export const BackgroundMockTable = () => {
               stroke={theme.icon.stroke.sm}
             />
           </StyledFooterCell>
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[1].width}>
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[1]!.width}>
             <StyledFooterLabel>
               <OverflowingTextWithTooltip text="Count all" />
             </StyledFooterLabel>
             <StyledFooterValue>599</StyledFooterValue>
           </StyledFooterCell>
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[2].width} />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[3].width} />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[4].width} />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[5].width}>
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[2]!.width} />
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[3]!.width} />
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[4]!.width} />
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[5]!.width}>
             <StyledFooterLabel>
               <OverflowingTextWithTooltip text="Max of Employees" />
             </StyledFooterLabel>
             <StyledFooterValue>284,571</StyledFooterValue>
           </StyledFooterCell>
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[6].width}>
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[6]!.width}>
             <StyledFooterLabel>
               <OverflowingTextWithTooltip text="Not empty of Address" />
             </StyledFooterLabel>

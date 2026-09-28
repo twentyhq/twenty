@@ -29,8 +29,8 @@ describe('SkillTag', () => {
     const skillTagType = editor.schema.nodes.skillTag;
 
     expect(skillTagType).toBeDefined();
-    expect(skillTagType.isInline).toBe(true);
-    expect(skillTagType.isAtom).toBe(true);
+    expect(skillTagType?.isInline).toBe(true);
+    expect(skillTagType?.isAtom).toBe(true);
   });
 
   it('should serialize a skill tag to the [[skill:...]] reference format', () => {

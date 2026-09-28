@@ -30,7 +30,7 @@ export const ObjectMetadataItemsDecorator: Decorator = (
   useEffect(() => {
     setCurrentWorkspaceMember(
       getRecordFromRecordNode<WorkspaceMember>({
-        recordNode: mockedWorkspaceMemberRecords[0],
+        recordNode: mockedWorkspaceMemberRecords[0]!,
       }),
     );
     setCurrentUser(mockedUserData);

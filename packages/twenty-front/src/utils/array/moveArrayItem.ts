@@ -9,7 +9,7 @@ export const moveArrayItem = <ArrayItem>(
     return array;
   }
 
-  const itemToMove = array[fromIndex];
+  const itemToMove = array[fromIndex]!;
   const arrayWithoutItem = toSpliced(array, fromIndex, 1);
   const arrayWithMovedItem = toSpliced(
     arrayWithoutItem,

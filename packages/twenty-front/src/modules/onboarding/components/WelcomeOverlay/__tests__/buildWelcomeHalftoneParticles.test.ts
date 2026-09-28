@@ -15,10 +15,10 @@ describe('buildWelcomeHalftoneParticles', () => {
       CANVAS_HEIGHT,
     );
 
-    expect(particles[0].dashLength).toBeCloseTo(
+    expect(particles[0]!.dashLength).toBeCloseTo(
       2 * VIEWBOX_TO_CANVAS_SCALE * 1.452,
     );
-    expect(particles[0].strokeWidth).toBeCloseTo(2 * VIEWBOX_TO_CANVAS_SCALE);
+    expect(particles[0]!.strokeWidth).toBeCloseTo(2 * VIEWBOX_TO_CANVAS_SCALE);
   });
 
   it('should keep the dash length when the source dash is longer than the aspect ratio', () => {
@@ -28,7 +28,7 @@ describe('buildWelcomeHalftoneParticles', () => {
       CANVAS_HEIGHT,
     );
 
-    expect(particles[0].dashLength).toBeCloseTo(10 * VIEWBOX_TO_CANVAS_SCALE);
+    expect(particles[0]!.dashLength).toBeCloseTo(10 * VIEWBOX_TO_CANVAS_SCALE);
   });
 
   it('should keep the dash length proportional to the source stroke width when the minimum stroke width applies', () => {
@@ -49,12 +49,12 @@ describe('buildWelcomeHalftoneParticles', () => {
       smallCanvasHeight,
     );
 
-    expect(particles[0].strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
-    expect(particles[1].strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
-    expect(particles[0].dashLength).toBeCloseTo(
+    expect(particles[0]!.strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
+    expect(particles[1]!.strokeWidth).toBe(MINIMUM_STROKE_WIDTH);
+    expect(particles[0]!.dashLength).toBeCloseTo(
       fainterSourceStrokeWidth * smallCanvasScale * 1.452,
     );
-    expect(particles[1].dashLength / particles[0].dashLength).toBeCloseTo(
+    expect(particles[1]!.dashLength / particles[0]!.dashLength).toBeCloseTo(
       denserSourceStrokeWidth / fainterSourceStrokeWidth,
     );
   });
@@ -69,7 +69,7 @@ describe('buildWelcomeHalftoneParticles', () => {
       CANVAS_HEIGHT,
     );
 
-    expect(particles[0].burstDirectionX).toBeLessThan(0);
-    expect(particles[1].burstDirectionX).toBeGreaterThan(0);
+    expect(particles[0]!.burstDirectionX).toBeLessThan(0);
+    expect(particles[1]!.burstDirectionX).toBeGreaterThan(0);
   });
 });

@@ -18,7 +18,7 @@ export const formatTimeZoneLabel = (ianaTimeZone: string) => {
   const ianaTimeZoneParts = ianaTimeZone.split('/');
   const location =
     ianaTimeZoneParts.length > 1
-      ? ianaTimeZoneParts.slice(-1)[0].replaceAll('_', ' ')
+      ? ianaTimeZoneParts.slice(-1)[0]!.replaceAll('_', ' ')
       : undefined;
 
   const timeZoneLabel =

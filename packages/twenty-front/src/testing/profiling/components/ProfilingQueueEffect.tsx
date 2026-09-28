@@ -57,16 +57,16 @@ export const ProfilingQueueEffect = ({
         const testArray = getTestArray(
           profilingId,
           numberOfTestsPerRun,
-          newTestRuns[0],
+          newTestRuns[0]!,
         );
 
         setProfilingQueue((currentProfilingQueue) => ({
           ...currentProfilingQueue,
-          [newTestRuns[0]]: testArray,
+          [newTestRuns[0]!]: testArray,
         }));
       } else if (profilingSessionStatus === 'running') {
         const testsStillToRun =
-          profilingQueue[profilingSessionRuns[currentProfilingRunIndex]];
+          profilingQueue[profilingSessionRuns[currentProfilingRunIndex]!]!;
 
         const allTestsAreRun = testsStillToRun.length > 0;
 
@@ -81,7 +81,7 @@ export const ProfilingQueueEffect = ({
 
           const timeInMs = profilingSessionRuns[
             currentProfilingRunIndex
-          ].startsWith('warm-up')
+          ]!.startsWith('warm-up')
             ? TIME_BETWEEN_TEST_RUNS_IN_MS * 2
             : TIME_BETWEEN_TEST_RUNS_IN_MS;
 
@@ -94,12 +94,12 @@ export const ProfilingQueueEffect = ({
           const testArray = getTestArray(
             profilingId,
             numberOfTestsPerRun,
-            profilingSessionRuns[nextIndex],
+            profilingSessionRuns[nextIndex]!,
           );
 
           setProfilingQueue((currentProfilingQueue) => ({
             ...currentProfilingQueue,
-            [profilingSessionRuns[nextIndex]]: testArray,
+            [profilingSessionRuns[nextIndex]!]: testArray,
           }));
         }
       }

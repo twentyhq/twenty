@@ -25,7 +25,7 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
 
   const currentRunName = profilingSessionRuns[currentProfilingRunIndex];
 
-  const testArray = getTestArray(id, numberOfTests, currentRunName);
+  const testArray = getTestArray(id, numberOfTests, currentRunName!);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -49,7 +49,7 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
               <ProfilerWrapper
                 key={id + index}
                 componentName={parameters.componentName}
-                runName={currentRunName}
+                runName={currentRunName!}
                 testIndex={index}
                 profilingId={id}
               >

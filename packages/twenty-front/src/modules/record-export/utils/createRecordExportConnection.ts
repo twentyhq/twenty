@@ -52,7 +52,7 @@ export const createRecordExportConnection = () => {
               return;
             }
             if (isDefined(errors) && errors.length > 0) {
-              finish(new Error(errors[0].message));
+              finish(new Error(errors[0]!.message));
               return;
             }
             const recordExport = data?.exportRecords;

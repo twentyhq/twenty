@@ -22,7 +22,7 @@ const meta: Meta<PageDecoratorArgs> = {
     routePath: '/object/:objectNameSingular/:objectRecordId',
     routeParams: {
       ':objectNameSingular': 'person',
-      ':objectRecordId': personRecord.id,
+      ':objectRecordId': personRecord!.id,
     },
   },
   parameters: {

@@ -177,7 +177,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     await flushMutation();
 
     expect(callCount).toBe(1);
-    expect(capturedVariablesList[0].companyContext).toEqual(enrichment);
+    expect(capturedVariablesList[0]!.companyContext).toEqual(enrichment);
   });
 
   it('should start the workspace setup chat only once when the effect renders twice', async () => {
@@ -266,7 +266,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
 
     await flushMutation();
 
-    expect(capturedVariablesList[0].companyContext).toEqual(enrichment);
+    expect(capturedVariablesList[0]!.companyContext).toEqual(enrichment);
   });
 
   it('should send an undefined companyContext variable when no enrichment is stored', async () => {
@@ -283,8 +283,8 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     await flushMutation();
 
     expect(capturedVariablesList.length).toBeGreaterThan(0);
-    expect(capturedVariablesList[0].companyContext).toBeUndefined();
-    expect(capturedVariablesList[0].personContext).toBeUndefined();
+    expect(capturedVariablesList[0]!.companyContext).toBeUndefined();
+    expect(capturedVariablesList[0]!.personContext).toBeUndefined();
   });
 
   it('should pass the stored person enrichment as the personContext variable when one is stored', async () => {
@@ -318,7 +318,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
 
     await flushMutation();
 
-    expect(capturedVariablesList[0].personContext).toEqual(personEnrichment);
+    expect(capturedVariablesList[0]!.personContext).toEqual(personEnrichment);
   });
 
   it('should not touch the chat state when the chat is unavailable', async () => {

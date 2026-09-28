@@ -71,8 +71,8 @@ const WORKSPACE_WITH_LOGS_CONSOLE = {
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
 
-const [firstLiveApplicationLog, secondLiveApplicationLog] =
-  mockedEventLogLiveApplicationLogs;
+const firstLiveApplicationLog = mockedEventLogLiveApplicationLogs[0]!;
+const secondLiveApplicationLog = mockedEventLogLiveApplicationLogs[1]!;
 
 const eventLogsLiveSubscriptions = new Map<
   Sink<ExecutionResult<EventLogsLiveSubscription>>,
@@ -314,9 +314,11 @@ export const AppLogDetail: Story = {
 
     await userEvent.click(await canvas.findByRole('tab', { name: 'App logs' }));
 
-    const [typeErrorMessage] = await canvas.findAllByText(
-      "TypeError: Cannot read properties of undefined (reading 'amount_due')",
-    );
+    const typeErrorMessage = (
+      await canvas.findAllByText(
+        "TypeError: Cannot read properties of undefined (reading 'amount_due')",
+      )
+    )[0]!;
 
     await userEvent.click(typeErrorMessage);
 

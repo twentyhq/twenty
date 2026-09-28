@@ -25,7 +25,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read records');
+      expect(result[0]!.label).toBe('Read records');
     });
 
     it('should return "Write records" for write-only', () => {
@@ -37,7 +37,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Write records');
+      expect(result[0]!.label).toBe('Write records');
     });
 
     it('should return "Read and write records" for read+write', () => {
@@ -50,7 +50,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read and write records');
+      expect(result[0]!.label).toBe('Read and write records');
     });
 
     it('should return "Delete records" for soft-delete only', () => {
@@ -62,7 +62,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Delete records');
+      expect(result[0]!.label).toBe('Delete records');
     });
 
     it('should return "Delete records" for destroy only', () => {
@@ -74,7 +74,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Delete records');
+      expect(result[0]!.label).toBe('Delete records');
     });
 
     it('should return "Read and delete records" for read+delete', () => {
@@ -87,7 +87,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read and delete records');
+      expect(result[0]!.label).toBe('Read and delete records');
     });
 
     it('should return "Read, write, and delete records" with Oxford comma for all three', () => {
@@ -101,7 +101,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read, write, and delete records');
+      expect(result[0]!.label).toBe('Read, write, and delete records');
     });
 
     it('should treat destroy the same as soft-delete for label purposes', () => {
@@ -114,7 +114,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
 
       const result = buildPermissionSummaryFromRoleManifest(role);
 
-      expect(result[0].label).toBe('Read, write, and delete records');
+      expect(result[0]!.label).toBe('Read, write, and delete records');
     });
   });
 
@@ -134,7 +134,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Access specific object records');
+      expect(result[0]!.label).toBe('Access specific object records');
     });
 
     it('should not show object permissions fallback when global record flags are set', () => {
@@ -153,7 +153,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read records');
+      expect(result[0]!.label).toBe('Read records');
     });
   });
 
@@ -167,7 +167,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read and write data model configuration');
+      expect(result[0]!.label).toBe('Read and write data model configuration');
     });
 
     it('should add WORKFLOWS flag', () => {
@@ -179,7 +179,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage workflows');
+      expect(result[0]!.label).toBe('Manage workflows');
     });
 
     it('should add SECURITY flag', () => {
@@ -191,7 +191,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage security settings');
+      expect(result[0]!.label).toBe('Manage security settings');
     });
 
     it('should add WORKSPACE_MEMBERS flag', () => {
@@ -205,7 +205,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage workspace members');
+      expect(result[0]!.label).toBe('Manage workspace members');
     });
 
     it('should add BILLING flag', () => {
@@ -217,7 +217,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage billing');
+      expect(result[0]!.label).toBe('Manage billing');
     });
 
     it('should add API_KEYS_AND_WEBHOOKS flag', () => {
@@ -231,7 +231,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage MCP, API keys, and webhooks');
+      expect(result[0]!.label).toBe('Manage MCP, API keys, and webhooks');
     });
 
     it('should ignore unknown permission flags', () => {
@@ -258,7 +258,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Update workspace settings');
+      expect(result[0]!.label).toBe('Update workspace settings');
     });
 
     it('should add "Access all tools" when canAccessAllTools is true', () => {
@@ -270,7 +270,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Access all tools');
+      expect(result[0]!.label).toBe('Access all tools');
     });
   });
 

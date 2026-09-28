@@ -67,7 +67,7 @@ describe('SkillSuggestion', () => {
       { searchSkills: jest.Mock }
     >;
 
-    expect(storage['skill-suggestion'].searchSkills).toBe(mockSearchSkills);
+    expect(storage['skill-suggestion']!.searchSkills).toBe(mockSearchSkills);
   });
 
   const isSuggestionActive = () =>

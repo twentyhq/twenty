@@ -1534,9 +1534,9 @@ export const workflowQueryResult = {
   },
 } satisfies { workflows: RecordGqlConnection };
 
-export const mockedWorkflow = workflowQueryResult.workflows.edges[0].node;
+export const mockedWorkflow = workflowQueryResult.workflows.edges[0]!.node;
 
-export const mockedWorkflowVersion = mockedWorkflow.versions.edges[0].node;
+export const mockedWorkflowVersion = mockedWorkflow.versions.edges[0]!.node;
 
 export const mockedWorkflowVersions = {
   ...mockedWorkflow.versions,
@@ -1553,4 +1553,4 @@ export const mockedWorkflowVersions = {
   },
 };
 
-export const mockedWorkflowNodeId = mockedWorkflowVersion.steps[0].id;
+export const mockedWorkflowNodeId = mockedWorkflowVersion.steps[0]!.id;

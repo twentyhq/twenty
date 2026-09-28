@@ -29,8 +29,8 @@ describe('PlaceAutocompleteSelect Component', () => {
       expect(validList).toHaveLength(2);
       expect(validList[0]).toHaveProperty('placeId');
       expect(validList[0]).toHaveProperty('text');
-      expect(typeof validList[0].placeId).toBe('string');
-      expect(typeof validList[0].text).toBe('string');
+      expect(typeof validList[0]!.placeId).toBe('string');
+      expect(typeof validList[0]!.text).toBe('string');
     });
 
     it('should handle onChange callback function', () => {
@@ -112,8 +112,8 @@ describe('PlaceAutocompleteSelect Component', () => {
       );
 
       expect(largeDataset).toHaveLength(1000);
-      expect(largeDataset[0].placeId).toBe('place-0');
-      expect(largeDataset[999].text).toBe('Location 999');
+      expect(largeDataset[0]!.placeId).toBe('place-0');
+      expect(largeDataset[999]!.text).toBe('Location 999');
     });
   });
 

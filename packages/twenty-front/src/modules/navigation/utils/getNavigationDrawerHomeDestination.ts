@@ -22,7 +22,7 @@ export const getNavigationDrawerHomeDestination = ({
 
   const [pathname] = memorizedUrl.split('?');
 
-  return isSettingsPath(pathname) || isAiChatPath(pathname)
+  return isSettingsPath(pathname!) || isAiChatPath(pathname!)
     ? defaultHomePagePath
     : memorizedUrl;
 };

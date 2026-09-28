@@ -100,8 +100,8 @@ describe('buildCoreWorkflowFilterInput', () => {
       timezone: 'Asia/Tokyo',
     })?.rules;
 
-    expect(rules?.[0].timezone).toBeNull();
-    expect(rules?.[1].timezone).toBe('Asia/Tokyo');
+    expect(rules?.[0]?.timezone).toBeNull();
+    expect(rules?.[1]?.timezone).toBe('Asia/Tokyo');
   });
 
   it('should drop a rule whose multi select value has no option left', () => {

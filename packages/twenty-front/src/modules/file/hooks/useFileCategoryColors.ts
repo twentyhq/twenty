@@ -40,7 +40,7 @@ export const useFileCategoryColors = (): Record<
       ) {
         colorMap[category] = (theme.color as unknown as Record<string, string>)[
           color
-        ];
+        ]!;
       }
     });
   }

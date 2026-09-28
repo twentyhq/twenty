@@ -70,13 +70,13 @@ export const RemovesAllInputsButTheLast: Story = {
 
     expect(getRemoveButtons(canvasElement)).toHaveLength(3);
 
-    await userEvent.click(getRemoveButtons(canvasElement)[2]);
+    await userEvent.click(getRemoveButtons(canvasElement)[2]!);
     await waitFor(async () =>
       expect(await findEmailInputs(canvas)).toHaveLength(2),
     );
     expect(getRemoveButtons(canvasElement)).toHaveLength(2);
 
-    await userEvent.click(getRemoveButtons(canvasElement)[1]);
+    await userEvent.click(getRemoveButtons(canvasElement)[1]!);
     await waitFor(async () =>
       expect(await findEmailInputs(canvas)).toHaveLength(1),
     );
