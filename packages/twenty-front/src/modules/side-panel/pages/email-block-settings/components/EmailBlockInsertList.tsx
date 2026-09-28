@@ -32,6 +32,14 @@ const LAYOUT_NODE_TYPES: string[] = [
   TIPTAP_NODE_TYPES.DIVIDER,
 ];
 
+type DraggableInsertItem = {
+  id: string;
+  Icon: IconComponent;
+  iconColor: string;
+  label: string;
+  content: JSONContent;
+};
+
 type EmailBlockInsertListProps = {
   editor: Editor;
 };
@@ -60,15 +68,15 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
       pageId: v4(),
     });
 
-  const renderDraggableItem = (
-    key: string,
-    Icon: IconComponent,
-    iconColor: string,
-    label: string,
-    content: JSONContent,
-  ) => (
+  const renderDraggableItem = ({
+    id,
+    Icon,
+    iconColor,
+    label,
+    content,
+  }: DraggableInsertItem) => (
     <AdvancedTextEditorDraggableContent
-      key={key}
+      key={id}
       editor={editor}
       content={content}
       Icon={Icon}
@@ -91,13 +99,13 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
     iconColor: string,
   ) =>
     items.map(({ id, title, icon, createContent }) =>
-      renderDraggableItem(
+      renderDraggableItem({
         id,
-        icon,
+        Icon: icon,
         iconColor,
-        i18n._(title),
-        createContent((message) => i18n._(message)),
-      ),
+        label: i18n._(title),
+        content: createContent((message) => i18n._(message)),
+      }),
     );
 
   return (
@@ -154,16 +162,16 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
             {t`Variables`}
           </SidePanelWorkflowSelectStepTitle>
           {variables.map(({ label, value }) =>
-            renderDraggableItem(
-              value,
-              IconVariable,
-              themeCssVariables.color.blue9,
+            renderDraggableItem({
+              id: value,
+              Icon: IconVariable,
+              iconColor: themeCssVariables.color.blue9,
               label,
-              {
+              content: {
                 type: TIPTAP_NODE_TYPES.VARIABLE_TAG,
                 attrs: { variable: value },
               },
-            ),
+            }),
           )}
         </>
       )}
