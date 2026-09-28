@@ -103,7 +103,7 @@ const routeObjects: WorkspaceRouteObject[] = [
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
   {
-    path: AppPath.WorkflowCoreIndexPage,
+    path: AppPath.WorkflowCoreShowPage,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
@@ -177,8 +177,8 @@ describe('RouteContextStoreProvider', () => {
     );
   });
 
-  it('provides workflow index context on the standalone core route', () => {
-    renderAt('/workflow-core', <MainSurfaceRoutes />);
+  it('provides workflow context on the core workflow show page', () => {
+    renderAt('/workflow/core-workflow-id', <MainSurfaceRoutes />);
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-object-metadata-id',
@@ -186,7 +186,7 @@ describe('RouteContextStoreProvider', () => {
     );
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-is-record-index-page',
-      'true',
+      'false',
     );
   });
 
