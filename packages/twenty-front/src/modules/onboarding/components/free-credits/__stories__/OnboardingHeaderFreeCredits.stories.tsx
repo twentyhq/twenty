@@ -5,6 +5,8 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
+import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { OnboardingHeaderFreeCredits } from '@/onboarding/components/free-credits/OnboardingHeaderFreeCredits';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
@@ -20,10 +22,16 @@ import {
 const seedOnboardingFreeCredits = ({
   onboardingStatus,
   onboardingFreeCredits = {},
+  numberFormat = NumberFormat.COMMAS_AND_DOT,
 }: {
   onboardingStatus: OnboardingStatus;
   onboardingFreeCredits?: Partial<OnboardingFreeCredits>;
+  numberFormat?: NumberFormat;
 }) => {
+  jotaiStore.set(
+    workspaceMemberFormatPreferencesState.atom,
+    (formatPreferences) => ({ ...formatPreferences, numberFormat }),
+  );
   jotaiStore.set(onboardingConfigState.atom, {
     importContactsCreditsReward: 1,
     inviteTeamCreditsRewardPerUser: 0.5,
@@ -182,17 +190,20 @@ export const Breakdown: Story = {
         inviteTeam: 1,
         seenCredits: 2.5,
       },
+      numberFormat: NumberFormat.DOTS_AND_COMMA,
     });
   },
   play: async ({ canvasElement }) => {
     const popover = await openFreeCreditsPopover(canvasElement, /free credits/);
 
+    await expect(popover.getByText('2,5 credits')).toBeVisible();
     await expect(
       popover.getByText('Enough for one of these on average'),
     ).toBeVisible();
     await expect(popover.getByText('60')).toBeVisible();
+    await expect(popover.getByText('2,5 hours')).toBeVisible();
     await expect(popover.getByText('Create profile')).toBeVisible();
-    await expect(popover.getByText('0/0.5')).toBeVisible();
+    await expect(popover.getByText('0/0,5')).toBeVisible();
     await expect(popover.getByText('Invite your team')).toBeVisible();
     await expect(popover.getByText('1/5')).toBeVisible();
   },

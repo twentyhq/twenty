@@ -90,6 +90,14 @@ export const OnboardingFreeCreditsPopoverContent = ({
     emailsSent,
   } = getOnboardingCreditWorth(earnedCredits > 0 ? earnedCredits : 1);
 
+  const formattedEarnedCredits = formatOnboardingCredits(
+    earnedCredits,
+    numberFormat,
+  );
+  const formattedCallRecordingHours = formatNumber(callRecordingHours, {
+    decimals: 1,
+  });
+
   return (
     <StyledContent>
       <StyledSection>
@@ -99,8 +107,8 @@ export const OnboardingFreeCreditsPopoverContent = ({
           label={t`Total earned`}
           value={null}
           valueLabel={plural(earnedCredits, {
-            one: '# credit',
-            other: '# credits',
+            one: `${formattedEarnedCredits} credit`,
+            other: `${formattedEarnedCredits} credits`,
           })}
         />
       </StyledSection>
@@ -155,8 +163,8 @@ export const OnboardingFreeCreditsPopoverContent = ({
           label={t`Call recording`}
           value={null}
           valueLabel={plural(callRecordingHours, {
-            one: '# hour',
-            other: '# hours',
+            one: `${formattedCallRecordingHours} hour`,
+            other: `${formattedCallRecordingHours} hours`,
           })}
         />
         <UsageProgressRow
