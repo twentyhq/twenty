@@ -26,6 +26,7 @@ interface BlockEditorProps {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
+  compact?: boolean;
 }
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
@@ -39,6 +40,16 @@ const StyledEditor = styled.div`
     color: ${themeCssVariables.font.color.primary};
     font-size: 13px;
     min-height: 400px;
+  }
+  &[data-compact='true'] {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.md};
+    box-sizing: border-box;
+  }
+  &[data-compact='true'] .editor {
+    min-height: 120px;
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   }
   & .editor [class^='_inlineContent']:before {
     color: ${themeCssVariables.font.color.tertiary};
@@ -164,6 +175,7 @@ export const BlockEditor = ({
   onChange,
   onPaste,
   readonly,
+  compact,
 }: BlockEditorProps) => {
   const colorScheme = useThemeColorScheme();
   const { t } = useLingui();
@@ -207,7 +219,7 @@ export const BlockEditor = ({
   };
 
   return (
-    <StyledEditor>
+    <StyledEditor data-compact={compact}>
       <BlockNoteView
         onFocus={handleFocus}
         onBlur={handleBlur}
