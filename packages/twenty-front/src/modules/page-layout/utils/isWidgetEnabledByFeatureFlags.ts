@@ -15,8 +15,9 @@ export const isWidgetEnabledByFeatureFlags = ({
 }: IsWidgetEnabledByFeatureFlagsParams): boolean => {
   const requiredFeatureFlag = WIDGET_TYPE_REQUIRED_FEATURE_FLAG[widget.type];
 
-  return (
-    !isDefined(requiredFeatureFlag) ||
-    featureFlags[requiredFeatureFlag] === true
-  );
+  if (isDefined(requiredFeatureFlag) && !featureFlags[requiredFeatureFlag]) {
+    return false;
+  }
+
+  return true;
 };
