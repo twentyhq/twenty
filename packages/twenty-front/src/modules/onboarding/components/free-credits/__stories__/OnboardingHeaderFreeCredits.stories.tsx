@@ -131,6 +131,15 @@ export const EarnedSoFar: Story = {
   },
 };
 
+export const EarnedSoFarOnPhone: Story = {
+  ...EarnedSoFar,
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+};
+
 export const NewlyEarned: Story = {
   beforeEach: () => {
     seedOnboardingFreeCredits({

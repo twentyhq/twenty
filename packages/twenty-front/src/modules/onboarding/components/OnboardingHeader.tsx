@@ -33,6 +33,7 @@ const StyledLeftSide = styled(StyledSide)`
   padding-right: ${themeCssVariables.spacing[1]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex: 0 0 auto;
     justify-content: flex-start;
   }
 `;
