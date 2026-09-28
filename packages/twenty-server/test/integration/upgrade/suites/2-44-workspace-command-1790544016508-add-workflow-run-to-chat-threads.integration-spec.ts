@@ -202,6 +202,66 @@ describe('2-44 workspace command 1790544016508 - AddWorkflowRunToChatThreadsComm
     expect(await readState()).toEqual(before);
   });
 
+  it('leaves threads still under SYSTEM protection as they are', async () => {
+    const { flatObjectMetadataMaps } =
+      await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatObjectMetadataMaps',
+      ]);
+    const threadObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ]!;
+    const migrationService =
+      getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
+        'WorkspaceMigrationValidateBuildAndRunService',
+      );
+    const applicationService =
+      getAppProviderByClassName<ApplicationService>('ApplicationService');
+    const { twentyStandardFlatApplication } =
+      await applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId: SEED_APPLE_WORKSPACE_ID },
+      );
+    const setThreadProtection = async (
+      protection: Pick<
+        typeof threadObject,
+        'readability' | 'readabilityParentFieldUniversalIdentifiers'
+      >,
+    ) => {
+      const result =
+        await migrationService.validateBuildAndRunLegacyWorkspaceMigration({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          allFlatEntityOperationByMetadataName: {
+            objectMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [{ ...threadObject, ...protection }],
+            },
+          },
+        });
+
+      expect(result.status).toBe('success');
+    };
+
+    await setThreadProtection({
+      readability: MetadataReadability.SYSTEM,
+      readabilityParentFieldUniversalIdentifiers: null,
+    });
+    await runCommand();
+
+    expect(await readState()).toMatchObject({
+      readability: MetadataReadability.SYSTEM,
+    });
+
+    await setThreadProtection({
+      readability: threadObject.readability,
+      readabilityParentFieldUniversalIdentifiers:
+        threadObject.readabilityParentFieldUniversalIdentifiers,
+    });
+  });
+
   it('makes threads PRIVATE again on down', async () => {
     await workspaceOrmManager.executeInWorkspaceContext(
       () => command.down(RUN_ON_WORKSPACE_ARGS),

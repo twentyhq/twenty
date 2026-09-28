@@ -1,3 +1,4 @@
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -200,6 +201,25 @@ describe('versioned agent history upgrade (integration)', () => {
         }),
       buildSystemAuthContext(WORKSPACE_ID),
     );
+    // The history objects were rebuilt as 2.42 leaves them; later upgrades
+    // have moved them on, so replay those for the suites that follow.
+    for (const laterCommandName of [
+      'EnableCommonRecordSharingCommand',
+      'AddWorkflowRunToChatThreadsCommand',
+    ]) {
+      await workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          getAppProviderByClassName<{
+            up: (args: RunOnWorkspaceArgs) => Promise<void>;
+          }>(laterCommandName).up({
+            workspaceId: WORKSPACE_ID,
+            index: 0,
+            total: 1,
+            options: {},
+          }),
+        buildSystemAuthContext(WORKSPACE_ID),
+      );
+    }
     await dataSource.query(
       `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
       [threadId],
