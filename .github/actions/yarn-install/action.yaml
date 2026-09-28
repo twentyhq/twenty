@@ -13,11 +13,7 @@ runs:
       run: |
         # Default GitHub images ship large SDKs this repo does not use; removing
         # them avoids ENOSPC when restoring or linking a full Yarn node_modules.
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        df -h
+        sudo nohup ionice -c 3 rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL > /dev/null 2>&1 &
     - name: Cache primary key builder
       id: globals
       shell: bash

@@ -97,7 +97,7 @@ jobs:
         run: |
           npx http-server packages/twenty-front-component-renderer/storybook-static --port 6008 --silent &
           timeout 30 bash -c 'until curl -sf http://localhost:6008 > /dev/null 2>&1; do sleep 1; done'
-          npx nx storybook:test twenty-front-component-renderer
+          npx nx storybook:test:no-coverage twenty-front-component-renderer
   ci-front-component-renderer-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
