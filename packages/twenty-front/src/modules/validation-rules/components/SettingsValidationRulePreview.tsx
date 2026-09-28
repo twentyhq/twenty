@@ -26,6 +26,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
+import { buildValidationRulePreviewRelationGqlFields } from '@/validation-rules/utils/buildValidationRulePreviewRelationGqlFields';
 import { formatValidationRulePreviewValue } from '@/validation-rules/utils/formatValidationRulePreviewValue';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
 import { getValidationRulePreviewValue } from '@/validation-rules/utils/getValidationRulePreviewValue';
@@ -110,9 +111,10 @@ export const SettingsValidationRulePreview = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordIndex, setRecordIndex] = useState(0);
 
-  const relationFieldNames = fields
-    .filter((field) => isDefined(field.relationTargetFields))
-    .map((field) => field.name);
+  const compilationResult = compileValidationRuleExpression({
+    expression,
+    fields,
+  });
 
   const { records, loading } = useFindManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -124,9 +126,12 @@ export const SettingsValidationRulePreview = ({
         objectMetadataItem,
         depth: 0,
       }),
-      ...Object.fromEntries(
-        relationFieldNames.map((fieldName) => [fieldName, true]),
-      ),
+      ...buildValidationRulePreviewRelationGqlFields({
+        bindingPaths: compilationResult.isValid
+          ? Object.keys(compilationResult.bindings)
+          : [],
+        fields,
+      }),
     },
   });
 
@@ -145,11 +150,6 @@ export const SettingsValidationRulePreview = ({
       </StyledPreview>
     );
   }
-
-  const compilationResult = compileValidationRuleExpression({
-    expression,
-    fields,
-  });
 
   const referencedPaths = compilationResult.isValid
     ? [
