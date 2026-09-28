@@ -1368,6 +1368,299 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
+  it('cancels the recording through the other meeting when the first cancel attempt fails', async () => {
+    class FirstCancelFailureFakeCoreApiClient extends FakeCoreApiClient {
+      hasFailedCancel = false;
+
+      override async mutation(mutation: any): Promise<any> {
+        if (
+          mutation.updateCallRecording?.__args.data.recordingRequestStatus ===
+            'CANCELED' &&
+          !this.hasFailedCancel
+        ) {
+          this.hasFailedCancel = true;
+
+          throw new Error('cancel write refused');
+        }
+
+        return super.mutation(mutation);
+      }
+    }
+
+    const client = new FirstCancelFailureFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: '2026-01-20T13:00:00.000Z',
+          endsAt: '2026-01-20T14:00:00.000Z',
+        }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      removedOccurrences: [
+        {
+          calendarEventId: 'calendar-event-1',
+          realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
+          startsAt: FUTURE_STARTS_AT,
+        },
+      ],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({ action: 'FAILED' }),
+      expect.objectContaining({
+        action: 'CANCELED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(recallBotDeleteCalls()).toHaveLength(1);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: null,
+      }),
+    ]);
+  });
+
+  it('keeps the new recording when the same moved-meeting batch runs twice', async () => {
+    const NEW_STARTS_AT = '2026-01-02T13:00:00.000Z';
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: NEW_STARTS_AT,
+          endsAt: '2026-01-02T14:00:00.000Z',
+        }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-old',
+        },
+      ],
+    });
+    const reconcileMovedMeeting = () =>
+      reconcileCallRecorderForCalendarEventIds({
+        client: client as unknown as CoreApiClient,
+        calendarEventIds: ['calendar-event-1'],
+        removedOccurrences: [
+          {
+            calendarEventId: 'calendar-event-1',
+            realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
+            startsAt: FUTURE_STARTS_AT,
+          },
+        ],
+        now: NOW,
+      });
+
+    await reconcileMovedMeeting();
+    await reconcileMovedMeeting();
+
+    expect(recallBotDeleteCalls().map(([requestUrl]) => requestUrl)).toEqual([
+      `${RECALL_API_BASE_URL}/bot/recall-bot-old/`,
+    ]);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(),
+        recordingRequestStatus: 'CANCELED',
+      }),
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(NEW_STARTS_AT),
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-1',
+      }),
+    ]);
+  });
+
+  it('keeps the status a webhook set while the batch was running', async () => {
+    class JoiningDuringBatchFakeCoreApiClient extends FakeCoreApiClient {
+      override async mutation(mutation: any): Promise<any> {
+        if (mutation.createCallRecording !== undefined) {
+          this.callRecordings = this.callRecordings.map((callRecording) =>
+            callRecording.id === buildCustomerSyncCallRecordingId()
+              ? { ...callRecording, status: 'JOINING' }
+              : callRecording,
+          );
+        }
+
+        return super.mutation(mutation);
+      }
+    }
+
+    const client = new JoiningDuringBatchFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          iCalUid: 'first-sync-uid',
+          conferenceLink: {
+            primaryLinkUrl: 'https://meet.google.com/first-sync',
+          },
+          callRecorderPreference: null,
+        }),
+        buildCalendarEvent({
+          id: 'calendar-event-2',
+          title: 'Renamed Customer Sync',
+        }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-2',
+          externalBotId: 'recall-bot-2',
+        },
+      ],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1', 'calendar-event-2'],
+      now: NOW,
+    });
+
+    expect(
+      client.callRecordings.find(
+        (candidate) => candidate.id === buildCustomerSyncCallRecordingId(),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        title: 'Renamed Customer Sync',
+        status: 'JOINING',
+      }),
+    );
+  });
+
+  it('keeps a replacement bot that another run scheduled while the batch was running', async () => {
+    fetchMock.mockImplementation(
+      async (requestUrl: string, requestInit: RequestInit) => {
+        if (requestUrl === `${RECALL_API_BASE_URL}/bot/recall-bot-stale/`) {
+          return new Response(JSON.stringify({ detail: 'Not found.' }), {
+            status: 404,
+          });
+        }
+
+        if (requestInit.method === 'POST' || requestInit.method === 'PATCH') {
+          return new Response(JSON.stringify({ id: 'recall-bot-1' }), {
+            status: 200,
+          });
+        }
+
+        throw new Error(`Unhandled fetch: ${requestInit.method} ${requestUrl}`);
+      },
+    );
+
+    class BotReplacedDuringBatchFakeCoreApiClient extends FakeCoreApiClient {
+      override async mutation(mutation: any): Promise<any> {
+        if (mutation.createCallRecording !== undefined) {
+          this.callRecordings = this.callRecordings.map((callRecording) =>
+            callRecording.id === buildCustomerSyncCallRecordingId()
+              ? { ...callRecording, externalBotId: 'recall-bot-replacement' }
+              : callRecording,
+          );
+        }
+
+        return super.mutation(mutation);
+      }
+    }
+
+    const client = new BotReplacedDuringBatchFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          iCalUid: 'first-sync-uid',
+          conferenceLink: {
+            primaryLinkUrl: 'https://meet.google.com/first-sync',
+          },
+          callRecorderPreference: null,
+        }),
+        buildCalendarEvent({ id: 'calendar-event-2' }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-2',
+          externalBotId: 'recall-bot-stale',
+        },
+      ],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1', 'calendar-event-2'],
+      now: NOW,
+    });
+
+    expect(
+      client.callRecordings.find(
+        (candidate) => candidate.id === buildCustomerSyncCallRecordingId(),
+      ),
+    ).toEqual(
+      expect.objectContaining({ externalBotId: 'recall-bot-replacement' }),
+    );
+  });
+
+  it('does not mark a meeting On when its recording is deleted before the write', async () => {
+    class RecordingDeletedDuringBatchFakeCoreApiClient extends FakeCoreApiClient {
+      override async query(query: any): Promise<any> {
+        const result = await super.query(query);
+
+        if (query.callRecordings?.__args.filter.id?.in !== undefined) {
+          this.callRecordings = [];
+        }
+
+        return result;
+      }
+    }
+
+    const client = new RecordingDeletedDuringBatchFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          title: 'Renamed Customer Sync',
+          callRecorderPreference: null,
+        }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([expect.objectContaining({ action: 'SKIPPED' })]);
+    expect(client.mutations).toEqual([]);
+    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
+  });
+
   it('does not write anything when the recording and preferences already match the meeting', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent()],
@@ -1397,6 +1690,54 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
     expect(client.mutations).toEqual([]);
     expect(recallBotUpdateCalls()).toHaveLength(1);
+  });
+
+  it('writes nothing when the policy-managed recording lookup fails', async () => {
+    class PolicyManagedLookupFailureFakeCoreApiClient extends FakeCoreApiClient {
+      override async query(query: any): Promise<any> {
+        if (query.callRecordings?.__args.filter.id?.in !== undefined) {
+          throw new Error('lookup refused');
+        }
+
+        return super.query(query);
+      }
+    }
+
+    const client = new PolicyManagedLookupFailureFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: '2026-01-02T13:00:00.000Z',
+          endsAt: '2026-01-02T14:00:00.000Z',
+        }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-old',
+        },
+      ],
+    });
+
+    await expect(
+      reconcileCallRecorderForCalendarEventIds({
+        client: client as unknown as CoreApiClient,
+        calendarEventIds: ['calendar-event-1'],
+        removedOccurrences: [
+          {
+            calendarEventId: 'calendar-event-1',
+            realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
+            startsAt: FUTURE_STARTS_AT,
+          },
+        ],
+        now: NOW,
+      }),
+    ).rejects.toThrow('lookup refused');
+    expect(client.mutations).toEqual([]);
+    expect(recallBotDeleteCalls()).toHaveLength(0);
   });
 
   it('fails the whole batch when the call recording lookup fails', async () => {
