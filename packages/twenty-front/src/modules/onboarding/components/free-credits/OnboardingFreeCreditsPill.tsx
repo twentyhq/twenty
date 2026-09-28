@@ -108,7 +108,7 @@ export const OnboardingFreeCreditsPill = ({
       <AnimatePresence>
         {hasNewlyEarnedCredits && (
           <OnboardingFreeCreditsChange
-            key={earnedCredits}
+            key={newlyEarnedCredits}
             label={`+${formatCredits(newlyEarnedCredits)}`}
             delay={
               hasTrackGrown

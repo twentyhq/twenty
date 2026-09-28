@@ -10,5 +10,6 @@ export const useSetOnboardingUpgradeTrialFreeCredits = () => {
     setOnboardingStepFreeCredits(
       'upgradeTrial',
       isTrialUpgraded ? (onboardingConfig?.upgradeCreditsReward ?? 0) : 0,
+      { isQuiet: true },
     );
 };

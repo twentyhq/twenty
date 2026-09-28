@@ -50,6 +50,31 @@ describe('useSetOnboardingStepFreeCredits', () => {
     });
   });
 
+  it('should count quiet credits as already seen', () => {
+    jotaiStore.set(onboardingFreeCreditsState.atom, {
+      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+      importContacts: 2,
+      installApps: 1,
+      seenCredits: 2,
+    });
+
+    const result = renderSetStepFreeCreditsHook();
+
+    act(() => {
+      result.current.setOnboardingStepFreeCredits('upgradeTrial', 4, {
+        isQuiet: true,
+      });
+    });
+
+    expect(result.current.onboardingFreeCredits).toEqual({
+      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+      importContacts: 2,
+      installApps: 1,
+      upgradeTrial: 4,
+      seenCredits: 6,
+    });
+  });
+
   it('should lower the seen credits when a step loses its reward', () => {
     jotaiStore.set(onboardingFreeCreditsState.atom, {
       ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
