@@ -17901,7 +17901,6 @@ msgstr "Μετονομασία"
 
 #. js-lingui-id: 6PsaMr
 #: src/modules/ai/components/AiChatPageThreadHeader.tsx
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Μετονομασία συνομιλίας"
 
@@ -22809,7 +22808,6 @@ msgid "Unsupported image format"
 msgstr "Μη υποστηριζόμενη μορφή εικόνας"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/ChatReferenceChip.tsx
 #: src/modules/ai/components/ChatReferenceChip.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
