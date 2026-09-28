@@ -10,6 +10,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -373,7 +374,9 @@ describe('application workflow execution permissions', () => {
     });
 
     expect(otherInstallation.errors).toBeUndefined();
-  }, 120000);
+
+    await waitForAllJobsToFinish();
+  }, 300000);
 
   afterAll(async () => {
     await globalThis.testDataSource.query(
