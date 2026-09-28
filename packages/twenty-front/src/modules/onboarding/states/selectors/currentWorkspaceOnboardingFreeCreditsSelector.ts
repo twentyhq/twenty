@@ -15,6 +15,9 @@ export const currentWorkspaceOnboardingFreeCreditsSelector =
         return ONBOARDING_FREE_CREDITS_DEFAULT_VALUE;
       }
 
-      return get(onboardingFreeCreditsFamilyState, currentWorkspace.id);
+      return {
+        ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+        ...get(onboardingFreeCreditsFamilyState, currentWorkspace.id),
+      };
     },
   });

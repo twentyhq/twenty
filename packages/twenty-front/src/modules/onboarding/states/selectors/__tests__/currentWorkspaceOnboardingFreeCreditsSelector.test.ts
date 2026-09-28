@@ -31,6 +31,26 @@ describe('currentWorkspaceOnboardingFreeCreditsSelector', () => {
     ).toEqual(EARNED_ONBOARDING_FREE_CREDITS);
   });
 
+  it('should fill fields missing from a stored counter with their defaults', () => {
+    const workspace = {
+      ...mockCurrentWorkspace,
+      id: 'workspace-with-partial-credits',
+    };
+
+    localStorage.setItem(
+      `onboardingFreeCreditsFamilyState__${workspace.id}`,
+      JSON.stringify({ importContacts: 2 }),
+    );
+
+    const store = createStore();
+
+    store.set(currentWorkspaceState.atom, workspace);
+
+    expect(
+      store.get(currentWorkspaceOnboardingFreeCreditsSelector.atom),
+    ).toEqual({ ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE, importContacts: 2 });
+  });
+
   it('should read the default credits while the current workspace is not loaded', () => {
     const store = createStore();
 
