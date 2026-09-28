@@ -400,15 +400,22 @@ export class LogicFunctionFromSourceService {
     id: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const { flatLogicFunction, ownerFlatApplication } =
-      await this.helperService.findLogicFunctionAndApplicationOrThrow({
-        id,
-        workspaceId,
-      });
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+    const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: flatLogicFunctionMaps,
+    });
 
     return this.logicFunctionResourceService.getSourceFile({
       workspaceId,
-      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
+      applicationUniversalIdentifier:
+        flatLogicFunction.applicationUniversalIdentifier,
       sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
     });
   }

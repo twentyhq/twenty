@@ -112,7 +112,9 @@ const CoreWorkflowShowContent = ({
           <Button
             title={t`Retry`}
             onClick={() => invalidateCoreWorkflowVersions(client)}
-          />
+          >
+            {t`Retry`}
+          </Button>
         </WorkspaceRouteUnavailable>
       </>
     );
@@ -157,7 +159,9 @@ const CoreWorkflowShowContent = ({
                         workflowVersionId: currentVersion.id,
                       })
                     }
-                  />
+                  >
+                    {t`Run`}
+                  </Button>
                 )}
                 <SidePanelToggleButton />
               </>

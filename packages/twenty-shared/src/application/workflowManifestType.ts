@@ -55,23 +55,47 @@ export const workflowManifestSchema = z
 
     const visiting = new Set<string>();
     const visited = new Set<string>();
-    const visit = (id: string): void => {
+    const stepsById = new Map(
+      steps.map((step) => [step.universalIdentifier, step]),
+    );
+    const visit = (
+      id: string,
+      enclosingIterators: string[] = [],
+      sourceId?: string,
+    ): void => {
       if (visiting.has(id)) {
+        // Loop bodies must return to their iterator to advance to the next item.
+        if (id !== sourceId && enclosingIterators.includes(id)) {
+          return;
+        }
         context.addIssue({
           code: 'custom',
           message: `Workflow contains a cycle at step ${id}`,
         });
         return;
       }
-      if (visited.has(id)) {
+      const visitKey = `${id}:${enclosingIterators.join(',')}`;
+      if (visited.has(visitKey)) {
         return;
       }
       visiting.add(id);
-      (graph.childrenByStepId.get(id) ?? []).forEach(visit);
+      const step = stepsById.get(id);
+      if (step?.type === 'ITERATOR') {
+        (step.input.initialLoopStepIds ?? []).forEach((nextId) =>
+          visit(nextId, [...enclosingIterators, id], id),
+        );
+        step.nextStepIds.forEach((nextId) =>
+          visit(nextId, enclosingIterators, id),
+        );
+      } else {
+        (graph.childrenByStepId.get(id) ?? []).forEach((nextId) =>
+          visit(nextId, enclosingIterators, id),
+        );
+      }
       visiting.delete(id);
-      visited.add(id);
+      visited.add(visitKey);
     };
-    trigger.nextStepIds.forEach(visit);
+    trigger.nextStepIds.forEach((id) => visit(id));
   });
 
 export type WorkflowManifest = z.input<typeof workflowManifestSchema>;
