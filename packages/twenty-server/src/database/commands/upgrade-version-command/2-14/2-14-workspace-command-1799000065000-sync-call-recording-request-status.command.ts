@@ -108,6 +108,29 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
       return;
     }
 
+    // Runs before the 2-26 reconcile moves the INDEX view onto the derived
+    // identifier the shared constants resolve to, so it is also resolved by key.
+    const callRecordingIndexView = [
+      CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+      ...existingCallRecordingObjectMetadata.viewUniversalIdentifiers,
+    ]
+      .map(
+        (viewUniversalIdentifier) =>
+          flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+      )
+      .find(
+        (flatView) =>
+          flatView?.key === ViewKey.INDEX && !isDefined(flatView.deletedAt),
+      );
+
+    if (!isDefined(callRecordingIndexView)) {
+      this.logger.warn(
+        `CallRecording INDEX view does not exist for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
     const standardAllFlatEntityMaps =
       computeTwentyStandardApplicationAllFlatEntityMapsPre231({
         now: new Date().toISOString(),
@@ -123,16 +146,6 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
           CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
         ],
       });
-
-    // Runs before the 2-26 reconcile moves the INDEX view onto the derived
-    // identifier the shared constants resolve to, so the view is resolved by key.
-    const callRecordingIndexViewUniversalIdentifier =
-      existingCallRecordingObjectMetadata.viewUniversalIdentifiers.find(
-        (viewUniversalIdentifier) =>
-          flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier]?.key ===
-          ViewKey.INDEX,
-      ) ?? CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER;
-
     const recordingRequestStatusViewFieldsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
@@ -145,7 +158,7 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
           ? {
               ...flatViewField,
               viewUniversalIdentifier:
-                callRecordingIndexViewUniversalIdentifier,
+                callRecordingIndexView.universalIdentifier,
             }
           : flatViewField,
       );
