@@ -34,7 +34,7 @@ export class CreateCalendarEventTool implements Tool {
         await this.calendarEventComposerService.composeCalendarEvent(
           parameters,
           context.workspaceId,
-          context.requireConnectedAccountUsableByCaller === true
+          context.requireConnectedAccountUsableByCaller
             ? { userWorkspaceId: context.userWorkspaceId }
             : undefined,
         );

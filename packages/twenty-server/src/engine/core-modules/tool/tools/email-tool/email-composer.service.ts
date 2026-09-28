@@ -101,7 +101,7 @@ export class EmailComposerService {
       }
 
       if (
-        requireConnectedAccountUsableByCaller === true &&
+        requireConnectedAccountUsableByCaller &&
         !isConnectedAccountUsableByActor({ connectedAccount, userWorkspaceId })
       ) {
         throw new EmailToolException(
@@ -164,12 +164,11 @@ export class EmailComposerService {
       }
 
       if (!isDefined(userWorkspaceId)) {
-        const defaultMailbox =
-          requireConnectedAccountUsableByCaller === true
-            ? usableMailboxes.find((connectedAccount) =>
-                isConnectedAccountUsableByActor({ connectedAccount }),
-              )
-            : usableMailboxes[0];
+        const defaultMailbox = requireConnectedAccountUsableByCaller
+          ? usableMailboxes.find((connectedAccount) =>
+              isConnectedAccountUsableByActor({ connectedAccount }),
+            )
+          : usableMailboxes[0];
 
         if (!isDefined(defaultMailbox)) {
           throw new EmailToolException(
