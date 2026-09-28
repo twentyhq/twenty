@@ -11,7 +11,7 @@ export const useFieldsWidgetEditorMode = ({
   pageLayoutId,
   widgetId,
 }: UseFieldsWidgetEditorModeParams): {
-  editorMode: FieldsWidgetEditorMode;
+  editorMode: FieldsWidgetEditorMode | undefined;
 } => {
   const fieldsWidgetEditorModeDraft = useAtomComponentStateValue(
     fieldsWidgetEditorModeDraftComponentState,

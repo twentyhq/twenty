@@ -5,6 +5,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { DashboardsBlockEditor } from '@/page-layout/widgets/standalone-rich-text/components/DashboardsBlockEditor';
 import { DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const ColorToolbarExample = () => {
   const editor = useCreateBlockNote({
@@ -43,9 +44,9 @@ export const ApplyColors: Story = {
     await expect(
       within(popup).getAllByRole('button', { name: 'Default' })[0],
     ).toHaveAttribute('aria-pressed', 'true');
-    await userEvent.click(
-      within(popup).getAllByRole('button', { name: 'Red' })[0],
-    );
+    const [redButton] = within(popup).getAllByRole('button', { name: 'Red' });
+    assertIsDefinedOrThrow(redButton);
+    await userEvent.click(redButton);
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
@@ -60,9 +61,11 @@ export const ApplyColors: Story = {
     await expect(
       within(reopened).getAllByRole('button', { name: 'Red' })[0],
     ).toHaveAttribute('aria-pressed', 'true');
-    await userEvent.click(
-      within(reopened).getAllByRole('button', { name: 'Blue' })[1],
-    );
+    const [, blueButton] = within(reopened).getAllByRole('button', {
+      name: 'Blue',
+    });
+    assertIsDefinedOrThrow(blueButton);
+    await userEvent.click(blueButton);
     await waitFor(() => expect(editor).toHaveFocus());
     await expect(
       editor.querySelector(

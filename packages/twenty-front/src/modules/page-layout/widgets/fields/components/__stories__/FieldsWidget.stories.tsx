@@ -42,6 +42,7 @@ import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMet
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
   CoreObjectNameSingular.Company,
@@ -489,10 +490,12 @@ const openEditModeOnEmployees = async ({
   const canvas = within(canvasElement);
 
   const [employeesValue] = await canvas.findAllByText('250');
+  assertIsDefinedOrThrow(employeesValue);
   await userEvent.hover(employeesValue);
 
-  const hoveredValues = await canvas.findAllByText('250');
-  await userEvent.click(hoveredValues[hoveredValues.length - 1]);
+  const hoveredValue = (await canvas.findAllByText('250')).at(-1);
+  assertIsDefinedOrThrow(hoveredValue);
+  await userEvent.click(hoveredValue);
 
   await waitFor(() => {
     expect(canvasElement.querySelector('input')).not.toBeNull();

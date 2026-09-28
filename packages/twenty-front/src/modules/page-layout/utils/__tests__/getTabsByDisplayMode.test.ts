@@ -273,7 +273,7 @@ describe('getTabsByDisplayMode', () => {
 
       expect(result.pinnedLeftTab?.id).toBe('tab-1');
       expect(result.tabsToRenderInTabList).toHaveLength(1);
-      expect(result.tabsToRenderInTabList[0].id).toBe('tab-2');
+      expect(result.tabsToRenderInTabList[0]?.id).toBe('tab-2');
     });
   });
 
@@ -517,8 +517,8 @@ describe('getTabsByDisplayMode', () => {
 
       expect(result.pinnedLeftTab?.id).toBe('tab-2');
       expect(result.tabsToRenderInTabList).toHaveLength(2);
-      expect(result.tabsToRenderInTabList[0].id).toBe('tab-3');
-      expect(result.tabsToRenderInTabList[1].id).toBe('tab-1');
+      expect(result.tabsToRenderInTabList[0]?.id).toBe('tab-3');
+      expect(result.tabsToRenderInTabList[1]?.id).toBe('tab-1');
     });
   });
 });

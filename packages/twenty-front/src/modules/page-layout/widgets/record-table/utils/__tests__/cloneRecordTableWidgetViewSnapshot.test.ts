@@ -7,6 +7,7 @@ import {
   ViewType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const SOURCE_VIEW_ID = 'source-view-id';
 const PARENT_FILTER_GROUP_ID = 'parent-filter-group-id';
@@ -91,26 +92,34 @@ describe('cloneRecordTableWidgetViewSnapshot', () => {
 
     const newViewId = clonedSnapshot.view.id;
 
-    expect(clonedSnapshot.viewFields[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewFilterGroups[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewFilters[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewSorts[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewGroups[0].viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewFields[0]?.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewFilterGroups[0]?.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewFilters[0]?.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewSorts[0]?.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewGroups[0]?.viewId).toBe(newViewId);
   });
 
   it('should regenerate row ids so the duplicate persists without colliding with the source', () => {
     const clonedSnapshot = cloneRecordTableWidgetViewSnapshot(sourceSnapshot);
+    const [viewField] = clonedSnapshot.viewFields;
+    const [viewFilter] = clonedSnapshot.viewFilters;
+    const [viewSort] = clonedSnapshot.viewSorts;
+    const [viewGroup] = clonedSnapshot.viewGroups;
+    const [parentViewFilterGroup, childViewFilterGroup] =
+      clonedSnapshot.viewFilterGroups;
+    assertIsDefinedOrThrow(viewField);
+    assertIsDefinedOrThrow(viewFilter);
+    assertIsDefinedOrThrow(viewSort);
+    assertIsDefinedOrThrow(viewGroup);
+    assertIsDefinedOrThrow(parentViewFilterGroup);
+    assertIsDefinedOrThrow(childViewFilterGroup);
 
-    expect(clonedSnapshot.viewFields[0].id).not.toBe('view-field-id');
-    expect(clonedSnapshot.viewFilters[0].id).not.toBe('view-filter-id');
-    expect(clonedSnapshot.viewSorts[0].id).not.toBe('view-sort-id');
-    expect(clonedSnapshot.viewGroups[0].id).not.toBe('view-group-id');
-    expect(clonedSnapshot.viewFilterGroups[0].id).not.toBe(
-      PARENT_FILTER_GROUP_ID,
-    );
-    expect(clonedSnapshot.viewFilterGroups[1].id).not.toBe(
-      CHILD_FILTER_GROUP_ID,
-    );
+    expect(viewField.id).not.toBe('view-field-id');
+    expect(viewFilter.id).not.toBe('view-filter-id');
+    expect(viewSort.id).not.toBe('view-sort-id');
+    expect(viewGroup.id).not.toBe('view-group-id');
+    expect(parentViewFilterGroup.id).not.toBe(PARENT_FILTER_GROUP_ID);
+    expect(childViewFilterGroup.id).not.toBe(CHILD_FILTER_GROUP_ID);
   });
 
   it('should re-point filter-group references to the regenerated group ids', () => {
@@ -118,8 +127,10 @@ describe('cloneRecordTableWidgetViewSnapshot', () => {
 
     const [parentGroup, childGroup] = clonedSnapshot.viewFilterGroups;
 
-    expect(childGroup.parentViewFilterGroupId).toBe(parentGroup.id);
-    expect(clonedSnapshot.viewFilters[0].viewFilterGroupId).toBe(childGroup.id);
+    expect(childGroup?.parentViewFilterGroupId).toBe(parentGroup?.id);
+    expect(clonedSnapshot.viewFilters[0]?.viewFilterGroupId).toBe(
+      childGroup?.id,
+    );
   });
 
   it('should preserve group content', () => {

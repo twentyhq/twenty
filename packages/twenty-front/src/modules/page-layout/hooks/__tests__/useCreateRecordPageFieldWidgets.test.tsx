@@ -113,9 +113,9 @@ describe('record-page field widget creation', () => {
         result.current();
       });
 
-      const widget = store.get(draftAtom).tabs[0].widgets[0];
-      expect(widget.type).toBe(widgetType);
-      expect(store.get(editingWidgetAtom)).toBe(widget.id);
+      const widget = store.get(draftAtom).tabs[0]?.widgets[0];
+      expect(widget?.type).toBe(widgetType);
+      expect(store.get(editingWidgetAtom)).toBe(widget?.id);
       expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
         sidePanelPage,
         focusTitleInput: true,

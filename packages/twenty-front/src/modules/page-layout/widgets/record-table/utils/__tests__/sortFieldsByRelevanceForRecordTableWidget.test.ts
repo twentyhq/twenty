@@ -117,8 +117,8 @@ describe('sortFieldsByRelevanceForRecordTableWidget', () => {
 
     const sorted = [...fields].sort(sorter);
 
-    expect(sorted[0].id).toBe(labelIdentifierId);
-    expect(sorted[sorted.length - 1].id).toBe('reverse-1');
+    expect(sorted[0]?.id).toBe(labelIdentifierId);
+    expect(sorted[sorted.length - 1]?.id).toBe('reverse-1');
     const labelIdx = sorted.findIndex((f) => f.id === labelIdentifierId);
     const textIdx = sorted.findIndex((f) => f.id === 'text-1');
     const relIdx = sorted.findIndex((f) => f.id === 'rel-1');

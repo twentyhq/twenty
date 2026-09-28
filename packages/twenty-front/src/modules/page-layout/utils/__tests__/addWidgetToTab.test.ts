@@ -11,6 +11,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 describe('addWidgetToTab', () => {
   it.each([0, 1, 2])(
@@ -31,12 +32,12 @@ describe('addWidgetToTab', () => {
 
       const result = addWidgetToTab(tabs, 'tab-1', replacement);
 
-      expect(result[0].widgets.map(({ id }) => id)).toEqual(
+      expect(result[0]?.widgets.map(({ id }) => id)).toEqual(
         widgets.map((widget, widgetIndex) =>
           widgetIndex === index ? replacement.id : widget.id,
         ),
       );
-      expect(result[0].widgets.map(({ position }) => position)).toMatchObject(
+      expect(result[0]?.widgets.map(({ position }) => position)).toMatchObject(
         widgets.map((_, widgetIndex) => ({ index: widgetIndex })),
       );
     },
@@ -103,26 +104,29 @@ describe('addWidgetToTab', () => {
     },
   ];
 
+  const [firstMockTab] = mockTabs;
+  assertIsDefinedOrThrow(firstMockTab);
+
   it('should add widget to the correct tab', () => {
     const result = addWidgetToTab(mockTabs, 'tab-1', mockWidget);
 
-    expect(result[0].widgets).toHaveLength(1);
-    expect(result[0].widgets?.[0]).toEqual(mockWidget);
-    expect(result[1].widgets).toHaveLength(0);
+    expect(result[0]?.widgets).toHaveLength(1);
+    expect(result[0]?.widgets?.[0]).toEqual(mockWidget);
+    expect(result[1]?.widgets).toHaveLength(0);
   });
 
   it('should not modify other tabs', () => {
     const result = addWidgetToTab(mockTabs, 'tab-1', mockWidget);
 
     expect(result[1]).toEqual(mockTabs[1]);
-    expect(result[1].widgets).toHaveLength(0);
+    expect(result[1]?.widgets).toHaveLength(0);
   });
 
   it('should handle non-existent tab ID gracefully', () => {
     const result = addWidgetToTab(mockTabs, 'non-existent-tab', mockWidget);
 
-    expect(result[0].widgets).toHaveLength(0);
-    expect(result[1].widgets).toHaveLength(0);
+    expect(result[0]?.widgets).toHaveLength(0);
+    expect(result[1]?.widgets).toHaveLength(0);
   });
 
   it('should add multiple widgets to the same tab', () => {
@@ -135,17 +139,17 @@ describe('addWidgetToTab', () => {
     let result = addWidgetToTab(mockTabs, 'tab-1', mockWidget);
     result = addWidgetToTab(result, 'tab-1', secondWidget);
 
-    expect(result[0].widgets).toHaveLength(2);
-    expect(result[0].widgets?.[0]).toEqual(mockWidget);
-    expect(result[0].widgets?.[1]).toEqual(secondWidget);
+    expect(result[0]?.widgets).toHaveLength(2);
+    expect(result[0]?.widgets?.[0]).toEqual(mockWidget);
+    expect(result[0]?.widgets?.[1]).toEqual(secondWidget);
   });
 
   it('should return a new array without mutating the original', () => {
     const result = addWidgetToTab(mockTabs, 'tab-1', mockWidget);
 
     expect(result).not.toBe(mockTabs);
-    expect(mockTabs[0].widgets).toHaveLength(0);
-    expect(result[0].widgets).toHaveLength(1);
+    expect(mockTabs[0]?.widgets).toHaveLength(0);
+    expect(result[0]?.widgets).toHaveLength(1);
   });
 
   it('should normalize an appended widget before a viewport-filling widget in a vertical-list tab', () => {
@@ -155,18 +159,18 @@ describe('addWidgetToTab', () => {
       type: WidgetType.TIMELINE,
     };
     const verticalListTab = {
-      ...mockTabs[0],
+      ...firstMockTab,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [timelineWidget],
     };
 
     const result = addWidgetToTab([verticalListTab], 'tab-1', mockWidget);
 
-    expect(result[0].widgets.map(({ id }) => id)).toEqual([
+    expect(result[0]?.widgets.map(({ id }) => id)).toEqual([
       'widget-1',
       'timeline-widget',
     ]);
-    expect(result[0].widgets.map(({ position }) => position)).toEqual([
+    expect(result[0]?.widgets.map(({ position }) => position)).toEqual([
       {
         __typename: 'PageLayoutWidgetVerticalListPosition',
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -200,7 +204,7 @@ describe('addWidgetToTab', () => {
       },
     };
     const verticalListTab = {
-      ...mockTabs[0],
+      ...firstMockTab,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [widgetA, widgetB],
     };
@@ -211,7 +215,7 @@ describe('addWidgetToTab', () => {
 
     const result = addWidgetToTab([verticalListTab], 'tab-1', newWidget);
 
-    expect(result[0].widgets.map(({ id }) => id)).toEqual([
+    expect(result[0]?.widgets.map(({ id }) => id)).toEqual([
       'widget-b',
       'widget-a',
       'widget-c',

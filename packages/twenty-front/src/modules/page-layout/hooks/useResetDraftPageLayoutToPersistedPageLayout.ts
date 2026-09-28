@@ -107,8 +107,10 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
         isDefined(currentActiveTabId) &&
         persistedTabIds.includes(currentActiveTabId);
 
-      if (!isActiveTabInPersistedTabs && pageLayoutPersisted.tabs.length > 0) {
-        store.set(activeTabId, pageLayoutPersisted.tabs[0].id);
+      const firstPersistedTab = pageLayoutPersisted.tabs[0];
+
+      if (!isActiveTabInPersistedTabs && isDefined(firstPersistedTab)) {
+        store.set(activeTabId, firstPersistedTab.id);
       }
 
       store.set(pageLayoutDraftState, toDraftPageLayout(pageLayoutPersisted));

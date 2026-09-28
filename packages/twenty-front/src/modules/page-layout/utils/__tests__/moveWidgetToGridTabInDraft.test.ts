@@ -59,13 +59,13 @@ describe('moveWidgetToGridTabInDraft', () => {
       destinationTabId: 'tab-2',
     });
 
-    expect(result.tabs[0].widgets).toHaveLength(0);
-    expect(result.tabs[1].widgets.map((widget) => widget.id)).toEqual([
+    expect(result.tabs[0]?.widgets).toHaveLength(0);
+    expect(result.tabs[1]?.widgets.map((widget) => widget.id)).toEqual([
       'widget-b',
       'widget-a',
     ]);
 
-    const movedWidget = result.tabs[1].widgets.find(
+    const movedWidget = result.tabs[1]?.widgets.find(
       (widget) => widget.id === 'widget-a',
     );
     expect(movedWidget?.pageLayoutTabId).toBe('tab-2');
@@ -99,7 +99,7 @@ describe('moveWidgetToGridTabInDraft', () => {
       destinationTabId: 'tab-2',
     });
 
-    const movedWidget = result.tabs[1].widgets[0];
+    const movedWidget = result.tabs[1]?.widgets[0];
     expect(movedWidget?.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition' as const,
       layoutMode: PageLayoutTabLayoutMode.GRID,

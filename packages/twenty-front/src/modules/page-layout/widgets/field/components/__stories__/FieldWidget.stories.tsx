@@ -924,12 +924,12 @@ const generateMockPersonRecords = (count: number) => {
       __typename: 'Person',
       name: {
         __typename: 'FullName',
-        firstName: nameInfo.firstName,
-        lastName: `${nameInfo.lastName} ${index + 1}`,
+        firstName: nameInfo?.firstName,
+        lastName: `${nameInfo?.lastName} ${index + 1}`,
       },
       emails: {
         __typename: 'Emails',
-        primaryEmail: `${nameInfo.firstName.toLowerCase()}.${nameInfo.lastName.toLowerCase()}${index + 1}@example.com`,
+        primaryEmail: `${nameInfo?.firstName.toLowerCase()}.${nameInfo?.lastName.toLowerCase()}${index + 1}@example.com`,
         additionalEmails: [],
       },
       phones: {

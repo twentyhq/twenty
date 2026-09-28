@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
@@ -82,8 +83,11 @@ export const useDeleteFieldsWidgetEditorGroup = ({
         (group) => group.position > deletedGroupPosition,
       );
 
-      const targetGroup =
-        nextGroup ?? sortedRemaining[sortedRemaining.length - 1];
+      const targetGroup = nextGroup ?? sortedRemaining.at(-1);
+
+      if (!isDefined(targetGroup)) {
+        return;
+      }
 
       store.set(fieldsWidgetGroupsDraftState, (prev) => ({
         ...prev,

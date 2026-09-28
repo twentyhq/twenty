@@ -13,6 +13,7 @@ import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-dro
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type DragStartEvent =
   DragDropProviderDragStartEvent<FieldsConfigurationDndData>;
@@ -88,9 +89,10 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
       return;
     }
 
-    const reorderedGroupIds = sortedGroups.map((group) => group.id);
-    const [movedGroupId] = reorderedGroupIds.splice(sourceIndex, 1);
-    reorderedGroupIds.splice(destinationIndex, 0, movedGroupId);
+    const reorderedGroupIds = moveArrayItem(
+      sortedGroups.map((group) => group.id),
+      { fromIndex: sourceIndex, toIndex: destinationIndex },
+    );
 
     reorderGroups(reorderedGroupIds);
   };

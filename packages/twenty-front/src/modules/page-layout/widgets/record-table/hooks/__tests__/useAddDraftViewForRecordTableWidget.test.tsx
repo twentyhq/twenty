@@ -118,7 +118,7 @@ describe('useAddDraftViewForRecordTableWidget', () => {
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
       }),
-    )[WIDGET_ID].view.id;
+    )[WIDGET_ID]?.view.id;
 
     expect(updatedWidget?.configuration).toEqual({
       configurationType: WidgetConfigurationType.RECORD_TABLE,

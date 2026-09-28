@@ -8,6 +8,7 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 let mockActiveTabId = 'hidden-transcript-tab-id';
 let mockPrerenderedTabIds: string[] = [];
@@ -283,6 +284,7 @@ describe('PageLayoutTabsRenderer', () => {
     });
     const sidePanelScrollWrapper = screen.getAllByTestId('scroll-wrapper')[1];
 
+    assertIsDefinedOrThrow(sidePanelScrollWrapper);
     expect(sidePanelScrollWrapper.id).not.toBe(mainViewScrollWrapper.id);
 
     sidePanelScrollWrapper.scrollTop = 200;
@@ -291,6 +293,6 @@ describe('PageLayoutTabsRenderer', () => {
     rerender(<PageLayoutTabsRenderer />);
 
     expect(mainViewScrollWrapper.scrollTop).toBe(200);
-    expect(sidePanelScrollWrapper.scrollTop).toBe(0);
+    expect(sidePanelScrollWrapper?.scrollTop).toBe(0);
   });
 });

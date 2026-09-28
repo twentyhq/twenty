@@ -114,10 +114,10 @@ describe('computeBarPositions', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].indexValue).toBe('A');
-    expect(result[0].seriesId).toBe('value1');
-    expect(result[0].value).toBe(50);
-    expect(result[0].color).toBe('redSolid');
+    expect(result[0]?.indexValue).toBe('A');
+    expect(result[0]?.seriesId).toBe('value1');
+    expect(result[0]?.value).toBe(50);
+    expect(result[0]?.color).toBe('redSolid');
   });
 
   it('stacks bars in stacked mode', () => {
@@ -161,8 +161,8 @@ describe('computeBarPositions', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].x).toBe(0);
-    expect(result[0].width).toBe(
+    expect(result[0]?.x).toBe(0);
+    expect(result[0]?.width).toBe(
       chartWidth - defaultMargins.left - defaultMargins.right,
     );
   });

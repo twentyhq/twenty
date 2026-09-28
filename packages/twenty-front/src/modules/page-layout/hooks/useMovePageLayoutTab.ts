@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
@@ -27,18 +28,14 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           prev.tabs.filter((tab) => tab.isActive),
         );
         const index = sortedActiveTabs.findIndex((tab) => tab.id === tabId);
-        const neighborIndex = index + offset;
+        const currentTab = sortedActiveTabs[index];
+        const neighborTab = sortedActiveTabs[index + offset];
 
-        if (
-          index < 0 ||
-          neighborIndex < 0 ||
-          neighborIndex >= sortedActiveTabs.length
-        ) {
+        if (!isDefined(currentTab) || !isDefined(neighborTab)) {
           return prev;
         }
 
-        const neighborTab = sortedActiveTabs[neighborIndex];
-        const currentPosition = sortedActiveTabs[index].position;
+        const currentPosition = currentTab.position;
 
         return {
           ...prev,

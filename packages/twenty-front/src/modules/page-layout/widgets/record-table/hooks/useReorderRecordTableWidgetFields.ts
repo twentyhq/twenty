@@ -5,6 +5,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type UseReorderRecordTableWidgetFieldsParams = {
   pageLayoutId: string;
@@ -32,9 +33,10 @@ export const useReorderRecordTableWidgetFields = ({
         return;
       }
 
-      const reorderedFields = [...visibleFieldItems];
-      const [movedField] = reorderedFields.splice(sourceIndex, 1);
-      reorderedFields.splice(destinationIndex, 0, movedField);
+      const reorderedFields = moveArrayItem(visibleFieldItems, {
+        fromIndex: sourceIndex,
+        toIndex: destinationIndex,
+      });
 
       const updatedPositions = new Map(
         reorderedFields.map((fieldItem, index) => [

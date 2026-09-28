@@ -144,7 +144,12 @@ export const useFieldsWidgetEditorGroupsData = ({
         };
       });
 
-      const lastGroup = groups[groups.length - 1];
+      const lastGroup = groups.at(-1);
+
+      if (!isDefined(lastGroup)) {
+        return { groups, ungroupedFields: [], editorMode: 'grouped' };
+      }
+
       const lastFieldPosition =
         lastGroup.fields.length > 0
           ? Math.max(...lastGroup.fields.map((f) => f.position)) + 1

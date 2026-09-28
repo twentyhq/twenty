@@ -54,8 +54,8 @@ describe('transformPageLayout', () => {
 
     const result = transformPageLayout(layout);
 
-    expect(result.tabs[0].id).toBe('tab-1');
-    expect(result.tabs[1].id).toBe('tab-2');
+    expect(result.tabs[0]?.id).toBe('tab-1');
+    expect(result.tabs[1]?.id).toBe('tab-2');
   });
 
   it('should default widgets to empty array when null', () => {
@@ -77,7 +77,7 @@ describe('transformPageLayout', () => {
 
     const result = transformPageLayout(layout);
 
-    expect(result.tabs[0].widgets).toEqual([]);
+    expect(result.tabs[0]?.widgets).toEqual([]);
   });
 
   it('should preserve existing widgets', () => {
@@ -105,7 +105,7 @@ describe('transformPageLayout', () => {
 
     const result = transformPageLayout(layout);
 
-    expect(result.tabs[0].widgets).toHaveLength(1);
-    expect(result.tabs[0].widgets[0].id).toBe('w1');
+    expect(result.tabs[0]?.widgets).toHaveLength(1);
+    expect(result.tabs[0]?.widgets[0]?.id).toBe('w1');
   });
 });

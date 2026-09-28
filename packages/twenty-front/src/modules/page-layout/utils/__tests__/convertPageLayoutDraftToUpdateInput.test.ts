@@ -68,8 +68,8 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.type).toBe(PageLayoutType.RECORD_PAGE);
     expect(result.objectMetadataId).toBe('obj-1');
     expect(result.tabs).toHaveLength(1);
-    expect(result.tabs[0].widgets).toHaveLength(1);
-    expect(result.tabs[0].widgets[0].id).toBe('w1');
+    expect(result.tabs[0]?.widgets).toHaveLength(1);
+    expect(result.tabs[0]?.widgets[0]?.id).toBe('w1');
   });
 
   it('should handle multiple widget types', () => {
@@ -83,8 +83,8 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets).toHaveLength(2);
-    expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
+    expect(result.tabs[0]?.widgets).toHaveLength(2);
+    expect(result.tabs[0]?.widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
   });
 
   it('should map position correctly', () => {
@@ -103,14 +103,14 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 2,
       column: 3,
       rowSpan: 4,
       columnSpan: 5,
     });
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: 'GRID',
       row: 2,
       column: 3,
@@ -137,7 +137,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].icon).toBe('IconHome');
+    expect(result.tabs[0]?.icon).toBe('IconHome');
   });
 
   it('should send null icon when tab icon is undefined', () => {
@@ -145,7 +145,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].icon).toBeNull();
+    expect(result.tabs[0]?.icon).toBeNull();
   });
 
   it('should handle multiple tabs', () => {
@@ -157,8 +157,8 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
     expect(result.tabs).toHaveLength(2);
-    expect(result.tabs[0].id).toBe('tab-1');
-    expect(result.tabs[1].id).toBe('tab-2');
+    expect(result.tabs[0]?.id).toBe('tab-1');
+    expect(result.tabs[1]?.id).toBe('tab-2');
   });
 
   it('should keep all widgets when multiple widget types exist', () => {
@@ -178,8 +178,12 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets).toHaveLength(3);
-    expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w3', 'w2']);
+    expect(result.tabs[0]?.widgets).toHaveLength(3);
+    expect(result.tabs[0]?.widgets.map((w) => w.id)).toEqual([
+      'w1',
+      'w3',
+      'w2',
+    ]);
   });
 
   it('should produce VERTICAL_LIST position with index from widget.position when tab is VERTICAL_LIST', () => {
@@ -197,7 +201,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: 3,
     });
@@ -219,7 +223,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: 0,
       heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
@@ -244,7 +248,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[1].position).toEqual({
+    expect(result.tabs[0]?.widgets[1]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: 1,
     });
@@ -260,7 +264,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
     });
   });
@@ -280,7 +284,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
     });
   });
@@ -295,7 +299,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 1,
       column: 2,
@@ -322,7 +326,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 5,
       column: 6,
@@ -345,7 +349,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
@@ -388,14 +392,14 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].position).toEqual({
+    expect(result.tabs[0]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: 0,
     });
-    expect(result.tabs[1].widgets[0].position).toEqual({
+    expect(result.tabs[1]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
     });
-    expect(result.tabs[2].widgets[0].position).toEqual({
+    expect(result.tabs[2]?.widgets[0]?.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 1,
       column: 0,

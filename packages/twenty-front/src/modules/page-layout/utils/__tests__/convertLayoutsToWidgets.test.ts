@@ -80,7 +80,7 @@ describe('convertLayoutsToWidgets', () => {
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
 
-    expect(result[0].position).toEqual({
+    expect(result[0]?.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition' as const,
       layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 2,
@@ -88,7 +88,7 @@ describe('convertLayoutsToWidgets', () => {
       columnSpan: 4,
       rowSpan: 5,
     });
-    expect(result[0].position).toEqual({
+    expect(result[0]?.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 2,
@@ -96,7 +96,7 @@ describe('convertLayoutsToWidgets', () => {
       columnSpan: 4,
       rowSpan: 5,
     });
-    expect(result[1].position).toEqual({
+    expect(result[1]?.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition' as const,
       layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 6,
@@ -104,7 +104,7 @@ describe('convertLayoutsToWidgets', () => {
       columnSpan: 8,
       rowSpan: 9,
     });
-    expect(result[1].position).toEqual({
+    expect(result[1]?.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 6,
@@ -121,7 +121,7 @@ describe('convertLayoutsToWidgets', () => {
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
 
-    expect(result[1].position).toEqual({
+    expect(result[1]?.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition' as const,
       layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 0,
@@ -138,7 +138,7 @@ describe('convertLayoutsToWidgets', () => {
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
 
-    expect(result[0].position).toEqual({
+    expect(result[0]?.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition' as const,
       layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 0,

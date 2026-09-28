@@ -2,6 +2,7 @@ import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPane
 import { render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 let mockTargetRecordIdentifier = {
   id: 'record-id',
@@ -130,6 +131,7 @@ describe('PageLayoutLeftPanel', () => {
       'pinned-scroll-wrapper',
     )[1];
 
+    assertIsDefinedOrThrow(sidePanelScrollWrapper);
     expect(sidePanelScrollWrapper.id).not.toBe(mainViewScrollWrapper.id);
 
     sidePanelScrollWrapper.scrollTop = 200;
@@ -146,6 +148,6 @@ describe('PageLayoutLeftPanel', () => {
     );
 
     expect(mainViewScrollWrapper.scrollTop).toBe(200);
-    expect(sidePanelScrollWrapper.scrollTop).toBe(0);
+    expect(sidePanelScrollWrapper?.scrollTop).toBe(0);
   });
 });

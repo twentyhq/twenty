@@ -49,9 +49,8 @@ export const buildGroupByFieldObject = ({
       return { [`${field.name}Id`]: true };
     }
 
-    const parts = subFieldName.split('.');
-    const nestedFieldName = parts[0];
-    const nestedSubFieldName = parts[1];
+    const [nestedFieldName = subFieldName, nestedSubFieldName] =
+      subFieldName.split('.');
 
     if (isNestedDateField === true) {
       const usedDateGranularity =

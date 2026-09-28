@@ -93,12 +93,12 @@ describe('useMovePageLayoutWidget', () => {
           result.current.movePageLayoutWidget(movedWidgetId, direction);
         });
 
-        const widgets = store.get(getDraftAtom()).tabs[0].widgets;
+        const widgets = store.get(getDraftAtom()).tabs[0]?.widgets;
 
-        const widgetAPosition = widgets.find(
+        const widgetAPosition = widgets?.find(
           (widget) => widget.id === 'widget-a',
         )?.position;
-        const widgetBPosition = widgets.find(
+        const widgetBPosition = widgets?.find(
           (widget) => widget.id === 'widget-b',
         )?.position;
 
@@ -126,13 +126,13 @@ describe('useMovePageLayoutWidget', () => {
 
         const draft = store.get(getDraftAtom());
 
-        expect(draft.tabs[0].widgets.map((widget) => widget.id)).toEqual([
+        expect(draft.tabs[0]?.widgets.map((widget) => widget.id)).toEqual([
           'widget-b',
           'widget-a',
           'timeline-widget',
         ]);
         expect(
-          draft.tabs[0].widgets.map((widget) =>
+          draft.tabs[0]?.widgets.map((widget) =>
             widget.position && 'index' in widget.position
               ? widget.position.index
               : undefined,
@@ -216,7 +216,7 @@ describe('useMovePageLayoutWidget', () => {
           result.current.movePageLayoutWidget(movedWidgetId, direction);
         });
 
-        expect(store.get(getDraftAtom()).tabs[1].widgets[0].id).toBe(
+        expect(store.get(getDraftAtom()).tabs[1]?.widgets[0]?.id).toBe(
           'widget-x',
         );
       });
