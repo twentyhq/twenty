@@ -10,7 +10,7 @@
     "README.md",
     "CHANGELOG.md",
     "package.json",
-    "docs/tooling.md"
+    "docs/build.md"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build"
@@ -64,12 +64,12 @@
       "import": "./dist/front-component-renderer/build.mjs",
       "require": "./dist/front-component-renderer/build.cjs"
     },
-    "./tooling": {
-      "types": "./dist/tooling/index.d.ts",
-      "import": "./dist/tooling.mjs",
-      "require": "./dist/tooling.cjs"
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build.mjs",
+      "require": "./dist/build.cjs"
     },
-    "./tooling/descriptor.json": "./dist/tooling/descriptor.json"
+    "./build/descriptor.json": "./dist/build/descriptor.json"
   },
   "license": "MIT",
   "dependencies": {
@@ -144,8 +144,8 @@
       "front-component-renderer/build": [
         "dist/front-component-renderer/build/index.d.ts"
       ],
-      "tooling": [
-        "dist/tooling/index.d.ts"
+      "build": [
+        "dist/build/index.d.ts"
       ]
     }
   }

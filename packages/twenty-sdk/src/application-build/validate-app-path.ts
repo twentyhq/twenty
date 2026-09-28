@@ -1,10 +1,11 @@
 import { stat } from 'node:fs/promises';
 import { isAbsolute } from 'node:path';
-import { type ToolingResult } from '@/tooling/types';
+
+import { type BuildResult } from '@/application-build/types';
 
 export const validateAppPath = async (
   appPath: string,
-): Promise<ToolingResult<null>> => {
+): Promise<BuildResult<null>> => {
   if (
     isAbsolute(appPath) &&
     (await stat(appPath).catch(() => null))?.isDirectory()

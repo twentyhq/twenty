@@ -1,13 +1,13 @@
 import { join, relative } from 'node:path';
 import ts from 'typescript';
-import {
-  type ToolingDiagnostic,
-  type ToolingOperationOptions,
-  type ToolingResult,
-} from '@/tooling/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { validateAppPath } from '@/tooling/validate-app-path';
+import {
+  type BuildDiagnostic,
+  type BuildOperationOptions,
+  type BuildResult,
+} from '@/application-build/types';
+import { validateAppPath } from '@/application-build/validate-app-path';
 
 const toDiagnostic = ({
   diagnostic,
@@ -15,7 +15,7 @@ const toDiagnostic = ({
 }: {
   diagnostic: ts.Diagnostic;
   appPath: string;
-}): ToolingDiagnostic => {
+}): BuildDiagnostic => {
   const position =
     isDefined(diagnostic.file) && isDefined(diagnostic.start)
       ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start)
@@ -73,7 +73,7 @@ const collectCompilerDiagnostics = ({
 export const typecheckApplication = async ({
   appPath,
   signal,
-}: ToolingOperationOptions): Promise<ToolingResult<null>> => {
+}: BuildOperationOptions): Promise<BuildResult<null>> => {
   const validation = await validateAppPath(appPath);
 
   if (!validation.success) {

@@ -3,9 +3,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { tooling } from '@/tooling';
+import { typecheckApp } from '@/application-build';
 
-describe('tooling.typecheck', () => {
+describe('typecheckApp', () => {
   let appPath: string;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe('tooling.typecheck', () => {
   });
 
   it('checks valid code without emitting JavaScript or declarations', async () => {
-    expect(await tooling.typecheck({ appPath })).toEqual({
+    expect(await typecheckApp({ appPath })).toEqual({
       success: true,
       data: null,
       diagnostics: [],
@@ -42,7 +42,7 @@ describe('tooling.typecheck', () => {
       'export const broken: number = "bad";',
     );
 
-    expect(await tooling.typecheck({ appPath })).toMatchObject({
+    expect(await typecheckApp({ appPath })).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: [
@@ -60,7 +60,7 @@ describe('tooling.typecheck', () => {
   it('fails when tsconfig.json is missing', async () => {
     await rm(join(appPath, 'tsconfig.json'));
 
-    expect(await tooling.typecheck({ appPath })).toMatchObject({
+    expect(await typecheckApp({ appPath })).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: [{ severity: 'error', code: 'TS5083' }],
@@ -73,7 +73,7 @@ describe('tooling.typecheck', () => {
       JSON.stringify({ compilerOptions: { target: 'invalid-target' } }),
     );
 
-    expect(await tooling.typecheck({ appPath })).toMatchObject({
+    expect(await typecheckApp({ appPath })).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: expect.arrayContaining([
@@ -104,7 +104,7 @@ describe('tooling.typecheck', () => {
       }),
     );
 
-    const result = await tooling.typecheck({ appPath });
+    const result = await typecheckApp({ appPath });
 
     expect(result).toMatchObject({
       success: false,
@@ -125,12 +125,12 @@ describe('tooling.typecheck', () => {
 
   it('returns a structured cancellation before checking', async () => {
     expect(
-      await tooling.typecheck({ appPath, signal: AbortSignal.abort() }),
+      await typecheckApp({ appPath, signal: AbortSignal.abort() }),
     ).toMatchObject({ success: false, error: { code: 'CANCELLED' } });
   });
 
   it('rejects relative application paths', async () => {
-    expect(await tooling.typecheck({ appPath: 'relative-app' })).toMatchObject({
+    expect(await typecheckApp({ appPath: 'relative-app' })).toMatchObject({
       success: false,
       error: { code: 'INVALID_APP_PATH' },
     });

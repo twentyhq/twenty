@@ -5,9 +5,9 @@ import { compileApplication } from '@/cli/utilities/build/common/compile-applica
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
-import { type ToolingErrorCode } from '@/tooling/types';
+import { type BuildErrorCode } from '@/application-build/types';
 
-const COMPILATION_ERROR_CODE_MAP: Partial<Record<ToolingErrorCode, string>> = {
+const COMPILATION_ERROR_CODE_MAP: Partial<Record<BuildErrorCode, string>> = {
   MANIFEST_BUILD_FAILED: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
   TYPECHECK_FAILED: APP_ERROR_CODES.TYPECHECK_FAILED,
 };

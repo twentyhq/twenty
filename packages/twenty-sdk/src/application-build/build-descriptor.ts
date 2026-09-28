@@ -1,8 +1,8 @@
-import { type ToolingDescriptor } from '@/tooling/types';
+import { type BuildDescriptor } from '@/application-build/types';
 
 import packageJson from '../../package.json';
 
-export const TOOLING_DESCRIPTOR: ToolingDescriptor = {
+export const BUILD_DESCRIPTOR: BuildDescriptor = {
   protocolVersion: 1,
   sdkVersion: packageJson.version,
   requiredNode: packageJson.engines.node,

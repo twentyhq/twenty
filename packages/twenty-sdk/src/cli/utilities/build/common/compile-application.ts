@@ -1,6 +1,9 @@
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
-import { type ToolingDiagnostic, type ToolingResult } from '@/tooling/types';
 
+import {
+  type BuildDiagnostic,
+  type BuildResult,
+} from '@/application-build/types';
 import {
   buildApplication,
   type BuiltFileInfo,
@@ -10,7 +13,7 @@ import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-a
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
-import { typecheckApplication } from '@/tooling/typecheck-application';
+import { typecheckApplication } from '@/application-build/typecheck-application';
 
 export const compileApplication = async ({
   appPath,
@@ -29,12 +32,12 @@ export const compileApplication = async ({
   signal?: AbortSignal;
   typecheck?: typeof typecheckApplication;
 }): Promise<
-  ToolingResult<{
+  BuildResult<{
     manifest: Manifest;
     builtFileInfos: Map<string, BuiltFileInfo>;
   }>
 > => {
-  const diagnostics: ToolingDiagnostic[] = [];
+  const diagnostics: BuildDiagnostic[] = [];
   const warn = (message: string) => {
     diagnostics.push({ severity: 'warning', code: 'BUILD_WARNING', message });
     onProgress?.(`⚠ ${message}`);

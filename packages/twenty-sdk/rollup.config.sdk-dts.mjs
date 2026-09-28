@@ -19,8 +19,8 @@ const plugins = [
 
 export default [
   {
-    input: 'src/tooling/index.ts',
-    output: { file: 'dist/tooling/index.d.ts', format: 'es' },
+    input: 'src/application-build/index.ts',
+    output: { file: 'dist/build/index.d.ts', format: 'es' },
     external,
     plugins,
   },

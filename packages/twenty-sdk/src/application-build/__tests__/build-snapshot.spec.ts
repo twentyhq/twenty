@@ -13,7 +13,7 @@ import {
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
-import { type ToolingBuildSnapshot } from '@/tooling/types';
+import { type BuildSnapshot } from '@/application-build/types';
 import {
   afterAll,
   afterEach,
@@ -27,17 +27,17 @@ import {
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { appBuild } from '@/cli/operations/build';
 import { pathExists } from '@/cli/utilities/file/fs-utils';
-import { tooling } from '@/tooling';
+import { buildAppSnapshot, releaseAppSnapshot } from '@/application-build';
 
-describe('tooling.build snapshots', () => {
+describe('buildAppSnapshot snapshots', () => {
   let appPath: string;
-  let first: ToolingBuildSnapshot;
-  let second: ToolingBuildSnapshot;
+  let first: BuildSnapshot;
+  let second: BuildSnapshot;
   let originalTsconfig: string;
-  const snapshots: ToolingBuildSnapshot[] = [];
+  const snapshots: BuildSnapshot[] = [];
 
   const build = async () => {
-    const result = await tooling.build({ appPath });
+    const result = await buildAppSnapshot({ appPath });
 
     if (!result.success) {
       throw new Error(JSON.stringify(result));
@@ -90,7 +90,7 @@ describe('tooling.build snapshots', () => {
 
   afterAll(async () => {
     for (const snapshot of snapshots) {
-      await tooling.releaseSnapshot({ buildId: snapshot.buildId });
+      await releaseAppSnapshot({ buildId: snapshot.buildId });
     }
 
     vi.unstubAllGlobals();
@@ -175,17 +175,19 @@ describe('tooling.build snapshots', () => {
         first.files.map((file) => readFile(join(first.directory, file.path))),
       ),
     ).toEqual(retainedBytes);
-    expect(await tooling.releaseSnapshot({ buildId: changed.buildId })).toEqual(
-      { success: true, data: null, diagnostics: [] },
-    );
+    expect(await releaseAppSnapshot({ buildId: changed.buildId })).toEqual({
+      success: true,
+      data: null,
+      diagnostics: [],
+    });
     expect(await pathExists(dirname(changed.directory))).toBe(false);
     expect(await pathExists(first.directory)).toBe(true);
     expect(await pathExists(second.directory)).toBe(true);
     expect(
-      await tooling.releaseSnapshot({ buildId: changed.buildId }),
+      await releaseAppSnapshot({ buildId: changed.buildId }),
     ).toMatchObject({ success: false, error: { code: 'SNAPSHOT_NOT_FOUND' } });
     expect(
-      await tooling.releaseSnapshot({ buildId: 'unowned-build' }),
+      await releaseAppSnapshot({ buildId: 'unowned-build' }),
     ).toMatchObject({ success: false, error: { code: 'SNAPSHOT_NOT_FOUND' } });
     expect(await pathExists(first.directory)).toBe(true);
   }, 120000);
@@ -199,7 +201,7 @@ describe('tooling.build snapshots', () => {
       'export const broken: number = "bad";',
     );
 
-    expect(await tooling.build({ appPath })).toMatchObject({
+    expect(await buildAppSnapshot({ appPath })).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: expect.arrayContaining([
@@ -212,12 +214,38 @@ describe('tooling.build snapshots', () => {
     expect(await pathExists(first.directory)).toBe(true);
   }, 120000);
 
+  it('preserves existing app files and output folders when releasing a snapshot', async () => {
+    const existingPaths = [
+      join(appPath, 'keep.txt'),
+      join(appPath, '.twenty', 'output', 'keep.txt'),
+      join(appPath, '.twenty', 'snapshots', 'build-existing', 'keep.txt'),
+    ];
+
+    for (const filePath of existingPaths) {
+      await mkdir(dirname(filePath), { recursive: true });
+      await writeFile(filePath, 'existing content');
+    }
+
+    const snapshot = await build();
+
+    expect(await releaseAppSnapshot({ buildId: snapshot.buildId })).toEqual({
+      success: true,
+      data: null,
+      diagnostics: [],
+    });
+    expect(await pathExists(dirname(snapshot.directory))).toBe(false);
+
+    for (const filePath of existingPaths) {
+      expect(await readFile(filePath, 'utf8')).toBe('existing content');
+    }
+  }, 120000);
+
   it('does not create output for a cancelled build', async () => {
     const snapshotsDirectory = join(appPath, '.twenty', 'snapshots');
     const directoriesBefore = (await readdir(snapshotsDirectory)).sort();
 
     expect(
-      await tooling.build({ appPath, signal: AbortSignal.abort() }),
+      await buildAppSnapshot({ appPath, signal: AbortSignal.abort() }),
     ).toMatchObject({ success: false, error: { code: 'CANCELLED' } });
     expect((await readdir(snapshotsDirectory)).sort()).toEqual(
       directoriesBefore,
@@ -249,7 +277,7 @@ describe('tooling.build snapshots', () => {
       }),
     );
 
-    expect(await tooling.build({ appPath })).toMatchObject({
+    expect(await buildAppSnapshot({ appPath })).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: expect.arrayContaining([

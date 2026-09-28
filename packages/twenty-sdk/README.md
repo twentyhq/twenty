@@ -34,7 +34,7 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 
 Guides in this repository:
 
-- [Programmatic build tooling](./docs/tooling.md), local builds and typechecking for scripts and integrations
+- [Programmatic application builds](./docs/build.md), local builds and typechecking for scripts and integrations
 - [Logic function inputs](./docs/logic-function-inputs.md) — input schema inference, record-typed inputs, and the id contract
 
 ## Manual installation
