@@ -2,5 +2,6 @@ import { type CacheLockOptions } from 'src/engine/core-modules/cache-lock/cache-
 
 export const ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS = {
   ttl: 30_000,
-  maxRetries: 300,
+  ms: 200,
+  maxRetries: 200,
 } satisfies CacheLockOptions;
