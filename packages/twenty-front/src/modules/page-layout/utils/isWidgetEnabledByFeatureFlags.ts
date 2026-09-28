@@ -1,13 +1,9 @@
 import { WIDGET_TYPE_REQUIRED_FEATURE_FLAG } from '@/page-layout/constants/WidgetTypeRequiredFeatureFlag';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { splitAvailabilityExpression } from '@/page-layout/utils/splitAvailabilityExpression';
-import {
-  evaluateConditionalAvailabilityExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type IsWidgetEnabledByFeatureFlagsParams = {
-  widget: Pick<PageLayoutWidget, 'type' | 'conditionalAvailabilityExpression'>;
+  widget: Pick<PageLayoutWidget, 'type'>;
   featureFlags: Record<string, boolean>;
 };
 
@@ -19,19 +15,8 @@ export const isWidgetEnabledByFeatureFlags = ({
 }: IsWidgetEnabledByFeatureFlagsParams): boolean => {
   const requiredFeatureFlag = WIDGET_TYPE_REQUIRED_FEATURE_FLAG[widget.type];
 
-  if (isDefined(requiredFeatureFlag) && !featureFlags[requiredFeatureFlag]) {
-    return false;
-  }
-
-  const { featureFlagCondition } = splitAvailabilityExpression(
-    widget.conditionalAvailabilityExpression,
+  return (
+    !isDefined(requiredFeatureFlag) ||
+    featureFlags[requiredFeatureFlag] === true
   );
-
-  if (!isDefined(featureFlagCondition)) {
-    return true;
-  }
-
-  return evaluateConditionalAvailabilityExpression(featureFlagCondition, {
-    featureFlags,
-  });
 };

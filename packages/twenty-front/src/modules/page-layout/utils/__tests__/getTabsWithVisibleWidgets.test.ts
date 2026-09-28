@@ -444,37 +444,24 @@ describe('getTabsWithVisibleWidgets', () => {
     });
   });
   describe('with feature flags', () => {
-    const FLAG_ON_EXPRESSION = 'featureFlags.IS_CONVERSATIONS_TAB_ENABLED';
-    const FLAG_OFF_EXPRESSION = 'not featureFlags.IS_CONVERSATIONS_TAB_ENABLED';
-
-    const createGatedWidget = (
+    const createChatThreadsWidget = (
       id: string,
-      conditionalAvailabilityExpression: string | null,
-      type: WidgetType = WidgetType.FIELDS,
     ): PageLayoutTab['widgets'][0] => ({
       ...createMockWidget(id),
-      type,
-      conditionalAvailabilityExpression,
+      type: WidgetType.CHAT_THREADS,
     });
 
     const buildTabs = () => [
-      createMockTab('emails', [
-        createGatedWidget('emails-widget', FLAG_OFF_EXPRESSION),
-      ]),
-      createMockTab('messages', [
-        createGatedWidget('messages-emails-widget', FLAG_ON_EXPRESSION),
-        createGatedWidget(
-          'messages-conversations-widget',
-          FLAG_ON_EXPRESSION,
-          WidgetType.CHAT_THREADS,
-        ),
+      createMockTab('emails', [createMockWidget('emails-widget')]),
+      createMockTab('conversations', [
+        createChatThreadsWidget('conversations-widget'),
       ]),
     ];
 
     const getRenderedWidgetIds = (tabs: PageLayoutTab[]) =>
       tabs.map((tab) => [tab.id, tab.widgets.map((widget) => widget.id)]);
 
-    it('should show the flag-off variant while the flag is off', () => {
+    it('should hide the conversations tab while the flag is off', () => {
       const result = getTabsWithVisibleWidgets({
         tabs: buildTabs(),
         isEditMode: false,
@@ -489,7 +476,7 @@ describe('getTabsWithVisibleWidgets', () => {
       ]);
     });
 
-    it('should show the flag-on variant while the flag is on', () => {
+    it('should show the conversations tab while the flag is on', () => {
       const result = getTabsWithVisibleWidgets({
         tabs: buildTabs(),
         isEditMode: false,
@@ -501,18 +488,19 @@ describe('getTabsWithVisibleWidgets', () => {
       });
 
       expect(getRenderedWidgetIds(result)).toEqual([
-        [
-          'messages',
-          ['messages-emails-widget', 'messages-conversations-widget'],
-        ],
+        ['emails', ['emails-widget']],
+        ['conversations', ['conversations-widget']],
       ]);
     });
 
-    it('should apply flag conditions in edit mode but keep device conditions and empty tabs', () => {
+    it('should apply feature flags in edit mode but keep device conditions and empty tabs', () => {
       const tabs = [
         ...buildTabs(),
         createMockTab('mobile-only', [
-          createGatedWidget('mobile-widget', 'device == "MOBILE"'),
+          {
+            ...createMockWidget('mobile-widget'),
+            conditionalAvailabilityExpression: 'device == "MOBILE"',
+          },
         ]),
         createMockTab('empty', []),
       ];
@@ -535,13 +523,18 @@ describe('getTabsWithVisibleWidgets', () => {
     });
 
     it('should keep a tab in edit mode once the edit leaves it with only flag-gated widgets', () => {
-      const notesWidget = createGatedWidget('notes-widget', FLAG_ON_EXPRESSION);
+      const conversationsWidget = createChatThreadsWidget(
+        'conversations-widget',
+      );
       const persistedTabs = [
-        createMockTab('files', [notesWidget, createMockWidget('files-widget')]),
+        createMockTab('emails', [
+          conversationsWidget,
+          createMockWidget('emails-widget'),
+        ]),
       ];
 
       const result = getTabsWithVisibleWidgets({
-        tabs: [createMockTab('files', [notesWidget])],
+        tabs: [createMockTab('emails', [conversationsWidget])],
         persistedTabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
@@ -550,18 +543,14 @@ describe('getTabsWithVisibleWidgets', () => {
         }),
       });
 
-      expect(getRenderedWidgetIds(result)).toEqual([['files', []]]);
+      expect(getRenderedWidgetIds(result)).toEqual([['emails', []]]);
     });
 
     it('should hide a chat threads widget without the flag, whatever its layout', () => {
       const tabs = [
         createMockTab('tab-1', [
           createMockWidget('fields-widget'),
-          createGatedWidget(
-            'conversations-widget',
-            null,
-            WidgetType.CHAT_THREADS,
-          ),
+          createChatThreadsWidget('conversations-widget'),
         ]),
       ];
 
