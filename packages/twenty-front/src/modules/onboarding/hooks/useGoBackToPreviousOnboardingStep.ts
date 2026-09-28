@@ -1,14 +1,10 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { NO_PREVIOUS_ONBOARDING_STEP_ERROR_CODE } from '@/onboarding/constants/NoPreviousOnboardingStepErrorCode';
+import { useRecomputeCreateProfileFreeCredits } from '@/onboarding/hooks/useRecomputeCreateProfileFreeCredits';
+import { useRecomputeInviteTeamFreeCredits } from '@/onboarding/hooks/useRecomputeInviteTeamFreeCredits';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
-import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
-import { getCreateProfileCreditsReward } from '@/onboarding/utils/getCreateProfileCreditsReward';
-import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
-import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { useMutation } from '@apollo/client/react';
 
 import { useStore } from 'jotai';
@@ -26,6 +22,9 @@ export const useGoBackToPreviousOnboardingStep = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
+  const recomputeCreateProfileFreeCredits =
+    useRecomputeCreateProfileFreeCredits();
+  const recomputeInviteTeamFreeCredits = useRecomputeInviteTeamFreeCredits();
   const [goBackToPreviousOnboardingStepMutation, { loading }] = useMutation(
     GoBackToPreviousOnboardingStepDocument,
   );
@@ -65,29 +64,14 @@ export const useGoBackToPreviousOnboardingStep = () => {
         onboardingStepNavigation.onboardingStatus ===
         OnboardingStatus.PROFILE_CREATION
       ) {
-        setOnboardingStepFreeCredits(
-          'createProfile',
-          getCreateProfileCreditsReward({
-            currentUser: store.get(currentUserState.atom),
-            currentWorkspaceMember: store.get(currentWorkspaceMemberState.atom),
-            onboardingConfig: store.get(onboardingConfigState.atom),
-          }),
-        );
+        recomputeCreateProfileFreeCredits();
       }
 
       if (
         onboardingStepNavigation.onboardingStatus ===
         OnboardingStatus.INVITE_TEAM
       ) {
-        setOnboardingStepFreeCredits(
-          'inviteTeam',
-          getInviteTeamCreditsReward({
-            invitedTeammatesCount: getValidInviteEmails(
-              store.get(onboardingInviteTeamEmailsDraftState.atom) ?? [],
-            ).length,
-            onboardingConfig: store.get(onboardingConfigState.atom),
-          }),
-        );
+        recomputeInviteTeamFreeCredits();
       }
     } catch (error) {
       if (isGraphqlErrorOfType(error, NO_PREVIOUS_ONBOARDING_STEP_ERROR_CODE)) {
@@ -110,6 +94,8 @@ export const useGoBackToPreviousOnboardingStep = () => {
   }, [
     goBackToPreviousOnboardingStepMutation,
     enqueueToast,
+    recomputeCreateProfileFreeCredits,
+    recomputeInviteTeamFreeCredits,
     setOnboardingStepFreeCredits,
     store,
   ]);

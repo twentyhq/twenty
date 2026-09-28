@@ -1,31 +1,18 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
-import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
-import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
-import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
-import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
+import { useRecomputeInviteTeamFreeCredits } from '@/onboarding/hooks/useRecomputeInviteTeamFreeCredits';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const InviteTeamCreditsEffect = () => {
-  const store = useStore();
   const isOnboardingConfigLoaded = isDefined(
     useAtomStateValue(onboardingConfigState),
   );
-  const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
+  const recomputeInviteTeamFreeCredits = useRecomputeInviteTeamFreeCredits();
 
   useEffect(() => {
-    setOnboardingStepFreeCredits(
-      'inviteTeam',
-      getInviteTeamCreditsReward({
-        invitedTeammatesCount: getValidInviteEmails(
-          store.get(onboardingInviteTeamEmailsDraftState.atom) ?? [],
-        ).length,
-        onboardingConfig: store.get(onboardingConfigState.atom),
-      }),
-    );
-  }, [isOnboardingConfigLoaded, setOnboardingStepFreeCredits, store]);
+    recomputeInviteTeamFreeCredits();
+  }, [isOnboardingConfigLoaded, recomputeInviteTeamFreeCredits]);
 
   return null;
 };
