@@ -11,8 +11,8 @@ import { type AdminChatMessageDTO } from 'src/engine/core-modules/admin-panel/dt
 import { type AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
 @Injectable()
 export class AdminPanelChatService {
@@ -25,9 +25,9 @@ export class AdminPanelChatService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
-    private readonly agentMessageRepository: AgentHistoryRepository<AgentMessageEntity>,
+    private readonly agentMessageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
   ) {}
 
   private async assertWorkspaceAllowsImpersonation(
@@ -69,8 +69,8 @@ export class AdminPanelChatService {
       totalOutputTokens: thread.totalOutputTokens,
       conversationSize: thread.conversationSize,
       messageCount: messageCountByThreadId.get(thread.id) ?? 0,
-      createdAt: thread.createdAt,
-      updatedAt: thread.updatedAt,
+      createdAt: new Date(thread.createdAt),
+      updatedAt: new Date(thread.updatedAt),
     }));
   }
 
@@ -139,20 +139,17 @@ export class AdminPanelChatService {
         })
       : null;
 
-    if (!isDefined(thread)) {
+    if (!isDefined(thread) || !isDefined(workspaceId)) {
       throw new UserInputError('Thread not found');
     }
 
-    await this.assertWorkspaceAllowsImpersonation(thread.workspaceId);
+    await this.assertWorkspaceAllowsImpersonation(workspaceId);
 
-    const messages = await this.agentMessageRepository.find(
-      thread.workspaceId,
-      {
-        where: { threadId },
-        relations: { parts: true },
-        order: { createdAt: 'ASC' },
-      },
-    );
+    const messages = await this.agentMessageRepository.find(workspaceId, {
+      where: { threadId },
+      relations: { parts: true },
+      order: { createdAt: 'ASC' },
+    });
 
     return {
       thread: {
@@ -162,8 +159,8 @@ export class AdminPanelChatService {
         totalOutputTokens: thread.totalOutputTokens,
         conversationSize: thread.conversationSize,
         messageCount: messages.filter((message) => !message.isHidden).length,
-        createdAt: thread.createdAt,
-        updatedAt: thread.updatedAt,
+        createdAt: new Date(thread.createdAt),
+        updatedAt: new Date(thread.updatedAt),
       },
       messages: messages.map((message) => ({
         id: message.id,
@@ -183,7 +180,7 @@ export class AdminPanelChatService {
             state: part.state,
             errorMessage: part.errorMessage,
           })),
-        createdAt: message.createdAt,
+        createdAt: new Date(message.createdAt),
       })),
     };
   }

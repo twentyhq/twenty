@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
@@ -52,7 +53,19 @@ const meta: Meta<typeof SettingsBillingLimitForm> = {
 export default meta;
 type Story = StoryObj<typeof SettingsBillingLimitForm>;
 
-export const Empty: Story = {};
+export const Empty: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      canvas.getByRole('button', { name: /Choose a usage/ }),
+    ).toHaveAttribute('aria-haspopup', 'dialog');
+    expect(canvas.getByText('Workspace · Workspace')).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: /Workspace · Workspace/ }),
+    ).not.toBeInTheDocument();
+  },
+};
 
 export const Filled: Story = {
   args: { values: FILLED_VALUES },

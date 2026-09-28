@@ -1,11 +1,8 @@
-import { type StepResult, type ToolSet } from 'ai';
-
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 
-const stepCalling = (...toolNames: string[]) =>
-  ({
-    toolCalls: toolNames.map((toolName) => ({ toolName })),
-  }) as Pick<StepResult<ToolSet>, 'toolCalls'>;
+const stepCalling = (...toolNames: string[]) => ({
+  toolCalls: toolNames.map((toolName) => ({ toolName })),
+});
 
 describe('endsOnPausingToolCall', () => {
   it('pauses when the last step calls a pausing tool', () => {
