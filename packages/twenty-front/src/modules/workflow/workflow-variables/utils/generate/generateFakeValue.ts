@@ -39,7 +39,7 @@ const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
         .split(':')
         .map((segment) => segment.trim());
 
-      objData[key] = generateFakeValue(propertyValueType);
+      objData[key!] = generateFakeValue(propertyValueType!);
     });
 
     return objData;

@@ -24,7 +24,7 @@ export const getHoursDescription = (
 
   if (isStepValue(hours)) {
     const [range, step] = hours.split('/');
-    const stepNum = parseInt(step, 10);
+    const stepNum = parseInt(step!, 10);
 
     if (range === '*') {
       if (stepNum === 1) {
@@ -34,17 +34,17 @@ export const getHoursDescription = (
       return t`every ${stepNumStr} hours`;
     }
 
-    if (range.includes('-')) {
-      const [start, end] = range.split('-');
+    if (range!.includes('-')) {
+      const [start, end] = range!.split('-');
       const stepNumStr = stepNum.toString();
       const startTime = formatCronTime({
-        hour: start,
+        hour: start!,
         minute: '0',
         use24HourFormat: use24Hour,
         appendUTC: true,
       });
       const endTime = formatCronTime({
-        hour: end,
+        hour: end!,
         minute: '0',
         use24HourFormat: use24Hour,
         appendUTC: true,
@@ -59,13 +59,13 @@ export const getHoursDescription = (
   if (isNumericRange(hours) && hours.includes('-')) {
     const [start, end] = hours.split('-');
     const startTime = formatCronTime({
-      hour: start,
+      hour: start!,
       minute: '0',
       use24HourFormat: use24Hour,
       appendUTC: true,
     });
     const endTime = formatCronTime({
-      hour: end,
+      hour: end!,
       minute: '0',
       use24HourFormat: use24Hour,
       appendUTC: true,
@@ -87,7 +87,7 @@ export const getHoursDescription = (
     if (formattedTimes.length === 2) {
       const firstTime = formattedTimes[0];
       const secondTime = formattedTimes[1];
-      return t`at ${firstTime} and ${secondTime}`;
+      return t`at ${firstTime!} and ${secondTime!}`;
     }
     const lastTime = formattedTimes.pop();
     const remainingTimes = formattedTimes.join(', ');

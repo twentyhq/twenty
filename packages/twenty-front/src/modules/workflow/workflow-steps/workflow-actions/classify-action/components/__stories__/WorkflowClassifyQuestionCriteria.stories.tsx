@@ -85,7 +85,7 @@ export const DeletesAnOption: Story = {
       name: 'Delete option',
     });
     await expect(buttons.at(-1)).toBeDisabled();
-    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]!);
     await expect(args.onChange).toHaveBeenLastCalledWith(
       INITIAL_CRITERIA.slice(1),
     );

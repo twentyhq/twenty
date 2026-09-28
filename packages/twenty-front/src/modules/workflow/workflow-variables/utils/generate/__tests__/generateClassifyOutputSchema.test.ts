@@ -78,7 +78,7 @@ describe('generateClassifyOutputSchema', () => {
 
     expect(
       (outputSchema.answers as { value: Record<string, { value: object }> })
-        .value.urgency.value,
+        .value.urgency!.value,
     ).toEqual({
       type: { isLeaf: true, type: 'string', label: 'Type', value: 'score' },
       score: { isLeaf: true, type: 'number', label: 'Score', value: 0 },
@@ -107,7 +107,7 @@ describe('generateClassifyOutputSchema', () => {
 
     expect(
       (outputSchema.answers as { value: Record<string, { value: object }> })
-        .value.isSpam.value,
+        .value.isSpam!.value,
     ).toEqual({
       type: { isLeaf: true, type: 'string', label: 'Type', value: 'boolean' },
       probability: {

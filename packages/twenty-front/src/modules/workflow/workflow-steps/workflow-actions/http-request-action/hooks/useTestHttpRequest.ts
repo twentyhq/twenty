@@ -29,13 +29,13 @@ const convertFlatVariablesToNestedContext = (flatVariables: {
 
     for (let i = 0; i < parts.length - 1; i++) {
       const part = parts[i];
-      if (!(part in current)) {
-        current[part] = {};
+      if (!(part! in current)) {
+        current[part!] = {};
       }
-      current = current[part] as Record<string, unknown>;
+      current = current[part!] as Record<string, unknown>;
     }
 
-    current[parts[parts.length - 1]] = value;
+    current[parts[parts.length - 1]!] = value;
   }
 
   return result;

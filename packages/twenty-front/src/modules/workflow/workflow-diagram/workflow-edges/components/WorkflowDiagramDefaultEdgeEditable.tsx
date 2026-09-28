@@ -74,7 +74,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     startNodeCreation({
       parentStepId: source,
       nextStepId: target,
-      position: { x: labelX, y: labelY },
+      position: { x: labelX!, y: labelY! },
       connectionOptions: sourceConnectionOptions,
     });
   };
@@ -122,8 +122,8 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
         <WorkflowDiagramEdgeV2Container
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
-          labelX={labelX}
-          labelY={labelY}
+          labelX={labelX!}
+          labelY={labelY!}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
             shouldDisplay={

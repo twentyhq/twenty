@@ -19,5 +19,5 @@ export const getBodyTypeFromHeaders = (
       bodyTypeKey !== BODY_TYPES.NONE && contentType === contentTypeVal,
   );
 
-  return isDefined(match) ? (match[0] as BodyType) : null;
+  return isDefined(match) ? (match[0]! as BodyType) : null;
 };

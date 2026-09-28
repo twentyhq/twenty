@@ -81,7 +81,7 @@ describe('getWorkflowPreviousSteps', () => {
     it('should return empty array when there are no previous steps', () => {
       const result = getPreviousSteps({
         steps: mockWorkflow,
-        currentStep: mockWorkflow[0],
+        currentStep: mockWorkflow[0]!,
       });
       expect(result).toEqual([]);
     });
@@ -89,35 +89,35 @@ describe('getWorkflowPreviousSteps', () => {
     it('should return direct previous steps', () => {
       const result = getPreviousSteps({
         steps: mockWorkflow,
-        currentStep: mockWorkflow[1],
+        currentStep: mockWorkflow[1]!,
       });
-      expect(result).toEqual([mockWorkflow[0]]);
+      expect(result).toEqual([mockWorkflow[0]!]);
     });
 
     it('should return all previous steps including indirect ones', () => {
       const result = getPreviousSteps({
         steps: mockWorkflow,
-        currentStep: mockWorkflow[3],
+        currentStep: mockWorkflow[3]!,
       });
       expect(result).toEqual([
-        mockWorkflow[0],
-        mockWorkflow[1],
-        mockWorkflow[2],
+        mockWorkflow[0]!,
+        mockWorkflow[1]!,
+        mockWorkflow[2]!,
       ]);
     });
 
     it('should handle circular dependencies', () => {
       const circularWorkflow = [...mockWorkflow];
-      circularWorkflow[3].nextStepIds = ['step1']; // Make step4 point back to step1
+      circularWorkflow[3]!.nextStepIds = ['step1']; // Make step4 point back to step1
 
       const result = getPreviousSteps({
         steps: circularWorkflow,
-        currentStep: circularWorkflow[3],
+        currentStep: circularWorkflow[3]!,
       });
       expect(result).toEqual([
-        mockWorkflow[0],
-        mockWorkflow[1],
-        mockWorkflow[2],
+        mockWorkflow[0]!,
+        mockWorkflow[1]!,
+        mockWorkflow[2]!,
       ]);
     });
   });
@@ -157,7 +157,7 @@ describe('getWorkflowPreviousSteps', () => {
     it('should consider iterator step as parent of loop steps', () => {
       const result = getPreviousSteps({
         steps: mockWorkflowWithIterator,
-        currentStep: mockWorkflowWithIterator[1],
+        currentStep: mockWorkflowWithIterator[1]!,
       });
 
       expect(result).toEqual([mockWorkflowWithIterator[0]]);
@@ -166,7 +166,7 @@ describe('getWorkflowPreviousSteps', () => {
     it('should not consider loop step as parent of iterator', () => {
       const result = getPreviousSteps({
         steps: mockWorkflowWithIterator,
-        currentStep: mockWorkflowWithIterator[0],
+        currentStep: mockWorkflowWithIterator[0]!,
       });
 
       expect(result).toEqual([]);
@@ -175,7 +175,7 @@ describe('getWorkflowPreviousSteps', () => {
     it('should consider iterator step as parent of non-loop steps', () => {
       const result = getPreviousSteps({
         steps: mockWorkflowWithIterator,
-        currentStep: mockWorkflowWithIterator[2],
+        currentStep: mockWorkflowWithIterator[2]!,
       });
 
       expect(result).toEqual([mockWorkflowWithIterator[0]]);

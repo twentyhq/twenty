@@ -55,7 +55,7 @@ const STEPS: StepOutputSchemaV2[] = [
 describe('searchWorkflowVariables', () => {
   it('searches only the current subtree while preserving full variable paths', () => {
     const results = searchWorkflowVariables({
-      steps: [STEPS[1]],
+      steps: [STEPS[1]!],
       currentPath: ['first'],
       searchInputValue: 'company name',
     });
@@ -68,7 +68,7 @@ describe('searchWorkflowVariables', () => {
     ]);
     expect(
       searchWorkflowVariables({
-        steps: [STEPS[1]],
+        steps: [STEPS[1]!],
         currentPath: ['first'],
         searchInputValue: 'total count',
       }),
@@ -79,7 +79,7 @@ describe('searchWorkflowVariables', () => {
     const results = searchWorkflowVariables({
       steps: [
         {
-          ...STEPS[0],
+          ...STEPS[0]!,
           outputSchema: {
             ...COMPANY_SCHEMA,
             object: { ...COMPANY_SCHEMA.object, fieldIdName: 'companyId' },
@@ -218,13 +218,13 @@ describe('searchWorkflowVariables', () => {
 
     expect(
       searchWorkflowVariables({
-        steps: [{ ...STEPS[0], outputSchema: outputSchema ?? {} }],
+        steps: [{ ...STEPS[0]!, outputSchema: outputSchema ?? {} }],
         searchInputValue: 'Company name',
       }),
     ).toEqual([]);
     expect(
       searchWorkflowVariables({
-        steps: [STEPS[1]],
+        steps: [STEPS[1]!],
         searchInputValue: 'Company name',
       }).map((result) => result.stepId),
     ).toEqual(['find']);
@@ -276,7 +276,10 @@ describe('searchWorkflowVariables', () => {
       searchInputValue: '0',
     });
     expect(
-      getVariableTemplateFromPath({ stepId: result.stepId, path: result.path }),
+      getVariableTemplateFromPath({
+        stepId: result!.stepId,
+        path: result!.path,
+      }),
     ).toBe('{{code.0}}');
     expect(
       searchWorkflowVariables({
@@ -339,7 +342,10 @@ describe('searchWorkflowVariables', () => {
       searchInputValue: 'Company name',
     });
     expect(
-      getVariableTemplateFromPath({ stepId: result.stepId, path: result.path }),
+      getVariableTemplateFromPath({
+        stepId: result!.stepId,
+        path: result!.path,
+      }),
     ).toBe('{{form.company.name}}');
   });
 });

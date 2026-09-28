@@ -29,11 +29,11 @@ export const getManualTriggerDefaultSettings = ({
     }
     case 'SINGLE_RECORD': {
       return {
-        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
+        objectType: activeNonSystemObjectMetadataItems[0]!.nameSingular,
         availability: {
           type: 'SINGLE_RECORD',
           objectNameSingular:
-            activeNonSystemObjectMetadataItems[0].nameSingular,
+            activeNonSystemObjectMetadataItems[0]!.nameSingular,
         },
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
@@ -42,11 +42,11 @@ export const getManualTriggerDefaultSettings = ({
     }
     case 'BULK_RECORDS': {
       return {
-        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
+        objectType: activeNonSystemObjectMetadataItems[0]!.nameSingular,
         availability: {
           type: 'BULK_RECORDS',
           objectNameSingular:
-            activeNonSystemObjectMetadataItems[0].nameSingular,
+            activeNonSystemObjectMetadataItems[0]!.nameSingular,
         },
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,

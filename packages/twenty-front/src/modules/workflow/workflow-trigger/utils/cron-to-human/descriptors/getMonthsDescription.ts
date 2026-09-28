@@ -42,7 +42,7 @@ export const getMonthsDescription = (
   // Step values (e.g., "*/3" = every 3 months)
   if (isStepValue(months)) {
     const [range, step] = months.split('/');
-    const stepNum = parseInt(step, 10);
+    const stepNum = parseInt(step!, 10);
     const stepNumStr = stepNum.toString();
 
     if (range === '*') {
@@ -53,15 +53,15 @@ export const getMonthsDescription = (
     }
 
     // Range with step (e.g., "1-6/2")
-    if (range.includes('-')) {
-      const [start, end] = range.split('-');
+    if (range!.includes('-')) {
+      const [start, end] = range!.split('-');
       const startMonth = getMonthName(
-        parseInt(start, 10),
+        parseInt(start!, 10),
         monthStartIndexZero,
         localeCatalog,
       );
       const endMonth = getMonthName(
-        parseInt(end, 10),
+        parseInt(end!, 10),
         monthStartIndexZero,
         localeCatalog,
       );
@@ -75,12 +75,12 @@ export const getMonthsDescription = (
   if (isNumericRange(months) && months.includes('-')) {
     const [start, end] = months.split('-');
     const startMonth = getMonthName(
-      parseInt(start, 10),
+      parseInt(start!, 10),
       monthStartIndexZero,
       localeCatalog,
     );
     const endMonth = getMonthName(
-      parseInt(end, 10),
+      parseInt(end!, 10),
       monthStartIndexZero,
       localeCatalog,
     );
@@ -98,12 +98,12 @@ export const getMonthsDescription = (
 
     if (monthNames.length === 1) {
       const monthName = monthNames[0];
-      return t`only in ${monthName}`;
+      return t`only in ${monthName!}`;
     }
     if (monthNames.length === 2) {
       const firstMonth = monthNames[0];
       const secondMonth = monthNames[1];
-      return t`only in ${firstMonth} and ${secondMonth}`;
+      return t`only in ${firstMonth!} and ${secondMonth!}`;
     }
     const lastMonth = monthNames.pop();
     const remainingMonths = monthNames.join(', ');

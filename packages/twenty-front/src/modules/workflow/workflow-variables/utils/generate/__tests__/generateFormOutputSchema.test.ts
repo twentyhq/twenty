@@ -69,7 +69,7 @@ describe('generateFormOutputSchema', () => {
 
       const result = generateFormOutputSchema(formFields, []);
 
-      expect(result.name.value).toBe('My text');
+      expect(result.name!.value).toBe('My text');
     });
 
     it('should handle NUMBER field type', () => {

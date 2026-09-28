@@ -59,8 +59,8 @@ export const getDayOfWeekDescription = (
   // Nth occurrence of a weekday (e.g., "1#2" = second Monday)
   if (dayOfWeek.includes('#')) {
     const [day, occurrence] = dayOfWeek.split('#');
-    const dayNum = parseInt(day, 10);
-    const occurrenceNum = parseInt(occurrence, 10);
+    const dayNum = parseInt(day!, 10);
+    const occurrenceNum = parseInt(occurrence!, 10);
 
     if (!isNaN(dayNum) && !isNaN(occurrenceNum)) {
       const dayName = getDayName(
@@ -84,7 +84,7 @@ export const getDayOfWeekDescription = (
   // Step values (e.g., "*/2" = every other day)
   if (isStepValue(dayOfWeek)) {
     const [range, step] = dayOfWeek.split('/');
-    const stepNum = parseInt(step, 10);
+    const stepNum = parseInt(step!, 10);
 
     if (range === '*') {
       if (stepNum === 1) {
@@ -101,12 +101,12 @@ export const getDayOfWeekDescription = (
   if (isNumericRange(dayOfWeek) && dayOfWeek.includes('-')) {
     const [start, end] = dayOfWeek.split('-');
     const startDay = getDayName(
-      parseInt(start, 10),
+      parseInt(start!, 10),
       dayOfWeekStartIndexZero,
       localeCatalog,
     );
     const endDay = getDayName(
-      parseInt(end, 10),
+      parseInt(end!, 10),
       dayOfWeekStartIndexZero,
       localeCatalog,
     );
@@ -132,12 +132,12 @@ export const getDayOfWeekDescription = (
 
     if (dayNames.length === 1) {
       const dayName = dayNames[0];
-      return t`only on ${dayName}`;
+      return t`only on ${dayName!}`;
     }
     if (dayNames.length === 2) {
       const firstDay = dayNames[0];
       const secondDay = dayNames[1];
-      return t`only on ${firstDay} and ${secondDay}`;
+      return t`only on ${firstDay!} and ${secondDay!}`;
     }
     const lastDay = dayNames.pop();
     const remainingDays = dayNames.join(', ');

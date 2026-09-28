@@ -112,7 +112,7 @@ export const DisabledWithDefaultStaticValues: Story = {
         ...DEFAULT_ACTION.settings,
         input: {
           ...DEFAULT_ACTION.settings.input,
-          objectRecordId: peopleMock.id,
+          objectRecordId: peopleMock!.id,
         },
       },
     },
@@ -143,7 +143,7 @@ export const DisabledWithDefaultStaticValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const selectedRecordToDelete = await canvas.findByText(
-      `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
+      `${peopleMock!.name.firstName} ${peopleMock!.name.lastName}`,
       undefined,
       {
         timeout: 3000,

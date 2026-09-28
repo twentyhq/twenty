@@ -30,30 +30,30 @@ export const parseCronExpression = (
       return {
         seconds: '0',
         minutes: '0',
-        hours: parts[0],
-        dayOfMonth: parts[1],
-        month: parts[2],
-        dayOfWeek: parts[3],
+        hours: parts[0]!,
+        dayOfMonth: parts[1]!,
+        month: parts[2]!,
+        dayOfWeek: parts[3]!,
       };
     } else if (parts.length === 5) {
       // Standard format: minute hour day month dayOfWeek
       return {
         seconds: '0',
-        minutes: parts[0],
-        hours: parts[1],
-        dayOfMonth: parts[2],
-        month: parts[3],
-        dayOfWeek: parts[4],
+        minutes: parts[0]!,
+        hours: parts[1]!,
+        dayOfMonth: parts[2]!,
+        month: parts[3]!,
+        dayOfWeek: parts[4]!,
       };
     } else if (parts.length === 6) {
       // Extended format: second minute hour day month dayOfWeek
       return {
-        seconds: parts[0],
-        minutes: parts[1],
-        hours: parts[2],
-        dayOfMonth: parts[3],
-        month: parts[4],
-        dayOfWeek: parts[5],
+        seconds: parts[0]!,
+        minutes: parts[1]!,
+        hours: parts[2]!,
+        dayOfMonth: parts[3]!,
+        month: parts[4]!,
+        dayOfWeek: parts[5]!,
       };
     }
 

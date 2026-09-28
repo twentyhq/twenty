@@ -14,10 +14,10 @@ export const convertOutputSchemaToJson = (
   if (isArray) {
     return keys.map((key) => {
       const entry = schema[key];
-      if (entry.isLeaf) {
-        return entry.value;
+      if (entry!.isLeaf) {
+        return entry!.value;
       }
-      return convertOutputSchemaToJson(entry.value as BaseOutputSchemaV2);
+      return convertOutputSchemaToJson(entry!.value as BaseOutputSchemaV2);
     });
   }
 

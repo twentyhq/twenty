@@ -129,14 +129,16 @@ export const AddNestedGroup: Story = {
     );
 
     await expect(args.onFilterSettingsUpdate).toHaveBeenCalledTimes(1);
-    const [{ stepFilters = [], stepFilterGroups = [] }] = mocked(
+    const { stepFilters = [], stepFilterGroups = [] } = mocked(
       args.onFilterSettingsUpdate,
-    ).mock.calls[0];
+    ).mock.calls[0]![0];
 
     await expect(stepFilterGroups).toHaveLength(2);
     await expect(stepFilters).toHaveLength(2);
-    const [rootGroup, nestedGroup] = stepFilterGroups;
-    const [existingFilter, nestedFilter] = stepFilters;
+    const rootGroup = stepFilterGroups[0]!;
+    const nestedGroup = stepFilterGroups[1]!;
+    const existingFilter = stepFilters[0]!;
+    const nestedFilter = stepFilters[1]!;
 
     await expect(rootGroup).toEqual(FILTER_GROUP);
     await expect(existingFilter).toEqual(FILTER);

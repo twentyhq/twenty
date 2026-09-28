@@ -34,7 +34,7 @@ export const getTriggerDefaultDefinition = ({
         ...baseTriggerDefinition,
         type,
         settings: {
-          eventName: `${activeNonSystemObjectMetadataItems[0].nameSingular}.${
+          eventName: `${activeNonSystemObjectMetadataItems[0]!.nameSingular}.${
             DATABASE_TRIGGER_TYPES.find(
               (availableEvent) => availableEvent.defaultLabel === defaultLabel,
             )?.event

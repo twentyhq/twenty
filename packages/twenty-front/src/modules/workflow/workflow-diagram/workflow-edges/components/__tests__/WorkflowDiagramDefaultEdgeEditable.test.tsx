@@ -151,8 +151,8 @@ describe('WorkflowDiagramDefaultEdgeEditable', () => {
     );
 
     const buttons = screen.getAllByRole('button', { name: 'Insert action' });
-    await user.click(buttons[0]);
-    await user.click(buttons[1]);
+    await user.click(buttons[0]!);
+    await user.click(buttons[1]!);
 
     expect(
       mockStartNodeCreation.mock.calls.map(([options]) => options),

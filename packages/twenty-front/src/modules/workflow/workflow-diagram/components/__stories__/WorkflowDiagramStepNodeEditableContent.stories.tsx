@@ -214,12 +214,12 @@ export const Catalog: CatalogStory<
 
     const triggerOptionsButton = optionsButtons[0];
 
-    await userEvent.click(triggerOptionsButton);
+    await userEvent.click(triggerOptionsButton!);
 
     await canvasBody.findByText('Change node');
     expect(canvasBody.queryByText('Duplicate node')).not.toBeInTheDocument();
 
-    await userEvent.click(triggerOptionsButton);
+    await userEvent.click(triggerOptionsButton!);
 
     await waitFor(() => {
       expect(canvasBody.queryByText('Change node')).not.toBeInTheDocument();
@@ -229,7 +229,7 @@ export const Catalog: CatalogStory<
       (step) => step.nodeType === 'action',
     );
 
-    await userEvent.click(optionsButtons[firstActionStepIndex]);
+    await userEvent.click(optionsButtons[firstActionStepIndex]!);
 
     await canvasBody.findByText('Duplicate node');
     const changeNodeAction = await canvasBody.findByRole('menuitem', {

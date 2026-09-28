@@ -20,7 +20,7 @@ export const getMinutesDescription = (
 
   if (isStepValue(minutes)) {
     const [range, step] = minutes.split('/');
-    const stepNum = parseInt(step, 10);
+    const stepNum = parseInt(step!, 10);
     const stepNumStr = stepNum.toString();
 
     if (range === '*') {
@@ -30,9 +30,9 @@ export const getMinutesDescription = (
       return t`every ${stepNumStr} minutes`;
     }
 
-    if (range.includes('-')) {
-      const [start, end] = range.split('-');
-      return t`every ${stepNumStr} minutes, between minute ${start} and ${end}`;
+    if (range!.includes('-')) {
+      const [start, end] = range!.split('-');
+      return t`every ${stepNumStr} minutes, between minute ${start!} and ${end!}`;
     }
 
     return t`every ${stepNumStr} minutes`;
@@ -40,7 +40,7 @@ export const getMinutesDescription = (
 
   if (isNumericRange(minutes) && minutes.includes('-')) {
     const [start, end] = minutes.split('-');
-    return t`between minute ${start} and ${end}`;
+    return t`between minute ${start!} and ${end!}`;
   }
 
   if (isListValue(minutes)) {
@@ -48,7 +48,7 @@ export const getMinutesDescription = (
     if (values.length === 2) {
       const firstValue = values[0];
       const secondValue = values[1];
-      return t`at minutes ${firstValue} and ${secondValue}`;
+      return t`at minutes ${firstValue!} and ${secondValue!}`;
     }
     const lastValue = values.pop();
     const remainingValues = values.join(', ');

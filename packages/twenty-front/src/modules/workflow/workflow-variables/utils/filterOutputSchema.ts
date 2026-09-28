@@ -46,16 +46,16 @@ const filterRecordOutputSchema = ({
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];
 
-    if (field.isLeaf) {
-      if (isFieldTypeCompatibleWithRecordId(field.type)) {
-        filteredFields[key] = field;
+    if (field!.isLeaf) {
+      if (isFieldTypeCompatibleWithRecordId(field!.type)) {
+        filteredFields[key] = field!;
         hasValidFields = true;
       }
       continue;
     }
 
     const validSubSchema = filterOutputSchema({
-      outputSchema: field.value,
+      outputSchema: field!.value,
       shouldDisplayRecordFields,
       shouldDisplayRecordObjects,
     });
@@ -150,27 +150,27 @@ const filterRecordOutputSchemaFieldsByType = ({
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];
 
-    if (isDefined(field.type) && fieldTypesToExclude.includes(field.type)) {
+    if (isDefined(field!.type) && fieldTypesToExclude.includes(field!.type)) {
       continue;
     }
 
-    if (field.isLeaf) {
-      filteredFields[key] = field;
+    if (field!.isLeaf) {
+      filteredFields[key] = field!;
       continue;
     }
 
-    const filteredValue = isRecordOutputSchemaV2(field.value)
+    const filteredValue = isRecordOutputSchemaV2(field!.value)
       ? filterRecordOutputSchemaFieldsByType({
-          outputSchema: field.value,
+          outputSchema: field!.value,
           fieldTypesToExclude,
         })
       : filterNonRecordOutputSchemaFieldsByType({
-          outputSchema: field.value,
+          outputSchema: field!.value,
           fieldTypesToExclude,
         });
 
     filteredFields[key] = {
-      ...field,
+      ...field!,
       value: filteredValue,
     };
   }

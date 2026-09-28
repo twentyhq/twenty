@@ -52,6 +52,6 @@ export const getStepFilterVariableSelectionSettings = ({
     type: filterType,
     fieldMetadataId,
     compositeFieldSubFieldName,
-    operand: defaultOperand,
+    operand: defaultOperand!,
   };
 };

@@ -8,7 +8,7 @@ function* resolveVariables(value: JsonValue): Generator<string> {
     for (const [, variablePath] of value.matchAll(
       CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     )) {
-      yield variablePath;
+      yield variablePath!;
     }
 
     return;

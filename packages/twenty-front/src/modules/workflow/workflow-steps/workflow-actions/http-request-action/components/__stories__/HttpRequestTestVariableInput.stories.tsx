@@ -144,13 +144,13 @@ export const WithPrefilledValues: Story = {
     const inputs = canvas.getAllByRole('textbox');
 
     const userIdInput = inputs[0];
-    await userEvent.type(userIdInput, '12345');
+    await userEvent.type(userIdInput!, '12345');
 
     const tokenInput = inputs[1];
-    await userEvent.type(tokenInput, 'abc123xyz');
+    await userEvent.type(tokenInput!, 'abc123xyz');
 
     const nameInput = inputs[2];
-    await userEvent.type(nameInput, 'John Doe');
+    await userEvent.type(nameInput!, 'John Doe');
   },
 };
 

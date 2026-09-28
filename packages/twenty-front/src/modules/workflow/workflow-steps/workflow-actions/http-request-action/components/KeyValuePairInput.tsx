@@ -83,7 +83,7 @@ export const KeyValuePairInput = ({
     const index = pairs.findIndex((p) => p.id === pairId);
     const newPairs = [...pairs];
 
-    newPairs[index] = { ...newPairs[index], [field]: newValue };
+    newPairs[index] = { ...newPairs[index]!, [field]: newValue };
 
     if (
       index === pairs.length - 1 &&
@@ -165,7 +165,7 @@ export const KeyValuePairInput = ({
             />
 
             {!readonly &&
-              (pair.id !== pairs[pairs.length - 1].id && !pair.isAutoSet ? (
+              (pair.id !== pairs[pairs.length - 1]!.id && !pair.isAutoSet ? (
                 <Button
                   onClick={() => handleRemovePair(pair.id)}
                   startIcon={<IconTrash />}

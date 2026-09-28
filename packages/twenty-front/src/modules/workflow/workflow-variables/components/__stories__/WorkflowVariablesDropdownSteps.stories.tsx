@@ -98,7 +98,7 @@ export const NestedFieldSearch: Story = {
     expect(
       canvas.getByText('Run code / Result', { exact: false }),
     ).toBeInTheDocument();
-    await userEvent.click(canvas.getAllByText('Company name')[1]);
+    await userEvent.click(canvas.getAllByText('Company name')[1]!);
     expect(args.onVariableSelect).toHaveBeenCalledWith({
       rawVariableName: '{{code.result.companyName}}',
       stepId: 'code',

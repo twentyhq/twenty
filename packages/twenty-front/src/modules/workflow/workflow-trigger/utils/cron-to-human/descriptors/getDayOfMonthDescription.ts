@@ -37,7 +37,7 @@ export const getDayOfMonthDescription = (
   // Step values (e.g., "*/5" = every 5 days)
   if (isStepValue(dayOfMonth)) {
     const [range, step] = dayOfMonth.split('/');
-    const stepNum = parseInt(step, 10);
+    const stepNum = parseInt(step!, 10);
 
     if (range === '*') {
       if (stepNum === 1) {
@@ -48,11 +48,11 @@ export const getDayOfMonthDescription = (
     }
 
     // Range with step (e.g., "1-15/3")
-    if (range.includes('-')) {
-      const [start, end] = range.split('-');
+    if (range!.includes('-')) {
+      const [start, end] = range!.split('-');
       const stepNumStr = stepNum.toString();
-      const startOrdinal = getOrdinalNumber(parseInt(start, 10));
-      const endOrdinal = getOrdinalNumber(parseInt(end, 10));
+      const startOrdinal = getOrdinalNumber(parseInt(start!, 10));
+      const endOrdinal = getOrdinalNumber(parseInt(end!, 10));
       return t`every ${stepNumStr} days, between the ${startOrdinal} and ${endOrdinal} of the month`;
     }
 
@@ -63,8 +63,8 @@ export const getDayOfMonthDescription = (
   // Range values (e.g., "1-15")
   if (isNumericRange(dayOfMonth) && dayOfMonth.includes('-')) {
     const [start, end] = dayOfMonth.split('-');
-    const startNum = parseInt(start, 10);
-    const endNum = parseInt(end, 10);
+    const startNum = parseInt(start!, 10);
+    const endNum = parseInt(end!, 10);
     const startOrdinal = getOrdinalNumber(startNum);
     const endOrdinal = getOrdinalNumber(endNum);
     return t`between the ${startOrdinal} and ${endOrdinal} of the month`;
@@ -80,7 +80,7 @@ export const getDayOfMonthDescription = (
     if (ordinalDays.length === 2) {
       const firstDay = ordinalDays[0];
       const secondDay = ordinalDays[1];
-      return t`on the ${firstDay} and ${secondDay} of the month`;
+      return t`on the ${firstDay!} and ${secondDay!} of the month`;
     }
     const lastDay = ordinalDays.pop();
     const remainingDays = ordinalDays.join(', ');
