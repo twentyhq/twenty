@@ -1433,9 +1433,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private getActiveValidationRules(): FlatValidationRule[] {
     if (
-      this.options.internalContext.featureFlagsMap[
+      !this.options.internalContext.featureFlagsMap[
         FeatureFlagKey.IS_VALIDATION_RULES_ENABLED
-      ] !== true
+      ]
     ) {
       return [];
     }

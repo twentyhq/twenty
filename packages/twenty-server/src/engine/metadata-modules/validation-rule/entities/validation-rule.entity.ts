@@ -48,13 +48,13 @@ export class ValidationRuleEntity
   @JoinColumn({ name: 'errorFieldMetadataId' })
   errorFieldMetadata: Relation<FieldMetadataEntity> | null;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'varchar' })
   name: string;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
   @Column({ nullable: false, type: 'text' })
