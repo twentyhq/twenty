@@ -114,7 +114,7 @@ describe('useNavigationMenuItemEditController', () => {
     expect(updateManyNavigationMenuItems).toHaveBeenCalledWith([
       { id: favoriteId, update: { name: 'Personal renamed' } },
     ]);
-    expect(store.get(navigationMenuItemsDraftState.atom)?.[0].name).toBe(
+    expect(store.get(navigationMenuItemsDraftState.atom)?.[0]?.name).toBe(
       'Team renamed',
     );
 

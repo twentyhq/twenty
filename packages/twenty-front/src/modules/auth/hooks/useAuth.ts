@@ -154,13 +154,13 @@ export const useAuth = () => {
         return;
       }
 
+      const targetWorkspace = getFirstAvailableWorkspaces(availableWorkspaces);
+
       if (
         availableWorkspacesCount === 1 &&
+        isDefined(targetWorkspace) &&
         !isChooseWorkspaceActionRequested()
       ) {
-        const targetWorkspace =
-          getFirstAvailableWorkspaces(availableWorkspaces);
-
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(targetWorkspace.workspaceUrls),
           targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,

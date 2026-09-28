@@ -21,6 +21,11 @@ const readTranscripts = (event: WebSpeechRecognitionEvent) => {
 
   for (let index = event.resultIndex; index < event.results.length; index++) {
     const result = event.results[index];
+
+    if (!isDefined(result)) {
+      continue;
+    }
+
     const transcript = result[0]?.transcript ?? '';
 
     if (result.isFinal) {

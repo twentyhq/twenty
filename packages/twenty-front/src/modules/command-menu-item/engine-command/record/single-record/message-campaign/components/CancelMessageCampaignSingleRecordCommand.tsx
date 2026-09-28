@@ -10,13 +10,13 @@ export const CancelMessageCampaignSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const selectedRecord = selectedRecords[0];
-  const campaignId = selectedRecord?.id;
   const { cancelMessageCampaign } = useCancelMessageCampaign();
 
-  if (!isDefined(campaignId)) {
+  if (!isDefined(selectedRecord)) {
     throw new Error('Record ID is required to cancel the campaign');
   }
 
+  const campaignId = selectedRecord.id;
   const campaignStatus: MessageCampaignStatus = selectedRecord.status;
   const isScheduled = campaignStatus === MessageCampaignStatus.SCHEDULED;
 

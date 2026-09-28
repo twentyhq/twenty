@@ -10,7 +10,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 
-import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -21,6 +20,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { getFirstRecordFilterOperandOrThrow } from '@/object-record/record-filter/utils/getFirstRecordFilterOperandOrThrow';
 
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
@@ -94,9 +94,9 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
           store.set(objectFilterDropdownSearchInputCallbackState, '');
 
-          const defaultOperand = getRecordFilterOperands({
+          const defaultOperand = getFirstRecordFilterOperandOrThrow({
             filterType,
-          })[0];
+          });
 
           const duplicateFilterInCurrentRecordFilters =
             findDuplicateRecordFilterInNonAdvancedRecordFilters({

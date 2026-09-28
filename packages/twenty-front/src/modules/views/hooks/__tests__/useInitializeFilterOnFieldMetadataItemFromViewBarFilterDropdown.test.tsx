@@ -25,6 +25,7 @@ import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { getFirstRecordFilterOperandOrThrow } from '@/object-record/record-filter/utils/getFirstRecordFilterOperandOrThrow';
 
 const mockPushFocusItemToFocusStack = jest.fn();
 
@@ -102,11 +103,11 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
       throw new Error('personCityFieldMetadataItemMock is not defined');
     }
 
-    const defaultOperand = getRecordFilterOperands({
+    const defaultOperand = getFirstRecordFilterOperandOrThrow({
       filterType: getFilterTypeFromFieldType(
         personCityFieldMetadataItemMock.type,
       ),
-    })?.[0];
+    });
 
     act(() => {
       result.current.initializeFilterOnFieldMetataItemFromViewBarFilterDropdown(
@@ -233,11 +234,11 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
       throw new Error('personCityFieldMetadataItemMock is not defined');
     }
 
-    const defaultOperand = getRecordFilterOperands({
+    const defaultOperand = getFirstRecordFilterOperandOrThrow({
       filterType: getFilterTypeFromFieldType(
         personCityFieldMetadataItemMock.type,
       ),
-    })?.[0];
+    });
 
     const mockExistingFilterOnCity: RecordFilter = {
       id: 'existing-filter-id',

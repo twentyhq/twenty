@@ -127,7 +127,7 @@ export const AddRulesAndRemoveGroup: Story = {
       expect(
         filters.map((filter) => filter.positionInRecordFilterGroup),
       ).toEqual([0, 1, 1, 2]);
-      expect(groups[1].positionInRecordFilterGroup).toBe(2);
+      expect(groups[1]?.positionInRecordFilterGroup).toBe(2);
     });
 
     await userEvent.click(

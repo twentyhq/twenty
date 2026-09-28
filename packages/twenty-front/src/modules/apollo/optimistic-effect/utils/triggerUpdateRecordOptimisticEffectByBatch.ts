@@ -6,6 +6,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const triggerUpdateRecordOptimisticEffectByBatch = ({
   cache,
@@ -28,11 +29,17 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   for (const [index, currentRecord] of currentRecords.entries()) {
+    const updatedRecord = updatedRecords[index];
+
+    if (!isDefined(updatedRecord)) {
+      continue;
+    }
+
     triggerUpdateRelationsOptimisticEffect({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
       currentSourceRecord: currentRecord,
-      updatedSourceRecord: updatedRecords[index],
+      updatedSourceRecord: updatedRecord,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       upsertRecordsInStore,

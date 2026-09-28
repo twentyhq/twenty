@@ -1,5 +1,6 @@
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import { type Content } from '@tiptap/core';
+import { isDefined } from 'twenty-shared/utils';
 
 const HTML_VOID_TAG_NAMES = new Set([
   'area',
@@ -31,14 +32,16 @@ const hasLeadingHtmlTag = (serializedDocument: string): boolean => {
     documentWithoutLeadingComments,
   );
 
-  if (openingTagMatch === null) {
+  const [, openingTagName, selfClosingSlash] = openingTagMatch ?? [];
+
+  if (!isDefined(openingTagName)) {
     return false;
   }
 
-  const tagName = openingTagMatch[1].toLowerCase();
+  const tagName = openingTagName.toLowerCase();
 
   return (
-    openingTagMatch[2] === '/' ||
+    selfClosingSlash === '/' ||
     HTML_VOID_TAG_NAMES.has(tagName) ||
     new RegExp(`</${tagName}\\s*>`, 'i').test(documentWithoutLeadingComments)
   );

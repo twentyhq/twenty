@@ -51,7 +51,7 @@ const StyledPromptList = styled.div<{ isCentered: boolean }>`
   justify-content: center;
 `;
 
-const pickRandom = <TItem,>(items: TItem[]): TItem =>
+const pickRandom = <TItem,>(items: TItem[]): TItem | undefined =>
   items[Math.floor(Math.random() * items.length)];
 
 type AiChatSuggestedPromptsProps = {
@@ -71,9 +71,15 @@ export const AiChatSuggestedPrompts = ({
   );
 
   const handleClick = (suggestedPrompt: SuggestedPrompt) => {
+    const prompt = pickRandom(suggestedPrompt.prompts);
+
+    if (!isDefined(prompt)) {
+      return;
+    }
+
     stageAiChatPreprompt({
       serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
-        resolveMessage(pickRandom(suggestedPrompt.prompts)),
+        resolveMessage(prompt),
       ),
       mode: suggestedPrompt.mode ?? 'PREFILL',
       draftKey: currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,

@@ -19,12 +19,12 @@ export const SeeWorkflowWorkflowRunSingleRecordCommand = () => {
   });
 
   const findCoreWorkflowId = async (): Promise<string | null | undefined> => {
-    if (isDefined(selectedRecord?.coreWorkflowId)) {
-      return selectedRecord.coreWorkflowId;
-    }
-
     if (!isDefined(selectedRecord?.id)) {
       return undefined;
+    }
+
+    if (isDefined(selectedRecord.coreWorkflowId)) {
+      return selectedRecord.coreWorkflowId;
     }
 
     let coreWorkflowId: string | null | undefined;

@@ -152,6 +152,10 @@ export const AiModelTierSlider = ({
     }
   };
 
+  if (!isDefined(resolvedTier)) {
+    return null;
+  }
+
   return (
     <StyledContainer>
       <StyledHeader>

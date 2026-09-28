@@ -6,6 +6,7 @@ import {
 } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -79,6 +80,12 @@ export const useCustomResolver = <
           page: page.pageNumber + 1,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
+          const previousResult = prev[queryName];
+
+          if (!isDefined(previousResult)) {
+            return prev;
+          }
+
           if (!fetchMoreResult?.[queryName]?.[objectName]?.length) {
             setPage((page) => ({
               ...page,
@@ -87,17 +94,17 @@ export const useCustomResolver = <
 
             return {
               [queryName]: {
-                ...prev?.[queryName],
-                [objectName]: [...(prev?.[queryName]?.[objectName] ?? [])],
+                ...previousResult,
+                [objectName]: [...(previousResult[objectName] ?? [])],
               },
             };
           }
 
           return {
             [queryName]: {
-              ...prev?.[queryName],
+              ...previousResult,
               [objectName]: [
-                ...(prev?.[queryName]?.[objectName] ?? []),
+                ...(previousResult[objectName] ?? []),
                 ...(fetchMoreResult?.[queryName]?.[objectName] ?? []),
               ],
             },

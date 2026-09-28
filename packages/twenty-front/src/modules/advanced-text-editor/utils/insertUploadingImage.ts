@@ -1,5 +1,6 @@
 import { type Editor } from '@tiptap/core';
 import { type Node } from '@tiptap/pm/model';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 
@@ -19,10 +20,15 @@ export const insertUploadingImage = ({
   onImageUploadError,
 }: InsertUploadingImageArgs) => {
   const { view } = editor;
-  const placeholderSrc = URL.createObjectURL(file);
-
   const { tr, schema } = view.state;
-  const imageNode = schema.nodes.image.create({
+  const imageNodeType = schema.nodes.image;
+
+  if (!isDefined(imageNodeType)) {
+    return;
+  }
+
+  const placeholderSrc = URL.createObjectURL(file);
+  const imageNode = imageNodeType.create({
     src: placeholderSrc,
     alt: file.name,
   });

@@ -48,8 +48,9 @@ const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber9,
 ];
 
-const getOptionNumberIcon = (optionIndex: number) =>
-  NUMBER_ICONS[Math.min(optionIndex, NUMBER_ICONS.length - 1)];
+const getOptionNumberIcon = (optionIndex: number): IconComponent =>
+  NUMBER_ICONS[Math.min(optionIndex, NUMBER_ICONS.length - 1)] ??
+  IconSquareNumber9;
 
 const StyledQuestionSection = styled.div`
   display: flex;
@@ -226,7 +227,14 @@ export const AiChatQuestionCard = ({
 
     setIsSubmitting(true);
 
-    const [{ selectedOptionIndices, freeText }] = answers;
+    const [firstAnswer] = answers;
+
+    if (!isDefined(firstAnswer)) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const { selectedOptionIndices, freeText } = firstAnswer;
     const isAnswered = await answerAgentChatToolCall(
       pendingQuestion.kind === 'question'
         ? {
@@ -262,7 +270,7 @@ export const AiChatQuestionCard = ({
   };
 
   const handleSelectOption = (optionIndex: number) => {
-    if (currentQuestion.allowMultiSelect === true) {
+    if (currentQuestion?.allowMultiSelect === true) {
       setSelectedByQuestion((previous) => {
         const current = previous[currentIndex] ?? [];
         const next = current.includes(optionIndex)
@@ -311,7 +319,7 @@ export const AiChatQuestionCard = ({
       [currentIndex]: true,
     }));
 
-    if (currentQuestion.allowMultiSelect !== true) {
+    if (currentQuestion?.allowMultiSelect !== true) {
       setSelectedByQuestion((previous) => ({
         ...previous,
         [currentIndex]: [],
@@ -321,7 +329,7 @@ export const AiChatQuestionCard = ({
 
   const handleToggleOther = () => {
     if (
-      currentQuestion.allowMultiSelect === true &&
+      currentQuestion?.allowMultiSelect === true &&
       otherSelectedByQuestion[currentIndex]
     ) {
       setOtherSelectedByQuestion((previous) => ({
@@ -374,6 +382,10 @@ export const AiChatQuestionCard = ({
       handleSend();
     }
   };
+
+  if (!isDefined(currentQuestion)) {
+    return null;
+  }
 
   return (
     <StyledAiChatAskCard>

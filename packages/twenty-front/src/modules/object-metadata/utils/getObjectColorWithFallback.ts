@@ -34,7 +34,7 @@ const getColorForCustomObject = (seed: string): ThemeColor => {
     hash |= 0;
   }
   const colorIndex = Math.abs(hash) % CUSTOM_OBJECT_ICON_COLORS.length;
-  return CUSTOM_OBJECT_ICON_COLORS[colorIndex];
+  return CUSTOM_OBJECT_ICON_COLORS[colorIndex] ?? 'blue';
 };
 
 export const getObjectColorWithFallback = (

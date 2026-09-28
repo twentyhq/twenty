@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
   type AskQuestionToolResult,
@@ -60,7 +61,9 @@ export const AiChatQuestionStatusRenderer = ({
   const entries = getAskedQuestionEntries(result);
 
   if (status === 'pending') {
-    if (entries.length !== 1) {
+    const [firstEntry] = entries;
+
+    if (entries.length !== 1 || !isDefined(firstEntry)) {
       return (
         <AiChatAskStatusRow
           Icon={IconHelpCircle}
@@ -70,7 +73,7 @@ export const AiChatQuestionStatusRenderer = ({
       );
     }
 
-    const pendingQuestion = entries[0].question.question;
+    const pendingQuestion = firstEntry.question.question;
 
     // the shimmer clips text to a transparent fill, which would hide chip labels
     return (

@@ -6,6 +6,7 @@ import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEm
 import { mergeEmailRecipients } from '@/activities/emails/recipients/utils/mergeEmailRecipients';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseEmailRecipientsFieldArgs = {
   recipients: EmailRecipient[];
@@ -144,8 +145,14 @@ export const useEmailRecipientsField = ({
   };
 
   const beginEditingChip = (chipIndex: number) => {
+    const recipient = recipients[chipIndex];
+
+    if (!isDefined(recipient)) {
+      return;
+    }
+
     setEditingIndex(chipIndex);
-    setInputValue(formatEmailRecipient(recipients[chipIndex]));
+    setInputValue(formatEmailRecipient(recipient));
     setChipSelection(null);
   };
 
@@ -226,14 +233,13 @@ export const useEmailRecipientsField = ({
       }
 
       const nextKeys = previousSelection.keys.filter((key) => key !== chipKey);
+      const fallbackKey = nextKeys.at(-1);
 
-      if (nextKeys.length === 0) {
+      if (!isDefined(fallbackKey)) {
         return null;
       }
 
       // Move the anchor and cursor off the removed chip, or Enter and shift+arrow would act on an unselected chip.
-      const fallbackKey = nextKeys[nextKeys.length - 1];
-
       return {
         anchorKey:
           previousSelection.anchorKey === chipKey

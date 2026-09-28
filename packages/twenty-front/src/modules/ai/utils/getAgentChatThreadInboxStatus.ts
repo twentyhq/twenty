@@ -2,7 +2,7 @@ import { isAfter } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
-import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
+import { type AgentChatThreadParticipant } from '@/ai/types/AgentChatThreadParticipant';
 
 // Activity and archiving have different writers and are compared rather than
 // folded into a status, so a message landing right after an archive brings the
@@ -14,7 +14,7 @@ export const getAgentChatThreadInboxStatus = ({
   participant,
 }: {
   lastActivityAt: string | null | undefined;
-  participant: AgentChatThreadParticipantFieldsFragment | undefined;
+  participant: AgentChatThreadParticipant | undefined;
 }): AgentChatThreadInboxStatus => {
   const isUnread =
     isDefined(lastActivityAt) &&

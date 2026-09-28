@@ -34,11 +34,11 @@ export const SignInUpWithSso = () => {
 
   const signInWithSso = () => {
     setLastAuthenticatedMethod(AuthenticatedMethod.SSO);
-    if (
-      isDefined(workspaceAuthProviders) &&
-      workspaceAuthProviders.sso.length === 1
-    ) {
-      return redirectToSsoLoginPage(workspaceAuthProviders.sso[0].id);
+    const [ssoProvider, ...otherSsoProviders] =
+      workspaceAuthProviders?.sso ?? [];
+
+    if (isDefined(ssoProvider) && otherSsoProviders.length === 0) {
+      return redirectToSsoLoginPage(ssoProvider.id);
     }
 
     setSignInUpStep(SignInUpStep.SsoIdentityProviderSelection);

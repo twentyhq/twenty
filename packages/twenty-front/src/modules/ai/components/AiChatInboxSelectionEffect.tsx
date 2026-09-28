@@ -30,8 +30,10 @@ export const AiChatInboxSelectionEffect = ({
       });
 
     if (!isDefined(selectedThreadId)) {
-      if (threads.length > 0) {
-        selectThread(threads[0].id);
+      const [firstThread] = threads;
+
+      if (isDefined(firstThread)) {
+        selectThread(firstThread.id);
       }
 
       return;

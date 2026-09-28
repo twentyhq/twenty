@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -82,15 +83,22 @@ export const AiChatPendingAskGate = ({
       : Math.min(previousIndex, requestCount - 1);
   const requestNumber = currentIndex + 1;
 
-  const selectRequest = (index: number) =>
+  const selectRequest = (index: number) => {
+    const requestToSelect = pendingToolCalls[index];
+
+    if (!isDefined(requestToSelect)) {
+      return;
+    }
+
     setSelection({
       threadId: agentChatDisplayedThread,
-      toolCallId: pendingToolCalls[index].toolCallId,
+      toolCallId: requestToSelect.toolCallId,
       index,
       batchToolCallIds: pendingToolCalls.map(
         (pendingToolCall) => pendingToolCall.toolCallId,
       ),
     });
+  };
 
   return (
     <StyledGate>

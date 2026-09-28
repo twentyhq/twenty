@@ -3,7 +3,8 @@ import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreatio
 import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 import { AppPath } from 'twenty-shared/types';
 
-const extractPathPrefix = (appPath: string): string => appPath.split('/:')[0];
+const extractPathPrefix = (appPath: string): string =>
+  appPath.split('/:')[0] ?? appPath;
 
 const EXCLUDED_PATH_PREFIXES = [
   ...ONGOING_USER_CREATION_PATHS,

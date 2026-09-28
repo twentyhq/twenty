@@ -140,9 +140,9 @@ export const AgentChatThreadInitializationEffect = () => {
       agentChatVisibleThreads,
     );
 
-    if (sortedThreads.length > 0) {
-      const firstThread = sortedThreads[0];
+    const [firstThread] = sortedThreads;
 
+    if (isDefined(firstThread)) {
       setCurrentAiChatThread(firstThread.id);
       store.set(
         agentChatUsageFamilyCallback({ threadId: firstThread.id }),

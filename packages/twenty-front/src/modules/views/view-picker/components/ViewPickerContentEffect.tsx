@@ -124,16 +124,18 @@ export const ViewPickerContentEffect = () => {
   ]);
 
   useEffect(() => {
+    const [firstFieldForGrouping] = availableFieldsForGrouping;
+
     if (
       isDefined(referenceView) &&
-      availableFieldsForGrouping.length > 0 &&
+      isDefined(firstFieldForGrouping) &&
       viewPickerMainGroupByFieldMetadataId === ''
     ) {
       setViewPickerMainGroupByFieldMetadataId(
         isDefined(referenceView.mainGroupByFieldMetadataId) &&
           referenceView.mainGroupByFieldMetadataId !== ''
           ? referenceView.mainGroupByFieldMetadataId
-          : availableFieldsForGrouping[0].id,
+          : firstFieldForGrouping.id,
       );
     }
   }, [

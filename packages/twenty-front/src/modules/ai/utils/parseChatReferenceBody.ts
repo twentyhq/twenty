@@ -1,7 +1,7 @@
 import { CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND } from '@/ai/constants/ChatReferenceIdentityShapeByKind';
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceKind } from '@/ai/types/ChatReferenceKind';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 type ParsedChatReferenceBody = ChatReferenceIdentity & { displayName: string };
 
@@ -10,10 +10,12 @@ const isChatReferenceKind = (segment: string): segment is ChatReferenceKind =>
 
 const getChatReferenceIdentity = ({
   kind,
-  segments: [firstSegment, secondSegment],
+  firstSegment,
+  secondSegment,
 }: {
   kind: ChatReferenceKind;
-  segments: string[];
+  firstSegment: string;
+  secondSegment: string;
 }): ChatReferenceIdentity => {
   switch (kind) {
     case 'record':
@@ -54,17 +56,19 @@ const parseSegments = ({
 }): ParsedChatReferenceBody | undefined => {
   const shape = CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND[kind];
   const identitySegments = segments.slice(0, shape.length);
+  const [firstSegment, secondSegment = ''] = identitySegments;
   const hasLabel = segments.length > shape.length;
 
   if (
     !hasLabel ||
-    !shape.every((regex, index) => regex.test(identitySegments[index]))
+    !isDefined(firstSegment) ||
+    !shape.every((regex, index) => regex.test(identitySegments[index] ?? ''))
   ) {
     return undefined;
   }
 
   return {
-    ...getChatReferenceIdentity({ kind, segments: identitySegments }),
+    ...getChatReferenceIdentity({ kind, firstSegment, secondSegment }),
     displayName: segments.slice(shape.length).join(':'),
   };
 };
@@ -76,7 +80,7 @@ export const parseChatReferenceBody = (
   const [kindPrefix, ...identityAndLabel] = segments;
 
   // A known prefix with a malformed identity is a retired marker, so it must not fall through to the unprefixed record form.
-  if (isChatReferenceKind(kindPrefix)) {
+  if (isDefined(kindPrefix) && isChatReferenceKind(kindPrefix)) {
     return parseSegments({ kind: kindPrefix, segments: identityAndLabel });
   }
 

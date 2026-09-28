@@ -15,7 +15,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -61,7 +61,7 @@ const CommandMenuItemButtonRenderer = ({
   // command menu from anywhere, and key sequences belong to it too
   const [hotKey] = item.hotKeys ?? [];
   const runsOnHotKey =
-    item.hotKeys?.length === 1 && /^[a-z]$/i.test(hotKey ?? '');
+    item.hotKeys?.length === 1 && isDefined(hotKey) && /^[a-z]$/i.test(hotKey);
 
   if (isInPreviewMode) {
     return (
@@ -77,7 +77,7 @@ const CommandMenuItemButtonRenderer = ({
 
   return (
     <>
-      {runsOnHotKey && (
+      {runsOnHotKey && isDefined(hotKey) && (
         <CommandMenuItemButtonHotkeyEffect
           hotKey={hotKey}
           disabled={disabled}

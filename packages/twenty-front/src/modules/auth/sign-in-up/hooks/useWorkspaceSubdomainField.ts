@@ -147,7 +147,9 @@ export const useWorkspaceSubdomainField = ({
     if (!validation.success) {
       debouncedAvailabilityCheck.cancel();
       setStatus('invalid');
-      setErrorMessage(validation.error.issues[0].message);
+      setErrorMessage(
+        validation.error.issues[0]?.message ?? validation.error.message,
+      );
       setSuggestions([]);
       return;
     }

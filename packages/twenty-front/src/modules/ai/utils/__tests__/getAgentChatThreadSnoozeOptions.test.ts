@@ -18,10 +18,10 @@ describe('getAgentChatThreadSnoozeOptions', () => {
       'tomorrow',
       'nextWeek',
     ]);
-    expect(options[0].date).toEqual(new Date(2026, 8, 3, 18, 0));
-    expect(options[1].date).toEqual(new Date(2026, 8, 3, 18, 0 + 60));
-    expect(options[2].date).toEqual(new Date(2026, 8, 4, 9, 0));
-    expect(options[3].date).toEqual(new Date(2026, 8, 7, 9, 0));
+    expect(options[0]?.date).toEqual(new Date(2026, 8, 3, 18, 0));
+    expect(options[1]?.date).toEqual(new Date(2026, 8, 3, 18, 0 + 60));
+    expect(options[2]?.date).toEqual(new Date(2026, 8, 4, 9, 0));
+    expect(options[3]?.date).toEqual(new Date(2026, 8, 7, 9, 0));
   });
 
   it('should drop the evening once it has passed and later today once it leaves the day', () => {
@@ -54,7 +54,7 @@ describe('getAgentChatThreadSnoozeOptions', () => {
       'tomorrow',
       'nextWeek',
     ]);
-    expect(options[0].date).toEqual(new Date(2026, 8, 3, 13, 0));
+    expect(options[0]?.date).toEqual(new Date(2026, 8, 3, 13, 0));
   });
 
   it('should not offer the same moment twice', () => {
@@ -87,7 +87,7 @@ describe('getAgentChatThreadSnoozeOptions', () => {
       'tomorrow',
       'nextWeek',
     ]);
-    expect(options[0].date).toEqual(new Date(2026, 8, 3, 23, 0));
+    expect(options[0]?.date).toEqual(new Date(2026, 8, 3, 23, 0));
   });
 
   it('should offer next week on a Sunday', () => {
@@ -105,8 +105,8 @@ describe('getAgentChatThreadSnoozeOptions', () => {
       'tomorrow',
       'nextWeek',
     ]);
-    expect(options[2].date).toEqual(new Date(2026, 8, 7, 9, 0));
-    expect(options[3].date).toEqual(new Date(2026, 8, 14, 9, 0));
+    expect(options[2]?.date).toEqual(new Date(2026, 8, 7, 9, 0));
+    expect(options[3]?.date).toEqual(new Date(2026, 8, 14, 9, 0));
   });
 
   it("should land on the member's morning when their time zone differs from the browser's", () => {

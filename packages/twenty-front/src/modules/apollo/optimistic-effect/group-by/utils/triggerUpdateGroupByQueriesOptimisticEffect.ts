@@ -145,21 +145,19 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
               continue;
             }
 
-            const groupByFieldNames = groupByConfig.map(
-              (groupByField) => Object.keys(groupByField)[0],
-            );
-
             const recordDimensionValues: string[] = [];
 
-            for (let i = 0; i < groupByFieldNames.length; i++) {
-              const fieldName = groupByFieldNames[i];
-              let recordValue = record[fieldName];
+            for (const groupByField of groupByConfig) {
+              const [fieldName] = Object.keys(groupByField);
+              let recordValue = isDefined(fieldName)
+                ? record[fieldName]
+                : undefined;
 
-              if (!isDefined(recordValue)) {
+              if (!isDefined(fieldName) || !isDefined(recordValue)) {
                 break;
               }
 
-              const fieldConfig = groupByConfig[i][fieldName];
+              const fieldConfig = groupByField[fieldName];
               const normalizedValue = normalizeGroupByDimensionValue(
                 recordValue,
                 fieldConfig,
@@ -179,7 +177,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
 
             if (
               !dimensionExists &&
-              recordDimensionValues.length === groupByFieldNames.length
+              recordDimensionValues.length === groupByConfig.length
             ) {
               const edge = createCacheEdgeWithRecordRef({
                 record,
@@ -210,8 +208,8 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
                 pageInfo: {
                   hasNextPage: false,
                   hasPreviousPage: false,
-                  startCursor: groupData.edges[0].cursor,
-                  endCursor: groupData.edges[groupData.edges.length - 1].cursor,
+                  startCursor: groupData.edges[0]?.cursor,
+                  endCursor: groupData.edges.at(-1)?.cursor,
                 },
                 totalCount: groupData.edges.length,
                 groupByDimensionValues: groupData.dimensionValues,
