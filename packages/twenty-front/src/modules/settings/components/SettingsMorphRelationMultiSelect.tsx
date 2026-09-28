@@ -224,7 +224,7 @@ export const SettingsMorphRelationMultiSelect = ({
             }
             aria-label={isNonEmptyString(label) ? label : undefined}
           >
-            {withSearchInput === true && (
+            {withSearchInput && (
               <Dropdown.Search
                 value={searchInputValue}
                 onValueChange={setSearchInputValue}
@@ -232,7 +232,7 @@ export const SettingsMorphRelationMultiSelect = ({
                 aria-label={t`Search`}
               />
             )}
-            {withSearchInput === true && isNonEmptyArray(matchingOptions) && (
+            {withSearchInput && isNonEmptyArray(matchingOptions) && (
               <Dropdown.Separator />
             )}
             {isNonEmptyArray(matchingOptions) && (

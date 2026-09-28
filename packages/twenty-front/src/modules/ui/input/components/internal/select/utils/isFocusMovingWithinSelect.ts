@@ -1,4 +1,5 @@
 import { type FocusEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const isFocusMovingWithinSelect = ({
   event,
@@ -12,6 +13,6 @@ export const isFocusMovingWithinSelect = ({
   return (
     nextFocus instanceof Node &&
     (event.currentTarget.contains(nextFocus) ||
-      dropdownContent?.contains(nextFocus) === true)
+      (isDefined(dropdownContent) && dropdownContent.contains(nextFocus)))
   );
 };
