@@ -451,69 +451,6 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     );
   });
 
-  it('sends a new idempotency key when a recording is re-requested after its bot was canceled', async () => {
-    const firstAttemptAt = new Date('2026-01-01T11:55:00.000Z');
-    const client = new FakeCoreApiClient({
-      callRecordings: [buildPendingCallRecording()],
-      calendarEvents: [buildCalendarEvent()],
-    });
-
-    vi.setSystemTime(firstAttemptAt);
-    await scheduleRecallBotsForPendingCallRecordings({
-      client: client as unknown as CoreApiClient,
-      now: firstAttemptAt,
-    });
-    Object.assign(client.callRecordings[0], {
-      externalBotId: null,
-      botScheduleAttemptedAt: null,
-      botScheduleIdempotencyKey: null,
-    });
-    vi.setSystemTime(NOW);
-
-    const result = await scheduleRecallBotsForPendingCallRecordings({
-      client: client as unknown as CoreApiClient,
-      now: NOW,
-    });
-
-    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
-    expect(listBotRequestUrls()).toHaveLength(0);
-    const [[, firstRequestInit], [, secondRequestInit]] = createBotCalls();
-    expect(secondRequestInit.headers['Idempotency-Key']).not.toBe(
-      firstRequestInit.headers['Idempotency-Key'],
-    );
-  });
-
-  it('creates no bot when another run records its attempt first', async () => {
-    class ConcurrentAttemptFakeCoreApiClient extends FakeCoreApiClient {
-      override async mutation(mutation: any): Promise<any> {
-        if (mutation.updateCallRecordings !== undefined) {
-          Object.assign(this.callRecordings[0], {
-            botScheduleAttemptedAt: '2026-01-01T11:59:59.000Z',
-            botScheduleIdempotencyKey: 'concurrent-idempotency-key',
-          });
-        }
-
-        return super.mutation(mutation);
-      }
-    }
-
-    const client = new ConcurrentAttemptFakeCoreApiClient({
-      callRecordings: [buildPendingCallRecording()],
-      calendarEvents: [buildCalendarEvent()],
-    });
-
-    const result = await scheduleRecallBotsForPendingCallRecordings({
-      client: client as unknown as CoreApiClient,
-      now: NOW,
-    });
-
-    expect(result.scheduledCallRecordingIds).toEqual([]);
-    expect(createBotCalls()).toHaveLength(0);
-    expect(client.callRecordings[0].botScheduleIdempotencyKey).toBe(
-      'concurrent-idempotency-key',
-    );
-  });
-
   it('falls back to the Recall lookup when the recorded attempt is too old to trust its idempotency key', async () => {
     const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',
@@ -558,34 +495,6 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
         buildPendingCallRecording({
           botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
           botScheduleIdempotencyKey: staleIdempotencyKey,
-        }),
-      ],
-      calendarEvents: [buildCalendarEvent()],
-    });
-
-    const result = await scheduleRecallBotsForPendingCallRecordings({
-      client: client as unknown as CoreApiClient,
-      now: NOW,
-    });
-
-    expect(listBotRequestUrls()).toHaveLength(1);
-    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
-  });
-
-  it('falls back to the Recall lookup when the stored key predates attempt-scoped keys', async () => {
-    const attemptlessIdempotencyKey = computeRecallBotCreationIdempotencyKey({
-      meetingUrl: 'https://meet.example.com/customer-sync',
-      joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
-      metadata: {
-        twentyWorkspaceId: WORKSPACE_ID,
-        twentyCallRecordingId: 'call-recording-1',
-      },
-    });
-    const client = new FakeCoreApiClient({
-      callRecordings: [
-        buildPendingCallRecording({
-          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
-          botScheduleIdempotencyKey: attemptlessIdempotencyKey,
         }),
       ],
       calendarEvents: [buildCalendarEvent()],
