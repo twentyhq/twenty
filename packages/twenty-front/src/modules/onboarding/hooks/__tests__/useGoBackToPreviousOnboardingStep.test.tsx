@@ -6,9 +6,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import {
@@ -19,7 +20,10 @@ import {
   GoBackToPreviousOnboardingStepDocument,
   OnboardingStatus,
 } from '~/generated-metadata/graphql';
-import { mockedUserData } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 
 const mockEnqueueToast = jest.fn();
 
@@ -62,6 +66,7 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     localStorage.clear();
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     jotaiStore.set(currentUserState.atom, {
       ...mockedUserData,
       onboardingStatus: OnboardingStatus.PROFILE_CREATION,
@@ -120,7 +125,11 @@ describe('useGoBackToPreviousOnboardingStep', () => {
       await result.current.goBackToPreviousOnboardingStep();
     });
 
-    expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(1);
+    expect(
+      jotaiStore.get(
+        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      ).inviteTeam,
+    ).toBe(1);
   });
 
   it('should clear the previous status when the server reports no earlier step', async () => {

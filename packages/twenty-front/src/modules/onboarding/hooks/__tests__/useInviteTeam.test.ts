@@ -5,16 +5,18 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const mockSendInvitation = jest.fn();
 const mockSetNextOnboardingStatus = jest.fn();
@@ -66,6 +68,7 @@ describe('useInviteTeam', () => {
     localStorage.clear();
     sessionStorage.clear();
     resetJotaiStore();
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     jest.clearAllMocks();
     mockSendInvitation.mockResolvedValue({});
     mockWaitForCompanyEnrichmentSettlement.mockResolvedValue(undefined);
@@ -226,7 +229,11 @@ describe('useInviteTeam', () => {
     });
 
     await waitFor(() => expect(mockSetNextOnboardingStatus).toHaveBeenCalled());
-    expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(1);
+    expect(
+      jotaiStore.get(
+        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      ).inviteTeam,
+    ).toBe(1);
   });
 
   it('should drop the invite credits on skip and keep the typed emails', async () => {
@@ -234,10 +241,15 @@ describe('useInviteTeam', () => {
       'grace@example.com',
       '',
     ]);
-    jotaiStore.set(onboardingFreeCreditsState.atom, {
-      ...jotaiStore.get(onboardingFreeCreditsState.atom),
-      inviteTeam: 0.5,
-    });
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      {
+        ...jotaiStore.get(
+          onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+        ),
+        inviteTeam: 0.5,
+      },
+    );
 
     const { result } = renderInviteTeam();
 
@@ -245,7 +257,11 @@ describe('useInviteTeam', () => {
       await result.current.handleSkip();
     });
 
-    expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(0);
+    expect(
+      jotaiStore.get(
+        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      ).inviteTeam,
+    ).toBe(0);
     expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
       'grace@example.com',
       '',

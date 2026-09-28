@@ -12,7 +12,7 @@ import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboard
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -204,9 +204,11 @@ describe('useSetNextOnboardingStatus', () => {
 
     renderHooks(OnboardingStatus.APPS_INSTALLATION);
 
-    expect(jotaiStore.get(onboardingFreeCreditsState.atom).createProfile).toBe(
-      0.5,
-    );
+    expect(
+      jotaiStore.get(
+        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      ).createProfile,
+    ).toBe(0.5);
   });
 
   it('should not count the profile credits when the profile step opens without a last name', () => {
@@ -225,9 +227,11 @@ describe('useSetNextOnboardingStatus', () => {
 
     renderHooks(OnboardingStatus.APPS_INSTALLATION);
 
-    expect(jotaiStore.get(onboardingFreeCreditsState.atom).createProfile).toBe(
-      0,
-    );
+    expect(
+      jotaiStore.get(
+        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      ).createProfile,
+    ).toBe(0);
   });
 
   it('should invite the team right after profile creation', () => {
