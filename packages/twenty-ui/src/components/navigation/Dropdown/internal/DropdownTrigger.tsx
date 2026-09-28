@@ -3,6 +3,7 @@ import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 
 import { type DropdownTriggerProps } from '../types/DropdownTriggerProps';
+import { createDropdownOpenChangeDetails } from './createDropdownOpenChangeDetails';
 import { useDropdownContext } from './useDropdownContext';
 import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
 
@@ -47,7 +48,13 @@ export const DropdownTrigger = ({
         event.preventDefault();
         setFocusOnOpen(true);
         setInitialFocusEdge(event.key === 'ArrowUp' ? 'last' : 'first');
-        setOpen(true);
+        setOpen(
+          true,
+          createDropdownOpenChangeDetails({
+            reason: 'list-navigation',
+            event: event.nativeEvent,
+          }),
+        );
       }}
     />
   );

@@ -194,7 +194,10 @@ describe('Dropdown picker', () => {
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     );
-    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'close-press' }),
+    );
   });
 
   it('filters caller-owned results and navigates mixed commands and options from search', async () => {

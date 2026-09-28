@@ -6,6 +6,7 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
+import { DropdownContextMenuExample } from './DropdownContextMenuExample';
 import { DropdownNestedExample } from './DropdownNestedExample';
 import { DropdownPagesExample } from './DropdownPagesExample';
 import { DropdownPanelExample } from './DropdownPanelExample';
@@ -308,4 +309,79 @@ export const Nested: Story = {
 
 export const NestedDocumentation: Story = {
   render: Nested.render,
+};
+
+export const ContextMenu: Story = {
+  render: () => <DropdownContextMenuExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const firstRecord = canvas.getByText('Ada Lovelace');
+    const secondRecord = canvas.getByText('Grace Hopper');
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: firstRecord,
+      coords: { clientX: 40, clientY: 30 },
+    });
+    const menu = await body.findByRole('menu', { name: 'Record actions' });
+
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
+    await waitFor(() =>
+      expect(menu.getBoundingClientRect()).toMatchObject({ left: 40, top: 30 }),
+    );
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: secondRecord,
+      coords: { clientX: 120, clientY: 60 },
+    });
+    await waitFor(() =>
+      expect(menu.getBoundingClientRect()).toMatchObject({
+        left: 120,
+        top: 60,
+      }),
+    );
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const CollisionPadding: Story = {
+  render: () => (
+    <div style={{ position: 'fixed', insetInlineEnd: 8, insetBlockStart: 16 }}>
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger render={<Button>Record actions</Button>} />
+        <Dropdown.Content collisionPadding={16}>
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const viewportWidth =
+      canvasElement.ownerDocument.documentElement.clientWidth;
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Record actions' }),
+    );
+    const menu = await within(canvasElement.ownerDocument.body).findByRole(
+      'menu',
+      { name: 'Record actions' },
+    );
+
+    await waitFor(() =>
+      expect(menu.getBoundingClientRect().right).toBeCloseTo(
+        viewportWidth - 16,
+        0,
+      ),
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(menu).not.toBeInTheDocument());
+  },
 };

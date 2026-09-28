@@ -64,6 +64,7 @@ export type { DropdownActionItemProps } from './navigation/Dropdown/types/Dropdo
 export type { DropdownCloseProps } from './navigation/Dropdown/types/DropdownCloseProps';
 export type { DropdownContentProps } from './navigation/Dropdown/types/DropdownContentProps';
 export type { DropdownHeaderProps } from './navigation/Dropdown/types/DropdownHeaderProps';
+export type { DropdownOpenChangeDetails } from './navigation/Dropdown/types/DropdownOpenChangeDetails';
 export type { DropdownOptionItemProps } from './navigation/Dropdown/types/DropdownOptionItemProps';
 export type { DropdownPageProps } from './navigation/Dropdown/types/DropdownPageProps';
 export type { DropdownRootProps } from './navigation/Dropdown/types/DropdownRootProps';

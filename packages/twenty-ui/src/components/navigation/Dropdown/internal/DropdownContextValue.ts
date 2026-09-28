@@ -1,3 +1,4 @@
+import { type DropdownOpenChangeDetails } from '../types/DropdownOpenChangeDetails';
 import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
@@ -21,8 +22,8 @@ export type DropdownContextValue = {
   setInitialFocusEdge: (edge: 'first' | 'last') => void;
   focusOnOpen: boolean;
   setFocusOnOpen: (focusOnOpen: boolean) => void;
-  setOpen: (open: boolean) => void;
-  closeTree: () => void;
+  setOpen: (open: boolean, eventDetails: DropdownOpenChangeDetails) => void;
+  closeTree: (event: MouseEvent | KeyboardEvent) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;

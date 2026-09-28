@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
@@ -671,5 +672,265 @@ describe('Dropdown popup name', () => {
     rerender(<SortPicker hasTitle={false} />);
 
     expect(screen.getByRole('dialog', { name: 'Sort' })).toBeVisible();
+  });
+});
+
+describe('Dropdown open changes', () => {
+  it('reports why the menu opens and closes', async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+
+    render(
+      <>
+        <Dropdown.Root type="menu" onOpenChange={onOpenChange}>
+          <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+          <Dropdown.Content>
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Root>
+        <Button>Outside</Button>
+      </>,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'Record actions' });
+
+    await user.click(trigger);
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      true,
+      expect.objectContaining({ reason: 'trigger-press' }),
+    );
+
+    await user.click(screen.getByRole('menuitem', { name: 'Duplicate' }));
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({
+        reason: 'item-press',
+        event: expect.any(MouseEvent),
+      }),
+    );
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await user.keyboard('{ArrowDown}');
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      true,
+      expect.objectContaining({ reason: 'list-navigation' }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
+
+    await user.keyboard('{Escape}');
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'escape-key' }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+
+    await user.click(trigger);
+    await user.click(screen.getByRole('button', { name: 'Outside' }));
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({
+        reason: expect.stringMatching(/^(focus-out|outside-press)$/),
+      }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  });
+
+  it('reports submenu keyboard changes and closes the whole tree after a selection', async () => {
+    const user = userEvent.setup();
+    const onRootOpenChange = vi.fn();
+    const onSubmenuOpenChange = vi.fn();
+
+    render(
+      <Dropdown.Root type="menu" onOpenChange={onRootOpenChange}>
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Submenu onOpenChange={onSubmenuOpenChange}>
+            <Dropdown.SubmenuTrigger>Export</Dropdown.SubmenuTrigger>
+            <Dropdown.Content>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+            </Dropdown.Content>
+          </Dropdown.Submenu>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    const exportTrigger = await screen.findByRole('menuitem', {
+      name: 'Export',
+    });
+
+    await waitFor(() => expect(exportTrigger).toHaveFocus());
+    await user.keyboard('{ArrowRight}');
+    expect(onSubmenuOpenChange).toHaveBeenLastCalledWith(
+      true,
+      expect.objectContaining({ reason: 'list-navigation' }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'CSV' })).toHaveFocus(),
+    );
+
+    await user.keyboard('{ArrowLeft}');
+    expect(onSubmenuOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'list-navigation' }),
+    );
+    await waitFor(() => expect(exportTrigger).toHaveFocus());
+
+    await user.keyboard('{ArrowRight}');
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'CSV' })).toHaveFocus(),
+    );
+    await user.keyboard('{Escape}');
+    expect(onSubmenuOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'escape-key' }),
+    );
+    await waitFor(() => expect(exportTrigger).toHaveFocus());
+    expect(screen.getByRole('menu', { name: 'Record actions' })).toBeVisible();
+
+    await user.keyboard('{ArrowRight}');
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'CSV' })).toHaveFocus(),
+    );
+    await user.keyboard('{Enter}');
+    expect(onSubmenuOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'item-press' }),
+    );
+    expect(onRootOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'item-press' }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  });
+
+  it('keeps the popup open when a change is canceled and lets the outside click through', async () => {
+    const user = userEvent.setup();
+    const clickOutsideControl = vi.fn();
+
+    render(
+      <>
+        <Dropdown.Root
+          type="menu"
+          onOpenChange={(open, eventDetails) => {
+            if (!open && eventDetails.reason !== 'escape-key') {
+              eventDetails.cancel();
+            }
+          }}
+        >
+          <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+          <Dropdown.Content>
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Root>
+        <Button onClick={clickOutsideControl}>Outside</Button>
+      </>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Duplicate' }));
+    expect(screen.getByRole('menu')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Outside' }));
+    expect(clickOutsideControl).toHaveBeenCalledOnce();
+    expect(screen.getByRole('menu')).toBeVisible();
+
+    await user.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  });
+});
+
+describe('Dropdown without a trigger', () => {
+  const RecordContextMenu = () => {
+    const [point, setPoint] = useState({ x: 0, y: 0 });
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        {['Ada Lovelace', 'Grace Hopper'].map((name) => (
+          <div
+            key={name}
+            role="row"
+            onContextMenu={(event) => {
+              event.preventDefault();
+              setPoint({ x: event.clientX, y: event.clientY });
+              setOpen(true);
+            }}
+          >
+            {name}
+          </div>
+        ))}
+        <Button>Outside</Button>
+        <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+          <Dropdown.Content
+            aria-label="Record actions"
+            anchor={{
+              getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+            }}
+          >
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      </>
+    );
+  };
+
+  it('opens at the pointer, follows a second right-click, and closes on Escape or an outside press', async () => {
+    const user = userEvent.setup();
+
+    render(<RecordContextMenu />);
+
+    const adaRow = screen.getByRole('row', { name: 'Ada Lovelace' });
+    const graceRow = screen.getByRole('row', { name: 'Grace Hopper' });
+
+    await user.pointer({
+      keys: '[MouseRight]',
+      target: adaRow,
+      coords: { clientX: 120, clientY: 80 },
+    });
+    const menu = await screen.findByRole('menu', { name: 'Record actions' });
+
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
+    expect(menu.parentElement).toHaveStyle({
+      transform: 'translate(120px, 80px)',
+    });
+
+    await user.pointer({
+      keys: '[MouseRight]',
+      target: graceRow,
+      coords: { clientX: 240, clientY: 160 },
+    });
+    await waitFor(() =>
+      expect(menu.parentElement).toHaveStyle({
+        transform: 'translate(240px, 160px)',
+      }),
+    );
+    expect(screen.getAllByRole('menu')).toHaveLength(1);
+
+    await user.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(document.body).toHaveFocus();
+
+    await user.pointer({ keys: '[MouseRight]', target: adaRow });
+    expect(await screen.findByRole('menu')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Outside' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
   });
 });

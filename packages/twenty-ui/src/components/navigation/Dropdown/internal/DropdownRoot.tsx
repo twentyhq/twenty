@@ -3,8 +3,10 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { type DropdownOpenChangeDetails } from '../types/DropdownOpenChangeDetails';
 import { type DropdownRootProps } from '../types/DropdownRootProps';
 import { type DropdownType } from '../types/DropdownType';
+import { createDropdownOpenChangeDetails } from './createDropdownOpenChangeDetails';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
@@ -68,19 +70,31 @@ export const DropdownRoot = ({
     }
   }
 
-  const setOpen = (nextOpen: boolean) => {
+  const setOpen = (
+    nextOpen: boolean,
+    eventDetails: DropdownOpenChangeDetails,
+  ) => {
+    onOpenChange?.(nextOpen, eventDetails);
+
+    if (eventDetails.isCanceled) {
+      return;
+    }
+
     if (!isDefined(controlledOpen)) {
       setUncontrolledOpen(nextOpen);
     }
-
-    onOpenChange?.(nextOpen);
   };
 
-  const closeTree = () => {
-    setOpen(false);
+  const closeTree = (event: MouseEvent | KeyboardEvent) => {
+    const eventDetails = createDropdownOpenChangeDetails({
+      reason: 'item-press',
+      event,
+    });
 
-    if (isSubmenu) {
-      parent?.closeTree();
+    setOpen(false, eventDetails);
+
+    if (isSubmenu && !eventDetails.isCanceled) {
+      parent?.closeTree(event);
     }
   };
 
@@ -141,12 +155,17 @@ export const DropdownRoot = ({
           return;
         }
 
+        setOpen(nextOpen, eventDetails);
+
+        if (eventDetails.isCanceled) {
+          return;
+        }
+
         if (isOutsideDismissal) {
           preventDismissingClickActivation(eventDetails.event);
         }
 
         setFocusOnOpen(eventDetails.reason !== 'trigger-hover');
-        setOpen(nextOpen);
       }}
     >
       <DropdownContext.Provider

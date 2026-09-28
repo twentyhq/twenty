@@ -45,7 +45,7 @@ Dropdown.Root
         └── Dropdown.OptionItem
 ```
 
-`Content` includes the portal and positioner. Use `width`, `side`, `align`, `sideOffset`, and `alignOffset` to control placement. `Section` groups rows with shared spacing, and `Separator` divides sections. A `scrollable` Section caps its height and scrolls; nest labelled sections inside it to scroll them as one list. Rows use [ListItem](/ui/primitives/navigation/list-item) for their appearance.
+`Content` includes the portal and positioner. Use `width`, `side`, `align`, `sideOffset`, and `alignOffset` to control placement, and `collisionPadding` to keep the popup further from the edges of the viewport before it shifts or flips (5 pixels by default). `Section` groups rows with shared spacing, and `Separator` divides sections. A `scrollable` Section caps its height and scrolls; nest labelled sections inside it to scroll them as one list. Rows use [ListItem](/ui/primitives/navigation/list-item) for their appearance.
 
 ```tsx
 import { Dropdown } from 'twenty-ui/components';
@@ -228,6 +228,94 @@ Use `type="panel"` for form inputs. Input interaction keeps the panel open; a sa
 />
 
 Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
+
+## Open state changes
+
+`onOpenChange` receives the next open state and a `DropdownOpenChangeDetails` object. Its `reason` tells what caused the change, and `event` holds the DOM event behind it.
+
+| Reason            | Change                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| `trigger-press`   | The trigger was pressed.                                                                                     |
+| `list-navigation` | ArrowDown or ArrowUp on the trigger opened the popup, or ArrowRight or ArrowLeft opened or closed a submenu. |
+| `item-press`      | An action or option closed the popup. In a submenu, every open level reports it.                             |
+| `escape-key`      | Escape closed the popup.                                                                                     |
+| `outside-press`   | A press outside the popup closed it.                                                                         |
+| `focus-out`       | Focus moved outside the popup, for example when an outside press lands on a focusable element.               |
+| `close-press`     | `Close` was pressed.                                                                                         |
+| `trigger-hover`   | Hovering a submenu trigger opened or closed its submenu.                                                     |
+
+Call `eventDetails.cancel()` to keep the popup as it is. A canceled outside press also lets the click reach the element it lands on. Cancel `focus-out` as well, since a press on a focusable element moves focus before the click happens:
+
+```tsx
+import { Dropdown } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ViewSettings = ({ isEditing }: { isEditing: boolean }) => (
+  <Dropdown.Root
+    type="panel"
+    onOpenChange={(open, eventDetails) => {
+      const isOutsideDismissal =
+        eventDetails.reason === 'outside-press' ||
+        eventDetails.reason === 'focus-out';
+
+      if (!open && isEditing && isOutsideDismissal) {
+        eventDetails.cancel();
+      }
+    }}
+  >
+    <Dropdown.Trigger render={<Button>View settings</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem>Save view</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Anchoring without a trigger
+
+A root can open without a `Trigger`, for example as a context menu. Control it with `open` and `onOpenChange`, and pass `anchor` to `Content`: an element, a ref, or a virtual element that returns a rectangle in viewport coordinates. Give `Content` an `aria-label`, since there is no trigger to name it after. On close, focus returns to the element that was focused when the popup opened.
+
+<StoryEmbed
+  storyId="ui-components-dropdown--context-menu"
+  title="Context menu anchored to the pointer"
+  height={300}
+/>
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
+
+export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState({ x: 0, y: 0 });
+
+  return (
+    <>
+      <p
+        onContextMenu={(event) => {
+          event.preventDefault();
+          setPoint({ x: event.clientX, y: event.clientY });
+          setOpen(true);
+        }}
+      >
+        {recordName}
+      </p>
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+        <Dropdown.Content
+          aria-label="Record actions"
+          anchor={{
+            getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+          }}
+        >
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </>
+  );
+};
+```
+
+Right-clicking elsewhere while the menu is open moves it to the new point.
 
 ## Labels
 

@@ -5362,6 +5362,13 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
+          },
+          {
             "name": "container",
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
@@ -6797,7 +6804,7 @@
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean) => void)",
+            "type": "((open: boolean, eventDetails: DropdownOpenChangeDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Called with the next open state when the popup opens or closes."
@@ -6923,6 +6930,13 @@
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
           },
           {
             "name": "container",
@@ -7489,7 +7503,7 @@
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean) => void)",
+            "type": "((open: boolean, eventDetails: DropdownOpenChangeDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Called with the next open state when the popup opens or closes."

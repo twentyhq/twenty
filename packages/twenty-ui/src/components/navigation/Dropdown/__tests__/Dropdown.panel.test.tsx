@@ -55,7 +55,10 @@ describe('Dropdown panel', () => {
 
     await screen.findByRole('dialog', { name: 'Details' });
     await user.keyboard('{Escape}');
-    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(onOpenChange).toHaveBeenCalledWith(
+      false,
+      expect.objectContaining({ reason: 'escape-key' }),
+    );
     expect(screen.getByRole('dialog')).toBeVisible();
     rerender(
       <Dropdown.Root type="panel" open={false} onOpenChange={onOpenChange}>
