@@ -39,20 +39,8 @@ description: Frequently asked questions about workflows in Twenty.
     See [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers) for details.
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. What should I do?">
-    An explicit If/Else node is not yet available but is on our roadmap.
-
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
-
-    ```
-    Step 1
-       │
-       ├── Branch A: Filter (condition = true) → Actions...
-       │
-       └── Branch B: Filter (condition = false) → Actions...
-    ```
-
-    Only the branch where the filter condition passes will execute its subsequent actions.
+  <Accordion title="How do I add an If/Else node?">
+    Add an **If/else** action from a step's branch menu, the same way you'd add any other action. It splits the workflow into a "true" and a "false" path based on the condition you configure, so only one side runs.
 
     See [How to Use Branches](/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
   </Accordion>
