@@ -1,3 +1,4 @@
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -41,6 +42,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async run({
@@ -167,6 +169,16 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
     }
+
+    // Recorded before the run is resumed: the resumed run can reach its end,
+    // and ending a run cancels whatever is still pending, so an Ask answered
+    // afterwards would read as canceled on a form somebody did answer.
+    await this.inputAskWorkspaceService.answerForFormStep({
+      workspaceId,
+      workflowRunId,
+      stepId,
+      response: enrichedResponse,
+    });
 
     await this.resume({
       workspaceId,

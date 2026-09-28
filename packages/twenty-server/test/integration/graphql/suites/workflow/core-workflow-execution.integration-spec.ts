@@ -846,6 +846,181 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(run.state.stepInfos[finalStep.id].status).toBe('NOT_STARTED');
   });
 
+  describe('the Ask a form step opens', () => {
+    const getInputAsks = async (runId: string) =>
+      global.testDataSource.query(
+        `SELECT name, "stepId", status, form, response, "answeredAt" FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
+        [runId],
+      );
+
+    const approvalForm = (nextStepIds: string[]): WorkflowAction => ({
+      ...formStep(nextStepIds),
+      name: 'Approve the discount',
+    });
+
+    it('opens while the form waits and is answered on submit', async () => {
+      const finalStep = emptyStep();
+      const form = approvalForm([finalStep.id]);
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [form, finalStep],
+      });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+
+      const [pendingInputAsk] = await getInputAsks(runId);
+
+      expect(pendingInputAsk).toMatchObject({
+        name: 'Approve the discount',
+        stepId: form.id,
+        status: 'PENDING',
+        response: null,
+        answeredAt: null,
+      });
+      expect(pendingInputAsk.form).toEqual({ fields: form.settings.input });
+
+      const response = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'Approved',
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+
+      const answeredInputAsks = await getInputAsks(runId);
+
+      expect(answeredInputAsks).toHaveLength(1);
+      expect(answeredInputAsks[0]).toMatchObject({
+        stepId: form.id,
+        status: 'ANSWERED',
+        response: { answer: 'Approved' },
+      });
+      expect(answeredInputAsks[0].answeredAt).not.toBeNull();
+    });
+
+    it('keeps the first answer when a second submission is refused', async () => {
+      const finalStep = emptyStep();
+      const form = approvalForm([finalStep.id]);
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [form, finalStep],
+      });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+      await submitForm({ runId, stepId: form.id, answer: 'Approved' });
+      await waitForRun(runId, 'COMPLETED');
+
+      const second = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'Approved again',
+      });
+
+      expect(second.body.errors).toBeDefined();
+      expect(await getInputAsks(runId)).toMatchObject([
+        { status: 'ANSWERED', response: { answer: 'Approved' } },
+      ]);
+    });
+
+    // Every iteration of a loop re-executes the same step in the same run, so
+    // the Ask keyed on the run and the step is reused. Without reopening it,
+    // the first iteration's answer would stand for the second.
+    it('reopens for each iteration of a form inside a loop', async () => {
+      const afterLoop = emptyStep();
+      const form = approvalForm([]);
+      const iterator: WorkflowAction = {
+        ...emptyStep(),
+        type: WorkflowActionType.ITERATOR,
+        settings: {
+          ...settings,
+          input: {
+            items: ['first', 'second'],
+            initialLoopStepIds: [form.id],
+          },
+        },
+        nextStepIds: [afterLoop.id],
+      };
+
+      form.nextStepIds = [iterator.id];
+
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [iterator, form, afterLoop],
+      });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+      expect(await getInputAsks(runId)).toMatchObject([{ status: 'PENDING' }]);
+
+      const first = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'First item',
+      });
+
+      expect(first.body.errors).toBeUndefined();
+      await waitForStep(runId, form.id, 'PENDING');
+
+      const reopenedInputAsks = await getInputAsks(runId);
+
+      expect(reopenedInputAsks).toHaveLength(1);
+      expect(reopenedInputAsks[0]).toMatchObject({
+        stepId: form.id,
+        status: 'PENDING',
+        response: null,
+        answeredAt: null,
+      });
+
+      const second = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'Second item',
+      });
+
+      expect(second.body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+      expect(await getInputAsks(runId)).toMatchObject([
+        { status: 'ANSWERED', response: { answer: 'Second item' } },
+      ]);
+    });
+
+    it('is canceled when its run ends before anyone answers, and stays canceled', async () => {
+      const finalStep = emptyStep();
+      const form = approvalForm([finalStep.id]);
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [form, finalStep],
+      });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+      expect(await getInputAsks(runId)).toMatchObject([{ status: 'PENDING' }]);
+
+      const response = await workflowGraphqlRequest(
+        'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+        { id: runId },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForRun(runId, 'STOPPED');
+      expect(await getInputAsks(runId)).toMatchObject([{ status: 'CANCELED' }]);
+
+      const late = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'Too late',
+      });
+
+      expect(late.body.errors).toBeDefined();
+      expect(await getInputAsks(runId)).toMatchObject([
+        { status: 'CANCELED', response: null },
+      ]);
+    });
+  });
+
   describe('an agent step that asks a question', () => {
     const QUESTIONS = [
       {

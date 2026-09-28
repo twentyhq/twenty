@@ -1,3 +1,4 @@
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
@@ -18,6 +19,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     MetricsModule,
     WorkspaceIteratorModule,
     FeatureFlagModule,
+    InputAskModule,
   ],
   providers: [
     WorkflowRunWorkspaceService,

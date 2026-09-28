@@ -1,3 +1,4 @@
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { Injectable } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -30,6 +31,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -183,6 +185,13 @@ export class WorkflowRunWorkspaceService {
     };
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+
+    // A run that ends can no longer consume an answer, so an Ask still
+    // waiting on one stops being actionable here rather than outliving it.
+    await this.inputAskWorkspaceService.cancelPendingForWorkflowRun({
+      workspaceId,
+      workflowRunId,
+    });
 
     const metricKey =
       status === WorkflowRunStatus.COMPLETED

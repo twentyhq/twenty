@@ -1,3 +1,4 @@
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -26,6 +27,7 @@ import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/work
     CodeStepBuildModule,
     WorkflowCoreModule,
     WorkflowVersionCoreModule,
+    InputAskModule,
   ],
   providers: [
     WorkflowRunnerWorkspaceService,
