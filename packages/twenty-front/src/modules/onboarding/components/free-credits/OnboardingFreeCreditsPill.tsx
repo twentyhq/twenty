@@ -54,6 +54,14 @@ const StyledCreditsContent = styled(motion.span)`
   gap: ${themeCssVariables.spacing['1.5']};
 `;
 
+const StyledTooltipContents = styled.div`
+  display: grid;
+`;
+
+const StyledTooltipContent = styled(motion.div)`
+  grid-area: 1 / 1;
+`;
+
 type OnboardingFreeCreditsPillProps = {
   progress: OnboardingCreditsProgress;
 };
@@ -157,21 +165,23 @@ export const OnboardingFreeCreditsPill = ({
           arrow
           withExitAnimation
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {isDefined(tooltipContent) && (
-              <motion.div
-                key={tooltipContent.title}
-                initial={{ opacity: 0, y: tooltipSlideOffset }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -tooltipSlideOffset }}
-                transition={{ duration: theme.animation.duration.fast }}
-              >
-                <Tooltip.Content description={tooltipContent.description}>
-                  {tooltipContent.title}
-                </Tooltip.Content>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <StyledTooltipContents>
+            <AnimatePresence initial={false}>
+              {isDefined(tooltipContent) && (
+                <StyledTooltipContent
+                  key={tooltipContent.title}
+                  initial={{ opacity: 0, y: tooltipSlideOffset }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -tooltipSlideOffset }}
+                  transition={{ duration: theme.animation.duration.normal }}
+                >
+                  <Tooltip.Content description={tooltipContent.description}>
+                    {tooltipContent.title}
+                  </Tooltip.Content>
+                </StyledTooltipContent>
+              )}
+            </AnimatePresence>
+          </StyledTooltipContents>
         </Tooltip.Popup>
       </Tooltip.Root>
     </StyledContainer>
