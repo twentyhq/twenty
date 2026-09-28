@@ -177,16 +177,19 @@ describe('Conversation common record access', () => {
     });
   });
 
-  it('keeps legacy SYSTEM history owner-only until migration', async () => {
+  it('does not bypass the common policy for owners of SYSTEM history', async () => {
     const { service, objectMetadata, repository } = buildService();
     objectMetadata.readability = MetadataReadability.SYSTEM;
+    repository.findRecordIdsAllowedForOperation.mockResolvedValue([]);
     await expect(service.getReadableThread(args)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
     await expect(
       service.getReadableThread({ ...args, userWorkspaceId: 'owner' }),
-    ).resolves.toBeDefined();
-    expect(repository.findRecordIdsAllowedForOperation).not.toHaveBeenCalled();
+    ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
+    expect(repository.findRecordIdsAllowedForOperation).toHaveBeenCalledTimes(
+      2,
+    );
   });
 
   it('returns common capabilities, including destructive permission differences', async () => {
@@ -203,16 +206,10 @@ describe('Conversation common record access', () => {
   it.each([MetadataReadability.SYSTEM, MetadataReadability.PRIVATE])(
     'bounds the readable thread list before ranking for %s metadata',
     async (readability) => {
-      const { service, repository, threadRepository, objectMetadata, sharing } =
-        buildService();
+      const { service, repository, objectMetadata, sharing } = buildService();
       objectMetadata.readability = readability;
       await service.getReadableThreadIds(args);
-      const selectedRepository =
-        readability === MetadataReadability.SYSTEM
-          ? threadRepository
-          : repository;
-      expect(selectedRepository.find).toHaveBeenCalledWith(
-        ...(readability === MetadataReadability.SYSTEM ? [WORKSPACE_ID] : []),
+      expect(repository.find).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 1000,
           order: { updatedAt: 'DESC', id: 'DESC' },

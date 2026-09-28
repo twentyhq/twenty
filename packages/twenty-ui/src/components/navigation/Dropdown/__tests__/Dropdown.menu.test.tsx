@@ -2,6 +2,8 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
+import { IconDotsVertical } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 
 import { Dropdown } from '../Dropdown';
@@ -425,7 +427,7 @@ describe('Dropdown menu', () => {
 
     expect(screen.getByRole('menu')).toBeVisible();
     expect(clickEvents).toHaveLength(1);
-    expect(clickEvents[0].defaultPrevented).toBe(true);
+    expect(clickEvents[0]?.defaultPrevented).toBe(true);
   });
 
   it('lets unhandled modifier shortcuts leave the menu and keeps other keys inside', async () => {
@@ -523,5 +525,153 @@ describe('Dropdown menu', () => {
 
     await user.click(screen.getByRole('row'));
     expect(activateRow).toHaveBeenCalledOnce();
+  });
+});
+
+describe('Dropdown popup name', () => {
+  it('names a menu after its icon trigger without matching the menu by label text', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger
+          render={
+            <LightIconButton aria-label="More options">
+              <IconDotsVertical />
+            </LightIconButton>
+          }
+        />
+        <Dropdown.Content>
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'More options' }));
+
+    expect(screen.getByRole('menu', { name: 'More options' })).toBeVisible();
+    expect(screen.getAllByLabelText('More options')).toHaveLength(1);
+  });
+
+  it.each(['picker', 'panel'] as const)(
+    'names a %s after its trigger',
+    async (type) => {
+      const user = userEvent.setup();
+
+      render(
+        <Dropdown.Root type={type}>
+          <Dropdown.Trigger render={<Button>Choose person</Button>} />
+          <Dropdown.Content>
+            <Dropdown.ActionItem>Invite person</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Root>,
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Choose person' }));
+
+      expect(
+        screen.getByRole('dialog', { name: 'Choose person' }),
+      ).toBeVisible();
+    },
+  );
+
+  it('names a submenu after its submenu trigger', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Submenu>
+            <Dropdown.SubmenuTrigger>Export</Dropdown.SubmenuTrigger>
+            <Dropdown.Content>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+            </Dropdown.Content>
+          </Dropdown.Submenu>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Export' })).toHaveFocus(),
+    );
+    await user.keyboard('{ArrowRight}');
+
+    expect(await screen.findByRole('menu', { name: 'Export' })).toBeVisible();
+    expect(screen.getByRole('menu', { name: 'Record actions' })).toBeVisible();
+  });
+
+  it('leaves a popup without a trigger unnamed until it passes a label', async () => {
+    const { rerender } = render(
+      <Dropdown.Root type="menu" open>
+        <Dropdown.Content>
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    const menu = await screen.findByRole('menu');
+
+    expect(menu).not.toHaveAttribute('aria-labelledby');
+    expect(menu).toHaveAccessibleName('');
+
+    rerender(
+      <Dropdown.Root type="menu" open>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    expect(menu).toHaveAccessibleName('Record actions');
+  });
+
+  it('prefers an explicit label over the trigger name', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="picker">
+        <Dropdown.Trigger>Currency</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Choose a currency">
+          <Dropdown.OptionItem selected>Euro</Dropdown.OptionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Currency' }));
+
+    expect(
+      screen.getByRole('dialog', { name: 'Choose a currency' }),
+    ).toBeVisible();
+  });
+
+  it('prefers a title while it is rendered and falls back to the trigger name', async () => {
+    const user = userEvent.setup();
+    const SortPicker = ({ hasTitle }: { hasTitle: boolean }) => (
+      <Dropdown.Root type="picker">
+        <Dropdown.Trigger>Sort</Dropdown.Trigger>
+        <Dropdown.Content>
+          {hasTitle && (
+            <Dropdown.Header>
+              <Dropdown.Title>Sort records by</Dropdown.Title>
+            </Dropdown.Header>
+          )}
+          <Dropdown.OptionItem selected={false}>Name</Dropdown.OptionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    );
+    const { rerender } = render(<SortPicker hasTitle />);
+
+    await user.click(screen.getByRole('button', { name: 'Sort' }));
+
+    expect(
+      screen.getByRole('dialog', { name: 'Sort records by' }),
+    ).toBeVisible();
+
+    rerender(<SortPicker hasTitle={false} />);
+
+    expect(screen.getByRole('dialog', { name: 'Sort' })).toBeVisible();
   });
 });
