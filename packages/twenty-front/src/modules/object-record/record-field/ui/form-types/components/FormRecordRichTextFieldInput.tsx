@@ -151,13 +151,6 @@ export const FormRecordRichTextFieldInput = ({
     }
   }, [hasUnreadableStoredValue, enqueueToast, t]);
 
-  useEffect(() => {
-    if (isMobile && isFullScreen) {
-      setIsFullScreen(false);
-      removeFocusItemFromFocusStackById({ focusId });
-    }
-  }, [isMobile, isFullScreen, focusId, removeFocusItemFromFocusStackById]);
-
   const handleFullScreenChange = (isFullScreenOpen: boolean) => {
     flushSync(() => {
       setIsFullScreen(isFullScreenOpen);
@@ -171,13 +164,12 @@ export const FormRecordRichTextFieldInput = ({
   });
 
   const isReadonly = readonly || hasUnreadableStoredValue;
-  const isFullScreenShown = isFullScreen && !isMobile;
 
   return (
     <>
       <FormFieldInputContainer>
         {label ? <Field.Label>{label}</Field.Label> : null}
-        {!isFullScreenShown && (
+        {!isFullScreen && (
           <StyledEditorContainer>
             <BlockEditor
               editor={editor}
@@ -212,7 +204,7 @@ export const FormRecordRichTextFieldInput = ({
             readonly={isReadonly}
           />
         </StyledFullScreenEditorContainer>,
-        isFullScreenShown,
+        isFullScreen,
       )}
     </>
   );
