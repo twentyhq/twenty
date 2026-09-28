@@ -1,16 +1,15 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
-import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, MainButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled(Dialog.Header)`
   align-items: center;
@@ -54,7 +53,6 @@ export const OnboardingSkipDialog = ({
   onSkip,
 }: OnboardingSkipDialogProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { closeDialog } = useDialog();
   const firstActionRef = useRef<HTMLButtonElement>(null);
 
@@ -62,10 +60,6 @@ export const OnboardingSkipDialog = ({
     closeDialog(dialogId);
     action.onClick();
   };
-
-  const creditsRewardChip = (
-    <OnboardingCreditsRewardChip creditsReward={creditsReward} />
-  );
 
   return (
     <DialogInstance dialogId={dialogId} dismissible renderInDocumentBody>
@@ -95,24 +89,14 @@ export const OnboardingSkipDialog = ({
           </StyledHeader>
           <Dialog.Footer>
             {actions.map((action, index) => (
-              <MainButton
+              <OnboardingRewardMainButton
                 key={action.label}
                 ref={index === 0 ? firstActionRef : undefined}
-                fullWidth
+                label={action.label}
+                Icon={action.Icon}
+                creditsReward={creditsReward}
                 onClick={() => runAction(action)}
-                startIcon={
-                  isDefined(action.Icon) ? (
-                    <action.Icon size={theme.icon.size.md} />
-                  ) : undefined
-                }
-                endIcon={creditsReward > 0 ? creditsRewardChip : undefined}
-                aria-label={getOnboardingCreditsRewardAriaLabel({
-                  label: action.label,
-                  creditsReward,
-                })}
-              >
-                {action.label}
-              </MainButton>
+              />
             ))}
             <Button
               variant="ghost"

@@ -1,5 +1,4 @@
-import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
-import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -12,9 +11,8 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOnboardingStep = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[8]};
@@ -62,13 +60,6 @@ export const ImportContacts = ({
   creditsReward = 0,
 }: ImportContactsProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const continueWithMicrosoftLabel = t`Continue with Microsoft`;
-  const continueWithGoogleLabel = t`Continue with Google`;
-  const creditsRewardChip =
-    creditsReward > 0 ? (
-      <OnboardingCreditsRewardChip creditsReward={creditsReward} />
-    ) : undefined;
 
   return (
     <StyledOnboardingStep>
@@ -94,32 +85,20 @@ export const ImportContacts = ({
         <StyledFooter>
           <StyledButtons>
             {isDefined(onContinueWithMicrosoft) && (
-              <MainButton
-                fullWidth
+              <OnboardingRewardMainButton
+                label={t`Continue with Microsoft`}
+                Icon={IconMicrosoft}
+                creditsReward={creditsReward}
                 onClick={onContinueWithMicrosoft}
-                startIcon={<IconMicrosoft size={theme.icon.size.md} />}
-                endIcon={creditsRewardChip}
-                aria-label={getOnboardingCreditsRewardAriaLabel({
-                  label: continueWithMicrosoftLabel,
-                  creditsReward,
-                })}
-              >
-                {continueWithMicrosoftLabel}
-              </MainButton>
+              />
             )}
             {isDefined(onContinueWithGoogle) && (
-              <MainButton
-                fullWidth
+              <OnboardingRewardMainButton
+                label={t`Continue with Google`}
+                Icon={IconGoogle}
+                creditsReward={creditsReward}
                 onClick={onContinueWithGoogle}
-                startIcon={<IconGoogle size={theme.icon.size.md} />}
-                endIcon={creditsRewardChip}
-                aria-label={getOnboardingCreditsRewardAriaLabel({
-                  label: continueWithGoogleLabel,
-                  creditsReward,
-                })}
-              >
-                {continueWithGoogleLabel}
-              </MainButton>
+              />
             )}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}
