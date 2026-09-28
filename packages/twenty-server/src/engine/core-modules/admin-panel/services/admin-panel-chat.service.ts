@@ -1,7 +1,7 @@
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -17,7 +17,11 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 @Injectable()
 export class AdminPanelChatService {
   constructor(
-    private readonly historyStorage: AgentHistoryStorageService,
+    @Inject(AgentHistoryWorkspaceStorageService)
+    private readonly historyStorage: Pick<
+      AgentHistoryWorkspaceStorageService,
+      'runReadOnlyReport'
+    >,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectAgentHistoryRepository('agentChatThread')

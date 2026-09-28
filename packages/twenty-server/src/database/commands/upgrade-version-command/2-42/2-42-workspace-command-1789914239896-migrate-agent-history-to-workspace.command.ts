@@ -14,9 +14,9 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
-import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
-import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
+import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
+import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -31,7 +31,7 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly schema: AgentHistorySchemaService,
     private readonly migration: AgentHistoryMigrationService,
-    private readonly storage: AgentHistoryStorageService,
+    private readonly storage: AgentHistoryMigrationStateService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
@@ -57,21 +57,21 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
     dataSource,
     target,
   }: RunOnWorkspaceArgs & {
-    target: AgentHistoryStorageState['storage'];
+    target: AgentHistoryMigrationState['storage'];
   }): Promise<void> {
     const dryRun = options.dryRun ?? false;
     if (!isDefined(dataSource)) {
       throw new Error('Agent history upgrade requires a workspace data source');
     }
     const runner = dataSource.createQueryRunner('master');
-    let state: AgentHistoryStorageState;
+    let state: AgentHistoryMigrationState;
     try {
       await runner.connect();
       state = await this.storage.readState(runner, workspaceId);
       if (!(await runner.hasSchema(getWorkspaceSchemaName(workspaceId)))) {
         const history = await runner.query(
-          `SELECT 1 WHERE ${AGENT_HISTORY_OBJECT_NAMES.map(
-            (name) =>
+          `SELECT 1 WHERE ${AGENT_HISTORY_TABLES.map(
+            ({ name }) =>
               `EXISTS (SELECT 1 FROM core."${name}" WHERE "workspaceId" = $1)`,
           ).join(' OR ')}`,
           [workspaceId],
@@ -121,7 +121,7 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
   }: {
     dataSource: NonNullable<RunOnWorkspaceArgs['dataSource']>;
     workspaceId: string;
-    source: AgentHistoryStorageState['storage'];
+    source: AgentHistoryMigrationState['storage'];
   }): Promise<void> {
     const runner = dataSource.createQueryRunner('master');
     try {
@@ -157,7 +157,7 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
   }: {
     runner: QueryRunner;
     workspaceId: string;
-    source: AgentHistoryStorageState['storage'];
+    source: AgentHistoryMigrationState['storage'];
     thread: { id: string; activeStreamId: string };
   }): Promise<void> {
     if (await this.streamHeartbeatService.isAlive(thread.activeStreamId)) {
@@ -218,7 +218,7 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
     source,
   }: {
     workspaceId: string;
-    source: AgentHistoryStorageState['storage'];
+    source: AgentHistoryMigrationState['storage'];
   }): string {
     return getAgentHistoryTable({
       workspaceId,

@@ -39,7 +39,6 @@ export const buildRecordShareGate = ({
   const gateKind = resolveRecordShareGateKind({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
-    isLegacyRecordAccessOpen: context.environment.isLegacyRecordAccessOpen,
   });
   switch (gateKind) {
     case 'open':
