@@ -9381,6 +9381,7 @@ msgstr "Прошири бочну траку"
 
 #. js-lingui-id: 4bQAS8
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Expand to full screen"
 msgstr "Прошири на цео екран"
 
@@ -21511,6 +21512,7 @@ msgstr "Текст копиран у клипборд"
 
 #. js-lingui-id: YXRaNg
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "Текстуални уређивач"
 

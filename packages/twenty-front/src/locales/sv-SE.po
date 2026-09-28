@@ -9381,6 +9381,7 @@ msgstr "Expandera sidofältet"
 
 #. js-lingui-id: 4bQAS8
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Expand to full screen"
 msgstr "Expandera till helskärm"
 
@@ -21517,6 +21518,7 @@ msgstr "Text kopierad till urklipp"
 
 #. js-lingui-id: YXRaNg
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "Textredigerare"
 

@@ -9381,6 +9381,7 @@ msgstr "展开侧边栏"
 
 #. js-lingui-id: 4bQAS8
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Expand to full screen"
 msgstr "展开至全屏"
 
@@ -21488,6 +21489,7 @@ msgstr "文本已复制到剪贴板"
 
 #. js-lingui-id: YXRaNg
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "文本编辑器"
 

@@ -606,18 +606,6 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "Faktisk optagelsesstart"
 
-#. js-lingui-id: czQdYE
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Add a Node"
-msgstr "Tilføj en node"
-
-#. js-lingui-id: Opy73Z
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Add a Node"
-msgstr "Tilføj en node"
-
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "Add at least one field to update."
@@ -1144,6 +1132,18 @@ msgstr "Applikationens logikfunktion for afinstallation fejlede."
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application upgrade failed."
 msgstr "Applikationsopgradering mislykkedes."
+
+#. js-lingui-id: Id/k1d
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key {key} is reserved"
+msgstr ""
+
+#. js-lingui-id: wJwhrT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key {keyUpdate} is reserved"
+msgstr ""
 
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -14895,6 +14895,11 @@ msgstr "År først"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Yes"
 msgstr "Ja"
+
+#. js-lingui-id: 3N5PgZ
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "You are not allowed to access this function."
+msgstr ""
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
