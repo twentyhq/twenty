@@ -346,6 +346,49 @@ describe('getToolDisplayMessage', () => {
     });
   });
 
+  describe('attach_conversation_to_record', () => {
+    it('should name the object the conversation is attached to', () => {
+      const displayContext = makeDisplayContext({
+        objectMetadataItems: [personMetadata],
+      });
+      const input = {
+        objectNameSingular: 'person',
+        recordId: '20202020-0000-4000-8000-000000000001',
+      };
+
+      expect(
+        getToolDisplayMessage({
+          input,
+          toolName: 'attach_conversation_to_record',
+          isFinished: false,
+          displayContext,
+        }),
+      ).toBe('Attaching this conversation to the person');
+      expect(
+        getToolDisplayMessage({
+          input,
+          toolName: 'attach_conversation_to_record',
+          isFinished: true,
+          displayContext,
+        }),
+      ).toBe('Attached this conversation to the person');
+    });
+
+    it('should fall back to a record when the object is unknown', () => {
+      const message = getToolDisplayMessage({
+        input: {
+          objectNameSingular: 'unknownObject',
+          recordId: '20202020-0000-4000-8000-000000000001',
+        },
+        toolName: 'attach_conversation_to_record',
+        isFinished: false,
+        displayContext: emptyDisplayContext,
+      });
+
+      expect(message).toBe('Attaching this conversation to a record');
+    });
+  });
+
   describe('default tool labels', () => {
     it('should use default Ran/Running for non-CRUD tools', () => {
       const displayContext = makeDisplayContext({
