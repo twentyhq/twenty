@@ -37,6 +37,12 @@ export const WithEmptySeats: Story = {
     avatars: [{ id: 'Alice', name: 'Alice', shape: 'circle' }],
     emptySeatsCount: 2,
   },
+  play: async ({ canvasElement }) => {
+    await expect(await within(canvasElement).findByText('A')).toBeVisible();
+    await expect(
+      canvasElement.querySelectorAll('.tabler-icon-plus'),
+    ).toHaveLength(2);
+  },
 };
 
 export const CapsVisibleAvatars: Story = {
