@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { IsNull, Not } from 'typeorm';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -31,12 +32,9 @@ export class InputAskWorkspaceService {
   ) {}
 
   // A run can re-enter a form it already asked about (a retried worker, a
-  // retried run, the next item of an iterator) and the unique key is the step,
-  // so the row is reused rather than duplicated. A row that is no longer
-  // PENDING is reopened: the previous answer belonged to the previous
-  // execution, and leaving it would park the run on a question nobody can
-  // answer. A row already PENDING is left exactly as it is, so a resumed worker
-  // does not rewrite a question someone is looking at.
+  // retried run, the next item of an iterator): the previous answer belonged
+  // to the previous execution, while a question still pending may be one
+  // someone is looking at.
   async openForFormStep({
     workspaceId,
     workflowRunId,
@@ -147,18 +145,50 @@ export class InputAskWorkspaceService {
 
   // A run that ends before its answer arrives leaves the question unanswerable,
   // and an unanswerable question left PENDING sits in someone's list forever.
+  // A form whose step completed was answered even if recording the answer
+  // failed at submission, so it closes as answered from the step's result.
   async cancelPendingForWorkflowRun({
     workspaceId,
     workflowRunId,
+    stepInfos,
   }: {
     workspaceId: string;
     workflowRunId: string;
+    stepInfos: Record<string, WorkflowRunStepInfo>;
   }): Promise<void> {
     if (!(await this.hasInputAskObject(workspaceId))) {
       return;
     }
 
     await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      const pendingFormInputAsks = await inputAskRepository.find({
+        where: {
+          workflowRunId,
+          status: InputAskStatus.PENDING,
+          toolCallId: IsNull(),
+        },
+        select: { id: true, stepId: true },
+      });
+
+      for (const pendingFormInputAsk of pendingFormInputAsks) {
+        const stepInfo = isDefined(pendingFormInputAsk.stepId)
+          ? stepInfos[pendingFormInputAsk.stepId]
+          : undefined;
+
+        if (stepInfo?.status !== StepStatus.SUCCESS) {
+          continue;
+        }
+
+        await inputAskRepository.update(
+          { id: pendingFormInputAsk.id, status: InputAskStatus.PENDING },
+          {
+            status: InputAskStatus.ANSWERED,
+            response: isPlainObject(stepInfo.result) ? stepInfo.result : null,
+            answeredAt: new Date().toISOString(),
+          },
+        );
+      }
+
       await inputAskRepository.update(
         { workflowRunId, status: InputAskStatus.PENDING },
         { status: InputAskStatus.CANCELED },
