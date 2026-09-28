@@ -301,7 +301,7 @@ export const ResourceCreditPriceSelector = ({
   const handleConfirmClick = async () => {
     try {
       const { data } = await setResourceCreditPrice({
-        variables: { priceId: selectedPrice.stripePriceId },
+        variables: { priceId: selectedPrice!.stripePriceId },
       });
       applyCurrentWorkspaceBillingUpdate(
         data?.setResourceCreditSubscriptionPrice,

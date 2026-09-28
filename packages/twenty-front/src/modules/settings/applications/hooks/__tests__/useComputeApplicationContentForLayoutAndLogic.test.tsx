@@ -50,11 +50,11 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
 
       expect(result.current.pageLayoutRows).toHaveLength(1);
       const [row] = result.current.pageLayoutRows;
-      expect(row.key).toBe('pl-1');
-      expect(row.name).toBe('Person dashboard');
-      expect(row.secondary).toContain(personObject.labelSingular);
-      expect(row.secondary).toContain('2 tabs');
-      expect(row.link).toBeUndefined();
+      expect(row?.key).toBe('pl-1');
+      expect(row?.name).toBe('Person dashboard');
+      expect(row?.secondary).toContain(personObject.labelSingular);
+      expect(row?.secondary).toContain('2 tabs');
+      expect(row!.link).toBeUndefined();
     });
 
     it('exposes a link to the layout detail page when an installed app is provided', () => {
@@ -79,7 +79,7 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
         { wrapper },
       );
 
-      expect(result.current.pageLayoutRows[0].link).toBeDefined();
+      expect(result.current.pageLayoutRows[0]!.link).toBeDefined();
     });
   });
 
@@ -112,12 +112,12 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
       );
 
       const [row] = result.current.viewRows;
-      expect(row.icon).toBe('IconTable');
-      expect(row.secondary).toContain('Table');
-      expect(row.secondary).toContain(personObject.labelSingular);
+      expect(row?.icon).toBe('IconTable');
+      expect(row?.secondary).toContain('Table');
+      expect(row?.secondary).toContain(personObject.labelSingular);
 
-      expect(result.current.viewRows[1].secondary).toContain('Table widget');
-      expect(result.current.viewRows[1].secondary).not.toContain(
+      expect(result.current.viewRows[1]!.secondary).toContain('Table widget');
+      expect(result.current.viewRows[1]!.secondary).not.toContain(
         'Table_widget',
       );
     });
@@ -149,11 +149,11 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
         { wrapper },
       );
 
-      expect(result.current.navigationMenuItemRows[0].name).toBe(
+      expect(result.current.navigationMenuItemRows[0]!.name).toBe(
         personObject.labelSingular,
       );
-      expect(result.current.navigationMenuItemRows[1].name).toBe('Folder');
-      expect(result.current.navigationMenuItemRows[2].name).toBe(
+      expect(result.current.navigationMenuItemRows[1]!.name).toBe('Folder');
+      expect(result.current.navigationMenuItemRows[2]!.name).toBe(
         'https://example.com',
       );
     });
@@ -184,10 +184,10 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
         { wrapper },
       );
 
-      expect(result.current.navigationMenuItemRows[0].secondary).toContain(
+      expect(result.current.navigationMenuItemRows[0]!.secondary).toContain(
         'Layout A',
       );
-      expect(result.current.navigationMenuItemRows[1].secondary).toContain(
+      expect(result.current.navigationMenuItemRows[1]!.secondary).toContain(
         'View A',
       );
     });
@@ -212,8 +212,8 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
           }),
         { wrapper },
       );
-      expect(installed.result.current.agentRows[0].key).toBe('agent-1');
-      expect(installed.result.current.agentRows[0].link).toBeDefined();
+      expect(installed.result.current.agentRows[0]!.key).toBe('agent-1');
+      expect(installed.result.current.agentRows[0]!.link).toBeDefined();
 
       const marketplace = renderHook(
         () =>
@@ -227,8 +227,8 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
           }),
         { wrapper },
       );
-      expect(marketplace.result.current.agentRows[0].key).toBe('a-uid');
-      expect(marketplace.result.current.agentRows[0].link).toBeUndefined();
+      expect(marketplace.result.current.agentRows[0]!.key).toBe('a-uid');
+      expect(marketplace.result.current.agentRows[0]!.link).toBeUndefined();
     });
   });
 
@@ -246,8 +246,8 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
         { wrapper },
       );
 
-      expect(result.current.skillRows[0].name).toBe('Skill A');
-      expect(result.current.roleRows[0].name).toBe('Role A');
+      expect(result.current.skillRows[0]!.name).toBe('Skill A');
+      expect(result.current.roleRows[0]!.name).toBe('Role A');
     });
   });
 });

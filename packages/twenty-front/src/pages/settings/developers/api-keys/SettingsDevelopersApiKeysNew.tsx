@@ -40,7 +40,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     expirationDate: number | null;
     roleId: string;
   }>({
-    expirationDate: EXPIRATION_DATES[5].value,
+    expirationDate: EXPIRATION_DATES[5]!.value,
     name: '',
     roleId: '',
   });
@@ -53,7 +53,7 @@ export const SettingsDevelopersApiKeysNew = () => {
       if (apiKeyAssignableRoles.length > 0) {
         setFormValues((prev) => {
           if (!prev.roleId) {
-            return { ...prev, roleId: apiKeyAssignableRoles[0].id };
+            return { ...prev, roleId: apiKeyAssignableRoles[0]!.id };
           }
           return prev;
         });

@@ -25,5 +25,5 @@ export const findSellableBaseProductOrThrow = <
     );
   }
 
-  return sellableBaseProducts[0];
+  return sellableBaseProducts[0]!;
 };

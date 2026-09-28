@@ -74,11 +74,11 @@ describe('getRoleWithUpsertedFieldPermission', () => {
     );
 
     expect(updatedRole.fieldPermissions).toContain(fieldPermissionToUpsert);
-    expect(updatedRole.fieldPermissions?.[0].canReadFieldValue).not.toEqual(
-      role.fieldPermissions?.[0].canReadFieldValue,
+    expect(updatedRole.fieldPermissions?.[0]?.canReadFieldValue).not.toEqual(
+      role.fieldPermissions?.[0]?.canReadFieldValue,
     );
-    expect(updatedRole.fieldPermissions?.[0].canUpdateFieldValue).not.toEqual(
-      role.fieldPermissions?.[0].canUpdateFieldValue,
+    expect(updatedRole.fieldPermissions?.[0]?.canUpdateFieldValue).not.toEqual(
+      role.fieldPermissions?.[0]?.canUpdateFieldValue,
     );
   });
 

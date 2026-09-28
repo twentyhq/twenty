@@ -45,11 +45,11 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText(mockedBlocklist[0].handle),
+      await canvas.findByText(mockedBlocklist[0]!.handle),
     ).toBeInTheDocument();
     expect(
       await canvas.findByText(
-        formatToHumanReadableDate(mockedBlocklist[0].createdAt),
+        formatToHumanReadableDate(mockedBlocklist[0]!.createdAt),
       ),
     ).toBeInTheDocument();
   },
@@ -63,7 +63,7 @@ export const DeleteFirstElementFromBlocklist: Story = {
 
     const removeFromBlocklistButton = canvas.getAllByRole('button')[0];
 
-    await userEvent.click(removeFromBlocklistButton);
+    await userEvent.click(removeFromBlocklistButton!);
 
     expect(onRemoveJestFn).toHaveBeenCalledTimes(1);
     expect(onRemoveJestFn).toHaveBeenCalledWith('1');

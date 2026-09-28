@@ -31,7 +31,7 @@ const MODAL_ID = 'role-modal';
 const DROPDOWN_ID = 'role-dropdown';
 
 const buildRole = (label: string): RoleWithPartialMembers => ({
-  ...mockedRoles[0],
+  ...mockedRoles[0]!,
   id: ROLE_ID,
   label,
 });

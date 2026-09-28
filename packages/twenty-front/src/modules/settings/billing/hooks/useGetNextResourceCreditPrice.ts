@@ -63,5 +63,5 @@ export const useGetNextResourceCreditPrice =
       return null;
     }
 
-    return pricesForInterval[currentIndex + 1];
+    return pricesForInterval[currentIndex + 1]!;
   };

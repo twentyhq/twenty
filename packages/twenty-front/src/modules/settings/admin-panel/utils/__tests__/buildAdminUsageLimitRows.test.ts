@@ -61,12 +61,12 @@ describe('buildAdminUsageLimitRows', () => {
   });
 
   it('reports a default as overridden and shows the override value', () => {
-    const [row] = buildAdminUsageLimitRows(
+    const row = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({
         defaults: [buildDefault({ overriddenByUsageLimitId: 'limit-1' })],
         limits: [buildLimit({ limitValue: 50 })],
       }),
-    );
+    )[0]!;
 
     expect(row.isOverridden).toBe(true);
     expect(row.usageLimitId).toBe('limit-1');
@@ -75,9 +75,9 @@ describe('buildAdminUsageLimitRows', () => {
   });
 
   it('shows the instance value on a default nothing replaced', () => {
-    const [row] = buildAdminUsageLimitRows(
+    const row = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({ defaults: [buildDefault()] }),
-    );
+    )[0]!;
 
     expect(row.isOverridden).toBe(false);
     expect(row.usageLimitId).toBeNull();
@@ -85,12 +85,12 @@ describe('buildAdminUsageLimitRows', () => {
   });
 
   it('leaves a default writable when the server named no row for it', () => {
-    const [row] = buildAdminUsageLimitRows(
+    const row = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({
         defaults: [buildDefault()],
         limits: [buildLimit({ id: 'a-limit-of-its-own' })],
       }),
-    );
+    )[0]!;
 
     expect(row.isOverridden).toBe(false);
     expect(row.usageLimitId).toBeNull();
@@ -98,7 +98,7 @@ describe('buildAdminUsageLimitRows', () => {
   });
 
   it('names the period of the row in force, not the one the default implies', () => {
-    const [row] = buildAdminUsageLimitRows(
+    const row = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({
         defaults: [
           buildDefault({
@@ -111,7 +111,7 @@ describe('buildAdminUsageLimitRows', () => {
         ],
         limits: [buildLimit({ periodCount: 60, periodUnit: 'second' })],
       }),
-    );
+    )[0]!;
 
     expect(row.periodCount).toBe(60);
     expect(row.periodUnit).toBe('second');
@@ -128,7 +128,7 @@ describe('buildAdminUsageLimitRows', () => {
   });
 
   it('carries the burst value of a speed override', () => {
-    const [row] = buildAdminUsageLimitRows(
+    const row = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({
         defaults: [
           buildDefault({
@@ -144,7 +144,7 @@ describe('buildAdminUsageLimitRows', () => {
         ],
         limits: [buildLimit({ burstValue: 20 })],
       }),
-    );
+    )[0]!;
 
     expect(row.burstValue).toBe(20);
   });

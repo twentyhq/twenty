@@ -9,12 +9,12 @@ export const parseOperationsFromStrings = (
     if (parts[0] === 'metadata' && parts.length === 3) {
       return {
         object: `${parts[0]}.${parts[1]}`,
-        action: parts[2],
+        action: parts[2]!,
       };
     }
 
     const [object, action] = parts;
 
-    return { object, action };
+    return { object: object!, action: action! };
   });
 };

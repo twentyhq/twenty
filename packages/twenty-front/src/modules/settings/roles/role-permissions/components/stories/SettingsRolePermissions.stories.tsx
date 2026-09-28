@@ -40,14 +40,14 @@ type Story = StoryObj<typeof SettingsRolePermissionsWrapper>;
 
 export const Default: Story = {
   args: {
-    roleId: mockedRoles[0].id,
+    roleId: mockedRoles[0]!.id,
     isEditable: true,
   },
 };
 
 export const ReadOnly: Story = {
   args: {
-    roleId: mockedRoles[0].id,
+    roleId: mockedRoles[0]!.id,
     isEditable: false,
   },
 };

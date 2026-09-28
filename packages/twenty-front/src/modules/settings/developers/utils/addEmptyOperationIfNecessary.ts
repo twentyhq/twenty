@@ -22,7 +22,7 @@ export const addEmptyOperationIfNecessary = (
 
   if (hasEmptyOperation) {
     const emptyOperation = newOperations[emptyOperationIndex];
-    return [...nonEmptyOperations, emptyOperation];
+    return [...nonEmptyOperations, emptyOperation!];
   }
 
   return [...nonEmptyOperations, WEBHOOK_EMPTY_OPERATION];

@@ -224,7 +224,7 @@ export const SettingsDataModelFieldSelectForm = ({
       toIndex: result.destination.index,
     }).map((option, index) => ({ ...option, position: index }));
 
-    onChange(nextOptions);
+    onChange(nextOptions!);
   };
 
   const isOptionDefaultValue = (

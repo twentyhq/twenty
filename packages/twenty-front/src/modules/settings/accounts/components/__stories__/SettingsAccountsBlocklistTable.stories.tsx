@@ -62,7 +62,7 @@ export const DeleteFirstElementFromBlocklist: Story = {
 
     const removeFromBlocklistButton = canvas.getAllByRole('button')[0];
 
-    await userEvent.click(removeFromBlocklistButton);
+    await userEvent.click(removeFromBlocklistButton!);
 
     expect(handleBlockedEmailRemoveJestFn).toHaveBeenCalledTimes(1);
     expect(handleBlockedEmailRemoveJestFn).toHaveBeenCalledWith('1');

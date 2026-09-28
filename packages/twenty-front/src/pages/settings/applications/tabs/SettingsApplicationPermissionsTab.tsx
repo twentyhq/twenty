@@ -138,8 +138,8 @@ const buildSyntheticRole = (
       id: uuidv4(),
       roleId: defaultRole.universalIdentifier,
       flag: SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER[
-        permissionFlagUniversalIdentifier
-      ],
+        permissionFlagUniversalIdentifier!
+      ]!,
     }),
   ),
 });

@@ -70,7 +70,7 @@ const answeredResult: AskQuestionsToolResult = {
 };
 
 const freeTextResult: AskQuestionsToolResult = {
-  questions: [QUESTIONS[0]],
+  questions: [QUESTIONS[0]!],
   status: 'answered',
   answers: [
     {
@@ -82,7 +82,7 @@ const freeTextResult: AskQuestionsToolResult = {
 };
 
 const pendingResult: AskQuestionsToolResult = {
-  questions: [QUESTIONS[0]],
+  questions: [QUESTIONS[0]!],
   status: 'pending',
 };
 

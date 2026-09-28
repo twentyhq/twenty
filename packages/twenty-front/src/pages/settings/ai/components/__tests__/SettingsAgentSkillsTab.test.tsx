@@ -161,9 +161,9 @@ describe('SettingsAgentSkillsTab', () => {
 
     const [firstRow, secondRow, thirdRow] = screen.getAllByRole('link');
 
-    expect(within(firstRow).getByText('Quarterly Report')).toBeInTheDocument();
-    expect(within(secondRow).getByText('Research')).toBeInTheDocument();
-    expect(within(thirdRow).getByText('Word Documents')).toBeInTheDocument();
+    expect(within(firstRow!).getByText('Quarterly Report')).toBeInTheDocument();
+    expect(within(secondRow!).getByText('Research')).toBeInTheDocument();
+    expect(within(thirdRow!).getByText('Word Documents')).toBeInTheDocument();
   });
 
   it('filters skills by the application label shown in the current locale', async () => {

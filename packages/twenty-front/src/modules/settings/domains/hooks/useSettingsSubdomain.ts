@@ -37,7 +37,7 @@ export const useSettingsSubdomain = () => {
 
     const result = subdomainSchema.safeParse(value);
 
-    setError(result.success ? undefined : result.error.issues[0].message);
+    setError(result.success ? undefined : result.error.issues[0]!.message);
   };
 
   const hasChanged = subdomain !== currentWorkspace?.subdomain;

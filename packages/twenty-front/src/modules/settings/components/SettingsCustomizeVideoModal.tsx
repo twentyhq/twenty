@@ -96,7 +96,7 @@ export const SettingsCustomizeVideoModal = ({
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
   const hasMultipleTabs = tabs.length > 1;
-  const ActiveTabIcon = activeTab.Icon;
+  const ActiveTabIcon = activeTab!.Icon;
 
   const handleClose = () => {
     closeDialog(modalInstanceId);
@@ -105,14 +105,14 @@ export const SettingsCustomizeVideoModal = ({
   const videoContent = (
     <StyledVideoContainer>
       <StyledVideoIframe
-        key={activeTab.id}
+        key={activeTab!.id}
         src={
-          activeTab.hasSound
-            ? `https://player.vimeo.com/video/${activeTab.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1`
-            : `https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`
+          activeTab!.hasSound
+            ? `https://player.vimeo.com/video/${activeTab!.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1`
+            : `https://player.vimeo.com/video/${activeTab!.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`
         }
         allow="autoplay; fullscreen; picture-in-picture"
-        title={activeTab.title}
+        title={activeTab!.title}
       />
     </StyledVideoContainer>
   );
@@ -126,7 +126,7 @@ export const SettingsCustomizeVideoModal = ({
     >
       {({ container, backdrop, viewportProps, onKeyDown }) => (
         <Dialog.Popup
-          aria-label={activeTab.title}
+          aria-label={activeTab!.title}
           {...{ container, backdrop, viewportProps, onKeyDown }}
           size="lg"
           style={{ padding: 0 }}
@@ -152,7 +152,7 @@ export const SettingsCustomizeVideoModal = ({
                     color={theme.font.color.primary}
                     aria-hidden
                   />
-                  <StyledTitleText>{activeTab.title}</StyledTitleText>
+                  <StyledTitleText>{activeTab!.title}</StyledTitleText>
                 </StyledTitle>
               )}
               <IconButton
@@ -164,7 +164,7 @@ export const SettingsCustomizeVideoModal = ({
               </IconButton>
             </StyledHeader>
             {hasMultipleTabs ? (
-              <Tabs.Panel value={activeTab.id}>{videoContent}</Tabs.Panel>
+              <Tabs.Panel value={activeTab!.id}>{videoContent}</Tabs.Panel>
             ) : (
               videoContent
             )}

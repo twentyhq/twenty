@@ -56,7 +56,7 @@ export const SettingsSsoSamlForm = () => {
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
-      const text = await e.target.files[0].text();
+      const text = await e.target.files[0]!.text();
       const samlMetadataParsed = parseSamlMetadataFromXmlFile(text);
       e.target.value = '';
       if (!samlMetadataParsed.success) {

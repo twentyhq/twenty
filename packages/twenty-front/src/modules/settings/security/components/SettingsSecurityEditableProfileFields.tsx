@@ -68,7 +68,7 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   const firstSelectedIcon =
     selectedFields.length === 1
-      ? optionByValue.get(selectedFields[0])?.Icon
+      ? optionByValue.get(selectedFields[0]!)!.Icon
       : undefined;
 
   const selectedOption: SelectOption<string> = {

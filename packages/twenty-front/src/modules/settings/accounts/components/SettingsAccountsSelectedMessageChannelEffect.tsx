@@ -31,7 +31,7 @@ export const SettingsAccountsSelectedMessageChannelEffect = ({
     );
 
     setSettingsAccountsSelectedMessageChannel(
-      activeChannel ?? messageChannels[0],
+      activeChannel! ?? messageChannels[0],
     );
   }, [messageChannels, activeTabId, setSettingsAccountsSelectedMessageChannel]);
 

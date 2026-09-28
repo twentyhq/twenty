@@ -38,7 +38,7 @@ export const ToggleWithoutClosing: Story = {
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog');
     const switches = within(popup).getAllByRole('switch');
-    await userEvent.click(switches[0]);
+    await userEvent.click(switches[0]!);
     expect(switches[0]).toBeChecked();
     expect(popup).toBeVisible();
     await userEvent.tab();

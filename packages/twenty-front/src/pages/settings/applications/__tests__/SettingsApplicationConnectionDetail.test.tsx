@@ -225,7 +225,7 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     const [disconnectButton] = screen.getAllByText('Disconnect');
 
-    fireEvent.click(disconnectButton);
+    fireEvent.click(disconnectButton!);
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
     expect(mockOpenModal).toHaveBeenCalledWith(

@@ -22,7 +22,7 @@ export const getSelectFieldPreviewValue = ({
     return null;
   }
 
-  const firstOptionValue = fieldMetadataItem.options[0].value;
+  const firstOptionValue = fieldMetadataItem.options[0]!.value;
 
   return selectFieldDefaultValueSchema(fieldMetadataItem.options)
     .refine(isDefined)

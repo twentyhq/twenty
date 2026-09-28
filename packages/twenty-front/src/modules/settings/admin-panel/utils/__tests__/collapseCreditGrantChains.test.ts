@@ -30,8 +30,8 @@ describe('collapseCreditGrantChains', () => {
 
     const [row] = collapseCreditGrantChains([carried, middle, origin]);
 
-    expect(row.current).toBe(carried);
-    expect(row.origin).toBe(origin);
+    expect(row?.current).toBe(carried);
+    expect(row?.origin).toBe(origin);
   });
 
   it('collapses each chain separately and keeps the server ordering', () => {

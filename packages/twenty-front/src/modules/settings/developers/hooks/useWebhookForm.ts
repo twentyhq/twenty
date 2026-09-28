@@ -161,7 +161,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     const newOperations = [...currentOperations];
 
     newOperations[index] = {
-      ...newOperations[index],
+      ...newOperations[index]!,
       [field]: value,
     };
 

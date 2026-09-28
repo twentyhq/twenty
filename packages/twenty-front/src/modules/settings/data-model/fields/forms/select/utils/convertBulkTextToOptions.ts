@@ -24,7 +24,7 @@ export const convertBulkTextToOptions = (
 
     // try to find an existing option with the same label, so we can keep its id, color, value, and label
     const existingOption = currentOptions.find(
-      (opt) => opt.label.toLowerCase() === label.toLowerCase(),
+      (opt) => opt.label!.toLowerCase() === label!.toLowerCase(),
     );
 
     if (isDefined(existingOption)) {

@@ -1,7 +1,7 @@
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
-const role = { ...mockedRoles[1], permissionFlags: [] };
+const role = { ...mockedRoles[1]!, permissionFlags: [] };
 const draftFlag = {
   id: 'temporary-id',
   roleId: role.id,

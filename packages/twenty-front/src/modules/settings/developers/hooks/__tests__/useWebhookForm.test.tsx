@@ -387,7 +387,7 @@ describe('useWebhookForm', () => {
       });
 
       const operations = result.current.formConfig.getValues('operations');
-      expect(operations[0].object).toBe('person');
+      expect(operations[0]!.object).toBe('person');
     });
 
     it('should remove operations correctly', () => {

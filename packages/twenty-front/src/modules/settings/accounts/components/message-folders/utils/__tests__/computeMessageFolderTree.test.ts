@@ -35,9 +35,9 @@ describe('computeMessageFolderTree', () => {
     const result = computeMessageFolderTree([folder]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].folder).toEqual(folder);
-    expect(result[0].hasChildren).toBe(false);
-    expect(result[0].children).toEqual([]);
+    expect(result[0]!.folder).toEqual(folder);
+    expect(result[0]!.hasChildren).toBe(false);
+    expect(result[0]!.children).toEqual([]);
   });
 
   it('should organize parent-child relationship', () => {
@@ -56,10 +56,10 @@ describe('computeMessageFolderTree', () => {
     const result = computeMessageFolderTree([parent, child]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].folder.name).toBe('Work');
-    expect(result[0].hasChildren).toBe(true);
-    expect(result[0].children).toHaveLength(1);
-    expect(result[0].children[0].folder.name).toBe('Projects');
+    expect(result[0]?.folder.name!).toBe('Work');
+    expect(result[0]!.hasChildren).toBe(true);
+    expect(result[0]!.children).toHaveLength(1);
+    expect(result[0]?.children[0]?.folder.name!).toBe('Projects');
   });
 
   it('should handle multiple levels of nesting', () => {
@@ -83,9 +83,9 @@ describe('computeMessageFolderTree', () => {
     );
     const result = computeMessageFolderTree([grandparent, parent, child]);
 
-    expect(result[0].folder.name).toBe('Work');
-    expect(result[0].children[0].folder.name).toBe('Projects');
-    expect(result[0].children[0].children[0].folder.name).toBe('2024');
+    expect(result[0]?.folder.name!).toBe('Work');
+    expect(result[0]?.children[0]?.folder.name!).toBe('Projects');
+    expect(result[0]?.children[0]?.children[0]?.folder.name!).toBe('2024');
   });
 
   it('should sort root folders alphabetically', () => {
@@ -96,9 +96,9 @@ describe('computeMessageFolderTree', () => {
     ];
     const result = computeMessageFolderTree(folders);
 
-    expect(result[0].folder.name).toBe('Drafts');
-    expect(result[1].folder.name).toBe('Inbox');
-    expect(result[2].folder.name).toBe('Sent');
+    expect(result[0]?.folder.name!).toBe('Drafts');
+    expect(result[1]?.folder.name!).toBe('Inbox');
+    expect(result[2]?.folder.name!).toBe('Sent');
   });
 
   it('should sort children alphabetically', () => {
@@ -122,8 +122,8 @@ describe('computeMessageFolderTree', () => {
     );
     const result = computeMessageFolderTree([parent, child1, child2]);
 
-    expect(result[0].children[0].folder.name).toBe('Apple');
-    expect(result[0].children[1].folder.name).toBe('Zebra');
+    expect(result[0]?.children[0]?.folder.name!).toBe('Apple');
+    expect(result[0]?.children[1]?.folder.name!).toBe('Zebra');
   });
 
   it('should treat orphaned folders as root folders', () => {
@@ -145,9 +145,9 @@ describe('computeMessageFolderTree', () => {
     const result = computeMessageFolderTree([work, projects, clients]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].children).toHaveLength(2);
-    expect(result[0].children[0].folder.name).toBe('Clients');
-    expect(result[0].children[1].folder.name).toBe('Projects');
+    expect(result[0]!.children).toHaveLength(2);
+    expect(result[0]?.children[0]?.folder.name!).toBe('Clients');
+    expect(result[0]?.children[1]?.folder.name!).toBe('Projects');
   });
 
   it('should resolve parent-child when parentFolderId references parent externalId', () => {
@@ -166,8 +166,8 @@ describe('computeMessageFolderTree', () => {
     const result = computeMessageFolderTree([parent, child]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].folder.name).toBe('custom folder');
-    expect(result[0].children).toHaveLength(1);
-    expect(result[0].children[0].folder.name).toBe('child folder');
+    expect(result[0]?.folder.name!).toBe('custom folder');
+    expect(result[0]!.children).toHaveLength(1);
+    expect(result[0]?.children[0]?.folder.name!).toBe('child folder');
   });
 });

@@ -80,7 +80,7 @@ export const SettingsAgentRoleTab = ({
     (selectedRole.apiKeys?.length || 0) === 0 &&
     (hasValidAgentId
       ? selectedRole.agents?.length === 1 &&
-        selectedRole.agents[0].id === agentId
+        selectedRole.agents[0]!.id === agentId
       : (selectedRole.agents?.length || 0) === 0);
 
   const handleCreateRole = async () => {

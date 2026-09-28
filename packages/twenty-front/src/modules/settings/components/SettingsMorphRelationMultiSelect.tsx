@@ -170,7 +170,7 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const handleDropdownOpen = () => {
     if (selectedOptions.length > 0 && !searchInputValue) {
-      setSelectedItemId(selectedOptions[0].objectMetadataId);
+      setSelectedItemId(selectedOptions[0]!.objectMetadataId);
     }
   };
 

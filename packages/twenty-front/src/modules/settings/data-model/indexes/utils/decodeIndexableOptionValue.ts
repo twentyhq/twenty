@@ -9,7 +9,7 @@ export const decodeIndexableOptionValue = (
   );
 
   return {
-    fieldMetadataId,
+    fieldMetadataId: fieldMetadataId!,
     subFieldName: isNonEmptyString(subFieldName) ? subFieldName : null,
   };
 };

@@ -59,6 +59,6 @@ export const SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle = ({
       : `${segments.slice(0, -1).join(', ')} ${t`and`} ${segments.at(-1)}`;
 
   return (
-    <>{t`Confirm deletion of ${roleName} role? This cannot be undone. ${reassignSubject} will be reassigned to the default role.`}</>
+    <>{t`Confirm deletion of ${roleName} role? This cannot be undone. ${reassignSubject!} will be reassigned to the default role.`}</>
   );
 };

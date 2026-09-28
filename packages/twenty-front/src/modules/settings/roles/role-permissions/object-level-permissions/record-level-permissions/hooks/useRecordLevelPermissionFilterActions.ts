@@ -149,7 +149,7 @@ export const useRecordLevelPermissionFilterActions = ({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForRLS.id,
       type: filterType,
-      operand: getRecordFilterOperands({ filterType })[0],
+      operand: getRecordFilterOperands({ filterType })[0]!,
       value: '',
       displayValue: '',
       recordFilterGroupId: recordFilterGroup.id,

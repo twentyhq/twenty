@@ -6,5 +6,5 @@ import { getModelsDevLogoIcon } from '@/settings/admin-panel/ai/utils/getModelsD
 
 export const getProviderIcon = (providerType: string): IconComponent =>
   isKnownProviderId(providerType)
-    ? PROVIDER_ICON_CONFIG[providerType].Icon
+    ? PROVIDER_ICON_CONFIG[providerType]!.Icon
     : getModelsDevLogoIcon(providerType);

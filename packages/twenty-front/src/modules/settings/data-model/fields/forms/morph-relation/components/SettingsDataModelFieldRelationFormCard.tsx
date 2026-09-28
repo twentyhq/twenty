@@ -94,7 +94,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
             objectNameSingulars={[objectNameSingular]}
             fieldPreviewTargetObjectNameSingular={
               relationObjectMetadataItems[0]?.nameSingular ??
-              fallbackRelationObjectMetadataItem.nameSingular
+              fallbackRelationObjectMetadataItem!.nameSingular
             }
             pluralizeLabel={watch('relationType') === RelationType.MANY_TO_ONE}
           />
@@ -118,7 +118,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
             objectNameSingulars={
               relationObjectMetadataItems.length > 0
                 ? relationObjectMetadataItems.map((item) => item.nameSingular)
-                : [fallbackRelationObjectMetadataItem.nameSingular]
+                : [fallbackRelationObjectMetadataItem!.nameSingular]
             }
             fieldPreviewTargetObjectNameSingular={objectNameSingular}
             pluralizeLabel={watch('relationType') !== RelationType.MANY_TO_ONE}

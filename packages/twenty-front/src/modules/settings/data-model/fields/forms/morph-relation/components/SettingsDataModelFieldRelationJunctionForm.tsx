@@ -122,7 +122,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
         'settings',
         {
           ...currentSettings,
-          junctionTargetFieldId: junctionFieldOptions[0].value,
+          junctionTargetFieldId: junctionFieldOptions[0]!.value,
         },
         {
           shouldDirty: true,

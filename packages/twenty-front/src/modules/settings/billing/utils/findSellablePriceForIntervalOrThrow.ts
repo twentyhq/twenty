@@ -29,5 +29,5 @@ export const findSellablePriceForIntervalOrThrow = <
     );
   }
 
-  return sellablePrices[0];
+  return sellablePrices[0]!;
 };

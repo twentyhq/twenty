@@ -125,7 +125,7 @@ describe('useApplicationVariablesDraft', () => {
     const { result } = renderVariablesDraft('app-untouched');
 
     expect(result.current.hasUnsavedApplicationVariables).toBe(false);
-    expect(result.current.draftApplicationVariables[0].value).toBe(OLD_VALUE);
+    expect(result.current.draftApplicationVariables[0]!.value).toBe(OLD_VALUE);
   });
 
   it('keeps the edited value unsaved until it is saved', () => {
@@ -135,7 +135,7 @@ describe('useApplicationVariablesDraft', () => {
       result.current.setApplicationVariableValue(KEY, NEW_VALUE);
     });
 
-    expect(result.current.draftApplicationVariables[0].value).toBe(NEW_VALUE);
+    expect(result.current.draftApplicationVariables[0]!.value).toBe(NEW_VALUE);
     expect(result.current.hasUnsavedApplicationVariables).toBe(true);
   });
 
@@ -179,7 +179,9 @@ describe('useApplicationVariablesDraft', () => {
       await savePromise;
     });
 
-    expect(result.current.draftApplicationVariables[0].value).toBe(LATER_VALUE);
+    expect(result.current.draftApplicationVariables[0]!.value).toBe(
+      LATER_VALUE,
+    );
     expect(result.current.hasUnsavedApplicationVariables).toBe(true);
   });
 });
