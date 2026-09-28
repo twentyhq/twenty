@@ -13,13 +13,15 @@ type AgentHistorySchemaMaps = Pick<
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 >;
 
-// agentChatThreadTarget is provisioned by its own command, which owns both legs
-// of its relation to agentChatThread: `thread` on the target and
-// `recordTargets` on the thread. This migration does not create that object, so
-// emitting either leg here would fail validation.
+// agentChatThreadTarget and inputAsk are provisioned by their own commands,
+// which own both legs of their relation to agentChatThread: `thread` on the
+// other object and its inverse on the thread. This migration does not create
+// those objects, so emitting either leg here would fail validation.
 const FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE = new Set([
   STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
   STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.agentChatThread.inputAsks.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.inputAsk.thread.universalIdentifier,
 ]);
 
 export const getAgentHistorySchemaAdditions = ({
