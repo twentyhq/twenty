@@ -72,7 +72,10 @@ export const workflowManifestSchema = z
       sourceId?: string,
     ): void => {
       if (visiting.has(id)) {
-        if (id !== sourceId && enclosingIterators.at(-1) === id) {
+        if (
+          id !== sourceId &&
+          enclosingIterators[enclosingIterators.length - 1] === id
+        ) {
           return;
         }
         context.addIssue({
@@ -99,7 +102,7 @@ export const workflowManifestSchema = z
       if (enclosingIterators.length > 0 && destinations.length === 0) {
         context.addIssue({
           code: 'custom',
-          message: `Loop body step ${id} must return to iterator ${enclosingIterators.at(-1)}`,
+          message: `Loop body step ${id} must return to iterator ${enclosingIterators[enclosingIterators.length - 1]}`,
         });
       }
       destinations.forEach((nextId) => visit(nextId, enclosingIterators, id));

@@ -88,7 +88,7 @@ export const validateWorkflowManifestRecordFields = ({
       step.input.fieldsToUpdate.some(
         (name) =>
           !fieldNames.has(name) ||
-          !Object.hasOwn(step.input.objectRecord, name),
+          !Object.prototype.hasOwnProperty.call(step.input.objectRecord, name),
       ))
   ) {
     throw new ApplicationException(
