@@ -52,7 +52,7 @@ type Story = StoryObj<typeof SettingsRoleAssignmentWrapper>;
 
 export const Default: Story = {
   args: {
-    roleId: mockedRoles[0].id,
+    roleId: mockedRoles[0]?.id,
   },
 };
 

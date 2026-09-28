@@ -9,6 +9,7 @@ import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mock
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const handleBlockedEmailRemoveJestFn = fn();
 
@@ -60,7 +61,8 @@ export const DeleteFirstElementFromBlocklist: Story = {
 
     expect(handleBlockedEmailRemoveJestFn).toHaveBeenCalledTimes(0);
 
-    const removeFromBlocklistButton = canvas.getAllByRole('button')[0];
+    const [removeFromBlocklistButton] = canvas.getAllByRole('button');
+    assertIsDefinedOrThrow(removeFromBlocklistButton);
 
     await userEvent.click(removeFromBlocklistButton);
 

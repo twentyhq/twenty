@@ -68,6 +68,10 @@ export const SettingsDataModelFieldRelationFormCard = ({
       ? RelationType.ONE_TO_MANY
       : RelationType.MANY_TO_ONE;
 
+  if (!isDefined(fallbackRelationObjectMetadataItem)) {
+    return null;
+  }
+
   return (
     <SettingsDataModelPreviewFormCard
       preview={

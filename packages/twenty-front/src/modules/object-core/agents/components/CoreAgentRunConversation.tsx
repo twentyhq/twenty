@@ -33,6 +33,11 @@ export const CoreAgentRunConversation = ({
 }: CoreAgentRunConversationProps) => {
   const theme = useTheme();
   const [latestRun] = runs;
+
+  if (!isDefined(latestRun)) {
+    return null;
+  }
+
   const ChevronIcon = isExpanded ? IconChevronDown : IconChevronRight;
   // a total missing some runs' usage would read as the whole conversation's cost
   const hasCreditsForEveryRun = runs.every((run) => isDefined(run.credits));

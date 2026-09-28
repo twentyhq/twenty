@@ -118,12 +118,14 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   }
 
   const handleJunctionToggle = (checked: boolean) => {
-    if (checked && junctionFieldOptions.length > 0) {
+    const [firstJunctionFieldOption] = junctionFieldOptions;
+
+    if (checked && isDefined(firstJunctionFieldOption)) {
       setValue(
         'settings',
         {
           ...currentSettings,
-          junctionTargetFieldId: junctionFieldOptions[0].value,
+          junctionTargetFieldId: firstJunctionFieldOption.value,
         },
         {
           shouldDirty: true,

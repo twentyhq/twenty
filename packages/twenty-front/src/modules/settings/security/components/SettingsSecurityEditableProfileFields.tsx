@@ -67,9 +67,11 @@ export const SettingsSecurityEditableProfileFields = () => {
       ? selectedLabelList.join(', ')
       : t`No fields selected`;
 
+  const [firstSelectedField] = selectedFields;
+
   const firstSelectedIcon =
-    selectedFields.length === 1
-      ? optionByValue.get(selectedFields[0])?.Icon
+    selectedFields.length === 1 && isDefined(firstSelectedField)
+      ? optionByValue.get(firstSelectedField)?.Icon
       : undefined;
 
   const selectedOption: SelectOption<string> = {

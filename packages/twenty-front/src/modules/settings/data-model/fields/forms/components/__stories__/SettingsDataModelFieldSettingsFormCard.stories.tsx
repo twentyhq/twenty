@@ -11,6 +11,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const mockedCompanyObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
@@ -78,6 +79,9 @@ export const WithSelectForm: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const [optionsMenuTrigger, optionActionsTrigger] =
       await canvas.findAllByRole('button', { name: 'More options' });
+
+    assertIsDefinedOrThrow(optionsMenuTrigger);
+    assertIsDefinedOrThrow(optionActionsTrigger);
 
     await userEvent.click(optionActionsTrigger);
     const optionActions = await body.findByRole('menu', {

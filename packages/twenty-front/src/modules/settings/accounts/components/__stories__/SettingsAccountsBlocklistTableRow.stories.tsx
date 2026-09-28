@@ -9,6 +9,10 @@ import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/component
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const [mockedBlocklistItem] = mockedBlocklist;
+assertIsDefinedOrThrow(mockedBlocklistItem);
 
 const onRemoveJestFn = fn();
 
@@ -25,7 +29,7 @@ const meta: Meta<typeof SettingsAccountsBlocklistTableRow> = {
   component: SettingsAccountsBlocklistTableRow,
   decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
-    blocklistItem: mockedBlocklist[0],
+    blocklistItem: mockedBlocklistItem,
     onRemove: onRemoveJestFn,
   },
   argTypes: {
@@ -45,11 +49,11 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText(mockedBlocklist[0].handle),
+      await canvas.findByText(mockedBlocklistItem.handle),
     ).toBeInTheDocument();
     expect(
       await canvas.findByText(
-        formatToHumanReadableDate(mockedBlocklist[0].createdAt),
+        formatToHumanReadableDate(mockedBlocklistItem.createdAt),
       ),
     ).toBeInTheDocument();
   },
@@ -61,7 +65,8 @@ export const DeleteFirstElementFromBlocklist: Story = {
 
     expect(onRemoveJestFn).toHaveBeenCalledTimes(0);
 
-    const removeFromBlocklistButton = canvas.getAllByRole('button')[0];
+    const [removeFromBlocklistButton] = canvas.getAllByRole('button');
+    assertIsDefinedOrThrow(removeFromBlocklistButton);
 
     await userEvent.click(removeFromBlocklistButton);
 

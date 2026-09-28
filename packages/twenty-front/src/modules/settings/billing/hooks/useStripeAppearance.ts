@@ -14,7 +14,8 @@ const toStripeColor = (color: string): string => {
     return color;
   }
 
-  const [, red, green, blue, alpha] = match;
+  // The three channel groups are mandatory in the pattern, only alpha is optional
+  const [, red = '0', green = '0', blue = '0', alpha] = match;
   const toByte = (value: string) => Math.round(Number(value) * 255);
   const rgb = `${toByte(red)}, ${toByte(green)}, ${toByte(blue)}`;
 

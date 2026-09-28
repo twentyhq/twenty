@@ -296,6 +296,10 @@ export const ResourceCreditPriceSelector = ({
   };
 
   const handleConfirmClick = async () => {
+    if (!isDefined(selectedPrice)) {
+      return;
+    }
+
     try {
       const { data } = await setResourceCreditPrice({
         variables: { priceId: selectedPrice.stripePriceId },

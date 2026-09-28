@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
@@ -21,6 +22,9 @@ jest.mock('@/settings/roles/components/SettingsRolesQueryEffect', () => ({
 jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
+
+const [mockedRole] = mockedRoles;
+assertIsDefinedOrThrow(mockedRole);
 
 const renderGuard = ({
   surface,
@@ -77,7 +81,7 @@ describe('SettingsRoleRouteGuard', () => {
       renderGuard({
         surface,
         roleIds: [],
-        draftRole: { ...mockedRoles[0], id: 'role-1' },
+        draftRole: { ...mockedRole, id: 'role-1' },
       });
 
       expect(screen.getByTestId('role-page')).toBeInTheDocument();
@@ -86,7 +90,7 @@ describe('SettingsRoleRouteGuard', () => {
   );
 
   it('does not use a stale draft to reopen a previously persisted role', () => {
-    const role = { ...mockedRoles[0], id: 'role-1' };
+    const role = { ...mockedRole, id: 'role-1' };
 
     renderGuard({
       surface: 'main',
@@ -102,7 +106,7 @@ describe('SettingsRoleRouteGuard', () => {
     renderGuard({
       surface: 'side-panel',
       roleIds: [],
-      draftRole: { ...mockedRoles[0], id: 'role-1' },
+      draftRole: { ...mockedRole, id: 'role-1' },
       draftScopeId: 'another-flow',
     });
 

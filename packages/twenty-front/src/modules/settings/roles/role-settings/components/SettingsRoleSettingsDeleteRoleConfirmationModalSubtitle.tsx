@@ -1,6 +1,7 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { plural, t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsRoleSettingsDeleteRoleConfirmationModalSubtitleProps = {
   roleId: string;
@@ -47,7 +48,9 @@ export const SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle = ({
     );
   }
 
-  if (segments.length === 0) {
+  const [firstSegment] = segments;
+
+  if (!isDefined(firstSegment)) {
     return (
       <>{t`Confirm deletion of ${roleName} role? This cannot be undone.`}</>
     );
@@ -55,7 +58,7 @@ export const SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle = ({
 
   const reassignSubject =
     segments.length === 1
-      ? segments[0]
+      ? firstSegment
       : `${segments.slice(0, -1).join(', ')} ${t`and`} ${segments.at(-1)}`;
 
   return (

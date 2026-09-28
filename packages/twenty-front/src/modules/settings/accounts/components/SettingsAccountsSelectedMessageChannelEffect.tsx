@@ -4,6 +4,7 @@ import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsAccountsSelectedMessageChannelEffectProps = {
   messageChannels: MessageChannel[];
@@ -22,17 +23,15 @@ export const SettingsAccountsSelectedMessageChannelEffect = ({
   );
 
   useEffect(() => {
-    if (messageChannels.length === 0) {
+    const activeChannel =
+      messageChannels.find((channel) => channel.id === activeTabId) ??
+      messageChannels[0];
+
+    if (!isDefined(activeChannel)) {
       return;
     }
 
-    const activeChannel = messageChannels.find(
-      (channel) => channel.id === activeTabId,
-    );
-
-    setSettingsAccountsSelectedMessageChannel(
-      activeChannel ?? messageChannels[0],
-    );
+    setSettingsAccountsSelectedMessageChannel(activeChannel);
   }, [messageChannels, activeTabId, setSettingsAccountsSelectedMessageChannel]);
 
   return null;

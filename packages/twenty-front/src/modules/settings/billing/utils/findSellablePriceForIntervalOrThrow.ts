@@ -1,6 +1,7 @@
 import { type SubscriptionInterval } from '~/generated-metadata/graphql';
 
 import { isSellableBillingPrice } from '@/settings/billing/utils/isSellableBillingPrice';
+import { isDefined } from 'twenty-shared/utils';
 
 type SellablePriceCandidate = {
   recurringInterval: SubscriptionInterval;
@@ -20,7 +21,9 @@ export const findSellablePriceForIntervalOrThrow = <
       price.recurringInterval === interval && isSellableBillingPrice(price),
   );
 
-  if (sellablePrices.length !== 1) {
+  const [sellablePrice, ...otherSellablePrices] = sellablePrices;
+
+  if (!isDefined(sellablePrice) || otherSellablePrices.length > 0) {
     throw new Error(
       `Expected a single sellable ${interval} price, found ${sellablePrices.length}: ${sellablePrices
         .map((price) => price.stripePriceId)
@@ -28,5 +31,5 @@ export const findSellablePriceForIntervalOrThrow = <
     );
   }
 
-  return sellablePrices[0];
+  return sellablePrice;
 };

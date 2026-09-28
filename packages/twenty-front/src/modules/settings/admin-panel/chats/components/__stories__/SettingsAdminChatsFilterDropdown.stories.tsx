@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const FilterExample = () => {
   const [filters, setFilters] = useState<AdminChatsFilterState>({
@@ -37,13 +38,14 @@ export const ToggleWithoutClosing: Story = {
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog');
-    const switches = within(popup).getAllByRole('switch');
-    await userEvent.click(switches[0]);
-    expect(switches[0]).toBeChecked();
+    const [firstSwitch, secondSwitch] = within(popup).getAllByRole('switch');
+    assertIsDefinedOrThrow(firstSwitch);
+    await userEvent.click(firstSwitch);
+    expect(firstSwitch).toBeChecked();
     expect(popup).toBeVisible();
     await userEvent.tab();
     await userEvent.keyboard(' ');
-    expect(switches[1]).toBeChecked();
+    expect(secondSwitch).toBeChecked();
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());

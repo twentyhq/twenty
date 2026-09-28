@@ -77,7 +77,7 @@ export const CoreAgentRoleTab = ({
     (settingsPersistedRole.apiKeys?.length || 0) === 0 &&
     (hasValidAgentId
       ? settingsPersistedRole.agents?.length === 1 &&
-        settingsPersistedRole.agents[0].id === agentId
+        settingsPersistedRole.agents[0]?.id === agentId
       : (settingsPersistedRole.agents?.length || 0) === 0);
 
   const handleCreateRole = async () => {

@@ -25,13 +25,17 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const [mockedRole] = mockedRoles;
+assertIsDefinedOrThrow(mockedRole);
 
 const ROLE_ID = 'role-1';
 const MODAL_ID = 'role-modal';
 const DROPDOWN_ID = 'role-dropdown';
 
 const buildRole = (label: string): RoleWithPartialMembers => ({
-  ...mockedRoles[0],
+  ...mockedRole,
   id: ROLE_ID,
   label,
 });

@@ -47,10 +47,10 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
       );
 
       expect(result.current.objectRows).toHaveLength(1);
-      expect(result.current.objectRows[0].key).toBe(personObject.nameSingular);
-      expect(result.current.objectRows[0].name).toBe(personObject.labelPlural);
-      expect(result.current.objectRows[0].secondary).toMatch(/\d+ fields/);
-      expect(result.current.objectRows[0].link).toBeDefined();
+      expect(result.current.objectRows[0]?.key).toBe(personObject.nameSingular);
+      expect(result.current.objectRows[0]?.name).toBe(personObject.labelPlural);
+      expect(result.current.objectRows[0]?.secondary).toMatch(/\d+ fields/);
+      expect(result.current.objectRows[0]?.link).toBeDefined();
     });
 
     it('should return empty object rows when application has no objects', () => {
@@ -84,8 +84,8 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
       const fieldBelongingToApp = companyObject.fields[0];
 
       const installedApplication = {
-        id: fieldBelongingToApp.applicationId ?? APP_ID,
-        universalIdentifier: fieldBelongingToApp.applicationId ?? APP_ID,
+        id: fieldBelongingToApp?.applicationId ?? APP_ID,
+        universalIdentifier: fieldBelongingToApp?.applicationId ?? APP_ID,
         objects: [{ id: personObject.id }],
         name: 'Test App',
         logo: null,
@@ -180,9 +180,9 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
       );
 
       expect(result.current.objectRows).toHaveLength(1);
-      expect(result.current.objectRows[0].key).toBe('customObject');
-      expect(result.current.objectRows[0].name).toBe('Custom Objects');
-      expect(result.current.objectRows[0].secondary).toBe('2 fields');
+      expect(result.current.objectRows[0]?.key).toBe('customObject');
+      expect(result.current.objectRows[0]?.name).toBe('Custom Objects');
+      expect(result.current.objectRows[0]?.secondary).toBe('2 fields');
     });
 
     it('should return one row per field when the parent object lives in the manifest', () => {
@@ -310,7 +310,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         { wrapper },
       );
 
-      expect(result.current.objectRows[0].key).toBe(personObject.nameSingular);
+      expect(result.current.objectRows[0]?.key).toBe(personObject.nameSingular);
       expect(
         result.current.objectRows.some((r) => r.key === 'manifestObj'),
       ).toBe(false);

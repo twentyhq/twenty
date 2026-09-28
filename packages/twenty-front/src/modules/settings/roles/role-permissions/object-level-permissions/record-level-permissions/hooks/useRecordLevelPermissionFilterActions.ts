@@ -21,10 +21,10 @@ import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
-import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { getFirstRecordFilterOperandOrThrow } from '@/object-record/record-filter/utils/getFirstRecordFilterOperandOrThrow';
 
 type UseRecordLevelPermissionFilterActionsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -149,7 +149,7 @@ export const useRecordLevelPermissionFilterActions = ({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForRLS.id,
       type: filterType,
-      operand: getRecordFilterOperands({ filterType })[0],
+      operand: getFirstRecordFilterOperandOrThrow({ filterType }),
       value: '',
       displayValue: '',
       recordFilterGroupId: recordFilterGroup.id,

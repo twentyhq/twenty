@@ -100,7 +100,7 @@ describe('buildMetadataTranslationsTable', () => {
   it('should only keep the given languages, in their order', () => {
     const { languageRows } = buildMetadataTranslationsTable({
       metadataTranslations: [FRENCH_SINGULAR, GERMAN_SINGULAR],
-      localeOptions: [LOCALE_OPTIONS[1]],
+      localeOptions: LOCALE_OPTIONS.slice(1, 2),
     });
 
     expect(languageRows.map(({ locale }) => locale)).toEqual(['fr-FR']);

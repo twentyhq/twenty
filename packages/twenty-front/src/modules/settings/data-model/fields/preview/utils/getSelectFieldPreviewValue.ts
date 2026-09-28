@@ -15,14 +15,15 @@ export const getSelectFieldPreviewValue = ({
     'defaultValue' | 'options' | 'type'
   >;
 }): FieldSelectValue => {
+  const firstOptionValue = fieldMetadataItem.options?.[0]?.value;
+
   if (
     fieldMetadataItem.type !== FieldMetadataType.SELECT ||
-    !fieldMetadataItem.options?.length
+    !isDefined(fieldMetadataItem.options) ||
+    !isDefined(firstOptionValue)
   ) {
     return null;
   }
-
-  const firstOptionValue = fieldMetadataItem.options[0].value;
 
   return selectFieldDefaultValueSchema(fieldMetadataItem.options)
     .refine(isDefined)

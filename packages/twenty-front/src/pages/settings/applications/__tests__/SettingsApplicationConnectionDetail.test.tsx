@@ -8,6 +8,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { SettingsApplicationConnectionDetail } from '~/pages/settings/applications/SettingsApplicationConnectionDetail';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const mockTriggerAppOAuth = jest.fn();
 const mockDeleteConnectedAccount = jest.fn();
@@ -224,6 +225,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     });
 
     const [disconnectButton] = screen.getAllByText('Disconnect');
+    assertIsDefinedOrThrow(disconnectButton);
 
     fireEvent.click(disconnectButton);
 

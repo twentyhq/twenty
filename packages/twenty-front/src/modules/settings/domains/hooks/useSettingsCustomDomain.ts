@@ -35,7 +35,7 @@ export const useSettingsCustomDomain = () => {
 
     const result = domainSchema.safeParse(value);
 
-    setError(result.success ? undefined : result.error.issues[0].message);
+    setError(result.success ? undefined : result.error.issues[0]?.message);
   };
 
   const handleDelete = () => {

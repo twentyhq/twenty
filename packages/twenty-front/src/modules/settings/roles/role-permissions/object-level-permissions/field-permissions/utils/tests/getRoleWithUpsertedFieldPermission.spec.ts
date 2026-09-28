@@ -1,5 +1,6 @@
 import { type FieldPermission, type Role } from '~/generated-metadata/graphql';
 import { getRoleWithUpsertedFieldPermission } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/getRoleWithUpsertedFieldPermission';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const BASE_ROLE_MOCK: Role = {
   canAccessAllTools: false,
@@ -74,11 +75,16 @@ describe('getRoleWithUpsertedFieldPermission', () => {
     );
 
     expect(updatedRole.fieldPermissions).toContain(fieldPermissionToUpsert);
-    expect(updatedRole.fieldPermissions?.[0].canReadFieldValue).not.toEqual(
-      role.fieldPermissions?.[0].canReadFieldValue,
+    const [updatedFieldPermission] = updatedRole.fieldPermissions ?? [];
+    const [originalFieldPermission] = role.fieldPermissions ?? [];
+    assertIsDefinedOrThrow(updatedFieldPermission);
+    assertIsDefinedOrThrow(originalFieldPermission);
+
+    expect(updatedFieldPermission.canReadFieldValue).not.toEqual(
+      originalFieldPermission.canReadFieldValue,
     );
-    expect(updatedRole.fieldPermissions?.[0].canUpdateFieldValue).not.toEqual(
-      role.fieldPermissions?.[0].canUpdateFieldValue,
+    expect(updatedFieldPermission.canUpdateFieldValue).not.toEqual(
+      originalFieldPermission.canUpdateFieldValue,
     );
   });
 
