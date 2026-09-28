@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/database/commands/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
+import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 
 type CoreWorkflowReverseRow = {
   workspaceWorkflowId: string;

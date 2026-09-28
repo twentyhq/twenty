@@ -2,7 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
-import { resolveLegacyCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/database/commands/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
+import { resolveLegacyCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-legacy-core-workflow-ids-by-workspace-workflow-id.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 

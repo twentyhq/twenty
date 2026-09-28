@@ -25,7 +25,7 @@ import {
   CoreWorkflowMetadataExceptionCode,
 } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { resolveLegacyCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/database/commands/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
+import { resolveLegacyCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-legacy-core-workflow-ids-by-workspace-workflow-id.util';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
