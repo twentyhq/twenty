@@ -1,10 +1,10 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
 
 export const mapDBPartsToUIMessageParts = (
-  parts: AgentMessagePartEntity[],
+  parts: AgentMessagePartWorkspaceEntity[],
 ): ExtendedUIMessagePart[] => {
   return parts
     .sort((a, b) => a.orderIndex - b.orderIndex)

@@ -12,11 +12,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-import {
-  type AgentMessageEntity,
-  AgentMessageRole,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
@@ -49,7 +47,7 @@ export class WorkflowAgentConversationWorkspaceService {
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
     @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageEntity>,
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -171,7 +169,7 @@ export class WorkflowAgentConversationWorkspaceService {
     const messages = await this.messageRepository.find(workspaceId, {
       where: { threadId },
       order: {
-        processedAt: { direction: 'ASC', nulls: 'LAST' },
+        processedAt: { order: 'ASC', nulls: 'NULLS LAST' },
         createdAt: 'ASC',
       },
       relations: ['parts'],
@@ -298,7 +296,7 @@ export class WorkflowAgentConversationWorkspaceService {
       turnId,
       role,
       agentId,
-      processedAt: new Date(),
+      processedAt: new Date().toISOString(),
       ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
     });
 

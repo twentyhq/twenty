@@ -9,6 +9,7 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
@@ -34,6 +35,7 @@ export const MultiWorkspaceDropdownClickableComponent = ({
     >
       <Avatar
         name={currentWorkspace?.displayName || ''}
+        colorSeed={getWorkspaceAvatarColorSeed(currentWorkspace?.displayName)}
         src={getAbsoluteImageUrl(
           currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
         )}

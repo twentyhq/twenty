@@ -11,7 +11,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type WorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -34,7 +34,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 export class AgentChatWorkflowQuestionService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageEntity>,
     private readonly agentChatService: AgentChatService,
@@ -52,7 +52,7 @@ export class AgentChatWorkflowQuestionService {
     userWorkspaceId,
     workspaceId,
   }: {
-    thread: AgentChatThreadEntity & WorkflowRunThreadFields;
+    thread: AgentChatThreadWorkspaceEntity & WorkflowRunThreadFields;
     messageId: string;
     answers: AskQuestionAnswer[];
     userWorkspaceId: string;

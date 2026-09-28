@@ -141,6 +141,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentMessage,
     ),
     agentId: { universalIdentifier: '880a91ad-4ab1-4067-87f6-970a53aa2234' },
+    senderWorkspaceMember: {
+      universalIdentifier: '69bea8e1-451d-4c3c-9d34-505b5a67e06e',
+    },
     senderUserWorkspaceId: {
       universalIdentifier: 'f4184c3a-b85c-4cef-8181-b2fefdf98fda',
     },
@@ -1592,6 +1595,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     timelineActivities: {
       universalIdentifier: '20202020-e15b-47b8-94fe-8200e3c66615',
+    },
+    agentMessages: {
+      universalIdentifier: '211b2717-450a-4f5f-808f-39695c819319',
     },
     agentChatThreads: {
       universalIdentifier: 'fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1',

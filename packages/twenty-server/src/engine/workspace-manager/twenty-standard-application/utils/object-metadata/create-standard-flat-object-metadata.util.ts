@@ -1649,8 +1649,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUICreatable: false,
         // A run carries its workflow's inputs and outputs, so it is exactly as
-        // private as its core workflow; syncWorkflowRunRecordShares writes the
-        // grants.
+        // private as its core workflow; WorkflowRunRecordShareService writes
+        // the grants.
         readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'name',
       },
