@@ -28,18 +28,14 @@ const creditItem = {
 };
 
 describe('buildSubscriptionItemsUpdate', () => {
-  it('restates every item so none is left on the interval the subscription is leaving', () => {
+  it('leaves an item it does not manage out of the payload, so Stripe keeps it as is', () => {
     const items = buildSubscriptionItemsUpdate({
       billingSubscriptionItems: [
         baseItem,
         creditItem,
         {
           stripeSubscriptionItemId: 'si_add_on',
-          stripePriceId: 'price_add_on_month',
-          quantity: 1,
-          billingProduct: {
-            metadata: { productKey: BillingProductKey.ADD_ON },
-          },
+          billingProduct: null,
         },
       ],
       toUpdatePrices,
@@ -48,7 +44,6 @@ describe('buildSubscriptionItemsUpdate', () => {
     expect(items).toEqual([
       { id: 'si_base', price: 'price_base_year', quantity: 7 },
       { id: 'si_credit', price: 'price_credits_year_1200', quantity: 1 },
-      { id: 'si_add_on', price: 'price_add_on_month', quantity: 1 },
     ]);
   });
 
@@ -64,20 +59,17 @@ describe('buildSubscriptionItemsUpdate', () => {
     ]);
   });
 
-  it('omits the quantity of an item that carries none', () => {
+  it('leaves out an item whose product the catalog cannot classify', () => {
     const items = buildSubscriptionItemsUpdate({
       billingSubscriptionItems: [
         baseItem,
-        {
-          stripeSubscriptionItemId: 'si_metered',
-          stripePriceId: 'price_metered',
-          quantity: null,
-          billingProduct: null,
-        },
+        { stripeSubscriptionItemId: 'si_metered', billingProduct: null },
       ],
       toUpdatePrices,
     });
 
-    expect(items[1]).toEqual({ id: 'si_metered', price: 'price_metered' });
+    expect(items).toEqual([
+      { id: 'si_base', price: 'price_base_year', quantity: 7 },
+    ]);
   });
 });

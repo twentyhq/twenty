@@ -10,7 +10,6 @@ const ADD_ON_PRICE_ID = 'price_add_on_month';
 const productKeyByPriceId = new Map([
   [BASE_PRICE_ID, BillingProductKey.BASE_PRODUCT],
   [CREDIT_PRICE_ID, BillingProductKey.RESOURCE_CREDIT],
-  [ADD_ON_PRICE_ID, BillingProductKey.ADD_ON],
 ]);
 
 const toUpdatePrices = {
@@ -29,7 +28,7 @@ const buildPhase = (items: Array<{ price: string; quantity?: number }>) => ({
 });
 
 describe('buildPhaseUpdateParams', () => {
-  it('rewrites the base and credit items and leaves an add-on untouched', () => {
+  it('rewrites the base and credit items and leaves an unclassified item untouched', () => {
     const phase = buildPhaseUpdateParams({
       currentPhase: buildPhase([
         { price: BASE_PRICE_ID, quantity: 3 },
@@ -50,7 +49,7 @@ describe('buildPhaseUpdateParams', () => {
     ]);
   });
 
-  it('keeps an add-on whatever its position', () => {
+  it('keeps an unclassified item whatever its position', () => {
     const phase = buildPhaseUpdateParams({
       currentPhase: buildPhase([
         { price: ADD_ON_PRICE_ID, quantity: 1 },

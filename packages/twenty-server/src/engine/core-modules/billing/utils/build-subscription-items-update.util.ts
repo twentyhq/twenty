@@ -11,7 +11,7 @@ import { resolveManagedItemPrice } from 'src/engine/core-modules/billing/utils/r
 
 type SubscriptionItemToUpdate = Pick<
   BillingSubscriptionItemEntity,
-  'stripeSubscriptionItemId' | 'stripePriceId' | 'quantity'
+  'stripeSubscriptionItemId'
 > & {
   billingProduct?: {
     metadata?: Pick<BillingProductMetadata, 'productKey'> | null;
@@ -25,19 +25,15 @@ export const buildSubscriptionItemsUpdate = ({
   billingSubscriptionItems: SubscriptionItemToUpdate[];
   toUpdatePrices: SubscriptionStripePrices;
 }): Stripe.SubscriptionUpdateParams.Item[] =>
-  billingSubscriptionItems.map(
-    ({ stripeSubscriptionItemId, stripePriceId, quantity, billingProduct }) => {
+  billingSubscriptionItems.flatMap(
+    ({ stripeSubscriptionItemId, billingProduct }) => {
       const managedPrice = resolveManagedItemPrice({
         productKey: billingProduct?.metadata?.productKey,
         toUpdatePrices,
       });
 
       return isDefined(managedPrice)
-        ? { id: stripeSubscriptionItemId, ...managedPrice }
-        : {
-            id: stripeSubscriptionItemId,
-            price: stripePriceId,
-            ...(isDefined(quantity) ? { quantity } : {}),
-          };
+        ? [{ id: stripeSubscriptionItemId, ...managedPrice }]
+        : [];
     },
   );

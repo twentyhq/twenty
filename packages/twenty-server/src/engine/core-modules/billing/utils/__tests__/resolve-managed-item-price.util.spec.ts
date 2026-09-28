@@ -28,15 +28,6 @@ describe('resolveManagedItemPrice', () => {
     ).toEqual({ price: 'price_credit_year', quantity: 1 });
   });
 
-  it('leaves an add-on unmanaged', () => {
-    expect(
-      resolveManagedItemPrice({
-        productKey: BillingProductKey.ADD_ON,
-        toUpdatePrices,
-      }),
-    ).toBeUndefined();
-  });
-
   it('leaves an unresolved product key unmanaged', () => {
     expect(
       resolveManagedItemPrice({ productKey: undefined, toUpdatePrices }),

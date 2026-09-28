@@ -875,7 +875,6 @@ export type BillingProductDto = {
 
 /** The different billing products available */
 export enum BillingProductKey {
-  ADD_ON = 'ADD_ON',
   BASE_PRODUCT = 'BASE_PRODUCT',
   RESOURCE_CREDIT = 'RESOURCE_CREDIT'
 }
