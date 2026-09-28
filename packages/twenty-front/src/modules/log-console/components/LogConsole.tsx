@@ -247,10 +247,12 @@ const StyledDetailPanelWrapper = styled.div<{
   position: relative;
   transition: ${({ isResizing }) =>
     getLogConsoleTransition(isResizing, ['width'])};
-  width: ${({ isOpen, detailPanelWidth }) =>
-    isOpen
-      ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
-      : '0px'};
+  width: ${({ isOpen, isResizing, detailPanelWidth }) =>
+    !isOpen
+      ? '0px'
+      : isResizing
+        ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
+        : `${detailPanelWidth}px`};
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
     position: static;

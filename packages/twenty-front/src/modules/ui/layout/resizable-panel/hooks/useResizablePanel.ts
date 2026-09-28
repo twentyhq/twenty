@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -65,7 +66,7 @@ export const useResizablePanel = ({
         onResizeStart?.(clampedSize);
       }
 
-      if (cssVariableName !== undefined) {
+      if (isDefined(cssVariableName)) {
         document.documentElement.style.setProperty(
           cssVariableName,
           `${clampedSize}px`,
@@ -120,14 +121,6 @@ export const useResizablePanel = ({
       onCollapse,
     ],
   );
-
-  useEffect(() => {
-    return () => {
-      if (cssVariableName !== undefined) {
-        document.documentElement.style.removeProperty(cssVariableName);
-      }
-    };
-  }, [cssVariableName]);
 
   useTrackPointer({
     shouldTrackPointer: isResizing,
