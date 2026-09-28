@@ -17,6 +17,8 @@ import { buildValidationRuleEditorFields } from '@/validation-rules/utils/buildV
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { getValidationRuleSaveErrorMessage } from '@/validation-rules/utils/getValidationRuleSaveErrorMessage';
 import { isValidationRuleFormSubmittable } from '@/validation-rules/utils/isValidationRuleFormSubmittable';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 const SettingsObjectNewValidationRuleForm = ({
@@ -88,6 +90,9 @@ const SettingsObjectNewValidationRuleForm = ({
 };
 
 export const SettingsObjectNewValidationRule = () => {
+  const isValidationRulesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  );
   const { objectNamePlural = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -95,7 +100,7 @@ export const SettingsObjectNewValidationRule = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  if (!isDefined(objectMetadataItem)) {
+  if (!isValidationRulesEnabled || !isDefined(objectMetadataItem)) {
     return <NotFound />;
   }
 

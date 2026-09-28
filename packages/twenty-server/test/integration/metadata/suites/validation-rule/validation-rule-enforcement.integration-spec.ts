@@ -1,8 +1,10 @@
 import gql from 'graphql-tag';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const CUSTOMER_NEEDS_AMOUNT_EXPRESSION =
@@ -50,6 +52,12 @@ describe('Validation rules should be enforced on record writes', () => {
   const createdOpportunityIds: string[] = [];
 
   beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },

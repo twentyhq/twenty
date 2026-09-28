@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
+  FeatureFlagKey,
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
@@ -1431,6 +1432,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private getActiveValidationRules(): ObjectValidationRule[] {
+    if (
+      this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_VALIDATION_RULES_ENABLED
+      ] !== true
+    ) {
+      return [];
+    }
+
     return (this.options.flatObjectMetadata.validationRules ?? []).filter(
       (validationRule) => validationRule.isActive,
     );

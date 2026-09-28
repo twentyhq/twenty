@@ -4,9 +4,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsValidationRuleEditForm } from '@/validation-rules/components/SettingsValidationRuleEditForm';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 export const SettingsObjectValidationRuleEdit = () => {
+  const isValidationRulesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  );
   const { objectNamePlural = '', validationRuleId = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -18,7 +23,7 @@ export const SettingsObjectValidationRuleEdit = () => {
     objectMetadataId: objectMetadataItem?.id ?? '',
   });
 
-  if (!isDefined(objectMetadataItem)) {
+  if (!isValidationRulesEnabled || !isDefined(objectMetadataItem)) {
     return <NotFound />;
   }
 

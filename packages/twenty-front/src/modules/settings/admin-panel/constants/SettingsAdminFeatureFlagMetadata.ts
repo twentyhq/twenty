@@ -66,4 +66,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Logs console`,
     description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
   },
+  [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: {
+    label: msg`Validation rules`,
+    description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
+  },
 };
