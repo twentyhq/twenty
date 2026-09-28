@@ -67,6 +67,8 @@ const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
 const LOG_CONSOLE_TOP_BORDER_WIDTH = '1px';
 
+const LOG_CONSOLE_BAR_BOTTOM_BORDER_WIDTH = '1px';
+
 const LOG_CONSOLE_TRANSITION_TIMING = `calc(${themeCssVariables.animation.duration.normal} * 1s) ${LOG_CONSOLE_ANIMATION_EASING}`;
 
 const LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS = {
@@ -373,7 +375,7 @@ export const LogConsole = () => {
     ? `var(${LOG_CONSOLE_HEIGHT_CSS_VARIABLE}, ${logConsoleBodyHeight}px)`
     : `${logConsoleBodyHeight}px`;
   const bodyHeight = `max(${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px, ${resizedBodyHeight})`;
-  const collapsedHeight = `calc(${TAB_LIST_HEIGHT} + ${LOG_CONSOLE_TOP_BORDER_WIDTH})`;
+  const collapsedHeight = `calc(${TAB_LIST_HEIGHT} + ${LOG_CONSOLE_TOP_BORDER_WIDTH} - ${LOG_CONSOLE_BAR_BOTTOM_BORDER_WIDTH})`;
   const openHeight = `calc(${TAB_LIST_HEIGHT} + ${LOG_CONSOLE_TOP_BORDER_WIDTH} + ${bodyHeight})`;
   const spacerHeight = isExiting
     ? '0px'
