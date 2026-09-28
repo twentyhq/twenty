@@ -242,6 +242,10 @@ export const useInviteTeam = () => {
   };
 
   const handleInvite = () => {
+    if (isSubmitting || isNavigating) {
+      return;
+    }
+
     const hasInviteEmails = isNonEmptyArray(
       getValidInviteEmails(getValues('emails').map(({ email }) => email)),
     );

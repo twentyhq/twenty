@@ -236,6 +236,38 @@ describe('useInviteTeam', () => {
     ).toBe(1);
   });
 
+  it('should send the invitations once when inviting again while they are being sent', async () => {
+    let resolveInvitation: (value: unknown) => void = () => {};
+
+    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
+      'grace@example.com',
+      '',
+    ]);
+    mockSendInvitation.mockReturnValue(
+      new Promise((resolve) => {
+        resolveInvitation = resolve;
+      }),
+    );
+
+    const { result } = renderInviteTeam();
+
+    await act(async () => {
+      result.current.handleInvite();
+    });
+
+    await waitFor(() => expect(mockSendInvitation).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      result.current.handleInvite();
+    });
+
+    await act(async () => {
+      resolveInvitation({});
+    });
+
+    expect(mockSendInvitation).toHaveBeenCalledTimes(1);
+  });
+
   it('should drop the invite credits on skip and keep the typed emails', async () => {
     jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
       'grace@example.com',
