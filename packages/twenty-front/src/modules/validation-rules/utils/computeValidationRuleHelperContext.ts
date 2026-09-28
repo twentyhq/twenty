@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { VALIDATION_RULE_FUNCTIONS } from '@/validation-rules/constants/ValidationRuleFunctions';
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleHelperContext } from '@/validation-rules/types/ValidationRuleHelperContext';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
+import { getValidationRuleFunctionDefinitions } from '@/validation-rules/utils/getValidationRuleFunctionDefinitions';
 import { tokenizeValidationRuleExpression } from '@/validation-rules/utils/tokenizeValidationRuleExpression';
 
 const WORD_BEFORE_CURSOR_PATTERN =
@@ -31,9 +31,9 @@ const computeRootItems = ({
     .map((field) => ({ kind: 'field', field }));
 
   const functionItems: ValidationRuleHelperItem[] =
-    VALIDATION_RULE_FUNCTIONS.filter((definition) =>
-      matchesQuery([definition.name], query),
-    ).map((definition) => ({ kind: 'function', definition }));
+    getValidationRuleFunctionDefinitions()
+      .filter((definition) => matchesQuery([definition.name], query))
+      .map((definition) => ({ kind: 'function', definition }));
 
   const keywordItems: ValidationRuleHelperItem[] =
     VALIDATION_RULE_KEYWORDS.filter((definition) =>

@@ -11,4 +11,5 @@ export type ValidationRuleEditorField = {
   selectOptionValues: string[];
   isSystem: boolean;
   hasMembers: boolean;
+  readsRelatedRecord: boolean;
 };

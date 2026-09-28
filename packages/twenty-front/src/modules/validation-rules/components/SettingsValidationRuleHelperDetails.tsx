@@ -101,6 +101,11 @@ export const SettingsValidationRuleHelperDetails = ({
                 {item.field.objectLabelSingular}
               </Tag>
             </StyledMeta>
+            {item.field.readsRelatedRecord && (
+              <StyledDescription>
+                {t`Checked only when the record this rule belongs to is saved. Editing the related record does not check it again.`}
+              </StyledDescription>
+            )}
           </>
         );
       }

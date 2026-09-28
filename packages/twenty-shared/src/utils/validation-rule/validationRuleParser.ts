@@ -1,8 +1,7 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
+import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
-import { isValidationRuleValueEmpty } from '@/utils/validation-rule/isValidationRuleValueEmpty';
 
 export const validationRuleParser = new Parser({
   allowMemberAccess: true,
@@ -78,13 +77,9 @@ validationRuleParser.binaryOps['>='] = compareDefinedValues(
   (left, right) => (left as number) >= (right as number),
 );
 
-validationRuleParser.functions = {
-  isDefined: isValidationRuleValueDefined,
-  isEmpty: isValidationRuleValueEmpty,
-  isNonEmptyString: (value: unknown) => isNonEmptyString(value),
-  includes: (container: unknown, value: unknown) =>
-    Array.isArray(container)
-      ? container.includes(value)
-      : isString(container) && isString(value) && container.includes(value),
-  arrayLength: (value: unknown) => (Array.isArray(value) ? value.length : 0),
-};
+validationRuleParser.functions = Object.fromEntries(
+  Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
+    name,
+    evaluate,
+  ]),
+);

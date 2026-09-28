@@ -1,4 +1,5 @@
-import { VALIDATION_RULE_FUNCTIONS } from '@/validation-rules/constants/ValidationRuleFunctions';
+import { VALIDATION_RULE_FUNCTIONS } from 'twenty-shared/constants';
+
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import {
   type ValidationRuleExpressionHighlight,
@@ -7,7 +8,7 @@ import {
 import { type ValidationRuleExpressionToken } from '@/validation-rules/types/ValidationRuleExpressionToken';
 import { tokenizeValidationRuleExpression } from '@/validation-rules/utils/tokenizeValidationRuleExpression';
 
-const FUNCTION_NAMES = VALIDATION_RULE_FUNCTIONS.map(({ name }) => name);
+const FUNCTION_NAMES = Object.keys(VALIDATION_RULE_FUNCTIONS);
 const KEYWORD_NAMES = VALIDATION_RULE_KEYWORDS.map(({ name }) => name);
 const OPERATOR_CHARACTERS = '=!<>+-*/%?:|&';
 

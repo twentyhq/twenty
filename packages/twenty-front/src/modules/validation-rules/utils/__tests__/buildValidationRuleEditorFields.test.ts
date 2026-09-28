@@ -54,6 +54,16 @@ describe('buildValidationRuleEditorFields', () => {
       label: 'Employees',
       parentLabel: 'Company',
       objectLabelSingular: 'Company',
+      readsRelatedRecord: true,
     });
+  });
+
+  it('should mark only related-record paths as read through a relation', () => {
+    expect(
+      editorFields.find(({ path }) => path === 'amount')?.readsRelatedRecord,
+    ).toBe(false);
+    expect(
+      editorFields.find(({ path }) => path === 'company')?.readsRelatedRecord,
+    ).toBe(true);
   });
 });

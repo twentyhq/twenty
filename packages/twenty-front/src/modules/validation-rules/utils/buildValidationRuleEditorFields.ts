@@ -37,11 +37,13 @@ const buildScalarEditorFields = ({
   objectMetadataItem,
   pathPrefix,
   parentLabel,
+  readsRelatedRecord,
 }: {
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: ValidationRuleEditorObject;
   pathPrefix: string;
   parentLabel: string | null;
+  readsRelatedRecord: boolean;
 }): ValidationRuleEditorField[] => {
   const compositeType = compositeTypeDefinitions.get(fieldMetadataItem.type);
   const path = `${pathPrefix}${fieldMetadataItem.name}`;
@@ -59,6 +61,7 @@ const buildScalarEditorFields = ({
       fieldMetadataItem.options?.map((option) => option.value) ?? [],
     isSystem: fieldMetadataItem.isSystem === true,
     hasMembers: isDefined(compositeType),
+    readsRelatedRecord,
   };
 
   const subfields: ValidationRuleEditorField[] = (
@@ -94,6 +97,7 @@ export const buildValidationRuleEditorFields = ({
           objectMetadataItem,
           pathPrefix: '',
           parentLabel: null,
+          readsRelatedRecord: false,
         });
       }
 
@@ -124,6 +128,7 @@ export const buildValidationRuleEditorFields = ({
         selectOptionValues: [],
         isSystem: fieldMetadataItem.isSystem === true,
         hasMembers: isDefined(targetObjectMetadataItem),
+        readsRelatedRecord: true,
       };
 
       if (!isDefined(targetObjectMetadataItem)) {
@@ -141,6 +146,7 @@ export const buildValidationRuleEditorFields = ({
             objectMetadataItem: targetObjectMetadataItem,
             pathPrefix: `${fieldMetadataItem.name}.`,
             parentLabel: fieldMetadataItem.label,
+            readsRelatedRecord: true,
           }),
         );
 
