@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { useEffect } from 'react';
 import {
   TIPTAP_NODE_TYPES,
   isDefined,
@@ -76,16 +75,9 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const target = useLiveEditorState(editor, (currentEditor) =>
     getBlockSelectionTarget(currentEditor),
   );
-  const hasTarget = isDefined(target);
-
-  useEffect(() => {
-    if (!hasTarget) {
-      goBackFromSidePanel();
-    }
-  }, [hasTarget, goBackFromSidePanel]);
 
   if (!isDefined(target)) {
-    return null;
+    return <StyledHint>{t`Select a block to edit its style.`}</StyledHint>;
   }
 
   const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];
@@ -140,6 +132,7 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
         return true;
       })
       .run();
+    goBackFromSidePanel();
   };
 
   const handleFieldChange = (

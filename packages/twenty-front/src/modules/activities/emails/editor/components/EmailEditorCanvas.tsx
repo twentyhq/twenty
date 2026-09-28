@@ -5,6 +5,7 @@ import { useOpenEmailBlockStyleInSidePanel } from '@/side-panel/hooks/useOpenEma
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { styled } from '@linaria/react';
+import { type MouseEvent } from 'react';
 import { CANVAS_THEME_DEFAULTS, resolveCanvasTheme } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -48,12 +49,23 @@ export const EmailEditorCanvas = ({
   const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
   const { openEmailBlockSettingsInSidePanel } =
     useOpenEmailBlockSettingsInSidePanel();
-  const { openEmailBlockStyleInSidePanel } =
-    useOpenEmailBlockStyleInSidePanel();
+  const {
+    openEmailBlockStyleInSidePanel,
+    followEmailBlockSelectionInSidePanel,
+  } = useOpenEmailBlockStyleInSidePanel();
 
   const openBlockStyle = () => {
     openEmailBlockSettingsInSidePanel();
     openEmailBlockStyleInSidePanel();
+  };
+
+  const handleCanvasClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (
+      event.target instanceof Node &&
+      editor.view.dom.contains(event.target)
+    ) {
+      followEmailBlockSelectionInSidePanel(editor);
+    }
   };
 
   return (
@@ -64,6 +76,7 @@ export const EmailEditorCanvas = ({
       }}
     >
       <StyledCanvasPage
+        onClick={handleCanvasClick}
         style={{
           backgroundColor: canvasTheme.bodyBackground || undefined,
           border:
