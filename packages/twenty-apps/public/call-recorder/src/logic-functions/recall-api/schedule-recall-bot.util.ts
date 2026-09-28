@@ -95,11 +95,18 @@ export const scheduleRecallBot = async ({
   };
 };
 
+// The attempt timestamp scopes the key to one creation attempt. Recall replays
+// a key's first response for an hour, so a bot created again after its
+// predecessor was canceled needs a key of its own, while re-sends of the same
+// attempt keep theirs.
 export const computeRecallBotCreationIdempotencyKey = ({
   meetingUrl,
   joinAt,
   metadata,
-}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'>): string =>
+  attemptedAt,
+}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'> & {
+  attemptedAt?: string;
+}): string =>
   createHash('sha256')
     .update(
       JSON.stringify({
@@ -107,6 +114,7 @@ export const computeRecallBotCreationIdempotencyKey = ({
         callRecordingId: metadata.twentyCallRecordingId,
         meetingUrl,
         joinAt,
+        attemptedAt,
       }),
     )
     .digest('hex');

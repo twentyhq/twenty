@@ -75,7 +75,31 @@ type CallRecordingNode = {
   externalBotId?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
+  botScheduleAttemptedAt?: string | null;
+  botScheduleIdempotencyKey?: string | null;
 };
+
+const matchesCallRecordingFilter = (
+  callRecording: CallRecordingNode,
+  filter: Record<string, { eq?: unknown; in?: unknown[]; is?: 'NULL' }>,
+): boolean =>
+  Object.entries(filter).every(([field, condition]) => {
+    const value = callRecording[field as keyof CallRecordingNode] ?? null;
+
+    if (condition.is === 'NULL') {
+      return value === null || value === '';
+    }
+
+    if (condition.in !== undefined) {
+      return condition.in.includes(value);
+    }
+
+    if ('eq' in condition) {
+      return value === condition.eq;
+    }
+
+    throw new Error(`Unhandled filter on ${field}: ${JSON.stringify(condition)}`);
+  });
 
 type FakeCoreApiClientFixture = {
   calendarEvents: CalendarEventNode[];
@@ -149,6 +173,25 @@ class FakeCoreApiClient {
         createCallRecording: {
           id: createdCallRecording.id,
         },
+      };
+    }
+
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) => matchesCallRecordingFilter(callRecording, filter),
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        Object.assign(callRecording, data);
+        this.mutations.push({
+          name: 'updateCallRecording',
+          args: { id: callRecording.id, data },
+        });
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
       };
     }
 
@@ -578,6 +621,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
           endedAt: FUTURE_ENDS_AT,
           calendarEventId: 'calendar-event-1',
           externalBotId: 'recall-bot-1',
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: 'idempotency-key',
         },
       ],
     });
@@ -599,10 +644,120 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         id: 'call-recording-1',
         recordingRequestStatus: 'CANCELED',
         externalBotId: null,
+        botScheduleAttemptedAt: null,
+        botScheduleIdempotencyKey: null,
       }),
     ]);
     expect(recallBotDeleteCalls().map(([requestUrl]) => requestUrl)).toEqual([
       `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
+    ]);
+  });
+
+  it('keeps the bot of a re-request that lands while the Recall cancel is in flight', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          callRecorderPreference: 'OFF',
+        }),
+      ],
+      callRecordings: [
+        {
+          id: 'call-recording-1',
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          startedAt: FUTURE_STARTS_AT,
+          endedAt: FUTURE_ENDS_AT,
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: 'idempotency-key',
+        },
+      ],
+    });
+
+    fetchMock.mockImplementation(
+      async (requestUrl: string, requestInit: RequestInit) => {
+        if (requestInit.method === 'DELETE') {
+          Object.assign(client.callRecordings[0], {
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: 'recall-bot-2',
+            botScheduleAttemptedAt: NOW.toISOString(),
+            botScheduleIdempotencyKey: 'next-idempotency-key',
+          });
+
+          return new Response(null, { status: 204 });
+        }
+
+        throw new Error(`Unhandled fetch: ${requestInit.method} ${requestUrl}`);
+      },
+    );
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-2',
+        botScheduleAttemptedAt: NOW.toISOString(),
+        botScheduleIdempotencyKey: 'next-idempotency-key',
+      }),
+    ]);
+  });
+
+  it('drops the deleted bot from a row re-requested before the Recall cancel went through', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          callRecorderPreference: 'OFF',
+        }),
+      ],
+      callRecordings: [
+        {
+          id: 'call-recording-1',
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          startedAt: FUTURE_STARTS_AT,
+          endedAt: FUTURE_ENDS_AT,
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: 'idempotency-key',
+        },
+      ],
+    });
+
+    fetchMock.mockImplementation(
+      async (requestUrl: string, requestInit: RequestInit) => {
+        if (requestInit.method === 'DELETE') {
+          // The re-request rescheduled the same bot before its delete landed.
+          client.callRecordings[0].recordingRequestStatus = 'REQUESTED';
+
+          return new Response(null, { status: 204 });
+        }
+
+        throw new Error(`Unhandled fetch: ${requestInit.method} ${requestUrl}`);
+      },
+    );
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: null,
+        botScheduleAttemptedAt: null,
+        botScheduleIdempotencyKey: null,
+      }),
     ]);
   });
 
@@ -630,6 +785,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
           endedAt: FUTURE_ENDS_AT,
           calendarEventId: 'calendar-event-1',
           externalBotId: 'recall-bot-1',
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: 'idempotency-key',
         },
       ],
     });
@@ -655,6 +812,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         id: 'call-recording-1',
         recordingRequestStatus: 'CANCELED',
         externalBotId: 'recall-bot-1',
+        botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        botScheduleIdempotencyKey: 'idempotency-key',
       }),
     ]);
   });
@@ -922,8 +1081,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     class CancelCleanupFailureFakeCoreApiClient extends FakeCoreApiClient {
       override async mutation(mutation: any): Promise<any> {
         if (
-          mutation.updateCallRecording !== undefined &&
-          mutation.updateCallRecording.__args.data.externalBotId === null
+          mutation.updateCallRecordings !== undefined &&
+          mutation.updateCallRecordings.__args.data.externalBotId === null
         ) {
           throw new Error('recall exploded');
         }

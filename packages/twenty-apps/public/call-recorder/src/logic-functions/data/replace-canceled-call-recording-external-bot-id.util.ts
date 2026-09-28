@@ -20,16 +20,33 @@ export const replaceCanceledCallRecordingExternalBotId = async (
       __args: {
         filter: {
           id: { eq: id },
-          recordingRequestStatus: {
-            eq: CallRecordingRequestStatus.CANCELED,
-          },
+          // Clearing follows a confirmed cancel, so the bot is gone and even a
+          // row re-requested meanwhile must drop it; only claiming a recovered
+          // bot is limited to canceled rows.
+          ...(nextExternalBotId === null
+            ? {}
+            : {
+                recordingRequestStatus: {
+                  eq: CallRecordingRequestStatus.CANCELED,
+                },
+              }),
           status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
           externalBotId:
             expectedExternalBotId === null
               ? { is: 'NULL' }
               : { eq: expectedExternalBotId },
         },
-        data: { externalBotId: nextExternalBotId },
+        // A confirmed cancel resolves the creation attempt, so a later
+        // re-request schedules a new bot at once instead of waiting for the
+        // recovery cron's Recall lookup.
+        data:
+          nextExternalBotId === null
+            ? {
+                externalBotId: null,
+                botScheduleAttemptedAt: null,
+                botScheduleIdempotencyKey: null,
+              }
+            : { externalBotId: nextExternalBotId },
       },
       id: true,
     },
