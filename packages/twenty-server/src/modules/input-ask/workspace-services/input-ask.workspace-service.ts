@@ -191,19 +191,47 @@ export class InputAskWorkspaceService {
     workspaceId: string;
     threadId: string;
     response: Record<string, unknown>;
-  }): Promise<void> {
+  }): Promise<string | null> {
     if (!(await this.hasInputAskObject(workspaceId))) {
-      return;
+      return null;
     }
 
-    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      const pendingInputAsk = await inputAskRepository.findOne({
+        where: { threadId, status: InputAskStatus.PENDING },
+        select: { id: true },
+      });
+
+      if (!isDefined(pendingInputAsk)) {
+        return null;
+      }
+
       await inputAskRepository.update(
-        { threadId, status: InputAskStatus.PENDING },
+        { id: pendingInputAsk.id, status: InputAskStatus.PENDING },
         {
           status: InputAskStatus.ANSWERED,
           response,
           answeredAt: new Date().toISOString(),
         },
+      );
+
+      return pendingInputAsk.id;
+    });
+  }
+
+  // Undoes answerPendingForThread when the answer it recorded is rolled back,
+  // so the Ask reads pending again alongside its reopened question.
+  async reopenAnswered({
+    workspaceId,
+    inputAskId,
+  }: {
+    workspaceId: string;
+    inputAskId: string;
+  }): Promise<void> {
+    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      await inputAskRepository.update(
+        { id: inputAskId, status: InputAskStatus.ANSWERED },
+        { status: InputAskStatus.PENDING, response: null, answeredAt: null },
       );
     });
   }

@@ -221,10 +221,9 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: replyParts,
     });
 
-    const pendingQuestionPart =
-      executionResult?.isPaused === true
-        ? findPendingQuestionPart(replyParts)
-        : undefined;
+    const pendingQuestionPart = executionResult?.isPaused
+      ? findPendingQuestionPart(replyParts)
+      : undefined;
 
     if (!isDefined(pendingQuestionPart)) {
       return false;
