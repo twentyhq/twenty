@@ -103,6 +103,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     search,
     objectId,
     folderId,
+    section,
     currentItems,
     isSearchingAllItems,
     addItem,
@@ -139,7 +140,9 @@ export const NavigationMenuItemAddDropdownContent = ({
           label: t`Other`,
           items: getItems('main').filter(
             (item) =>
-              (item.id === 'folder' || item.id === 'link') &&
+              (item.id === 'folder' ||
+                item.id === 'link' ||
+                item.id === 'divider') &&
               matchesSearch(item),
           ),
         },

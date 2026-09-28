@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/utils/isNavigationMenuItemReadable';
+import { removeTrailingNavigationMenuItemDividers } from '@/navigation-menu-item/display/divider/utils/removeTrailingNavigationMenuItemDividers';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -35,7 +36,10 @@ export const useReadableNavigationMenuItems = ({
 
   const filteredFolderChildrenById = new Map<string, NavigationMenuItem[]>();
   for (const [folderId, children] of folderChildrenById) {
-    filteredFolderChildrenById.set(folderId, children.filter(isItemReadable));
+    filteredFolderChildrenById.set(
+      folderId,
+      removeTrailingNavigationMenuItemDividers(children.filter(isItemReadable)),
+    );
   }
 
   const filteredTopLevelItems = topLevelItems.filter((item) =>

@@ -25,6 +25,7 @@ export const isNavigationMenuItemReadable = ({
   const itemType = item.type;
 
   if (
+    itemType === NavigationMenuItemType.DIVIDER ||
     itemType === NavigationMenuItemType.FOLDER ||
     itemType === NavigationMenuItemType.LINK ||
     itemType === NavigationMenuItemType.PAGE_LAYOUT

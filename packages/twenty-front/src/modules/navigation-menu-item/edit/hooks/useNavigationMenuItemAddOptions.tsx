@@ -7,6 +7,7 @@ import {
   IconBox,
   IconFolder,
   IconLink,
+  IconMinus,
   IconPerspective,
   IconTable,
   useIcons,
@@ -20,6 +21,7 @@ import {
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
@@ -49,6 +51,7 @@ type UseNavigationMenuItemAddOptionsParams = {
   search: string;
   objectId: string | null;
   folderId?: string;
+  section: NavigationMenuItemSection;
   currentItems: NavigationMenuItem[];
   isSearchingAllItems: boolean;
   addItem: (input: NewNavigationMenuItemInput) => void;
@@ -61,6 +64,7 @@ export const useNavigationMenuItemAddOptions = ({
   search,
   objectId,
   folderId,
+  section,
   currentItems,
   isSearchingAllItems,
   addItem,
@@ -186,6 +190,17 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('page'),
           hasSubMenu: true,
         },
+        ...(section === 'workspace'
+          ? [
+              {
+                id: 'divider',
+                label: t`Divider`,
+                icon: <TintedIconTile Icon={IconMinus} />,
+                onClick: () =>
+                  addItem({ type: NavigationMenuItemType.DIVIDER }),
+              },
+            ]
+          : []),
       ];
     }
     if (

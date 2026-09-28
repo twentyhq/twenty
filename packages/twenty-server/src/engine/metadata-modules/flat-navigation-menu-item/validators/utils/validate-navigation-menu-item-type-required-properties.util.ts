@@ -70,6 +70,9 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
             ),
           ];
     }
+    case NavigationMenuItemType.DIVIDER: {
+      return [];
+    }
     case NavigationMenuItemType.OBJECT: {
       return validateUuidProperty({
         value: targetObjectMetadataUniversalIdentifier,

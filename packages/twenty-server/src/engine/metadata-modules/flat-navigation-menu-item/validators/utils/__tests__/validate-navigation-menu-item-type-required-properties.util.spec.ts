@@ -114,6 +114,10 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
     },
+    {
+      type: NavigationMenuItemType.DIVIDER,
+      overrides: {},
+    },
   ])(
     'should not report any error when $type type properties are valid',
     ({ type, overrides }) => {
