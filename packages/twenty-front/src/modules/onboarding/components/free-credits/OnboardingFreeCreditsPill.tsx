@@ -125,8 +125,13 @@ export const OnboardingFreeCreditsPill = ({
   );
   const pillRef = useRef<HTMLDivElement>(null);
 
-  const { earnedCredits, goalCredits, currentStep, currentStepCredits } =
-    progress;
+  const {
+    earnedCredits,
+    earnedCreditsByStep,
+    goalCredits,
+    currentStep,
+    currentStepCredits,
+  } = progress;
   const {
     seenCredits,
     newlyEarnedCredits,
@@ -221,7 +226,10 @@ export const OnboardingFreeCreditsPill = ({
             </StyledInfoPart>
           </Popover.Trigger>
           <Popover.Popup side="bottom" align="end" aria-label={t`Free credits`}>
-            <OnboardingFreeCreditsPopoverContent progress={progress} />
+            <OnboardingFreeCreditsPopoverContent
+              earnedCredits={earnedCredits}
+              earnedCreditsByStep={earnedCreditsByStep}
+            />
           </Popover.Popup>
         </Popover.Root>
       </StyledPillAnchor>

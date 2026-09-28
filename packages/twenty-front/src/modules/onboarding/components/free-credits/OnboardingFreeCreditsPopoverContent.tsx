@@ -58,18 +58,18 @@ const StyledFooter = styled.div`
   min-height: ${themeCssVariables.spacing[6]};
 `;
 
-type OnboardingFreeCreditsPopoverContentProps = {
-  progress: OnboardingCreditsProgress;
-};
+type OnboardingFreeCreditsPopoverContentProps = Pick<
+  OnboardingCreditsProgress,
+  'earnedCredits' | 'earnedCreditsByStep'
+>;
 
 export const OnboardingFreeCreditsPopoverContent = ({
-  progress,
+  earnedCredits,
+  earnedCreditsByStep,
 }: OnboardingFreeCreditsPopoverContentProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber, numberFormat } = useNumberFormat();
-
-  const { earnedCredits, earnedCreditsByStep } = progress;
 
   const creditsSteps: Record<
     OnboardingCreditsStep,
