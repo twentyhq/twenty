@@ -59,7 +59,7 @@ export const OnboardingConstructionSite = () => {
     return null;
   }
 
-  const { stageIndex, isFinale } = getOnboardingConstructionSiteStage({
+  const { stageIndex } = getOnboardingConstructionSiteStage({
     onboardingStatus: currentUser?.onboardingStatus,
     isLastOnboardingStep: getIsLastOnboardingStep({
       currentUser,
@@ -78,7 +78,6 @@ export const OnboardingConstructionSite = () => {
       <OnboardingConstructionSiteCanvasEffect
         canvasRef={canvasRef}
         stageIndex={stageIndex}
-        isFinale={isFinale}
         colorScheme={colorScheme}
         prefersReducedMotion={prefersReducedMotion}
       />

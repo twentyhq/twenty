@@ -25,16 +25,12 @@ export const getOnboardingConstructionSiteStage = ({
   isLastOnboardingStep,
 }: GetOnboardingConstructionSiteStageArgs): OnboardingConstructionSiteStage => {
   if (isLastOnboardingStep) {
-    return {
-      stageIndex: ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX,
-      isFinale: true,
-    };
+    return { stageIndex: ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX };
   }
 
   return {
     stageIndex: isDefined(onboardingStatus)
       ? (STAGE_INDEX_BY_ONBOARDING_STATUS[onboardingStatus] ?? 0)
       : 0,
-    isFinale: false,
   };
 };

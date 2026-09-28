@@ -602,7 +602,7 @@ export const createOnboardingConstructionSiteRenderer = ({
     sceneWidth = Math.max(1, Math.round(cssWidth));
     sceneHeight = Math.max(1, Math.round(cssHeight));
     allocateSceneTarget();
-    requestRender();
+    renderFrame();
   };
 
   const handleContextLost = (event: Event) => {

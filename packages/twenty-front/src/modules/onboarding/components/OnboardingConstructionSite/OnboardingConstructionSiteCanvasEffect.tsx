@@ -33,7 +33,6 @@ const readCanvasColors = (
 type OnboardingConstructionSiteCanvasEffectProps = {
   canvasRef: RefObject<HTMLCanvasElement | null>;
   stageIndex: number;
-  isFinale: boolean;
   colorScheme: 'light' | 'dark';
   prefersReducedMotion: boolean;
 };
@@ -41,7 +40,6 @@ type OnboardingConstructionSiteCanvasEffectProps = {
 export const OnboardingConstructionSiteCanvasEffect = ({
   canvasRef,
   stageIndex,
-  isFinale,
   colorScheme,
   prefersReducedMotion,
 }: OnboardingConstructionSiteCanvasEffectProps) => {
@@ -82,8 +80,8 @@ export const OnboardingConstructionSiteCanvasEffect = ({
   }, [canvasRef, prefersReducedMotion]);
 
   useEffect(() => {
-    renderer?.setStage({ stageIndex, isFinale });
-  }, [renderer, stageIndex, isFinale]);
+    renderer?.setStage({ stageIndex });
+  }, [renderer, stageIndex]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

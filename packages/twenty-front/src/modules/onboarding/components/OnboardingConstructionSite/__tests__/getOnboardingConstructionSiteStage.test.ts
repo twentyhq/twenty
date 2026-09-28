@@ -9,7 +9,7 @@ describe('getOnboardingConstructionSiteStage', () => {
         onboardingStatus: OnboardingStatus.SYNC_EMAIL,
         isLastOnboardingStep: false,
       }),
-    ).toEqual({ stageIndex: 0, isFinale: false });
+    ).toEqual({ stageIndex: 0 });
   });
 
   it('should move the construction forward with each step', () => {
@@ -36,9 +36,6 @@ describe('getOnboardingConstructionSiteStage', () => {
         onboardingStatus: OnboardingStatus.INVITE_TEAM,
         isLastOnboardingStep: true,
       }),
-    ).toEqual({
-      stageIndex: ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX,
-      isFinale: true,
-    });
+    ).toEqual({ stageIndex: ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX });
   });
 });
