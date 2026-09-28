@@ -96,7 +96,7 @@ export type AdminChatThreadListItem = {
   userFirstName?: Maybe<Scalars['String']['output']>;
   userLastName?: Maybe<Scalars['String']['output']>;
   userReplyCount: Scalars['Int']['output'];
-  userWorkspaceId: Scalars['UUID']['output'];
+  userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   workspaceDisplayName?: Maybe<Scalars['String']['output']>;
   workspaceId: Scalars['UUID']['output'];
 };
@@ -484,6 +484,7 @@ export enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
+  IS_LOGS_SETTINGS_SECTION_ENABLED = 'IS_LOGS_SETTINGS_SECTION_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_SHARING_ENABLED = 'IS_RECORD_SHARING_ENABLED',
@@ -1500,7 +1501,7 @@ export type GetAdminChatThreadsQueryVariables = Exact<{
 }>;
 
 
-export type GetAdminChatThreadsQuery = { __typename?: 'Query', getAdminChatThreads: { __typename?: 'PaginatedAdminChatThreads', totalCount: number, hasMore: boolean, threads: Array<{ __typename?: 'AdminChatThreadListItem', id: string, title?: string | null, workspaceId: string, workspaceDisplayName?: string | null, userWorkspaceId: string, userEmail?: string | null, userFirstName?: string | null, userLastName?: string | null, messageCount: number, userReplyCount: number, hasError: boolean, isOnboardingThread: boolean, deletedAt?: string | null, createdAt: string, updatedAt: string }> } };
+export type GetAdminChatThreadsQuery = { __typename?: 'Query', getAdminChatThreads: { __typename?: 'PaginatedAdminChatThreads', totalCount: number, hasMore: boolean, threads: Array<{ __typename?: 'AdminChatThreadListItem', id: string, title?: string | null, workspaceId: string, workspaceDisplayName?: string | null, userWorkspaceId?: string | null, userEmail?: string | null, userFirstName?: string | null, userLastName?: string | null, messageCount: number, userReplyCount: number, hasError: boolean, isOnboardingThread: boolean, deletedAt?: string | null, createdAt: string, updatedAt: string }> } };
 
 export type GetAdminWorkspaceChatThreadsQueryVariables = Exact<{
   workspaceId: Scalars['UUID']['input'];

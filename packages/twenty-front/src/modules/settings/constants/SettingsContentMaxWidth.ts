@@ -1,0 +1,1 @@
+export const SETTINGS_CONTENT_MAX_WIDTH = 760;

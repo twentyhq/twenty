@@ -833,11 +833,17 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "AI"
 msgstr "AI"
 
+#. js-lingui-id: t/7WbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat messages sent by the workspace member"
+msgstr "AI-chatberichten verzonden door het werkruimtelid"
+
 #. js-lingui-id: NHpbHJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
-msgstr ""
+msgstr "AI-chatthreads die eigendom zijn van het werkruimtelid"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -2337,6 +2343,12 @@ msgstr "De waarde van een grafiekfilter is niet geldig voor deze operand."
 msgid "Chat message not found."
 msgstr "Chatbericht niet gevonden."
 
+#. js-lingui-id: wATfZo
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat messages"
+msgstr "Chatberichten"
+
 #. js-lingui-id: /VxChJ
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat thread not found."
@@ -2351,7 +2363,7 @@ msgstr "Titel van de chatdraad mag niet leeg zijn."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat threads"
-msgstr ""
+msgstr "Chatthreads"
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -10325,6 +10337,12 @@ msgctxt "commandMenuItem.label"
 msgid "Send Test Email"
 msgstr "Test-e-mail verzenden"
 
+#. js-lingui-id: fZP2UR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Sender"
+msgstr "Afzender"
+
 #. js-lingui-id: nzBQFi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12226,6 +12244,11 @@ msgstr "Dit bestandspad is te lang om te uploaden."
 msgid "This file upload has already been finalized."
 msgstr "Deze bestandsupload is al voltooid."
 
+#. js-lingui-id: Ee9ncG
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "This form is no longer awaiting a submission"
+msgstr "Dit formulier wacht niet langer op een inzending"
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -12260,6 +12283,16 @@ msgstr "Deze limiet kan niet worden opgeslagen."
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Deze limiet is gewijzigd terwijl je deze bewerkte. Laad opnieuw en probeer het opnieuw."
+
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr "Dit logfilter is niet geldig."
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr "Deze logtabel is niet geldig."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13097,6 +13130,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Het bijgewerkte veld is geen morph-relatie of relatie."
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Kan geen toegang krijgen tot de AI-geschiedenis. Probeer het opnieuw."
@@ -14681,7 +14715,13 @@ msgstr "Positie van werkruimtelid"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
-msgstr ""
+msgstr "Werkruimtelid dat de thread bezit"
+
+#. js-lingui-id: Ws6spT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who sent this message"
+msgstr "Werkruimtelid dat dit bericht heeft verzonden"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
