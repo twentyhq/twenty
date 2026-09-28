@@ -19,14 +19,12 @@ export const useSetOnboardingStepFreeCredits = () => {
     ) =>
       setOnboardingFreeCredits((current) => {
         const onboardingFreeCredits = { ...current, [step]: credits };
-        const quietlyEarnedCredits = isQuiet
-          ? Math.max(0, credits - current[step])
-          : 0;
+        const quietCreditsChange = isQuiet ? credits - current[step] : 0;
 
         return {
           ...onboardingFreeCredits,
           seenCredits: Math.min(
-            current.seenCredits + quietlyEarnedCredits,
+            Math.max(0, current.seenCredits + quietCreditsChange),
             getOnboardingEarnedCredits(onboardingFreeCredits),
           ),
         };

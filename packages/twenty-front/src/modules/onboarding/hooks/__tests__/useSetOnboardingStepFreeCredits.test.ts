@@ -75,6 +75,41 @@ describe('useSetOnboardingStepFreeCredits', () => {
     });
   });
 
+  it('should keep unseen credits when a quiet reward is removed', () => {
+    jotaiStore.set(onboardingFreeCreditsState.atom, {
+      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+      importContacts: 2,
+      seenCredits: 0,
+    });
+
+    const result = renderSetStepFreeCreditsHook();
+
+    act(() => {
+      result.current.setOnboardingStepFreeCredits('upgradeTrial', 0.5, {
+        isQuiet: true,
+      });
+    });
+
+    expect(result.current.onboardingFreeCredits).toEqual({
+      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+      importContacts: 2,
+      upgradeTrial: 0.5,
+      seenCredits: 0.5,
+    });
+
+    act(() => {
+      result.current.setOnboardingStepFreeCredits('upgradeTrial', 0, {
+        isQuiet: true,
+      });
+    });
+
+    expect(result.current.onboardingFreeCredits).toEqual({
+      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+      importContacts: 2,
+      seenCredits: 0,
+    });
+  });
+
   it('should lower the seen credits when a step loses its reward', () => {
     jotaiStore.set(onboardingFreeCreditsState.atom, {
       ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
