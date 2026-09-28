@@ -187,6 +187,10 @@ export class GroupByRecordsService {
       return fieldName;
     }
 
+    if (nestedFieldName === 'unnest') {
+      return fieldName;
+    }
+
     if (nestedFieldName === 'id' && fieldName.endsWith('Id')) {
       return fieldName;
     }

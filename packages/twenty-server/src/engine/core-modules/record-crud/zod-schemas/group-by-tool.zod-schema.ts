@@ -114,6 +114,23 @@ const buildGroupByEntriesAndDescriptions = (
       continue;
     }
 
+    if (isFieldMetadataEntityOfType(field, FieldMetadataType.MULTI_SELECT)) {
+      groupByEntries.push(
+        z
+          .object({
+            [field.name]: z.union([
+              z.literal(true),
+              z.object({ unnest: z.literal(true) }).strict(),
+            ]),
+          })
+          .strict(),
+      );
+      fieldNameDescriptions.push(
+        `${field.name} (multi-select, {"${field.name}": {"unnest": true}} counts each option)`,
+      );
+      continue;
+    }
+
     groupByEntries.push(z.object({ [field.name]: z.literal(true) }).strict());
     fieldNameDescriptions.push(field.name);
   }
