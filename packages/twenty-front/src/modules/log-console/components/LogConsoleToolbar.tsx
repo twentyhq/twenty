@@ -58,8 +58,9 @@ const VIEW_FILTER_OPERAND_BY_EVENT_LOG_FILTER_OPERAND: Record<
 
 const StyledContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   flex-shrink: 0;
-  margin-inline: calc(-1 * ${themeCssVariables.spacing[3]});
+  height: ${APP_HEADER_HEIGHT}px;
   padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
@@ -68,7 +69,7 @@ const StyledToolbar = styled.div`
   display: flex;
   flex-wrap: nowrap;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${APP_HEADER_HEIGHT}px;
+  height: 100%;
   overflow: hidden;
 `;
 

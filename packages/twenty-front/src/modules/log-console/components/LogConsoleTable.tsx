@@ -56,6 +56,11 @@ const StyledLiveEntryRow = styled(TableRow)`
   }
 `;
 
+const StyledTable = styled(Table)`
+  box-sizing: border-box;
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledLoadMoreTrigger = styled.div`
   height: 1px;
 `;
@@ -136,7 +141,7 @@ export const LogConsoleTable = ({
 
   return (
     <ScrollWrapper componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}>
-      <Table>
+      <StyledTable>
         <StyledHeaderRow
           gridTemplateColumns={gridTemplateColumns}
           hoverBackgroundColor={themeCssVariables.background.primary}
@@ -180,7 +185,7 @@ export const LogConsoleTable = ({
             ))}
           </SkeletonTheme>
         )}
-      </Table>
+      </StyledTable>
     </ScrollWrapper>
   );
 };

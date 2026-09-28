@@ -18,11 +18,15 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import {
+  getOsControlSymbol,
+  getOsShortcutSeparator,
+} from 'twenty-ui/utilities';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
+import { LogConsoleToggleHotkeyEffect } from '@/log-console/components/LogConsoleToggleHotkeyEffect';
 import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
 import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
@@ -209,7 +213,6 @@ const StyledActiveSource = styled.div<{ isDetailPanelOpen: boolean }>`
   flex: 1;
   flex-direction: column;
   min-width: 0;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 
   @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
     visibility: ${({ isDetailPanelOpen }) =>
@@ -346,8 +349,21 @@ export const LogConsole = () => {
     logConsoleResizeConstraints.max,
   );
 
+  const toggleLogConsoleOpen = () => {
+    setLogConsoleDisplayMode(isOpen ? 'collapsed' : 'open');
+    setIsLogConsoleFullScreen(false);
+  };
+
+  const toggleHotkeyLabel = [getOsControlSymbol(), 'J'].join(
+    getOsShortcutSeparator(),
+  );
+
+  const toggleHotkeyEffect = isLogConsoleAllowed ? (
+    <LogConsoleToggleHotkeyEffect onToggle={toggleLogConsoleOpen} />
+  ) : null;
+
   if (!isDefined(displayedLayout)) {
-    return null;
+    return toggleHotkeyEffect;
   }
 
   const isBodyRendered =
@@ -435,11 +451,6 @@ export const LogConsole = () => {
     openLogConsole();
   };
 
-  const toggleLogConsoleOpen = () => {
-    setLogConsoleDisplayMode(isOpen ? 'collapsed' : 'open');
-    setIsLogConsoleFullScreen(false);
-  };
-
   const toggleLogConsoleFullScreen = () => {
     setLogConsoleDisplayMode('open');
     setIsLogConsoleFullScreen(!isFullScreen);
@@ -469,7 +480,7 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(false);
     enqueueToast({
       variant: 'info',
-      children: t`Logs console hidden. Open it again from the command menu (${getOsControlSymbol()}K).`,
+      children: t`Logs console hidden. Press ${toggleHotkeyLabel} to open it again.`,
     });
   };
 
@@ -524,6 +535,7 @@ export const LogConsole = () => {
 
   return (
     <>
+      {toggleHotkeyEffect}
       <StyledSpacer
         data-animate-entrance={shouldAnimateEntrance}
         isResizing={isResizing}
@@ -570,7 +582,7 @@ export const LogConsole = () => {
                 <IconButton
                   size="sm"
                   variant="outline"
-                  tooltip={openOrCollapseLabel}
+                  tooltip={`${openOrCollapseLabel} | ${toggleHotkeyLabel}`}
                   aria-label={openOrCollapseLabel}
                   onClick={toggleLogConsoleOpen}
                 >

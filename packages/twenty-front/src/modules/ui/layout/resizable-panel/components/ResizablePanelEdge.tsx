@@ -37,11 +37,9 @@ const StyledHandle = styled.div<{
   side: ResizablePanelSide;
 }>`
   background-color: ${({ isActive, isHovered }) =>
-    isActive
-      ? themeCssVariables.color.blue
-      : isHovered
-        ? themeCssVariables.font.color.tertiary
-        : themeCssVariables.background.quaternary};
+    isActive || isHovered
+      ? themeCssVariables.border.color.strong
+      : themeCssVariables.background.quaternary};
   border-radius: ${themeCssVariables.border.radius.pill};
   corner-shape: round;
   height: ${({ side }) => (side === 'top' ? '3px' : '48px')};
