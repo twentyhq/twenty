@@ -184,7 +184,6 @@ msgstr "{0, plural, one {# jobb kunne ikke prøves på nytt} other {# jobber kun
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# Objekt} other {# Objekter}}"
 
@@ -198,7 +197,7 @@ msgstr "{0, plural, one {# arbeidsområde har feilet eller er på etterskudd} ot
 #. placeholder {0}: otherFieldDiffs.length
 #: src/modules/log-console/components/LogConsoleChangesCell.tsx
 msgid "{0, plural, one {and # more} other {and # more}}"
-msgstr ""
+msgstr "{0, plural, one {og # til} other {og # til}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -426,17 +425,17 @@ msgstr "{browser} på {operatingSystem}"
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} endring} other {{formattedCount} endringer}}"
 
 #. js-lingui-id: wtKNU8
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} page view} other {{formattedCount} page views}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} sidevisning} other {{formattedCount} sidevisninger}}"
 
 #. js-lingui-id: JBM5me
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} usage event} other {{formattedCount} usage events}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} brukshendelse} other {{formattedCount} brukshendelser}}"
 
 #. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -653,7 +652,7 @@ msgstr "{queuedMessage}, hopper over {skipReasons}"
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "{retentionInDays, plural, one {# day} other {# days}}"
-msgstr ""
+msgstr "{retentionInDays, plural, one {# dag} other {# dager}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -714,7 +713,7 @@ msgstr "{selectedCount} kildetyper"
 #. js-lingui-id: px4Svg
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 msgid "{selectedOptionCount} options"
-msgstr ""
+msgstr "{selectedOptionCount} alternativer"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1308,7 +1307,7 @@ msgstr "Aktivitetssynlighet"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/utils/__tests__/getLogConsoleFieldFilters.test.ts
 msgid "Actor"
-msgstr ""
+msgstr "Aktør"
 
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -2508,11 +2507,6 @@ msgstr "Tillate medietilgang for {applicationName}?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Tillat innlogging med Microsoft for brukere med SSO-omgåelsestillatelser."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Tillat deling av individuelle poster med medlemmer av arbeidsområdet."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -2846,12 +2840,12 @@ msgstr "App slettet vellykket"
 #. js-lingui-id: Oh+wHS
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "App logs"
-msgstr ""
+msgstr "Applikasjonslogger"
 
 #. js-lingui-id: ZGfGyx
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "App logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "Applikasjonslogger oppbevares i {retentionInDays} dager."
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -3336,7 +3330,7 @@ msgstr "Revisjonslogger"
 #. js-lingui-id: APXe7E
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Audit logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "Revisjonslogger oppbevares i {retentionInDays} dager."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -4372,7 +4366,7 @@ msgstr "Bytt tema til system"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
-msgstr ""
+msgstr "Endringer"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -4788,7 +4782,7 @@ msgstr "Lukk banner"
 #. js-lingui-id: n5fb8M
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Close details"
-msgstr ""
+msgstr "Lukk detaljer"
 
 #. js-lingui-id: c2EYjZ
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
@@ -4803,7 +4797,7 @@ msgstr "Lukk tastatursnarveier"
 #. js-lingui-id: hAei0W
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Close logs console"
-msgstr ""
+msgstr "Lukk loggkonsollen"
 
 #. js-lingui-id: vcpc5o
 #: src/modules/blocknote-editor/components/BlockEditor.tsx
@@ -4922,6 +4916,7 @@ msgstr "Skjul sidefelt"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Color"
 msgstr "Farge"
 
@@ -5611,7 +5606,7 @@ msgstr "Kopier"
 #. js-lingui-id: Qv14oC
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Copy as JSON"
-msgstr ""
+msgstr "Kopier som JSON"
 
 #. js-lingui-id: 6gAr5+
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
@@ -5973,6 +5968,7 @@ msgstr "Teller mottakere..."
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/ui/field/input/components/AddressInput.tsx
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Country"
 msgstr "Land"
 
@@ -6411,6 +6407,7 @@ msgstr "valutaer"
 
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency"
 msgstr "Valuta"
 
@@ -6488,7 +6485,7 @@ msgstr "Tilpassede apper"
 #. js-lingui-id: GAD3Dx
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Custom domain"
-msgstr ""
+msgstr "Tilpasset domene"
 
 #. js-lingui-id: XQ681Q
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6509,12 +6506,12 @@ msgstr "Eget domene (crm.yourco.com)"
 #. js-lingui-id: ML4S78
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain activated"
-msgstr ""
+msgstr "Tilpasset domene aktivert"
 
 #. js-lingui-id: Kj25t7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain deactivated"
-msgstr ""
+msgstr "Tilpasset domene deaktivert"
 
 #. js-lingui-id: +ub6QN
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6973,7 +6970,7 @@ msgstr "Deaktivert"
 #. js-lingui-id: Osn70z
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 msgid "Debug"
-msgstr ""
+msgstr "Feilsøking"
 
 #. js-lingui-id: Iotuxe
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -7565,7 +7562,7 @@ msgstr "Oppdaget applikasjonsversjon som kjører på denne instansen"
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "developer"
-msgstr ""
+msgstr "utvikler"
 
 #. js-lingui-id: 7aDnUb
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -7576,7 +7573,7 @@ msgstr "Utvikler"
 #. js-lingui-id: JSEGvu
 #: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 msgid "Developer mode"
-msgstr ""
+msgstr "Utviklermodus"
 
 #. js-lingui-id: n+SX4g
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -7629,6 +7626,7 @@ msgid "Direct REST metadata responses"
 msgstr "Direkte REST-metadataresponser"
 
 #. js-lingui-id: MRB7nI
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Direction"
 msgstr "Retning"
@@ -8605,7 +8603,7 @@ msgstr "Avsluttes"
 #. js-lingui-id: FCKppt
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 msgid "Endpoint"
-msgstr ""
+msgstr "Endepunkt"
 
 #. js-lingui-id: T3juzf
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -9274,7 +9272,7 @@ msgstr "Signerte kopier"
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
-msgstr ""
+msgstr "Kjøring"
 
 #. js-lingui-id: B0clc7
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -9299,7 +9297,7 @@ msgstr "Avslutt"
 #. js-lingui-id: IkOhTI
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Exit full screen"
-msgstr ""
+msgstr "Avslutt fullskjerm"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -10639,7 +10637,7 @@ msgstr "Full side"
 #. js-lingui-id: OwIqiD
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Full screen"
-msgstr ""
+msgstr "Fullskjerm"
 
 #. js-lingui-id: CU/Sq6
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -11617,12 +11615,12 @@ msgstr "Imitering"
 #. js-lingui-id: 2Ay+wL
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation ended"
-msgstr ""
+msgstr "Etterligning avsluttet"
 
 #. js-lingui-id: 6C6HwH
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation failed"
-msgstr ""
+msgstr "Etterligning mislyktes"
 
 #. js-lingui-id: yImXof
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -11632,12 +11630,12 @@ msgstr "Etterligning er deaktivert for denne arbeidsområdet"
 #. js-lingui-id: Qzg4zX
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation requested"
-msgstr ""
+msgstr "Etterligning forespurt"
 
 #. js-lingui-id: 5LAZwq
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation started"
-msgstr ""
+msgstr "Etterligning startet"
 
 #. js-lingui-id: yHueLx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11817,7 +11815,7 @@ msgstr "Info"
 #. js-lingui-id: XP/nZ1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Initial values"
-msgstr ""
+msgstr "Opprinnelige verdier"
 
 #. js-lingui-id: XU5AOg
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -12591,12 +12589,12 @@ msgstr "Siste 12 timer (eldst → nyest)"
 #. js-lingui-id: evdQsU
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 15 minutes"
-msgstr ""
+msgstr "Siste 15 minutter"
 
 #. js-lingui-id: aK4uBd
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 24 hours"
-msgstr ""
+msgstr "Siste 24 timer"
 
 #. js-lingui-id: j5nqnO
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -13269,7 +13267,7 @@ msgstr "Laster inn..."
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
-#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "Laster…"
 
@@ -13304,7 +13302,7 @@ msgstr "Loggfør en ny avtale (selskap, beløp, fase, forventet avslutning). Det
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
-msgstr ""
+msgstr "Loggen ble kopiert som JSON"
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
@@ -13328,7 +13326,7 @@ msgstr "Loggoppbevaring"
 #. js-lingui-id: ZQMmpY
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Log sources"
-msgstr ""
+msgstr "Loggkilder"
 
 #. js-lingui-id: hykMbH
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -13338,7 +13336,7 @@ msgstr "Pålogget som {impersonatedUser}"
 #. js-lingui-id: mxY4xF
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Logged out"
-msgstr ""
+msgstr "Logget ut"
 
 #. js-lingui-id: ILNASD
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -13393,7 +13391,7 @@ msgstr "Logg ut"
 #. js-lingui-id: yYOzWD
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "logs"
-msgstr ""
+msgstr "logger"
 
 #. js-lingui-id: w/bY7R
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
@@ -13407,12 +13405,12 @@ msgstr "Logger"
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Logs console"
-msgstr ""
+msgstr "Loggkonsoll"
 
 #. js-lingui-id: fHuZPA
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Logs console hidden. Press {toggleHotkeyLabel} to open it again."
-msgstr ""
+msgstr "Loggkonsollen er skjult. Trykk på {toggleHotkeyLabel} for å åpne den igjen."
 
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
@@ -13754,7 +13752,7 @@ msgstr ""
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Member"
-msgstr ""
+msgstr "Medlem"
 
 #. js-lingui-id: lXyaAg
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -14213,7 +14211,7 @@ msgstr "Flytt arbeidet fremover på tvers av team og agenter"
 #. js-lingui-id: Qf/mt6
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Moved to trash"
-msgstr ""
+msgstr "Flyttet til papirkurven"
 
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -15466,7 +15464,7 @@ msgstr "Ingen verdi"
 #. js-lingui-id: P9sVTw
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "No values kept"
-msgstr ""
+msgstr "Ingen verdier beholdt"
 
 #. js-lingui-id: 4jhave
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdown.tsx
@@ -16198,7 +16196,7 @@ msgstr "Åpne lenke"
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
-msgstr ""
+msgstr "Åpne loggkonsollen"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16252,7 +16250,7 @@ msgstr "Åpne Twentys offisielle ChatGPT-integrasjon for arbeidsområdet ditt."
 #. js-lingui-id: tirDue
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Open webhook settings"
-msgstr ""
+msgstr "Åpne webhook-innstillinger"
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
@@ -16260,6 +16258,8 @@ msgid "Opened"
 msgstr "Åpnet"
 
 #. js-lingui-id: Fzfj4N
+#: src/modules/log-console/components/LogConsoleToolbar.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Operand"
 msgstr "Operand"
@@ -16267,7 +16267,7 @@ msgstr "Operand"
 #. js-lingui-id: FZg3wM
 #: src/modules/log-console/constants/LogConsoleUsageOperationColumn.tsx
 msgid "Operation"
-msgstr ""
+msgstr "Operasjon"
 
 #. js-lingui-id: 8m1COB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
@@ -16626,7 +16626,7 @@ msgstr "Sidestil"
 #. js-lingui-id: QbrUIo
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Page views"
-msgstr ""
+msgstr "Sidevisninger"
 
 #. js-lingui-id: sF+Xp9
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
@@ -16836,12 +16836,12 @@ msgstr "Permanent sletting. Skriv inn antall dager."
 #. js-lingui-id: e7kLp1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Slettet permanent"
 
 #. js-lingui-id: Qun2bc
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 msgid "Permanently deleted records keep no values."
-msgstr ""
+msgstr "Permanent slettede oppføringer beholder ingen verdier."
 
 #. js-lingui-id: EPkrPQ
 #: src/modules/command-menu-item/engine-command/record/components/DestroyRecordsCommand.tsx
@@ -17453,7 +17453,7 @@ msgstr "Kjøring av Python-kode"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
 msgid "Quantity"
-msgstr ""
+msgstr "Antall"
 
 #. js-lingui-id: 2vudsu
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -17537,7 +17537,7 @@ msgstr "Forhold"
 #. js-lingui-id: 05e9XO
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Raw event"
-msgstr ""
+msgstr "Rå hendelse"
 
 #. js-lingui-id: wdlYqX
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -17745,12 +17745,12 @@ msgstr "Oppføring (ID)"
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Record changes"
-msgstr ""
+msgstr "Endringer i oppføringer"
 
 #. js-lingui-id: tpEWQj
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "Endringer i oppføringer og applikasjonslogger er tilgjengelige i den nåværende planen din. Andre loggtyper krever et Organization-abonnement."
 
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17790,11 +17790,6 @@ msgstr "Opptak etikett"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Oppføringsside"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Deling av poster"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -17887,7 +17882,7 @@ msgstr "Omdirigerings-URI"
 #. js-lingui-id: lCF0wC
 #: src/modules/log-console/components/LogConsoleResults.tsx
 msgid "Refresh"
-msgstr ""
+msgstr "Oppdater"
 
 #. js-lingui-id: pTGa/J
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -18495,12 +18490,12 @@ msgstr "Gjenopprett innstillingene for aktivitetstypen som er definert av applik
 #. js-lingui-id: o8va6N
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored"
-msgstr ""
+msgstr "Gjenopprettet"
 
 #. js-lingui-id: fkvsIG
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored from trash"
-msgstr ""
+msgstr "Gjenopprettet fra papirkurven"
 
 #. js-lingui-id: rNDhLF
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
@@ -18529,7 +18524,7 @@ msgstr "Gjenoppta"
 #. js-lingui-id: nBz1I/
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "Retention"
-msgstr ""
+msgstr "Loggoppbevaring"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -18990,8 +18985,12 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -19619,6 +19618,7 @@ msgstr "Velg dato og klokkeslett"
 
 #. js-lingui-id: hR/4+8
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Select entity"
 msgstr "Velg entitet"
 
@@ -19893,7 +19893,7 @@ msgstr "Servertilgang"
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Server administrator access updated"
-msgstr ""
+msgstr "Serveradministrator-tilgang oppdatert"
 
 #. js-lingui-id: 4Fpy78
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -19918,22 +19918,22 @@ msgstr "Tjenesteyterens detaljopplysninger"
 #. js-lingui-id: CqO9qC
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 msgid "Session"
-msgstr ""
+msgstr "Økt"
 
 #. js-lingui-id: jvivc3
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Session ID"
-msgstr ""
+msgstr "Økt-ID"
 
 #. js-lingui-id: uRGnZ7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Session revoked"
-msgstr ""
+msgstr "Økt tilbakekalt"
 
 #. js-lingui-id: 4cEClj
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Sessions"
-msgstr ""
+msgstr "Økter"
 
 #. js-lingui-id: 4FANIj
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellDisplayContainer.tsx
@@ -20156,7 +20156,7 @@ msgstr "Skal endring av etiketten også endre API-navnet?"
 #. js-lingui-id: 3MO9Sa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr ""
+msgstr "Vis en loggkonsoll nederst i appen i avansert modus."
 
 #. js-lingui-id: vbXZ3k
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -20281,13 +20281,13 @@ msgstr "Signert DPA generert og lastet ned"
 #. js-lingui-id: q2v4sG
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed in"
-msgstr ""
+msgstr "Logget inn"
 
 #. js-lingui-id: t8SqKm
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed up"
-msgstr ""
+msgstr "Registrert"
 
 #. js-lingui-id: X1zsRT
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
@@ -21110,7 +21110,7 @@ msgstr "Støtte"
 #. js-lingui-id: y1H7Uc
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Support team"
-msgstr ""
+msgstr "Kundestøtteteam"
 
 #. js-lingui-id: yYneQW
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
@@ -22259,7 +22259,7 @@ msgstr "Tim"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleTimeColumn.tsx
 msgid "Time"
-msgstr ""
+msgstr "Tid"
 
 #. js-lingui-id: n9nSNJ
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -22753,12 +22753,12 @@ msgstr ""
 #. js-lingui-id: I94zOx
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn off developer mode"
-msgstr ""
+msgstr "Slå av utviklermodus"
 
 #. js-lingui-id: mpTAWL
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn on developer mode"
-msgstr ""
+msgstr "Slå på utviklermodus"
 
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -23080,7 +23080,7 @@ msgstr "Ukjent emne"
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Unknown user"
-msgstr ""
+msgstr "Ukjent bruker"
 
 #. js-lingui-id: m/o1+r
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesByHealthAccordion.tsx
@@ -23596,7 +23596,7 @@ msgstr "Laster opp..."
 #. js-lingui-id: +Ueo4g
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Upserted"
-msgstr ""
+msgstr "Oppdatert eller opprettet"
 
 #. js-lingui-id: PZd7QF
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -23832,7 +23832,7 @@ msgstr "Brukerkontekst"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User ID"
-msgstr ""
+msgstr "Bruker-ID"
 
 #. js-lingui-id: tNT8wT
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23866,7 +23866,7 @@ msgstr "Bruk per bruker"
 #. js-lingui-id: UC8MH6
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User workspace ID"
-msgstr ""
+msgstr "ID for brukerens arbeidsområde"
 
 #. js-lingui-id: FYgCVU
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23953,7 +23953,7 @@ msgstr "Verdier"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Values before deletion"
-msgstr ""
+msgstr "Verdier før sletting"
 
 #. js-lingui-id: M9lOpp
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
@@ -24537,7 +24537,7 @@ msgstr "Webhook slettet vellykket"
 #. js-lingui-id: 0PSwb2
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Webhook ID"
-msgstr ""
+msgstr "Webhook-ID"
 
 #. js-lingui-id: 8bfORM
 #: src/modules/settings/developers/hooks/useWebhookForm.ts

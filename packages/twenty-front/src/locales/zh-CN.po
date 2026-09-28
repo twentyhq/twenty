@@ -184,7 +184,6 @@ msgstr "{0, plural, other {# 个任务无法重试}}"
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, other {# 个对象}}"
 
@@ -198,7 +197,7 @@ msgstr "{0, plural, one {# 个工作区失败或落后} other {# 个工作区失
 #. placeholder {0}: otherFieldDiffs.length
 #: src/modules/log-console/components/LogConsoleChangesCell.tsx
 msgid "{0, plural, one {and # more} other {and # more}}"
-msgstr ""
+msgstr "{0, plural, other {以及另外 # 项}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -426,12 +425,12 @@ msgstr "{operatingSystem} 上的 {browser}"
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
-msgstr ""
+msgstr "{count, plural, other {{formattedCount} 项更改}}"
 
 #. js-lingui-id: wtKNU8
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} page view} other {{formattedCount} page views}}"
-msgstr ""
+msgstr "{count, plural, other {{formattedCount} 次页面浏览}}"
 
 #. js-lingui-id: JBM5me
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -653,7 +652,7 @@ msgstr "{queuedMessage}，跳过 {skipReasons}"
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "{retentionInDays, plural, one {# day} other {# days}}"
-msgstr ""
+msgstr "{retentionInDays, plural, other {# 天}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -714,7 +713,7 @@ msgstr "{selectedCount} 种来源类型"
 #. js-lingui-id: px4Svg
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 msgid "{selectedOptionCount} options"
-msgstr ""
+msgstr "{selectedOptionCount} 个选项"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1308,7 +1307,7 @@ msgstr "活动可见性"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/utils/__tests__/getLogConsoleFieldFilters.test.ts
 msgid "Actor"
-msgstr ""
+msgstr "操作者"
 
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -2508,11 +2507,6 @@ msgstr "允许 {applicationName} 访问媒体？"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "允许具有SSO绕过权限的用户使用Microsoft登录。"
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr ""
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -2846,12 +2840,12 @@ msgstr "应用删除成功"
 #. js-lingui-id: Oh+wHS
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "App logs"
-msgstr ""
+msgstr "应用日志"
 
 #. js-lingui-id: ZGfGyx
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "App logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "应用日志保留 {retentionInDays} 天。"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -3336,7 +3330,7 @@ msgstr "审计日志"
 #. js-lingui-id: APXe7E
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Audit logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "审计日志保留 {retentionInDays} 天。"
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -4372,7 +4366,7 @@ msgstr "将主题更改为系统"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
-msgstr ""
+msgstr "更改"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -4788,7 +4782,7 @@ msgstr "关闭横幅"
 #. js-lingui-id: n5fb8M
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Close details"
-msgstr ""
+msgstr "关闭详细信息"
 
 #. js-lingui-id: c2EYjZ
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
@@ -4803,7 +4797,7 @@ msgstr "关闭键盘快捷键"
 #. js-lingui-id: hAei0W
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Close logs console"
-msgstr ""
+msgstr "关闭日志控制台"
 
 #. js-lingui-id: vcpc5o
 #: src/modules/blocknote-editor/components/BlockEditor.tsx
@@ -4922,6 +4916,7 @@ msgstr "折叠侧边栏"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Color"
 msgstr "颜色"
 
@@ -5611,7 +5606,7 @@ msgstr "复制"
 #. js-lingui-id: Qv14oC
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Copy as JSON"
-msgstr ""
+msgstr "复制为 JSON"
 
 #. js-lingui-id: 6gAr5+
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
@@ -5973,6 +5968,7 @@ msgstr "正在统计收件人数量..."
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/ui/field/input/components/AddressInput.tsx
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Country"
 msgstr "国家"
 
@@ -6411,6 +6407,7 @@ msgstr "货币"
 
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency"
 msgstr "货币"
 
@@ -6488,7 +6485,7 @@ msgstr "自定义应用"
 #. js-lingui-id: GAD3Dx
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Custom domain"
-msgstr ""
+msgstr "自定义域名"
 
 #. js-lingui-id: XQ681Q
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6509,12 +6506,12 @@ msgstr "自定义域名（crm.yourco.com）"
 #. js-lingui-id: ML4S78
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain activated"
-msgstr ""
+msgstr "自定义域名已启用"
 
 #. js-lingui-id: Kj25t7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain deactivated"
-msgstr ""
+msgstr "自定义域名已停用"
 
 #. js-lingui-id: +ub6QN
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6973,7 +6970,7 @@ msgstr "已停用"
 #. js-lingui-id: Osn70z
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 msgid "Debug"
-msgstr ""
+msgstr "调试"
 
 #. js-lingui-id: Iotuxe
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -7565,7 +7562,7 @@ msgstr "检测到此实例上正在运行的应用版本"
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "developer"
-msgstr ""
+msgstr "开发者"
 
 #. js-lingui-id: 7aDnUb
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -7576,7 +7573,7 @@ msgstr "开发者"
 #. js-lingui-id: JSEGvu
 #: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 msgid "Developer mode"
-msgstr ""
+msgstr "开发者模式"
 
 #. js-lingui-id: n+SX4g
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -7629,6 +7626,7 @@ msgid "Direct REST metadata responses"
 msgstr "直接 REST 元数据响应"
 
 #. js-lingui-id: MRB7nI
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Direction"
 msgstr "方向"
@@ -8605,7 +8603,7 @@ msgstr "结束中"
 #. js-lingui-id: FCKppt
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 msgid "Endpoint"
-msgstr ""
+msgstr "端点"
 
 #. js-lingui-id: T3juzf
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -9274,7 +9272,7 @@ msgstr "已执行副本"
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
-msgstr ""
+msgstr "执行"
 
 #. js-lingui-id: B0clc7
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -9299,7 +9297,7 @@ msgstr "退出"
 #. js-lingui-id: IkOhTI
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Exit full screen"
-msgstr ""
+msgstr "退出全屏"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -10639,7 +10637,7 @@ msgstr "整页"
 #. js-lingui-id: OwIqiD
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Full screen"
-msgstr ""
+msgstr "全屏"
 
 #. js-lingui-id: CU/Sq6
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -11594,12 +11592,12 @@ msgstr "模拟登录"
 #. js-lingui-id: 2Ay+wL
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation ended"
-msgstr ""
+msgstr "模拟登录已结束"
 
 #. js-lingui-id: 6C6HwH
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation failed"
-msgstr ""
+msgstr "模拟登录失败"
 
 #. js-lingui-id: yImXof
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -11609,12 +11607,12 @@ msgstr "工作区不支持代理功能"
 #. js-lingui-id: Qzg4zX
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation requested"
-msgstr ""
+msgstr "已请求模拟登录"
 
 #. js-lingui-id: 5LAZwq
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation started"
-msgstr ""
+msgstr "模拟登录已开始"
 
 #. js-lingui-id: yHueLx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11794,7 +11792,7 @@ msgstr "信息"
 #. js-lingui-id: XP/nZ1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Initial values"
-msgstr ""
+msgstr "初始值"
 
 #. js-lingui-id: XU5AOg
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -12568,12 +12566,12 @@ msgstr "最近12小时（最旧 → 最新）"
 #. js-lingui-id: evdQsU
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 15 minutes"
-msgstr ""
+msgstr "最近 15 分钟"
 
 #. js-lingui-id: aK4uBd
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 24 hours"
-msgstr ""
+msgstr "最近24小时"
 
 #. js-lingui-id: j5nqnO
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -13246,7 +13244,7 @@ msgstr "加载中……"
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
-#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "正在加载…"
 
@@ -13281,7 +13279,7 @@ msgstr "记录一笔新交易 (公司、金额、阶段、预计成交日期)。
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
-msgstr ""
+msgstr "日志已复制为 JSON"
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
@@ -13305,7 +13303,7 @@ msgstr "日志保留期"
 #. js-lingui-id: ZQMmpY
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Log sources"
-msgstr ""
+msgstr "日志来源"
 
 #. js-lingui-id: hykMbH
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -13315,7 +13313,7 @@ msgstr "以 {impersonatedUser} 身份登录"
 #. js-lingui-id: mxY4xF
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Logged out"
-msgstr ""
+msgstr "已退出登录"
 
 #. js-lingui-id: ILNASD
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -13370,7 +13368,7 @@ msgstr "注销"
 #. js-lingui-id: yYOzWD
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "logs"
-msgstr ""
+msgstr "日志"
 
 #. js-lingui-id: w/bY7R
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
@@ -13384,12 +13382,12 @@ msgstr "日志"
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Logs console"
-msgstr ""
+msgstr "日志控制台"
 
 #. js-lingui-id: fHuZPA
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Logs console hidden. Press {toggleHotkeyLabel} to open it again."
-msgstr ""
+msgstr "日志控制台已隐藏。按 {toggleHotkeyLabel} 再次打开。"
 
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
@@ -13731,7 +13729,7 @@ msgstr ""
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Member"
-msgstr ""
+msgstr "成员"
 
 #. js-lingui-id: lXyaAg
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -14190,7 +14188,7 @@ msgstr "跨团队和代理推进工作进展"
 #. js-lingui-id: Qf/mt6
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Moved to trash"
-msgstr ""
+msgstr "已移至回收站"
 
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -15443,7 +15441,7 @@ msgstr "无值"
 #. js-lingui-id: P9sVTw
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "No values kept"
-msgstr ""
+msgstr "未保留值"
 
 #. js-lingui-id: 4jhave
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdown.tsx
@@ -16175,7 +16173,7 @@ msgstr "打开链接"
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
-msgstr ""
+msgstr "打开日志控制台"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16229,7 +16227,7 @@ msgstr "打开适用于你工作区的 Twenty 官方 ChatGPT 集成。"
 #. js-lingui-id: tirDue
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Open webhook settings"
-msgstr ""
+msgstr "打开 Webhook 设置"
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
@@ -16237,6 +16235,8 @@ msgid "Opened"
 msgstr "已打开"
 
 #. js-lingui-id: Fzfj4N
+#: src/modules/log-console/components/LogConsoleToolbar.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Operand"
 msgstr "操作数"
@@ -16244,7 +16244,7 @@ msgstr "操作数"
 #. js-lingui-id: FZg3wM
 #: src/modules/log-console/constants/LogConsoleUsageOperationColumn.tsx
 msgid "Operation"
-msgstr ""
+msgstr "操作"
 
 #. js-lingui-id: 8m1COB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
@@ -16603,7 +16603,7 @@ msgstr "页面样式"
 #. js-lingui-id: QbrUIo
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Page views"
-msgstr ""
+msgstr "页面浏览量"
 
 #. js-lingui-id: sF+Xp9
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
@@ -16813,12 +16813,12 @@ msgstr "永久删除。 输入天数。"
 #. js-lingui-id: e7kLp1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Permanently deleted"
-msgstr ""
+msgstr "已永久删除"
 
 #. js-lingui-id: Qun2bc
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 msgid "Permanently deleted records keep no values."
-msgstr ""
+msgstr "永久删除的记录不保留任何值。"
 
 #. js-lingui-id: EPkrPQ
 #: src/modules/command-menu-item/engine-command/record/components/DestroyRecordsCommand.tsx
@@ -17430,7 +17430,7 @@ msgstr "Python 代码执行"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
 msgid "Quantity"
-msgstr ""
+msgstr "数量"
 
 #. js-lingui-id: 2vudsu
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -17514,7 +17514,7 @@ msgstr "比例"
 #. js-lingui-id: 05e9XO
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Raw event"
-msgstr ""
+msgstr "原始事件"
 
 #. js-lingui-id: wdlYqX
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -17722,12 +17722,12 @@ msgstr "记录（ID）"
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Record changes"
-msgstr ""
+msgstr "记录更改"
 
 #. js-lingui-id: tpEWQj
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "您当前的方案可使用记录更改和应用日志。其他日志类型需要组织订阅。"
 
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17767,11 +17767,6 @@ msgstr "记录标签"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "记录页面"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "记录共享"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -17864,7 +17859,7 @@ msgstr "重定向 URI"
 #. js-lingui-id: lCF0wC
 #: src/modules/log-console/components/LogConsoleResults.tsx
 msgid "Refresh"
-msgstr ""
+msgstr "刷新"
 
 #. js-lingui-id: pTGa/J
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -18472,12 +18467,12 @@ msgstr "恢复由应用程序定义的活动类型设置"
 #. js-lingui-id: o8va6N
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored"
-msgstr ""
+msgstr "已恢复"
 
 #. js-lingui-id: fkvsIG
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored from trash"
-msgstr ""
+msgstr "已从回收站恢复"
 
 #. js-lingui-id: rNDhLF
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
@@ -18506,7 +18501,7 @@ msgstr "恢复"
 #. js-lingui-id: nBz1I/
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "Retention"
-msgstr ""
+msgstr "保留期"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -18967,8 +18962,12 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -19596,6 +19595,7 @@ msgstr "选择日期和时间"
 
 #. js-lingui-id: hR/4+8
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Select entity"
 msgstr "选择实体"
 
@@ -19870,7 +19870,7 @@ msgstr "服务器访问"
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Server administrator access updated"
-msgstr ""
+msgstr "服务器管理员访问权限已更新"
 
 #. js-lingui-id: 4Fpy78
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -19895,22 +19895,22 @@ msgstr "服务提供商详情"
 #. js-lingui-id: CqO9qC
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 msgid "Session"
-msgstr ""
+msgstr "会话"
 
 #. js-lingui-id: jvivc3
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Session ID"
-msgstr ""
+msgstr "会话 ID"
 
 #. js-lingui-id: uRGnZ7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Session revoked"
-msgstr ""
+msgstr "会话已撤销"
 
 #. js-lingui-id: 4cEClj
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Sessions"
-msgstr ""
+msgstr "会话"
 
 #. js-lingui-id: 4FANIj
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellDisplayContainer.tsx
@@ -20133,7 +20133,7 @@ msgstr "更改标签是否也要更改 API 名称？"
 #. js-lingui-id: 3MO9Sa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr ""
+msgstr "在高级模式下，在应用底部显示日志控制台。"
 
 #. js-lingui-id: vbXZ3k
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -20258,13 +20258,13 @@ msgstr "已生成并下载签署的 DPA"
 #. js-lingui-id: q2v4sG
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed in"
-msgstr ""
+msgstr "已登录"
 
 #. js-lingui-id: t8SqKm
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed up"
-msgstr ""
+msgstr "已注册"
 
 #. js-lingui-id: X1zsRT
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
@@ -21087,7 +21087,7 @@ msgstr "支持"
 #. js-lingui-id: y1H7Uc
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Support team"
-msgstr ""
+msgstr "支持团队"
 
 #. js-lingui-id: yYneQW
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
@@ -22206,7 +22206,7 @@ msgstr "Tim"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleTimeColumn.tsx
 msgid "Time"
-msgstr ""
+msgstr "时间"
 
 #. js-lingui-id: n9nSNJ
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -22700,12 +22700,12 @@ msgstr ""
 #. js-lingui-id: I94zOx
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn off developer mode"
-msgstr ""
+msgstr "关闭开发者模式"
 
 #. js-lingui-id: mpTAWL
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn on developer mode"
-msgstr ""
+msgstr "开启开发者模式"
 
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -23027,7 +23027,7 @@ msgstr "未知主题"
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Unknown user"
-msgstr ""
+msgstr "未知用户"
 
 #. js-lingui-id: m/o1+r
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesByHealthAccordion.tsx
@@ -23543,7 +23543,7 @@ msgstr "正在上传..."
 #. js-lingui-id: +Ueo4g
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Upserted"
-msgstr ""
+msgstr "已更新或插入"
 
 #. js-lingui-id: PZd7QF
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -23779,7 +23779,7 @@ msgstr "用户上下文"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User ID"
-msgstr ""
+msgstr "用户 ID"
 
 #. js-lingui-id: tNT8wT
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23813,7 +23813,7 @@ msgstr "用户使用情况"
 #. js-lingui-id: UC8MH6
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User workspace ID"
-msgstr ""
+msgstr "用户工作区 ID"
 
 #. js-lingui-id: FYgCVU
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23900,7 +23900,7 @@ msgstr "值"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Values before deletion"
-msgstr ""
+msgstr "删除前的值"
 
 #. js-lingui-id: M9lOpp
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
@@ -24484,7 +24484,7 @@ msgstr "Webhook 删除成功"
 #. js-lingui-id: 0PSwb2
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Webhook ID"
-msgstr ""
+msgstr "Webhook ID"
 
 #. js-lingui-id: 8bfORM
 #: src/modules/settings/developers/hooks/useWebhookForm.ts

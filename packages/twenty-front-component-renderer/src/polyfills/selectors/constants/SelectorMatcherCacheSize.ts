@@ -1,0 +1,1 @@
+export const SELECTOR_MATCHER_CACHE_SIZE = 256;
