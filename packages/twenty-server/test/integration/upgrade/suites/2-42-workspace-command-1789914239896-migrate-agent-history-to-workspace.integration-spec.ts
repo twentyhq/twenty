@@ -140,8 +140,9 @@ describe('versioned agent history upgrade (integration)', () => {
 
     // Recreate a pre-upgrade workspace: history exists only in core, and none
     // of the five standard objects has been installed yet, nor the link object
-    // 2.43 adds on top of them. Leaving that one in place would strand it
-    // without its thread relation, which the deleted thread object takes along.
+    // 2.43 adds on top of them, nor the Ask 2.44 adds. Leaving those in place
+    // would strand them without their thread relation, which the deleted
+    // thread object takes along.
     await dataSource.query(
       'DELETE FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
       [
@@ -149,10 +150,21 @@ describe('versioned agent history upgrade (integration)', () => {
         [
           ...AGENT_HISTORY_TABLES.map(({ name }) => name),
           'agentChatThreadTarget',
+          'inputAsk',
         ],
       ],
     );
     await dataSource.query(`DROP TABLE "${SCHEMA}"."agentChatThreadTarget"`);
+    await dataSource.query(`DROP TABLE "${SCHEMA}"."inputAsk"`);
+    // Its select columns leave their enum types behind the table.
+    const inputAskEnumTypes: { typname: string }[] = await dataSource.query(
+      `SELECT typname FROM pg_type JOIN pg_namespace ON pg_namespace.oid = pg_type.typnamespace
+       WHERE nspname = $1 AND typname LIKE 'inputAsk\\_%'`,
+      [SCHEMA],
+    );
+    for (const { typname } of inputAskEnumTypes) {
+      await dataSource.query(`DROP TYPE "${SCHEMA}"."${typname}"`);
+    }
     for (const { name } of [...AGENT_HISTORY_TABLES].reverse()) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}" CASCADE`);
     }
@@ -179,6 +191,11 @@ describe('versioned agent history upgrade (integration)', () => {
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
+      // The Ask's views went with its object in the database.
+      'flatViewMaps',
+      'flatViewFieldGroupMaps',
+      'flatViewFieldMaps',
+      'flatViewFilterMaps',
     ]);
   });
 
@@ -206,6 +223,7 @@ describe('versioned agent history upgrade (integration)', () => {
     for (const laterCommandName of [
       'EnableCommonRecordSharingCommand',
       'AddWorkflowRunToChatThreadsCommand',
+      'AddInputAskObjectCommand',
     ]) {
       await workspaceOrmManager.executeInWorkspaceContext(
         () =>
