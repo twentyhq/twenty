@@ -177,6 +177,24 @@ describe('getOnboardingCreditsProgress', () => {
     expect(progress.goalCredits).toBe(3.5);
   });
 
+  it('should keep the earned upgrade reward in the goal once the workspace has a plan', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({
+        importContacts: 2,
+        installApps: 1,
+        createProfile: 0.5,
+        upgradeTrial: 0.5,
+      }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.COMPLETED,
+      isWorkspaceCreator: true,
+      isPlanRequired: false,
+    });
+
+    expect(progress.earnedCredits).toBe(4);
+    expect(progress.goalCredits).toBe(4);
+  });
+
   it('should leave out the workspace creator rewards for other members', () => {
     const progress = getOnboardingCreditsProgress({
       onboardingFreeCredits: buildOnboardingFreeCredits(),

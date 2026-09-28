@@ -70,7 +70,7 @@ export const getOnboardingCreditsProgress = ({
     (goal, step) =>
       goal +
       (isStepDone(step) && step !== 'inviteTeam'
-        ? rewardCreditsByStep[step]
+        ? Math.max(rewardCreditsByStep[step], onboardingFreeCredits[step])
         : onboardingFreeCredits[step]),
     0,
   );
