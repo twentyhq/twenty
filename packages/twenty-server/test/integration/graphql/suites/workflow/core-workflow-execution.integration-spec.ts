@@ -806,7 +806,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       answer: 'Approved again',
     });
 
-    expect(second.body.errors).toBeDefined();
+    expect(second.body.errors?.[0]?.message).toContain(
+      'no longer awaiting a submission',
+    );
     expect((await getRun(runId)).state.stepInfos[form.id].result).toEqual({
       answer: 'Approved',
     });
@@ -835,13 +837,46 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       answer: 'Too late',
     });
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors?.[0]?.message).toContain(
+      'no longer awaiting a submission',
+    );
 
     const run = await getRun(runId);
 
     expect(run.status).toBe('STOPPED');
     expect(run.state.stepInfos[form.id].status).toBe('FAILED');
     expect(run.state.stepInfos[finalStep.id].status).toBe('NOT_STARTED');
+  });
+
+  // A stop waiting on a step still running on another branch parks the run in
+  // STOPPING with the form still PENDING; nothing would resume an answer.
+  it('refuses a submission while its run is stopping', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."workflowRun" SET status = 'STOPPING' WHERE id = $1`,
+      [runId],
+    );
+
+    const response = await submitForm({
+      runId,
+      stepId: form.id,
+      answer: 'While stopping',
+    });
+
+    expect(response.body.errors?.[0]?.message).toContain(
+      'no longer awaiting a submission',
+    );
+    expect((await getRun(runId)).state.stepInfos[form.id].status).toBe(
+      'PENDING',
+    );
   });
 
   it('stops a pending delay and ignores its later resume job', async () => {
