@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type OnboardingConstructionSiteConstruction } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteConstruction.type';
+import { type OnboardingConstructionSiteConstruction } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteConstruction';
 import {
   type OnboardingConstructionSiteInstances,
   type OnboardingConstructionSiteMeshName,
-} from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteInstances.type';
+} from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteInstances';
 import {
   type OnboardingConstructionSiteVector,
   writeTransformMatrix,

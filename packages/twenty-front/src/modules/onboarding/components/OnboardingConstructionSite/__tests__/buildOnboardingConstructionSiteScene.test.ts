@@ -3,8 +3,8 @@ import {
   ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX,
   ONBOARDING_CONSTRUCTION_SITE_FLOATS_PER_INSTANCE,
 } from '@/onboarding/components/OnboardingConstructionSite/buildOnboardingConstructionSiteScene';
-import { type OnboardingConstructionSiteConstruction } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteConstruction.type';
-import { type OnboardingConstructionSiteInstances } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteInstances.type';
+import { type OnboardingConstructionSiteConstruction } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteConstruction';
+import { type OnboardingConstructionSiteInstances } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteInstances';
 
 const LAYOUT = {
   halfWidth: 5.5,

@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX } from '@/onboarding/components/OnboardingConstructionSite/buildOnboardingConstructionSiteScene';
-import { type OnboardingConstructionSiteConstruction } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteConstruction.type';
+import { type OnboardingConstructionSiteConstruction } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteConstruction';
 
 const INITIAL_STAGE_INDEX = -1;
 const TRANSITION_SECONDS_PER_STEP = 1.6;

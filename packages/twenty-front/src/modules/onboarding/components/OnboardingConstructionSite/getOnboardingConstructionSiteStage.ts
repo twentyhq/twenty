@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX } from '@/onboarding/components/OnboardingConstructionSite/buildOnboardingConstructionSiteScene';
-import { type OnboardingConstructionSiteStage } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteStage.type';
+import { type OnboardingConstructionSiteStage } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteStage';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 const STAGE_INDEX_BY_ONBOARDING_STATUS: Partial<

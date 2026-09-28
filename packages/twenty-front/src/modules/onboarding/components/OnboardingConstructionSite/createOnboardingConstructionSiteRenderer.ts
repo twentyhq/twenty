@@ -9,16 +9,16 @@ import { createOnboardingConstructionSiteTimeline } from '@/onboarding/component
 import {
   type OnboardingConstructionSiteInstances,
   type OnboardingConstructionSiteMeshName,
-} from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteInstances.type';
+} from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteInstances';
 import {
   createLookAtMatrix,
   createPerspectiveMatrix,
   multiplyMatrices,
 } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteMatrices';
 import { ONBOARDING_CONSTRUCTION_SITE_MESHES } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteMeshes';
-import { type OnboardingConstructionSiteSettings } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteSettings.type';
+import { type OnboardingConstructionSiteSettings } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteSettings';
 import { ONBOARDING_CONSTRUCTION_SITE_SHADERS } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteShaders';
-import { type OnboardingConstructionSiteStage } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteStage.type';
+import { type OnboardingConstructionSiteStage } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteStage';
 
 const MESH_NAMES: readonly OnboardingConstructionSiteMeshName[] = [
   'cube',

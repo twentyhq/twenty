@@ -1,4 +1,4 @@
-import { type OnboardingConstructionSiteSettings } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteSettings.type';
+import { type OnboardingConstructionSiteSettings } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteSettings';
 
 export const ONBOARDING_CONSTRUCTION_SITE_DEFAULT_SETTINGS: OnboardingConstructionSiteSettings =
   {
