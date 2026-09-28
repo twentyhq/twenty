@@ -549,15 +549,11 @@ export const LogConsole = () => {
               <StyledBarActions>
                 <LightIconButton
                   emphasis="subtle"
-                  tooltip={openOrCollapseLabel}
-                  aria-label={openOrCollapseLabel}
-                  onClick={toggleLogConsoleOpen}
+                  tooltip={closeLabel}
+                  aria-label={closeLabel}
+                  onClick={closeLogConsole}
                 >
-                  {displayedLayout.isOpen ? (
-                    <IconChevronDown />
-                  ) : (
-                    <IconChevronUp />
-                  )}
+                  <IconX />
                 </LightIconButton>
                 <LightIconButton
                   emphasis="subtle"
@@ -574,11 +570,15 @@ export const LogConsole = () => {
                 <IconButton
                   size="sm"
                   variant="outline"
-                  tooltip={closeLabel}
-                  aria-label={closeLabel}
-                  onClick={closeLogConsole}
+                  tooltip={openOrCollapseLabel}
+                  aria-label={openOrCollapseLabel}
+                  onClick={toggleLogConsoleOpen}
                 >
-                  <IconX />
+                  {displayedLayout.isOpen ? (
+                    <IconChevronDown />
+                  ) : (
+                    <IconChevronUp />
+                  )}
                 </IconButton>
               </StyledBarActions>
             }
@@ -619,7 +619,6 @@ export const LogConsole = () => {
             onSizeChange={handleHeightChange}
             cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
             onResizeStart={handleResizeStart}
-            showHandle={false}
           />
         )}
       </StyledPanel>

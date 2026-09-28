@@ -27,8 +27,8 @@ import {
 } from 'twenty-ui/icon';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
-import { LogConsoleCreditsCell } from '@/log-console/components/LogConsoleCreditsCell';
-import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberCell';
+import { LogConsoleCredits } from '@/log-console/components/LogConsoleCredits';
+import { LogConsoleMemberChip } from '@/log-console/components/LogConsoleMemberChip';
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
 import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
 import { LOG_CONSOLE_APPLICATION_LOG_COLUMNS } from '@/log-console/constants/LogConsoleApplicationLogColumns';
@@ -150,7 +150,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         label: msg`Actor`,
         Icon: IconUsers,
         renderValue: (entry) => (
-          <LogConsoleMemberCell
+          <LogConsoleMemberChip
             userId={entry.userId}
             isImpersonator={entry.event === 'Impersonation'}
           />
@@ -270,7 +270,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         label: msg`Member`,
         Icon: IconUsers,
-        renderValue: (entry) => <LogConsoleMemberCell userId={entry.userId} />,
+        renderValue: (entry) => <LogConsoleMemberChip userId={entry.userId} />,
       },
     ],
     idFields: [
@@ -300,7 +300,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         label: msg`Spender`,
         Icon: IconUsers,
         renderValue: (entry) => (
-          <LogConsoleMemberCell userWorkspaceId={entry.userId} />
+          <LogConsoleMemberChip userWorkspaceId={entry.userId} />
         ),
       },
       {
@@ -312,7 +312,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         label: msg`Usage`,
         Icon: IconCoins,
         renderValue: (entry) => (
-          <LogConsoleCreditsCell
+          <LogConsoleCredits
             creditsUsedMicro={entry.properties?.creditsUsedMicro}
           />
         ),

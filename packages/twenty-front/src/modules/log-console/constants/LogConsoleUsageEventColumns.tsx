@@ -5,6 +5,7 @@ import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberC
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
 import { LOG_CONSOLE_USAGE_OPERATION_COLUMN } from '@/log-console/constants/LogConsoleUsageOperationColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
@@ -22,7 +23,12 @@ export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
     id: 'quantity',
     label: msg`Quantity`,
     gridTrack: '104px',
-    renderCell: (entry) => formatNumber(entry.properties?.quantity),
+    renderCell: (entry) => (
+      <SettingsTableTextCell
+        align="right"
+        text={formatNumber(entry.properties?.quantity)}
+      />
+    ),
     align: 'right',
   },
   {

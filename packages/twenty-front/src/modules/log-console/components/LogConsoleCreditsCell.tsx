@@ -1,5 +1,6 @@
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 
 type LogConsoleCreditsCellProps = {
@@ -11,7 +12,12 @@ export const LogConsoleCreditsCell = ({
 }: LogConsoleCreditsCellProps) => {
   const { formatUsageValue } = useUsageValueFormatter();
 
-  return formatUsageValue(
-    creditsUsedMicro / INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+  return (
+    <SettingsTableTextCell
+      align="right"
+      text={formatUsageValue(
+        creditsUsedMicro / INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+      )}
+    />
   );
 };

@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
-import { Text } from 'twenty-ui/primitives/typography';
 
 import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberCell';
 import { LOG_CONSOLE_SECURITY_EVENT_COLUMN } from '@/log-console/constants/LogConsoleSecurityEventColumn';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 
 export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
   LOG_CONSOLE_TIME_COLUMN,
@@ -24,6 +24,8 @@ export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
     id: 'details',
     label: msg`Details`,
     gridTrack: 'minmax(0, 1fr)',
-    renderCell: (entry) => <Text truncate>{entry.properties?.message}</Text>,
+    renderCell: (entry) => (
+      <SettingsTableTextCell text={entry.properties?.message} />
+    ),
   },
 ];

@@ -9,6 +9,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/format-preferences/getWorkspaceDateFormatFromDateFormat';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -39,16 +40,18 @@ export const LogConsoleTimeCell = ({ timestamp }: LogConsoleTimeCellProps) => {
     formatInTimeZone(timestamp, timeZone, format, { locale: localeCatalog });
 
   return (
-    <Tooltip
-      content={beautifyPastDateRelativeToNow(timestamp, localeCatalog)}
-      delay={TooltipDelay.mediumDelay}
-    >
-      <StyledTimeAndDate>
-        {formatTimestamp(timeWithMillisecondsFormat)}
-        <SettingsNameCellSecondaryLabel>
-          {formatTimestamp(dayAndMonthFormat)}
-        </SettingsNameCellSecondaryLabel>
-      </StyledTimeAndDate>
-    </Tooltip>
+    <StyledNameTableCell overflow="hidden" whiteSpace="nowrap">
+      <Tooltip
+        content={beautifyPastDateRelativeToNow(timestamp, localeCatalog)}
+        delay={TooltipDelay.mediumDelay}
+      >
+        <StyledTimeAndDate>
+          {formatTimestamp(timeWithMillisecondsFormat)}
+          <SettingsNameCellSecondaryLabel>
+            {formatTimestamp(dayAndMonthFormat)}
+          </SettingsNameCellSecondaryLabel>
+        </StyledTimeAndDate>
+      </Tooltip>
+    </StyledNameTableCell>
   );
 };

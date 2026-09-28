@@ -4,11 +4,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
 import { getLogConsoleRecordChangeFieldDiffs } from '@/log-console/utils/getLogConsoleRecordChangeFieldDiffs';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 
@@ -34,33 +36,28 @@ export const LogConsoleChangesCell = ({
     entry.objectMetadataId ?? '',
   );
 
-  if (isDefined(summary)) {
-    return <Text truncate>{t(summary)}</Text>;
-  }
-
-  if (!isDefined(objectMetadataItem)) {
-    return null;
-  }
-
-  const fieldDiffs = getLogConsoleRecordChangeFieldDiffs({
-    entry,
-    objectMetadataItem,
-  });
+  const fieldDiffs =
+    isDefined(summary) || !isDefined(objectMetadataItem)
+      ? []
+      : getLogConsoleRecordChangeFieldDiffs({ entry, objectMetadataItem });
 
   const [firstFieldDiff, ...otherFieldDiffs] = fieldDiffs;
 
-  if (!isDefined(firstFieldDiff)) {
-    return null;
-  }
-
   return (
-    <>
-      <EventFieldDiffContainer
-        mainObjectMetadataItem={objectMetadataItem}
-        diffKey={firstFieldDiff.key}
-        fieldDiff={firstFieldDiff}
-        eventId={diffId}
-      />
+    <TableCell
+      gap={themeCssVariables.spacing[2]}
+      overflow="hidden"
+      whiteSpace="nowrap"
+    >
+      {isDefined(summary) && <Text truncate>{t(summary)}</Text>}
+      {isDefined(objectMetadataItem) && isDefined(firstFieldDiff) && (
+        <EventFieldDiffContainer
+          mainObjectMetadataItem={objectMetadataItem}
+          diffKey={firstFieldDiff.key}
+          fieldDiff={firstFieldDiff}
+          eventId={diffId}
+        />
+      )}
       {otherFieldDiffs.length > 0 && (
         <StyledOtherFieldDiffCount>
           {plural(otherFieldDiffs.length, {
@@ -69,6 +66,6 @@ export const LogConsoleChangesCell = ({
           })}
         </StyledOtherFieldDiffCount>
       )}
-    </>
+    </TableCell>
   );
 };

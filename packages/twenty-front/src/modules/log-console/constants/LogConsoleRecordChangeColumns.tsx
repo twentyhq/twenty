@@ -9,6 +9,7 @@ import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRe
 import { LOG_CONSOLE_RECORD_CHANGE_ACTOR_COLUMN } from '@/log-console/constants/LogConsoleRecordChangeActorColumn';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { SettingsTableTagCell } from '@/settings/components/SettingsTableTagCell';
 
 export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
   LOG_CONSOLE_TIME_COLUMN,
@@ -19,9 +20,13 @@ export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
     renderCell: (entry) => {
       const action = LOG_CONSOLE_RECORD_ACTIONS[entry.event];
 
-      return isDefined(action) ? (
-        <Status color={action.color}>{t(action.label)}</Status>
-      ) : null;
+      return (
+        <SettingsTableTagCell>
+          {isDefined(action) && (
+            <Status color={action.color}>{t(action.label)}</Status>
+          )}
+        </SettingsTableTagCell>
+      );
     },
   },
   {

@@ -1,8 +1,8 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Text } from 'twenty-ui/primitives/typography';
 
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 
 export const LOG_CONSOLE_USAGE_OPERATION_COLUMN: LogConsoleColumn = {
@@ -15,11 +15,13 @@ export const LOG_CONSOLE_USAGE_OPERATION_COLUMN: LogConsoleColumn = {
     );
 
     return (
-      <Text truncate>
-        {isDefined(operationTypeLabel)
-          ? t(operationTypeLabel)
-          : entry.properties?.operationType}
-      </Text>
+      <SettingsTableTextCell
+        text={
+          isDefined(operationTypeLabel)
+            ? t(operationTypeLabel)
+            : entry.properties?.operationType
+        }
+      />
     );
   },
 };

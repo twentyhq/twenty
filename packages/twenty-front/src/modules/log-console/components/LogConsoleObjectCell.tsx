@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
-import { Chip } from 'twenty-ui/primitives/data-display';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 
@@ -19,18 +19,14 @@ export const LogConsoleObjectCell = ({ entry }: LogConsoleObjectCellProps) => {
     entry.objectMetadataId ?? '',
   );
 
-  if (!isDefined(objectMetadataItem)) {
-    return null;
-  }
-
   return (
-    <Chip
+    <SettingsTableTextCell
       startElement={
-        <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+        isDefined(objectMetadataItem) ? (
+          <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+        ) : null
       }
-      style={{ paddingInlineStart: 0 }}
-    >
-      {objectMetadataItem.labelSingular}
-    </Chip>
+      text={objectMetadataItem?.labelSingular}
+    />
   );
 };

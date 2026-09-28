@@ -15,9 +15,8 @@ export const BOX_SHADOW_TOKENS = {
     dark: '-4px 4px 4px 0px rgba(0, 0, 0, 0.03)',
   }),
   bottomPanel: token({
-    light:
-      '0px -4px 16px 0px color(display-p3 0 0 0 / 0.078), 0px -2px 4px 0px color(display-p3 0 0 0 / 0.039)',
-    dark: '0px -4px 16px 0px rgba(0, 0, 0, 0.08), 0px -2px 4px 0px rgba(0, 0, 0, 0.04)',
+    light: '0px 0px 20px 0px color(display-p3 0 0 0 / 0.1)',
+    dark: '0px 0px 20px 0px rgba(0, 0, 0, 0.1)',
   }),
   strong: token({
     light:

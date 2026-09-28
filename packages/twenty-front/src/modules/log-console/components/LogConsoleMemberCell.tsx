@@ -1,14 +1,9 @@
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLifebuoy } from 'twenty-ui/icon';
-import { Chip } from 'twenty-ui/primitives/data-display';
 
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { LogConsoleMemberAvatar } from '@/log-console/components/LogConsoleMemberAvatar';
+import { useLogConsoleMember } from '@/log-console/hooks/useLogConsoleMember';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
-import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 
 type LogConsoleMemberCellProps = {
   userId?: string | null;
@@ -17,62 +12,15 @@ type LogConsoleMemberCellProps = {
   isImpersonator?: boolean;
 };
 
-export const LogConsoleMemberCell = ({
-  userId,
-  userWorkspaceId,
-  actor,
-  isImpersonator = false,
-}: LogConsoleMemberCellProps) => {
-  const { t } = useLingui();
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
+export const LogConsoleMemberCell = (props: LogConsoleMemberCellProps) => {
+  const member = useLogConsoleMember(props);
+
+  return (
+    <SettingsTableTextCell
+      startElement={
+        isDefined(member) ? <LogConsoleMemberAvatar member={member} /> : null
+      }
+      text={member?.name}
+    />
   );
-
-  const workspaceMember = currentWorkspaceMembers.find((member) =>
-    isDefined(actor)
-      ? member.id === actor.workspaceMemberId
-      : isDefined(userWorkspaceId)
-        ? member.userWorkspaceId === userWorkspaceId
-        : member.userId === userId,
-  );
-
-  if (isDefined(workspaceMember)) {
-    return (
-      <ActorDisplay
-        name={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-        source={actor?.source}
-        avatarUrl={workspaceMember.avatarUrl}
-        workspaceMemberId={workspaceMember.id}
-        context={actor?.context}
-      />
-    );
-  }
-
-  if (isDefined(actor)) {
-    return (
-      <ActorDisplay
-        name={actor.name}
-        source={actor.source}
-        workspaceMemberId={actor.workspaceMemberId}
-        context={actor.context}
-      />
-    );
-  }
-
-  const isUnknownUser =
-    currentWorkspaceMembers.length > 0 &&
-    (isNonEmptyString(userId) || isNonEmptyString(userWorkspaceId));
-
-  if (isUnknownUser && isImpersonator) {
-    return (
-      <Chip
-        startElement={<AvatarOrIcon Icon={IconLifebuoy} />}
-        style={{ paddingInlineStart: 0 }}
-      >
-        {t`Support team`}
-      </Chip>
-    );
-  }
-
-  return isUnknownUser ? <ActorDisplay name={t`Unknown user`} /> : null;
 };

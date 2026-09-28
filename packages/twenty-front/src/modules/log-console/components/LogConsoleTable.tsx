@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Fragment } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,7 +9,6 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
-import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -127,22 +127,9 @@ export const LogConsoleTable = ({
         }
         onClick={() => onEntryClick(entry)}
       >
-        {columns.map((column, columnIndex) => {
-          const isFirstColumn = columnIndex === 0;
-          const EntryCell = isFirstColumn ? StyledNameTableCell : TableCell;
-
-          return (
-            <EntryCell
-              key={column.id}
-              align={column.align}
-              gap={themeCssVariables.spacing[2]}
-              overflow="hidden"
-              whiteSpace="nowrap"
-            >
-              {column.renderCell(entry)}
-            </EntryCell>
-          );
-        })}
+        {columns.map((column) => (
+          <Fragment key={column.id}>{column.renderCell(entry)}</Fragment>
+        ))}
       </EntryRow>
     );
   };

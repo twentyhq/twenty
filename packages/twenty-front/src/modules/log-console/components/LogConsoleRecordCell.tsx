@@ -1,20 +1,29 @@
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip } from 'twenty-ui/primitives/data-display';
 
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
-import { RecordChip } from '@/object-record/components/RecordChip';
+import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type LogConsoleRecordCellProps = {
   entry: EventLogRecord;
 };
 
 export const LogConsoleRecordCell = ({ entry }: LogConsoleRecordCellProps) => {
+  const { t } = useLingui();
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
+  );
+  const allowRequestsToTwentyIcons = useAtomStateValue(
+    allowRequestsToTwentyIconsState,
   );
 
   const objectMetadataItem = objectMetadataItemsByIdMap.get(
@@ -23,23 +32,37 @@ export const LogConsoleRecordCell = ({ entry }: LogConsoleRecordCellProps) => {
   const recordSnapshot = entry.properties?.after ?? entry.properties?.before;
 
   if (isDefined(objectMetadataItem) && isDefined(recordSnapshot)) {
+    const recordIdentifier = getObjectRecordIdentifier({
+      objectMetadataItem,
+      record: recordSnapshot,
+      allowRequestsToTwentyIcons,
+    });
+
     return (
-      <RecordChip
-        objectNameSingular={objectMetadataItem.nameSingular}
-        record={recordSnapshot}
-        forceDisableClick
+      <SettingsTableTextCell
+        startElement={
+          <AvatarOrIcon
+            name={recordIdentifier.name}
+            colorSeed={recordIdentifier.id}
+            shape={recordIdentifier.avatarShape ?? undefined}
+            src={getAbsoluteImageUrl(recordIdentifier.avatarUrl ?? '')}
+          />
+        }
+        text={
+          isNonEmptyString(recordIdentifier.name)
+            ? recordIdentifier.name
+            : t`Untitled`
+        }
       />
     );
   }
 
   return (
-    <Chip
+    <SettingsTableTextCell
       startElement={
         <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
       }
-      style={{ paddingInlineStart: 0 }}
-    >
-      {getLogConsoleRecordLabel({ entry, objectMetadataItem })}
-    </Chip>
+      text={getLogConsoleRecordLabel({ entry, objectMetadataItem })}
+    />
   );
 };
