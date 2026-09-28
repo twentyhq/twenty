@@ -74,11 +74,13 @@ describe('generateFieldFilterZodSchema', () => {
     it('exposes containsAny instead of in', () => {
       const field = fieldOfType(FieldMetadataType.MULTI_SELECT);
       field.options = [{ value: 'A' }, { value: 'B' }];
-      
+
       const schema = generateFieldFilterZodSchema(field);
 
       expect(schema).not.toBeNull();
-      expect(schema!.parse({ containsAny: ['A'] })).toEqual({ containsAny: ['A'] });
+      expect(schema!.parse({ containsAny: ['A'] })).toEqual({
+        containsAny: ['A'],
+      });
       // `in` is not a valid operator for MULTI_SELECT — stripped.
       expect(schema!.parse({ in: ['A'] })).toEqual({});
     });
