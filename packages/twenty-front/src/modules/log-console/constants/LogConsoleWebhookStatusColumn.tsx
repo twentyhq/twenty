@@ -1,5 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
 import { SettingsTableTagCell } from '@/settings/components/SettingsTableTagCell';
@@ -10,12 +10,9 @@ export const LOG_CONSOLE_WEBHOOK_STATUS_COLUMN: LogConsoleColumn = {
   gridTrack: '120px',
   renderCell: (entry) => (
     <SettingsTableTagCell>
-      <Tag
-        color={entry.properties?.success ? 'green' : 'red'}
-        style={{ flexShrink: 0 }}
-      >
+      <Status color={entry.properties?.success ? 'green' : 'red'}>
         {entry.properties?.status ?? t`Network error`}
-      </Tag>
+      </Status>
     </SettingsTableTagCell>
   ),
 };
