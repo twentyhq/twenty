@@ -237,7 +237,6 @@ export const useInviteTeam = () => {
 
   const handleSkip = async () => {
     setInviteTeamFreeCredits(0);
-    store.set(onboardingInviteTeamEmailsDraftState.atom, null);
 
     await onSubmit({ emails: [] });
   };

@@ -1,7 +1,12 @@
 import { currentUserState } from '@/auth/states/currentUserState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { NO_PREVIOUS_ONBOARDING_STEP_ERROR_CODE } from '@/onboarding/constants/NoPreviousOnboardingStepErrorCode';
+import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
+import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
+import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
+import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { useMutation } from '@apollo/client/react';
 
 import { useStore } from 'jotai';
@@ -9,12 +14,16 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
-import { GoBackToPreviousOnboardingStepDocument } from '~/generated-metadata/graphql';
+import {
+  GoBackToPreviousOnboardingStepDocument,
+  OnboardingStatus,
+} from '~/generated-metadata/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useGoBackToPreviousOnboardingStep = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
+  const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
   const [goBackToPreviousOnboardingStepMutation, { loading }] = useMutation(
     GoBackToPreviousOnboardingStepDocument,
   );
@@ -41,6 +50,21 @@ export const useGoBackToPreviousOnboardingStep = () => {
             onboardingStepNavigation.previousOnboardingStatus,
         };
       });
+
+      if (
+        onboardingStepNavigation.onboardingStatus ===
+        OnboardingStatus.INVITE_TEAM
+      ) {
+        setOnboardingStepFreeCredits(
+          'inviteTeam',
+          getInviteTeamCreditsReward({
+            invitedTeammatesCount: getValidInviteEmails(
+              store.get(onboardingInviteTeamEmailsDraftState.atom) ?? [],
+            ).length,
+            onboardingConfig: store.get(onboardingConfigState.atom),
+          }),
+        );
+      }
     } catch (error) {
       if (isGraphqlErrorOfType(error, NO_PREVIOUS_ONBOARDING_STEP_ERROR_CODE)) {
         store.set(currentUserState.atom, (currentUser) => {
@@ -59,7 +83,12 @@ export const useGoBackToPreviousOnboardingStep = () => {
 
       enqueueToast(getToastOptionsFromError({ error }));
     }
-  }, [goBackToPreviousOnboardingStepMutation, enqueueToast, store]);
+  }, [
+    goBackToPreviousOnboardingStepMutation,
+    enqueueToast,
+    setOnboardingStepFreeCredits,
+    store,
+  ]);
 
   return {
     goBackToPreviousOnboardingStep,

@@ -6,7 +6,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
+import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import {
   jotaiStore,
@@ -89,6 +92,35 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     expect(jotaiStore.get(onboardingNavigationDirectionState.atom)).toBe(
       'backward',
     );
+  });
+
+  it('should count the restored invite emails when going back to the invite step', async () => {
+    jotaiStore.set(onboardingConfigState.atom, {
+      importContactsCreditsReward: 1,
+      inviteTeamCreditsRewardPerUser: 0.5,
+      installAppsCreditsReward: 0.5,
+      createProfileCreditsReward: 0.5,
+      upgradeCreditsReward: 2,
+      inviteTeamMaxInvites: 5,
+    });
+    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
+      'grace@example.com',
+      'alan@example.com',
+      '',
+    ]);
+
+    const { result } = renderGoBackHook([
+      buildGoBackMock({
+        onboardingStatus: OnboardingStatus.INVITE_TEAM,
+        previousOnboardingStatus: OnboardingStatus.PROFILE_CREATION,
+      }),
+    ]);
+
+    await act(async () => {
+      await result.current.goBackToPreviousOnboardingStep();
+    });
+
+    expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(1);
   });
 
   it('should clear the previous status when the server reports no earlier step', async () => {

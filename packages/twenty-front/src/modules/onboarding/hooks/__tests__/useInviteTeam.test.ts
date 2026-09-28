@@ -229,7 +229,7 @@ describe('useInviteTeam', () => {
     expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(1);
   });
 
-  it('should drop the typed invite emails and their credits on skip', async () => {
+  it('should drop the invite credits on skip and keep the typed emails', async () => {
     jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
       'grace@example.com',
       '',
@@ -246,8 +246,9 @@ describe('useInviteTeam', () => {
     });
 
     expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(0);
-    expect(
-      jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom),
-    ).toBeNull();
+    expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
+      'grace@example.com',
+      '',
+    ]);
   });
 });
