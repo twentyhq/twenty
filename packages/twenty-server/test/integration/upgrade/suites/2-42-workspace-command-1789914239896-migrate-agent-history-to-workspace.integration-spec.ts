@@ -1,3 +1,4 @@
+import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -104,7 +105,7 @@ describe('versioned agent history upgrade (integration)', () => {
       'WorkspaceOrmManager',
     );
     storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+      'AgentHistoryUpgradeStorageService',
     );
     heartbeat = getAppProviderByClassName<AgentChatStreamHeartbeatService>(
       'AgentChatStreamHeartbeatService',
@@ -207,6 +208,15 @@ describe('versioned agent history upgrade (integration)', () => {
     await dataSource.query('DELETE FROM core."agentChatThread" WHERE id = $1', [
       threadId,
     ]);
+    await getAppProviderByClassName<EnableCommonRecordSharingCommand>(
+      'EnableCommonRecordSharingCommand',
+    ).up({
+      workspaceId: WORKSPACE_ID,
+      dataSource,
+      index: 0,
+      total: 1,
+      options: {},
+    });
     expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
       seededAgentChatThreadTarget,
     );

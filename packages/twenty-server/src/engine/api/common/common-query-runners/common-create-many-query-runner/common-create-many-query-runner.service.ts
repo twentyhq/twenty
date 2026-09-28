@@ -77,17 +77,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       queryRunnerContext.flatObjectMetadata.readability ===
       MetadataReadability.PRIVATE;
     const isGatedThroughRecordShares =
-      isPrivateObject ||
-      queryRunnerContext.flatObjectMetadata.readability ===
-        MetadataReadability.INHERITED;
+      this.isGatedThroughRecordShares(queryRunnerContext);
 
     // An inherited record is reachable through its parent, so shareWith stays
     // optional there and is checked only when given
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
-        isRecordSharingEnforced:
-          this.isRecordSharingEnforced(queryRunnerContext),
         shareWith: args.shareWith,
       });
     }
@@ -612,14 +608,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
 
-    if (!this.shouldInsertRecordSharesForCreatedRecords(queryRunnerContext)) {
+    if (!this.isGatedThroughRecordShares(queryRunnerContext)) {
       return;
     }
 
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
-      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       shareWith,
@@ -627,26 +622,15 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     });
   }
 
-  private shouldInsertRecordSharesForCreatedRecords(
+  private isGatedThroughRecordShares(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    switch (queryRunnerContext.flatObjectMetadata.readability) {
-      case MetadataReadability.PRIVATE:
-        return true;
-      // Legacy inherited records must keep following their parent after
-      // activation instead of receiving an EVERYONE compatibility grant.
-      case MetadataReadability.INHERITED:
-        return this.isRecordSharingEnforced(queryRunnerContext);
-      default:
-        return false;
-    }
-  }
-
-  private isRecordSharingEnforced(
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): boolean {
-    return !queryRunnerContext.repository.internalContext
-      .isLegacyRecordAccessOpen;
+    return (
+      queryRunnerContext.flatObjectMetadata.readability ===
+        MetadataReadability.PRIVATE ||
+      queryRunnerContext.flatObjectMetadata.readability ===
+        MetadataReadability.INHERITED
+    );
   }
 
   private resolveNestedRelationsForCreate({

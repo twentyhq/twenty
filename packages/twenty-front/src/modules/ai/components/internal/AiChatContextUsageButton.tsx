@@ -1,6 +1,5 @@
 import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
-import { useQuery } from '@apollo/client/react';
 import {
   FloatingPortal,
   autoUpdate,
@@ -29,6 +28,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
+import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
@@ -41,7 +41,6 @@ import { StyledInformationCard } from '@/ui/layout/information-card/components/S
 import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { GetAiChatUsageDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledTrigger = styled.button`
@@ -112,23 +111,22 @@ export const AiChatContextUsageButton = () => {
       ? Math.min(100, Math.max(0, (conversationSize / contextWindow) * 100))
       : 0;
 
-  const { data, loading, error } = useQuery(GetAiChatUsageDocument, {
+  const {
+    usage: creditUsage,
+    loading,
+    error,
+  } = useAiChatUsage({
     skip: !isOpen || isWorkspaceSetupChat,
     fetchPolicy: 'network-only',
   });
 
-  const creditUsage = data?.aiChatUsage;
-
-  const limitValue = isDefined(creditUsage)
-    ? Number(creditUsage.limitValue)
-    : null;
-
-  const consumedValue = isDefined(creditUsage?.consumedValue)
-    ? Number(creditUsage?.consumedValue)
-    : null;
+  const limitValue = creditUsage?.limitValue ?? null;
 
   const progress = isDefined(limitValue)
-    ? computeUsageLimitProgress({ limitValue, consumedValue })
+    ? computeUsageLimitProgress({
+        limitValue,
+        consumedValue: creditUsage?.consumedValue ?? null,
+      })
     : null;
 
   const creditPercentage =

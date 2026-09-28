@@ -3,6 +3,7 @@ import { type Country } from '@/ui/input/components/internal/types/Country';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 
@@ -112,6 +113,7 @@ export const PhoneCountryPickerDropdownButton = ({
         align="start"
         sideOffset={4}
         alignOffset={0}
+        aria-label={t`Country`}
       >
         <PhoneCountryPickerDropdownSelect
           countries={countries}

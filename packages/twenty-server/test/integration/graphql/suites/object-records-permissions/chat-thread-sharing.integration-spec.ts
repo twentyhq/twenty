@@ -435,7 +435,7 @@ describe('Conversation sharing through the authenticated API', () => {
       {} as never,
       cache,
       getAppProviderByClassName<AgentHistoryStorageService>(
-        'AgentHistoryStorageService',
+        'AgentHistoryUpgradeStorageService',
       ),
       getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
         'WorkspaceMigrationValidateBuildAndRunService',
@@ -484,12 +484,14 @@ describe('Conversation sharing through the authenticated API', () => {
         chatService.archiveThread(owner),
       ]);
       for (const retried of retriedArchives) {
-        expect(retried.deletedAt).toEqual(archived.deletedAt);
+        expect(retried.archivedAt).toEqual(archived.archivedAt);
         expect(retried.updatedAt).toEqual(archived.updatedAt);
       }
-      expect(archived.deletedAt?.toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-      expect((await chatService.getWritableThread(owner)).deletedAt).toEqual(
-        archived.deletedAt,
+      expect(new Date(archived.archivedAt!).toISOString()).toMatch(
+        /^\d{4}-\d{2}-\d{2}T/,
+      );
+      expect((await chatService.getWritableThread(owner)).archivedAt).toEqual(
+        archived.archivedAt,
       );
       expect(
         (await chatService.getThreadsForUser(owner)).some(
