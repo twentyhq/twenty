@@ -13,9 +13,7 @@ export const LOG_CONSOLE_PAGE_VIEW_COLUMNS: LogConsoleColumn[] = [
     id: 'member',
     label: msg`Member`,
     gridTrack: 'minmax(0, 200px)',
-    renderCell: (entry, color) => (
-      <LogConsoleMemberCell userId={entry.userId} color={color} />
-    ),
+    renderCell: (entry) => <LogConsoleMemberCell userId={entry.userId} />,
   },
   {
     id: 'page',

@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, type ChipProps } from 'twenty-ui/primitives/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 
 import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -10,13 +10,9 @@ import { type EventLogRecord } from '~/generated-metadata/graphql';
 
 type LogConsoleRecordCellProps = {
   entry: EventLogRecord;
-  color?: ChipProps['color'];
 };
 
-export const LogConsoleRecordCell = ({
-  entry,
-  color,
-}: LogConsoleRecordCellProps) => {
+export const LogConsoleRecordCell = ({ entry }: LogConsoleRecordCellProps) => {
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
@@ -31,7 +27,6 @@ export const LogConsoleRecordCell = ({
       <RecordChip
         objectNameSingular={objectMetadataItem.nameSingular}
         record={recordSnapshot}
-        color={color}
         forceDisableClick
       />
     );
@@ -39,7 +34,6 @@ export const LogConsoleRecordCell = ({
 
   return (
     <Chip
-      color={color}
       startElement={
         <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
       }

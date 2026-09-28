@@ -139,10 +139,7 @@ export const LogConsoleTable = ({
               overflow="hidden"
               whiteSpace="nowrap"
             >
-              {column.renderCell(
-                entry,
-                isFirstColumn ? 'primary' : 'secondary',
-              )}
+              {column.renderCell(entry)}
             </EntryCell>
           );
         })}

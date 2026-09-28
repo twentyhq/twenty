@@ -13,11 +13,10 @@ export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
     id: 'actor',
     label: msg`Actor`,
     gridTrack: 'minmax(0, 200px)',
-    renderCell: (entry, color) => (
+    renderCell: (entry) => (
       <LogConsoleMemberCell
         userId={entry.userId}
         isImpersonator={entry.event === 'Impersonation'}
-        color={color}
       />
     ),
   },

@@ -1,9 +1,14 @@
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { typedObjectEntries } from 'twenty-shared/utils';
-import { IconCalendarEvent, IconChevronDown } from 'twenty-ui/icon';
-import { Button, SegmentedControl } from 'twenty-ui/primitives/input';
+import {
+  IconCalendarEvent,
+  IconChevronDown,
+  IconChevronLeft,
+} from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
@@ -15,6 +20,8 @@ import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRange';
 import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogConsoleTimeRangeWithinRetention';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -43,8 +50,17 @@ export const LogConsoleTimeRangeDropdown = ({
   const [logConsoleTimeZone, setLogConsoleTimeZone] = useAtomState(
     logConsoleTimeZoneState,
   );
+  const [isTimeZoneMenuOpen, setIsTimeZoneMenuOpen] = useState(false);
   const { closeDropdown } = useCloseDropdown();
   const navigateSettings = useNavigateSettings();
+
+  const timeZoneOptions = [
+    { value: 'member', label: memberTimeZone },
+    { value: 'utc', label: 'UTC' },
+  ] as const;
+
+  const selectedTimeZoneLabel =
+    logConsoleTimeZone === 'utc' ? 'UTC' : memberTimeZone;
 
   const getTimeRangeLabel = (labeledTimeRange: LogConsoleTimeRange) => {
     if (labeledTimeRange === 'today') {
@@ -105,43 +121,73 @@ export const LogConsoleTimeRangeDropdown = ({
           {getTimeRangeLabel(timeRange)}
         </Button>
       }
+      onClose={() => setIsTimeZoneMenuOpen(false)}
       dropdownComponents={
-        <LegacyDropdownContent
-          widthInPixels={GenericDropdownContentWidth.Large}
-        >
-          <DropdownMenuItemsContainer>
-            {typedObjectEntries(LOG_CONSOLE_TIME_RANGE_PRESETS).map(
-              ([preset]) => renderTimeRangeItem(preset),
-            )}
-            <DropdownMenuSeparator />
-            {renderTimeRangeItem('today')}
-            {renderTimeRangeItem('yesterday')}
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer scrollable={false}>
-            <ListItem
-              description={plural(retentionInDays, {
-                one: '# day',
-                other: '# days',
-              })}
-              descriptionPlacement="end"
-              disabled={!source.requiresAuditLogs}
-              onClick={openRetentionSettings}
+        isTimeZoneMenuOpen ? (
+          <LegacyDropdownContent
+            widthInPixels={GenericDropdownContentWidth.Large}
+          >
+            <DropdownMenuHeader
+              StartComponent={
+                <DropdownMenuHeaderLeftComponent
+                  onClick={() => setIsTimeZoneMenuOpen(false)}
+                  Icon={IconChevronLeft}
+                />
+              }
             >
-              {t`Retention`}
-            </ListItem>
+              {t`Time zone`}
+            </DropdownMenuHeader>
+            <DropdownMenuItemsContainer scrollable={false}>
+              {timeZoneOptions.map((timeZoneOption) => (
+                <ListItem
+                  key={timeZoneOption.value}
+                  role="option"
+                  aria-selected={timeZoneOption.value === logConsoleTimeZone}
+                  selected={timeZoneOption.value === logConsoleTimeZone}
+                  indicator="check"
+                  onClick={() => setLogConsoleTimeZone(timeZoneOption.value)}
+                >
+                  {timeZoneOption.label}
+                </ListItem>
+              ))}
+            </DropdownMenuItemsContainer>
+          </LegacyDropdownContent>
+        ) : (
+          <LegacyDropdownContent
+            widthInPixels={GenericDropdownContentWidth.Large}
+          >
+            <DropdownMenuItemsContainer>
+              {typedObjectEntries(LOG_CONSOLE_TIME_RANGE_PRESETS).map(
+                ([preset]) => renderTimeRangeItem(preset),
+              )}
+              <DropdownMenuSeparator />
+              {renderTimeRangeItem('today')}
+              {renderTimeRangeItem('yesterday')}
+            </DropdownMenuItemsContainer>
             <DropdownMenuSeparator />
-            <SegmentedControl
-              aria-label={t`Time zone`}
-              value={logConsoleTimeZone}
-              onValueChange={setLogConsoleTimeZone}
-              options={[
-                { value: 'member', label: memberTimeZone },
-                { value: 'utc', label: 'UTC' },
-              ]}
-            />
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
+            <DropdownMenuItemsContainer scrollable={false}>
+              <ListItem
+                description={plural(retentionInDays, {
+                  one: '# day',
+                  other: '# days',
+                })}
+                descriptionPlacement="end"
+                disabled={!source.requiresAuditLogs}
+                onClick={openRetentionSettings}
+              >
+                {t`Retention`}
+              </ListItem>
+              <ListItem
+                description={selectedTimeZoneLabel}
+                descriptionPlacement="end"
+                hasSubmenu
+                onClick={() => setIsTimeZoneMenuOpen(true)}
+              >
+                {t`Time zone`}
+              </ListItem>
+            </DropdownMenuItemsContainer>
+          </LegacyDropdownContent>
+        )
       }
     />
   );

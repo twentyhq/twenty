@@ -29,9 +29,8 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
     id: 'function',
     label: msg`Function`,
     gridTrack: '216px',
-    renderCell: (entry, color) => (
+    renderCell: (entry) => (
       <Chip
-        color={color}
         startElement={
           <IconBrandTypescript
             size={14}

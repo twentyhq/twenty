@@ -28,17 +28,13 @@ export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
     id: 'object',
     label: msg`Object`,
     gridTrack: 'minmax(0, 160px)',
-    renderCell: (entry, color) => (
-      <LogConsoleObjectCell entry={entry} color={color} />
-    ),
+    renderCell: (entry) => <LogConsoleObjectCell entry={entry} />,
   },
   {
     id: 'record',
     label: msg`Record`,
     gridTrack: 'minmax(0, 216px)',
-    renderCell: (entry, color) => (
-      <LogConsoleRecordCell entry={entry} color={color} />
-    ),
+    renderCell: (entry) => <LogConsoleRecordCell entry={entry} />,
   },
   {
     id: 'changes',

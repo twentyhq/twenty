@@ -130,6 +130,7 @@ const StyledPanel = styled.div<{
   bottom: 0;
   box-shadow: ${themeCssVariables.boxShadow.bottomPanel};
   box-sizing: border-box;
+  clip-path: inset(calc(-1 * ${themeCssVariables.spacing[6]}) 0 0 0);
   display: flex;
   flex-direction: column;
   height: ${({ panelHeight }) => panelHeight};
