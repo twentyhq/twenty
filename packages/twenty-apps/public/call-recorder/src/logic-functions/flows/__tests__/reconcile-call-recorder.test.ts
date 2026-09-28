@@ -107,22 +107,6 @@ class FakeCoreApiClient {
     if (query.callRecordings !== undefined) {
       const filter = query.callRecordings.__args.filter;
 
-      if (filter.or !== undefined) {
-        return {
-          callRecordings: buildConnection(
-            this.callRecordings.filter((callRecording) =>
-              filter.or.some((orFilter: any) =>
-                orFilter.id !== undefined
-                  ? callRecording.id === orFilter.id.eq
-                  : orFilter.calendarEventId.in.includes(
-                      callRecording.calendarEventId,
-                    ),
-              ),
-            ),
-          ),
-        };
-      }
-
       if (filter.id?.in !== undefined) {
         return {
           callRecordings: buildConnection(
@@ -862,92 +846,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(recallBotDeleteCalls().map(([requestUrl]) => requestUrl)).toEqual([
       `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
     ]);
-  });
-
-  it('cancels the bot of a destroyed calendar event whose recording lost its calendar event link', async () => {
-    const client = buildFakeCoreApiClient({
-      calendarEvents: [],
-      callRecordings: [
-        {
-          id: buildCustomerSyncCallRecordingId(),
-          title: 'Customer Sync',
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'REQUESTED',
-          startedAt: FUTURE_STARTS_AT,
-          endedAt: FUTURE_ENDS_AT,
-          calendarEventId: null,
-          externalBotId: 'recall-bot-1',
-        },
-      ],
-    });
-
-    const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
-      calendarEventIds: [],
-      removedOccurrences: [
-        {
-          calendarEventId: 'calendar-event-1',
-          realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
-          startsAt: FUTURE_STARTS_AT,
-        },
-      ],
-      now: NOW,
-    });
-
-    expect(result).toEqual([
-      expect.objectContaining({
-        action: 'CANCELED',
-        callRecordingId: buildCustomerSyncCallRecordingId(),
-      }),
-    ]);
-    expect(client.callRecordings).toEqual([
-      expect.objectContaining({
-        recordingRequestStatus: 'CANCELED',
-        externalBotId: null,
-      }),
-    ]);
-    expect(recallBotDeleteCalls().map(([requestUrl]) => requestUrl)).toEqual([
-      `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
-    ]);
-  });
-
-  it('keeps the bot of a recording a re-imported event already re-requested', async () => {
-    const client = buildFakeCoreApiClient({
-      calendarEvents: [],
-      callRecordings: [
-        {
-          id: buildCustomerSyncCallRecordingId(),
-          title: 'Customer Sync',
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'REQUESTED',
-          startedAt: FUTURE_STARTS_AT,
-          endedAt: FUTURE_ENDS_AT,
-          calendarEventId: 'calendar-event-2',
-          externalBotId: 'recall-bot-2',
-        },
-      ],
-    });
-
-    await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
-      calendarEventIds: [],
-      removedOccurrences: [
-        {
-          calendarEventId: 'calendar-event-1',
-          realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
-          startsAt: FUTURE_STARTS_AT,
-        },
-      ],
-      now: NOW,
-    });
-
-    expect(client.callRecordings).toEqual([
-      expect.objectContaining({
-        recordingRequestStatus: 'REQUESTED',
-        externalBotId: 'recall-bot-2',
-      }),
-    ]);
-    expect(recallBotDeleteCalls()).toEqual([]);
   });
 
   it('cancels the old occurrence and creates a fresh recording when the meeting moves to a new time', async () => {

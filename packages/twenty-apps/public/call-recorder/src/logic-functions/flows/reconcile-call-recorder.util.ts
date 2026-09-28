@@ -23,7 +23,6 @@ import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fe
 import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
-import { findCallRecordingsByIdOrCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-id-or-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
@@ -445,18 +444,19 @@ const reconcileCanceledMeeting = async ({
     ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
-  const meetingCallRecordings = (
-    await findCallRecordingsByIdOrCalendarEventIds(client, {
-      callRecordingId: computeCallRecordingIdForMeeting(
-        meetingPolicyResult.realMeetingKey,
-      ),
-      calendarEventIds,
-    })
-  ).filter(
-    (callRecording) =>
-      isUndefined(callRecording.calendarEventId) ||
-      calendarEventIds.includes(callRecording.calendarEventId),
+  const linkedCallRecordings = await findCallRecordingsByCalendarEventIds(
+    client,
+    calendarEventIds,
   );
+  const orphanedPolicyManagedCallRecordings = (
+    await findCallRecordingsByIds(client, [
+      computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
+    ])
+  ).filter((callRecording) => isUndefined(callRecording.calendarEventId));
+  const meetingCallRecordings = [
+    ...linkedCallRecordings,
+    ...orphanedPolicyManagedCallRecordings,
+  ];
   const cancellableCallRecordings = meetingCallRecordings.filter(
     (callRecording) =>
       callRecording.status === CallRecordingStatus.SCHEDULED &&
