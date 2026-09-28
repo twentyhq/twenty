@@ -60,7 +60,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     <FieldContext.Provider
       value={{
         recordId,
-        fieldDefinition,
+        fieldDefinition: fieldDefinition!,
         useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
         isLabelIdentifier: true,
         displayedMaxRows: 1,

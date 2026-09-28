@@ -179,7 +179,7 @@ export const FilesFieldInput = () => {
         index < files.length &&
         isDefined(files)
       ) {
-        const fileToEdit = files[index];
+        const fileToEdit = files[index]!;
         return {
           ...fileToEdit,
           label: _input.trim(),

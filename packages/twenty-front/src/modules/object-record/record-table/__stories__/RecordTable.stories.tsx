@@ -90,7 +90,7 @@ export const ScrolledLeft: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findAllByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecords[0]!.name,
       {},
       { timeout: 3000 },
     );
@@ -111,7 +111,7 @@ export const ScrolledLeft: Story = {
       },
     });
 
-    await canvas.findByText(mockedCompanyRecords[1].name);
+    await canvas.findByText(mockedCompanyRecords[1]!.name);
   },
 };
 
@@ -124,7 +124,7 @@ export const ScrolledBottom: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findAllByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecords[0]!.name,
       {},
       { timeout: 3000 },
     );
@@ -145,6 +145,6 @@ export const ScrolledBottom: Story = {
       },
     });
 
-    await canvas.findByText(mockedCompanyRecords[1].name);
+    await canvas.findByText(mockedCompanyRecords[1]!.name);
   },
 };

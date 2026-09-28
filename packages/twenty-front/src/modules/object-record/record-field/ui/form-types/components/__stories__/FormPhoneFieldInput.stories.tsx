@@ -126,7 +126,7 @@ export const SelectingVariables: Story = {
     const addVariableButtons = await canvas.findAllByText('Add variable');
     const phoneNumberVariablePicker = addVariableButtons[1];
 
-    await userEvent.click(phoneNumberVariablePicker);
+    await userEvent.click(phoneNumberVariablePicker!);
 
     const phoneNumberVariable = await canvas.findByText('Amount Micros');
     expect(phoneNumberVariable).toBeVisible();

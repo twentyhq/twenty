@@ -64,7 +64,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             throw new Error('No fields for kanban - should not happen');
           }
 
-          const mainGroupByFieldMetadataId = availableFieldsForGrouping[0].id;
+          const mainGroupByFieldMetadataId = availableFieldsForGrouping[0]!.id;
           updateCurrentViewParams.mainGroupByFieldMetadataId =
             mainGroupByFieldMetadataId;
 
@@ -91,7 +91,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             throw new Error('No date fields for calendar');
           }
 
-          const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
+          const calendarFieldMetadataId = availableFieldsForCalendar[0]!.id;
 
           setRecordIndexViewType(viewType);
 

@@ -72,10 +72,10 @@ export const useLoadRecordsToVirtualRows = () => {
       const newAllRecordIds = currentAllRecordIds.concat();
 
       for (let i = 0; i < records.length; i++) {
-        newAllRecordIds[i + startingRealIndex] = recordIds[i];
+        newAllRecordIds[i + startingRealIndex] = recordIds[i]!;
 
         if (isAllRowsSelected) {
-          store.set(isRowSelectedFamilyState(recordIds[i]), true);
+          store.set(isRowSelectedFamilyState(recordIds[i]!), true);
         }
       }
 

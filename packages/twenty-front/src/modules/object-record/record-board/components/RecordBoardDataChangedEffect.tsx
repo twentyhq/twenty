@@ -135,7 +135,7 @@ export const RecordBoardDataChangedEffect = () => {
 
             const firstRecordIdInGroup = recordIdsWithoutCreatedRecord[0];
             const firstExistingRecordInGroup = store.get(
-              recordStoreFamilyState.atomFamily(firstRecordIdInGroup),
+              recordStoreFamilyState.atomFamily(firstRecordIdInGroup!),
             ) as { position?: number } | null | undefined;
 
             if (!isDefined(firstExistingRecordInGroup)) {

@@ -39,7 +39,7 @@ export const RecordIdentifierBarTitle = ({
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(event.target.files)) {
-      onUploadPicture?.(event.target.files[0]);
+      onUploadPicture?.(event.target.files[0]!);
     }
   };
 

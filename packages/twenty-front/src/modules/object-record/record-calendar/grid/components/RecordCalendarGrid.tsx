@@ -75,7 +75,7 @@ export const RecordCalendarGrid = ({
         </StyledHeader>
         <StyledBody>
           {days.map((row) => (
-            <StyledRow key={row[0].toString()}>
+            <StyledRow key={row[0]!.toString()}>
               {row.map((day) => (
                 <RecordCalendarGridDay
                   key={day.toString()}

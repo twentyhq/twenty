@@ -61,7 +61,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
         const record = getRecordFromRecordNode<T>({
           recordNode: (result.data as Record<string, RecordGqlNode>)[
             objectNameSingular
-          ],
+          ]!,
         });
         onCompleted?.(record);
       }

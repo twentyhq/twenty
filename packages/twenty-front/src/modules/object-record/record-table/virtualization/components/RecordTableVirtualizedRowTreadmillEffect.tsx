@@ -160,11 +160,12 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
               const previousMeasurement = allMeasurements[currentIndex - 1];
 
               const secondsDifferenceWithPreviousMeasurement =
-                (scrollMeasurement.timestamp - previousMeasurement.timestamp) /
+                (scrollMeasurement.timestamp - previousMeasurement!.timestamp) /
                 1_000;
 
               const scrollDifferenceWithPreviousMeasurement = Math.abs(
-                scrollMeasurement.scrollToTop - previousMeasurement.scrollToTop,
+                scrollMeasurement.scrollToTop -
+                  previousMeasurement!.scrollToTop,
               );
 
               const scrollSpeedInPixelsPerSecond =

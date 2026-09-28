@@ -60,7 +60,7 @@ export const computeNewPositionOfDraggedRecord = ({
 
       const intermediaryPosition =
         targetItem.position -
-        (targetItem.position - itemBeforeTargetItem.position) / 2;
+        (targetItem.position - itemBeforeTargetItem!.position) / 2;
 
       return intermediaryPosition;
     }

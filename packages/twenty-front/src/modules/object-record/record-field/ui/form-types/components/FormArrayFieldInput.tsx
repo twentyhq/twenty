@@ -219,7 +219,7 @@ export const FormArrayFieldInput = ({
   };
 
   const handleEditItem = (index: number) => {
-    setInputValue(draftValue.value[index]);
+    setInputValue(draftValue.value[index]!);
     setItemToEditIndex(index);
     setIsInputDisplayed(true);
   };

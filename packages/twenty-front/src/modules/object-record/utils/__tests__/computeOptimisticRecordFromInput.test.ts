@@ -30,13 +30,13 @@ const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
 
 describe('computeOptimisticRecordFromInput', () => {
   const currentWorkspaceMember = mockCurrentWorkspaceMembers[0];
-  const currentWorkspaceMemberFullname = `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`;
+  const currentWorkspaceMemberFullname = `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`;
   it('should generate correct optimistic record if no relation field is present', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -59,7 +59,7 @@ describe('computeOptimisticRecordFromInput', () => {
       source: 'API',
     };
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -76,7 +76,7 @@ describe('computeOptimisticRecordFromInput', () => {
         context: {},
         name: currentWorkspaceMemberFullname,
         source: 'API',
-        workspaceMemberId: currentWorkspaceMember.id,
+        workspaceMemberId: currentWorkspaceMember?.id,
       },
     });
   });
@@ -85,7 +85,7 @@ describe('computeOptimisticRecordFromInput', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -105,7 +105,7 @@ describe('computeOptimisticRecordFromInput', () => {
         context: {},
         name: currentWorkspaceMemberFullname,
         source: 'SYSTEM',
-        workspaceMemberId: currentWorkspaceMember.id,
+        workspaceMemberId: currentWorkspaceMember?.id,
       },
     });
   });
@@ -115,7 +115,7 @@ describe('computeOptimisticRecordFromInput', () => {
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -163,7 +163,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
 
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -216,7 +216,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
 
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -237,7 +237,7 @@ describe('computeOptimisticRecordFromInput', () => {
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -259,7 +259,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     expect(() =>
       computeOptimisticRecordFromInput({
-        currentWorkspaceMember,
+        currentWorkspaceMember: currentWorkspaceMember!,
         objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         objectMetadataItem: personObjectMetadataItem,
         recordInput: {
@@ -290,7 +290,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
 
     const result = computeOptimisticRecordFromInput({
-      currentWorkspaceMember,
+      currentWorkspaceMember: currentWorkspaceMember!,
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: sanitizedInput,

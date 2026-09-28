@@ -65,7 +65,7 @@ export const ResponsiveFields: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     const recordIdentifier = await canvas.findByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecords[0]!.name,
       {},
       { timeout: 3000 },
     );
@@ -77,11 +77,11 @@ export const ResponsiveFields: Story = {
     const firstOverflowChip = overflowChips[0];
 
     await expect(firstOverflowChip).toHaveAttribute('href');
-    await expect(firstOverflowChip.getAttribute('href')).toContain(
+    await expect(firstOverflowChip!.getAttribute('href')).toContain(
       '/object/company/',
     );
 
-    await userEvent.hover(within(firstOverflowChip).getByText(/^\+\d+$/));
+    await userEvent.hover(within(firstOverflowChip!).getByText(/^\+\d+$/));
 
     await body.findByRole('tooltip', {}, { timeout: 3000 });
   },

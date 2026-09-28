@@ -25,13 +25,13 @@ export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
 
     const { displayValue, value } = getInitialFilterValue(
       filterType,
-      defaultOperand,
+      defaultOperand!,
     );
 
     const newRecordFilter: RecordFilter = {
       id: v4(),
       fieldMetadataId: fieldMetadataItem.id,
-      operand: defaultOperand,
+      operand: defaultOperand!,
       displayValue,
       label: fieldMetadataItem.label,
       type: filterType,

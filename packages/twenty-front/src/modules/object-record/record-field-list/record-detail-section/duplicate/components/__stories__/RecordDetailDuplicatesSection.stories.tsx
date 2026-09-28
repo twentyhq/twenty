@@ -20,7 +20,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
       <LayoutRenderingProvider
         value={{
           targetRecordIdentifier: {
-            id: mockedCompanyRecords[0].id,
+            id: mockedCompanyRecords[0]!.id,
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
@@ -35,7 +35,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
     MemoryRouterDecorator,
   ],
   args: {
-    objectRecordId: mockedCompanyRecords[0].id,
+    objectRecordId: mockedCompanyRecords[0]!.id,
     objectNameSingular: CoreObjectNameSingular.Company,
   },
   parameters: {

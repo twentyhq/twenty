@@ -25,5 +25,5 @@ export const getDefaultAdvancedFilterOperand = ({
     return RecordFilterOperand.IS_RELATIVE;
   }
 
-  return availableOperands[0];
+  return availableOperands[0]!;
 };

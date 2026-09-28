@@ -56,8 +56,8 @@ export const RecordTableCellFieldContextGeneric = ({
 
   // todo @guillim : adjust this to handle morph relations permissions display
   if (
-    isFieldRelationManyToOne(fieldDefinition) ||
-    isFieldRelationOneToMany(fieldDefinition)
+    isFieldRelationManyToOne(fieldDefinition!) ||
+    isFieldRelationOneToMany(fieldDefinition!)
   ) {
     const relationObjectMetadataId =
       fieldDefinition.metadata.relationObjectMetadataId;
@@ -108,12 +108,12 @@ export const RecordTableCellFieldContextGeneric = ({
       value={{
         fieldMetadataItemId: recordField.fieldMetadataItemId,
         recordId,
-        fieldDefinition: fieldDefinition,
+        fieldDefinition: fieldDefinition!,
         useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
         isLabelIdentifier: isLabelIdentifierField({
           fieldMetadataItem: {
-            id: fieldDefinition.fieldMetadataId,
-            name: fieldDefinition.metadata.fieldName,
+            id: fieldDefinition!.fieldMetadataId,
+            name: fieldDefinition!.metadata.fieldName,
           },
           objectMetadataItem,
         }),

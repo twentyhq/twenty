@@ -84,7 +84,7 @@ export const useTextVariableEditor = ({
             const { state } = view;
             const { tr } = state;
             const transaction = tr.replaceSelectionWith(
-              state.schema.nodes.hardBreak.create(),
+              state.schema.nodes.hardBreak!.create(),
             );
 
             view.dispatch(transaction);

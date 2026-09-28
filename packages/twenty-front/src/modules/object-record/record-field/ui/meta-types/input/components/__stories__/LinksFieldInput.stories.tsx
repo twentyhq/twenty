@@ -398,7 +398,7 @@ export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[0]);
+    await userEvent.click(openDropdownButtons[0]!);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
@@ -440,7 +440,7 @@ export const DeleteSecondaryLink: Story = {
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[1]);
+    await userEvent.click(openDropdownButtons[1]!);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
@@ -548,7 +548,7 @@ export const MakeSecondaryLinkPrimary: Story = {
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[1]); // Click the secondary link's dropdown
+    await userEvent.click(openDropdownButtons[1]!); // Click the secondary link's dropdown
 
     const setPrimaryOption = await within(
       canvasElement.ownerDocument.body,

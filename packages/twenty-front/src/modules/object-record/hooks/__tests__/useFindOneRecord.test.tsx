@@ -50,6 +50,6 @@ describe('useFindOneRecord', () => {
       expect(result.current.record).toBeDefined();
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks[0]!.result).toHaveBeenCalled();
   });
 });

@@ -118,7 +118,7 @@ export const FormSingleRecordPicker = ({
       isDefined(defaultValue) && !isStandaloneVariableString(defaultValue)
         ? defaultValue
         : '',
-    objectNameSingular: resolvedObjectNameSingular,
+    objectNameSingular: resolvedObjectNameSingular!,
     withSoftDeleted: true,
     skip: !isDefined(defaultValue) || !isValidUuid(defaultValue),
   });
@@ -208,7 +208,7 @@ export const FormSingleRecordPicker = ({
               <FormSingleRecordFieldChip
                 draftValue={draftValue}
                 selectedRecord={selectedRecord}
-                objectNameSingular={resolvedObjectNameSingular}
+                objectNameSingular={resolvedObjectNameSingular!}
                 onRemove={handleUnlinkVariable}
                 disabled={disabled}
               />
@@ -236,7 +236,7 @@ export const FormSingleRecordPicker = ({
                     <FormSingleRecordFieldChip
                       draftValue={draftValue}
                       selectedRecord={selectedRecord}
-                      objectNameSingular={resolvedObjectNameSingular}
+                      objectNameSingular={resolvedObjectNameSingular!}
                       onRemove={handleUnlinkVariable}
                       disabled={disabled}
                     />

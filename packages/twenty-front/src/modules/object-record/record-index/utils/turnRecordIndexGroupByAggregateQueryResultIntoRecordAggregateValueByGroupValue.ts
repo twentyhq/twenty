@@ -24,7 +24,7 @@ export const turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueB
 
     const groupByQueryResultItems = queryResult[queryResultGqlFieldName];
 
-    for (const groupByQueryResultItem of groupByQueryResultItems) {
+    for (const groupByQueryResultItem of groupByQueryResultItems!) {
       if (groupByQueryResultItem.groupByDimensionValues.length === 1) {
         const groupByValue = groupByQueryResultItem.groupByDimensionValues[0];
 

@@ -213,7 +213,7 @@ export const MultipleRecordPicker = ({
     }
 
     if (creatableObjectMetadataItems.length === 1) {
-      void handleCreate(creatableObjectMetadataItems[0].id);
+      void handleCreate(creatableObjectMetadataItems[0]!.id);
       return;
     }
 

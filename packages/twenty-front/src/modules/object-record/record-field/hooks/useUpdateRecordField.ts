@@ -43,7 +43,7 @@ export const useUpdateRecordField = (
         );
 
         newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
-          ...newCurrentRecordFields[indexOfRecordFieldToUpdate],
+          ...newCurrentRecordFields[indexOfRecordFieldToUpdate]!,
           ...partialRecordField,
         };
 

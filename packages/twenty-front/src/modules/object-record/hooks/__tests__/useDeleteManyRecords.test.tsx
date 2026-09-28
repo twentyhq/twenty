@@ -106,7 +106,7 @@ describe('useDeleteManyRecords', () => {
         assertCachedRecordsIsNull(personIds);
       });
 
-      expect(apolloMocks[0].result).toHaveBeenCalled();
+      expect(apolloMocks[0]!.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
   });
@@ -149,7 +149,7 @@ describe('useDeleteManyRecords', () => {
         assertCachedRecordsMatch(expectedCachedRecordsWithDeletedAt);
       });
 
-      expect(apolloMocks[0].result).toHaveBeenCalled();
+      expect(apolloMocks[0]!.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
 
@@ -176,7 +176,7 @@ describe('useDeleteManyRecords', () => {
         );
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]!.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
@@ -206,7 +206,7 @@ describe('useDeleteManyRecords', () => {
         }
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]!.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
   });

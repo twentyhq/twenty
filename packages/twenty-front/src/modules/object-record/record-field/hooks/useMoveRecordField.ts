@@ -53,24 +53,24 @@ export const useMoveRecordField = (recordTableId?: string) => {
         visibleRecordFieldsValue[indexOfRecordFieldToMove];
       const targetRecordField = visibleRecordFieldsValue[targetArrayIndex];
 
-      const targetRecordFieldNewPosition = currentRecordField.position;
-      const currentRecordFieldNewPosition = targetRecordField.position;
+      const targetRecordFieldNewPosition = currentRecordField!.position;
+      const currentRecordFieldNewPosition = targetRecordField!.position;
 
-      updateRecordField(targetRecordField.fieldMetadataItemId, {
+      updateRecordField(targetRecordField!.fieldMetadataItemId, {
         position: targetRecordFieldNewPosition,
       });
 
-      updateRecordField(currentRecordField.fieldMetadataItemId, {
+      updateRecordField(currentRecordField!.fieldMetadataItemId, {
         position: currentRecordFieldNewPosition,
       });
 
       await saveViewFields([
         mapRecordFieldToViewField({
-          ...targetRecordField,
+          ...targetRecordField!,
           position: targetRecordFieldNewPosition,
         }),
         mapRecordFieldToViewField({
-          ...currentRecordField,
+          ...currentRecordField!,
           position: currentRecordFieldNewPosition,
         }),
       ]);

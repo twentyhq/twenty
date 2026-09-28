@@ -115,7 +115,7 @@ export const useObjectOptionsForBoard = ({
               updatedRecordField.fieldMetadataItemId,
           );
 
-          draftRecordIndexFieldDefinitions[indexToModify].position =
+          draftRecordIndexFieldDefinitions[indexToModify]!.position =
             updatedRecordField.position;
         },
       );
@@ -150,7 +150,7 @@ export const useObjectOptionsForBoard = ({
     ) => {
       const lastPosition = currentRecordFields.toSorted(
         sortByProperty('position', 'desc'),
-      )[0].position;
+      )[0]!.position;
 
       const shouldShowFieldMetadataItem =
         updatedFieldDefinition.isVisible === true;
@@ -223,7 +223,7 @@ export const useObjectOptionsForBoard = ({
                 updatedRecordField.fieldMetadataItemId,
             );
 
-            draftRecordIndexFieldDefinitions[indexToModify].isVisible =
+            draftRecordIndexFieldDefinitions[indexToModify]!.isVisible =
               shouldShowFieldMetadataItem;
           },
         );

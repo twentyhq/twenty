@@ -37,7 +37,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
       <LayoutRenderingProvider
         value={{
           targetRecordIdentifier: {
-            id: mockedCompanyRecords[0].id,
+            id: mockedCompanyRecords[0]!.id,
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
@@ -48,7 +48,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
         >
           <FieldContext.Provider
             value={{
-              recordId: mockedCompanyRecords[0].id,
+              recordId: mockedCompanyRecords[0]!.id,
               isLabelIdentifier: false,
               fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
                 field: mockedCompanyObjectMetadataItem.fields.find(

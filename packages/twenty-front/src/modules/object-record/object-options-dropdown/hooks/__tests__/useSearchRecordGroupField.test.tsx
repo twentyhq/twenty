@@ -105,7 +105,7 @@ describe('useSearchRecordGroupField', () => {
     expect(result.current.filteredRecordGroupFieldMetadataItems).toHaveLength(
       1,
     );
-    expect(result.current.filteredRecordGroupFieldMetadataItems[0].label).toBe(
+    expect(result.current.filteredRecordGroupFieldMetadataItems[0]!.label).toBe(
       'Active Field',
     );
   });

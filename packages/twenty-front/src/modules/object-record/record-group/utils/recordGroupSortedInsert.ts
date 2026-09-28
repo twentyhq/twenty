@@ -9,7 +9,7 @@ export const recordGroupSortedInsert = <T>(
   while (low < high) {
     const mid = Math.floor((low + high) / 2);
 
-    if (comparator(item, array[mid]) < 0) {
+    if (comparator(item, array[mid]!) < 0) {
       high = mid;
     } else {
       low = mid + 1;

@@ -28,7 +28,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = peopleMock[0];
+    const record = peopleMock[0]!;
 
     const result = getRecordNodeFromRecord({
       objectMetadataItems,
@@ -40,12 +40,12 @@ describe('getRecordNodeFromRecord', () => {
     expect(result).toEqual({
       __typename: 'Person',
       company: {
-        __ref: `Company:${record.company.id}`,
+        __ref: `Company:${record?.company.id}`,
       },
       name: {
         __typename: 'FullName',
-        firstName: record.name.firstName,
-        lastName: record.name.lastName,
+        firstName: record?.name.firstName,
+        lastName: record?.name.lastName,
       },
     });
   });
@@ -70,7 +70,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = peopleMock[0];
+    const record = peopleMock[0]!;
     const computeReferences = false;
 
     const result = getRecordNodeFromRecord({
@@ -83,11 +83,11 @@ describe('getRecordNodeFromRecord', () => {
 
     expect(result).toEqual({
       __typename: 'Person',
-      company: record.company,
+      company: record?.company,
       name: {
         __typename: 'FullName',
-        firstName: record.name.firstName,
-        lastName: record.name.lastName,
+        firstName: record?.name.firstName,
+        lastName: record?.name.lastName,
       },
     });
   });
@@ -114,7 +114,7 @@ describe('getRecordNodeFromRecord', () => {
     }
 
     const record = {
-      ...peopleMock[0],
+      ...peopleMock[0]!,
       [oneToManyRelationField.name]: null,
     };
     const recordGqlFields = {

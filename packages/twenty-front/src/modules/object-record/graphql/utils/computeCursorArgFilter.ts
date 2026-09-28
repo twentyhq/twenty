@@ -104,7 +104,7 @@ export const computeCursorArgFilter = ({
 
       const conditions = [...equalityPrefixes, comparison];
 
-      return conditions.length === 1 ? conditions[0] : { and: conditions };
+      return conditions.length === 1 ? conditions[0]! : { and: conditions };
     },
   );
 

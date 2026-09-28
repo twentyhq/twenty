@@ -475,7 +475,7 @@ describe('csvDownloader', () => {
       rows: [{ id: '1', name: 'test' }],
     });
 
-    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const blob = mockSaveAs.mock.calls[0]![0]! as Blob;
     const bytes = new Uint8Array(await readBlob(blob));
 
     expect(bytes[0]).toBe(0xef);
@@ -491,7 +491,7 @@ describe('csvDownloader', () => {
   ])('preserves %s characters in exported content', async (_, name) => {
     csvDownloader('export.csv', { columns, rows: [{ id: '1', name }] });
 
-    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const blob = mockSaveAs.mock.calls[0]![0]! as Blob;
     const text = Buffer.from(await readBlob(blob)).toString('utf-8');
 
     expect(text).toContain(name);

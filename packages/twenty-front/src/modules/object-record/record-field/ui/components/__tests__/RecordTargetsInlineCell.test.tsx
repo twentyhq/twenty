@@ -72,7 +72,7 @@ describe('RecordTargetsInlineCell', () => {
       screen.queryByTestId('inline-cell-edit-mode-container'),
     ).not.toBeInTheDocument();
 
-    await userEvent.click(relationsTexts[relationsTexts.length - 1]);
+    await userEvent.click(relationsTexts[relationsTexts.length - 1]!);
 
     expect(
       screen.getByTestId('inline-cell-edit-mode-container'),
@@ -84,7 +84,7 @@ describe('RecordTargetsInlineCell', () => {
 
     const relationsTexts = await screen.findAllByText('Relations');
 
-    await userEvent.click(relationsTexts[relationsTexts.length - 1]);
+    await userEvent.click(relationsTexts[relationsTexts.length - 1]!);
 
     expect(
       screen.getByTestId('inline-cell-edit-mode-container'),

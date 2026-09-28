@@ -52,7 +52,7 @@ const SharingStory = ({
     ];
     store.set(currentWorkspaceMembersState.atom, members);
     store.set(currentWorkspaceMemberState.atom, {
-      ...members[0],
+      ...members[0]!,
       colorScheme: 'Light',
       locale: 'en',
     });

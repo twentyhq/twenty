@@ -11,9 +11,12 @@ export const getRelationConnectSubFieldLabel = (
   const compositeSubFieldLabel =
     isCompositeFieldType(uniqueFieldMetadataItem.type) &&
     isDefined(compositeSubFieldKey)
-      ? COMPOSITE_FIELD_SUB_FIELD_LABELS[uniqueFieldMetadataItem.type][
-          compositeSubFieldKey
-        ]
+      ? Object.entries(
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[uniqueFieldMetadataItem.type],
+        ).find(
+          ([labelledSubFieldName]) =>
+            labelledSubFieldName === compositeSubFieldKey,
+        )?.[1]
       : undefined;
 
   return `${fieldMetadataItem.label} / ${uniqueFieldMetadataItem.label}${compositeSubFieldLabel ? ` / ${compositeSubFieldLabel}` : ''}`;

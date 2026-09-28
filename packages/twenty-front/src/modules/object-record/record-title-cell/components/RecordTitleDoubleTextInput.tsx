@@ -179,8 +179,8 @@ export const RecordTitleDoubleTextInput = ({
     const splittedName = splitFullName(name);
 
     onPaste?.({
-      firstValue: splittedName[0],
-      secondValue: splittedName[1],
+      firstValue: splittedName[0]!,
+      secondValue: splittedName[1]!,
     });
   };
 

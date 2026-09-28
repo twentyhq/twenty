@@ -97,8 +97,8 @@ export const useRecordTableHeaderDndKit = (): {
     });
 
     const updatedRecordField = reorderVisibleRecordFields({
-      recordFieldToMove: sortableRecordFields[sourceIndex],
-      targetRecordField: sortableRecordFields[destinationIndex],
+      recordFieldToMove: sortableRecordFields[sourceIndex]!,
+      targetRecordField: sortableRecordFields[destinationIndex]!,
     });
 
     saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);

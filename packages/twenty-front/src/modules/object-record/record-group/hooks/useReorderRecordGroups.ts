@@ -70,7 +70,7 @@ export const useReorderRecordGroups = ({
         RecordGroupDefinition[]
       >((acc, recordGroupId, reorderIndex) => {
         const recordGroupDefinition = store.get(
-          recordGroupDefinitionFamilyState.atomFamily(recordGroupId),
+          recordGroupDefinitionFamilyState.atomFamily(recordGroupId!),
         );
 
         if (!isDefined(recordGroupDefinition)) {

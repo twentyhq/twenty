@@ -112,7 +112,7 @@ describe('ObjectFilterDropdownOptionSelect', () => {
 
     const [firstOption, ...otherOptions] = selectField.options ?? [];
 
-    await findByText(firstOption.label);
+    await findByText(firstOption!.label);
 
     for (const option of otherOptions) {
       expect(getByText(option.label)).toBeInTheDocument();

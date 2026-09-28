@@ -78,6 +78,6 @@ export const getObjectMorphJunctionConfig = ({
   // Older workspaces can lack the junction target marker. The relation graph is
   // still authoritative when it describes exactly one morph junction.
   return inferredJunctionConfigs.length === 1
-    ? inferredJunctionConfigs[0]
+    ? inferredJunctionConfigs[0]!
     : null;
 };

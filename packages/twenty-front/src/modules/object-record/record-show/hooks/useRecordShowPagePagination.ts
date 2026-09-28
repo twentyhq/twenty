@@ -244,7 +244,7 @@ export const useRecordShowPagePagination = (
 
         store.set(
           lastShowPageRecordIdState.atomFamily({
-            instanceId: previousIndexPage.pageId,
+            instanceId: previousIndexPage!.pageId,
           }),
           objectRecordId,
         );

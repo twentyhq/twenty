@@ -109,7 +109,7 @@ const getUniqueValues = (
       if (
         fieldType === FieldMetadataType.LINKS &&
         columnName.includes(
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]!
             .primaryLinkUrl,
         )
       ) {

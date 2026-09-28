@@ -13,20 +13,20 @@ const StyledRatingInputContainer = styled.div`
 
 const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
-): string => rating.split('_')[1];
+): string => rating.split('_')[1]!;
 
 export const convertGreaterThanOrEqualRatingToArrayOfRatingValues = (
   greaterThanValue: number,
 ) =>
   RATING_VALUES.filter(
-    (ratingValue) => +ratingValue.split('_')[1] >= greaterThanValue,
+    (ratingValue) => +ratingValue.split('_')[1]! >= greaterThanValue,
   );
 
 export const convertLessThanOrEqualRatingToArrayOfRatingValues = (
   lessThanValue: number,
 ) =>
   RATING_VALUES.filter(
-    (ratingValue) => +ratingValue.split('_')[1] <= lessThanValue,
+    (ratingValue) => +ratingValue.split('_')[1]! <= lessThanValue,
   );
 
 export const convertRatingToRatingValue = (rating: number) =>

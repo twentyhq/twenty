@@ -135,7 +135,7 @@ export const useBuildSpreadsheetImportFields = () => {
         if (!isImportable) return;
         const label = getCompositeSubFieldLabelWithFieldLabel(
           fieldMetadataItem,
-          subFieldLabel,
+          subFieldLabel!,
         );
 
         spreadsheetImportFields.push(

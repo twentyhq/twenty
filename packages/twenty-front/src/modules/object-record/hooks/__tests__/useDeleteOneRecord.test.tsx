@@ -29,14 +29,14 @@ const flatCompanyRecords = mockedCompanyRecords.map((record) =>
 );
 
 describe('useDeleteOneRecord', () => {
-  const matchingCompanyId = flatCompanyRecords[0].id;
+  const matchingCompanyId = flatCompanyRecords[0]!.id;
   const personRecord = {
-    ...flatPersonRecords[0],
+    ...flatPersonRecords[0]!,
     deletedAt: null,
     companyId: matchingCompanyId,
-    company: { ...flatCompanyRecords[0] },
+    company: { ...flatCompanyRecords[0]! },
   };
-  const relatedCompanyRecord = flatCompanyRecords[0];
+  const relatedCompanyRecord = flatCompanyRecords[0]!;
   const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
   const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
   const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
@@ -98,7 +98,7 @@ describe('useDeleteOneRecord', () => {
 
       await act(async () => {
         const deleteOneResult = await result.current.deleteOneRecord(
-          personRecord.id,
+          personRecord.id!,
         );
         expect(deleteOneResult).toStrictEqual({
           __typename: personRecord.__typename,
@@ -118,7 +118,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(defaultMocks[0].result).toHaveBeenCalled();
+      expect(defaultMocks[0]!.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
 
@@ -141,7 +141,7 @@ describe('useDeleteOneRecord', () => {
       );
 
       await act(async () => {
-        result.current.deleteOneRecord(personRecord.id);
+        result.current.deleteOneRecord(personRecord.id!);
         await waitFor(() => {
           assertCachedRecordIsNull({
             recordId: personRecord.id,
@@ -154,7 +154,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(defaultMocks[0].result).not.toHaveBeenCalled();
+      expect(defaultMocks[0]!.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
@@ -177,7 +177,7 @@ describe('useDeleteOneRecord', () => {
 
       await act(async () => {
         try {
-          await result.current.deleteOneRecord(personRecord.id);
+          await result.current.deleteOneRecord(personRecord.id!);
           fail('Should have thrown an error');
         } catch {
           assertCachedRecordIsNull({
@@ -185,7 +185,7 @@ describe('useDeleteOneRecord', () => {
             objectMetadataItem: personObjectMetadataItem,
           });
           assertCachedRecordIsNull({
-            recordId: relatedCompanyRecord.id,
+            recordId: relatedCompanyRecord!.id,
             objectMetadataItem: companyObjectMetadataItem,
           });
         }
@@ -231,7 +231,7 @@ describe('useDeleteOneRecord', () => {
       );
 
       await act(async () => {
-        const res = await result.current.deleteOneRecord(personRecord.id);
+        const res = await result.current.deleteOneRecord(personRecord.id!);
         expect(res).toMatchObject({
           __typename: 'Person',
           id: personRecord.id,
@@ -251,7 +251,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(defaultMocks[0].result).toHaveBeenCalled();
+      expect(defaultMocks[0]!.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
 
@@ -274,7 +274,7 @@ describe('useDeleteOneRecord', () => {
       );
 
       await act(async () => {
-        result.current.deleteOneRecord(personRecord.id);
+        result.current.deleteOneRecord(personRecord.id!);
         await waitFor(() => {
           assertCachedRecordMatchSnapshot({
             recordId: personRecord.id,
@@ -294,7 +294,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]!.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
@@ -317,7 +317,7 @@ describe('useDeleteOneRecord', () => {
 
       await act(async () => {
         try {
-          await result.current.deleteOneRecord(personRecord.id);
+          await result.current.deleteOneRecord(personRecord.id!);
           fail('Should have thrown an error');
         } catch {
           assertCachedRecordMatchSnapshot({
@@ -334,7 +334,7 @@ describe('useDeleteOneRecord', () => {
         }
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]!.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
   });

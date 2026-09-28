@@ -23,7 +23,7 @@ export const useHandleFindManyRecordsCompleted = <T>({
       const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
 
       const records = getRecordsFromRecordConnection({
-        recordConnection: data?.[objectMetadataItem.namePlural],
+        recordConnection: data?.[objectMetadataItem.namePlural]!,
       }) as T[];
 
       onCompleted?.(records, {

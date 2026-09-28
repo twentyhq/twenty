@@ -37,6 +37,6 @@ export const Default: Story = {
     await expect(unavailable).toBeDisabled();
     edit.focus();
     await userEvent.keyboard('{Enter}');
-    await expect(args.buttons[0].onClick).toHaveBeenCalledOnce();
+    await expect(args.buttons[0]!.onClick).toHaveBeenCalledOnce();
   },
 };

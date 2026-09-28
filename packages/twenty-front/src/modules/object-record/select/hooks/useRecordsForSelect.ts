@@ -71,7 +71,7 @@ export const useRecordsForSelect = ({
 
         if (isNonEmptyString(subFieldName)) {
           return {
-            [parentFieldName]: {
+            [parentFieldName!]: {
               [subFieldName]: {
                 ilike: `%${filter}%`,
               },

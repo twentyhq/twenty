@@ -7,9 +7,9 @@ export const getVisibleFieldWithLowestPosition = (
     return undefined;
   }
   return visibleRecordFields.reduce((lowestPositionField, currentField) => {
-    if (currentField?.position < lowestPositionField?.position) {
+    if (currentField.position < lowestPositionField.position) {
       return currentField;
     }
     return lowestPositionField;
-  }, visibleRecordFields[0]);
+  }, visibleRecordFields[0]!);
 };

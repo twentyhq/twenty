@@ -119,7 +119,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
   return (
     <DropdownMenuInnerSelect
       dropdownId={dropdownId}
-      selectedOption={selectedOption}
+      selectedOption={selectedOption!}
       onChange={handleOperandChange}
       options={options}
       widthInPixels={widthInPixels}

@@ -25,7 +25,7 @@ const flatPersonRecords = mockedPersonRecords.map((record) =>
 );
 
 export const personRecords = personIds.map<ObjectRecord>((personId, index) => ({
-  ...flatPersonRecords[index],
+  ...flatPersonRecords[index]!,
   id: personId,
 }));
 
@@ -44,7 +44,7 @@ export const variables = {
 
 export const updatedPersonRecords = personIds.map<ObjectRecord>(
   (personId, index) => ({
-    ...flatPersonRecords[index],
+    ...flatPersonRecords[index]!,
     id: personId,
     city: 'Updated City',
   }),

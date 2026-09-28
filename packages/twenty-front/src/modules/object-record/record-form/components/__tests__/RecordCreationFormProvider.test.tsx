@@ -61,7 +61,7 @@ it('removes the form from deeper in the history when the user moved on before cr
       createRecord,
     });
   });
-  const [formPage] = store.get(sidePanelNavigationStackState.atom);
+  const formPage = store.get(sidePanelNavigationStackState.atom)[0]!;
   let submission: Promise<void> | undefined;
   act(() => {
     submission = result.current.settleRecordCreationDraft({

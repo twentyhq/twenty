@@ -30,8 +30,8 @@ jest
   // uuid v11+ types add a Uint8Array overload to v4; pin to the string
   // signature so the mocked return values type-check.
   .mocked(v4 as () => string)
-  .mockReturnValueOnce(variables.data[0].id)
-  .mockReturnValueOnce(variables.data[1].id);
+  .mockReturnValueOnce(variables.data[0]!.id)
+  .mockReturnValueOnce(variables.data[1]!.id);
 
 const input = variables.data.map(({ id: _id, ...personInput }) => personInput);
 
@@ -89,7 +89,7 @@ describe('useCreateManyRecords', () => {
       expect(res).toEqual(response);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks[0]!.result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 
@@ -113,8 +113,8 @@ describe('useCreateManyRecords', () => {
     });
 
     // Verify that the mutation was called with data without IDs
-    expect(mocks[1].request.variables.data).toEqual(input);
-    mocks[1].request.variables.data.forEach((record: any) => {
+    expect(mocks[1]!.request.variables.data).toEqual(input);
+    mocks[1]!.request.variables.data.forEach((record) => {
       expect(record).not.toHaveProperty('id');
     });
     expect(triggerCreateRecordsOptimisticEffect).toHaveBeenCalledTimes(1);

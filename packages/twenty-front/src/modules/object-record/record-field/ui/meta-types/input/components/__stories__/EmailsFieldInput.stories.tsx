@@ -166,7 +166,7 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[0]);
+    await userEvent.click(openDropdownButtons[0]!);
 
     const editOption = await within(
       canvasElement.ownerDocument.body,
