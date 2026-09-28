@@ -8,6 +8,10 @@ const previewTooltipClass = css`
   border-radius: ${themeCssVariables.border.radius.md} !important;
   box-shadow: ${themeCssVariables.boxShadow.strong} !important;
   padding: 0 !important;
+
+  [data-anchor-hidden] & {
+    visibility: hidden;
+  }
 `;
 
 type SuggestionItemPreviewTooltipProps = {

@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { EditorContent } from '@tiptap/react';
 import { graphql, HttpResponse } from 'msw';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
@@ -186,5 +187,59 @@ export const PreviewSkill: Story = {
     await expect(await body.findByRole('tooltip')).toHaveTextContent(
       '/meeting-prep',
     );
+  },
+};
+
+const SCROLLABLE_SKILLS = Array.from({ length: 10 }, (_, index) => {
+  const skillNumber = String(index + 1).padStart(2, '0');
+
+  return {
+    __typename: 'Skill',
+    id: `20202020-0000-4000-8000-0000000000${skillNumber}`,
+    name: `skill-${skillNumber}`,
+    label: `Skill ${skillNumber}`,
+    description: `Runs skill ${skillNumber}.`,
+    icon: 'IconBook',
+    isActive: true,
+    isSystem: false,
+  };
+});
+
+export const HideScrolledOutSkillPreview: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('FindManySkillsForSuggestion', () =>
+          HttpResponse.json({ data: { skills: SCROLLABLE_SKILLS } }),
+        ),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const menu = await openAddMenu(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(menu.getByRole('menuitem', { name: /Skills/ }));
+    const firstSkill = await menu.findByRole('button', { name: 'Skill 01' });
+    await waitFor(() =>
+      expect(firstSkill).not.toHaveAttribute('aria-disabled'),
+    );
+
+    await userEvent.type(
+      menu.getByRole('searchbox', { name: 'Search skills' }),
+      'skill',
+    );
+    const preview = await body.findByRole('tooltip');
+    await expect(preview).toHaveTextContent('/skill-01');
+
+    const skillList = firstSkill.closest('[data-scrollable]');
+    if (isDefined(skillList)) {
+      fireEvent.scroll(skillList, {
+        target: { scrollTop: skillList.scrollHeight },
+      });
+    }
+
+    await waitFor(() => expect(preview).not.toBeVisible());
   },
 };
