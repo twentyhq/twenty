@@ -2,7 +2,6 @@ import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/email
 import { getCampaignEngagementThrottleLimits } from 'src/modules/emailing/utils/get-campaign-engagement-throttle-limits.util';
 
 const PAYLOAD: CampaignTrackingTokenPayload = {
-  purpose: 'CLICK',
   workspaceId: '4fe04fe4-dcd6-4123-bf05-ec8f989cda29',
   deliveryId: '7b1b78df-f57c-4367-88ba-31b41e38ab91',
   shortLinkId: 'e589543a-287d-4a83-ae31-55f9ef6c1cb3',
