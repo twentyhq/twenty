@@ -39,6 +39,7 @@ import { Pool } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { AGENT_HISTORY_TEST_SCHEMA } from 'src/database/commands/agent-history/__tests__/agent-history-test-schema.constant';
@@ -64,9 +65,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       synchronize: false,
     });
     const storage = new AgentHistoryStorageService(dataSource);
+    const migrationState = new AgentHistoryMigrationStateService();
     const migration = new AgentHistoryMigrationService(
       dataSource,
-      storage,
+      migrationState,
       new AgentHistoryMigrationDataService(),
       new AgentHistoryMigrationValidationService(),
     );
@@ -514,9 +516,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         'UPDATE core."agentChatThread" SET "updatedAt" = $1',
         [originalTimestamp],
       );
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const injectedCrash = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (
             state.migration?.phase === 'copying' &&
@@ -1004,9 +1006,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     });
 
     it('keeps the fence when a copied value fails verification, then allows abort', async () => {
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const corruptCopy = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           await writeState(runner, workspaceId, state);
           if (
@@ -1160,11 +1162,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
         'Invalid agent history storage state',
       );
+      await expect(migration.inspect(WORKSPACE_ID)).rejects.toThrow(
+        'Invalid agent history storage state',
+      );
       await dataSource.query('DELETE FROM core."keyValuePair"');
       await expect(
         storage.run(WORKSPACE_ID, async () => undefined),
       ).rejects.toThrow('route is missing');
       await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
+        'route is missing',
+      );
+      await expect(migration.inspect(WORKSPACE_ID)).rejects.toThrow(
         'route is missing',
       );
     });
@@ -1215,9 +1223,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const collision = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           await writeState(runner, workspaceId, state);
           if (
@@ -1566,9 +1574,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(await readRoute()).toBe('workspace');
     });
     it('does not allow copy to resume after an interrupted abort', async () => {
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const failCopy = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (
             state.migration?.phase === 'copying' &&
@@ -1582,7 +1590,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).rejects.toThrow('crash');
       failCopy.mockRestore();
       const failAbort = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (!state.migration) throw new Error('abort interrupted');
           await writeState(runner, workspaceId, state);

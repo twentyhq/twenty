@@ -191,6 +191,7 @@ export type ThemeType = {
     color: string;
     light: string;
     sidebar: string;
+    bottomPanel: string;
     strong: string;
     underline: string;
     superHeavy: string;
