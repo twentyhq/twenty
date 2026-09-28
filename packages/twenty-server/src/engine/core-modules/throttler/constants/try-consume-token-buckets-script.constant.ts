@@ -4,7 +4,7 @@ export const TOKEN_BUCKETS_ALLOW_PARTIAL_ARG = '1';
 export const TOKEN_BUCKETS_DENY_PARTIAL_ARG = '0';
 
 export const TRY_CONSUME_TOKEN_BUCKETS_SCRIPT: CacheScript = {
-  name: 'usage-limit:try-consume-token-buckets',
+  name: 'throttler:try-consume-token-buckets',
   source: `
 local requestedCost = tonumber(ARGV[1])
 local buckets = cjson.decode(ARGV[2])
