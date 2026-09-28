@@ -1,7 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  tokenizeValidationRuleExpression,
+} from 'twenty-shared/utils';
 
 import { type ValidationRuleEditorSegment } from '@/validation-rules/types/ValidationRuleEditorSegment';
-import { tokenizeValidationRuleExpression } from '@/validation-rules/utils/tokenizeValidationRuleExpression';
 
 type TextRange = { start: number; end: number };
 

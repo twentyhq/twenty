@@ -334,6 +334,7 @@ export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
+export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
 export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';
 export type { ValidationRuleFunctionName } from './ValidationRuleFunctionName';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';

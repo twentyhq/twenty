@@ -1,11 +1,13 @@
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  tokenizeValidationRuleExpression,
+} from 'twenty-shared/utils';
 
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleHelperContext } from '@/validation-rules/types/ValidationRuleHelperContext';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
 import { getValidationRuleFunctionDefinitions } from '@/validation-rules/utils/getValidationRuleFunctionDefinitions';
-import { tokenizeValidationRuleExpression } from '@/validation-rules/utils/tokenizeValidationRuleExpression';
 
 const WORD_BEFORE_CURSOR_PATTERN =
   /(?:([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\.)?([A-Za-z_$][\w$]*)?$/;

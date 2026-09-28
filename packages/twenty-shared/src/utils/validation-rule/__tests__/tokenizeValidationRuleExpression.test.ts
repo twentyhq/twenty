@@ -1,4 +1,4 @@
-import { tokenizeValidationRuleExpression } from '@/validation-rules/utils/tokenizeValidationRuleExpression';
+import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
 
 const describeTokens = (expression: string) =>
   tokenizeValidationRuleExpression(expression).map(

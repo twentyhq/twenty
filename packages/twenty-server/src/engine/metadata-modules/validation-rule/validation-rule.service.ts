@@ -321,6 +321,11 @@ export class ValidationRuleService {
         flatObjectMetadata,
       });
 
+      const isActive = input.update.isActive ?? existingValidationRule.isActive;
+      const shouldCompile =
+        expression !== existingValidationRule.expression ||
+        (isActive && !existingValidationRule.isActive);
+
       const updatedValidationRule: ObjectValidationRule = {
         ...existingValidationRule,
         name: input.update.name ?? existingValidationRule.name,
@@ -333,18 +338,17 @@ export class ValidationRuleService {
             ? existingValidationRule.icon
             : input.update.icon,
         expression,
-        bindings:
-          expression === existingValidationRule.expression
-            ? existingValidationRule.bindings
-            : compileValidationRuleExpressionOrThrow({
-                expression,
-                objectMetadataId: flatObjectMetadata.id,
-                flatObjectMetadataMaps,
-                flatFieldMetadataMaps,
-              }),
+        bindings: shouldCompile
+          ? compileValidationRuleExpressionOrThrow({
+              expression,
+              objectMetadataId: flatObjectMetadata.id,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+            })
+          : existingValidationRule.bindings,
         message: input.update.message ?? existingValidationRule.message,
         errorFieldMetadataId,
-        isActive: input.update.isActive ?? existingValidationRule.isActive,
+        isActive,
       };
 
       await this.writeValidationRules({

@@ -316,6 +316,7 @@ export { isValidationRuleValueDefined } from './validation-rule/isValidationRule
 export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';
 export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
 export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
+export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
 export { validationRuleParser } from './validation-rule/validationRuleParser';
 export {
   validationRuleNullPlaceholders,

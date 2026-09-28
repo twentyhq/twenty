@@ -1,4 +1,4 @@
-import { type ValidationRuleExpressionToken } from '@/validation-rules/types/ValidationRuleExpressionToken';
+import { type ValidationRuleExpressionToken } from '@/types/ValidationRuleExpressionToken';
 
 const PATH_PATTERN = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*/;
 const NUMBER_PATTERN = /^\d+(?:\.\d+)?/;

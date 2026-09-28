@@ -1,12 +1,12 @@
 import { VALIDATION_RULE_FUNCTIONS } from 'twenty-shared/constants';
+import { type ValidationRuleExpressionToken } from 'twenty-shared/types';
+import { tokenizeValidationRuleExpression } from 'twenty-shared/utils';
 
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import {
   type ValidationRuleExpressionHighlight,
   type ValidationRuleExpressionHighlightKind,
 } from '@/validation-rules/types/ValidationRuleExpressionHighlight';
-import { type ValidationRuleExpressionToken } from '@/validation-rules/types/ValidationRuleExpressionToken';
-import { tokenizeValidationRuleExpression } from '@/validation-rules/utils/tokenizeValidationRuleExpression';
 
 const FUNCTION_NAMES = Object.keys(VALIDATION_RULE_FUNCTIONS);
 const KEYWORD_NAMES = VALIDATION_RULE_KEYWORDS.map(({ name }) => name);
