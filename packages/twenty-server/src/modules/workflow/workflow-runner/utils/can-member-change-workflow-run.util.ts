@@ -1,9 +1,9 @@
 import isEqual from 'lodash.isequal';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const canMemberChangeWorkflowRun = ({
@@ -12,7 +12,10 @@ export const canMemberChangeWorkflowRun = ({
   workspaceMemberId,
   replacementStep,
 }: {
-  workflowRun: Pick<WorkflowRunWorkspaceEntity, 'createdBy' | 'state'>;
+  workflowRun: {
+    createdBy: Pick<ActorMetadata, 'workspaceMemberId'>;
+    state: { flow?: { steps?: WorkflowAction[] } } | null;
+  };
   owningApplication: Pick<FlatApplication, 'id'> | null;
   workspaceMemberId: string | undefined;
   replacementStep?: WorkflowAction;

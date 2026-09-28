@@ -1,62 +1,78 @@
-import { FieldActorSource } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowCodeAction,
+  type WorkflowCreateRecordAction,
+  type WorkflowDeleteRecordAction,
+  type WorkflowFormAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { canMemberChangeWorkflowRun } from 'src/modules/workflow/workflow-runner/utils/can-member-change-workflow-run.util';
 
 const INITIATOR_MEMBER_ID = 'initiator-member-id';
 const OTHER_MEMBER_ID = 'other-member-id';
 const OWNING_APPLICATION = { id: 'installed-app-id' };
 
-const FORM_STEP = {
+const ERROR_HANDLING_OPTIONS = {
+  retryOnFailure: { value: 0 },
+  continueOnFailure: { value: false },
+};
+
+const FORM_STEP: WorkflowFormAction = {
   id: 'form-step',
-  type: WorkflowActionType.FORM,
   name: 'Ask',
+  type: WorkflowActionType.FORM,
   valid: true,
   nextStepIds: ['record-step'],
   settings: {
-    input: [{ id: 'field', label: 'Name', type: 'TEXT', value: null }],
+    input: [
+      {
+        id: 'field',
+        name: 'name',
+        label: 'Name',
+        type: FieldMetadataType.TEXT,
+      },
+    ],
     outputSchema: {},
-    errorHandlingOptions: {
-      retryOnFailure: { value: false },
-      continueOnFailure: { value: false },
-    },
+    errorHandlingOptions: ERROR_HANDLING_OPTIONS,
   },
-} as unknown as WorkflowAction;
+};
 
-const RECORD_STEP = {
-  ...FORM_STEP,
+const RECORD_STEP: WorkflowCreateRecordAction = {
   id: 'record-step',
+  name: 'Create company',
   type: WorkflowActionType.CREATE_RECORD,
+  valid: true,
   nextStepIds: [],
-} as unknown as WorkflowAction;
+  settings: {
+    input: { objectName: 'company', objectRecord: {} },
+    outputSchema: {},
+    errorHandlingOptions: ERROR_HANDLING_OPTIONS,
+  },
+};
 
 const workflowRun = {
-  createdBy: {
-    source: FieldActorSource.MANUAL,
-    workspaceMemberId: INITIATOR_MEMBER_ID,
-    name: 'Tim Apple',
-    context: {},
-  },
-  state: {
-    flow: {
-      steps: [FORM_STEP, RECORD_STEP],
-    },
-  },
-} as unknown as Pick<WorkflowRunWorkspaceEntity, 'createdBy' | 'state'>;
+  createdBy: { workspaceMemberId: INITIATOR_MEMBER_ID },
+  state: { flow: { steps: [FORM_STEP, RECORD_STEP] } },
+};
 
 describe('canMemberChangeWorkflowRun', () => {
   it('keeps workspace workflow runs open to any member allowed on workflows', () => {
+    const deleteStep: WorkflowDeleteRecordAction = {
+      ...RECORD_STEP,
+      type: WorkflowActionType.DELETE_RECORD,
+      settings: {
+        ...RECORD_STEP.settings,
+        input: { objectName: 'company', objectRecordId: 'company-id' },
+      },
+    };
+
     expect(
       canMemberChangeWorkflowRun({
         workflowRun,
         owningApplication: null,
         workspaceMemberId: OTHER_MEMBER_ID,
-        replacementStep: {
-          ...RECORD_STEP,
-          type: WorkflowActionType.DELETE_RECORD,
-        } as unknown as WorkflowAction,
+        replacementStep: deleteStep,
       }),
     ).toBe(true);
   });
@@ -98,21 +114,36 @@ describe('canMemberChangeWorkflowRun', () => {
           ...FORM_STEP,
           settings: {
             ...FORM_STEP.settings,
-            input: [{ id: 'field', label: 'Name', type: 'TEXT', value: 'A' }],
+            input: [{ ...FORM_STEP.settings.input[0], value: 'Acme' }],
           },
-        } as unknown as WorkflowAction,
+        },
       }),
     ).toBe(true);
   });
 
   it('refuses any other change to the graph of an application workflow run', () => {
-    const replacements = [
-      { ...RECORD_STEP, type: WorkflowActionType.FORM },
-      { ...FORM_STEP, type: WorkflowActionType.CODE },
-      { ...FORM_STEP, nextStepIds: [] },
-    ] as unknown as WorkflowAction[];
+    const codeStepReplacingForm: WorkflowCodeAction = {
+      ...FORM_STEP,
+      type: WorkflowActionType.CODE,
+      settings: {
+        ...FORM_STEP.settings,
+        input: { logicFunctionId: 'function-id', logicFunctionInput: {} },
+      },
+    };
+    const formStepReplacingRecord: WorkflowFormAction = {
+      ...FORM_STEP,
+      id: RECORD_STEP.id,
+    };
+    const reroutedFormStep: WorkflowFormAction = {
+      ...FORM_STEP,
+      nextStepIds: [],
+    };
 
-    for (const replacementStep of replacements) {
+    for (const replacementStep of [
+      codeStepReplacingForm,
+      formStepReplacingRecord,
+      reroutedFormStep,
+    ]) {
       expect(
         canMemberChangeWorkflowRun({
           workflowRun,
