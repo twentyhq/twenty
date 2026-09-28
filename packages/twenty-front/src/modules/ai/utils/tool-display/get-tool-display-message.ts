@@ -1,5 +1,8 @@
+import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
@@ -16,6 +19,9 @@ const ModelGeneratedLabelSchema = z.object({
 });
 const LearnToolsSchema = z.object({ toolNames: z.array(z.string()) });
 const LoadSkillsSchema = z.object({ skillNames: z.array(z.string()) });
+const AttachConversationToRecordSchema = z.object({
+  objectNameSingular: z.string(),
+});
 
 export const getToolDisplayMessage = ({
   input,
@@ -123,6 +129,39 @@ const buildToolDisplayMessage = ({
         isFinished,
         completedLabel: t`Ran code`,
         loadingLabel: t`Running code`,
+      });
+    }
+    case ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME: {
+      const parsed = AttachConversationToRecordSchema.safeParse(input);
+      const objectMetadataItem = parsed.success
+        ? displayContext.objectMetadataItems.find(
+            (metadataItem) =>
+              metadataItem.nameSingular === parsed.data.objectNameSingular,
+          )
+        : undefined;
+      const hasFailed =
+        isObject(output) && 'success' in output && output.success === false;
+
+      if (isDefined(objectMetadataItem)) {
+        const objectLabel = objectMetadataItem.labelSingular.toLocaleLowerCase(
+          i18n.locale,
+        );
+
+        return pickStatusLabel({
+          isFinished,
+          completedLabel: hasFailed
+            ? t`Could not attach this conversation to the ${objectLabel}`
+            : t`Attached this conversation to the ${objectLabel}`,
+          loadingLabel: t`Attaching this conversation to the ${objectLabel}`,
+        });
+      }
+
+      return pickStatusLabel({
+        isFinished,
+        completedLabel: hasFailed
+          ? t`Could not attach this conversation to a record`
+          : t`Attached this conversation to a record`,
+        loadingLabel: t`Attaching this conversation to a record`,
       });
     }
     default:
