@@ -1,4 +1,4 @@
-﻿import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
@@ -59,6 +59,7 @@ describe('GroupByRecordsService dimension labels', () => {
         authContext: {} as WorkspaceAuthContext,
       });
 
+      expect(commonGroupByRunner.execute).toHaveBeenCalledTimes(1);
       expect(commonGroupByRunner.execute).toHaveBeenCalledWith(
         expect.objectContaining({ groupBy }),
         {},
