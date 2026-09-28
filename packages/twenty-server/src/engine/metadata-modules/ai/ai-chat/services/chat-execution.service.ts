@@ -270,13 +270,16 @@ export class ChatExecutionService {
       ...nativeTools,
     };
 
-    const isWorkspaceSetupThread =
+    const isWorkspaceSetupConversation =
       isDefined(threadId) &&
       threadId ===
         buildWorkspaceSetupChatThreadId({
           workspaceId: workspace.id,
           userWorkspaceId,
-        }) &&
+        });
+
+    const isWorkspaceSetupThread =
+      isWorkspaceSetupConversation &&
       !hasSucceededWorkspaceSetupCompletion(messages);
 
     const isWorkspaceSetupKickoffTurn =
@@ -284,8 +287,11 @@ export class ChatExecutionService {
 
     tagAiChatKindScope({ isWorkspaceSetupThread });
 
+    // Judged on the conversation rather than on setup still running: once setup
+    // completes, the member's onboarding carries on in this same conversation,
+    // and it is not one to file under their records.
     const canAttachConversationToRecords =
-      !isWorkspaceSetupThread &&
+      !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
         workspace.id,

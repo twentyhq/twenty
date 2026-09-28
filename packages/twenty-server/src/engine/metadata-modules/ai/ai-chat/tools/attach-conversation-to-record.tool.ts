@@ -32,7 +32,10 @@ export const createAttachConversationToRecordTool = ({
   agentChatThreadTargetService,
   toolContext,
 }: {
-  agentChatThreadTargetService: AgentChatThreadTargetService;
+  agentChatThreadTargetService: Pick<
+    AgentChatThreadTargetService,
+    'attachThreadToRecord'
+  >;
   toolContext: ToolContext;
 }) => ({
   description:

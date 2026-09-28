@@ -387,6 +387,27 @@ describe('getToolDisplayMessage', () => {
 
       expect(message).toBe('Attaching this conversation to a record');
     });
+
+    it('should say the attachment failed when the tool reports a failure', () => {
+      const message = getToolDisplayMessage({
+        input: {
+          objectNameSingular: 'person',
+          recordId: '20202020-0000-4000-8000-000000000001',
+        },
+        toolName: 'attach_conversation_to_record',
+        isFinished: true,
+        displayContext: makeDisplayContext({
+          objectMetadataItems: [personMetadata],
+        }),
+        output: {
+          success: false,
+          message: 'Failed to attach this conversation to the person record',
+          error: 'Record not found',
+        },
+      });
+
+      expect(message).toBe('Could not attach this conversation to the person');
+    });
   });
 
   describe('default tool labels', () => {

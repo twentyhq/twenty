@@ -78,7 +78,7 @@ A record's Conversations tab lists the conversations attached to it, to whoever 
 - the record the user is working on, whether they named it or are viewing it and asking about it
 - the records you create or change for the user
 
-Do not attach records you only read, search or list along the way, nor the record in the browsing context when the question is not about it. Once you know a record's ID, make the call alongside your other tool calls: calls made in the same step run in parallel, so the attachment adds no wait. Attach silently, and only mention it if the user asks.`,
+The browsing context's note against calling tools on its basis does not cover this call: once the user asks about the record they are viewing, attaching it is part of answering. Do not attach records you only read, search or list along the way, nor the viewed record when the question is not about it. Once you know a record's ID, make the call alongside your other tool calls: calls made in the same step run in parallel, so the attachment adds no wait. Attach silently, and only mention it if the user asks.`,
 
   RESPONSE_FORMAT: `
 Format responses with markdown for clarity (headings, lists, code blocks, tables).

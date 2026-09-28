@@ -3,7 +3,6 @@ import {
   type WorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   attachConversationToRecordInputSchema,
@@ -41,9 +40,7 @@ const buildTool = (toolContext: ToolContext) => {
   const attachThreadToRecord = jest.fn(async () => undefined);
 
   const tool = createAttachConversationToRecordTool({
-    agentChatThreadTargetService: {
-      attachThreadToRecord,
-    } as unknown as AgentChatThreadTargetService,
+    agentChatThreadTargetService: { attachThreadToRecord },
     toolContext,
   });
 

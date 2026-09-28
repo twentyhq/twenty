@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -139,6 +139,8 @@ const buildToolDisplayMessage = ({
               metadataItem.nameSingular === parsed.data.objectNameSingular,
           )
         : undefined;
+      const hasFailed =
+        isObject(output) && 'success' in output && output.success === false;
 
       if (isDefined(objectMetadataItem)) {
         const objectLabel = objectMetadataItem.labelSingular.toLocaleLowerCase(
@@ -147,14 +149,18 @@ const buildToolDisplayMessage = ({
 
         return pickStatusLabel({
           isFinished,
-          completedLabel: t`Attached this conversation to the ${objectLabel}`,
+          completedLabel: hasFailed
+            ? t`Could not attach this conversation to the ${objectLabel}`
+            : t`Attached this conversation to the ${objectLabel}`,
           loadingLabel: t`Attaching this conversation to the ${objectLabel}`,
         });
       }
 
       return pickStatusLabel({
         isFinished,
-        completedLabel: t`Attached this conversation to a record`,
+        completedLabel: hasFailed
+          ? t`Could not attach this conversation to a record`
+          : t`Attached this conversation to a record`,
         loadingLabel: t`Attaching this conversation to a record`,
       });
     }
