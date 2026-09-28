@@ -36,9 +36,9 @@ export class FormWorkflowAction implements WorkflowAction {
       );
     }
 
-    // Written before the step reports itself pending: a run that pauses
-    // without its Ask is a question nobody can find, whereas an Ask whose run
-    // never parks is answerable and resolves the step when it does.
+    // Written before the step reports itself pending: a run parked without its
+    // Ask is a question nobody can find, while an early Ask is only briefly
+    // unanswerable and is canceled if the run dies before parking.
     await this.inputAskWorkspaceService.openForFormStep({
       workspaceId: runInfo.workspaceId,
       workflowRunId: runInfo.workflowRunId,

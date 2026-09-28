@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,6 +27,8 @@ import {
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunWorkspaceService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
@@ -188,11 +190,19 @@ export class WorkflowRunWorkspaceService {
 
     // A run that ends can no longer consume an answer, so an Ask still
     // waiting on one stops being actionable here rather than outliving it.
-    await this.inputAskWorkspaceService.cancelPendingForWorkflowRun({
-      workspaceId,
-      workflowRunId,
-      stepInfos: updatedStepInfos,
-    });
+    // The run has ended either way: a failure here only leaves a stale Ask,
+    // and must not turn the run's outcome into a failure.
+    try {
+      await this.inputAskWorkspaceService.cancelPendingForWorkflowRun({
+        workspaceId,
+        workflowRunId,
+        stepInfos: updatedStepInfos,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to close the Asks of workflow run ${workflowRunId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
     const metricKey =
       status === WorkflowRunStatus.COMPLETED

@@ -937,6 +937,42 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    it('completes the run even when its Asks cannot be closed', async () => {
+      const finalStep = emptyStep();
+      const form = approvalForm([finalStep.id]);
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [form, finalStep],
+      });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+
+      const cancelPending = jest
+        .spyOn(
+          getAppProviderByClassName<InputAskWorkspaceService>(
+            'InputAskWorkspaceService',
+          ),
+          'cancelPendingForWorkflowRun',
+        )
+        .mockRejectedValueOnce(new Error('Ask write failed'));
+
+      const response = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'Approved',
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      cancelPending.mockRestore();
+
+      expect(run.status).toBe('COMPLETED');
+      expect(run.state.stepInfos[finalStep.id].status).toBe('SUCCESS');
+    });
+
     it('keeps the first answer when a second submission is refused', async () => {
       const finalStep = emptyStep();
       const form = approvalForm([finalStep.id]);
