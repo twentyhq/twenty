@@ -1,16 +1,13 @@
 import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
+import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
 import { type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/components';
-import { type IconComponent } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
-type OnboardingRewardMainButtonProps = {
-  label: string;
-  Icon?: IconComponent;
+type OnboardingRewardMainButtonProps = OnboardingRewardAction & {
   creditsReward: number;
-  onClick: () => void;
   ref?: Ref<HTMLButtonElement>;
 };
 

@@ -1,4 +1,5 @@
 import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -11,7 +12,6 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOnboardingStep = styled(StyledOnboardingStepPage)`
@@ -47,15 +47,13 @@ const StyledButtons = styled.div`
 `;
 
 type ImportContactsProps = {
-  onContinueWithGoogle?: () => void;
-  onContinueWithMicrosoft?: () => void;
+  providerActions: OnboardingRewardAction[];
   onSkip?: () => void;
   creditsReward?: number;
 };
 
 export const ImportContacts = ({
-  onContinueWithGoogle,
-  onContinueWithMicrosoft,
+  providerActions,
   onSkip,
   creditsReward = 0,
 }: ImportContactsProps) => {
@@ -84,22 +82,15 @@ export const ImportContacts = ({
       <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
           <StyledButtons>
-            {isDefined(onContinueWithMicrosoft) && (
+            {providerActions.map((providerAction) => (
               <OnboardingRewardMainButton
-                label={t`Continue with Microsoft`}
-                Icon={IconMicrosoft}
+                key={providerAction.label}
+                label={providerAction.label}
+                Icon={providerAction.Icon}
                 creditsReward={creditsReward}
-                onClick={onContinueWithMicrosoft}
+                onClick={providerAction.onClick}
               />
-            )}
-            {isDefined(onContinueWithGoogle) && (
-              <OnboardingRewardMainButton
-                label={t`Continue with Google`}
-                Icon={IconGoogle}
-                creditsReward={creditsReward}
-                onClick={onContinueWithGoogle}
-              />
-            )}
+            ))}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}
         </StyledFooter>

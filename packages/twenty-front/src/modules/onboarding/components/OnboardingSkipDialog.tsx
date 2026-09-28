@@ -1,12 +1,13 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
-import { type IconComponent, IconX } from 'twenty-ui/icon';
+import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -27,18 +28,12 @@ const StyledVisual = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-type OnboardingSkipDialogAction = {
-  label: string;
-  Icon?: IconComponent;
-  onClick: () => void;
-};
-
 type OnboardingSkipDialogProps = {
   dialogId: string;
   visual: ReactNode;
   title: string;
   description?: string;
-  actions: OnboardingSkipDialogAction[];
+  actions: OnboardingRewardAction[];
   creditsReward: number;
   onSkip: () => void;
 };
@@ -56,7 +51,7 @@ export const OnboardingSkipDialog = ({
   const { closeDialog } = useDialog();
   const firstActionRef = useRef<HTMLButtonElement>(null);
 
-  const runAction = (action: OnboardingSkipDialogAction) => {
+  const runAction = (action: OnboardingRewardAction) => {
     closeDialog(dialogId);
     action.onClick();
   };

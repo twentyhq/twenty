@@ -89,6 +89,21 @@ export const SyncEmails = () => {
     }
   };
 
+  const providerActions = [
+    {
+      isEnabled: isMicrosoftProviderEnabled,
+      label: t`Continue with Microsoft`,
+      Icon: IconMicrosoft,
+      onClick: () => connectWithProvider(ConnectedAccountProvider.MICROSOFT),
+    },
+    {
+      isEnabled: isGoogleProviderEnabled,
+      label: t`Continue with Google`,
+      Icon: IconGoogle,
+      onClick: () => connectWithProvider(ConnectedAccountProvider.GOOGLE),
+    },
+  ].filter((providerAction) => providerAction.isEnabled);
+
   const handleSkip = () => openDialog(ONBOARDING_SKIP_DIALOG_IDS.syncEmails);
 
   const handleSkipConfirm = async () => {
@@ -117,16 +132,7 @@ export const SyncEmails = () => {
   return (
     <>
       <ImportContacts
-        onContinueWithGoogle={
-          isGoogleProviderEnabled
-            ? () => connectWithProvider(ConnectedAccountProvider.GOOGLE)
-            : undefined
-        }
-        onContinueWithMicrosoft={
-          isMicrosoftProviderEnabled
-            ? () => connectWithProvider(ConnectedAccountProvider.MICROSOFT)
-            : undefined
-        }
+        providerActions={providerActions}
         onSkip={handleSkip}
         creditsReward={importContactsCreditsReward}
       />
@@ -144,28 +150,7 @@ export const SyncEmails = () => {
         }
         title={t`Start with your whole network`}
         description={t`Twenty adds the people you email and meet, and keeps them up to date without manual data entry.`}
-        actions={[
-          ...(isMicrosoftProviderEnabled
-            ? [
-                {
-                  label: t`Continue with Microsoft`,
-                  Icon: IconMicrosoft,
-                  onClick: () =>
-                    connectWithProvider(ConnectedAccountProvider.MICROSOFT),
-                },
-              ]
-            : []),
-          ...(isGoogleProviderEnabled
-            ? [
-                {
-                  label: t`Continue with Google`,
-                  Icon: IconGoogle,
-                  onClick: () =>
-                    connectWithProvider(ConnectedAccountProvider.GOOGLE),
-                },
-              ]
-            : []),
-        ]}
+        actions={providerActions}
         creditsReward={importContactsCreditsReward}
         onSkip={() => void handleSkipConfirm()}
       />
