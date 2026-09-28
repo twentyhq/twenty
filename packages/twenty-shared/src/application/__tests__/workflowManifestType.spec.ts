@@ -45,6 +45,23 @@ const workflow: WorkflowManifest = {
 };
 
 describe('workflow manifest iterator cycles', () => {
+  it('rejects a loop body without a return edge', () => {
+    const invalid = structuredClone(workflow);
+    invalid.version.steps[1].nextStepIds = [];
+    const result = workflowManifestSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success)
+      expect(result.error.message).toContain('must return to iterator');
+  });
+
+  it('rejects references to a missing step', () => {
+    const invalid = structuredClone(workflow);
+    const iterator = invalid.version.steps[0];
+    if (iterator.type !== 'ITERATOR') throw new Error('Expected iterator');
+    iterator.input.items = '{{missing.items}}';
+    expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
+  });
+
   it('accepts a loop body returning to its iterator', () => {
     expect(workflowManifestSchema.safeParse(workflow).success).toBe(true);
   });

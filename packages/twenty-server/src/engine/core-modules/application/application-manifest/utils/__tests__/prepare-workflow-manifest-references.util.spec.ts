@@ -40,6 +40,41 @@ const proposedMaps = () => {
 };
 
 describe('workflow manifest references', () => {
+  it('resolves function and agent output schemas from the same installation', () => {
+    const proposed = proposedMaps();
+    proposed.flatLogicFunctionMaps.byUniversalIdentifier.action!.workflowActionTriggerSettings =
+      {
+        outputSchema: [
+          { type: 'object', properties: { greeting: { type: 'string' } } },
+        ],
+      };
+    proposed.flatAgentMaps.byUniversalIdentifier.agent!.responseFormat = {
+      type: 'json',
+      schema: {
+        type: 'object',
+        properties: {
+          summary: { type: 'string', description: 'Summary' },
+          score: { type: 'number' },
+        },
+      },
+    };
+    const references = prepareWorkflowManifestReferences({
+      fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
+      existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
+      toAllUniversalFlatEntityMaps: proposed,
+      ownerApplicationId: OWNER,
+    });
+    expect(
+      references.logicFunctionOutputSchemaByUniversalIdentifier?.get('action'),
+    ).toMatchObject({ greeting: { isLeaf: true, type: 'string' } });
+    expect(
+      references.agentOutputSchemaByUniversalIdentifier?.get('agent'),
+    ).toMatchObject({
+      summary: { isLeaf: true, type: 'string', description: 'Summary' },
+      score: { type: 'number' },
+    });
+  });
+
   it('uses the IDs assigned to metadata in the same installation', () => {
     const proposed = proposedMaps();
     const references = prepareWorkflowManifestReferences({

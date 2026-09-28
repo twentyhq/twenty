@@ -70,6 +70,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     fromAllFlatEntityMaps,
     existingAllFlatEntityMaps = fromAllFlatEntityMaps,
     isLogicFunctionPrebuiltModeEnabled,
+    isApplicationWorkflowsEnabled = false,
     inferDeletionFromMissingEntities = false,
     now,
     workspaceId,
@@ -79,10 +80,22 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     fromAllFlatEntityMaps: AllFlatEntityMaps;
     existingAllFlatEntityMaps?: AllFlatEntityMaps;
     isLogicFunctionPrebuiltModeEnabled: boolean;
+    isApplicationWorkflowsEnabled?: boolean;
     inferDeletionFromMissingEntities?: boolean;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
+    const workflows = manifest.workflows ?? [];
+    if (workflows.length > 0 && !isApplicationWorkflowsEnabled) {
+      throw new ApplicationException(
+        'Application workflows are not enabled for this workspace',
+        ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Application workflows are not enabled for this workspace.`,
+        },
+      );
+    }
+
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
     const {
@@ -697,7 +710,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    const workflows = manifest.workflows ?? [];
     const declaredWorkflowIds = new Set(
       workflows.map((workflow) => workflow.universalIdentifier),
     );

@@ -177,7 +177,7 @@ const branchingWorkflow = (type: 'IF_ELSE' | 'ITERATOR'): WorkflowManifest => ({
         name: 'Inside',
         type: 'EMPTY',
         input: {},
-        nextStepIds: [],
+        nextStepIds: type === 'ITERATOR' ? [FIRST_STEP_ID] : [],
       },
     ],
   },
@@ -208,7 +208,7 @@ describe('application workflow action graphs', () => {
         }),
       ).toThrow();
       const cyclic = branchingWorkflow(type);
-      cyclic.version.steps[2].nextStepIds = [FIRST_STEP_ID];
+      cyclic.version.steps[2].nextStepIds = [BODY_ID];
       expect(() =>
         fromWorkflowManifestToCoreDefinitionsOrThrow({
           ...options,

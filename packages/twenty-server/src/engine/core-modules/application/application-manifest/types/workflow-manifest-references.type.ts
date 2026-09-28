@@ -1,3 +1,4 @@
+import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -6,7 +7,10 @@ export type WorkflowManifestObjectReference = Pick<
   'nameSingular'
 > &
   Partial<
-    Pick<FlatObjectMetadata, 'labelIdentifierFieldMetadataUniversalIdentifier'>
+    Pick<
+      FlatObjectMetadata,
+      'labelIdentifierFieldMetadataUniversalIdentifier' | 'namePlural'
+    >
   >;
 
 export type WorkflowManifestFieldReference = {
@@ -21,6 +25,14 @@ export type WorkflowManifestFieldReference = {
 >;
 
 export type WorkflowManifestReferences = {
+  logicFunctionOutputSchemaByUniversalIdentifier?: ReadonlyMap<
+    string,
+    BaseOutputSchemaV2
+  >;
+  agentOutputSchemaByUniversalIdentifier?: ReadonlyMap<
+    string,
+    BaseOutputSchemaV2
+  >;
   logicFunctionIdByUniversalIdentifier: ReadonlyMap<string, string>;
   codeFunctionIdByUniversalIdentifier?: ReadonlyMap<string, string>;
   agentIdByUniversalIdentifier?: ReadonlyMap<string, string>;

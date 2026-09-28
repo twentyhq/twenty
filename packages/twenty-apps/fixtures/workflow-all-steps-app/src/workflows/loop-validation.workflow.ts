@@ -4,7 +4,13 @@ import gallery from './all-steps.workflow';
 const CREATE_STEP_ID = '8689d5e3-2b2e-5e53-9901-c552ff3e2d38';
 const ITERATOR_STEP_ID = '136ca3b7-c3cb-5245-afa7-6f6bb33e24ae';
 const validationId = (id: string) => `11111111${id.slice(8)}`;
-const STEP_TYPES = ['CREATE_RECORD', 'ITERATOR', 'DELAY', 'DELETE_RECORD', 'EMPTY'];
+const STEP_TYPES = [
+  'CREATE_RECORD',
+  'ITERATOR',
+  'DELAY',
+  'DELETE_RECORD',
+  'EMPTY',
+];
 
 export default defineWorkflow({
   universalIdentifier: 'b6c9a401-44f8-443f-88f4-13e9f20b0d11',
@@ -35,9 +41,20 @@ export default defineWorkflow({
         universalIdentifier: validationId(step.universalIdentifier),
         nextStepIds: step.nextStepIds.map(validationId),
         ...(step.type === 'ITERATOR'
-          ? { input: { ...step.input, initialLoopStepIds: step.input.initialLoopStepIds.map(validationId) } }
+          ? {
+              input: {
+                ...step.input,
+                initialLoopStepIds:
+                  step.input.initialLoopStepIds.map(validationId),
+              },
+            }
           : step.type === 'DELETE_RECORD'
-            ? { input: { ...step.input, objectRecordId: `{{${validationId(CREATE_STEP_ID)}.id}}` } }
+            ? {
+                input: {
+                  ...step.input,
+                  objectRecordId: `{{${validationId(CREATE_STEP_ID)}.id}}`,
+                },
+              }
             : {}),
       })),
   },

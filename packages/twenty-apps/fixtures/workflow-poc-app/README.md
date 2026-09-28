@@ -49,6 +49,13 @@ A record step can use an object declared by the same app:
 }
 ```
 
-For `IF_ELSE`, each branch's `nextStepIds` identifies its entry steps. For `ITERATOR`, `input.initialLoopStepIds` identifies the loop body, while the iterator's `nextStepIds` identifies the steps after the loop. Loop-body terminal steps have no outgoing edge; do not add a back edge to the iterator. Manifest validation checks these edges for missing steps, cycles and reachability.
+For `IF_ELSE`, each branch's `nextStepIds` identifies its entry steps. For `ITERATOR`, `input.initialLoopStepIds` identifies the loop body, while the iterator's `nextStepIds` identifies the steps after the loop. Every loop-body path must return to its enclosing iterator through `nextStepIds`. The iterator advances on that return edge. Its own `nextStepIds` runs after the loop completes. Manifest validation checks these edges for missing steps, invalid cycles, missing iterator returns, unknown variable sources and reachability.
 
 `CODE` uses a separately declared app logic function rather than inline source. External integrations still require their normal setup: connected accounts for email/calendar, AI availability for agent/classification actions, and reachable HTTP endpoints. Supporting their definitions does not bypass those requirements or change their permissions.
+
+
+Application workflows are experimental. Enable `IS_APPLICATION_WORKFLOWS_ENABLED` to install or update workflow definitions and start new runs, and enable `IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED` for the core workflow UI. Both flags default off unless configured. Disabling the application-workflow flag blocks installation/updates containing workflows and hides Run; it does not delete definitions or interrupt already-started runs. The older workspace UI cannot display these core-only definitions. Execution permissions, uninstall safety and dependency pinning remain outside this POC.
+
+Output schemas are populated during installation without executing steps. Explicit step `outputSchema` takes precedence. CODE and LOGIC_FUNCTION steps can reuse the referenced function's `workflowActionTriggerSettings.outputSchema`; otherwise provide an `expectedOutputSchema` containing a representative result. HTTP_REQUEST also uses `expectedOutputSchema`. AI_AGENT uses the referenced agent's response format. Arbitrary code and HTTP response shapes cannot be inferred without an output declaration. Keep declarations in sync with the implementation.
+
+Record-write field names are checked against metadata from the target workspace and the same app installation. UPDATE_RECORD must select existing fields and provide their values in `objectRecord`.

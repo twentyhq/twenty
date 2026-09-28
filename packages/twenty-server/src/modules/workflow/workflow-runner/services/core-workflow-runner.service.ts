@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
+import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -38,6 +39,7 @@ export class CoreWorkflowRunnerService {
     private readonly billingUsageService: BillingUsageService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -95,6 +97,19 @@ export class CoreWorkflowRunnerService {
     ) {
       throw new WorkflowRunException(
         'Core workflow not found',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    if (
+      !isDefined(workflow.workspaceWorkflowId) &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
+        workspaceId,
+      ))
+    ) {
+      throw new WorkflowRunException(
+        'Application workflows are not enabled for this workspace',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }

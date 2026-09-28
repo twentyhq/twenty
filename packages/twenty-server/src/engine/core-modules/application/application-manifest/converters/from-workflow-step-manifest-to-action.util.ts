@@ -1,3 +1,5 @@
+import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
+import { validateWorkflowManifestRecordFields } from 'src/engine/core-modules/application/application-manifest/utils/validate-workflow-manifest-record-fields.util';
 import { computeWorkflowManifestOrderBy } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-order-by.util';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
@@ -79,6 +81,7 @@ export const fromWorkflowStepManifestToAction = ({
         : {}),
     };
   };
+  validateWorkflowManifestRecordFields({ step, references });
   let input: unknown;
   switch (step.type) {
     case 'CODE':
@@ -236,7 +239,9 @@ export const fromWorkflowStepManifestToAction = ({
     position: step.position ?? { x: 0, y: (index + 1) * 180 },
     settings: {
       input: structuredClone(input),
-      outputSchema: structuredClone(step.outputSchema ?? {}),
+      outputSchema: structuredClone(
+        computeWorkflowManifestOutputSchema({ step, references }),
+      ),
       ...(isDefined(step.expectedOutputSchema)
         ? { expectedOutputSchema: structuredClone(step.expectedOutputSchema) }
         : {}),

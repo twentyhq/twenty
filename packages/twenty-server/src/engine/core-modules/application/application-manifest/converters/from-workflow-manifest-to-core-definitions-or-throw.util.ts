@@ -1,3 +1,7 @@
+import {
+  buildWorkflowGraph,
+  validateWorkflowVariableReferences,
+} from 'twenty-shared/workflow';
 import { fromWorkflowStepManifestToAction } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { msg } from '@lingui/core/macro';
@@ -16,7 +20,10 @@ import { v4 } from 'uuid';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  type WorkflowManualTrigger,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 
@@ -76,6 +83,29 @@ export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
     fromWorkflowStepManifestToAction({ step, index, references }),
   );
 
+  const trigger = {
+    ...definition.version.trigger,
+    name: 'Manual trigger',
+    type: WorkflowTriggerType.MANUAL,
+    position: { x: 0, y: 0 },
+    settings: { outputSchema: {} },
+  } satisfies WorkflowManualTrigger;
+  const content = { trigger, steps };
+  const variableIssues = validateWorkflowVariableReferences({
+    workflow: content,
+    graph: buildWorkflowGraph(content),
+    stepsById: new Map(steps.map((step) => [step.id, step])),
+  });
+  if (variableIssues.length > 0) {
+    throw new ApplicationException(
+      variableIssues.map(({ message }) => message).join('; '),
+      ApplicationExceptionCode.INVALID_INPUT,
+      {
+        userFriendlyMessage: msg`The workflow contains invalid variable references.`,
+      },
+    );
+  }
+
   return {
     workflow: {
       id: workflowId,
@@ -98,15 +128,7 @@ export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
       workflowId: null,
       workspaceWorkflowVersionId: null,
       status: WorkflowVersionStatus.ACTIVE,
-      triggers: [
-        {
-          ...definition.version.trigger,
-          name: 'Manual trigger',
-          type: WorkflowTriggerType.MANUAL,
-          position: { x: 0, y: 0 },
-          settings: { outputSchema: {} },
-        },
-      ],
+      triggers: [trigger],
       steps,
       createdAt: existingVersion?.createdAt ?? now,
       updatedAt: now,

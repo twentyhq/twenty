@@ -10,5 +10,11 @@ export default defineLogicFunction({
   name: 'greet',
   timeoutSeconds: 5,
   handler,
-  workflowActionTriggerSettings: { label: 'Greet', icon: 'IconHandStop' },
+  workflowActionTriggerSettings: {
+    label: 'Greet',
+    icon: 'IconHandStop',
+    outputSchema: [
+      { type: 'object', properties: { greeting: { type: 'string' } } },
+    ],
+  },
 });

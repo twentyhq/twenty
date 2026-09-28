@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { validateWorkflowVariableReferences } from '@/workflow/validation/utils/validate-workflow-variable-references.util';
+
 import { workflowStepManifestSchema } from '@/application/workflowStepManifestType';
 import { buildWorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { validateWorkflowGraph } from '@/workflow/validation/utils/validate-workflow-graph.util';
@@ -44,10 +46,16 @@ export const workflowManifestSchema = z
       })),
     };
     const graph = buildWorkflowGraph(validatableWorkflow);
-    for (const issue of validateWorkflowGraph({
-      workflow: validatableWorkflow,
-      graph,
-    })) {
+    for (const issue of [
+      ...validateWorkflowGraph({ workflow: validatableWorkflow, graph }),
+      ...validateWorkflowVariableReferences({
+        workflow: validatableWorkflow,
+        graph,
+        stepsById: new Map(
+          validatableWorkflow.steps.map((step) => [step.id, step]),
+        ),
+      }),
+    ]) {
       if (issue.severity === 'error') {
         context.addIssue({ code: 'custom', message: issue.message });
       }
@@ -64,8 +72,7 @@ export const workflowManifestSchema = z
       sourceId?: string,
     ): void => {
       if (visiting.has(id)) {
-        // Loop bodies must return to their iterator to advance to the next item.
-        if (id !== sourceId && enclosingIterators.includes(id)) {
+        if (id !== sourceId && enclosingIterators.at(-1) === id) {
           return;
         }
         context.addIssue({
@@ -88,9 +95,14 @@ export const workflowManifestSchema = z
           visit(nextId, enclosingIterators, id),
         );
       } else {
-        (graph.childrenByStepId.get(id) ?? []).forEach((nextId) =>
-          visit(nextId, enclosingIterators, id),
-        );
+        const destinations = graph.childrenByStepId.get(id) ?? [];
+        if (enclosingIterators.length > 0 && destinations.length === 0) {
+          context.addIssue({
+            code: 'custom',
+            message: `Loop body step ${id} must return to iterator ${enclosingIterators.at(-1)}`,
+          });
+        }
+        destinations.forEach((nextId) => visit(nextId, enclosingIterators, id));
       }
       visiting.delete(id);
       visited.add(visitKey);

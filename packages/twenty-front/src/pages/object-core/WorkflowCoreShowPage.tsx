@@ -1,3 +1,4 @@
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
@@ -7,7 +8,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/primitives/feedback';
@@ -47,6 +52,9 @@ const CoreWorkflowShowContent = ({
   coreWorkflowId: string;
 }) => {
   const client = useApolloCoreClient();
+  const isApplicationWorkflowsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
+  );
   const { runWorkflowVersion } = useRunWorkflowVersion();
   const { record, coreWorkflow, loading, error, refetch } =
     useCoreWorkflowShowPageResource({
@@ -150,19 +158,21 @@ const CoreWorkflowShowContent = ({
             actionButton={
               <>
                 {!isReadOnlyVersion && <RecordShowCommandMenu />}
-                {isApplicationManaged && isDefined(currentVersion) && (
-                  <Button
-                    title={t`Run`}
-                    onClick={() =>
-                      runWorkflowVersion({
-                        workflowId: coreWorkflowId,
-                        workflowVersionId: currentVersion.id,
-                      })
-                    }
-                  >
-                    {t`Run`}
-                  </Button>
-                )}
+                {isApplicationManaged &&
+                  isApplicationWorkflowsEnabled &&
+                  isDefined(currentVersion) && (
+                    <Button
+                      title={t`Run`}
+                      onClick={() =>
+                        runWorkflowVersion({
+                          workflowId: coreWorkflowId,
+                          workflowVersionId: currentVersion.id,
+                        })
+                      }
+                    >
+                      {t`Run`}
+                    </Button>
+                  )}
                 <SidePanelToggleButton />
               </>
             }

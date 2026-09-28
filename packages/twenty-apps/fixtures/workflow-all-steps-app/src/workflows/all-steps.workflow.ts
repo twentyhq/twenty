@@ -84,6 +84,10 @@ export default defineWorkflow({
         universalIdentifier: STEP_IDS.CODE,
         name: 'Prepare a unique company name',
         type: 'CODE',
+        expectedOutputSchema: {
+          companyName: 'Demo company',
+          summaryPrompt: 'Describe the demo company',
+        },
         position: {
           x: 0,
           y: 360,

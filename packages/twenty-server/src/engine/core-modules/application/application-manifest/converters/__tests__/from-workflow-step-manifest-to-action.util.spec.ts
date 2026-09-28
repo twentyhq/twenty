@@ -17,6 +17,17 @@ const references = {
   ]),
   fieldByUniversalIdentifier: new Map([
     [
+      'name-field',
+      {
+        id: 'name-id',
+        name: 'name',
+        objectUniversalIdentifier: REFERENCE_ID,
+        type: FieldMetadataType.TEXT,
+        settings: null,
+        relationTargetObjectMetadataUniversalIdentifier: null,
+      },
+    ],
+    [
       FIELD_ID,
       {
         id: LOCAL_ID,
@@ -138,6 +149,65 @@ const convert = (type: WorkflowActionType) =>
   });
 
 describe('application workflow actions', () => {
+  it('rejects unknown record fields before installing the workflow', () => {
+    const step = stepFor(WorkflowActionType.UPDATE_RECORD);
+    if (step.type !== 'UPDATE_RECORD') throw new Error('Expected update');
+    step.input.objectRecord = { employees: 10 };
+    step.input.fieldsToUpdate = ['employees'];
+    expect(() =>
+      fromWorkflowStepManifestToAction({ step, index: 0, references }),
+    ).toThrow('unknown record field employees');
+  });
+
+  it.each([{ fieldsToUpdate: [] }, { fieldsToUpdate: ['owner'] }])(
+    'rejects an update with no supplied values for its selection %j',
+    ({ fieldsToUpdate }) => {
+      const step = stepFor(WorkflowActionType.UPDATE_RECORD);
+      if (step.type !== 'UPDATE_RECORD') throw new Error('Expected update');
+      step.input.fieldsToUpdate = fieldsToUpdate;
+      expect(() =>
+        fromWorkflowStepManifestToAction({ step, index: 0, references }),
+      ).toThrow('fieldsToUpdate');
+    },
+  );
+
+  it('derives a nested code output schema from an expected result', () => {
+    const step = stepFor(WorkflowActionType.CODE);
+    step.expectedOutputSchema = { company: { name: 'Example' }, count: 2 };
+    const result = fromWorkflowStepManifestToAction({
+      step,
+      index: 0,
+      references,
+    });
+    expect(result.settings.outputSchema).toMatchObject({
+      company: { isLeaf: false, value: { name: { type: 'string' } } },
+      count: { isLeaf: true, type: 'number' },
+    });
+  });
+
+  it('uses the declared function output schema without running the function', () => {
+    const outputSchema = {
+      greeting: {
+        isLeaf: true as const,
+        type: 'string' as const,
+        label: 'Greeting',
+        value: null,
+      },
+    };
+    const result = fromWorkflowStepManifestToAction({
+      step: stepFor(WorkflowActionType.LOGIC_FUNCTION),
+      index: 0,
+      references: {
+        ...references,
+        logicFunctionOutputSchemaByUniversalIdentifier: new Map([
+          [REFERENCE_ID, outputSchema],
+        ]),
+      },
+    });
+    expect(result.settings.outputSchema).toEqual(outputSchema);
+    expect(result.settings.outputSchema).not.toBe(outputSchema);
+  });
+
   it.each(Object.values(WorkflowActionType))(
     'converts %s to its runtime action',
     (type) => {

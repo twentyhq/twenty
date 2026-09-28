@@ -1,3 +1,6 @@
+import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
+import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { computeAiAgentOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-ai-agent-output-schema.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -19,6 +22,14 @@ export const prepareWorkflowManifestReferences = ({
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   ownerApplicationId: string;
 }): WorkflowManifestReferences => {
+  const logicFunctionOutputSchemaByUniversalIdentifier = new Map<
+    string,
+    BaseOutputSchemaV2
+  >();
+  const agentOutputSchemaByUniversalIdentifier = new Map<
+    string,
+    BaseOutputSchemaV2
+  >();
   const logicFunctionIdByUniversalIdentifier = new Map<string, string>();
   const codeFunctionIdByUniversalIdentifier = new Map<string, string>();
   const agentIdByUniversalIdentifier = new Map<string, string>();
@@ -45,6 +56,14 @@ export const prepareWorkflowManifestReferences = ({
       logicFunction.universalIdentifier,
       logicFunction.id,
     );
+    const declaredOutputSchema =
+      logicFunction.workflowActionTriggerSettings?.outputSchema;
+    if (isDefined(declaredOutputSchema)) {
+      logicFunctionOutputSchemaByUniversalIdentifier.set(
+        logicFunction.universalIdentifier,
+        inputSchemaToOutputSchema(declaredOutputSchema),
+      );
+    }
     if (isDefined(logicFunction.workflowActionTriggerSettings)) {
       logicFunctionIdByUniversalIdentifier.set(
         logicFunction.universalIdentifier,
@@ -63,6 +82,10 @@ export const prepareWorkflowManifestReferences = ({
         agent.universalIdentifier
       ]?.id ?? v4();
     agentIdByUniversalIdentifier.set(agent.universalIdentifier, agent.id);
+    agentOutputSchemaByUniversalIdentifier.set(
+      agent.universalIdentifier,
+      computeAiAgentOutputSchema(agent.responseFormat),
+    );
   }
   for (const object of Object.values(
     existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
@@ -104,6 +127,8 @@ export const prepareWorkflowManifestReferences = ({
     });
   }
   return {
+    logicFunctionOutputSchemaByUniversalIdentifier,
+    agentOutputSchemaByUniversalIdentifier,
     logicFunctionIdByUniversalIdentifier,
     codeFunctionIdByUniversalIdentifier,
     agentIdByUniversalIdentifier,

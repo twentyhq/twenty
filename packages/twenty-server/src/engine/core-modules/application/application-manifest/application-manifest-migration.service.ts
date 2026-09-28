@@ -115,6 +115,8 @@ export class ApplicationManifestMigrationService {
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        isApplicationWorkflowsEnabled:
+          featureFlagsMap[FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED],
         isLogicFunctionPrebuiltModeEnabled:
           featureFlagsMap[
             FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
@@ -214,6 +216,8 @@ export class ApplicationManifestMigrationService {
         fromAllFlatEntityMaps,
         existingAllFlatEntityMaps,
         inferDeletionFromMissingEntities,
+        isApplicationWorkflowsEnabled:
+          featureFlagsMap[FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED],
         isLogicFunctionPrebuiltModeEnabled:
           featureFlagsMap[
             FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
