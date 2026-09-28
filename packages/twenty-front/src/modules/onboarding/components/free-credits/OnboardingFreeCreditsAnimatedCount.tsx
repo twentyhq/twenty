@@ -1,4 +1,5 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
@@ -20,7 +21,7 @@ export const OnboardingFreeCreditsAnimatedCount = ({
   credits,
 }: OnboardingFreeCreditsAnimatedCountProps) => {
   const theme = useTheme();
-  const { formatNumber } = useNumberFormat();
+  const { numberFormat } = useNumberFormat();
   const shouldReduceMotion = useReducedMotion();
   const [previousCredits, setPreviousCredits] = useState(credits);
   const [rollDirection, setRollDirection] = useState(1);
@@ -57,7 +58,7 @@ export const OnboardingFreeCreditsAnimatedCount = ({
             ease: EASE_OUT,
           }}
         >
-          {formatNumber(credits, { decimals: 2 })}
+          {formatOnboardingCredits(credits, numberFormat)}
         </motion.span>
       </AnimatePresence>
     </StyledContainer>

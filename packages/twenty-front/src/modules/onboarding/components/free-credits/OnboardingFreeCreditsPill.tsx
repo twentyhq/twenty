@@ -7,6 +7,7 @@ import { StyledOnboardingFreeCreditsText } from '@/onboarding/components/free-cr
 import { useOnboardingFreeCreditsTooltipContent } from '@/onboarding/hooks/useOnboardingFreeCreditsTooltipContent';
 import { useOnboardingNewlyEarnedCredits } from '@/onboarding/hooks/useOnboardingNewlyEarnedCredits';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
+import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -72,7 +73,7 @@ export const OnboardingFreeCreditsPill = ({
   const { t } = useLingui();
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
-  const { formatNumber } = useNumberFormat();
+  const { numberFormat } = useNumberFormat();
   const [hasTrackGrown, setHasTrackGrown] = useState(
     shouldReduceMotion ?? false,
   );
@@ -95,9 +96,10 @@ export const OnboardingFreeCreditsPill = ({
   const hasNewlyEarnedCredits = newlyEarnedCredits > 0;
   const isEarningFirstCredits = goalCredits <= 0;
 
-  const formatCredits = (credits: number) =>
-    formatNumber(credits, { decimals: 2 });
-  const formattedCurrentStepCredits = formatCredits(currentStepCredits);
+  const formattedCurrentStepCredits = formatOnboardingCredits(
+    currentStepCredits,
+    numberFormat,
+  );
 
   const tooltipSlideOffset = shouldReduceMotion
     ? 0
@@ -109,7 +111,7 @@ export const OnboardingFreeCreditsPill = ({
         {hasNewlyEarnedCredits && (
           <OnboardingFreeCreditsChange
             key={newlyEarnedCredits}
-            label={`+${formatCredits(newlyEarnedCredits)}`}
+            label={`+${formatOnboardingCredits(newlyEarnedCredits, numberFormat)}`}
             delay={
               hasTrackGrown
                 ? theme.animation.duration.normal
