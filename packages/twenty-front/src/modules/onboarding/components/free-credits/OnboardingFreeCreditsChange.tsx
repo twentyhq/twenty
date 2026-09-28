@@ -1,4 +1,3 @@
-import { ONBOARDING_LOST_CREDITS_DISPLAY_DURATION_S } from '@/onboarding/constants/OnboardingLostCreditsDisplayDurationS';
 import { ONBOARDING_NEWLY_EARNED_CREDITS_DISPLAY_DURATION_S } from '@/onboarding/constants/OnboardingNewlyEarnedCreditsDisplayDurationS';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -33,7 +32,7 @@ export const OnboardingFreeCreditsChange = ({
   const fadeInDuration = theme.animation.duration.normal;
   const fadeOutDuration = theme.animation.duration.fast;
   const visibleDuration = isLost
-    ? ONBOARDING_LOST_CREDITS_DISPLAY_DURATION_S
+    ? theme.animation.duration.slow
     : ONBOARDING_NEWLY_EARNED_CREDITS_DISPLAY_DURATION_S;
   const displayDuration = visibleDuration + fadeOutDuration;
   const fadeTimes = [
