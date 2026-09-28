@@ -52,7 +52,6 @@ type GetBuiltCodeParams = Identifier & {
 };
 
 type CopySourceParams = Identifier & {
-  fromApplicationUniversalIdentifier: string;
   fromSourceHandlerPath: string;
   toSourceHandlerPath: string;
   fromBuiltHandlerPath: string;
@@ -206,7 +205,6 @@ export class LogicFunctionResourceService {
   }
 
   async copyResources({
-    fromApplicationUniversalIdentifier,
     fromSourceHandlerPath,
     toSourceHandlerPath,
     fromBuiltHandlerPath,
@@ -217,7 +215,7 @@ export class LogicFunctionResourceService {
     await this.fileStorageService.copyFileByPath({
       from: {
         workspaceId,
-        applicationUniversalIdentifier: fromApplicationUniversalIdentifier,
+        applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
         resourcePath: fromSourceHandlerPath,
       },
@@ -231,7 +229,7 @@ export class LogicFunctionResourceService {
 
     const builtFileExists = await this.fileStorageService.checkFileExists({
       workspaceId,
-      applicationUniversalIdentifier: fromApplicationUniversalIdentifier,
+      applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: fromBuiltHandlerPath,
     });
@@ -243,7 +241,7 @@ export class LogicFunctionResourceService {
     await this.fileStorageService.copyFileByPath({
       from: {
         workspaceId,
-        applicationUniversalIdentifier: fromApplicationUniversalIdentifier,
+        applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
         resourcePath: fromBuiltHandlerPath,
       },

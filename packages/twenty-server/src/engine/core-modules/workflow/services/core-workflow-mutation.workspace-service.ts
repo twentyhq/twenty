@@ -177,35 +177,64 @@ export class CoreWorkflowMutationWorkspaceService {
         steps: sourceVersion.steps ?? [],
       });
 
-    const duplicatedWorkflow = await this.createWorkflow({
-      workspaceId,
-      createdBy,
-      userWorkspaceId,
-      name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
-      // duplicating a private workflow must not publish it to the workspace
-      visibility: sourceCoreWorkflow.visibility,
-    });
+    let duplicatedCoreWorkflowId: string | undefined;
 
     try {
+      const duplicatedWorkflow = await this.createWorkflow({
+        workspaceId,
+        createdBy,
+        userWorkspaceId,
+        name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
+        // duplicating a private workflow must not publish it to the workspace
+        visibility: sourceCoreWorkflow.visibility,
+      });
+
+      duplicatedCoreWorkflowId = duplicatedWorkflow.id;
+
       return await this.writeDuplicatedContentAndReturn({
         workspaceId,
         userWorkspaceId,
-        duplicatedCoreWorkflowId: duplicatedWorkflow.id,
+        duplicatedCoreWorkflowId,
         trigger: remappedTrigger,
         steps: remappedSteps,
       });
     } catch (error) {
+      if (isDefined(duplicatedCoreWorkflowId)) {
+        try {
+          await this.deleteWorkflows({
+            workspaceId,
+            userWorkspaceId,
+            coreWorkflowIds: [duplicatedCoreWorkflowId],
+          });
+        } catch (cleanupError) {
+          this.logger.error(cleanupError);
+        }
+      }
+
+      await this.deleteClonedStepResources({
+        workspaceId,
+        clonedSteps: remappedSteps,
+      });
+
+      throw error;
+    }
+  }
+
+  private async deleteClonedStepResources({
+    workspaceId,
+    clonedSteps,
+  }: {
+    workspaceId: string;
+    clonedSteps: WorkflowAction[];
+  }): Promise<void> {
+    for (const step of clonedSteps) {
       try {
-        await this.deleteWorkflows({
-          workspaceId,
-          userWorkspaceId,
-          coreWorkflowIds: [duplicatedWorkflow.id],
-        });
+        await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+          { step, workspaceId },
+        );
       } catch (cleanupError) {
         this.logger.error(cleanupError);
       }
-
-      throw error;
     }
   }
 
@@ -285,15 +314,24 @@ export class CoreWorkflowMutationWorkspaceService {
     }[] = [];
     const clonedStepIdBySourceStepId = new Map<string, string>();
 
-    for (const step of steps) {
-      const clonedStep =
-        await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
-          step,
-          workspaceId,
-        });
+    try {
+      for (const step of steps) {
+        const clonedStep =
+          await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
+            step,
+            workspaceId,
+          });
 
-      sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
-      clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
+        sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
+        clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
+      }
+    } catch (error) {
+      await this.deleteClonedStepResources({
+        workspaceId,
+        clonedSteps: sourceToClonedPairs.map(({ duplicated }) => duplicated),
+      });
+
+      throw error;
     }
 
     return remapDuplicatedStepDestinations({

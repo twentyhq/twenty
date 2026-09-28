@@ -164,7 +164,8 @@ const CoreWorkflowShowContent = ({
             recordId={coreWorkflowId}
             name={record.name}
             namePlaceholder={t`Workflow name`}
-            onRename={isApplicationManaged ? undefined : renameWorkflow}
+            onRename={renameWorkflow}
+            isReadOnly={isApplicationManaged}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor

@@ -48,7 +48,7 @@ export const CoreWorkflowDuplicateButton = ({
   };
 
   return (
-    <Button disabled={isDuplicating} onClick={handleDuplicate}>
+    <Button size="sm" disabled={isDuplicating} onClick={handleDuplicate}>
       {t`Duplicate`}
     </Button>
   );

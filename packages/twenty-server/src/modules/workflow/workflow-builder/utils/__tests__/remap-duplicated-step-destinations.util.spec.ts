@@ -130,4 +130,75 @@ describe('remapDuplicatedStepDestinations', () => {
 
     expect(initialLoopStepIds).toEqual(['cloned-loop-start']);
   });
+
+  it('remaps loop back-edges and variable references to cloned steps', () => {
+    const sourceFind = buildStep({
+      id: 'source-find',
+      type: WorkflowActionType.FIND_RECORDS,
+      nextStepIds: ['source-iterator'],
+    });
+    const sourceIterator = buildStep({
+      id: 'source-iterator',
+      type: WorkflowActionType.ITERATOR,
+      settings: {
+        input: {
+          items: '{{source-find.all}}',
+          initialLoopStepIds: ['source-loop'],
+        },
+      },
+    } as unknown as Partial<WorkflowAction> & { id: string });
+    const sourceLoop = buildStep({
+      id: 'source-loop',
+      nextStepIds: ['source-iterator'],
+      settings: {
+        input: {
+          logicFunctionInput: {
+            companyId: '{{source-iterator.currentItem.id}}',
+            triggerId: '{{trigger.recordId}}',
+          },
+        },
+      },
+    } as unknown as Partial<WorkflowAction> & { id: string });
+
+    const { steps } = remapDuplicatedStepDestinations({
+      trigger: { ...TRIGGER, nextStepIds: ['source-find'] },
+      sourceToClonedPairs: [
+        {
+          source: sourceFind,
+          duplicated: { ...sourceFind, id: 'cloned-find', nextStepIds: [] },
+        },
+        {
+          source: sourceIterator,
+          duplicated: { ...sourceIterator, id: 'cloned-iterator' },
+        },
+        {
+          source: sourceLoop,
+          duplicated: { ...sourceLoop, id: 'cloned-loop', nextStepIds: [] },
+        },
+      ],
+      clonedStepIdBySourceStepId: new Map([
+        ['source-find', 'cloned-find'],
+        ['source-iterator', 'cloned-iterator'],
+        ['source-loop', 'cloned-loop'],
+      ]),
+    });
+
+    const [find, iterator, loop] = steps as unknown as {
+      nextStepIds: string[];
+      settings: { input: Record<string, unknown> };
+    }[];
+
+    expect(find.nextStepIds).toEqual(['cloned-iterator']);
+    expect(iterator.settings.input).toEqual({
+      items: '{{cloned-find.all}}',
+      initialLoopStepIds: ['cloned-loop'],
+    });
+    expect(loop.nextStepIds).toEqual(['cloned-iterator']);
+    expect(loop.settings.input).toEqual({
+      logicFunctionInput: {
+        companyId: '{{cloned-iterator.currentItem.id}}',
+        triggerId: '{{trigger.recordId}}',
+      },
+    });
+  });
 });

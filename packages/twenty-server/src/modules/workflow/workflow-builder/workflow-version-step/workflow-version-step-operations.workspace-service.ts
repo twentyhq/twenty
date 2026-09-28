@@ -17,11 +17,13 @@ import {
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -42,6 +44,7 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { getClonedAgentRoleId } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-cloned-agent-role-id.util';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   type WorkflowAction,
@@ -83,6 +86,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -842,7 +846,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             modelId: existingAgent.modelId,
             responseFormat: existingAgent.responseFormat ?? undefined,
             modelConfiguration: existingAgent.modelConfiguration ?? undefined,
-            roleId: existingAgent.roleId ?? undefined,
+            roleId: await this.findClonedAgentRoleId({
+              sourceRoleId: existingAgent.roleId,
+              workspaceId,
+            }),
             isCustom: true,
           },
           workspaceId,
@@ -886,6 +893,36 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
     }
+  }
+
+  private async findClonedAgentRoleId({
+    sourceRoleId,
+    workspaceId,
+  }: {
+    sourceRoleId: string | null;
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    if (!isDefined(sourceRoleId)) {
+      return undefined;
+    }
+
+    const [{ flatRoleMaps }, { workspaceCustomFlatApplication }] =
+      await Promise.all([
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatRoleMaps',
+        ]),
+        this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        ),
+      ]);
+
+    return getClonedAgentRoleId({
+      sourceRole: findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: sourceRoleId,
+        flatEntityMaps: flatRoleMaps,
+      }),
+      clonedAgentApplicationId: workspaceCustomFlatApplication.id,
+    });
   }
 
   markStepAsDuplicate({ step }: { step: WorkflowAction }): WorkflowAction {

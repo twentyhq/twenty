@@ -21,7 +21,8 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
-import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-universal-flat-logic-function-to-create.util';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { buildDuplicatedCodeStepLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-duplicated-code-step-logic-function-to-create.util';
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
@@ -142,44 +143,37 @@ export class LogicFunctionFromSourceService {
 
     const newId = v4();
 
-    const { sourceHandlerPath, builtHandlerPath } = existingLogicFunction;
+    const { sourceHandlerPath, builtHandlerPath } =
+      this.helperService.buildHandlerPaths(newId);
 
-    const {
-      sourceHandlerPath: toSourceHandlerPath,
-      builtHandlerPath: toBuiltHandlerPath,
-    } = this.helperService.buildHandlerPaths(newId);
-
-    await this.logicFunctionResourceService.copyResources({
-      fromApplicationUniversalIdentifier:
-        existingLogicFunction.applicationUniversalIdentifier,
-      fromSourceHandlerPath: sourceHandlerPath,
-      toSourceHandlerPath,
-      fromBuiltHandlerPath: builtHandlerPath,
-      toBuiltHandlerPath,
-      workspaceId,
-      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
-    });
+    const { checksum, isBuildUpToDate } =
+      existingLogicFunction.applicationUniversalIdentifier ===
+      ownerFlatApplication.universalIdentifier
+        ? await this.copySameApplicationResources({
+            existingLogicFunction,
+            sourceHandlerPath,
+            builtHandlerPath,
+            workspaceId,
+            applicationUniversalIdentifier:
+              ownerFlatApplication.universalIdentifier,
+          })
+        : await this.copyApplicationBundleAsSource({
+            existingLogicFunction,
+            sourceHandlerPath,
+            builtHandlerPath,
+            workspaceId,
+            applicationUniversalIdentifier:
+              ownerFlatApplication.universalIdentifier,
+          });
 
     const universalFlatLogicFunctionToCreate =
-      buildUniversalFlatLogicFunctionToCreate({
+      buildDuplicatedCodeStepLogicFunctionToCreate({
+        existingLogicFunction,
         id: newId,
-        name: existingLogicFunction.name,
-        description: existingLogicFunction.description,
-        timeoutSeconds: existingLogicFunction.timeoutSeconds,
-        isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
-        checksum: existingLogicFunction.checksum,
-        executionMode: LogicFunctionExecutionMode.LIVE,
-        handlerName: existingLogicFunction.handlerName,
-        sourceHandlerPath: toSourceHandlerPath,
-        builtHandlerPath: toBuiltHandlerPath,
-        cronTriggerSettings: existingLogicFunction.cronTriggerSettings,
-        databaseEventTriggerSettings:
-          existingLogicFunction.databaseEventTriggerSettings,
-        httpRouteTriggerSettings:
-          existingLogicFunction.httpRouteTriggerSettings,
-        toolTriggerSettings: existingLogicFunction.toolTriggerSettings,
-        workflowActionTriggerSettings:
-          existingLogicFunction.workflowActionTriggerSettings,
+        sourceHandlerPath,
+        builtHandlerPath,
+        checksum,
+        isBuildUpToDate,
         applicationUniversalIdentifier:
           ownerFlatApplication.universalIdentifier,
       });
@@ -197,6 +191,74 @@ export class LogicFunctionFromSourceService {
     }
 
     return { id: created.id };
+  }
+
+  private async copySameApplicationResources({
+    existingLogicFunction,
+    sourceHandlerPath,
+    builtHandlerPath,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    existingLogicFunction: FlatLogicFunction;
+    sourceHandlerPath: string;
+    builtHandlerPath: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<{ checksum: string | null; isBuildUpToDate: boolean }> {
+    await this.logicFunctionResourceService.copyResources({
+      fromSourceHandlerPath: existingLogicFunction.sourceHandlerPath,
+      toSourceHandlerPath: sourceHandlerPath,
+      fromBuiltHandlerPath: existingLogicFunction.builtHandlerPath,
+      toBuiltHandlerPath: builtHandlerPath,
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    return {
+      checksum: existingLogicFunction.checksum,
+      isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
+    };
+  }
+
+  private async copyApplicationBundleAsSource({
+    existingLogicFunction,
+    sourceHandlerPath,
+    builtHandlerPath,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    existingLogicFunction: FlatLogicFunction;
+    sourceHandlerPath: string;
+    builtHandlerPath: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<{ checksum: string; isBuildUpToDate: boolean }> {
+    const builtCode = await this.logicFunctionResourceService.getBuiltCode({
+      workspaceId,
+      applicationUniversalIdentifier:
+        existingLogicFunction.applicationUniversalIdentifier,
+      builtHandlerPath: existingLogicFunction.builtHandlerPath,
+    });
+
+    await this.logicFunctionResourceService.uploadSourceFile({
+      sourceHandlerPath,
+      sourceHandlerCode: builtCode,
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    await this.logicFunctionResourceService.uploadBuiltFile({
+      builtHandlerPath,
+      builtCode,
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    return {
+      checksum: crypto.createHash('md5').update(builtCode).digest('hex'),
+      isBuildUpToDate: true,
+    };
   }
 
   async updateOneFromSource({
