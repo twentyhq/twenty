@@ -13,7 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledTiles = styled.div`
@@ -132,6 +132,7 @@ export const InstallAppsContent = ({
   onSkip,
 }: InstallAppsContentProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   const hasApps = isNonEmptyArray(apps);
   const hasSelectedApps = isNonEmptyArray(selectedUniversalIdentifiers);
@@ -204,7 +205,9 @@ export const InstallAppsContent = ({
                     </StyledAppDescription>
                   </StyledTileContent>
                   <StyledTileCheck aria-hidden>
-                    {isSelected && <IconCheck size={12} stroke={3} />}
+                    {isSelected && (
+                      <IconCheck size={theme.icon.size.sm} stroke={3} />
+                    )}
                   </StyledTileCheck>
                 </StyledTile>
               );
