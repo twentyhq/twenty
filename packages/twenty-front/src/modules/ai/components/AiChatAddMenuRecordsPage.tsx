@@ -22,7 +22,8 @@ export const AiChatAddMenuRecordsPage = ({
 }: AiChatAddMenuRecordsPageProps) => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebounce(search.trim(), 300);
+  const trimmedSearch = search.trim();
+  const [debouncedSearch] = useDebounce(trimmedSearch, 300);
   const { searchableObjectMetadataItems } = useMentionSearch();
   const searchableObjectMetadataItemByNameSingular = new Map(
     searchableObjectMetadataItems.map((objectMetadataItem) => [
@@ -38,6 +39,7 @@ export const AiChatAddMenuRecordsPage = ({
     searchInput: debouncedSearch,
     skip: searchableObjectMetadataItems.length === 0,
   });
+  const areSearchRecordsStale = loading || debouncedSearch !== trimmedSearch;
 
   const handleRecordSelect = (record: SearchRecord) => {
     if (!isDefined(editor)) {
@@ -64,6 +66,7 @@ export const AiChatAddMenuRecordsPage = ({
             key={`${record.objectNameSingular}-${record.recordId}`}
             selected={false}
             indicator="none"
+            disabled={areSearchRecordsStale}
             startIcon={
               <Avatar
                 name={record.label}
