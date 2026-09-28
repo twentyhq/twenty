@@ -9,6 +9,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
+import { AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -27,6 +28,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     DeleteFieldLessIndexMetadataCommand,
     FollowWorkflowVisibilityOnRunsCommand,
     LinkChatMessageSendersToWorkspaceMembersCommand,
+    AddWorkflowRunToChatThreadsCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

@@ -1,5 +1,6 @@
 import { hasLegacyChatThreadOwnerField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-legacy-chat-thread-owner-field.util';
 import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
+import { IsNull } from 'typeorm';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -17,6 +18,8 @@ import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
+import { isWorkflowRunThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import {
   AiException,
@@ -67,6 +70,11 @@ export class AgentChatSharingService {
     if (!isDefined(thread)) {
       return this.throwNotFound();
     }
+    // A run's conversation is the record of what its agent step did, and it is
+    // readable by whoever reads the run, so nobody may add to or edit it.
+    if (operationType !== 'select') {
+      this.assertNotWorkflowRunThread(thread);
+    }
     const allowedIds = await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
@@ -110,10 +118,20 @@ export class AgentChatSharingService {
     args: Omit<ThreadAccessArgs, 'threadId'>,
   ): Promise<string[]> {
     const authContext = await this.getAuthContext(args);
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(args.workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const records = await this.workspaceOrmManager
         .getRepositoryWithContextPermissions('agentChatThread')
         .find({
+          // Anyone who reads a run reads its agent's conversations, so without
+          // this every run would crowd into every member's own chats.
+          where: hasWorkflowRunThreadFields(flatFieldMetadataMaps)
+            ? { workflowRunId: IsNull() }
+            : undefined,
           select: { id: true },
           withDeleted: false,
           order: { updatedAt: 'DESC', id: 'DESC' },
@@ -267,6 +285,7 @@ export class AgentChatSharingService {
             objectMetadataId: objectMetadata.id,
             threadId: args.threadId,
           });
+          this.assertNotWorkflowRunThread(thread);
 
           const allowedIds = await this.workspaceOrmManager
             .getRepositoryWithContextPermissions('agentChatThread')
@@ -284,6 +303,17 @@ export class AgentChatSharingService {
         }),
       authContext,
     );
+  }
+
+  private assertNotWorkflowRunThread(
+    thread: AgentChatThreadWorkspaceEntity,
+  ): void {
+    if (isWorkflowRunThread(thread)) {
+      throw new AiException(
+        'A workflow run conversation is read-only',
+        AiExceptionCode.WORKFLOW_RUN_THREAD_READ_ONLY,
+      );
+    }
   }
 
   async getAuthContext(args: Omit<ThreadAccessArgs, 'threadId'>) {

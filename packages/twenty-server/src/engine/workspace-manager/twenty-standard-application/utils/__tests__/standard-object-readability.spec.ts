@@ -23,6 +23,7 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
   agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
+  agentChatThread: STANDARD_OBJECT_FIELDS.agentChatThread.workflowRun,
 } as const;
 
 describe('Standard object readability', () => {
@@ -63,7 +64,6 @@ describe('Standard object readability', () => {
   ) as (keyof typeof INHERITED_STANDARD_OBJECT_PARENT_FIELDS)[];
 
   const nonOpenObjectUniversalIdentifiers: string[] = [
-    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     STANDARD_OBJECTS.agentMessage.universalIdentifier,
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
@@ -170,8 +170,25 @@ describe('Standard object readability', () => {
     ).toContainEqual({
       joinColumnName: 'targetAgentChatThreadId',
       parentNameSingular: 'agentChatThread',
-      parentReadability: MetadataReadability.PRIVATE,
+      parentReadability: MetadataReadability.INHERITED,
     });
+  });
+
+  // A member's chat has no run, so it reads only through its own grants, as a
+  // PRIVATE thread did; a run's conversation reads as its run does.
+  it('resolves its workflow run as the only parent of an agentChatThread', () => {
+    expect(
+      resolveParents('agentChatThread').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'workflowRunId', parentNameSingular: 'workflowRun' },
+    ]);
   });
 
   it('resolves every target of a noteTarget as its parent, not the note', () => {

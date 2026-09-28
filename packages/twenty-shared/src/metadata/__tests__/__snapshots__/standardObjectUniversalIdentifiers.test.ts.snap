@@ -70,6 +70,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "userWorkspaceId": {
         "universalIdentifier": "bf830886-b6dc-46e9-a229-eecbb0e66032",
       },
+      "workflowRun": {
+        "universalIdentifier": "2187f4c6-bff3-4b80-8585-c82965faf79b",
+      },
+      "workflowStepId": {
+        "universalIdentifier": "ba4091ef-dfa2-4a99-bfb3-322ef9a745ab",
+      },
       "workspaceMember": {
         "universalIdentifier": "6f3ed3b5-0642-4a2a-9558-98376adb60f4",
       },
@@ -77,6 +83,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "indexes": {
       "ownerIndex": {
         "universalIdentifier": "c97a4c97-266b-490a-a4d6-76274f5de429",
+      },
+      "workflowRunIndex": {
+        "universalIdentifier": "cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b",
       },
       "workspaceMemberIndex": {
         "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",
@@ -3760,6 +3769,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "workflowRun": {
     "fields": {
+      "agentChatThreads": {
+        "universalIdentifier": "c664a2e7-ef64-4597-9cdf-ded3eae85ae4",
+      },
       "coreWorkflowId": {
         "universalIdentifier": "e07d8ac0-6b6e-4685-81fa-50d82ae7f880",
       },

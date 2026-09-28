@@ -29,7 +29,7 @@ type GlobalChatThreadRawRow = {
   title: string | null;
   workspaceId: string;
   workspaceDisplayName: string | null;
-  userWorkspaceId: string;
+  userWorkspaceId: string | null;
   userEmail: string | null;
   userFirstName: string | null;
   userLastName: string | null;
@@ -113,7 +113,7 @@ export class AdminPanelGlobalChatThreadsService {
               membership.id AS "userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
               thread."archivedAt" AS "deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
               (EXISTS (SELECT 1 FROM ${table('agentMessage')} hidden WHERE hidden."threadId" = thread.id AND hidden."isHidden" = true)
-                OR thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || membership.id::text)) AS "isOnboardingThread",
+                OR (membership.id IS NOT NULL AND thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || membership.id::text))) AS "isOnboardingThread",
               (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false) AS "messageCount",
               ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role = 'user')
                 + (SELECT COUNT(*) FROM ${table('agentMessagePart')} part JOIN ${table('agentMessage')} message ON message.id = part."messageId"
