@@ -6,6 +6,7 @@ import { styled } from '@linaria/react';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useTheme, themeCssVariables, type ThemeColor } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 
 type ChartColorGradientOptionProps = {
   colorOption: {
@@ -33,13 +34,16 @@ export const ChartColorGradientOption = ({
   const colorName = colorOption.colorName as ThemeColor;
 
   const theme = useTheme();
-  const colorRegistry = createGraphColorRegistry(theme.color);
+  const colorScheme = createGraphColorRegistry(theme.color)[colorName];
+
+  if (!isDefined(colorScheme)) {
+    return null;
+  }
 
   const colorSamples = (
     <StyledColorSamplesContainer>
       {Array.from({ length: CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT }).map(
         (_, index) => {
-          const colorScheme = colorRegistry[colorName];
           const reversedIndex =
             CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT - 1 - index;
           const groupColor = generateGroupColor({

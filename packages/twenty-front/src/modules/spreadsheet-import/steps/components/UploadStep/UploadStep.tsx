@@ -1,6 +1,7 @@
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { type WorkBook } from 'xlsx-ugnis';
 
 import { useComputeColumnSuggestionsAndAutoMatch } from '@/spreadsheet-import/hooks/useComputeColumnSuggestionsAndAutoMatch';
@@ -42,7 +43,10 @@ export const UploadStep = ({
       if (isSingleSheet) {
         if (
           maxRecords > 0 &&
-          exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
+          exceedsMaxRecords(
+            workbook.Sheets[workbook.SheetNames[0] ?? ''],
+            maxRecords,
+          )
         ) {
           const maxRecordsString = maxRecords.toString();
           onError(t`Too many records. Up to ${maxRecordsString} allowed`);
@@ -57,10 +61,12 @@ export const UploadStep = ({
               data: mappedWorkbook,
             });
           } else {
-            const trimmedData = mappedWorkbook.slice(1);
+            const [headerRow, ...trimmedData] = mappedWorkbook;
+
+            assertIsDefinedOrThrow(headerRow);
 
             const { importedRows: data, headerRow: headerValues } =
-              await selectHeaderStepHook(mappedWorkbook[0], trimmedData);
+              await selectHeaderStepHook(headerRow, trimmedData);
 
             await computeColumnSuggestionsAndAutoMatch({
               headerValues,

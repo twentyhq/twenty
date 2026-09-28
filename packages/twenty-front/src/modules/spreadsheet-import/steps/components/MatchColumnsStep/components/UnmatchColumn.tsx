@@ -3,7 +3,6 @@ import { SubMatchingSelectRow } from '@/spreadsheet-import/steps/components/Matc
 import { UnmatchColumnBanner } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumnBanner';
 import { type SpreadsheetImportFields } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -31,8 +30,7 @@ const getExpandableContainerTitle = (
 };
 
 type UnmatchColumnProps = {
-  columns: SpreadsheetColumns;
-  columnIndex: number;
+  column: SpreadsheetColumn;
   onSubChange: (val: string, index: number, option: string) => void;
 };
 
@@ -49,14 +47,9 @@ const StyledContentWrapper = styled.div`
   padding-bottom: ${themeCssVariables.spacing[4]};
 `;
 
-export const UnmatchColumn = ({
-  columns,
-  columnIndex,
-  onSubChange,
-}: UnmatchColumnProps) => {
+export const UnmatchColumn = ({ column, onSubChange }: UnmatchColumnProps) => {
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
   const [isExpanded, setIsExpanded] = useState(false);
-  const column = columns[columnIndex];
   const isSelect = 'matchedOptions' in column;
   const { t } = useLingui();
 

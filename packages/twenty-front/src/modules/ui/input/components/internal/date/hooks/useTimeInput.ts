@@ -36,7 +36,7 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
       const match = timeString.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
       if (!match) return null;
 
-      const [, hoursStr, minutesStr, amPmStr] = match;
+      const [, hoursStr = '', minutesStr = '', amPmStr = ''] = match;
       const hours = parseInt(hoursStr, 10);
       const minutes = parseInt(minutesStr, 10);
 
@@ -53,7 +53,7 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
       const match = timeString.match(/^(\d{1,2}):(\d{2})$/);
       if (!match) return null;
 
-      const [, hoursStr, minutesStr] = match;
+      const [, hoursStr = '', minutesStr = ''] = match;
       const hours = parseInt(hoursStr, 10);
       const minutes = parseInt(minutesStr, 10);
 

@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useState } from 'react';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -163,16 +163,19 @@ export const GridKeyboard: Story = {
       expect(within(dialog).getAllByRole('button')).toHaveLength(25),
     );
     const icons = within(dialog).getAllByRole('button');
+    const [firstIcon, , , , , , seventhIcon] = icons;
+    assertIsDefinedOrThrow(firstIcon);
+    assertIsDefinedOrThrow(seventhIcon);
 
-    expect(icons[0].querySelector('svg')).toBeVisible();
-    expect(icons[0]).toHaveAccessibleName('Icon Calendar Event');
+    expect(firstIcon.querySelector('svg')).toBeVisible();
+    expect(firstIcon).toHaveAccessibleName('Icon Calendar Event');
     await waitFor(() =>
       expect(within(dialog).getByRole('searchbox')).toHaveFocus(),
     );
     await userEvent.keyboard('{ArrowDown}{ArrowRight}{ArrowDown}');
-    expect(icons[6]).toHaveFocus();
+    expect(seventhIcon).toHaveFocus();
     await userEvent.keyboard('{ArrowLeft}{ArrowUp}');
-    expect(icons[0]).toHaveFocus();
+    expect(firstIcon).toHaveFocus();
     await userEvent.keyboard('{ArrowDown}{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),

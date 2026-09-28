@@ -1,3 +1,4 @@
+import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
@@ -76,18 +77,9 @@ const StyledGridHeader = styled.div<PositionProps>`
 
 type ColumnGridProps = {
   columns: SpreadsheetColumns;
-  renderUserColumn: (
-    columns: SpreadsheetColumns,
-    columnIndex: number,
-  ) => React.ReactNode;
-  renderTemplateColumn: (
-    columns: SpreadsheetColumns,
-    columnIndex: number,
-  ) => React.ReactNode;
-  renderUnmatchedColumn: (
-    columns: SpreadsheetColumns,
-    columnIndex: number,
-  ) => React.ReactNode;
+  renderUserColumn: (column: SpreadsheetColumn) => React.ReactNode;
+  renderTemplateColumn: (column: SpreadsheetColumn) => React.ReactNode;
+  renderUnmatchedColumn: (column: SpreadsheetColumn) => React.ReactNode;
 };
 
 export const ColumnGrid = ({
@@ -105,10 +97,10 @@ export const ColumnGrid = ({
             <StyledGridHeader position="right">{t`Twenty fields`}</StyledGridHeader>
           </StyledGridRow>
           {columns.map((column, index) => {
-            const userColumn = renderUserColumn(columns, index);
-            const templateColumn = renderTemplateColumn(columns, index);
-            const unmatchedColumn = renderUnmatchedColumn(columns, index);
-            const isSelect = 'matchedOptions' in columns[index];
+            const userColumn = renderUserColumn(column);
+            const templateColumn = renderTemplateColumn(column);
+            const unmatchedColumn = renderUnmatchedColumn(column);
+            const isSelect = 'matchedOptions' in column;
             const isLast = index === columns.length - 1;
 
             if (React.isValidElement(userColumn)) {

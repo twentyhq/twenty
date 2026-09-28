@@ -42,36 +42,13 @@ const StyledHint = styled.div`
 `;
 
 const themeBoxValueToSides = (value: string): CssBoxSides => {
-  const tokens = value.trim().split(/\s+/);
+  const [top, right, bottom, left, ...extraTokens] = value.trim().split(/\s+/);
 
-  if (tokens.length === 4) {
-    return {
-      top: tokens[0],
-      right: tokens[1],
-      bottom: tokens[2],
-      left: tokens[3],
-    };
+  if (!isDefined(top) || !isDefined(right) || extraTokens.length > 0) {
+    return { top: value, right: value, bottom: value, left: value };
   }
 
-  if (tokens.length === 3) {
-    return {
-      top: tokens[0],
-      right: tokens[1],
-      bottom: tokens[2],
-      left: tokens[1],
-    };
-  }
-
-  if (tokens.length === 2) {
-    return {
-      top: tokens[0],
-      right: tokens[1],
-      bottom: tokens[0],
-      left: tokens[1],
-    };
-  }
-
-  return { top: value, right: value, bottom: value, left: value };
+  return { top, right, bottom: bottom ?? top, left: left ?? right };
 };
 
 const sidesToThemeBoxValue = ({ top, right, bottom, left }: CssBoxSides) =>

@@ -110,7 +110,7 @@ export const MatchColumnsStep = ({
   const onChange = useCallback(
     (value: string, columnIndex: number) => {
       if (value === DO_NOT_IMPORT_OPTION_KEY) {
-        if (columns[columnIndex].type === SpreadsheetColumnType.ignored) {
+        if (columns[columnIndex]?.type === SpreadsheetColumnType.ignored) {
           onRevertIgnore(columnIndex);
         } else {
           onIgnore(columnIndex);
@@ -283,27 +283,21 @@ export const MatchColumnsStep = ({
         <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
-            renderUserColumn={(columns, columnIndex) => (
+            renderUserColumn={(column) => (
               <UserTableColumn
-                column={columns[columnIndex]}
-                importedRow={dataExample.map(
-                  (row) => row[columns[columnIndex].index],
-                )}
+                column={column}
+                importedRow={dataExample.map((row) => row[column.index])}
               />
             )}
-            renderTemplateColumn={(columns, columnIndex) => (
+            renderTemplateColumn={(column) => (
               <TemplateColumn
                 columns={columns}
-                columnIndex={columnIndex}
+                column={column}
                 onChange={onChange}
               />
             )}
-            renderUnmatchedColumn={(columns, columnIndex) => (
-              <UnmatchColumn
-                columns={columns}
-                columnIndex={columnIndex}
-                onSubChange={onSubChange}
-              />
+            renderUnmatchedColumn={(column) => (
+              <UnmatchColumn column={column} onSubChange={onSubChange} />
             )}
           />
         </ScrollWrapper>

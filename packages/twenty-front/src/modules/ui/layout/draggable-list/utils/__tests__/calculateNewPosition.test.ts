@@ -1,4 +1,5 @@
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 describe('calculateNewPosition', () => {
   const createItems = (positions: number[]) =>
@@ -116,9 +117,13 @@ describe('calculateNewPosition', () => {
         items,
       });
 
+      const [firstItem, secondItem] = items;
+      assertIsDefinedOrThrow(firstItem);
+      assertIsDefinedOrThrow(secondItem);
+
       expect(result).toBe(1.5);
-      expect(result).not.toBe(items[0].position);
-      expect(result).not.toBe(items[1].position);
+      expect(result).not.toBe(firstItem.position);
+      expect(result).not.toBe(secondItem.position);
     });
 
     it('should handle destinationIndex equal to sourceIndex', () => {

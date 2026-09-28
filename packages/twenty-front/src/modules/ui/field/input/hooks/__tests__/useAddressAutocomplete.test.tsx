@@ -1,4 +1,5 @@
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { type PlaceDetailsResult } from '@/geo-map/types/PlaceApi';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -364,8 +365,13 @@ describe('useAddressAutocomplete', () => {
       });
     });
 
+    const [resolveFirstRequest, resolveSecondRequest] =
+      resolvePlaceDetailsRequests;
+    assertIsDefinedOrThrow(resolveFirstRequest);
+    assertIsDefinedOrThrow(resolveSecondRequest);
+
     await act(async () => {
-      resolvePlaceDetailsRequests[0]({
+      resolveFirstRequest({
         street: 'Place Bellecour',
         city: 'Lyon',
       });
@@ -376,7 +382,7 @@ describe('useAddressAutocomplete', () => {
     expect(mockCloseDropdown).not.toHaveBeenCalled();
 
     await act(async () => {
-      resolvePlaceDetailsRequests[1]({
+      resolveSecondRequest({
         street: 'Place de la Concorde',
         city: 'Paris',
       });

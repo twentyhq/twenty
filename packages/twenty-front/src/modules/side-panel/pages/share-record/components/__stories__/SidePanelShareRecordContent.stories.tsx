@@ -17,6 +17,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const setGeneralAccess = fn();
 const setShare = fn();
@@ -92,10 +93,13 @@ const StyledSidePanel = styled.div`
 
 const SidePanelStoryProviders = ({ children }: { children: ReactNode }) => {
   const [store] = useState(() => {
+    const [ownerMember] = MEMBERS;
+    assertIsDefinedOrThrow(ownerMember);
+
     const store = createStore();
     store.set(currentWorkspaceMembersState.atom, MEMBERS);
     store.set(currentWorkspaceMemberState.atom, {
-      ...MEMBERS[0],
+      ...ownerMember,
       colorScheme: 'Light',
       locale: 'en',
     });

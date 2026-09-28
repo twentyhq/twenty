@@ -25,8 +25,8 @@ export const useSelectableListHotKeys = (
       return;
     }
 
-    for (let row = 0; row < selectableItemIds.length; row++) {
-      const col = selectableItemIds[row].indexOf(selectedItemId);
+    for (const [row, rowItemIds] of selectableItemIds.entries()) {
+      const col = rowItemIds.indexOf(selectedItemId);
       if (col !== -1) {
         return { row, col };
       }
@@ -57,12 +57,14 @@ export const useSelectableListHotKeys = (
         }
 
         if (!selectedItemId || !currentPosition) {
-          return selectableItemIds[0][0];
+          return selectableItemIds[0]?.[0];
         }
 
         const { row: currentRow, col: currentCol } = currentPosition;
 
         const isSingleRow = selectableItemIds.length === 1;
+        const lastColInCurrentRow =
+          (selectableItemIds[currentRow]?.length ?? 0) - 1;
 
         let nextRow: number;
         let nextCol: number;
@@ -77,10 +79,7 @@ export const useSelectableListHotKeys = (
               ? currentRow
               : Math.min(selectableItemIds.length - 1, currentRow + 1);
             nextCol = isSingleRow
-              ? Math.min(
-                  selectableItemIds[currentRow].length - 1,
-                  currentCol + 1,
-                )
+              ? Math.min(lastColInCurrentRow, currentCol + 1)
               : currentCol;
             break;
           case 'left':
@@ -89,17 +88,14 @@ export const useSelectableListHotKeys = (
             break;
           case 'right':
             nextRow = currentRow;
-            nextCol = Math.min(
-              selectableItemIds[currentRow].length - 1,
-              currentCol + 1,
-            );
+            nextCol = Math.min(lastColInCurrentRow, currentCol + 1);
             break;
           default:
             nextRow = currentRow;
             nextCol = currentCol;
         }
 
-        return selectableItemIds[nextRow][nextCol];
+        return selectableItemIds[nextRow]?.[nextCol];
       };
 
       const nextId = computeNextId(direction);

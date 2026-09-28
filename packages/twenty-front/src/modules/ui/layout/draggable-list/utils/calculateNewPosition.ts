@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 type CalculateNewPositionParams = {
   destinationIndex: number;
   sourceIndex: number;
@@ -9,26 +10,33 @@ export const calculateNewPosition = ({
   sourceIndex,
   items,
 }: CalculateNewPositionParams): number => {
-  if (destinationIndex === 0) {
-    return items[0].position - 1;
+  const firstItem = items[0];
+  const lastItem = items.at(-1);
+
+  if (destinationIndex === 0 && isDefined(firstItem)) {
+    return firstItem.position - 1;
   }
 
-  if (destinationIndex === items.length) {
-    return items[items.length - 1].position + 1;
+  if (destinationIndex === items.length && isDefined(lastItem)) {
+    return lastItem.position + 1;
+  }
+
+  const destinationItem = items[destinationIndex];
+  const itemBeforeDestination = items[destinationIndex - 1];
+
+  if (!isDefined(destinationItem) || !isDefined(itemBeforeDestination)) {
+    throw new Error(`Invalid destination index: ${destinationIndex}`);
   }
 
   if (destinationIndex > sourceIndex) {
     return (
-      items[destinationIndex].position +
-      (items[destinationIndex - 1].position -
-        items[destinationIndex].position) /
-        2
+      destinationItem.position +
+      (itemBeforeDestination.position - destinationItem.position) / 2
     );
   }
 
   return (
-    items[destinationIndex].position -
-    (items[destinationIndex].position - items[destinationIndex - 1].position) /
-      2
+    destinationItem.position -
+    (destinationItem.position - itemBeforeDestination.position) / 2
   );
 };

@@ -25,7 +25,7 @@ import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workfl
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 
 export const useSidePanelCloseAnimationCompleteCleanup = () => {
@@ -55,11 +55,13 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         );
-        if (
+        const recordId =
           targetedRecordsRule.mode === 'selection' &&
           targetedRecordsRule.selectedRecordIds.length === 1
-        ) {
-          const recordId = targetedRecordsRule.selectedRecordIds[0];
+            ? targetedRecordsRule.selectedRecordIds[0]
+            : undefined;
+
+        if (isDefined(recordId)) {
           const record = store.get(recordStoreFamilyState.atomFamily(recordId));
 
           if (isDefined(record) && isDefined(record.pageLayoutId)) {
@@ -116,6 +118,10 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       );
 
       for (const [pageId, morphItems] of morphItemsByPage) {
+        if (!isNonEmptyArray(morphItems)) {
+          continue;
+        }
+
         store.set(
           activeTabIdComponentState.atomFamily({
             instanceId: getShowPageTabListComponentId({

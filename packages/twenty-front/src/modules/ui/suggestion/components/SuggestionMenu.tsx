@@ -178,7 +178,7 @@ const SuggestionMenuInner = <TItem,>(
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsSelectedItemVisible(entry.isIntersecting);
+        setIsSelectedItemVisible(entry?.isIntersecting ?? false);
       },
       { root: scrollableContainer, threshold: 0.99 },
     );
@@ -208,10 +208,11 @@ const SuggestionMenuInner = <TItem,>(
           {items.map((item, index) => {
             const isSelected = index === clampedSelectedIndex;
             const section = getItemSection?.(item);
+            const previousItem = items[index - 1];
             const isFirstOfSection =
               isDefined(section) &&
-              (index === 0 ||
-                getItemSection?.(items[index - 1])?.key !== section.key);
+              (!isDefined(previousItem) ||
+                getItemSection?.(previousItem)?.key !== section.key);
 
             return (
               <div

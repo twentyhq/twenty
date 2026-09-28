@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
@@ -127,7 +127,7 @@ const meta: Meta<typeof MatchColumnsExample> = {
   beforeEach: () => {
     jotaiStore.set(matchColumnsState.atom, []);
     jotaiStore.set(suggestedFieldsByColumnHeaderState.atom, {
-      company: [fields[0]],
+      company: fields.slice(0, 1),
     });
 
     return () => {
@@ -161,6 +161,7 @@ export const CompositeFieldAndBack: Story = {
     const trigger = within(dialog).getAllByRole('button', {
       name: 'Select column...',
     })[1];
+    assertIsDefinedOrThrow(trigger);
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', {
       name: 'Select matching field',
@@ -213,6 +214,7 @@ export const SuggestionsIgnoreAndCancel: Story = {
     const trigger = within(dialog).getAllByRole('button', {
       name: 'Select column...',
     })[0];
+    assertIsDefinedOrThrow(trigger);
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', {
       name: 'Select matching field',

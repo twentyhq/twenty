@@ -3,6 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const INITIAL_PLAIN_DATE = '2023-01-01';
 
@@ -60,6 +61,8 @@ export const OpensOnlyItsOwnYearSelect: Story = {
       {},
       { timeout: 10000 },
     );
+
+    assertIsDefinedOrThrow(firstYearSelect);
 
     await userEvent.click(firstYearSelect);
 

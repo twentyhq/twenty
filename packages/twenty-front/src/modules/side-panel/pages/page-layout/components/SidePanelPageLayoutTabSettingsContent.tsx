@@ -86,8 +86,8 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   const currentIndex = tabsSorted.findIndex(
     (tabItem) => tabItem.id === pageLayoutTabSettingsOpenTabId,
   );
-  if (currentIndex < 0) return null;
   const tab = tabsSorted[currentIndex];
+  if (!isDefined(tab)) return null;
   const isRecordPage = pageLayoutDraft.type === PageLayoutType.RECORD_PAGE;
   const hasPinnedTab =
     isRecordPage &&

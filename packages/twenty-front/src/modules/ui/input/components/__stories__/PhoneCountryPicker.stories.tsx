@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { type E164Number } from 'libphonenumber-js';
 import { useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
@@ -131,6 +132,8 @@ export const IndependentPhoneInputs: Story = {
     const [workTrigger, personalTrigger] = canvas.getAllByRole('button', {
       name: 'Country',
     });
+    assertIsDefinedOrThrow(workTrigger);
+    assertIsDefinedOrThrow(personalTrigger);
 
     await userEvent.click(workTrigger);
     const workPopup = await body.findByRole('dialog', { name: 'Country' });
@@ -180,6 +183,8 @@ export const DisabledAndReadOnlyPhoneInputs: Story = {
     const [disabledTrigger, readOnlyTrigger] = canvas.getAllByRole('button', {
       name: 'Country',
     });
+    assertIsDefinedOrThrow(disabledTrigger);
+    assertIsDefinedOrThrow(readOnlyTrigger);
 
     expect(disabledTrigger).toBeDisabled();
     expect(readOnlyTrigger).toBeDisabled();

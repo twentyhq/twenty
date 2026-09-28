@@ -70,13 +70,18 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     .toSorted(sortByProperty('position'));
 
   const handleDragEnd = (result: DraggableListDropResult) => {
-    if (!isDefined(result.destination)) {
+    const recordFieldToMove = draggableRecordFields[result.source.index];
+    const targetRecordField = isDefined(result.destination)
+      ? draggableRecordFields[result.destination.index]
+      : undefined;
+
+    if (!isDefined(recordFieldToMove) || !isDefined(targetRecordField)) {
       return;
     }
 
     const updatedField = reorderVisibleRecordFields({
-      recordFieldToMove: draggableRecordFields[result.source.index],
-      targetRecordField: draggableRecordFields[result.destination.index],
+      recordFieldToMove,
+      targetRecordField,
     });
 
     onFieldUpdated?.(updatedField.id, { position: updatedField.position });
