@@ -140,6 +140,17 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
       });
     }
 
+    // Only threads already under common sharing (2.43) inherit: SYSTEM
+    // threads are still owner-only and have no owner grants yet, so making
+    // them inherit would lock owners out of their own chats.
+    if (threadObject.readability !== MetadataReadability.PRIVATE) {
+      this.logger.log(
+        `agentChatThread readability is ${threadObject.readability} for workspace ${workspaceId}, leaving it`,
+      );
+
+      return;
+    }
+
     // Readability names the parent field, so it can only change once the
     // field exists.
     const flatObjectMetadatasToUpdate: FlatObjectMetadata[] = [
