@@ -1,11 +1,9 @@
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 
-import { LogConsoleWebhookEndpointLink } from '@/log-console/components/LogConsoleWebhookEndpointLink';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
 import { LOG_CONSOLE_WEBHOOK_STATUS_COLUMN } from '@/log-console/constants/LogConsoleWebhookStatusColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
-import { SettingsTableTagCell } from '@/settings/components/SettingsTableTagCell';
+import { SettingsTableLinkCell } from '@/settings/components/SettingsTableLinkCell';
 import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 
 export const LOG_CONSOLE_WEBHOOK_COLUMNS: LogConsoleColumn[] = [
@@ -23,11 +21,7 @@ export const LOG_CONSOLE_WEBHOOK_COLUMNS: LogConsoleColumn[] = [
     label: msg`Endpoint`,
     gridTrack: 'minmax(0, 1fr)',
     renderCell: (entry) => (
-      <SettingsTableTagCell>
-        {isNonEmptyString(entry.properties?.url) && (
-          <LogConsoleWebhookEndpointLink url={entry.properties.url} />
-        )}
-      </SettingsTableTagCell>
+      <SettingsTableLinkCell url={entry.properties?.url} />
     ),
   },
   LOG_CONSOLE_WEBHOOK_STATUS_COLUMN,
