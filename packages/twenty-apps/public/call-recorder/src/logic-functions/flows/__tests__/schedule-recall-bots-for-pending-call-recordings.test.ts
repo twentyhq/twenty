@@ -69,7 +69,9 @@ const matchesCallRecordingFilter = (
       return value === condition.eq;
     }
 
-    throw new Error(`Unhandled filter on ${field}: ${JSON.stringify(condition)}`);
+    throw new Error(
+      `Unhandled filter on ${field}: ${JSON.stringify(condition)}`,
+    );
   });
 
 class FakeCoreApiClient {
@@ -461,8 +463,6 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       client: client as unknown as CoreApiClient,
       now: firstAttemptAt,
     });
-    // A confirmed cancel clears the bot and its attempt markers, and the
-    // re-request leaves the meeting inputs unchanged.
     Object.assign(client.callRecordings[0], {
       externalBotId: null,
       botScheduleAttemptedAt: null,
@@ -478,8 +478,6 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
     expect(listBotRequestUrls()).toHaveLength(0);
     const [[, firstRequestInit], [, secondRequestInit]] = createBotCalls();
-    // Recall replays a reused key's first response for an hour, which would
-    // hand back the canceled bot instead of creating one.
     expect(secondRequestInit.headers['Idempotency-Key']).not.toBe(
       firstRequestInit.headers['Idempotency-Key'],
     );
@@ -489,7 +487,6 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     class ConcurrentAttemptFakeCoreApiClient extends FakeCoreApiClient {
       override async mutation(mutation: any): Promise<any> {
         if (mutation.updateCallRecordings !== undefined) {
-          // Another run wrote its own attempt after this one read the row.
           Object.assign(this.callRecordings[0], {
             botScheduleAttemptedAt: '2026-01-01T11:59:59.000Z',
             botScheduleIdempotencyKey: 'concurrent-idempotency-key',

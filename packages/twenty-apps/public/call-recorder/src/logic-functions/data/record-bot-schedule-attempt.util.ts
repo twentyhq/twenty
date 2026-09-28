@@ -4,9 +4,6 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
-// Compare-and-set on the attempt markers: of concurrent runs that read the same
-// pending row, only the one whose write still finds the markers it read goes
-// on to create a bot, so their different attempt keys cannot create twins.
 export const recordBotScheduleAttempt = async (
   client: CoreApiClient,
   {

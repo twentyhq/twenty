@@ -95,10 +95,6 @@ export const scheduleRecallBot = async ({
   };
 };
 
-// The attempt timestamp scopes the key to one creation attempt. Recall replays
-// a key's first response for an hour, so a bot created again after its
-// predecessor was canceled needs a key of its own, while re-sends of the same
-// attempt keep theirs.
 export const computeRecallBotCreationIdempotencyKey = ({
   meetingUrl,
   joinAt,

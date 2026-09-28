@@ -98,7 +98,9 @@ const matchesCallRecordingFilter = (
       return value === condition.eq;
     }
 
-    throw new Error(`Unhandled filter on ${field}: ${JSON.stringify(condition)}`);
+    throw new Error(
+      `Unhandled filter on ${field}: ${JSON.stringify(condition)}`,
+    );
   });
 
 type FakeCoreApiClientFixture = {
@@ -735,7 +737,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
         if (requestInit.method === 'DELETE') {
-          // The re-request rescheduled the same bot before its delete landed.
           client.callRecordings[0].recordingRequestStatus = 'REQUESTED';
 
           return new Response(null, { status: 204 });
