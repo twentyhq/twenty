@@ -38,7 +38,7 @@ import {
   type FileUploadStorageLocation,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
-import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
+import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -397,24 +397,12 @@ export class ApplicationTarballService {
       );
     }
 
-    const reservedServerVariableKeys = findEngineInjectedEnvVariableNames(
-      Object.keys(manifest.application.serverVariables ?? {}),
-    );
+    const reservedVariableNames =
+      findReservedVariableNamesInApplicationManifest(manifest.application);
 
-    if (reservedServerVariableKeys.length > 0) {
+    if (reservedVariableNames.length > 0) {
       throw new ApplicationRegistrationException(
-        `Server variable names are reserved: ${reservedServerVariableKeys.join(', ')}`,
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const reservedApplicationVariableKeys = findEngineInjectedEnvVariableNames(
-      Object.keys(manifest.application.applicationVariables ?? {}),
-    );
-
-    if (reservedApplicationVariableKeys.length > 0) {
-      throw new ApplicationRegistrationException(
-        `Application variable names are reserved: ${reservedApplicationVariableKeys.join(', ')}`,
+        `Variable names are reserved: ${reservedVariableNames.join(', ')}`,
         ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }

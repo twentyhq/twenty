@@ -26,7 +26,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
+import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -77,14 +77,13 @@ export class ApplicationSyncService {
     hasSchemaMetadataChanged: boolean;
   }> {
     // Server variables are written to the registration after this sync, so
-    // they are checked here to fail before the workspace changes
-    const reservedServerVariableKeys = findEngineInjectedEnvVariableNames(
-      Object.keys(manifest.application.serverVariables ?? {}),
-    );
+    // reserved names are checked here to fail before the workspace changes
+    const reservedVariableNames =
+      findReservedVariableNamesInApplicationManifest(manifest.application);
 
-    if (reservedServerVariableKeys.length > 0) {
+    if (reservedVariableNames.length > 0) {
       throw new ApplicationException(
-        `Server variable names are reserved: ${reservedServerVariableKeys.join(', ')}`,
+        `Variable names are reserved: ${reservedVariableNames.join(', ')}`,
         ApplicationExceptionCode.INVALID_INPUT,
       );
     }

@@ -7,7 +7,7 @@ exports[`Publish application should fail on reserved variable names should refus
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input for application registration.",
   },
-  "message": "Application variable names are reserved: TWENTY_API_URL",
+  "message": "Variable names are reserved: TWENTY_API_URL",
   "name": "UserInputError",
 }
 `;
@@ -19,7 +19,7 @@ exports[`Publish application should fail on reserved variable names should refus
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input for application registration.",
   },
-  "message": "Server variable names are reserved: TWENTY_API_URL",
+  "message": "Variable names are reserved: TWENTY_API_URL",
   "name": "UserInputError",
 }
 `;

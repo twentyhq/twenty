@@ -7,7 +7,7 @@ exports[`Sync application should fail on reserved variable names should refuse a
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Server variable names are reserved: APPLICATION_ID",
+  "message": "Variable names are reserved: APPLICATION_ID",
   "name": "UserInputError",
 }
 `;
@@ -19,7 +19,7 @@ exports[`Sync application should fail on reserved variable names should refuse a
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Server variable names are reserved: TWENTY_API_KEY",
+  "message": "Variable names are reserved: TWENTY_API_KEY",
   "name": "UserInputError",
 }
 `;
@@ -31,7 +31,7 @@ exports[`Sync application should fail on reserved variable names should refuse a
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Server variable names are reserved: TWENTY_API_URL",
+  "message": "Variable names are reserved: TWENTY_API_URL",
   "name": "UserInputError",
 }
 `;
@@ -43,7 +43,7 @@ exports[`Sync application should fail on reserved variable names should refuse a
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Server variable names are reserved: TWENTY_APP_ACCESS_TOKEN",
+  "message": "Variable names are reserved: TWENTY_APP_ACCESS_TOKEN",
   "name": "UserInputError",
 }
 `;
@@ -55,7 +55,7 @@ exports[`Sync application should fail on reserved variable names should refuse a
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Server variable names are reserved: TWENTY_APP_APPLICATION_ACCESS_TOKEN",
+  "message": "Variable names are reserved: TWENTY_APP_APPLICATION_ACCESS_TOKEN",
   "name": "UserInputError",
 }
 `;
@@ -67,7 +67,7 @@ exports[`Sync application should fail on reserved variable names should refuse a
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Server variable names are reserved: TWENTY_FUNCTIONS_URL",
+  "message": "Variable names are reserved: TWENTY_FUNCTIONS_URL",
   "name": "UserInputError",
 }
 `;
@@ -75,215 +75,71 @@ exports[`Sync application should fail on reserved variable names should refuse a
 exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named APPLICATION_ID 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "applicationVariable": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
-              "message": "Application variable key APPLICATION_ID is reserved",
-              "userFriendlyMessage": "Application variable key APPLICATION_ID is reserved",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "key": "APPLICATION_ID",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "applicationVariable",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 applicationVariable",
-    "summary": {
-      "applicationVariable": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Application variable key APPLICATION_ID is reserved",
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Validation errors occurred while syncing application manifest metadata",
-  "name": "GraphQLError",
+  "message": "Variable names are reserved: APPLICATION_ID",
+  "name": "UserInputError",
 }
 `;
 
 exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named TWENTY_API_KEY 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "applicationVariable": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
-              "message": "Application variable key TWENTY_API_KEY is reserved",
-              "userFriendlyMessage": "Application variable key TWENTY_API_KEY is reserved",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "key": "TWENTY_API_KEY",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "applicationVariable",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 applicationVariable",
-    "summary": {
-      "applicationVariable": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Application variable key TWENTY_API_KEY is reserved",
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Validation errors occurred while syncing application manifest metadata",
-  "name": "GraphQLError",
+  "message": "Variable names are reserved: TWENTY_API_KEY",
+  "name": "UserInputError",
 }
 `;
 
 exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named TWENTY_API_URL 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "applicationVariable": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
-              "message": "Application variable key TWENTY_API_URL is reserved",
-              "userFriendlyMessage": "Application variable key TWENTY_API_URL is reserved",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "key": "TWENTY_API_URL",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "applicationVariable",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 applicationVariable",
-    "summary": {
-      "applicationVariable": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Application variable key TWENTY_API_URL is reserved",
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Validation errors occurred while syncing application manifest metadata",
-  "name": "GraphQLError",
+  "message": "Variable names are reserved: TWENTY_API_URL",
+  "name": "UserInputError",
 }
 `;
 
 exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named TWENTY_APP_ACCESS_TOKEN 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "applicationVariable": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
-              "message": "Application variable key TWENTY_APP_ACCESS_TOKEN is reserved",
-              "userFriendlyMessage": "Application variable key TWENTY_APP_ACCESS_TOKEN is reserved",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "key": "TWENTY_APP_ACCESS_TOKEN",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "applicationVariable",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 applicationVariable",
-    "summary": {
-      "applicationVariable": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Application variable key TWENTY_APP_ACCESS_TOKEN is reserved",
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Validation errors occurred while syncing application manifest metadata",
-  "name": "GraphQLError",
+  "message": "Variable names are reserved: TWENTY_APP_ACCESS_TOKEN",
+  "name": "UserInputError",
 }
 `;
 
 exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named TWENTY_APP_APPLICATION_ACCESS_TOKEN 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "applicationVariable": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
-              "message": "Application variable key TWENTY_APP_APPLICATION_ACCESS_TOKEN is reserved",
-              "userFriendlyMessage": "Application variable key TWENTY_APP_APPLICATION_ACCESS_TOKEN is reserved",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "key": "TWENTY_APP_APPLICATION_ACCESS_TOKEN",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "applicationVariable",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 applicationVariable",
-    "summary": {
-      "applicationVariable": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Application variable key TWENTY_APP_APPLICATION_ACCESS_TOKEN is reserved",
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Validation errors occurred while syncing application manifest metadata",
-  "name": "GraphQLError",
+  "message": "Variable names are reserved: TWENTY_APP_APPLICATION_ACCESS_TOKEN",
+  "name": "UserInputError",
 }
 `;
 
 exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named TWENTY_FUNCTIONS_URL 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "applicationVariable": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_APPLICATION_VARIABLE_INPUT",
-              "message": "Application variable key TWENTY_FUNCTIONS_URL is reserved",
-              "userFriendlyMessage": "Application variable key TWENTY_FUNCTIONS_URL is reserved",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "key": "TWENTY_FUNCTIONS_URL",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "applicationVariable",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 applicationVariable",
-    "summary": {
-      "applicationVariable": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Application variable key TWENTY_FUNCTIONS_URL is reserved",
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Validation errors occurred while syncing application manifest metadata",
-  "name": "GraphQLError",
+  "message": "Variable names are reserved: TWENTY_FUNCTIONS_URL",
+  "name": "UserInputError",
 }
 `;

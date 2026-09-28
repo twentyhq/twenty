@@ -19,7 +19,7 @@ import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/app
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
+import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -910,14 +910,14 @@ export class ApplicationRegistrationService {
       return null;
     }
 
-    const reservedVariableKeys = findEngineInjectedEnvVariableNames([
-      ...Object.keys(params.manifest.application.serverVariables ?? {}),
-      ...Object.keys(params.manifest.application.applicationVariables ?? {}),
-    ]);
+    const reservedVariableNames =
+      findReservedVariableNamesInApplicationManifest(
+        params.manifest.application,
+      );
 
-    if (reservedVariableKeys.length > 0) {
+    if (reservedVariableNames.length > 0) {
       this.logger.warn(
-        `Skipping catalog entry from package ${params.sourcePackage}: variable names are reserved: ${reservedVariableKeys.join(', ')}`,
+        `Skipping catalog entry from package ${params.sourcePackage}: variable names are reserved: ${reservedVariableNames.join(', ')}`,
       );
 
       return null;
