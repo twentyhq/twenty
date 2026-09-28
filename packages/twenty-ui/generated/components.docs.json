@@ -9070,7 +9070,7 @@
         "type": "((event: MouseEvent<HTMLLIElement, MouseEvent>) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Pointer activation callback. The row itself does not add keyboard or menu semantics."
+        "description": "Activation callback. When supplied, the row gains button semantics, a tab stop, and Enter/Space activation."
       },
       {
         "name": "selected",

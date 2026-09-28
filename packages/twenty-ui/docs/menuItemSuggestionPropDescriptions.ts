@@ -11,7 +11,7 @@ export const MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS = {
   selected: 'Applies selected styling. The application owns selection.',
   className: 'Class applied to the row.',
   onClick:
-    'Pointer activation callback. The row itself does not add keyboard or menu semantics.',
+    'Activation callback. When supplied, the row gains button semantics, a tab stop, and Enter/Space activation.',
 } satisfies Partial<
   Record<keyof ComponentProps<typeof MenuItemSuggestion>, string>
 >;
