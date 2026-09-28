@@ -7,16 +7,19 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { AgentHistoryMigrateCommand } from 'src/database/commands/agent-history/agent-history-migrate.command';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
-import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
+import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
-  exports: [AgentHistorySchemaService, AgentHistoryMigrationService],
+  exports: [
+    AgentHistorySchemaService,
+    AgentHistoryMigrationService,
+    AgentHistoryMigrationStateService,
+  ],
   imports: [
     WorkspaceIteratorModule,
-    AgentHistoryModule,
     ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceMigrationModule,
@@ -25,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AgentHistoryCleanupCommand,
     AgentHistoryMigrateCommand,
     AgentHistoryMigrationService,
+    AgentHistoryMigrationStateService,
     AgentHistoryMigrationDataService,
     AgentHistoryMigrationValidationService,
     AgentHistorySchemaService,
