@@ -45,6 +45,11 @@ import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/typ
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
+type PendingQuestionRollback = {
+  partId: string;
+  previousOutput: Record<string, unknown> & { result?: AskQuestionsToolResult };
+};
+
 @Injectable()
 export class AgentChatService {
   private readonly logger = new Logger(AgentChatService.name);
@@ -779,7 +784,7 @@ export class AgentChatService {
   }): Promise<{
     answerText: string;
     turnId: string | null;
-    rollback: { partId: string; previousOutput: Record<string, unknown> };
+    rollback: PendingQuestionRollback;
   }> {
     const message = await this.messageRepository.findOne(workspaceId, {
       where: { id: messageId, threadId },
@@ -808,11 +813,9 @@ export class AgentChatService {
     }
 
     const previousOutput =
-      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
-    const previousResult = previousOutput.result as
-      | AskQuestionsToolResult
-      | undefined;
-    const questions = previousResult?.questions ?? [];
+      (pendingPart.toolOutput as PendingQuestionRollback['previousOutput'] | null) ??
+      {};
+    const questions = previousOutput.result?.questions ?? [];
 
     this.validateQuestionAnswers(answers, questions);
 
@@ -945,7 +948,7 @@ export class AgentChatService {
     messageId: string;
     streamId: string;
     workspaceId: string;
-    rollback: { partId: string; previousOutput: Record<string, unknown> };
+    rollback: PendingQuestionRollback;
   }): Promise<void> {
     await this.messagePartRepository
       .update(
@@ -976,12 +979,8 @@ export class AgentChatService {
     threadId: string;
     streamId: string;
     workspaceId: string;
-    rollback: { partId: string; previousOutput: Record<string, unknown> };
+    rollback: PendingQuestionRollback;
   }): Promise<void> {
-    const previousResult = rollback.previousOutput.result as
-      | AskQuestionsToolResult
-      | undefined;
-
     await this.messagePartRepository
       .update(
         workspaceId,
@@ -989,7 +988,7 @@ export class AgentChatService {
         {
           toolOutput: {
             ...rollback.previousOutput,
-            result: { ...previousResult, status: 'skipped' },
+            result: { ...rollback.previousOutput.result, status: 'skipped' },
           },
         },
       )
