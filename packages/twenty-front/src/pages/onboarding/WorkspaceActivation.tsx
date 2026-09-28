@@ -6,11 +6,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
+import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
-import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client/react';
@@ -56,10 +55,8 @@ export const WorkspaceActivation = () => {
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
-  const setOnboardingFreeCredits = useSetAtomFamilyState(
-    onboardingFreeCreditsFamilyState,
-    currentWorkspace?.id ?? '',
-  );
+  const setOnboardingFreeCredits =
+    useSetCurrentWorkspaceOnboardingFreeCredits();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
   );

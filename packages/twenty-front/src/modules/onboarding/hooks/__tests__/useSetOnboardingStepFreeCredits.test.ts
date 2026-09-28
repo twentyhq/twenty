@@ -154,6 +154,28 @@ describe('useSetOnboardingStepFreeCredits', () => {
     ).toEqual(otherWorkspaceFreeCredits);
   });
 
+  it('should not write any credits while the current workspace is not loaded', () => {
+    jotaiStore.set(currentWorkspaceState.atom, null);
+
+    const result = renderSetStepFreeCreditsHook();
+
+    act(() => {
+      result.current.setOnboardingStepFreeCredits('installApps', 1);
+    });
+
+    expect(
+      jotaiStore.get(onboardingFreeCreditsFamilyState.atomFamily('')),
+    ).toEqual(ONBOARDING_FREE_CREDITS_DEFAULT_VALUE);
+
+    act(() => {
+      jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    });
+
+    expect(result.current.onboardingFreeCredits).toEqual(
+      ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+    );
+  });
+
   it('should lower the seen credits when a step loses its reward', () => {
     jotaiStore.set(
       onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
