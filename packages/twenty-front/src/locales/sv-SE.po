@@ -1535,7 +1535,7 @@ msgstr "Lägg till fil"
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
-msgstr ""
+msgstr "Lägg till filer, poster eller färdigheter"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
@@ -2219,12 +2219,12 @@ msgstr "AI-användning per arbetsyta"
 #. js-lingui-id: 6ktJa0
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
-msgstr ""
+msgstr "Gränsen för AI-användning har nåtts för den här perioden."
 
 #. js-lingui-id: JQW6M/
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
-msgstr ""
+msgstr "Gränsen för AI-användning har nåtts. Be en administratör att höja gränsen."
 
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -3153,7 +3153,7 @@ msgstr "Fråga AI"
 #. js-lingui-id: IRCQfx
 #: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
-msgstr ""
+msgstr "Be en administratör att höja gränsen."
 
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -13258,7 +13258,7 @@ msgstr "Laddar fler..."
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
-msgstr ""
+msgstr "Laddar poster"
 
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -13268,7 +13268,7 @@ msgstr "Laddar kvarhållningskonfiguration..."
 #. js-lingui-id: VeVIIk
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
-msgstr ""
+msgstr "Laddar färdigheter"
 
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
@@ -13532,7 +13532,7 @@ msgstr "Hantera funktionsflaggor för den här arbetsytan"
 #. js-lingui-id: BaAAPb
 #: src/modules/settings/billing/hooks/useManageUsageLimitsButton.ts
 msgid "Manage limits"
-msgstr ""
+msgstr "Hantera gränser"
 
 #. js-lingui-id: PxMD2N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -14617,7 +14617,7 @@ msgstr "Ny gräns för överföring"
 #. js-lingui-id: MdpSC1
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
-msgstr ""
+msgstr "Ny färdighet"
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15397,7 +15397,7 @@ msgstr "Inga serveradministratörer hittades."
 #. js-lingui-id: b5hW1u
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
-msgstr ""
+msgstr "Inga färdigheter hittades"
 
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -16195,6 +16195,11 @@ msgstr "Öppna som länk"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
 msgstr "Öppna Claude med Twenty-anslutningsnamn och MCP-URL förifyllda."
+
+#. js-lingui-id: uIKeEf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
+msgid "Open conversation"
+msgstr ""
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -19282,7 +19287,7 @@ msgstr "Sök efter personer eller roller"
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Search records"
-msgstr ""
+msgstr "Sök poster"
 
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -19298,7 +19303,7 @@ msgstr "Sök registreringar..."
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
-msgstr ""
+msgstr "Sök färdigheter"
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -23315,6 +23320,8 @@ msgstr "Bildformatet stöds inte"
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Untitled"
@@ -24877,11 +24884,6 @@ msgstr "Arbetsflödeskörning"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
 msgstr "Indexsida för arbetsflöden"
-
-#. js-lingui-id: 975MSi
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
-msgid "Workflow name"
-msgstr "Arbetsflödets namn"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx

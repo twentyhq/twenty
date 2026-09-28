@@ -1535,7 +1535,7 @@ msgstr "파일 추가"
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
-msgstr ""
+msgstr "파일, 레코드 또는 스킬 추가"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
@@ -2219,12 +2219,12 @@ msgstr "워크스페이스별 AI 사용량"
 #. js-lingui-id: 6ktJa0
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
-msgstr ""
+msgstr "이 기간의 AI 사용 한도에 도달했습니다."
 
 #. js-lingui-id: JQW6M/
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
-msgstr ""
+msgstr "AI 사용 한도에 도달했습니다. 관리자에게 한도 상향을 요청하세요."
 
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -3153,7 +3153,7 @@ msgstr "AI에게 질문하기"
 #. js-lingui-id: IRCQfx
 #: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
-msgstr ""
+msgstr "관리자에게 한도를 늘려 달라고 요청하세요."
 
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -13258,7 +13258,7 @@ msgstr "더 로딩 중..."
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
-msgstr ""
+msgstr "레코드 불러오는 중"
 
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -13268,7 +13268,7 @@ msgstr "보존 설정 로드 중..."
 #. js-lingui-id: VeVIIk
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
-msgstr ""
+msgstr "스킬 로드 중"
 
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
@@ -13532,7 +13532,7 @@ msgstr "이 워크스페이스의 기능 플래그 관리"
 #. js-lingui-id: BaAAPb
 #: src/modules/settings/billing/hooks/useManageUsageLimitsButton.ts
 msgid "Manage limits"
-msgstr ""
+msgstr "한도 관리"
 
 #. js-lingui-id: PxMD2N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -14615,7 +14615,7 @@ msgstr "새 이월 한도"
 #. js-lingui-id: MdpSC1
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
-msgstr ""
+msgstr "새 스킬"
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15395,7 +15395,7 @@ msgstr "서버 관리자를 찾을 수 없습니다."
 #. js-lingui-id: b5hW1u
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
-msgstr ""
+msgstr "스킬을 찾을 수 없습니다"
 
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -16193,6 +16193,11 @@ msgstr "링크로 열기"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
 msgstr "Twenty 커넥터 이름과 MCP URL이 미리 채워진 상태로 Claude를 여세요."
+
+#. js-lingui-id: uIKeEf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
+msgid "Open conversation"
+msgstr ""
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -19278,7 +19283,7 @@ msgstr "사용자 또는 역할 검색"
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Search records"
-msgstr ""
+msgstr "레코드 검색"
 
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -19294,7 +19299,7 @@ msgstr "등록 검색..."
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
-msgstr ""
+msgstr "스킬 검색"
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -23307,6 +23312,8 @@ msgstr "지원되지 않는 이미지 형식"
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Untitled"
@@ -24869,11 +24876,6 @@ msgstr "워크플로우 실행"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
 msgstr "워크플로 인덱스 페이지"
-
-#. js-lingui-id: 975MSi
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
-msgid "Workflow name"
-msgstr "워크플로우 이름"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx

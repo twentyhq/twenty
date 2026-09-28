@@ -44,7 +44,10 @@ export const getAgentHistorySchemaAdditions = ({
       ((current.readability === MetadataReadability.SYSTEM &&
         current.writability === MetadataWritability.SYSTEM) ||
         (identifier === STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
-          current.readability === MetadataReadability.PRIVATE &&
+          // INHERITED once threads can belong to a workflow run; a thread
+          // without one still reads only through its own grants.
+          (current.readability === MetadataReadability.PRIVATE ||
+            current.readability === MetadataReadability.INHERITED) &&
           current.writability === MetadataWritability.OPEN));
     if (
       isDefined(current) &&

@@ -1535,7 +1535,7 @@ msgstr "הוסף קובץ"
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
-msgstr ""
+msgstr "הוסף קבצים, רשומות או מיומנויות"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
@@ -2219,12 +2219,12 @@ msgstr "שימוש ב-AI לפי סביבת עבודה"
 #. js-lingui-id: 6ktJa0
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
-msgstr ""
+msgstr "הגעת למגבלת השימוש ב-AI לתקופה זו."
 
 #. js-lingui-id: JQW6M/
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
-msgstr ""
+msgstr "הגעת למגבלת השימוש ב-AI. בקש ממנהל מערכת להגדיל את המגבלה."
 
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -3153,7 +3153,7 @@ msgstr "שאל את ה-AI"
 #. js-lingui-id: IRCQfx
 #: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
-msgstr ""
+msgstr "בקש ממנהל מערכת להגדיל את המגבלה."
 
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -13258,7 +13258,7 @@ msgstr "טוען עוד..."
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
-msgstr ""
+msgstr "טוען רשומות"
 
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -13268,7 +13268,7 @@ msgstr "טוען תצורת שמירות..."
 #. js-lingui-id: VeVIIk
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
-msgstr ""
+msgstr "טוען מיומנויות"
 
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
@@ -13532,7 +13532,7 @@ msgstr "נהל דגלי תכונות עבור סביבת עבודה זו"
 #. js-lingui-id: BaAAPb
 #: src/modules/settings/billing/hooks/useManageUsageLimitsButton.ts
 msgid "Manage limits"
-msgstr ""
+msgstr "נהל מגבלות"
 
 #. js-lingui-id: PxMD2N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -14615,7 +14615,7 @@ msgstr "מגבלת העברה חדשה"
 #. js-lingui-id: MdpSC1
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
-msgstr ""
+msgstr "מיומנות חדשה"
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15395,7 +15395,7 @@ msgstr "לא נמצאו מנהלי שרת."
 #. js-lingui-id: b5hW1u
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
-msgstr ""
+msgstr "לא נמצאו מיומנויות"
 
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -16193,6 +16193,11 @@ msgstr "פתח כקישור"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
 msgstr "פתח את Claude כששם מחבר Twenty וכתובת ה-URL של MCP מולאו מראש."
+
+#. js-lingui-id: uIKeEf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
+msgid "Open conversation"
+msgstr ""
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -19278,7 +19283,7 @@ msgstr "חפש אנשים או תפקידים"
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Search records"
-msgstr ""
+msgstr "חפש רשומות"
 
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -19294,7 +19299,7 @@ msgstr "חפש רישומים..."
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
-msgstr ""
+msgstr "חפש מיומנויות"
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -23307,6 +23312,8 @@ msgstr "פורמט תמונה לא נתמך"
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Untitled"
@@ -24869,11 +24876,6 @@ msgstr "ביצוע זרימת עבודה"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
 msgstr "דף אינדקס של תהליכי עבודה"
-
-#. js-lingui-id: 975MSi
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
-msgid "Workflow name"
-msgstr "שם זרימת העבודה"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
