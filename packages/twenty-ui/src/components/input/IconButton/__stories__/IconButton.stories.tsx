@@ -206,8 +206,8 @@ export const Tooltip: Story = {
 };
 
 export const TooltipDocumentation: Story = {
-  ...Tooltip,
-  play: undefined,
+  decorators: Tooltip.decorators,
+  args: Tooltip.args,
 };
 
 export const TooltipDisabled: Story = {

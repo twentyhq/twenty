@@ -13,6 +13,8 @@ import { collectLeaves } from '../design-tokens/pipeline/collectLeaves';
 import { DOCUMENTED_COMPONENTS } from '../docs/components';
 import { DocumentationParser } from '../docs/DocumentationParser';
 import { formatDocumentationTokenValue } from '../docs/formatDocumentationTokenValue';
+import { getIconDocumentationGroups } from '../docs/getIconDocumentationGroups';
+import { getPublicComponentExports } from '../docs/getPublicComponentExports';
 import { normalizeDocumentationDefaultValue } from '../docs/normalizeDocumentationDefaultValue';
 import { normalizeDocumentationPropType } from '../docs/normalizeDocumentationPropType';
 import {
@@ -51,11 +53,62 @@ if (errors.length > 0) {
 const sourcePaths = DOCUMENTED_COMPONENTS.map((component) =>
   resolve(sourceRoot, component.source),
 );
-const program = ts.createProgram(sourcePaths, {
-  ...options,
-  preserveSymlinks: true,
-});
+const packageManifest: { exports: Record<string, unknown> } = JSON.parse(
+  readFileSync(resolve(packageRoot, 'package.json'), 'utf8'),
+);
+const entryPoints = Object.keys(packageManifest.exports)
+  .filter((subpath) => !subpath.endsWith('.css'))
+  .map((subpath) => ({
+    name: subpath === '.' ? 'twenty-ui' : `twenty-ui/${subpath.slice(2)}`,
+    path: resolve(sourceRoot, subpath, 'index.ts'),
+  }));
+const program = ts.createProgram(
+  [...sourcePaths, ...entryPoints.map((entry) => entry.path)],
+  {
+    ...options,
+    preserveSymlinks: true,
+  },
+);
 const checker = program.getTypeChecker();
+const publicComponents = getPublicComponentExports({
+  checker,
+  entryPoints: entryPoints.map((entry) => {
+    const source = program.getSourceFile(entry.path);
+
+    if (!source) {
+      throw new Error(`Could not read ${entry.name}`);
+    }
+
+    return { name: entry.name, source };
+  }),
+});
+const documentedNames = new Set<string>(
+  DOCUMENTED_COMPONENTS.map((component) => component.name),
+);
+const documentedDecorators = new Set([
+  'CatalogDecorator',
+  'ComponentDecorator',
+]);
+const catalogIcons = publicComponents.filter(
+  (component) =>
+    component.entryPoint === 'twenty-ui/icon' &&
+    !documentedNames.has(component.name),
+);
+const iconNames = new Set(catalogIcons.map((icon) => icon.name));
+
+for (const component of publicComponents) {
+  if (
+    !documentedNames.has(component.name) &&
+    !iconNames.has(component.name) &&
+    !documentedDecorators.has(component.name)
+  ) {
+    throw new Error(
+      `Missing documentation for ${component.name} from ${component.entryPoint}. Add a public component reference.`,
+    );
+  }
+}
+
+const iconGroups = getIconDocumentationGroups({ checker, icons: catalogIcons });
 
 const isReactNativeAttribute = (prop: PropItem): boolean =>
   prop.declarations !== undefined &&
@@ -245,6 +298,7 @@ const tokens: TokenDocumentation[] = collectLeaves(DESIGN_TOKENS)
 const outputs = [
   { name: 'components.docs.json', data: components },
   { name: 'tokens.docs.json', data: tokens },
+  { name: 'icons.docs.json', data: iconGroups },
 ];
 const isCheckMode = process.argv.includes('--check');
 

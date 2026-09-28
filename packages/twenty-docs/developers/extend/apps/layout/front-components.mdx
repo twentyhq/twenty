@@ -861,7 +861,7 @@ Import individual icons from `twenty-ui/icon`:
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider`, `useIcons`, and `iconsState` — they pull in the full Tabler icon set (several MB).
+Each named icon is tree-shaken, so importing a handful adds little to your bundle. Prefer named imports in front components. `IconsProvider` loads the complete dynamic icon catalog; `useIcons` reads that provider. See the [icon reference](/ui/icons) for available exports and supported props.
 
 ### Theming and theme tokens
 

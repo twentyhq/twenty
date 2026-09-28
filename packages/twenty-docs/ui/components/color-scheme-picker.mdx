@@ -1,0 +1,34 @@
+---
+title: ColorSchemePicker
+description: Choose light, dark, or the system color scheme.
+---
+
+import ColorSchemePickerReference from '/snippets/ui/generated/components/color-scheme-picker.mdx';
+
+`ColorSchemePicker` is controlled through `value` and `onChange`. Supply the three labels from your application. Selecting a scheme does not persist it or change a theme provider automatically.
+
+```tsx
+import { useState } from 'react';
+import { ColorSchemePicker } from 'twenty-ui/components';
+import { type ColorScheme } from 'twenty-ui/primitives/input';
+
+export const AppearanceChoice = () => {
+  const [scheme, setScheme] = useState<ColorScheme>('System');
+
+  return (
+    <ColorSchemePicker
+      value={scheme}
+      onChange={setScheme}
+      lightLabel="Light"
+      darkLabel="Dark"
+      systemLabel="Use system setting"
+    />
+  );
+};
+```
+
+When the value is `System`, resolve the system preference to `light` or `dark` before passing it to [ThemeProvider](/ui/theming). The three previews are separate button controls with Enter and Space activation. Their accessible names are `Light`, `Dark`, and `System`; the label props change only the visible captions. The selected checkmark is visual.
+
+## Props
+
+<ColorSchemePickerReference />

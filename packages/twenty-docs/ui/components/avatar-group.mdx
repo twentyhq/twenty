@@ -1,0 +1,38 @@
+---
+title: AvatarGroup
+description: Overlapping avatars with an optional overflow indicator.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AvatarGroupReference from '/snippets/ui/generated/components/avatar-group.mdx';
+
+`AvatarGroup` receives rendered avatars. Supply `overflowCount` yourself; slicing the avatars does not calculate the hidden count. `overflowAvatar` replaces the numeric indicator.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const TeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={2}
+    overflowCount={1}
+    avatars={[
+      <Avatar key="ada" name="Ada Lovelace" />,
+      <Avatar key="grace" name="Grace Hopper" />,
+      <Avatar key="margaret" name="Margaret Hamilton" />,
+    ]}
+  />
+);
+```
+
+Keep the member names available in surrounding content. `overlap` chooses the stacking direction and `overlapOffset` accepts a CSS length. An empty group without an overflow element renders nothing.
+
+<StoryEmbed
+  storyId="ui-data-display-avatargroup--default"
+  title="AvatarGroup example"
+  height={280}
+/>
+
+## Props
+
+<AvatarGroupReference />

@@ -65,8 +65,8 @@ export const Framed: Story = {
   },
 };
 export const FramedDocumentation: Story = {
-  ...Framed,
-  play: undefined,
+  decorators: Framed.decorators,
+  render: Framed.render,
 };
 
 export const FramedDark: Story = {

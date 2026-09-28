@@ -38,6 +38,11 @@ export const Default: Story = {
   },
 };
 
+export const Documentation: Story = {
+  args: Default.args,
+  decorators: Default.decorators,
+};
+
 export const Dark: Story = { ...Default, globals: { colorScheme: 'dark' } };
 export const Single: Story = {
   ...Default,

@@ -68,6 +68,6 @@ export const AnimatedIcon: Story = {
   },
 };
 export const AnimatedIconDocumentation: Story = {
-  ...AnimatedIcon,
-  play: undefined,
+  decorators: AnimatedIcon.decorators,
+  render: AnimatedIcon.render,
 };

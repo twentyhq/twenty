@@ -156,6 +156,10 @@ export const Picker: Story = {
   },
 };
 
+export const PickerDocumentation: Story = {
+  render: Picker.render,
+};
+
 export const MultipleSelection: Story = {
   render: () => <DropdownPickerExample multiple />,
   play: async ({ canvasElement }) => {
@@ -171,6 +175,10 @@ export const MultipleSelection: Story = {
     await expect(ada).toHaveAttribute('aria-pressed', 'true');
     await expect(body.getByRole('dialog')).toBeVisible();
   },
+};
+
+export const MultipleSelectionDocumentation: Story = {
+  render: MultipleSelection.render,
 };
 
 export const MultipleSelectionDark: Story = {
@@ -221,6 +229,10 @@ export const Pages: Story = {
   },
 };
 
+export const PagesDocumentation: Story = {
+  render: Pages.render,
+};
+
 export const PagesDark: Story = {
   ...Pages,
   globals: { colorScheme: 'dark' },
@@ -244,6 +256,10 @@ export const Panel: Story = {
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
   },
+};
+
+export const PanelDocumentation: Story = {
+  render: Panel.render,
 };
 
 export const Nested: Story = {
@@ -288,4 +304,8 @@ export const Nested: Story = {
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
   },
+};
+
+export const NestedDocumentation: Story = {
+  render: Nested.render,
 };

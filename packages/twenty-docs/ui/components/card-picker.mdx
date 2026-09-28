@@ -1,0 +1,26 @@
+---
+title: CardPicker
+description: A radio option presented as a card.
+---
+
+import CardPickerReference from '/snippets/ui/generated/components/card-picker.mdx';
+
+Place `CardPicker` inside [RadioGroup](/ui/primitives/input/radio-group). The group owns selection; each card supplies a value and its visible content. It uses Radio's keyboard, form, and disabled behavior.
+
+```tsx
+import { CardPicker } from 'twenty-ui/components';
+import { RadioGroup } from 'twenty-ui/primitives/input';
+
+export const ViewChoice = () => (
+  <RadioGroup aria-label="Default view" defaultValue="table">
+    <CardPicker value="table">Table view</CardPicker>
+    <CardPicker value="board">Board view</CardPicker>
+  </RadioGroup>
+);
+```
+
+Use `value` and `onValueChange` on the group for controlled selection, or `defaultValue` for an initial choice. The default card renders a div with radio semantics. Avoid nesting interactive controls in its content.
+
+## Props
+
+<CardPickerReference />
