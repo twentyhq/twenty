@@ -837,7 +837,7 @@ msgstr "AI"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "AI chat messages sent by the workspace member"
-msgstr ""
+msgstr "AI-chattmeddelanden som skickats av arbetsytans medlem"
 
 #. js-lingui-id: NHpbHJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2347,7 +2347,7 @@ msgstr "Chattmeddelande hittades inte."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat messages"
-msgstr ""
+msgstr "Chattmeddelanden"
 
 #. js-lingui-id: /VxChJ
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10345,7 +10345,7 @@ msgstr "Skicka testmejl"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sender"
-msgstr ""
+msgstr "Avsändare"
 
 #. js-lingui-id: nzBQFi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -12253,7 +12253,7 @@ msgstr "Denna filuppladdning har redan slutförts."
 #. js-lingui-id: Ee9ncG
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "This form is no longer awaiting a submission"
-msgstr ""
+msgstr "Detta formulär väntar inte längre på en inlämning"
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -14727,7 +14727,7 @@ msgstr "Arbetsytemedlem som äger tråden"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who sent this message"
-msgstr ""
+msgstr "Arbetsytans medlem som skickade det här meddelandet"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
