@@ -589,18 +589,16 @@ export const createOnboardingConstructionSiteRenderer = ({
   const resize = () => {
     cssWidth = canvas.clientWidth;
     cssHeight = canvas.clientHeight;
-    devicePixelRatio = Math.max(
-      1,
-      Math.min(
-        window.devicePixelRatio || 1,
-        MAXIMUM_DEVICE_PIXEL_RATIO,
-        Math.sqrt(MAXIMUM_CANVAS_PIXELS / Math.max(cssWidth * cssHeight, 1)),
-      ),
+    devicePixelRatio = Math.min(
+      Math.max(1, window.devicePixelRatio || 1),
+      MAXIMUM_DEVICE_PIXEL_RATIO,
+      Math.sqrt(MAXIMUM_CANVAS_PIXELS / Math.max(cssWidth * cssHeight, 1)),
     );
+    const sceneScale = Math.min(1, devicePixelRatio);
     canvas.width = Math.max(1, Math.round(cssWidth * devicePixelRatio));
     canvas.height = Math.max(1, Math.round(cssHeight * devicePixelRatio));
-    sceneWidth = Math.max(1, Math.round(cssWidth));
-    sceneHeight = Math.max(1, Math.round(cssHeight));
+    sceneWidth = Math.max(1, Math.round(cssWidth * sceneScale));
+    sceneHeight = Math.max(1, Math.round(cssHeight * sceneScale));
     allocateSceneTarget();
     renderFrame();
   };
