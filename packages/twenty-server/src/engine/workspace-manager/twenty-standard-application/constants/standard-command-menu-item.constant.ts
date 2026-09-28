@@ -1562,4 +1562,44 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.DUPLICATE_MESSAGE_LIST,
     hotKeys: null,
   },
+  addToMessageList: {
+    universalIdentifier: '22bc988d-c499-43b3-a870-d62a42efc6bb',
+    label: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUserPlus',
+    isPinned: false,
+    position: 73,
+    shortLabel: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_TO_MESSAGE_LIST,
+    hotKeys: null,
+  },
+  addViewToMessageList: {
+    universalIdentifier: '679bd5df-324f-4d9c-becc-370d824f4db0',
+    label: i18nLabel(
+      msg({ message: `Add View to List`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUserPlus',
+    isPinned: false,
+    position: 74,
+    shortLabel: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_VIEW_TO_MESSAGE_LIST,
+    hotKeys: null,
+  },
 } as const;

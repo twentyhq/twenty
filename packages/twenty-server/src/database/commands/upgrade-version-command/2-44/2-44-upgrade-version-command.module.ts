@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790583246061-rename-call-recording-tabs-to-transcript.command';
 import { VerifyCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790590808102-verify-common-record-sharing.command';
 import { DeleteFieldLessIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790595494562-delete-field-less-index-metadata.command';
+import { AddMessageListMemberCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790597839000-add-message-list-member-command-menu-items.command';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -17,6 +18,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RenameCallRecordingTabsToTranscriptCommand,
     VerifyCommonRecordSharingCommand,
     DeleteFieldLessIndexMetadataCommand,
+    AddMessageListMemberCommandMenuItemsCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

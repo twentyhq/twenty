@@ -12,6 +12,7 @@ import { SidePanelCreateRelatedRecordPage } from '@/side-panel/pages/create-rela
 import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage';
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
+import { SidePanelAddToMessageListPage } from '@/side-panel/pages/add-to-message-list/components/SidePanelAddToMessageListPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
 import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
@@ -94,6 +95,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.SendCampaign, <SidePanelSendCampaignPage />],
   [SidePanelPages.RecordCreationForm, <SidePanelRecordCreationFormPage />],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
+  [SidePanelPages.AddToMessageList, <SidePanelAddToMessageListPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
