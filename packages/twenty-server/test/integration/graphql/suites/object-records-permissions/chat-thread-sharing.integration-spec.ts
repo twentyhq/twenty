@@ -3,7 +3,7 @@ import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-ch
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790591162158-add-workflow-run-to-chat-threads.command';
+import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790599104004-add-workflow-run-to-chat-threads.command';
 import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -436,7 +436,7 @@ describe('Conversation sharing through the authenticated API', () => {
       {} as never,
       cache,
       getAppProviderByClassName<AgentHistoryStorageService>(
-        'AgentHistoryStorageService',
+        'AgentHistoryUpgradeStorageService',
       ),
       getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
         'WorkspaceMigrationValidateBuildAndRunService',
