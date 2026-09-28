@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
@@ -46,10 +45,11 @@ export class CreateCalendarEventWorkflowAction extends ToolBackedWorkflowAction<
   protected override buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {
-    return this.workflowExecutionContextService.buildConnectedAccountToolExecutionContext(
+    return this.workflowExecutionContextService.buildConnectedAccountToolContextOrThrow(
       {
         runInfo,
-        permissionFlag: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+        permissionFlag: this.createCalendarEventTool.flag,
+        shouldPassWorkspaceRunUser: false,
       },
     );
   }

@@ -37,6 +37,7 @@ const COMPANY_NAME = `${RUN_PREFIX} company`;
 const DELAYED_COMPANY_NAME = `${RUN_PREFIX} delayed company`;
 const OPPORTUNITY_NAME = `${RUN_PREFIX} opportunity`;
 const WORKSPACE_OPPORTUNITY_NAME = `${RUN_PREFIX} workspace opportunity`;
+const NESTED_OPPORTUNITY_NAME = `${RUN_PREFIX} nested opportunity`;
 
 type WorkflowStepManifest = NonNullable<
   Manifest['workflows']
@@ -539,6 +540,35 @@ describe('application workflow execution permissions', () => {
     );
   }, 60000);
 
+  it('keeps the application bound when its token starts a workspace workflow', async () => {
+    const [{ id: applicationId }] = await globalThis.testDataSource.query(
+      `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      [APP_ID, SEED_APPLE_WORKSPACE_ID],
+    );
+    const { applicationAccessToken } = await generateApplicationTokenPair({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId,
+      userId: USER_DATA_SEED_IDS.JANE,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    });
+
+    const { status, stepStatus } = await runWorkflowActionStep({
+      name: `${RUN_PREFIX} workspace workflow started by the application`,
+      stepType: 'CREATE_RECORD',
+      input: {
+        objectName: 'opportunity',
+        objectRecord: { name: NESTED_OPPORTUNITY_NAME },
+      },
+      runToken: applicationAccessToken.token,
+    });
+
+    expect(status).toBe('FAILED');
+    expect(stepStatus).toBe('FAILED');
+    expect(
+      await countRecordsByName('opportunity', NESTED_OPPORTUNITY_NAME),
+    ).toBe(0);
+  }, 60000);
+
   it('only lets the member who started an application workflow run retry it', async () => {
     const workflowRunId = await runWorkflow(CREATE_OPPORTUNITY_WORKFLOW);
 
@@ -550,7 +580,9 @@ describe('application workflow execution permissions', () => {
       { workflowRunId },
     );
 
-    expect(retryWithApiKey.body.errors).toBeDefined();
+    expect(retryWithApiKey.body.errors?.[0]?.message).toContain(
+      'Only the member who started this application workflow run',
+    );
 
     const retryByInitiator = await workflowGraphqlRequest(RETRY_WORKFLOW_RUN, {
       workflowRunId,

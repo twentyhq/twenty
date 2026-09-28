@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -13,6 +15,7 @@ import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-u
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   PermissionsException,
@@ -33,9 +36,15 @@ import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-exe
 import { buildApplicationWorkflowRolePermissionConfig } from 'src/modules/workflow/workflow-executor/utils/build-application-workflow-role-permission-config.util';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { resolveWorkflowRunOwningApplication } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-owning-application.util';
+import { resolveWorkflowRunStartingApplication } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-starting-application.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { canMemberChangeWorkflowRun } from 'src/modules/workflow/workflow-runner/utils/can-member-change-workflow-run.util';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+
+type WorkflowRunApplications = {
+  owningApplication: FlatApplication | null;
+  boundingApplications: FlatApplication[];
+};
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -48,6 +57,8 @@ export class WorkflowExecutionContextService {
     private readonly roleService: RoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async getExecutionContext(
@@ -58,7 +69,7 @@ export class WorkflowExecutionContextService {
       workspaceId: runInfo.workspaceId,
     });
 
-    const owningApplication = await this.findOwningApplication(
+    const workflowRunApplications = await this.findWorkflowRunApplications(
       workflowRun,
       runInfo.workspaceId,
     );
@@ -71,15 +82,15 @@ export class WorkflowExecutionContextService {
       return this.buildUserExecutionContext(
         workflowRun,
         runInfo.workspaceId,
-        owningApplication,
+        workflowRunApplications,
       );
     }
 
-    if (isDefined(owningApplication)) {
-      return this.buildOwningApplicationExecutionContext(
+    if (workflowRunApplications.boundingApplications.length > 0) {
+      return this.buildBoundApplicationExecutionContext(
         workflowRun,
         runInfo.workspaceId,
-        owningApplication,
+        workflowRunApplications,
       );
     }
 
@@ -89,14 +100,30 @@ export class WorkflowExecutionContextService {
     );
   }
 
-  async buildConnectedAccountToolExecutionContext({
+  async buildConnectedAccountToolContextOrThrow({
     runInfo,
     permissionFlag,
+    shouldPassWorkspaceRunUser,
   }: {
     runInfo: WorkflowRunInfo;
     permissionFlag: PermissionFlagType;
+    shouldPassWorkspaceRunUser: boolean;
   }): Promise<ToolExecutionContext> {
-    const { authContext, rolePermissionConfig, owningApplication } =
+    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId: runInfo.workspaceId,
+    });
+
+    const { boundingApplications } = await this.findWorkflowRunApplications(
+      workflowRun,
+      runInfo.workspaceId,
+    );
+
+    if (boundingApplications.length === 0 && !shouldPassWorkspaceRunUser) {
+      return { workspaceId: runInfo.workspaceId };
+    }
+
+    const { authContext, rolePermissionConfig, actingApplication } =
       await this.getExecutionContext(runInfo);
 
     const toolExecutionContext: ToolExecutionContext = {
@@ -104,7 +131,7 @@ export class WorkflowExecutionContextService {
       ...getUserFromAuthContext(authContext),
     };
 
-    if (!isDefined(owningApplication)) {
+    if (!isDefined(actingApplication)) {
       return toolExecutionContext;
     }
 
@@ -116,7 +143,7 @@ export class WorkflowExecutionContextService {
 
     if (!hasToolPermission) {
       throw new WorkflowStepExecutorException(
-        `Application "${owningApplication.name}" is missing the ${permissionFlag} permission required by this step`,
+        `Application "${actingApplication.name}" is missing the ${permissionFlag} permission required by this step`,
         WorkflowStepExecutorExceptionCode.FORBIDDEN,
       );
     }
@@ -141,10 +168,19 @@ export class WorkflowExecutionContextService {
       workspaceId: runInfo.workspaceId,
     });
 
-    const owningApplication = await this.findOwningApplication(
+    const { owningApplication } = await this.findWorkflowRunApplications(
       workflowRun,
       runInfo.workspaceId,
-    );
+    ).catch((error: unknown) => {
+      if (error instanceof WorkflowStepExecutorException) {
+        throw new PermissionsException(
+          error.message,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+
+      throw error;
+    });
 
     if (
       !canMemberChangeWorkflowRun({
@@ -164,10 +200,10 @@ export class WorkflowExecutionContextService {
     }
   }
 
-  private async findOwningApplication(
+  private async findWorkflowRunApplications(
     workflowRun: WorkflowRunWorkspaceEntity,
     workspaceId: string,
-  ): Promise<FlatApplication | null> {
+  ): Promise<WorkflowRunApplications> {
     const [
       { flatWorkflowMaps, flatApplicationMaps },
       { workspaceCustomFlatApplication, twentyStandardFlatApplication },
@@ -181,21 +217,38 @@ export class WorkflowExecutionContextService {
       ),
     ]);
 
-    return resolveWorkflowRunOwningApplication({
+    const workspaceOwnedApplicationIds = [
+      workspaceCustomFlatApplication.id,
+      twentyStandardFlatApplication.id,
+    ];
+
+    const owningApplication = resolveWorkflowRunOwningApplication({
       workflowRun,
       flatWorkflowMaps,
       flatApplicationMaps,
-      workspaceOwnedApplicationIds: [
-        workspaceCustomFlatApplication.id,
-        twentyStandardFlatApplication.id,
-      ],
+      workspaceOwnedApplicationIds,
     });
+
+    const startingApplication = resolveWorkflowRunStartingApplication({
+      workflowRun,
+      flatApplicationMaps,
+      workspaceOwnedApplicationIds,
+    });
+
+    const boundingApplications = [owningApplication, startingApplication]
+      .filter(isDefined)
+      .filter(
+        (application, index, applications) =>
+          applications.findIndex(({ id }) => id === application.id) === index,
+      );
+
+    return { owningApplication, boundingApplications };
   }
 
   private async buildUserExecutionContext(
     workflowRun: WorkflowRunWorkspaceEntity,
     workspaceId: string,
-    owningApplication: FlatApplication | null,
+    { owningApplication, boundingApplications }: WorkflowRunApplications,
   ): Promise<WorkflowExecutionContext> {
     const workspaceMember =
       await this.userWorkspaceService.getWorkspaceMemberOrThrow({
@@ -215,42 +268,46 @@ export class WorkflowExecutionContextService {
       workspaceId,
     });
 
+    const actingApplication = boundingApplications[0] ?? null;
+
     const authContext: WorkspaceAuthContext = buildUserAuthContext({
       workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
       userWorkspaceId: userWorkspace.id,
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId: workspaceMember.id,
       workspaceMember,
-      application: owningApplication,
+      application: actingApplication,
     });
 
     return {
       isActingOnBehalfOfUser: true,
       initiator: workflowRun.createdBy,
-      rolePermissionConfig: isDefined(owningApplication)
+      rolePermissionConfig: isDefined(actingApplication)
         ? buildApplicationWorkflowRolePermissionConfig({
-            owningApplication,
+            applications: boundingApplications,
             userRoleId: roleId,
           })
         : { unionOf: [roleId] },
       authContext,
       owningApplication,
+      actingApplication,
     };
   }
 
-  private async buildOwningApplicationExecutionContext(
+  private async buildBoundApplicationExecutionContext(
     workflowRun: WorkflowRunWorkspaceEntity,
     workspaceId: string,
-    owningApplication: FlatApplication,
+    { owningApplication, boundingApplications }: WorkflowRunApplications,
   ): Promise<WorkflowExecutionContext> {
     const rolePermissionConfig = buildApplicationWorkflowRolePermissionConfig({
-      owningApplication,
+      applications: boundingApplications,
     });
 
-    const { workspace } =
-      await this.applicationService.findTwentyStandardApplicationOrThrow(
-        workspaceId,
-      );
+    const actingApplication = boundingApplications[0];
+
+    const workspace = await this.workspaceRepository.findOneOrFail({
+      where: { id: workspaceId },
+    });
 
     return {
       isActingOnBehalfOfUser: false,
@@ -258,9 +315,10 @@ export class WorkflowExecutionContextService {
       rolePermissionConfig,
       authContext: buildApplicationAuthContext({
         workspace: fromWorkspaceEntityToFlat(workspace),
-        application: owningApplication,
+        application: actingApplication,
       }),
       owningApplication,
+      actingApplication,
     };
   }
 
@@ -305,6 +363,7 @@ export class WorkflowExecutionContextService {
       rolePermissionConfig,
       authContext,
       owningApplication: null,
+      actingApplication: null,
     };
   }
 }

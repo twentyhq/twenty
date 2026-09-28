@@ -68,7 +68,7 @@ describe('DraftEmailWorkflowAction', () => {
         {
           provide: WorkflowExecutionContextService,
           useValue: {
-            buildConnectedAccountToolExecutionContext: jest
+            buildConnectedAccountToolContextOrThrow: jest
               .fn()
               .mockResolvedValue({ workspaceId: 'workspace-1' }),
           },

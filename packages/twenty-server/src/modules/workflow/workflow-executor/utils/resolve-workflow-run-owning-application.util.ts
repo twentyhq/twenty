@@ -16,10 +16,7 @@ export const resolveWorkflowRunOwningApplication = ({
   flatApplicationMaps,
   workspaceOwnedApplicationIds,
 }: {
-  workflowRun: Pick<
-    WorkflowRunWorkspaceEntity,
-    'coreWorkflowId' | 'workflowId'
-  >;
+  workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>;
   flatWorkflowMaps: FlatWorkflowMaps;
   flatApplicationMaps: FlatApplicationCacheMaps;
   workspaceOwnedApplicationIds: string[];
@@ -34,10 +31,6 @@ export const resolveWorkflowRunOwningApplication = ({
   });
 
   if (!isDefined(coreWorkflow)) {
-    if (isDefined(workflowRun.workflowId)) {
-      return null;
-    }
-
     throw new WorkflowStepExecutorException(
       'The workflow of this run no longer exists, so the permissions to run its steps cannot be determined',
       WorkflowStepExecutorExceptionCode.FORBIDDEN,

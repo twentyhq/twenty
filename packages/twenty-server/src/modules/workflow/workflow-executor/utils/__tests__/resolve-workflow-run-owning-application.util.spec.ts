@@ -56,15 +56,13 @@ const FLAT_APPLICATION_MAPS: FlatApplicationCacheMaps = {
 
 const resolve = ({
   coreWorkflowId,
-  workflowId = null,
   flatApplicationMaps = FLAT_APPLICATION_MAPS,
 }: {
   coreWorkflowId: string | null;
-  workflowId?: string | null;
   flatApplicationMaps?: FlatApplicationCacheMaps;
 }) =>
   resolveWorkflowRunOwningApplication({
-    workflowRun: { coreWorkflowId, workflowId },
+    workflowRun: { coreWorkflowId },
     flatWorkflowMaps: FLAT_WORKFLOW_MAPS,
     flatApplicationMaps,
     workspaceOwnedApplicationIds: [
@@ -89,16 +87,7 @@ describe('resolveWorkflowRunOwningApplication', () => {
     );
   });
 
-  it('keeps a mirrored workspace workflow run working after its core row is gone', () => {
-    expect(
-      resolve({
-        coreWorkflowId: 'deleted-workflow-id',
-        workflowId: 'workspace-mirror-id',
-      }),
-    ).toBeNull();
-  });
-
-  it('fails closed when the workflow is not in this workspace', () => {
+  it('fails closed when the workflow is deleted or belongs to another workspace', () => {
     expect(() =>
       resolve({ coreWorkflowId: 'other-workspace-workflow-id' }),
     ).toThrow('The workflow of this run no longer exists');

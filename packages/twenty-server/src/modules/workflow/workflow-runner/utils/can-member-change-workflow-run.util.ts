@@ -41,12 +41,12 @@ export const canMemberChangeWorkflowRun = ({
   }
 
   return isEqual(
-    withoutFormValues(existingStep),
-    withoutFormValues(replacementStep),
+    withoutFormInput(existingStep),
+    withoutFormInput(replacementStep),
   );
 };
 
-const withoutFormValues = (step: WorkflowAction) => ({
+const withoutFormInput = (step: WorkflowAction) => ({
   ...step,
   settings: { ...step.settings, input: undefined },
 });

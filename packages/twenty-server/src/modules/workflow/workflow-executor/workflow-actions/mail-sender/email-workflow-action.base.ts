@@ -75,10 +75,11 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
   protected override buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {
-    return this.workflowExecutionContextService.buildConnectedAccountToolExecutionContext(
+    return this.workflowExecutionContextService.buildConnectedAccountToolContextOrThrow(
       {
         runInfo,
         permissionFlag: PermissionFlagType.SEND_EMAIL_TOOL,
+        shouldPassWorkspaceRunUser: true,
       },
     );
   }

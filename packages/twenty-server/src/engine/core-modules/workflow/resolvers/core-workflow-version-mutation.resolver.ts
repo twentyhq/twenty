@@ -155,7 +155,11 @@ export class CoreWorkflowVersionMutationResolver {
     );
 
     const { payload: triggerPayload, createdBy } =
-      buildWorkflowRunTriggerContext({ workspaceMember, payload });
+      buildWorkflowRunTriggerContext({
+        workspaceMember,
+        payload,
+        startingApplicationId: callerApplication?.id,
+      });
 
     return this.coreWorkflowRunnerService.run({
       workspaceId,

@@ -79,7 +79,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { owningApplication } = executionContext;
+    const { owningApplication, actingApplication } = executionContext;
 
     if (isDefined(agent)) {
       assertStepTargetBelongsToOwningApplication({
@@ -121,7 +121,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workspaceId,
         userWorkspaceId,
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-        ...(isDefined(owningApplication)
+        ...(isDefined(actingApplication)
           ? {
               executionRoleIds: getRoleIdsFromRolePermissionConfig(
                 executionContext.rolePermissionConfig,

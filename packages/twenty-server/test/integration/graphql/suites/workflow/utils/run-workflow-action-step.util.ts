@@ -186,11 +186,13 @@ export const runWorkflowActionStep = async ({
   stepType,
   input,
   payload,
+  runToken,
 }: {
   name: string;
   stepType: WorkflowActionStepType;
   input: Record<string, unknown>;
   payload?: object;
+  runToken?: string;
 }): Promise<WorkflowActionStepRun> => {
   const workflowId = await createWorkflow(name);
 
@@ -216,7 +218,11 @@ export const runWorkflowActionStep = async ({
 
     await updateWorkflowVersionStepInput({ workflowVersionId, step, input });
 
-    workflowRunId = await runWorkflowVersion({ workflowVersionId, payload });
+    workflowRunId = await runWorkflowVersion({
+      workflowVersionId,
+      payload,
+      token: runToken,
+    });
 
     const workflowRun = await waitForWorkflowCompletion(workflowRunId);
     const stepInfo = workflowRun?.state?.stepInfos?.[step.id];
