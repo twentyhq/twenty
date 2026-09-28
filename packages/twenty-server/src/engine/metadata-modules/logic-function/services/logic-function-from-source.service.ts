@@ -142,55 +142,69 @@ export class LogicFunctionFromSourceService {
       });
 
     const newId = v4();
+    const applicationUniversalIdentifier =
+      ownerFlatApplication.universalIdentifier;
 
     const { sourceHandlerPath, builtHandlerPath } =
       this.helperService.buildHandlerPaths(newId);
 
-    const { checksum, isBuildUpToDate } =
-      existingLogicFunction.applicationUniversalIdentifier ===
-      ownerFlatApplication.universalIdentifier
-        ? await this.copySameApplicationResources({
-            existingLogicFunction,
-            sourceHandlerPath,
-            builtHandlerPath,
-            workspaceId,
-            applicationUniversalIdentifier:
-              ownerFlatApplication.universalIdentifier,
-          })
-        : await this.copyApplicationBundleAsSource({
-            existingLogicFunction,
-            sourceHandlerPath,
-            builtHandlerPath,
-            workspaceId,
-            applicationUniversalIdentifier:
-              ownerFlatApplication.universalIdentifier,
-          });
+    try {
+      const { checksum, isBuildUpToDate } =
+        existingLogicFunction.applicationUniversalIdentifier ===
+        applicationUniversalIdentifier
+          ? await this.copySameApplicationResources({
+              existingLogicFunction,
+              sourceHandlerPath,
+              builtHandlerPath,
+              workspaceId,
+              applicationUniversalIdentifier,
+            })
+          : await this.copyApplicationBundleAsSource({
+              existingLogicFunction,
+              sourceHandlerPath,
+              builtHandlerPath,
+              workspaceId,
+              applicationUniversalIdentifier,
+            });
 
-    const universalFlatLogicFunctionToCreate =
-      buildDuplicatedCodeStepLogicFunctionToCreate({
-        existingLogicFunction,
-        id: newId,
-        sourceHandlerPath,
-        builtHandlerPath,
-        checksum,
-        isBuildUpToDate,
-        applicationUniversalIdentifier:
-          ownerFlatApplication.universalIdentifier,
+      const created = await this.helperService.createOneFromMetadata({
+        universalFlatLogicFunctionToCreate:
+          buildDuplicatedCodeStepLogicFunctionToCreate({
+            existingLogicFunction,
+            id: newId,
+            sourceHandlerPath,
+            builtHandlerPath,
+            checksum,
+            isBuildUpToDate,
+            applicationUniversalIdentifier,
+          }),
+        workspaceId,
       });
 
-    const created = await this.helperService.createOneFromMetadata({
-      universalFlatLogicFunctionToCreate,
-      workspaceId,
-    });
+      if (!isDefined(created)) {
+        throw new LogicFunctionException(
+          'Failed to duplicate logic function',
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
 
-    if (!isDefined(created)) {
-      throw new LogicFunctionException(
-        'Failed to duplicate logic function',
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
+      return { id: created.id };
+    } catch (error) {
+      await Promise.allSettled([
+        this.logicFunctionResourceService.deleteSourceFile({
+          sourceHandlerPath,
+          workspaceId,
+          applicationUniversalIdentifier,
+        }),
+        this.logicFunctionResourceService.deleteBuiltFile({
+          builtHandlerPath,
+          workspaceId,
+          applicationUniversalIdentifier,
+        }),
+      ]);
+
+      throw error;
     }
-
-    return { id: created.id };
   }
 
   private async copySameApplicationResources({

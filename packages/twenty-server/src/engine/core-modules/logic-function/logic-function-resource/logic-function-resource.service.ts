@@ -153,6 +153,19 @@ export class LogicFunctionResourceService {
     });
   }
 
+  async deleteBuiltFile({
+    builtHandlerPath,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: GetBuiltCodeParams): Promise<void> {
+    await this.fileStorageService.deleteFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: builtHandlerPath,
+    });
+  }
+
   async uploadBuiltFile({
     workspaceId,
     applicationUniversalIdentifier,
