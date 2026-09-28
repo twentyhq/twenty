@@ -19,6 +19,10 @@ const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
   const isCore = useIsWorkflowCoreEnabled();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
+  if (isCore && !isDefined(workflowWithCurrentVersion)) {
+    return null;
+  }
+
   return (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}

@@ -524,7 +524,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": true,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "includesEvery(selectedRecords, \"statuses\", \"ACTIVE\") and noneDefined(selectedRecords, \"deletedAt\")",
+    "conditionalAvailabilityExpression": "(everyEquals(selectedRecords, \"currentVersion.status\", \"ACTIVE\") or includesEvery(selectedRecords, \"statuses\", \"ACTIVE\")) and noneDefined(selectedRecords, \"deletedAt\")",
     "availabilityType": "RECORD_SELECTION",
     "availabilityObjectMetadataId": "7fa7fa3c-2efd-4689-9048-559222d3b80d",
     "pageLayoutId": null,

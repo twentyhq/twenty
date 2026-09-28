@@ -14,7 +14,10 @@ const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
   },
 );
 
-const getStandardCommandMenuItem = (universalIdentifier: string) => {
+const buildCommandMenuItem = (
+  universalIdentifier: string,
+  conditionalAvailabilityExpression: string,
+): FlatCommandMenuItem => {
   const commandMenuItem =
     allFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
       universalIdentifier
@@ -26,53 +29,35 @@ const getStandardCommandMenuItem = (universalIdentifier: string) => {
     );
   }
 
-  return commandMenuItem;
+  return { ...commandMenuItem, conditionalAvailabilityExpression };
 };
 
-const withExpression = (
-  commandMenuItem: FlatCommandMenuItem,
-  conditionalAvailabilityExpression: string,
-): FlatCommandMenuItem => ({
-  ...commandMenuItem,
-  conditionalAvailabilityExpression,
-});
-
 const buildUpdates = (
-  commandMenuItems: FlatCommandMenuItem[],
+  commandMenuItem: FlatCommandMenuItem,
   direction: 'up' | 'down',
 ) =>
   buildWorkflowCommandMenuItemAvailabilityUpdates({
-    flatCommandMenuItemsByUniversalIdentifier: Object.fromEntries(
-      commandMenuItems.map((commandMenuItem) => [
-        commandMenuItem.universalIdentifier,
-        commandMenuItem,
-      ]),
-    ),
+    flatCommandMenuItemsByUniversalIdentifier: {
+      [commandMenuItem.universalIdentifier]: commandMenuItem,
+    },
     now: NOW,
     direction,
   });
 
-describe.each(WORKFLOW_COMMAND_MENU_ITEM_AVAILABILITY_EXPRESSIONS)(
-  'buildWorkflowCommandMenuItemAvailabilityUpdates for $universalIdentifier',
-  ({ universalIdentifier, previousExpression, nextExpression }) => {
-    const standardCommandMenuItem =
-      getStandardCommandMenuItem(universalIdentifier);
-
-    it('matches what a new workspace is seeded with', () => {
-      expect(standardCommandMenuItem.conditionalAvailabilityExpression).toBe(
-        nextExpression,
-      );
-    });
-
+describe.each(
+  Object.entries(WORKFLOW_COMMAND_MENU_ITEM_AVAILABILITY_EXPRESSIONS),
+)(
+  'buildWorkflowCommandMenuItemAvailabilityUpdates for %s',
+  (_name, { universalIdentifier, previousExpression, nextExpression }) => {
     it('moves the previous expression to the next one on up', () => {
-      const legacyCommandMenuItem = withExpression(
-        standardCommandMenuItem,
+      const commandMenuItem = buildCommandMenuItem(
+        universalIdentifier,
         previousExpression,
       );
 
-      expect(buildUpdates([legacyCommandMenuItem], 'up')).toEqual([
+      expect(buildUpdates(commandMenuItem, 'up')).toEqual([
         {
-          ...legacyCommandMenuItem,
+          ...commandMenuItem,
           conditionalAvailabilityExpression: nextExpression,
           updatedAt: NOW,
         },
@@ -80,9 +65,14 @@ describe.each(WORKFLOW_COMMAND_MENU_ITEM_AVAILABILITY_EXPRESSIONS)(
     });
 
     it('restores the previous expression on down', () => {
-      expect(buildUpdates([standardCommandMenuItem], 'down')).toEqual([
+      const commandMenuItem = buildCommandMenuItem(
+        universalIdentifier,
+        nextExpression,
+      );
+
+      expect(buildUpdates(commandMenuItem, 'down')).toEqual([
         {
-          ...standardCommandMenuItem,
+          ...commandMenuItem,
           conditionalAvailabilityExpression: previousExpression,
           updatedAt: NOW,
         },
@@ -90,10 +80,15 @@ describe.each(WORKFLOW_COMMAND_MENU_ITEM_AVAILABILITY_EXPRESSIONS)(
     });
 
     it('skips items already migrated or carrying another expression', () => {
-      expect(buildUpdates([standardCommandMenuItem], 'up')).toEqual([]);
       expect(
         buildUpdates(
-          [withExpression(standardCommandMenuItem, 'isInSidePanel')],
+          buildCommandMenuItem(universalIdentifier, nextExpression),
+          'up',
+        ),
+      ).toEqual([]);
+      expect(
+        buildUpdates(
+          buildCommandMenuItem(universalIdentifier, 'isInSidePanel'),
           'up',
         ),
       ).toEqual([]);

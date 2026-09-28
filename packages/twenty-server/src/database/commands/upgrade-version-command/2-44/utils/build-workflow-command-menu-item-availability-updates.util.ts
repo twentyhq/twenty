@@ -15,7 +15,7 @@ export const buildWorkflowCommandMenuItemAvailabilityUpdates = ({
   now: string;
   direction: 'up' | 'down';
 }): FlatCommandMenuItem[] =>
-  WORKFLOW_COMMAND_MENU_ITEM_AVAILABILITY_EXPRESSIONS.flatMap(
+  Object.values(WORKFLOW_COMMAND_MENU_ITEM_AVAILABILITY_EXPRESSIONS).flatMap(
     ({ universalIdentifier, previousExpression, nextExpression }) => {
       const commandMenuItem =
         flatCommandMenuItemsByUniversalIdentifier[universalIdentifier];

@@ -86,10 +86,14 @@ export const useFiltersFromQueryParams = () => {
               ? JSON.stringify(filterValueFromURL)
               : (filterValueFromURL as string);
 
-          const displayValue =
+          const displayValueFromURL =
             filterDisplayValueQueryParams?.[fieldName]?.[
               filterOperandFromURL as ViewFilterOperand
-            ] ?? filterValueAsString;
+            ];
+
+          const displayValue = isNonEmptyString(displayValueFromURL)
+            ? displayValueFromURL
+            : filterValueAsString;
 
           const filterId = `tmp-${[
             fieldName,
