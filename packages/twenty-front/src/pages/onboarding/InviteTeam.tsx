@@ -4,7 +4,6 @@ import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRe
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingSkipDialog } from '@/onboarding/components/OnboardingSkipDialog';
 import { OnboardingSkipDialogAvatars } from '@/onboarding/components/OnboardingSkipDialogAvatars';
-import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
@@ -12,15 +11,17 @@ import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnbo
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
+import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { plural } from '@lingui/core/macro';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { Controller, useWatch } from 'react-hook-form';
@@ -63,10 +64,16 @@ export const InviteTeam = () => {
   const { openDialog } = useDialog();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const emails = useWatch({ control, name: 'emails' });
-  const firstEmailInputRef = useRef<HTMLInputElement>(null);
+  const emailInputToFocusRef = useRef<HTMLInputElement>(null);
 
   const inviteEmails = getValidInviteEmails(emails.map(({ email }) => email));
   const hasInviteEmails = isNonEmptyArray(inviteEmails);
+  const firstInvalidEmailIndex = emails.findIndex(
+    ({ email }) =>
+      isNonEmptyString(email) &&
+      !isNonEmptyArray(getValidInviteEmails([email])),
+  );
+  const emailIndexToFocus = Math.max(firstInvalidEmailIndex, 0);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const inviteTeamMaxInvites = onboardingConfig?.inviteTeamMaxInvites ?? 0;
   const inviteTeamCreditsRewardPerUser =
@@ -114,7 +121,11 @@ export const InviteTeam = () => {
                     fieldState: { error },
                   }) => (
                     <TextInput
-                      ref={index === 0 ? firstEmailInputRef : undefined}
+                      ref={
+                        index === emailIndexToFocus
+                          ? emailInputToFocusRef
+                          : undefined
+                      }
                       autoFocus={index === 0}
                       type="email"
                       value={value}
@@ -191,7 +202,7 @@ export const InviteTeam = () => {
           hasInviteEmails ? undefined : t`All it takes is their email.`
         }
         actions={[
-          hasInviteEmails
+          hasInviteEmails && isValid
             ? {
                 label: plural(inviteEmails.length, {
                   one: 'Send invite',
@@ -203,7 +214,7 @@ export const InviteTeam = () => {
         ]}
         creditsReward={creditsReward}
         isRewardPerItem={!hasInviteEmails}
-        finalFocus={firstEmailInputRef}
+        finalFocus={emailInputToFocusRef}
         onSkip={() => void handleSkip()}
       />
     </StyledOnboardingStepPage>
