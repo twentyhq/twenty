@@ -13,7 +13,6 @@ import { toApplicationCapabilities } from 'src/engine/core-modules/application/u
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
-import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -27,7 +26,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -404,12 +403,11 @@ export class ApplicationSyncService {
       getMetadataFlatEntityMapsKey,
     );
 
-    const cacheResult = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [...flatEntityMapsCacheKeys, 'featureFlagsMap'],
-    );
-
-    const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
+    const fromAllFlatEntityMaps =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        flatEntityMapsCacheKeys,
+      );
 
     const applicationFromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps(
       {
@@ -418,22 +416,31 @@ export class ApplicationSyncService {
       },
     );
 
-    const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
-      fromAllFlatEntityMaps: applicationFromAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-    });
+    // Uninstall also removes engine-owned and workspace-local metadata that
+    // manifest omission intentionally preserves. Expand these explicit deletions
+    // so dependents owned by other applications are cleaned up too.
+    const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
+      Object.fromEntries(
+        Object.values(ALL_METADATA_NAME).map((metadataName) => [
+          metadataName,
+          {
+            flatEntityToCreate: {},
+            flatEntityToUpdate: {},
+            flatEntityToDelete:
+              applicationFromAllFlatEntityMaps[
+                getMetadataFlatEntityMapsKey(metadataName)
+              ].byUniversalIdentifier,
+          },
+        ]),
+      );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
         {
-          buildOptions: {
-            isSystemBuild: true,
-            inferDeletionFromMissingEntities: true,
-            applicationUniversalIdentifier,
-          },
-          fromToAllFlatEntityMaps,
+          isSystemBuild: true,
+          applicationUniversalIdentifier,
+          allFlatEntityOperationRecordByMetadataName,
           workspaceId,
-          additionalCacheDataMaps: { featureFlagsMap },
         },
       );
 
