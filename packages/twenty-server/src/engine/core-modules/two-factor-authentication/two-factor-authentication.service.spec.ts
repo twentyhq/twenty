@@ -111,7 +111,7 @@ describe('TwoFactorAuthenticationService', () => {
   });
 
   describe('validateStrategy', () => {
-    it('consumes a rate-limit token per attempt before looking the method up', async () => {
+    it('consumes a rate-limit token per attempt keyed by user and workspace', async () => {
       repository.findOne.mockResolvedValue(buildVerifiedMethod());
 
       await service.validateStrategy(
@@ -127,9 +127,6 @@ describe('TwoFactorAuthenticationService', () => {
         expect.any(Number),
         expect.any(Number),
       );
-      expect(
-        throttlerService.tokenBucketThrottleOrThrow.mock.invocationCallOrder[0],
-      ).toBeLessThan(repository.findOne.mock.invocationCallOrder[0]);
     });
 
     it('rejects the attempt without touching the method when the limit is reached', async () => {
@@ -151,6 +148,34 @@ describe('TwoFactorAuthenticationService', () => {
 
       expect(repository.findOne).not.toHaveBeenCalled();
       expect(repository.update).not.toHaveBeenCalled();
+    });
+
+    it('records a rejected attempt when no method is configured', async () => {
+      repository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.validateStrategy(
+          USER_ID,
+          '123456',
+          WORKSPACE_ID,
+          TwoFactorAuthenticationStrategy.TOTP,
+        ),
+      ).rejects.toThrow(
+        new TwoFactorAuthenticationException(
+          'Two Factor Authentication Method not found.',
+          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
+        ),
+      );
+
+      expect(insertWorkspaceEvent).toHaveBeenCalledWith(
+        TWO_FACTOR_AUTHENTICATION_EVENT,
+        {
+          action: 'otp_rejected',
+          strategy: TwoFactorAuthenticationStrategy.TOTP,
+          targetUserId: USER_ID,
+          message: 'No two-factor authentication method configured',
+        },
+      );
     });
 
     it('records a rejected code and throws INVALID_OTP', async () => {

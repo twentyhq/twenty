@@ -9,7 +9,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { TWO_FACTOR_AUTHENTICATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/two-factor-authentication/two-factor-authentication';
+import {
+  TWO_FACTOR_AUTHENTICATION_EVENT,
+  type TwoFactorAuthenticationTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/two-factor-authentication/two-factor-authentication';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -190,6 +193,14 @@ export class TwoFactorAuthenticationService {
       });
 
     if (!isDefined(userTwoFactorAuthenticationMethod)) {
+      this.emitTwoFactorAuthenticationEvent({
+        workspaceId,
+        userId,
+        action: 'otp_rejected',
+        strategy: twoFactorAuthenticationStrategy,
+        message: 'No two-factor authentication method configured',
+      });
+
       throw new TwoFactorAuthenticationException(
         'Two Factor Authentication Method not found.',
         TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
@@ -295,15 +306,13 @@ export class TwoFactorAuthenticationService {
     userId,
     action,
     strategy,
+    message,
   }: {
     workspaceId: WorkspaceEntity['id'];
     userId: UserEntity['id'];
-    action:
-      | 'method_provisioned'
-      | 'method_verified'
-      | 'method_deleted'
-      | 'otp_rejected';
+    action: TwoFactorAuthenticationTrackEvent['properties']['action'];
     strategy: TwoFactorAuthenticationStrategy;
+    message?: string;
   }) {
     const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId,
@@ -314,6 +323,7 @@ export class TwoFactorAuthenticationService {
       action,
       strategy,
       targetUserId: userId,
+      ...(isDefined(message) ? { message } : {}),
     });
   }
 
