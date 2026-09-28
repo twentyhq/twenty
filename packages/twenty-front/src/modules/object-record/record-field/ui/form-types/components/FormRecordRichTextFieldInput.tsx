@@ -177,7 +177,7 @@ export const FormRecordRichTextFieldInput = ({
               onFocus={handleFocus}
               onBlur={handleBlur}
               readonly={isReadonly}
-              compact
+              isCompact
             />
             {!isReadonly && !isMobile && (
               <StyledExpandButtonContainer>

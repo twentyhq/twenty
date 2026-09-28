@@ -26,7 +26,7 @@ interface BlockEditorProps {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
-  compact?: boolean;
+  isCompact?: boolean;
 }
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
@@ -175,7 +175,7 @@ export const BlockEditor = ({
   onChange,
   onPaste,
   readonly,
-  compact,
+  isCompact,
 }: BlockEditorProps) => {
   const colorScheme = useThemeColorScheme();
   const { t } = useLingui();
@@ -219,7 +219,7 @@ export const BlockEditor = ({
   };
 
   return (
-    <StyledEditor data-compact={compact}>
+    <StyledEditor data-compact={isCompact}>
       <BlockNoteView
         onFocus={handleFocus}
         onBlur={handleBlur}
