@@ -29,6 +29,11 @@ const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
 
 type RemoteElementWithAttributeUpdater = Element &
   Record<string, unknown> & {
+    attributeChangedCallback: (
+      attributeName: string,
+      oldValue: string | null,
+      newValue: string | null,
+    ) => void;
     updateRemoteAttribute: (attributeName: string, value?: string) => void;
     updateRemoteProperty: (propertyName: string, value?: unknown) => void;
   };
@@ -133,6 +138,22 @@ export const patchRemoteElementAttributes = (): void => {
         );
       }
     }
+
+    const overwriteReflectedRemotePropertyWithAttributeValue = ({
+      element,
+      attributeName,
+      attributeValue,
+    }: {
+      element: RemoteElementWithAttributeUpdater;
+      attributeName: string;
+      attributeValue: string | null;
+    }): void => {
+      if (!remotePropertyDefinitionByAttributeName.has(attributeName)) {
+        return;
+      }
+
+      element.attributeChangedCallback(attributeName, null, attributeValue);
+    };
 
     const originalGetAttribute = elementConstructor.prototype.getAttribute;
 
@@ -243,6 +264,11 @@ export const patchRemoteElementAttributes = (): void => {
       }
 
       originalSetAttribute.call(this, attributeName, attributeValue);
+      overwriteReflectedRemotePropertyWithAttributeValue({
+        element: this,
+        attributeName,
+        attributeValue,
+      });
 
       if (attributeName === 'class') {
         this.updateRemoteProperty('className', attributeValue);
@@ -271,6 +297,11 @@ export const patchRemoteElementAttributes = (): void => {
       }
 
       originalRemoveAttribute.call(this, attributeName);
+      overwriteReflectedRemotePropertyWithAttributeValue({
+        element: this,
+        attributeName,
+        attributeValue: null,
+      });
 
       if (attributeName === 'class') {
         this.updateRemoteProperty('className', undefined);

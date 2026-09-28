@@ -368,6 +368,38 @@ describe('patchRemoteElementAttributes', () => {
 
       expect(element.getAttribute('style')).toBe('color:red');
     });
+
+    it('should drop a property assigned directly once its attribute is removed', () => {
+      const element = createHtmlDivElement();
+
+      element.id = 'account';
+      element.removeAttribute('id');
+
+      expect(element.getAttribute('id')).toBeNull();
+      expect(element.hasAttribute('id')).toBe(false);
+    });
+
+    it('should drop inline styles once the style attribute is removed', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('style', 'color: red');
+      element.removeAttribute('style');
+
+      expect(element.getAttribute('style')).toBeNull();
+    });
+
+    it('should restore an attribute value over a newer property', () => {
+      const element =
+        createHtmlDivElement() as RemoteElementWithPropertyUpdater &
+          Record<string, unknown>;
+
+      element.setAttribute('aria-label', 'First label');
+      element['aria-label'] = 'Second label';
+      element.setAttribute('aria-label', 'First label');
+
+      expect(element.getAttribute('aria-label')).toBe('First label');
+    });
+
   });
 
   describe('attribute names colliding with Object prototype keys', () => {
