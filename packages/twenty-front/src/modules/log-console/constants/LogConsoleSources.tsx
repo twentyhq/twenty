@@ -1,4 +1,5 @@
 import { msg, plural, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -30,6 +31,7 @@ import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { LogConsoleCredits } from '@/log-console/components/LogConsoleCredits';
 import { LogConsoleMemberChip } from '@/log-console/components/LogConsoleMemberChip';
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
+import { LogConsoleWebhookEndpointLink } from '@/log-console/components/LogConsoleWebhookEndpointLink';
 import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
 import { LOG_CONSOLE_APPLICATION_LOG_COLUMNS } from '@/log-console/constants/LogConsoleApplicationLogColumns';
 import { LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS } from '@/log-console/constants/LogConsoleApplicationLogFilterFields';
@@ -229,13 +231,16 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         Icon: IconWebhook,
         renderValue: (entry) => entry.properties?.eventName,
       },
-    ],
-    idFields: [
       {
         label: msg`Endpoint URL`,
         Icon: IconLink,
-        getId: (entry) => entry.properties?.url,
+        renderValue: (entry) =>
+          isNonEmptyString(entry.properties?.url) ? (
+            <LogConsoleWebhookEndpointLink url={entry.properties.url} />
+          ) : null,
       },
+    ],
+    idFields: [
       { label: msg`Webhook ID`, getId: (entry) => entry.properties?.webhookId },
     ],
     getSeverity: (entry) => (entry.properties?.success ? undefined : 'error'),
