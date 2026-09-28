@@ -1585,6 +1585,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "threadToolCallUniqueIndex": {
         "universalIdentifier": "6a0ac44d-84f3-4bfa-8939-ce3d82f0d043",
       },
+      "workflowRunStatusIndex": {
+        "universalIdentifier": "77615052-0e81-4210-b259-37a9e939bb41",
+      },
       "workflowRunStepUniqueIndex": {
         "universalIdentifier": "c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41",
       },
@@ -1631,6 +1634,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "status": {
             "universalIdentifier": "4adc644d-eae8-5692-ac22-c2285f66183b",
           },
+          "thread": {
+            "universalIdentifier": "eaf50f5c-8b9d-5e12-8dae-dfa413ff3134",
+          },
           "workflowRun": {
             "universalIdentifier": "1ff7997b-742f-5b42-9180-44acc5ae78aa",
           },
@@ -1644,6 +1650,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "name": {
             "universalIdentifier": "f1ae6a65-159f-4e87-a99d-04d39598c74a",
+          },
+          "source": {
+            "universalIdentifier": "76633724-5037-45cb-871a-08c576e3059b",
+          },
+          "thread": {
+            "universalIdentifier": "c81b54d7-ffaf-4222-8beb-4479e662426e",
           },
           "workflowRun": {
             "universalIdentifier": "52e80140-79f9-43b6-b051-ea2c47587392",
