@@ -7,6 +7,7 @@ import {
 } from '@/onboarding/components/OnboardingConstructionSite/buildOnboardingConstructionSiteScene';
 import { createOnboardingConstructionSiteTimeline } from '@/onboarding/components/OnboardingConstructionSite/createOnboardingConstructionSiteTimeline';
 import {
+  type OnboardingConstructionSiteInstanceBatch,
   type OnboardingConstructionSiteInstances,
   type OnboardingConstructionSiteMeshName,
 } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteInstances';
@@ -82,9 +83,7 @@ const compileProgram = (
   gl.deleteShader(vertexShader);
   gl.deleteShader(fragmentShader);
 
-  return gl.getProgramParameter(program, gl.LINK_STATUS) === true
-    ? program
-    : null;
+  return gl.getProgramParameter(program, gl.LINK_STATUS) ? program : null;
 };
 
 type MeshResources = {
@@ -174,18 +173,22 @@ export const createOnboardingConstructionSiteRenderer = ({
         gl.getParameter(debugRendererInfo.UNMASKED_RENDERER_WEBGL),
       ));
 
-  const instances = Object.fromEntries(
-    MESH_NAMES.map((meshName) => [
-      meshName,
-      {
-        data: new Float32Array(
-          INSTANCE_CAPACITY[meshName] *
-            ONBOARDING_CONSTRUCTION_SITE_FLOATS_PER_INSTANCE,
-        ),
-        count: 0,
-      },
-    ]),
-  ) as OnboardingConstructionSiteInstances;
+  const createInstanceBatch = (
+    meshName: OnboardingConstructionSiteMeshName,
+  ): OnboardingConstructionSiteInstanceBatch => ({
+    data: new Float32Array(
+      INSTANCE_CAPACITY[meshName] *
+        ONBOARDING_CONSTRUCTION_SITE_FLOATS_PER_INSTANCE,
+    ),
+    count: 0,
+  });
+
+  const instances: OnboardingConstructionSiteInstances = {
+    cube: createInstanceBatch('cube'),
+    cylinder: createInstanceBatch('cylinder'),
+    cone: createInstanceBatch('cone'),
+    mixerDrum: createInstanceBatch('mixerDrum'),
+  };
 
   let resources: GlResources | null = null;
   let colors = initialColors;
@@ -239,7 +242,9 @@ export const createOnboardingConstructionSiteRenderer = ({
     const albedoLocation = gl.getAttribLocation(sceneProgram, 'instanceAlbedo');
     const instanceStride = ONBOARDING_CONSTRUCTION_SITE_FLOATS_PER_INSTANCE * 4;
 
-    const meshEntries = MESH_NAMES.map((meshName) => {
+    const createMeshResources = (
+      meshName: OnboardingConstructionSiteMeshName,
+    ): MeshResources | null => {
       const vertexData = ONBOARDING_CONSTRUCTION_SITE_MESHES[meshName];
       const vertexArray = gl.createVertexArray();
       const vertexBuffer = gl.createBuffer();
@@ -289,19 +294,26 @@ export const createOnboardingConstructionSiteRenderer = ({
       );
       gl.vertexAttribDivisor(albedoLocation, 1);
 
-      return [
-        meshName,
-        {
-          vertexArray,
-          vertexBuffer,
-          instanceBuffer,
-          vertexCount: vertexData.length / 6,
-        },
-      ] as const;
-    });
+      return {
+        vertexArray,
+        vertexBuffer,
+        instanceBuffer,
+        vertexCount: vertexData.length / 6,
+      };
+    };
+
+    const cubeMesh = createMeshResources('cube');
+    const cylinderMesh = createMeshResources('cylinder');
+    const coneMesh = createMeshResources('cone');
+    const mixerDrumMesh = createMeshResources('mixerDrum');
     gl.bindVertexArray(null);
 
-    if (meshEntries.some((meshEntry) => !isDefined(meshEntry))) {
+    if (
+      !isDefined(cubeMesh) ||
+      !isDefined(cylinderMesh) ||
+      !isDefined(coneMesh) ||
+      !isDefined(mixerDrumMesh)
+    ) {
       return null;
     }
 
@@ -320,9 +332,12 @@ export const createOnboardingConstructionSiteRenderer = ({
       halftoneProgram,
       sceneUniform: createUniformLookup(sceneProgram),
       halftoneUniform: createUniformLookup(halftoneProgram),
-      meshes: Object.fromEntries(
-        meshEntries.filter(isDefined),
-      ) as GlResources['meshes'],
+      meshes: {
+        cube: cubeMesh,
+        cylinder: cylinderMesh,
+        cone: coneMesh,
+        mixerDrum: mixerDrumMesh,
+      },
       sceneTexture,
       sceneDepthBuffer,
       sceneFramebuffer,

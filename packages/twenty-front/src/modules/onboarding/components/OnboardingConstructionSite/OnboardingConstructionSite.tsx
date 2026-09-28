@@ -3,6 +3,7 @@ import { useRef } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
@@ -47,6 +48,7 @@ export const OnboardingConstructionSite = () => {
   const isClientConfigLoaded = useAtomStateValue(
     clientConfigApiStatusState,
   ).isLoadedOnce;
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const isBookCallOnboardingStepEnabled = useAtomStateValue(
     isBookCallOnboardingStepEnabledState,
   );
@@ -55,7 +57,7 @@ export const OnboardingConstructionSite = () => {
     '(prefers-reduced-motion: reduce)',
   );
 
-  if (!isClientConfigLoaded) {
+  if (!isClientConfigLoaded || !isCurrentUserLoaded) {
     return null;
   }
 
