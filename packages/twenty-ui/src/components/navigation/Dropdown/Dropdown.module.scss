@@ -42,10 +42,6 @@
   font-weight: var(--t-font-weight-medium);
   min-block-size: 33px;
   padding-inline: var(--t-spacing-2);
-
-  &:dir(rtl) svg {
-    transform: rotate(180deg);
-  }
 }
 
 .searchContainer {
@@ -82,10 +78,6 @@
   gap: var(--t-spacing-1);
   min-block-size: 33px;
   padding-inline: var(--t-spacing-2);
-
-  &:dir(rtl) svg {
-    transform: rotate(180deg);
-  }
 }
 
 .title {

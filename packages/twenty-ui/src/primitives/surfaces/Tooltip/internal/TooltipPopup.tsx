@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { isNumber, isString } from '@sniptt/guards';
 
@@ -32,6 +33,7 @@ export const TooltipPopup = ({
   ...props
 }: TooltipPopupProps) => {
   const themeContainer = useThemeContainer();
+  const direction = useDirection();
   const hasPlainTextContent = isString(children) || isNumber(children);
 
   return (
@@ -40,6 +42,7 @@ export const TooltipPopup = ({
       keepMounted={keepMounted}
     >
       <TooltipPrimitive.Positioner
+        dir={direction}
         side={side}
         align={align}
         sideOffset={sideOffset}

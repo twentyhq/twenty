@@ -19,6 +19,10 @@
 
 Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when upgrading Twenty apps.
 
+### Fixed
+
+- Reading-direction spacing, JSON disclosure arrows, theme picker corners, and avatar overlap now follow RTL layouts. Menu, Popover, and Tooltip portals preserve `TextDirectionProvider` direction. Dropdown uses that provider for submenu keys and keeps caller-supplied icons unchanged. Pair the provider with the matching HTML `dir` attribute.
+
 ### Added
 
 - `twenty-ui/utilities` exports `useMediaQuery`, `MOBILE_MEDIA_QUERY`, and `TOUCH_DEVICE_MEDIA_QUERY`. `twenty-ui/testing` exports `overrideMediaQueryMatches`.

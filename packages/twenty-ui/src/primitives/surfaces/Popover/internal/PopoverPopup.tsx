@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 
 import { useThemeContainer } from '@ui/theme';
@@ -20,6 +21,7 @@ export const PopoverPopup = ({
   ...props
 }: PopoverPopupProps) => {
   const themeContainer = useThemeContainer();
+  const direction = useDirection();
 
   return (
     <PopoverPrimitive.Portal
@@ -27,6 +29,7 @@ export const PopoverPopup = ({
       keepMounted={keepMounted}
     >
       <PopoverPrimitive.Positioner
+        dir={direction}
         side={side}
         align={align}
         sideOffset={sideOffset}

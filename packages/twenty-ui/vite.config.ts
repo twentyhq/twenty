@@ -117,6 +117,7 @@ export default defineConfig(({ command }) => {
     build: {
       cssCodeSplit: false,
       minify: 'esbuild',
+      cssMinify: 'esbuild',
       sourcemap: false,
       emptyOutDir: false,
       outDir: './dist',

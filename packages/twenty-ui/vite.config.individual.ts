@@ -53,6 +53,7 @@ export default defineConfig(() => {
     build: {
       cssCodeSplit: false,
       minify: 'esbuild',
+      cssMinify: 'esbuild',
       sourcemap: true,
       outDir: './dist/individual',
       emptyOutDir: true,
