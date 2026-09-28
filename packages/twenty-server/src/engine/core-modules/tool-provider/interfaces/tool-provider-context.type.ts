@@ -20,4 +20,5 @@ export type ToolProviderContext = {
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   requireExplicitObjectGrants?: boolean;
+  requireConnectedAccountUsableByCaller?: boolean;
 };

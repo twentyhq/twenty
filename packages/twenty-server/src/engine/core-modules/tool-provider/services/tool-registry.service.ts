@@ -463,6 +463,8 @@ export class ToolRegistryService {
       threadId: context.threadId,
       locale: context.locale,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
+      requireConnectedAccountUsableByCaller:
+        context.requireConnectedAccountUsableByCaller,
     };
   }
 }

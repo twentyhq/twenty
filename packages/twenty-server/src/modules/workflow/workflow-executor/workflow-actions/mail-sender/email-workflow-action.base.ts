@@ -1,3 +1,4 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { type EmailOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
@@ -21,7 +22,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
-import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { buildEmailStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
@@ -72,16 +72,15 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     };
   }
 
-  protected override async buildToolExecutionContext(
+  protected override buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {
-    const { authContext } =
-      await this.workflowExecutionContextService.getExecutionContext(runInfo);
-
-    return {
-      workspaceId: runInfo.workspaceId,
-      ...getUserFromAuthContext(authContext),
-    };
+    return this.workflowExecutionContextService.buildConnectedAccountToolExecutionContext(
+      {
+        runInfo,
+        permissionFlag: PermissionFlagType.SEND_EMAIL_TOOL,
+      },
+    );
   }
 
   protected override async postprocessInput(

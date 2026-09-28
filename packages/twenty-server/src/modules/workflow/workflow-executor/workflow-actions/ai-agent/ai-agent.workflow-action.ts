@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -9,6 +9,7 @@ import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -18,6 +19,7 @@ import {
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { assertStepTargetBelongsToOwningApplication } from 'src/modules/workflow/workflow-executor/utils/assert-step-target-belongs-to-owning-application.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
@@ -77,6 +79,16 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
+    const { owningApplication } = executionContext;
+
+    if (isDefined(agent)) {
+      assertStepTargetBelongsToOwningApplication({
+        owningApplication,
+        targetApplicationId: agent.applicationId,
+        targetLabel: `Agent "${agent.name}"`,
+      });
+    }
+
     const userWorkspaceId =
       executionContext.authContext.type === 'user'
         ? executionContext.authContext.userWorkspaceId
@@ -109,6 +121,14 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workspaceId,
         userWorkspaceId,
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+        ...(isDefined(owningApplication)
+          ? {
+              executionRoleIds: getRoleIdsFromRolePermissionConfig(
+                executionContext.rolePermissionConfig,
+              ),
+              requireConnectedAccountUsableByCaller: true,
+            }
+          : {}),
       })
       .catch(async (error: unknown) => {
         await recordConversation();

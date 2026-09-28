@@ -36,6 +36,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
 import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
+import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionCoreModule,
     WorkflowVersionValidationModule,
     CoreWorkflowServicesModule,
+    WorkflowExecutionContextModule,
   ],
   controllers: [WorkflowTriggerController],
   providers: [

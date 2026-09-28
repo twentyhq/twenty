@@ -6,6 +6,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { assertStepTargetBelongsToOwningApplication } from 'src/modules/workflow/workflow-executor/utils/assert-step-target-belongs-to-owning-application.util';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -79,8 +80,14 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { authContext } =
+    const { authContext, owningApplication } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    assertStepTargetBelongsToOwningApplication({
+      owningApplication,
+      targetApplicationId: logicFunction.applicationId,
+      targetLabel: `Logic function "${logicFunction.name}"`,
+    });
 
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: workflowActionInput.logicFunctionId,

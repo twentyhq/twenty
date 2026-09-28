@@ -24,4 +24,28 @@ describe('buildAgentRolePermissionConfig', () => {
       }),
     ).toEqual({ intersectionOf: ['agent-role-id'] });
   });
+
+  it('bounds the agent role by the roles of the run that executes it', () => {
+    expect(
+      buildAgentRolePermissionConfig({
+        agentRoleId: 'agent-role-id',
+        executionRoleIds: ['member-role-id', 'application-role-id'],
+      }),
+    ).toEqual({
+      intersectionOf: [
+        'agent-role-id',
+        'member-role-id',
+        'application-role-id',
+      ],
+    });
+  });
+
+  it('does not repeat a role shared by the agent and the run', () => {
+    expect(
+      buildAgentRolePermissionConfig({
+        agentRoleId: 'application-role-id',
+        executionRoleIds: ['application-role-id'],
+      }),
+    ).toEqual({ intersectionOf: ['application-role-id'] });
+  });
 });

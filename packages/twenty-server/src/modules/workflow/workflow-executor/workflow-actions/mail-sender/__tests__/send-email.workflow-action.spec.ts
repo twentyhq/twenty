@@ -72,9 +72,9 @@ describe('SendEmailWorkflowAction', () => {
         {
           provide: WorkflowExecutionContextService,
           useValue: {
-            getExecutionContext: jest
+            buildConnectedAccountToolExecutionContext: jest
               .fn()
-              .mockResolvedValue({ authContext: { type: 'application' } }),
+              .mockResolvedValue({ workspaceId: 'workspace-1' }),
           },
         },
         {

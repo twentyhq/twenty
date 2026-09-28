@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { isWorkflowCreateCalendarEventAction } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/guards/is-workflow-create-calendar-event-action.guard';
 import { type WorkflowCreateCalendarEventActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/types/workflow-create-calendar-event-action-input.type';
 import { buildCreateCalendarEventStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/utils/build-create-calendar-event-step-log.util';
@@ -20,6 +24,7 @@ import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflo
 export class CreateCalendarEventWorkflowAction extends ToolBackedWorkflowAction<WorkflowCreateCalendarEventActionInput> {
   constructor(
     private readonly createCalendarEventTool: CreateCalendarEventTool,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
   ) {
     super(CreateCalendarEventWorkflowAction.name, workflowRunStepLogService);
@@ -36,6 +41,17 @@ export class CreateCalendarEventWorkflowAction extends ToolBackedWorkflowAction<
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
+  }
+
+  protected override buildToolExecutionContext(
+    runInfo: WorkflowRunInfo,
+  ): Promise<ToolExecutionContext> {
+    return this.workflowExecutionContextService.buildConnectedAccountToolExecutionContext(
+      {
+        runInfo,
+        permissionFlag: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+      },
+    );
   }
 
   protected buildStepLog({

@@ -18,6 +18,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -26,6 +27,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -47,6 +49,7 @@ export class WorkflowTriggerResolver {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   @Mutation(() => Boolean)
@@ -155,9 +158,15 @@ export class WorkflowTriggerResolver {
   @Mutation(() => WorkflowRunDTO)
   async retryWorkflowRun(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
+    await this.workflowExecutionContextService.assertMemberCanChangeRunOrThrow({
+      runInfo: { workflowRunId, workspaceId: workspace.id },
+      workspaceMemberId,
+    });
+
     return this.workflowTriggerWorkspaceService.retryWorkflowRun(
       workflowRunId,
       workspace.id,

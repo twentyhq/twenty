@@ -8,6 +8,7 @@ import { In } from 'typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { canApplicationStartCoreWorkflow } from 'src/engine/core-modules/workflow/utils/can-application-start-core-workflow.util';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -58,6 +59,77 @@ export class CoreWorkflowAccessService {
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`This workflow is managed by an application and is read-only`,
+        },
+      );
+    }
+  }
+
+  async assertCoreWorkflowVersionsAreStartableByApplicationOrThrow({
+    workspaceId,
+    callerApplicationId,
+    coreWorkflowVersionIds,
+  }: {
+    workspaceId: string;
+    callerApplicationId: string | undefined;
+    coreWorkflowVersionIds: string[];
+  }): Promise<void> {
+    if (
+      !isDefined(callerApplicationId) ||
+      coreWorkflowVersionIds.length === 0
+    ) {
+      return;
+    }
+
+    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { id: In(coreWorkflowVersionIds) },
+        select: { id: true, coreWorkflowId: true },
+      },
+    );
+
+    const coreWorkflowIds = [
+      ...new Set(
+        coreWorkflowVersions
+          .map(({ coreWorkflowId }) => coreWorkflowId)
+          .filter(isDefined),
+      ),
+    ];
+
+    if (coreWorkflowIds.length === 0) {
+      return;
+    }
+
+    const [
+      workflows,
+      { workspaceCustomFlatApplication, twentyStandardFlatApplication },
+    ] = await Promise.all([
+      this.coreWorkflowRepository.find(workspaceId, {
+        where: { id: In(coreWorkflowIds) },
+        select: { id: true, applicationId: true },
+      }),
+      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      ),
+    ]);
+
+    const isStartable = workflows.every((workflow) =>
+      canApplicationStartCoreWorkflow({
+        callerApplicationId,
+        workflowApplicationId: workflow.applicationId,
+        workspaceOwnedApplicationIds: [
+          workspaceCustomFlatApplication.id,
+          twentyStandardFlatApplication.id,
+        ],
+      }),
+    );
+
+    if (!isStartable) {
+      throw new WorkflowQueryValidationException(
+        `Application '${callerApplicationId}' cannot start a workflow owned by another application`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`An application can only start its own workflows.`,
         },
       );
     }
