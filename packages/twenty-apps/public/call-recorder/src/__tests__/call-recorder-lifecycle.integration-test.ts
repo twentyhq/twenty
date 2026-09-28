@@ -19,10 +19,12 @@ import {
   CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { type CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
+import { getBatches } from 'src/logic-functions/utils/get-batches.util';
+import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 import { saveCallRecordingImportProgress } from 'src/logic-functions/data/save-call-recording-import-progress.util';
@@ -1001,6 +1003,7 @@ describe('call recorder app lifecycle (integration)', () => {
         edges: {
           node: {
             id: true,
+            title: true,
             status: true,
             recordingRequestStatus: true,
             calendarEventId: true,
@@ -1125,6 +1128,67 @@ describe('call recorder app lifecycle (integration)', () => {
       ),
     });
 
+  const updateCalendarEventForDelivery = async (
+    calendarEventId: string,
+    data: Partial<CalendarEventFixture>,
+  ) => {
+    const result = await client.query({
+      calendarEvents: {
+        __args: { filter: { id: { eq: calendarEventId } }, first: 1 },
+        edges: {
+          node: {
+            id: true,
+            title: true,
+            startsAt: true,
+            endsAt: true,
+            iCalUid: true,
+            callRecorderPreference: true,
+            conferenceLink: { primaryLinkUrl: true },
+          },
+        },
+      },
+    });
+    const before = result.calendarEvents?.edges?.[0]?.node;
+
+    if (isUndefined(before)) {
+      throw new Error(`Calendar event ${calendarEventId} not found`);
+    }
+
+    await client.mutation({
+      updateCalendarEvent: {
+        __args: { id: calendarEventId, data },
+        id: true,
+      },
+    });
+
+    return {
+      calendarEventId,
+      updatedFields: Object.keys(data),
+      before,
+      after: { ...before, ...data },
+    };
+  };
+
+  const interceptCoreApiRequests = (
+    intercept: (
+      request: { query: string; variables: Record<string, unknown> },
+      sendRequest: () => Promise<Response>,
+    ) => Promise<Response>,
+  ) => {
+    const interceptedFetch = globalThis.fetch;
+
+    vi.stubGlobal(
+      'fetch',
+      (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+        const sendRequest = () => interceptedFetch(input, init);
+
+        return String(input) === `${process.env.TWENTY_API_URL}/graphql`
+          ? intercept(JSON.parse(String(init?.body)), sendRequest)
+          : sendRequest();
+      },
+    );
+  };
+
   // Mocked webhook trigger: invokes the webhook logic function handler with
   // the payload Recall would have delivered.
   const deliverRecallWebhook = (body: object) =>
@@ -1166,6 +1230,441 @@ describe('call recorder app lifecycle (integration)', () => {
     return result;
   };
 
+  describe('batched calendar reconciliation', () => {
+    it('saves later preference batches when the middle batch fails', async () => {
+      const fixtureCount = 2 * CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1;
+      const fixtures = availableCalendarEventFixtures.slice(
+        nextCalendarEventFixtureIndex,
+        nextCalendarEventFixtureIndex + fixtureCount,
+      );
+      nextCalendarEventFixtureIndex += fixtureCount;
+      expect(fixtures).toHaveLength(fixtureCount);
+      expect(
+        fixtures.every(({ callRecorderPreference }) =>
+          isNull(callRecorderPreference),
+        ),
+      ).toBe(true);
+
+      const calendarEventIds = fixtures.map(({ id }) => id);
+      let preferenceBatchCount = 0;
+
+      interceptCoreApiRequests(async ({ query }, sendRequest) => {
+        if (query.includes('updateCalendarEvents(')) {
+          preferenceBatchCount += 1;
+
+          if (preferenceBatchCount === 2) {
+            return new Response('Preference update failed', { status: 500 });
+          }
+        }
+
+        return sendRequest();
+      });
+
+      try {
+        await expect(
+          markCalendarEventsRecordingOn(new CoreApiClient(), calendarEventIds),
+        ).rejects.toThrow('1 of 3 calendar event preference batches failed');
+
+        const result = await client.query({
+          calendarEvents: {
+            __args: {
+              filter: { id: { in: calendarEventIds } },
+              first: fixtureCount,
+            },
+            edges: { node: { id: true, callRecorderPreference: true } },
+          },
+        });
+        const failedCalendarEventIds = new Set(
+          [...calendarEventIds]
+            .sort()
+            .slice(
+              CALENDAR_EVENT_UPDATE_BATCH_SIZE,
+              2 * CALENDAR_EVENT_UPDATE_BATCH_SIZE,
+            ),
+        );
+        const calendarEvents = result.calendarEvents?.edges ?? [];
+
+        expect(preferenceBatchCount).toBe(3);
+        expect(calendarEvents).toHaveLength(fixtureCount);
+
+        for (const { node } of calendarEvents) {
+          expect(node.callRecorderPreference).toBe(
+            failedCalendarEventIds.has(node.id) ? null : 'ON',
+          );
+        }
+      } finally {
+        for (const calendarEventIdBatch of getBatches(
+          calendarEventIds,
+          CALENDAR_EVENT_UPDATE_BATCH_SIZE,
+        )) {
+          await client.mutation({
+            updateCalendarEvents: {
+              __args: {
+                filter: { id: { in: calendarEventIdBatch } },
+                data: { callRecorderPreference: null },
+              },
+              id: true,
+            },
+          });
+        }
+      }
+    });
+
+    it.each(['calendarEventId', 'id'])(
+      'leaves existing recordings intact and requests redelivery when the %s lookup fails',
+      async (filterField) => {
+        const { calendarEventId, callRecordingId, botId } =
+          await scheduleRecordingThroughCalendarReconciliation();
+        const update = await updateCalendarEventForDelivery(calendarEventId, {
+          startsAt: hoursAgo(-2 * 24),
+          endsAt: hoursAgo(-2 * 24 - 1),
+        });
+        let lookupFailed = false;
+        let mutationCount = 0;
+
+        interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+          if (query.startsWith('mutation')) {
+            mutationCount += 1;
+          }
+
+          if (
+            query.includes('callRecordings(') &&
+            JSON.stringify(variables).includes(`"${filterField}":{"in":`)
+          ) {
+            lookupFailed = true;
+            return new Response('Recording lookup failed', { status: 500 });
+          }
+
+          return sendRequest();
+        });
+
+        await expect(deliverCalendarEventUpdates(update)).rejects.toMatchObject(
+          {
+            name: 'RetryableLogicFunctionError',
+          },
+        );
+
+        expect(lookupFailed).toBe(true);
+        expect(mutationCount).toBe(0);
+        expect(
+          await findCallRecordings({
+            calendarEventId: { eq: calendarEventId },
+          }),
+        ).toHaveLength(1);
+        expect(await fetchCallRecording(callRecordingId)).toEqual(
+          expect.objectContaining({
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: botId,
+          }),
+        );
+        expect(recall.deletedBotIds).toEqual([]);
+        expect([...recall.bots.keys()]).toEqual([botId]);
+      },
+    );
+
+    it('leaves recording blank when its recording is deleted during reconciliation', async () => {
+      const { calendarEventId, callRecordingId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        title: 'Renamed before deletion',
+        callRecorderPreference: null,
+      });
+      let recordingDeleted = false;
+
+      interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+        const response = await sendRequest();
+
+        if (
+          !recordingDeleted &&
+          query.includes('callRecordings(') &&
+          JSON.stringify(variables).includes('"id":{"in":')
+        ) {
+          recordingDeleted = true;
+          await client.mutation({
+            destroyCallRecording: { __args: { id: callRecordingId }, id: true },
+          });
+        }
+
+        return response;
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(recordingDeleted).toBe(true);
+      expect(
+        await findCallRecordings({ calendarEventId: { eq: calendarEventId } }),
+      ).toEqual([]);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+    });
+
+    it('keeps a replacement bot when an outdated reschedule receives a Recall 404', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        endsAt: hoursAgo(-3),
+      });
+      const replacementBotId = randomUUID();
+      let botReplaced = false;
+
+      interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+        const response = await sendRequest();
+
+        if (
+          !botReplaced &&
+          query.includes('callRecordings(') &&
+          JSON.stringify(variables).includes('"id":{"in":')
+        ) {
+          botReplaced = true;
+          recall.bots.delete(botId);
+          recall.seedBot({
+            id: replacementBotId,
+            metadata,
+            statusCode: 'scheduled',
+          });
+          await client.mutation({
+            updateCallRecording: {
+              __args: {
+                id: callRecordingId,
+                data: { externalBotId: replacementBotId },
+              },
+              id: true,
+            },
+          });
+        }
+
+        return response;
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(botReplaced).toBe(true);
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        replacementBotId,
+      );
+      expect([...recall.bots.keys()]).toEqual([replacementBotId]);
+    });
+
+    it('keeps a webhook status change while applying a calendar title change', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        title: 'Renamed while joining',
+      });
+      let webhookDelivered = false;
+
+      interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+        const response = await sendRequest();
+
+        if (
+          !webhookDelivered &&
+          query.includes('callRecordings(') &&
+          JSON.stringify(variables).includes('"id":{"in":')
+        ) {
+          webhookDelivered = true;
+          await deliverRecallWebhook(
+            buildBotStatusChangeWebhook({
+              botId,
+              metadata,
+              statusCode: 'joining_call',
+            }),
+          );
+        }
+
+        return response;
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(webhookDelivered).toBe(true);
+      expect(await fetchCallRecording(callRecordingId)).toEqual(
+        expect.objectContaining({
+          title: 'Renamed while joining',
+          status: 'JOINING',
+        }),
+      );
+    });
+
+    it('cancels the old recorder once when a meeting moves three weeks into the future', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        startsAt: hoursAgo(-21 * 24),
+        endsAt: hoursAgo(-21 * 24 - 1),
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      const recordings = await findCallRecordings({
+        calendarEventId: { eq: calendarEventId },
+      });
+      expect(recordings).toHaveLength(1);
+      expect(recordings[0].id).toBe(callRecordingId);
+      expect(recordings[0].recordingRequestStatus).toBe('CANCELED');
+      expect(recordings[0].externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect(recall.bots.size).toBe(0);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+    });
+
+    it('keeps the replacement recorder when the same reschedule is delivered twice', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        startsAt: hoursAgo(-2 * 24),
+        endsAt: hoursAgo(-2 * 24 - 1),
+      });
+
+      await deliverCalendarEventUpdates(update);
+      const recordings = await findCallRecordings({
+        calendarEventId: { eq: calendarEventId },
+      });
+      const replacement = recordings.find(({ id }) => id !== callRecordingId);
+      if (isUndefined(replacement)) {
+        throw new Error('The rescheduled meeting has no replacement recording');
+      }
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(
+        await findCallRecordings({ calendarEventId: { eq: calendarEventId } }),
+      ).toHaveLength(2);
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+      expect(await fetchCallRecording(replacement.id)).toEqual(
+        expect.objectContaining({
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: replacement.externalBotId,
+        }),
+      );
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect([...recall.bots.keys()]).toEqual([replacement.externalBotId]);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+    });
+
+    it('creates, updates and cancels recordings for different meetings in one batch', async () => {
+      const createdCalendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
+      const updated = await scheduleRecordingThroughCalendarReconciliation();
+      const canceled = await scheduleRecordingThroughCalendarReconciliation();
+      const updatedEvent = await updateCalendarEventForDelivery(
+        updated.calendarEventId,
+        { title: 'Renamed customer sync', callRecorderPreference: null },
+      );
+      const canceledEvent = await updateCalendarEventForDelivery(
+        canceled.calendarEventId,
+        { callRecorderPreference: CallRecorderPreference.OFF },
+      );
+
+      const createdEvent = await updateCalendarEventForDelivery(
+        createdCalendarEventId,
+        { title: 'New customer sync' },
+      );
+
+      await deliverCalendarEventUpdates(
+        createdEvent,
+        updatedEvent,
+        canceledEvent,
+      );
+
+      const createdRecordings = await findCallRecordings({
+        calendarEventId: { eq: createdCalendarEventId },
+      });
+      expect(createdRecordings).toHaveLength(1);
+      expect(createdRecordings[0].recordingRequestStatus).toBe('REQUESTED');
+      expect(recall.bots.has(createdRecordings[0].externalBotId)).toBe(true);
+      expect(await fetchCallRecording(updated.callRecordingId)).toEqual(
+        expect.objectContaining({
+          title: 'Renamed customer sync',
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: updated.botId,
+        }),
+      );
+      const canceledRecording = await fetchCallRecording(
+        canceled.callRecordingId,
+      );
+      expect(canceledRecording.recordingRequestStatus).toBe('CANCELED');
+      expect(canceledRecording.externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toEqual([canceled.botId]);
+      expect(await fetchCallRecorderPreference(createdCalendarEventId)).toBe(
+        'ON',
+      );
+      expect(await fetchCallRecorderPreference(updated.calendarEventId)).toBe(
+        'ON',
+      );
+      expect(await fetchCallRecorderPreference(canceled.calendarEventId)).toBe(
+        'OFF',
+      );
+    });
+
+    it.each([1, 2])(
+      'cancels each recorder once when cancellation write %i fails during a move beyond seven days',
+      async (failedCancellationIndex) => {
+        const calendarEventId = await createCalendarEvent();
+        const callRecordingIds: string[] = [];
+        const botIds = [randomUUID(), randomUUID()];
+
+        for (const botId of botIds) {
+          const callRecordingId = await createPendingCallRecording({
+            calendarEventId,
+            externalBotId: botId,
+          });
+
+          callRecordingIds.push(callRecordingId);
+          recall.seedBot({
+            id: botId,
+            metadata: buildBotMetadata(callRecordingId, workspaceId),
+            statusCode: 'scheduled',
+          });
+        }
+
+        const update = await updateCalendarEventForDelivery(calendarEventId, {
+          startsAt: hoursAgo(-21 * 24),
+          endsAt: hoursAgo(-21 * 24 - 1),
+        });
+        let cancellationWriteCount = 0;
+
+        interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+          if (
+            query.includes('updateCallRecording(') &&
+            JSON.stringify(variables).includes(
+              '"recordingRequestStatus":"CANCELED"',
+            )
+          ) {
+            cancellationWriteCount += 1;
+
+            if (cancellationWriteCount === failedCancellationIndex) {
+              return new Response('Cancellation write failed', { status: 500 });
+            }
+          }
+
+          return sendRequest();
+        });
+
+        const result = await deliverCalendarEventUpdates(update);
+
+        expect(result).toEqual(
+          expect.objectContaining({
+            reconciliationResults: [
+              expect.objectContaining({ action: 'FAILED' }),
+              expect.objectContaining({ action: 'CANCELED' }),
+            ],
+          }),
+        );
+        expect(cancellationWriteCount).toBe(3);
+        expect(recall.deletedBotIds.sort()).toEqual([...botIds].sort());
+
+        for (const callRecordingId of callRecordingIds) {
+          const callRecording = await fetchCallRecording(callRecordingId);
+
+          expect(callRecording.recordingRequestStatus).toBe('CANCELED');
+          expect(callRecording.externalBotId).toBeFalsy();
+        }
+      },
+    );
+  });
+
   describe('scheduling from calendar changes', () => {
     it('creates a recording and schedules a Recall bot for a meeting with recording enabled', async () => {
       const { callRecordingId, botId } =
@@ -1200,7 +1699,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('asks the queue to redeliver a batch whose reads fail, before writing anything', async () => {
+    it('asks the queue to redeliver a batch when the recording On echo lookup fails', async () => {
       const calendarEventId = await createCalendarEvent();
 
       recall.failCallRecordingReads = true;
@@ -1208,9 +1707,9 @@ describe('call recorder app lifecycle (integration)', () => {
       await expect(
         deliverCalendarEventUpdates({
           calendarEventId,
-          updatedFields: ['title'],
-          before: { title: 'Customer Sync' },
-          after: { title: 'Customer Sync (renamed)' },
+          updatedFields: ['callRecorderPreference'],
+          before: { callRecorderPreference: null },
+          after: { callRecorderPreference: 'ON' },
         }),
       ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
       expect(
@@ -2710,7 +3209,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('uses four Core API calls for a batch of meetings that already have bots', async () => {
+    it('uses four Core API reads and no writes for a batch of meetings that already have bots', async () => {
       const calendarEventIds = [
         await createCalendarEvent(),
         await createCalendarEvent(),
@@ -2755,6 +3254,11 @@ describe('call recorder app lifecycle (integration)', () => {
         }),
       );
       expect(twentyGraphqlRequestBodies).toHaveLength(4);
+      expect(
+        twentyGraphqlRequestBodies.every((body) =>
+          JSON.parse(String(body)).query.startsWith('query'),
+        ),
+      ).toBe(true);
     });
 
     it('schedules a bot when a user sets On on an eligible meeting that has none yet', async () => {

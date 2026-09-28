@@ -301,12 +301,9 @@ const reconcileCanceledMeetings = async ({
           meetingPolicyResult,
           meetingCallRecordings,
           cancellableCallRecordings,
+          callRecordingIdsCanceledInBatch,
         }),
       );
-
-      for (const cancellableCallRecording of cancellableCallRecordings) {
-        callRecordingIdsCanceledInBatch.add(cancellableCallRecording.id);
-      }
     } catch (error) {
       canceledMeetingReconciliations.push({
         reconciliationResult: buildFailedResult(
@@ -656,17 +653,20 @@ const reconcileCanceledMeeting = async ({
   meetingPolicyResult,
   meetingCallRecordings,
   cancellableCallRecordings,
+  callRecordingIdsCanceledInBatch,
 }: {
   client: CoreApiClient;
   meetingPolicyResult: CallRecorderPolicyResultForMeeting;
   meetingCallRecordings: CallRecordingRecord[];
   cancellableCallRecordings: CallRecordingRecord[];
+  callRecordingIdsCanceledInBatch: Set<string>;
 }): Promise<CanceledMeetingReconciliation> => {
   for (const callRecording of cancellableCallRecordings) {
     await cancelCallRecordingRequest({
       client,
       callRecording,
     });
+    callRecordingIdsCanceledInBatch.add(callRecording.id);
   }
 
   const cancellableCallRecordingIds = new Set(
