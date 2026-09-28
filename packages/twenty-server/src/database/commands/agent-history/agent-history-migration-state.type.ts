@@ -1,18 +1,14 @@
 import { z } from 'zod';
-import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
+import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 
-export const agentHistoryStorageStateSchema = z
+export const agentHistoryMigrationStateSchema = z
   .object({
     storage: z.enum(['core', 'workspace']),
     migration: z
       .object({
         phase: z.enum(['clearing', 'copying', 'aborting']),
         target: z.enum(['core', 'workspace']),
-        tableIndex: z
-          .number()
-          .int()
-          .min(0)
-          .max(AGENT_HISTORY_OBJECT_NAMES.length),
+        tableIndex: z.number().int().min(0).max(AGENT_HISTORY_TABLES.length),
         lastId: z.string().uuid().nullable(),
       })
       .optional(),
@@ -23,6 +19,6 @@ export const agentHistoryStorageStateSchema = z
     (state) => !state.migration || state.migration.target !== state.storage,
   );
 
-export type AgentHistoryStorageState = z.infer<
-  typeof agentHistoryStorageStateSchema
+export type AgentHistoryMigrationState = z.infer<
+  typeof agentHistoryMigrationStateSchema
 >;

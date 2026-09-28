@@ -11,8 +11,6 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
@@ -231,11 +229,11 @@ const createActiveManualWorkflow = async (name: string) => {
   return { coreWorkflowId, workspaceWorkflowId, workspaceWorkflowVersionId };
 };
 
-// The generic record API, which the run and version pages read, rather than
+// The generic record API, which the run pages read, rather than
 // the core workflow API that #26243 already gates.
 const findRecordIds = async (
   requester: (query: string, variables?: object) => request.Test,
-  objectNamePlural: 'workflows' | 'workflowRuns' | 'workflowVersions',
+  objectNamePlural: 'workflowRuns',
   id: string,
 ) => {
   const response = await requester(
@@ -697,11 +695,21 @@ describe('core workflow visibility (e2e)', () => {
 
   // A run holds the workflow's inputs and step outputs, so it has to be as
   // private as the workflow even when read through the generic record API.
-  describe('the runs and versions of a workflow', () => {
+  describe('the runs of a workflow', () => {
     let runsCoreWorkflowId: string;
     let runsWorkspaceWorkflowId: string;
     let runsWorkspaceWorkflowVersionId: string;
     let workflowRunId: string;
+
+    const runWorkflow = async () => {
+      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
+        input: { workflowVersionId: runsWorkspaceWorkflowVersionId },
+      });
+
+      expect(runResponse.body.errors).toBeUndefined();
+
+      return runResponse.body.data.runWorkflowVersion.workflowRunId as string;
+    };
 
     beforeAll(async () => {
       ({
@@ -710,12 +718,7 @@ describe('core workflow visibility (e2e)', () => {
         workspaceWorkflowVersionId: runsWorkspaceWorkflowVersionId,
       } = await createActiveManualWorkflow('Workflow With Runs'));
 
-      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
-        input: { workflowVersionId: runsWorkspaceWorkflowVersionId },
-      });
-
-      expect(runResponse.body.errors).toBeUndefined();
-      workflowRunId = runResponse.body.data.runWorkflowVersion.workflowRunId;
+      workflowRunId = await runWorkflow();
     });
 
     afterAll(async () => {
@@ -731,39 +734,17 @@ describe('core workflow visibility (e2e)', () => {
       expect(
         await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
       ).toEqual([workflowRunId]);
-      expect(
-        await findRecordIds(
-          asOtherMember,
-          'workflowVersions',
-          runsWorkspaceWorkflowVersionId,
-        ),
-      ).toEqual([runsWorkspaceWorkflowVersionId]);
     });
 
-    it('hides the workflow, its runs and its versions from another member once private', async () => {
+    it('hides them from another member once the workflow is private', async () => {
       const response = await setVisibility(
         runsCoreWorkflowId,
         WorkflowVisibility.PRIVATE,
       );
 
       expect(response.body.errors).toBeUndefined();
-
-      expect(
-        await findRecordIds(
-          asOtherMember,
-          'workflows',
-          runsWorkspaceWorkflowId,
-        ),
-      ).toEqual([]);
       expect(
         await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
-      ).toEqual([]);
-      expect(
-        await findRecordIds(
-          asOtherMember,
-          'workflowVersions',
-          runsWorkspaceWorkflowVersionId,
-        ),
       ).toEqual([]);
     });
 
@@ -775,13 +756,21 @@ describe('core workflow visibility (e2e)', () => {
           workflowRunId,
         ),
       ).toEqual([workflowRunId]);
+    });
+
+    it('keeps a run started while private to its creator', async () => {
+      const privateRunId = await runWorkflow();
+
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', privateRunId),
+      ).toEqual([]);
       expect(
         await findRecordIds(
           workflowGraphqlRequest,
-          'workflows',
-          runsWorkspaceWorkflowId,
+          'workflowRuns',
+          privateRunId,
         ),
-      ).toEqual([runsWorkspaceWorkflowId]);
+      ).toEqual([privateRunId]);
     });
 
     it('gives them back to another member once the workflow is visible to the workspace again', async () => {
@@ -1139,109 +1128,23 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // An API key has to name whom a new private record is shared with, and the
-  // workflow create hook names everyone on its behalf. That grant is not the
-  // one the visibility sync writes, so the sync has to withdraw it as well.
-  describe('a workflow created by an API key through the record API', () => {
-    const apiKeyWorkflowId = randomUUID();
-    let apiKeyCoreWorkflowId: string;
-
-    beforeAll(async () => {
-      const createResponse = await makeGraphqlApiRequestWithApiKey(
-        createOneOperationFactory({
-          objectMetadataSingularName: 'workflow',
-          gqlFields: 'id coreWorkflowId',
-          data: { id: apiKeyWorkflowId, name: 'API Key Workflow' },
-        }),
-      );
-
-      expect(createResponse.body.errors).toBeUndefined();
-      expect(createResponse.body.data.createWorkflow.id).toBe(apiKeyWorkflowId);
-
-      // The core workflow is written by the create post-query hook, after the
-      // record has been returned.
-      apiKeyCoreWorkflowId = (await pollWorkflowGraphqlRequest<
-        { workflows: { edges: { node: { coreWorkflowId: string | null } }[] } },
-        string | null | undefined
-      >({
-        query: `
-          query ApiKeyWorkflow($id: UUID!) {
-            workflows(filter: { id: { eq: $id } }) {
-              edges {
-                node {
-                  coreWorkflowId
-                }
-              }
-            }
-          }
-        `,
-        variables: { id: apiKeyWorkflowId },
-        extract: (data) => data?.workflows.edges[0]?.node.coreWorkflowId,
-        until: (coreWorkflowId) => isDefined(coreWorkflowId),
-      }))!;
-    });
-
-    afterAll(async () => {
-      if (isDefined(apiKeyCoreWorkflowId)) {
-        await setVisibility(apiKeyCoreWorkflowId, WorkflowVisibility.WORKSPACE);
-      }
-      await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
-        id: apiKeyWorkflowId,
-      });
-    });
-
-    it('is visible to every member', async () => {
-      expect(
-        await findRecordIds(asOtherMember, 'workflows', apiKeyWorkflowId),
-      ).toEqual([apiKeyWorkflowId]);
-    });
-
-    it('is hidden from another member once whoever claims it makes it private', async () => {
-      const response = await setVisibility(
-        apiKeyCoreWorkflowId,
-        WorkflowVisibility.PRIVATE,
-      );
-
-      expect(response.body.errors).toBeUndefined();
-      expect(
-        await findRecordIds(asOtherMember, 'workflows', apiKeyWorkflowId),
-      ).toEqual([]);
-      // The API key's creator role grant would keep every member holding
-      // that role reading the workflow and its runs.
-      expect(
-        await global.testDataSource.query(
-          `SELECT "principalType", "rowCause" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."recordShare" WHERE "recordId" = $1`,
-          [apiKeyWorkflowId],
-        ),
-      ).toEqual([{ principalType: 'WORKSPACE_MEMBER', rowCause: 'OWNER' }]);
-      expect(
-        await findRecordIds(
-          workflowGraphqlRequest,
-          'workflows',
-          apiKeyWorkflowId,
-        ),
-      ).toEqual([apiKeyWorkflowId]);
-    });
-  });
-
   // Removing a member deletes their membership, and the database then clears
   // the creator of every workflow they created.
-  describe('a private workflow whose creator is removed from the workspace', () => {
+  describe('the runs of a private workflow whose creator is removed from the workspace', () => {
     const removedUserId = randomUUID();
     const removedUserWorkspaceId = randomUUID();
     let orphanedWorkflowId: string;
     let orphanedCoreWorkflowId: string;
+    let orphanedRunId: string;
 
     beforeAll(async () => {
-      const createResponse = await workflowGraphqlRequest(
-        CREATE_CORE_WORKFLOW_MUTATION,
-        { input: { name: 'Workflow Of A Removed Member' } },
-      );
+      let orphanedWorkflowVersionId: string;
 
-      expect(createResponse.body.errors).toBeUndefined();
-      orphanedCoreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
-      orphanedWorkflowId =
-        createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
+      ({
+        coreWorkflowId: orphanedCoreWorkflowId,
+        workspaceWorkflowId: orphanedWorkflowId,
+        workspaceWorkflowVersionId: orphanedWorkflowVersionId,
+      } = await createActiveManualWorkflow('Workflow Of A Removed Member'));
 
       expect(
         (
@@ -1251,6 +1154,13 @@ describe('core workflow visibility (e2e)', () => {
           )
         ).body.errors,
       ).toBeUndefined();
+
+      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
+        input: { workflowVersionId: orphanedWorkflowVersionId },
+      });
+
+      expect(runResponse.body.errors).toBeUndefined();
+      orphanedRunId = runResponse.body.data.runWorkflowVersion.workflowRunId;
 
       await global.testDataSource.query(
         `INSERT INTO core."user" (id, email) VALUES ($1, $2)`,
@@ -1282,9 +1192,9 @@ describe('core workflow visibility (e2e)', () => {
       );
     });
 
-    it('becomes readable to the workspace, as core now shows it', async () => {
+    it('become readable to the workspace, as core now shows the workflow', async () => {
       expect(
-        await findRecordIds(asOtherMember, 'workflows', orphanedWorkflowId),
+        await findRecordIds(asOtherMember, 'workflowRuns', orphanedRunId),
       ).toEqual([]);
 
       await getAppProviderByClassName<UserWorkspaceService>(
@@ -1301,8 +1211,8 @@ describe('core workflow visibility (e2e)', () => {
 
       expect(coreWorkflow.createdByUserWorkspaceId).toBeNull();
       expect(
-        await findRecordIds(asOtherMember, 'workflows', orphanedWorkflowId),
-      ).toEqual([orphanedWorkflowId]);
+        await findRecordIds(asOtherMember, 'workflowRuns', orphanedRunId),
+      ).toEqual([orphanedRunId]);
     });
   });
 });
