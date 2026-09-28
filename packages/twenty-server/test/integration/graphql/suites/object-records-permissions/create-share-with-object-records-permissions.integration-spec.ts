@@ -672,8 +672,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
     'PRIVATE creates with the flag off and conversation readability %s',
     (conversationReadability) => {
       let conversationObjectMetadata: ObjectMetadataEntity;
-      const isLegacyOpen =
-        conversationReadability === MetadataReadability.SYSTEM;
 
       beforeAll(async () => {
         conversationObjectMetadata =
@@ -703,7 +701,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         );
       });
 
-      it('requires an explicit API sharing target after activation', async () => {
+      it('requires an explicit API sharing target regardless of rollout state', async () => {
         const recordId = trackRecordId();
         const response = await makeGraphqlApiRequestWithApiKey(
           createOneOperation({
@@ -711,30 +709,13 @@ describe('createShareWithObjectRecordsPermissions', () => {
           }),
         );
 
-        if (isLegacyOpen) {
-          expect(response.body.errors).toBeUndefined();
-          expect(response.body.data.createShareWithTestObject.id).toBe(
-            recordId,
-          );
-          expect(await findRecordShares(recordId)).toEqual(
-            expect.arrayContaining([
-              expect.objectContaining({
-                principalType: RecordSharePrincipalType.EVERYONE,
-                accessLevel: RecordShareAccessLevel.FULL,
-                rowCause: RecordShareRowCause.APPLICATION,
-                sourceId: objectMetadataId,
-              }),
-            ]),
-          );
-        } else {
-          expect(response.body.errors[0].message).toBe(
-            SHARE_WITH_REQUIRED_MESSAGE,
-          );
-          expect(await findRecordShares(recordId)).toEqual([]);
-        }
+        expect(response.body.errors[0].message).toBe(
+          SHARE_WITH_REQUIRED_MESSAGE,
+        );
+        expect(await findRecordShares(recordId)).toEqual([]);
       });
 
-      it('keeps new member records private after activation', async () => {
+      it('keeps new member records private regardless of rollout state', async () => {
         const recordId = trackRecordId();
         const response = await makeGraphqlApiRequest(
           createOneOperation({
@@ -750,7 +731,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
             ),
           ]),
         );
-        expect(shares).toHaveLength(isLegacyOpen ? 2 : 1);
+        expect(shares).toHaveLength(1);
 
         const otherMemberResponse = await makeGraphqlApiRequestWithMemberRole(
           findManyOperation(recordId),
@@ -758,7 +739,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         expect(otherMemberResponse.body.errors).toBeUndefined();
         expect(
           otherMemberResponse.body.data.shareWithTestObjects.edges,
-        ).toHaveLength(isLegacyOpen ? 1 : 0);
+        ).toHaveLength(0);
         const ownerResponse = await makeGraphqlApiRequest(
           findManyOperation(recordId),
         );

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreWorkspaces": ["packages/twenty-docs", "packages/twenty-apps/**"],
+  "rules": {
+    "binaries": "warn",
+    "dependencies": "error",
+    "devDependencies": "error",
+    "duplicates": "warn",
+    "enumMembers": "warn",
+    "exports": "warn",
+    "files": "error",
+    "optionalPeerDependencies": "warn",
+    "types": "warn",
+    "unlisted": "warn",
+    "unresolved": "warn"
+  },
+  "workspaces": {
+    "packages/twenty-server": {
+      "entry": [
+        "src/main.ts",
+        "src/command/command.ts",
+        "src/queue-worker/queue-worker.ts",
+        "src/database/scripts/*.ts",
+        "src/database/clickhouse/migrations/run-migrations.ts",
+        "src/database/clickhouse/seeds/run-seeds.ts",
+        "src/instrument.ts",
+        "lingui.config.ts",
+        "scripts/**/*.ts",
+        "**/*.spec.ts",
+        "**/*.integration-spec.ts",
+        "test/integration/graphql/codegen/index.ts",
+        "test/integration/utils/setup-test.ts",
+        "test/integration/utils/teardown-test.ts",
+        "src/database/typeorm/core/legacy-typeorm-migrations-do-not-add/**/*.ts"
+      ],
+      "project": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"],
+      "jest": [
+        "jest.config.mjs",
+        "jest-integration.config.ts",
+        "jest-integration-secure.config.ts"
+      ],
+      "ignore": [
+        "src/**/constants/seed-project/**",
+        "src/database/typeorm/core/migrations/**",
+        "**/*.workspace-entity.ts",
+        "src/engine/core-modules/logic-function/logic-function-resource/constants/**",
+        "src/database/commands/upgrade-version-command/**",
+        "src/engine/metadata-modules/*/constants/standard-*-names.ts",
+        "src/engine/metadata-modules/*/constants/standard-*-titles.ts"
+      ],
+      "ignoreDependencies": ["@types/psl"]
+    },
+    "packages/twenty-front": {
+      "entry": [
+        "src/index.tsx",
+        "src/**/graphql/**/*.{ts,tsx}",
+        "src/modules/geo-map/graphql-query/*.{ts,tsx}",
+        "vitest.config.ts",
+        "lingui.config.ts",
+        "nyc.config.cjs",
+        "jest-failures-only-reporter.cjs"
+      ],
+      "graphql-codegen": [
+        "codegen.cjs",
+        "codegen-admin.cjs",
+        "codegen-metadata.cjs"
+      ],
+      "ignore": ["src/locales/generated/**", ".eloqnt/config.ts"],
+      "ignoreDependencies": [
+        "@babel/preset-typescript",
+        "buffer",
+        "esbuild",
+        "playwright",
+        "rollup-plugin-node-polyfills"
+      ]
+    },
+    "packages/twenty-ui": {
+      "entry": ["scripts/**/*.ts", "docs/**/*.ts"],
+      "ignore": ["src/styles/abstracts/**"],
+      "ignoreDependencies": ["@swc/core"]
+    }
+  }
+}
