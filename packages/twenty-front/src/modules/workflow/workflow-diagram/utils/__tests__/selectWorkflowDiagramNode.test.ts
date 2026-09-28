@@ -40,8 +40,8 @@ describe('selectWorkflowDiagramNode', () => {
       nodeIdToSelect: '1',
     });
 
-    expect(result.nodes[0].selected).toBe(true);
-    expect(result.nodes[1].selected).toBe(false);
+    expect(result.nodes[0]?.selected).toBe(true);
+    expect(result.nodes[1]?.selected).toBe(false);
   });
 
   it('should return same diagram when node is not found', () => {

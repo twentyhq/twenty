@@ -5,7 +5,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({
@@ -17,7 +17,9 @@ export const getTriggerDefaultDefinition = ({
   type: WorkflowTriggerType;
   activeNonSystemObjectMetadataItems: EnrichedObjectMetadataItem[];
 }): WorkflowTrigger => {
-  if (activeNonSystemObjectMetadataItems.length === 0) {
+  const [defaultObjectMetadataItem] = activeNonSystemObjectMetadataItems;
+
+  if (!isDefined(defaultObjectMetadataItem)) {
     throw new Error(
       'This function need to receive at least one object metadata item to run.',
     );
@@ -34,7 +36,7 @@ export const getTriggerDefaultDefinition = ({
         ...baseTriggerDefinition,
         type,
         settings: {
-          eventName: `${activeNonSystemObjectMetadataItems[0].nameSingular}.${
+          eventName: `${defaultObjectMetadataItem.nameSingular}.${
             DATABASE_TRIGGER_TYPES.find(
               (availableEvent) => availableEvent.defaultLabel === defaultLabel,
             )?.event

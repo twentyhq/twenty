@@ -27,6 +27,7 @@ export const parseAndValidateVariableFriendlyStringifiedJson = (
 
   return {
     isValid: false,
-    error: parsingResult.error.issues[0].message,
+    error:
+      parsingResult.error.issues[0]?.message ?? parsingResult.error.message,
   } as const;
 };

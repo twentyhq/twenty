@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type WorkflowManualTriggerSettings } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, assertUnreachable } from 'twenty-shared/utils';
 
 export const getManualTriggerDefaultSettings = ({
   availabilityType,
@@ -14,6 +14,9 @@ export const getManualTriggerDefaultSettings = ({
   icon?: string;
   isPinned?: boolean;
 }): WorkflowManualTriggerSettings => {
+  const defaultObjectNameSingular =
+    activeNonSystemObjectMetadataItems[0]?.nameSingular;
+
   switch (availabilityType) {
     case 'GLOBAL': {
       return {
@@ -28,12 +31,16 @@ export const getManualTriggerDefaultSettings = ({
       };
     }
     case 'SINGLE_RECORD': {
+      assertIsDefinedOrThrow(
+        defaultObjectNameSingular,
+        new Error('A record trigger needs at least one active object'),
+      );
+
       return {
-        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
+        objectType: defaultObjectNameSingular,
         availability: {
           type: 'SINGLE_RECORD',
-          objectNameSingular:
-            activeNonSystemObjectMetadataItems[0].nameSingular,
+          objectNameSingular: defaultObjectNameSingular,
         },
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
@@ -41,12 +48,16 @@ export const getManualTriggerDefaultSettings = ({
       };
     }
     case 'BULK_RECORDS': {
+      assertIsDefinedOrThrow(
+        defaultObjectNameSingular,
+        new Error('A record trigger needs at least one active object'),
+      );
+
       return {
-        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
+        objectType: defaultObjectNameSingular,
         availability: {
           type: 'BULK_RECORDS',
-          objectNameSingular:
-            activeNonSystemObjectMetadataItems[0].nameSingular,
+          objectNameSingular: defaultObjectNameSingular,
         },
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,

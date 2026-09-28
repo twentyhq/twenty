@@ -5,8 +5,8 @@ const getSubstringCoordinate = (
 ): { line: number; column: number } | null => {
   const lines = text.split('\n');
 
-  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    const columnIndex = lines[lineIndex].indexOf(substring);
+  for (const [lineIndex, line] of lines.entries()) {
+    const columnIndex = line.indexOf(substring);
     if (columnIndex !== -1) {
       return {
         line: lineIndex + 1, // 1-based line number

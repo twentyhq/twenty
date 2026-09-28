@@ -2,13 +2,16 @@ import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { isObject, isString } from '@sniptt/guards';
 import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
+import { isDefined } from 'twenty-shared/utils';
 
 function* resolveVariables(value: JsonValue): Generator<string> {
   if (isString(value)) {
     for (const [, variablePath] of value.matchAll(
       CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     )) {
-      yield variablePath;
+      if (isDefined(variablePath)) {
+        yield variablePath;
+      }
     }
 
     return;

@@ -16,6 +16,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const STEP_ID = 'step-id';
 const FILTER_GROUP: StepFilterGroup = {
@@ -129,14 +130,17 @@ export const AddNestedGroup: Story = {
     );
 
     await expect(args.onFilterSettingsUpdate).toHaveBeenCalledTimes(1);
-    const [{ stepFilters = [], stepFilterGroups = [] }] = mocked(
-      args.onFilterSettingsUpdate,
-    ).mock.calls[0];
+    const [firstCall] = mocked(args.onFilterSettingsUpdate).mock.calls;
+    assertIsDefinedOrThrow(firstCall);
+
+    const { stepFilters = [], stepFilterGroups = [] } = firstCall[0];
 
     await expect(stepFilterGroups).toHaveLength(2);
     await expect(stepFilters).toHaveLength(2);
     const [rootGroup, nestedGroup] = stepFilterGroups;
     const [existingFilter, nestedFilter] = stepFilters;
+    assertIsDefinedOrThrow(nestedGroup);
+    assertIsDefinedOrThrow(nestedFilter);
 
     await expect(rootGroup).toEqual(FILTER_GROUP);
     await expect(existingFilter).toEqual(FILTER);

@@ -13,6 +13,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -102,7 +103,8 @@ const flatPersonRecords = mockedPersonRecords.map((record) =>
   getRecordFromRecordNode({ recordNode: record }),
 );
 
-const peopleMock = flatPersonRecords[0];
+const [peopleMock] = flatPersonRecords;
+assertIsDefinedOrThrow(peopleMock);
 
 export const DisabledWithDefaultStaticValues: Story = {
   args: {

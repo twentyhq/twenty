@@ -8,7 +8,7 @@ import '@xyflow/react/dist/style.css';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -212,7 +212,8 @@ export const Catalog: CatalogStory<
 
     const canvasBody = within(canvasElement.ownerDocument.body);
 
-    const triggerOptionsButton = optionsButtons[0];
+    const [triggerOptionsButton] = optionsButtons;
+    assertIsDefinedOrThrow(triggerOptionsButton);
 
     await userEvent.click(triggerOptionsButton);
 
@@ -229,7 +230,10 @@ export const Catalog: CatalogStory<
       (step) => step.nodeType === 'action',
     );
 
-    await userEvent.click(optionsButtons[firstActionStepIndex]);
+    const firstActionOptionsButton = optionsButtons[firstActionStepIndex];
+    assertIsDefinedOrThrow(firstActionOptionsButton);
+
+    await userEvent.click(firstActionOptionsButton);
 
     await canvasBody.findByText('Duplicate node');
     const changeNodeAction = await canvasBody.findByRole('menuitem', {

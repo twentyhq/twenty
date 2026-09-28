@@ -12,8 +12,7 @@ export const convertOutputSchemaToJson = (
   const isArray = keys.every((key, index) => key === String(index));
 
   if (isArray) {
-    return keys.map((key) => {
-      const entry = schema[key];
+    return Object.values(schema).map((entry) => {
       if (entry.isLeaf) {
         return entry.value;
       }

@@ -2,7 +2,7 @@ import { type WorkflowPickRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionPickRecord } from '@/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -14,6 +14,9 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 
+const firstCompanyRecord = mockedCompanyRecords[0];
+assertIsDefinedOrThrow(firstCompanyRecord);
+
 const DEFAULT_ACTION: WorkflowPickRecordAction = {
   id: getWorkflowNodeIdMock(),
   name: 'Pick Record',
@@ -23,7 +26,7 @@ const DEFAULT_ACTION: WorkflowPickRecordAction = {
     input: {
       objectName: 'company',
       strategy: 'RANDOM',
-      recordIds: [mockedCompanyRecords[0].id],
+      recordIds: [firstCompanyRecord.id],
       loadBalance: { objectNameSingular: 'person', fieldName: 'company' },
     },
     outputSchema: {},

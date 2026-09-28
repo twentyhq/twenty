@@ -4,6 +4,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { HttpRequestTestVariableInput } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const meta: Meta<typeof HttpRequestTestVariableInput> = {
   title: 'Modules/Workflow/Actions/HttpRequest/TestVariableInput',
@@ -139,15 +140,13 @@ export const WithPrefilledValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const inputs = canvas.getAllByRole('textbox');
+    const [userIdInput, tokenInput, nameInput] = canvas.getAllByRole('textbox');
+    assertIsDefinedOrThrow(userIdInput);
+    assertIsDefinedOrThrow(tokenInput);
+    assertIsDefinedOrThrow(nameInput);
 
-    const userIdInput = inputs[0];
     await userEvent.type(userIdInput, '12345');
-
-    const tokenInput = inputs[1];
     await userEvent.type(tokenInput, 'abc123xyz');
-
-    const nameInput = inputs[2];
     await userEvent.type(nameInput, 'John Doe');
   },
 };

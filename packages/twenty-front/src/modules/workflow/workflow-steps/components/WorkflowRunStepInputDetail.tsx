@@ -69,11 +69,13 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
       : undefined,
   });
 
-  if (stepContext.length === 0) {
+  const previousStep = stepContext.at(-1);
+
+  if (!isDefined(previousStep)) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
 
-  const previousStepId = stepContext[stepContext.length - 1].id;
+  const previousStepId = previousStep.id;
 
   const getNodeHighlighting: GetJsonNodeHighlighting = (keyPath: string) => {
     if (variablesUsedInStep.has(keyPath)) {

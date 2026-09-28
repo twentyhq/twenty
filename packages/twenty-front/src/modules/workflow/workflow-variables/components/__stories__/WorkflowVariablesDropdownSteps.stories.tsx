@@ -10,6 +10,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const STEPS: StepOutputSchemaV2[] = [
   {
@@ -119,7 +120,9 @@ export const NestedFieldSearch: Story = {
     expect(
       canvas.getByText('Run code / Result', { exact: false }),
     ).toBeInTheDocument();
-    await userEvent.click(canvas.getAllByText('Company name')[1]);
+    const [, nestedCompanyName] = canvas.getAllByText('Company name');
+    assertIsDefinedOrThrow(nestedCompanyName);
+    await userEvent.click(nestedCompanyName);
     expect(args.onVariableSelect).toHaveBeenCalledWith({
       rawVariableName: '{{code.result.companyName}}',
       stepId: 'code',

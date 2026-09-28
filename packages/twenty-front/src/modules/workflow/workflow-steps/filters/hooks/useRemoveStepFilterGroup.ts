@@ -38,7 +38,7 @@ export const useRemoveStepFilterGroup = () => {
 
       const shouldResetStepFilterSettings =
         updatedStepFilterGroups.length === 1 &&
-        updatedStepFilterGroups[0].id === rootStepFilterGroup?.id &&
+        updatedStepFilterGroups[0]?.id === rootStepFilterGroup?.id &&
         updatedStepFilters.length === 0;
 
       if (shouldResetStepFilterSettings) {

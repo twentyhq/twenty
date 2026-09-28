@@ -138,7 +138,7 @@ describe('findStepPosition', () => {
   });
 
   it('should work with single step array', () => {
-    const singleStep = [mockSteps[0]];
+    const singleStep = mockSteps.slice(0, 1);
     const result = findStepPosition({
       steps: singleStep,
       stepId: 'step-1',

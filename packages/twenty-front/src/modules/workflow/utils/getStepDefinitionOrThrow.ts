@@ -39,12 +39,16 @@ export const getStepDefinitionOrThrow = ({
     steps,
     stepId,
   });
-  if (!isDefined(selectedNodePosition)) {
+  const selectedStep = isDefined(selectedNodePosition)
+    ? selectedNodePosition.steps[selectedNodePosition.index]
+    : undefined;
+
+  if (!isDefined(selectedStep)) {
     return undefined;
   }
 
   return {
     type: 'action',
-    definition: selectedNodePosition.steps[selectedNodePosition.index],
+    definition: selectedStep,
   } as const;
 };

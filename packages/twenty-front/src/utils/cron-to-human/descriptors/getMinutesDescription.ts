@@ -5,6 +5,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '~/utils/cron-to-human/types/CronDescriptionOptions';
+import { splitCronValuePair } from '~/utils/cron-to-human/utils/splitCronValuePair';
 
 export const getMinutesDescription = (
   minutes: string,
@@ -19,7 +20,7 @@ export const getMinutesDescription = (
   }
 
   if (isStepValue(minutes)) {
-    const [range, step] = minutes.split('/');
+    const [range, step] = splitCronValuePair(minutes, '/');
     const stepNum = parseInt(step, 10);
     const stepNumStr = stepNum.toString();
 
@@ -31,7 +32,7 @@ export const getMinutesDescription = (
     }
 
     if (range.includes('-')) {
-      const [start, end] = range.split('-');
+      const [start, end] = splitCronValuePair(range, '-');
       return t`every ${stepNumStr} minutes, between minute ${start} and ${end}`;
     }
 
@@ -39,15 +40,18 @@ export const getMinutesDescription = (
   }
 
   if (isNumericRange(minutes) && minutes.includes('-')) {
-    const [start, end] = minutes.split('-');
+    const [start, end] = splitCronValuePair(minutes, '-');
     return t`between minute ${start} and ${end}`;
   }
 
   if (isListValue(minutes)) {
     const values = minutes.split(',').map((v) => v.trim());
-    if (values.length === 2) {
-      const firstValue = values[0];
-      const secondValue = values[1];
+    const [firstValue, secondValue] = values;
+    if (
+      values.length === 2 &&
+      isDefined(firstValue) &&
+      isDefined(secondValue)
+    ) {
       return t`at minutes ${firstValue} and ${secondValue}`;
     }
     const lastValue = values.pop();

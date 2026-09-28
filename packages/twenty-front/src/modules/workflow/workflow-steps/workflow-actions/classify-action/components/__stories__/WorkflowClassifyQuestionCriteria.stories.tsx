@@ -8,6 +8,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const INITIAL_CRITERIA: WorkflowClassifyCriterion[] = [
   {
@@ -84,8 +85,10 @@ export const DeletesAnOption: Story = {
     const buttons = await canvas.findAllByRole('button', {
       name: 'Delete option',
     });
+    const [firstDeleteButton] = buttons;
+    assertIsDefinedOrThrow(firstDeleteButton);
     await expect(buttons.at(-1)).toBeDisabled();
-    await userEvent.click(buttons[0]);
+    await userEvent.click(firstDeleteButton);
     await expect(args.onChange).toHaveBeenLastCalledWith(
       INITIAL_CRITERIA.slice(1),
     );

@@ -4,6 +4,7 @@ import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOu
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const COMPANY_SCHEMA: RecordOutputSchemaV2 = {
   _outputSchemaType: 'RECORD',
@@ -28,7 +29,7 @@ const COMPANY_SCHEMA: RecordOutputSchemaV2 = {
   },
 };
 
-const STEPS: StepOutputSchemaV2[] = [
+const STEPS: [StepOutputSchemaV2, StepOutputSchemaV2] = [
   {
     id: 'trigger',
     name: 'Record created',
@@ -275,8 +276,12 @@ describe('searchWorkflowVariables', () => {
       steps: [step],
       searchInputValue: '0',
     });
+    assertIsDefinedOrThrow(result);
     expect(
-      getVariableTemplateFromPath({ stepId: result.stepId, path: result.path }),
+      getVariableTemplateFromPath({
+        stepId: result.stepId,
+        path: result.path,
+      }),
     ).toBe('{{code.0}}');
     expect(
       searchWorkflowVariables({
@@ -338,8 +343,12 @@ describe('searchWorkflowVariables', () => {
       steps: [step],
       searchInputValue: 'Company name',
     });
+    assertIsDefinedOrThrow(result);
     expect(
-      getVariableTemplateFromPath({ stepId: result.stepId, path: result.path }),
+      getVariableTemplateFromPath({
+        stepId: result.stepId,
+        path: result.path,
+      }),
     ).toBe('{{form.company.name}}');
   });
 });
