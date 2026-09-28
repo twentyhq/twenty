@@ -12264,12 +12264,12 @@ msgstr "Giới hạn này đã thay đổi trong khi bạn đang chỉnh sửa. 
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
-msgstr ""
+msgstr "Bộ lọc nhật ký này không hợp lệ."
 
 #. js-lingui-id: BuvBj9
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
-msgstr ""
+msgstr "Bảng nhật ký này không hợp lệ."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

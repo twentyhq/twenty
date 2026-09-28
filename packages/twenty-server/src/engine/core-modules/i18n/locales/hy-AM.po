@@ -12264,12 +12264,12 @@ msgstr "Այս սահմանաչափը փոխվել է, մինչ դուք այն 
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
-msgstr ""
+msgstr "Այս մատյանի զտիչը վավեր չէ։"
 
 #. js-lingui-id: BuvBj9
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
-msgstr ""
+msgstr "Այս մատյանի աղյուսակը վավեր չէ։"
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

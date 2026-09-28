@@ -12264,12 +12264,12 @@ msgstr "Αυτό το όριο άλλαξε ενώ το επεξεργαζόσα
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
-msgstr ""
+msgstr "Αυτό το φίλτρο καταγραφών δεν είναι έγκυρο."
 
 #. js-lingui-id: BuvBj9
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
-msgstr ""
+msgstr "Αυτός ο πίνακας καταγραφών δεν είναι έγκυρος."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
