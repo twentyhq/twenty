@@ -444,10 +444,23 @@ const reconcileCanceledMeeting = async ({
     ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
-  const meetingCallRecordings = await findCallRecordingsByCalendarEventIds(
+  const linkedCallRecordings = await findCallRecordingsByCalendarEventIds(
     client,
     calendarEventIds,
   );
+  // Destroying a calendar event nulls its recordings' calendarEventId before
+  // this runs, so the policy-managed recording is also found by the id its
+  // meeting key derives; otherwise a canceled meeting keeps its bot.
+  const policyManagedCallRecordings = await findCallRecordingsByIds(client, [
+    computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
+  ]);
+  const meetingCallRecordings = [
+    ...new Map(
+      [...linkedCallRecordings, ...policyManagedCallRecordings].map(
+        (callRecording) => [callRecording.id, callRecording],
+      ),
+    ).values(),
+  ];
   const cancellableCallRecordings = meetingCallRecordings.filter(
     (callRecording) =>
       callRecording.status === CallRecordingStatus.SCHEDULED &&
