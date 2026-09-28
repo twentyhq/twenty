@@ -9,10 +9,13 @@ export type ProgressBarProps = {
   barColor?: string;
   backgroundColor?: string;
   withBorderRadius?: boolean;
+  withGrowIn?: boolean;
+  withGlint?: boolean;
   ariaLabel?: string;
   countdownDurationInMs?: number;
   isCountdownPaused?: boolean;
   onCountdownComplete?: () => void;
+  onGrowInComplete?: () => void;
 };
 
 export const ProgressBar = ({
@@ -21,10 +24,13 @@ export const ProgressBar = ({
   barColor,
   backgroundColor = 'none',
   withBorderRadius = false,
+  withGrowIn = false,
+  withGlint = false,
   ariaLabel,
   countdownDurationInMs,
   isCountdownPaused = false,
   onCountdownComplete,
+  onGrowInComplete,
 }: ProgressBarProps) => {
   const isCountdown = countdownDurationInMs !== undefined;
 
@@ -32,8 +38,14 @@ export const ProgressBar = ({
     <Progress.Root
       className={clsx(styles.bar, className)}
       data-with-border-radius={withBorderRadius || undefined}
+      data-grow-in={withGrowIn || undefined}
       aria-label={ariaLabel}
       value={value}
+      onAnimationEnd={(event) => {
+        if (withGrowIn && event.target === event.currentTarget) {
+          onGrowInComplete?.();
+        }
+      }}
       style={
         {
           '--progress-bar-background-color': backgroundColor,
@@ -53,7 +65,9 @@ export const ProgressBar = ({
           data-nonzero={(value > 0 && !isCountdown) || undefined}
           data-paused={(isCountdown && isCountdownPaused) || undefined}
           onAnimationEnd={isCountdown ? onCountdownComplete : undefined}
-        />
+        >
+          {withGlint && <span className={styles.glint} />}
+        </Progress.Indicator>
       </Progress.Track>
     </Progress.Root>
   );

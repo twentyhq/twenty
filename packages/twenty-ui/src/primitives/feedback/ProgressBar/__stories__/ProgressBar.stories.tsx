@@ -23,6 +23,16 @@ export const Default: Story = {
   },
 };
 
+export const GrowInWithGlint: Story = {
+  args: {
+    value: 60,
+    ariaLabel: 'Progress',
+    withBorderRadius: true,
+    withGrowIn: true,
+    withGlint: true,
+  },
+};
+
 export const Countdown: Story = {
   tags: ['!test'],
   argTypes: {
