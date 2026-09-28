@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -53,6 +53,24 @@ const findVisibleTooltip = async (canvasElement: HTMLElement, text: string) => {
   );
 
   await waitFor(() => expect(tooltip).toBeVisible());
+};
+
+const openFreeCreditsPopover = async (
+  canvasElement: HTMLElement,
+  pillName: RegExp,
+) => {
+  await userEvent.click(
+    await within(canvasElement).findByRole('button', { name: pillName }),
+  );
+
+  const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+    'dialog',
+    { name: 'Free credits' },
+  );
+
+  await waitFor(() => expect(dialog).toBeVisible());
+
+  return within(dialog);
 };
 
 const meta: Meta<typeof OnboardingHeaderFreeCredits> = {
@@ -134,5 +152,48 @@ export const NewlyEarned: Story = {
     await waitFor(() =>
       expect(within(canvasElement).queryByText('+1')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const CreditsWorth: Story = {
+  beforeEach: () => {
+    seedOnboardingFreeCredits({
+      onboardingStatus: OnboardingStatus.SYNC_EMAIL,
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const popover = await openFreeCreditsPopover(canvasElement, /Earn 1/);
+
+    await expect(
+      popover.getByText('1 credit is enough for one of these on average'),
+    ).toBeVisible();
+    await expect(popover.getByText('Total earned')).toBeVisible();
+    await expect(popover.queryByText('Breakdown')).not.toBeInTheDocument();
+  },
+};
+
+export const Breakdown: Story = {
+  beforeEach: () => {
+    seedOnboardingFreeCredits({
+      onboardingStatus: OnboardingStatus.COMPLETED,
+      onboardingFreeCredits: {
+        importContacts: 1,
+        installApps: 0.5,
+        inviteTeam: 1,
+        seenCredits: 2.5,
+      },
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const popover = await openFreeCreditsPopover(canvasElement, /free credits/);
+
+    await expect(
+      popover.getByText('Enough for one of these on average'),
+    ).toBeVisible();
+    await expect(popover.getByText('60')).toBeVisible();
+    await expect(popover.getByText('Create profile')).toBeVisible();
+    await expect(popover.getByText('0/0.5')).toBeVisible();
+    await expect(popover.getByText('Invite your team')).toBeVisible();
+    await expect(popover.getByText('1/5')).toBeVisible();
   },
 };
