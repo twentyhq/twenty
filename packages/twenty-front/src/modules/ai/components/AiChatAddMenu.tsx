@@ -63,7 +63,10 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
             <Dropdown.Section>
               <Dropdown.ActionItem
                 startIcon={<IconPaperclip />}
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => {
+                  editor?.view.focus();
+                  fileInputRef.current?.click();
+                }}
               >
                 {t`Attach files`}
               </Dropdown.ActionItem>

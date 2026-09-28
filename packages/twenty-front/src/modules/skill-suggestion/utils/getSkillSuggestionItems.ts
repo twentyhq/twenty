@@ -9,7 +9,7 @@ export const getSkillSuggestionItems = ({
   skills: FindManySkillsForSuggestionQuery['skills'];
   query: string;
 }): SkillSuggestionItem[] => {
-  const normalizedQuery = normalizeSearchText(query);
+  const normalizedQuery = normalizeSearchText(query.trim());
 
   return skills
     .filter(

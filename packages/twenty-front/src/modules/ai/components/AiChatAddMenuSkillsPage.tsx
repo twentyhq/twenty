@@ -70,6 +70,7 @@ export const AiChatAddMenuSkillsPage = ({
               key={skill.id}
               selected={false}
               indicator="none"
+              disabled={loading}
               startIcon={<SkillIcon />}
               onSelect={() => handleSkillSelect(skill)}
             >

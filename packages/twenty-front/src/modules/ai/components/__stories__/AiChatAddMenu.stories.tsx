@@ -140,6 +140,11 @@ export const InsertSkill: Story = {
     await expect(
       await menu.findByRole('button', { name: 'New skill' }),
     ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        menu.getByRole('button', { name: 'Meeting Prep' }),
+      ).not.toHaveAttribute('aria-disabled'),
+    );
     await userEvent.type(
       menu.getByRole('searchbox', { name: 'Search skills' }),
       'meet{Enter}',
