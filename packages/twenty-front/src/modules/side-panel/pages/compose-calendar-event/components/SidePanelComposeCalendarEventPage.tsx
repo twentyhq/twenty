@@ -93,7 +93,9 @@ export const SidePanelComposeCalendarEventPage = () => {
       <CalendarEventComposerFields
         composerState={composerState}
         contextRecord={composeCalendarEventInitialValues.contextRecord}
-        onAddAccount={handleAddAccount}
+        onAddAccount={
+          hasConnectedAccountsPermission ? handleAddAccount : undefined
+        }
         onReauthorize={
           hasConnectedAccountsPermission ? handleReauthorize : undefined
         }

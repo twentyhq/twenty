@@ -116,14 +116,18 @@ export const WorkflowEditActionCreateCalendarEvent = ({
             handleFieldChange('connectedAccountId', value ?? '')
           }
           readonly={actionOptions.readonly}
-          callToActionButton={{
-            onClick: () => {
-              closeSidePanelMenu();
-              navigate(SettingsPath.NewAccount);
-            },
-            Icon: IconPlus,
-            text: t`Add account`,
-          }}
+          callToActionButton={
+            hasConnectedAccountsPermission
+              ? {
+                  onClick: () => {
+                    closeSidePanelMenu();
+                    navigate(SettingsPath.NewAccount);
+                  },
+                  Icon: IconPlus,
+                  text: t`Add account`,
+                }
+              : undefined
+          }
         />
         {isDefined(missingScopes) && (
           <Callout

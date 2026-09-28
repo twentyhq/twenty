@@ -56,7 +56,7 @@ const StyledNoticesContainer = styled.div`
 type CalendarEventComposerFieldsProps = {
   composerState: ReturnType<typeof useCalendarEventComposer>;
   contextRecord: EmailComposerContextRecord;
-  onAddAccount: () => void;
+  onAddAccount?: () => void;
   onReauthorize?: () => void;
 };
 
@@ -310,8 +310,16 @@ export const CalendarEventComposerFields = ({
             <Callout
               variant="warning"
               title={t`Connect a calendar account`}
-              description={t`Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.`}
-              action={{ label: t`Add account`, onClick: onAddAccount }}
+              description={
+                isDefined(onAddAccount)
+                  ? t`Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.`
+                  : t`Ask a workspace admin for the Sync Account permission to connect a calendar account.`
+              }
+              action={
+                isDefined(onAddAccount)
+                  ? { label: t`Add account`, onClick: onAddAccount }
+                  : undefined
+              }
             />
           )}
           {composerState.missingScopes.length > 0 && (

@@ -5,7 +5,7 @@ import {
 import { WorkflowEditActionEmailBase } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, fn, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -286,6 +286,42 @@ export const Configured: Story = {
 
     const subjectInput = await canvas.findByText('Welcome to Twenty!');
     expect(subjectInput).toBeVisible();
+
+    await userEvent.click(canvas.getByText('tim@apple.dev'));
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+
+    expect(await dropdown.findByText('Add account')).toBeVisible();
+  },
+};
+
+export const WithoutConnectedAccountsPermission: Story = {
+  args: {
+    action: CONFIGURED_SEND_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('tim@apple.dev'));
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+    const accountAlias = await dropdown.findByText('sales@apple.dev');
+
+    expect(accountAlias).toBeVisible();
+    expect(dropdown.queryByText('Add account')).not.toBeInTheDocument();
+
+    await userEvent.click(accountAlias);
+
+    expect(await canvas.findByText('sales@apple.dev')).toBeVisible();
   },
 };
 
