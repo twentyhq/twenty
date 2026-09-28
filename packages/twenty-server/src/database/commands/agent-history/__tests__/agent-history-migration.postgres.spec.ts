@@ -1,4 +1,4 @@
-import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790591945083-contract-chat-thread-owners.command';
+import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605732698-contract-chat-thread-owners.command';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import {
@@ -7,8 +7,8 @@ import {
   LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER,
 } from 'src/database/commands/upgrade-version-command/2-44/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-44-chat-owner.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
+import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
-import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790591899563-link-chat-message-senders-to-workspace-members.command';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -163,6 +163,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       storage,
       orm,
     );
+    const legacyThreads = new AgentHistoryRepository<
+      AgentChatThreadWorkspaceEntity & { userWorkspaceId: string }
+    >('agentChatThread', storage, orm);
     const messages = new AgentHistoryRepository<AgentMessageWorkspaceEntity>(
       'agentMessage',
       storage,
@@ -780,8 +783,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       expect(message.parts[0].textContent).toBe('Hidden setup context');
       expect(message.parts[0].createdAt).toBeInstanceOf(Date);
-      const created = await threads.insertAndReturnOne(WORKSPACE_ID, {
-        ...{ userWorkspaceId: OWNER_ID },
+      const created = await legacyThreads.insertAndReturnOne(WORKSPACE_ID, {
+        userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
         title: 'New workspace chat',
       });
@@ -855,6 +858,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).toEqual([
         { recordId: THREAD_ID, principalId: MEMBER_ID, rowCause: 'OWNER' },
       ]);
+      await dataSource.query(`DELETE FROM "${SCHEMA}"."recordShare"`);
+      await dataSource.query(
+        'UPDATE core."userWorkspace" SET "deletedAt" = NOW() WHERE id = $1',
+        [OWNER_ID],
+      );
+      await expect(backfillWorkspaceChatThreadOwnerGrants(args)).resolves.toBe(
+        0,
+      );
     });
 
     it('contracts owners without exposing unshared history and restores only live memberships', async () => {
@@ -1027,12 +1038,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER
         ],
       ).toBeUndefined();
-      // The run's thread goes before the rollback, as its own command's
-      // rollback removes it.
-      await dataSource.query(
-        `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
-        [runThreadId],
-      );
       await dataSource.query(
         'INSERT INTO core."userWorkspace" (id, "workspaceId", "userId", "deletedAt") VALUES ($1, $2, $3, now())',
         ['20202020-0000-4000-8000-000000009999', WORKSPACE_ID, OWNER_ID],
@@ -1058,7 +1063,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         await dataSource.query(
           `SELECT "userWorkspaceId" FROM "${SCHEMA}"."agentChatThread"`,
         ),
-      ).toEqual([{ userWorkspaceId: null }]);
+      ).toEqual([{ userWorkspaceId: null }, { userWorkspaceId: null }]);
       await dataSource.query(
         'UPDATE core."userWorkspace" SET "deletedAt" = NULL WHERE id = $1',
         [OWNER_ID],
@@ -1073,12 +1078,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         await dataSource.query(
           `SELECT "userWorkspaceId" FROM "${SCHEMA}"."agentChatThread"`,
         ),
-      ).toEqual([{ userWorkspaceId: OWNER_ID }]);
+      ).toEqual(
+        expect.arrayContaining([
+          { userWorkspaceId: OWNER_ID },
+          { userWorkspaceId: null },
+        ]),
+      );
       expect(
         commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
           LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
         ],
-      ).toMatchObject({ isNullable: false });
+      ).toMatchObject({ isNullable: true });
       expect(
         commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
           STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
@@ -1099,8 +1109,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       const chat = createChatService(messages);
       const actors = createActorService(messages);
-      const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
-        ...{ userWorkspaceId: OWNER_ID },
+      const thread = await legacyThreads.insertAndReturnOne(WORKSPACE_ID, {
+        userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
       });
       const kickoff = await chat.ensureHiddenKickoffMessage({
@@ -1306,6 +1316,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
+      await dataSource.query(
+        `UPDATE "${SCHEMA}"."agentChatThread" SET "workspaceMemberId" = $1 WHERE id = $2`,
+        [MEMBER_ID, THREAD_ID],
+      );
       await expect(
         createActorService(messages).resolveMessage({
           workspaceId: WORKSPACE_ID,

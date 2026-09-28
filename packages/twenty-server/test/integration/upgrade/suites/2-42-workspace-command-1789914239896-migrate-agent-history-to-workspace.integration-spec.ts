@@ -1,3 +1,5 @@
+import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
+import { type ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605732698-contract-chat-thread-owners.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -128,6 +130,9 @@ describe('versioned agent history upgrade (integration)', () => {
     dataSource = owners.manager.connection;
     const owner = await owners.findOneByOrFail({ workspaceId: WORKSPACE_ID });
 
+    await getAppProviderByClassName<ContractChatThreadOwnersCommand>(
+      'ContractChatThreadOwnersCommand',
+    ).down({ workspaceId: WORKSPACE_ID, index: 0, total: 1, options: {} });
     await runCommand('down');
     await dataSource.query(
       'INSERT INTO core."agentChatThread" (id, "workspaceId", "userWorkspaceId", title, "activeStreamId") VALUES ($1, $2, $3, $4, $5)',
@@ -207,6 +212,18 @@ describe('versioned agent history upgrade (integration)', () => {
     await dataSource.query('DELETE FROM core."agentChatThread" WHERE id = $1', [
       threadId,
     ]);
+    await getAppProviderByClassName<EnableCommonRecordSharingCommand>(
+      'EnableCommonRecordSharingCommand',
+    ).up({
+      workspaceId: WORKSPACE_ID,
+      dataSource,
+      index: 0,
+      total: 1,
+      options: {},
+    });
+    await getAppProviderByClassName<ContractChatThreadOwnersCommand>(
+      'ContractChatThreadOwnersCommand',
+    ).up({ workspaceId: WORKSPACE_ID, index: 0, total: 1, options: {} });
     expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
       seededAgentChatThreadTarget,
     );

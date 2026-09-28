@@ -1,3 +1,4 @@
+import { type ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605732698-contract-chat-thread-owners.command';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
@@ -456,6 +457,11 @@ describe('Conversation sharing through the authenticated API', () => {
       threadId: randomUUID(),
     };
     const options = { workspaceId, options: { dryRun: false } } as never;
+    const ownerContract =
+      getAppProviderByClassName<ContractChatThreadOwnersCommand>(
+        'ContractChatThreadOwnersCommand',
+      );
+    await ownerContract.down(options);
     const originalFlag =
       (await cache.getOrRecompute(workspaceId, ['featureFlagsMap']))
         .featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
@@ -507,6 +513,7 @@ describe('Conversation sharing through the authenticated API', () => {
     } finally {
       await command.up(options);
       await chatService.hardDeleteThread(owner);
+      await ownerContract.up(options);
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
         value: originalFlag,
@@ -560,7 +567,7 @@ describe('Conversation sharing through the authenticated API', () => {
         }),
       ).toMatchObject({
         title: 'Collaborative rename',
-        userWorkspaceId: owner.userWorkspaceId,
+        workspaceMemberId: owner.workspaceMemberId,
       });
       const writerView = await readThread(
         owner.threadId,
@@ -623,16 +630,15 @@ describe('Conversation sharing through the authenticated API', () => {
     };
     await chat.createThread({ ...owner, id: owner.threadId });
     try {
-      const rows: { workspaceMemberId: string; userWorkspaceId: string }[] =
+      const rows: { workspaceMemberId: string }[] =
         await global.testDataSource.query(
-          `SELECT "workspaceMemberId", "userWorkspaceId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
+          `SELECT "workspaceMemberId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
           [owner.threadId],
         );
 
       expect(rows).toEqual([
         {
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
         },
       ]);
     } finally {

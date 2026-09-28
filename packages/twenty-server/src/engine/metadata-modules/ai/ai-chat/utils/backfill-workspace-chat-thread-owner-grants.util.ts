@@ -15,14 +15,18 @@ export const backfillWorkspaceChatThreadOwnerGrants = async ({
   recordIds?: string[];
 }): Promise<number> => {
   const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+  // Membership removal must wait until the owner grant commits before cleanup.
   const inserted = await manager.query<{ id: string }[]>(
     `
     INSERT INTO ${schema}."recordShare"
       ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
     SELECT metadata.id, thread.id, thread."workspaceMemberId", 'WORKSPACE_MEMBER', 'FULL', 'OWNER', thread.id
     FROM ${threadTableExpression} thread
+    JOIN ${schema}."workspaceMember" member ON member.id = thread."workspaceMemberId" AND member."deletedAt" IS NULL
+    JOIN core."userWorkspace" membership ON membership."userId" = member."userId" AND membership."workspaceId" = $1 AND membership."deletedAt" IS NULL
     JOIN core."objectMetadata" metadata ON metadata."workspaceId" = $1 AND metadata."universalIdentifier" = $2
     WHERE thread."workspaceMemberId" IS NOT NULL AND ($3::uuid[] IS NULL OR thread.id = ANY($3::uuid[]))
+    FOR SHARE OF member, membership
     ON CONFLICT DO NOTHING RETURNING id`,
     [
       workspaceId,

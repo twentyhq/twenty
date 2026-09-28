@@ -74,18 +74,24 @@ export class AgentChatActorService {
     }
     // Only pre-attribution messages inherit the original participant. Never use
     // a worker's caller or the participant whose preceding turn drained the queue.
-    const userWorkspaceId =
-      message.senderUserWorkspaceId ??
-      (
+    let userWorkspaceId = message.senderUserWorkspaceId;
+    if (!isDefined(userWorkspaceId)) {
+      const thread = await this.threads.findOneOrFail(workspaceId, {
+        where: { id: threadId },
+      });
+      if (!isDefined(thread.workspaceMemberId)) {
+        throw new AiException(
+          'Message has no sender or workspace member owner',
+          AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+        );
+      }
+      userWorkspaceId = (
         await this.userAuthContextService.resolveWorkspaceMember({
           workspaceId,
-          workspaceMemberId: (
-            await this.threads.findOneOrFail(workspaceId, {
-              where: { id: threadId },
-            })
-          ).workspaceMemberId,
+          workspaceMemberId: thread.workspaceMemberId,
         })
       ).userWorkspaceId;
+    }
     const sender: AgentChatSender = {
       userWorkspaceId,
       applicationId: message.senderApplicationId ?? null,

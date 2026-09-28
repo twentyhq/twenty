@@ -88,6 +88,15 @@ describe('Chat execution sender', () => {
       workspaceMemberId: 'sender-member',
     });
   });
+  it('rejects unattributed messages on ownerless threads', async () => {
+    const { service, message, threads, auth } = build();
+    message.senderUserWorkspaceId = null;
+    threads.findOneOrFail.mockResolvedValue({ workspaceMemberId: null });
+    await expect(service.resolveMessage(job)).rejects.toMatchObject({
+      code: 'RUN_AS_WORKSPACE_MEMBER_NOT_FOUND',
+    });
+    expect(auth.resolveWorkspaceMember).not.toHaveBeenCalled();
+  });
   it('rejects a job attempting to execute another participant’s message', async () => {
     const { service, chat } = build();
     await expect(
