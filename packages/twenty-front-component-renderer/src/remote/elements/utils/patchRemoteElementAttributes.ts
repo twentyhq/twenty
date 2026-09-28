@@ -49,27 +49,32 @@ const readRemotePropertyAsAttributeValue = ({
   element,
   attributeName,
   remotePropertyDefinition,
-  readStoredAttributeValue,
+  readAttributeValueWrittenBySetAttribute,
 }: {
   element: RemoteElementWithAttributeUpdater;
   attributeName: string;
   remotePropertyDefinition: RemotePropertyDefinition;
-  readStoredAttributeValue: (attributeName: string) => string | null;
+  readAttributeValueWrittenBySetAttribute: (
+    attributeName: string,
+  ) => string | null;
 }): string | null => {
   const propertyValue = element[remotePropertyDefinition.name];
   const serializedValue = serializeRemotePropertyAsAttributeValue({
     attributeName,
     propertyValue,
-    isBooleanTypedProperty: remotePropertyDefinition.type === Boolean,
+    hasRemoteDomFalseDefault: remotePropertyDefinition.type === Boolean,
   });
+  const isFalseSerializedAsAbsent =
+    propertyValue === false && !isDefined(serializedValue);
 
-  if (isDefined(serializedValue) || propertyValue !== false) {
+  if (!isFalseSerializedAsAbsent) {
     return serializedValue;
   }
 
-  // setAttribute keeps the written string, which tells an explicit "false"
-  // apart from the false remote-dom seeds into Boolean-typed properties.
-  return readStoredAttributeValue(attributeName) === 'false' ? 'false' : null;
+  const isFalseWrittenBySetAttribute =
+    readAttributeValueWrittenBySetAttribute(attributeName) === 'false';
+
+  return isFalseWrittenBySetAttribute ? 'false' : null;
 };
 
 export const patchRemoteElementAttributes = (): void => {
@@ -155,8 +160,8 @@ export const patchRemoteElementAttributes = (): void => {
           element: this,
           attributeName,
           remotePropertyDefinition,
-          readStoredAttributeValue: (storedAttributeName) =>
-            originalGetAttribute.call(this, storedAttributeName),
+          readAttributeValueWrittenBySetAttribute: (writtenAttributeName) =>
+            originalGetAttribute.call(this, writtenAttributeName),
         });
       }
 

@@ -15,11 +15,11 @@ type StyleDeclarationLike = {
 const serializeBooleanPropertyValue = ({
   attributeName,
   propertyValue,
-  isBooleanTypedProperty,
+  hasRemoteDomFalseDefault,
 }: {
   attributeName: string;
   propertyValue: boolean;
-  isBooleanTypedProperty: boolean;
+  hasRemoteDomFalseDefault: boolean;
 }): string | null => {
   const isBooleanishAttribute = isBooleanishAttributeName(attributeName);
 
@@ -27,19 +27,21 @@ const serializeBooleanPropertyValue = ({
     return isBooleanishAttribute ? 'true' : '';
   }
 
-  // remote-dom seeds every Boolean property with false, so false on a
-  // Boolean-typed property cannot be told apart from a property never set.
-  return isBooleanishAttribute && !isBooleanTypedProperty ? 'false' : null;
+  const isFalseDistinguishableFromUnset = !hasRemoteDomFalseDefault;
+
+  return isBooleanishAttribute && isFalseDistinguishableFromUnset
+    ? 'false'
+    : null;
 };
 
 export const serializeRemotePropertyAsAttributeValue = ({
   attributeName,
   propertyValue,
-  isBooleanTypedProperty,
+  hasRemoteDomFalseDefault,
 }: {
   attributeName: string;
   propertyValue: unknown;
-  isBooleanTypedProperty: boolean;
+  hasRemoteDomFalseDefault: boolean;
 }): string | null => {
   if (isString(propertyValue)) {
     return propertyValue;
@@ -53,7 +55,7 @@ export const serializeRemotePropertyAsAttributeValue = ({
     return serializeBooleanPropertyValue({
       attributeName,
       propertyValue,
-      isBooleanTypedProperty,
+      hasRemoteDomFalseDefault,
     });
   }
 
