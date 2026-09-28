@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { copyFile, readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'path';
 import {
   NODE_ESM_CJS_BANNER,
@@ -9,6 +9,7 @@ import {
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { copyBuildFile } from '@/cli/utilities/build/common/copy-build-file';
 import { copyReadmeToOutput } from '@/cli/utilities/build/common/copy-readme-to-output';
 import { type GeneratedAsset } from '@/cli/utilities/build/cover/generated-asset.type';
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
@@ -22,7 +23,6 @@ import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/commo
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/translations/load-front-component-translation-catalogs';
 import {
-  copy,
   emptyDir,
   ensureDir,
   pathExists,
@@ -189,11 +189,11 @@ export const buildApplication = async (
     });
   }
 
-  await copyReadmeToOutput(
-    options.appPath,
+  await copyReadmeToOutput({
+    appPath: options.appPath,
     relativeOutputDir,
-    options.dereferenceSymlinks,
-  );
+    dereferenceSymlinks: options.dereferenceSymlinks,
+  });
 
   return { builtFileInfos };
 };
@@ -254,11 +254,11 @@ const copyStaticFiles = async ({
     const absoluteBuiltPath = join(appPath, builtPath);
 
     await ensureDir(dirname(absoluteBuiltPath));
-    if (dereferenceSymlinks) {
-      await copyFile(absoluteSourcePath, absoluteBuiltPath);
-    } else {
-      await copy(absoluteSourcePath, absoluteBuiltPath);
-    }
+    await copyBuildFile({
+      sourcePath: absoluteSourcePath,
+      destinationPath: absoluteBuiltPath,
+      dereferenceSymlinks,
+    });
 
     const content = await readFile(absoluteBuiltPath);
     const checksum = crypto.createHash('md5').update(content).digest('hex');

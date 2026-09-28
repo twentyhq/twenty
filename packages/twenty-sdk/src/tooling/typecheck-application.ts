@@ -9,10 +9,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { validateAppPath } from '@/tooling/validate-app-path';
 
-const toDiagnostic = (
-  diagnostic: ts.Diagnostic,
-  appPath: string,
-): ToolingDiagnostic => {
+const toDiagnostic = ({
+  diagnostic,
+  appPath,
+}: {
+  diagnostic: ts.Diagnostic;
+  appPath: string;
+}): ToolingDiagnostic => {
   const position =
     isDefined(diagnostic.file) && isDefined(diagnostic.start)
       ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start)
@@ -34,6 +37,39 @@ const toDiagnostic = (
   };
 };
 
+const collectCompilerDiagnostics = ({
+  appPath,
+}: {
+  appPath: string;
+}): readonly ts.Diagnostic[] => {
+  const configPath = join(appPath, 'tsconfig.json');
+  const config = ts.readConfigFile(configPath, ts.sys.readFile);
+
+  if (isDefined(config.error)) {
+    return [config.error];
+  }
+
+  const parsed = ts.parseJsonConfigFileContent(
+    config.config,
+    ts.sys,
+    appPath,
+    { noEmit: true },
+    configPath,
+  );
+
+  if (parsed.errors.length > 0) {
+    return parsed.errors;
+  }
+
+  const program = ts.createProgram({
+    rootNames: parsed.fileNames,
+    options: parsed.options,
+    projectReferences: parsed.projectReferences,
+  });
+
+  return ts.getPreEmitDiagnostics(program);
+};
+
 export const typecheckApplication = async ({
   appPath,
   signal,
@@ -46,38 +82,12 @@ export const typecheckApplication = async ({
 
   try {
     signal?.throwIfAborted();
-    const configPath = join(appPath, 'tsconfig.json');
-    const config = ts.readConfigFile(configPath, ts.sys.readFile);
-    let compilerDiagnostics: readonly ts.Diagnostic[];
-
-    if (isDefined(config.error)) {
-      compilerDiagnostics = [config.error];
-    } else {
-      const parsed = ts.parseJsonConfigFileContent(
-        config.config,
-        ts.sys,
-        appPath,
-        { noEmit: true },
-        configPath,
-      );
-
-      if (parsed.errors.length > 0) {
-        compilerDiagnostics = parsed.errors;
-      } else {
-        const program = ts.createProgram({
-          rootNames: parsed.fileNames,
-          options: parsed.options,
-          projectReferences: parsed.projectReferences,
-        });
-
-        compilerDiagnostics = ts.getPreEmitDiagnostics(program);
-      }
-    }
+    const compilerDiagnostics = collectCompilerDiagnostics({ appPath });
 
     signal?.throwIfAborted();
 
     const diagnostics = compilerDiagnostics.map((diagnostic) =>
-      toDiagnostic(diagnostic, appPath),
+      toDiagnostic({ diagnostic, appPath }),
     );
 
     return diagnostics.some((diagnostic) => diagnostic.severity === 'error')

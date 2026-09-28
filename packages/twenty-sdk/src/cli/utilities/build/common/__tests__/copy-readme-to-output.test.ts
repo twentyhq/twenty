@@ -50,7 +50,7 @@ describe('copyReadmeToOutput', () => {
   it('should copy the readme into the output directory', async () => {
     await writeFile(join(appPath, 'README.md'), '# My App', 'utf-8');
 
-    await copyReadmeToOutput(appPath);
+    await copyReadmeToOutput({ appPath });
 
     const copiedReadme = await readFile(
       join(appPath, OUTPUT_DIR, 'README.md'),
@@ -63,7 +63,7 @@ describe('copyReadmeToOutput', () => {
   it('should do nothing when the app has no readme', async () => {
     await writeFile(join(appPath, 'package.json'), '{}', 'utf-8');
 
-    await copyReadmeToOutput(appPath);
+    await copyReadmeToOutput({ appPath });
 
     expect(await pathExists(join(appPath, OUTPUT_DIR))).toBe(false);
   });
@@ -73,8 +73,12 @@ describe('copyReadmeToOutput', () => {
 
     await writeFile(sourcePath, 'original readme');
     await symlink(sourcePath, join(appPath, 'README.md'));
-    await copyReadmeToOutput(appPath);
-    await copyReadmeToOutput(appPath, '.twenty/snapshots/readme/files', true);
+    await copyReadmeToOutput({ appPath });
+    await copyReadmeToOutput({
+      appPath,
+      relativeOutputDir: '.twenty/snapshots/readme/files',
+      dereferenceSymlinks: true,
+    });
 
     const legacyPath = join(appPath, OUTPUT_DIR, 'README.md');
     const snapshotPath = join(

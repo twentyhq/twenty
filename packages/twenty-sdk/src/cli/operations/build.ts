@@ -5,6 +5,12 @@ import { compileApplication } from '@/cli/utilities/build/common/compile-applica
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import { type ToolingErrorCode } from '@/tooling/types';
+
+const COMPILATION_ERROR_CODE_MAP: Partial<Record<ToolingErrorCode, string>> = {
+  MANIFEST_BUILD_FAILED: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
+  TYPECHECK_FAILED: APP_ERROR_CODES.TYPECHECK_FAILED,
+};
 
 export type AppBuildOptions = {
   appPath: string;
@@ -55,11 +61,8 @@ const innerAppBuild = async (
       success: false,
       error: {
         code:
-          compilation.error.code === 'MANIFEST_BUILD_FAILED'
-            ? APP_ERROR_CODES.MANIFEST_BUILD_FAILED
-            : compilation.error.code === 'TYPECHECK_FAILED'
-              ? APP_ERROR_CODES.TYPECHECK_FAILED
-              : APP_ERROR_CODES.BUILD_FAILED,
+          COMPILATION_ERROR_CODE_MAP[compilation.error.code] ??
+          APP_ERROR_CODES.BUILD_FAILED,
         message: compilation.error.message,
       },
     };

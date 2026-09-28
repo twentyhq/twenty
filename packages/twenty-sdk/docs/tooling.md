@@ -49,10 +49,12 @@ A successful build returns:
 - `buildId`, unique for the build, and `directory`, an absolute directory containing stable artifact bytes.
 - `manifestFormat: "twenty-application"` and the opaque `manifest`. This format name identifies the existing server manifest, which has no standalone numeric schema version. The server still validates compatibility.
 - `application: { universalIdentifier, name, displayName }`, with `name` taken from the app package.
-- `files`, the complete uploadable artifact set, sorted by path. Each entry has a snapshot-relative POSIX `path`, app-relative `sourcePath`, `role`, byte `size`, and `sha256`.
+- `files`, the complete uploadable artifact set, sorted by path. Each entry has a snapshot-relative POSIX `path`, logical app-relative `sourcePath`, `role`, byte `size`, and `sha256`. Read artifact bytes from `directory` and `path`.
 - `contentHash`, SHA-256 of the UTF-8 JSON encoding of the sorted `{ path, role, sha256 }` entries, a newline, then the exact `manifest.json` bytes. Compare within a compatible SDK/tooling environment; this is not a server-approved plan digest.
 
 Roles are the server's upload folder values: `built-logic-function`, `built-front-component`, `source`, `dependencies`, and `public-asset`. Sources, dependency files, and generated assets are included every time, even when unchanged. Source maps, README, and `manifest.json` may also exist in the directory; they are not extra upload targets. Existing manifest checksum algorithms remain unchanged; artifact SHA-256 is a separate transport integrity contract.
+
+`sourcePath` identifies an artifact's origin: compiled files point to their TypeScript source, the shared dependencies bundle points to `package.json`, and generated assets such as the cover may not exist in the app directory. It is not a path to the artifact's bytes.
 
 Each build writes only under a unique `.twenty/snapshots/build-*/` directory, with artifacts in `files/` and owner information in `lease.json`. It never clears another build's output or `.twenty/output`. Static files are copied as bytes, so changing a symlink target cannot mutate a retained snapshot.
 

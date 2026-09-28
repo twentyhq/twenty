@@ -1,8 +1,9 @@
-import { copyFile, readdir } from 'node:fs/promises';
+import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 
-import { copy, ensureDir } from '@/cli/utilities/file/fs-utils';
+import { copyBuildFile } from '@/cli/utilities/build/common/copy-build-file';
+import { ensureDir } from '@/cli/utilities/file/fs-utils';
 
 // npm only ships a README when the file lives in the package root, so the
 // app's readme has to be copied into the build output that gets published.
@@ -19,11 +20,15 @@ export const findReadmeFileName = (entries: string[]): string | undefined => {
   );
 };
 
-export const copyReadmeToOutput = async (
-  appPath: string,
+export const copyReadmeToOutput = async ({
+  appPath,
   relativeOutputDir = OUTPUT_DIR,
   dereferenceSymlinks = false,
-): Promise<void> => {
+}: {
+  appPath: string;
+  relativeOutputDir?: string;
+  dereferenceSymlinks?: boolean;
+}): Promise<void> => {
   const readmeFileName = findReadmeFileName(await readdir(appPath));
 
   if (readmeFileName === undefined) {
@@ -36,9 +41,5 @@ export const copyReadmeToOutput = async (
   const sourcePath = join(appPath, readmeFileName);
   const destinationPath = join(outputDir, readmeFileName);
 
-  if (dereferenceSymlinks) {
-    await copyFile(sourcePath, destinationPath);
-  } else {
-    await copy(sourcePath, destinationPath);
-  }
+  await copyBuildFile({ sourcePath, destinationPath, dereferenceSymlinks });
 };
