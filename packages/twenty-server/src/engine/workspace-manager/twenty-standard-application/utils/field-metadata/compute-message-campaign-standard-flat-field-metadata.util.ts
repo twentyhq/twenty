@@ -527,13 +527,13 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
-    clickedCount: createStandardFieldFlatMetadata({
+    uniqueClickCount: createStandardFieldFlatMetadata({
       ...base,
       context: {
-        fieldName: 'clickedCount',
+        fieldName: 'uniqueClickCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Clicked count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Unique clicks`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
@@ -547,13 +547,13 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
-    clickCount: createStandardFieldFlatMetadata({
+    totalClickCount: createStandardFieldFlatMetadata({
       ...base,
       context: {
-        fieldName: 'clickCount',
+        fieldName: 'totalClickCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Click count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Total clicks`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({

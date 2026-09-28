@@ -20,17 +20,18 @@ const DELIVERY = STANDARD_OBJECTS.campaignDelivery;
 const CLICK_FIELD_UNIVERSAL_IDENTIFIERS = [
   DELIVERY.fields.clickedAt.universalIdentifier,
   DELIVERY.fields.clickCount.universalIdentifier,
-  CAMPAIGN.fields.clickedCount.universalIdentifier,
-  CAMPAIGN.fields.clickCount.universalIdentifier,
+  CAMPAIGN.fields.uniqueClickCount.universalIdentifier,
+  CAMPAIGN.fields.totalClickCount.universalIdentifier,
 ];
 
 const CLICK_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
-  CAMPAIGN.views.allMessageCampaigns.viewFields.clickedCount
+  CAMPAIGN.views.allMessageCampaigns.viewFields.uniqueClickCount
     .universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.clickCount.universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickedCount
+  CAMPAIGN.views.allMessageCampaigns.viewFields.totalClickCount
     .universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickCount
+  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.uniqueClickCount
+    .universalIdentifier,
+  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.totalClickCount
     .universalIdentifier,
 ];
 

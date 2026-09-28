@@ -1489,12 +1489,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "bouncedCount": {
         "id": "00000000-0000-0000-0000-000000000313",
       },
-      "clickCount": {
-        "id": "00000000-0000-0000-0000-000000000317",
-      },
-      "clickedCount": {
-        "id": "00000000-0000-0000-0000-000000000316",
-      },
       "complainedCount": {
         "id": "00000000-0000-0000-0000-000000000314",
       },
@@ -1558,6 +1552,12 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "timelineActivities": {
         "id": "00000000-0000-0000-0000-000000000320",
       },
+      "totalClickCount": {
+        "id": "00000000-0000-0000-0000-000000000317",
+      },
+      "uniqueClickCount": {
+        "id": "00000000-0000-0000-0000-000000000316",
+      },
       "unsubscribeTopicId": {
         "id": "00000000-0000-0000-0000-000000000318",
       },
@@ -1576,12 +1576,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
         "viewFields": {
           "bouncedCount": {
             "id": "00000000-0000-0000-0000-000000000334",
-          },
-          "clickCount": {
-            "id": "00000000-0000-0000-0000-000000000339",
-          },
-          "clickedCount": {
-            "id": "00000000-0000-0000-0000-000000000338",
           },
           "complainedCount": {
             "id": "00000000-0000-0000-0000-000000000335",
@@ -1625,6 +1619,12 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           "subject": {
             "id": "00000000-0000-0000-0000-000000000324",
           },
+          "totalClickCount": {
+            "id": "00000000-0000-0000-0000-000000000339",
+          },
+          "uniqueClickCount": {
+            "id": "00000000-0000-0000-0000-000000000338",
+          },
         },
         "viewGroups": {},
       },
@@ -1638,12 +1638,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
         "viewFields": {
           "bouncedCount": {
             "id": "00000000-0000-0000-0000-000000000348",
-          },
-          "clickCount": {
-            "id": "00000000-0000-0000-0000-000000000351",
-          },
-          "clickedCount": {
-            "id": "00000000-0000-0000-0000-000000000350",
           },
           "complainedCount": {
             "id": "00000000-0000-0000-0000-000000000349",
@@ -1668,6 +1662,12 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           },
           "status": {
             "id": "00000000-0000-0000-0000-000000000341",
+          },
+          "totalClickCount": {
+            "id": "00000000-0000-0000-0000-000000000351",
+          },
+          "uniqueClickCount": {
+            "id": "00000000-0000-0000-0000-000000000350",
           },
         },
         "viewGroups": {},

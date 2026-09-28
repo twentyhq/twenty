@@ -20,8 +20,8 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   bouncedCount: number;
   complainedCount: number;
   skippedCount: number;
-  clickedCount: number;
-  clickCount: number;
+  uniqueClickCount: number;
+  totalClickCount: number;
   unsubscribeTopicId: string | null;
   list: EntityRelation<MessageListWorkspaceEntity> | null;
   listId: string | null;

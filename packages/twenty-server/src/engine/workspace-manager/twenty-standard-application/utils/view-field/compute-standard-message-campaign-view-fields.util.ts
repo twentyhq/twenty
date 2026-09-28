@@ -164,25 +164,25 @@ export const computeStandardMessageCampaignViewFields = (
         size: 120,
       },
     }),
-    allMessageCampaignsClickedCount: createStandardViewFieldFlatMetadata({
+    allMessageCampaignsUniqueClickCount: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',
       context: {
         viewName: 'allMessageCampaigns',
-        viewFieldName: 'clickedCount',
-        fieldName: 'clickedCount',
+        viewFieldName: 'uniqueClickCount',
+        fieldName: 'uniqueClickCount',
         position: 15,
         isVisible: true,
         size: 120,
       },
     }),
-    allMessageCampaignsClickCount: createStandardViewFieldFlatMetadata({
+    allMessageCampaignsTotalClickCount: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',
       context: {
         viewName: 'allMessageCampaigns',
-        viewFieldName: 'clickCount',
-        fieldName: 'clickCount',
+        viewFieldName: 'totalClickCount',
+        fieldName: 'totalClickCount',
         position: 16,
         isVisible: true,
         size: 120,
@@ -337,28 +337,28 @@ export const computeStandardMessageCampaignViewFields = (
           viewFieldGroupName: 'stats',
         },
       }),
-    messageCampaignRecordPageFieldsClickedCount:
+    messageCampaignRecordPageFieldsUniqueClickCount:
       createStandardViewFieldFlatMetadata({
         ...args,
         objectName: 'messageCampaign',
         context: {
           viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'clickedCount',
-          fieldName: 'clickedCount',
+          viewFieldName: 'uniqueClickCount',
+          fieldName: 'uniqueClickCount',
           position: 9,
           isVisible: true,
           size: 120,
           viewFieldGroupName: 'stats',
         },
       }),
-    messageCampaignRecordPageFieldsClickCount:
+    messageCampaignRecordPageFieldsTotalClickCount:
       createStandardViewFieldFlatMetadata({
         ...args,
         objectName: 'messageCampaign',
         context: {
           viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'clickCount',
-          fieldName: 'clickCount',
+          viewFieldName: 'totalClickCount',
+          fieldName: 'totalClickCount',
           position: 10,
           isVisible: true,
           size: 120,

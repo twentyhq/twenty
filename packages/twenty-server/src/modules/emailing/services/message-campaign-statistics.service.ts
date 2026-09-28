@@ -96,8 +96,8 @@ export class MessageCampaignStatisticsService {
         COUNT("bouncedAt") AS "bouncedCount",
         COUNT("complainedAt") AS "complainedCount",
         COUNT(*) FILTER (WHERE "rejectedAt" IS NOT NULL OR "renderingFailedAt" IS NOT NULL) AS "providerFailedCount",
-        COUNT("clickedAt") AS "clickedCount",
-        COALESCE(SUM("clickCount"), 0) AS "clickCount"
+        COUNT("clickedAt") AS "uniqueClickCount",
+        COALESCE(SUM("clickCount"), 0) AS "totalClickCount"
       FROM ${getCampaignDeliveryTableName(workspaceId)}
       WHERE "campaignId" = :campaignId
       GROUP BY "state"`,
@@ -185,8 +185,8 @@ export class MessageCampaignStatisticsService {
           skippedCount: true,
           bouncedCount: true,
           complainedCount: true,
-          clickedCount: true,
-          clickCount: true,
+          uniqueClickCount: true,
+          totalClickCount: true,
         },
       });
 
@@ -201,8 +201,8 @@ export class MessageCampaignStatisticsService {
         skippedCount: counts.skippedCount,
         bouncedCount: counts.bouncedCount,
         complainedCount: counts.complainedCount,
-        clickedCount: counts.clickedCount,
-        clickCount: counts.clickCount,
+        uniqueClickCount: counts.uniqueClickCount,
+        totalClickCount: counts.totalClickCount,
       };
 
       const storedCounts = {
@@ -212,8 +212,8 @@ export class MessageCampaignStatisticsService {
         skippedCount: campaign.skippedCount,
         bouncedCount: campaign.bouncedCount,
         complainedCount: campaign.complainedCount,
-        clickedCount: campaign.clickedCount,
-        clickCount: campaign.clickCount,
+        uniqueClickCount: campaign.uniqueClickCount,
+        totalClickCount: campaign.totalClickCount,
       };
 
       if (fastDeepEqual(storedCounts, nextCounts)) {

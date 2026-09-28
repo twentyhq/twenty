@@ -856,10 +856,10 @@ export const STANDARD_OBJECT_FIELDS = {
     skippedCount: {
       universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
     },
-    clickedCount: {
+    uniqueClickCount: {
       universalIdentifier: 'd9a4e1c6-5b3f-4e0a-9c8d-4f7b9a3e6c12',
     },
-    clickCount: {
+    totalClickCount: {
       universalIdentifier: 'ea05f2d7-6c4a-4f1b-8d9e-5a8c0b4f7d23',
     },
     unsubscribeTopicId: {

@@ -11,8 +11,8 @@ const buildGroup = (
   bouncedCount: '0',
   complainedCount: '0',
   providerFailedCount: '0',
-  clickedCount: '0',
-  clickCount: '0',
+  uniqueClickCount: '0',
+  totalClickCount: '0',
   ...overrides,
 });
 
@@ -119,8 +119,8 @@ describe('computeCampaignCounts', () => {
       skippedCount: 0,
       bouncedCount: 0,
       complainedCount: 0,
-      clickedCount: 0,
-      clickCount: 0,
+      uniqueClickCount: 0,
+      totalClickCount: 0,
     });
   });
 
@@ -130,13 +130,13 @@ describe('computeCampaignCounts', () => {
         buildGroup({
           total: '3',
           deliveredCount: '3',
-          clickedCount: '2',
-          clickCount: '5',
+          uniqueClickCount: '2',
+          totalClickCount: '5',
         }),
       ],
     });
 
-    expect(counts.clickedCount).toBe(2);
-    expect(counts.clickCount).toBe(5);
+    expect(counts.uniqueClickCount).toBe(2);
+    expect(counts.totalClickCount).toBe(5);
   });
 });
