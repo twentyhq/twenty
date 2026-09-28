@@ -82,7 +82,7 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
       return;
     }
 
-    if (options.dryRun === true) {
+    if (options.dryRun ?? false) {
       this.logger.log(
         `[DRY RUN] Would grant workflow visibility and make runs and versions inherit it for workspace ${workspaceId}`,
       );
