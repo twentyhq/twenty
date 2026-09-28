@@ -128,7 +128,7 @@ export const SyncEmails = () => {
             : undefined
         }
         onSkip={handleSkip}
-        rewardCredits={importContactsCreditsReward}
+        creditsReward={importContactsCreditsReward}
       />
       <OnboardingSkipDialog
         dialogId={ONBOARDING_SKIP_DIALOG_IDS.syncEmails}
@@ -166,7 +166,7 @@ export const SyncEmails = () => {
               ]
             : []),
         ]}
-        rewardCredits={importContactsCreditsReward}
+        creditsReward={importContactsCreditsReward}
         onSkip={() => void handleSkipConfirm()}
       />
     </>

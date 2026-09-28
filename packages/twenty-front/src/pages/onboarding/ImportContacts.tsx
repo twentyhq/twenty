@@ -1,5 +1,5 @@
-import { OnboardingRewardCreditsChip } from '@/onboarding/components/OnboardingRewardCreditsChip';
-import { getOnboardingRewardCreditsAriaLabel } from '@/onboarding/utils/getOnboardingRewardCreditsAriaLabel';
+import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
+import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -52,22 +52,22 @@ type ImportContactsProps = {
   onContinueWithGoogle?: () => void;
   onContinueWithMicrosoft?: () => void;
   onSkip?: () => void;
-  rewardCredits?: number;
+  creditsReward?: number;
 };
 
 export const ImportContacts = ({
   onContinueWithGoogle,
   onContinueWithMicrosoft,
   onSkip,
-  rewardCredits = 0,
+  creditsReward = 0,
 }: ImportContactsProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const continueWithMicrosoftLabel = t`Continue with Microsoft`;
   const continueWithGoogleLabel = t`Continue with Google`;
-  const rewardCreditsChip =
-    rewardCredits > 0 ? (
-      <OnboardingRewardCreditsChip rewardCredits={rewardCredits} />
+  const creditsRewardChip =
+    creditsReward > 0 ? (
+      <OnboardingCreditsRewardChip creditsReward={creditsReward} />
     ) : undefined;
 
   return (
@@ -98,10 +98,10 @@ export const ImportContacts = ({
                 fullWidth
                 onClick={onContinueWithMicrosoft}
                 startIcon={<IconMicrosoft size={theme.icon.size.md} />}
-                endIcon={rewardCreditsChip}
-                aria-label={getOnboardingRewardCreditsAriaLabel({
+                endIcon={creditsRewardChip}
+                aria-label={getOnboardingCreditsRewardAriaLabel({
                   label: continueWithMicrosoftLabel,
-                  rewardCredits,
+                  creditsReward,
                 })}
               >
                 {continueWithMicrosoftLabel}
@@ -112,10 +112,10 @@ export const ImportContacts = ({
                 fullWidth
                 onClick={onContinueWithGoogle}
                 startIcon={<IconGoogle size={theme.icon.size.md} />}
-                endIcon={rewardCreditsChip}
-                aria-label={getOnboardingRewardCreditsAriaLabel({
+                endIcon={creditsRewardChip}
+                aria-label={getOnboardingCreditsRewardAriaLabel({
                   label: continueWithGoogleLabel,
-                  rewardCredits,
+                  creditsReward,
                 })}
               >
                 {continueWithGoogleLabel}

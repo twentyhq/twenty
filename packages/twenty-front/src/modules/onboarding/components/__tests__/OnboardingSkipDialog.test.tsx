@@ -19,10 +19,10 @@ i18n.activate(SOURCE_LOCALE);
 const DIALOG_ID = 'onboarding-skip-dialog-test';
 
 const TestSkipDialog = ({
-  rewardCredits,
+  creditsReward,
   onSkip,
 }: {
-  rewardCredits: number;
+  creditsReward: number;
   onSkip: () => void;
 }) => {
   const { openDialog } = useDialog();
@@ -37,7 +37,7 @@ const TestSkipDialog = ({
         visual={null}
         title="Start with your whole network"
         actions={[{ label: 'Continue with Google', onClick: jest.fn() }]}
-        rewardCredits={rewardCredits}
+        creditsReward={creditsReward}
         onSkip={onSkip}
       />
     </>
@@ -45,14 +45,14 @@ const TestSkipDialog = ({
 };
 
 const renderSkipDialog = (
-  rewardCredits: number,
+  creditsReward: number,
   { onSkip = jest.fn() } = {},
 ) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <TestSkipDialog
-          rewardCredits={rewardCredits}
+          creditsReward={creditsReward}
           onSkip={onSkip}
         />
       </I18nProvider>

@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { IconCoins } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledRewardCredits = styled.span`
+const StyledCreditsReward = styled.span`
   align-items: center;
   background-color: color-mix(in srgb, currentColor 16%, transparent);
   border-radius: ${themeCssVariables.border.radius.pill};
@@ -16,21 +16,21 @@ const StyledRewardCredits = styled.span`
   padding: 0 ${themeCssVariables.spacing['1.5']};
 `;
 
-type OnboardingRewardCreditsChipProps = {
-  rewardCredits: number;
+type OnboardingCreditsRewardChipProps = {
+  creditsReward: number;
 };
 
-export const OnboardingRewardCreditsChip = ({
-  rewardCredits,
-}: OnboardingRewardCreditsChipProps) => {
+export const OnboardingCreditsRewardChip = ({
+  creditsReward,
+}: OnboardingCreditsRewardChipProps) => {
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
-  const formattedRewardCredits = formatNumber(rewardCredits, { decimals: 2 });
+  const formattedCreditsReward = formatNumber(creditsReward, { decimals: 2 });
 
   return (
-    <StyledRewardCredits>
+    <StyledCreditsReward>
       <IconCoins size={theme.icon.size.sm} />
-      {`+${formattedRewardCredits}`}
-    </StyledRewardCredits>
+      {`+${formattedCreditsReward}`}
+    </StyledCreditsReward>
   );
 };

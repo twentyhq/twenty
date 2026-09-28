@@ -1,7 +1,7 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { OnboardingRewardCreditsChip } from '@/onboarding/components/OnboardingRewardCreditsChip';
-import { getOnboardingRewardCreditsAriaLabel } from '@/onboarding/utils/getOnboardingRewardCreditsAriaLabel';
+import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
+import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useRef } from 'react';
@@ -64,7 +64,7 @@ type OnboardingSkipDialogProps = {
   title: string;
   description?: string;
   actions: OnboardingSkipDialogAction[];
-  rewardCredits: number;
+  creditsReward: number;
   onSkip: () => void;
 };
 
@@ -74,7 +74,7 @@ export const OnboardingSkipDialog = ({
   title,
   description,
   actions,
-  rewardCredits,
+  creditsReward,
   onSkip,
 }: OnboardingSkipDialogProps) => {
   const { t } = useLingui();
@@ -87,8 +87,8 @@ export const OnboardingSkipDialog = ({
     action.onClick();
   };
 
-  const rewardCreditsChip = (
-    <OnboardingRewardCreditsChip rewardCredits={rewardCredits} />
+  const creditsRewardChip = (
+    <OnboardingCreditsRewardChip creditsReward={creditsReward} />
   );
 
   return (
@@ -128,10 +128,10 @@ export const OnboardingSkipDialog = ({
                     <action.Icon size={theme.icon.size.md} />
                   ) : undefined
                 }
-                endIcon={rewardCredits > 0 ? rewardCreditsChip : undefined}
-                aria-label={getOnboardingRewardCreditsAriaLabel({
+                endIcon={creditsReward > 0 ? creditsRewardChip : undefined}
+                aria-label={getOnboardingCreditsRewardAriaLabel({
                   label: action.label,
-                  rewardCredits,
+                  creditsReward,
                 })}
               >
                 {action.label}
