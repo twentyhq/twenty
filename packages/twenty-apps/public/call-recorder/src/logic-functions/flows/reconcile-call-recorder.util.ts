@@ -450,13 +450,17 @@ const reconcileCanceledMeeting = async ({
   );
   // Destroying a calendar event nulls its recordings' calendarEventId before
   // this runs, so the policy-managed recording is also found by the id its
-  // meeting key derives; otherwise a canceled meeting keeps its bot.
-  const policyManagedCallRecordings = await findCallRecordingsByIds(client, [
-    computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
-  ]);
+  // meeting key derives; otherwise a canceled meeting keeps its bot. Only an
+  // unlinked one qualifies: a re-imported event that already re-requested the
+  // recording has linked it again and keeps its bot.
+  const orphanedPolicyManagedCallRecordings = (
+    await findCallRecordingsByIds(client, [
+      computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
+    ])
+  ).filter((callRecording) => isUndefined(callRecording.calendarEventId));
   const meetingCallRecordings = [
     ...new Map(
-      [...linkedCallRecordings, ...policyManagedCallRecordings].map(
+      [...linkedCallRecordings, ...orphanedPolicyManagedCallRecordings].map(
         (callRecording) => [callRecording.id, callRecording],
       ),
     ).values(),

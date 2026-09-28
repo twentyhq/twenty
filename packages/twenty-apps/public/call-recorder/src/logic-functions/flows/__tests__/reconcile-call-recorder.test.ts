@@ -897,6 +897,47 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
+  it('keeps the bot of a recording a re-imported event already re-requested', async () => {
+    // The replacement event re-linked the recording after this reconcile read
+    // the meeting's calendar events.
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          startedAt: FUTURE_STARTS_AT,
+          endedAt: FUTURE_ENDS_AT,
+          calendarEventId: 'calendar-event-2',
+          externalBotId: 'recall-bot-2',
+        },
+      ],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: [],
+      removedOccurrences: [
+        {
+          calendarEventId: 'calendar-event-1',
+          realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
+          startsAt: FUTURE_STARTS_AT,
+        },
+      ],
+      now: NOW,
+    });
+
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-2',
+      }),
+    ]);
+    expect(recallBotDeleteCalls()).toEqual([]);
+  });
+
   it('cancels the old occurrence and creates a fresh recording when the meeting moves to a new time', async () => {
     const NEW_STARTS_AT = '2026-01-02T13:00:00.000Z';
     const NEW_RECALL_BOT_JOIN_AT = '2026-01-02T12:59:00.000Z';
