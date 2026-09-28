@@ -833,11 +833,17 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "AI"
 msgstr "MI"
 
+#. js-lingui-id: t/7WbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat messages sent by the workspace member"
+msgstr "A munkaterület tagja által küldött AI-csevegőüzenetek"
+
 #. js-lingui-id: NHpbHJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
-msgstr ""
+msgstr "A munkaterület tagjának AI-csevegésszálai"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -2337,6 +2343,12 @@ msgstr "A diagram szűrőértéke nem érvényes ehhez az operandushoz."
 msgid "Chat message not found."
 msgstr "Chatüzenet nem található."
 
+#. js-lingui-id: wATfZo
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat messages"
+msgstr "Csevegőüzenetek"
+
 #. js-lingui-id: /VxChJ
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat thread not found."
@@ -2351,7 +2363,7 @@ msgstr "A csevegési szál címe nem lehet üres."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat threads"
-msgstr ""
+msgstr "Csevegésszálak"
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -10325,6 +10337,12 @@ msgctxt "commandMenuItem.label"
 msgid "Send Test Email"
 msgstr "Teszt e-mail küldése"
 
+#. js-lingui-id: fZP2UR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Sender"
+msgstr "Feladó"
+
 #. js-lingui-id: nzBQFi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12226,6 +12244,11 @@ msgstr "Ez a fájlútvonal túl hosszú a feltöltéshez."
 msgid "This file upload has already been finalized."
 msgstr "Ennek a fájlfeltöltésnek a véglegesítése már megtörtént."
 
+#. js-lingui-id: Ee9ncG
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "This form is no longer awaiting a submission"
+msgstr "Ez az űrlap már nem vár beküldésre."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -12264,12 +12287,12 @@ msgstr "Ez a korlát módosult, miközben szerkesztette. Töltse be újra az old
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
-msgstr ""
+msgstr "Ez a naplószűrő nem érvényes."
 
 #. js-lingui-id: BuvBj9
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
-msgstr ""
+msgstr "Ez a naplótábla nem érvényes."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -14692,7 +14715,13 @@ msgstr "Munkaterület tagjának beosztása"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
-msgstr ""
+msgstr "A szálat birtokló munkaterületi tag"
+
+#. js-lingui-id: Ws6spT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who sent this message"
+msgstr "A munkaterületnek az üzenetet küldő tagja"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

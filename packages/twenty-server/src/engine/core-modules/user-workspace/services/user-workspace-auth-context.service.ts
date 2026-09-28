@@ -24,6 +24,59 @@ export class UserWorkspaceAuthContextService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
+  async resolveWorkspaceMember({
+    workspaceId,
+    workspaceMemberId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+    applicationId?: string | null;
+  }) {
+    if (
+      !isNonEmptyString(workspaceId) ||
+      !isNonEmptyString(workspaceMemberId)
+    ) {
+      throw new AuthException(
+        'Workspace member required',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
+    if (!isDefined(member) || isDefined(member.deletedAt)) {
+      throw new AuthException(
+        'Workspace member not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    const membership = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId, userId: member.userId },
+      select: { id: true },
+    });
+    if (!isDefined(membership)) {
+      throw new AuthException(
+        'User workspace not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    const authContext = await this.resolve({
+      workspaceId,
+      userWorkspaceId: membership.id,
+      applicationId,
+    });
+    if (authContext.workspaceMemberId !== workspaceMemberId) {
+      throw new AuthException(
+        'Workspace member changed',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    return authContext;
+  }
+
   // Queued work and subscriptions must rebuild their subject after membership changes.
   async resolve({
     workspaceId,

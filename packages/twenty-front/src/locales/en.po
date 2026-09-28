@@ -179,7 +179,6 @@ msgstr "{0, plural, one {# job could not be retried} other {# jobs could not be 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# Object} other {# Objects}}"
 
@@ -1527,6 +1526,12 @@ msgstr "Add Field"
 msgid "Add file"
 msgstr "Add file"
 
+#. js-lingui-id: yCsT+y
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenu.tsx
+msgid "Add files, records or skills"
+msgstr "Add files, records or skills"
+
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
@@ -2205,6 +2210,16 @@ msgstr "AI Usage by User"
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "AI Usage by Workspace"
 msgstr "AI Usage by Workspace"
+
+#. js-lingui-id: 6ktJa0
+#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+msgid "AI usage limit reached for this period."
+msgstr "AI usage limit reached for this period."
+
+#. js-lingui-id: JQW6M/
+#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+msgid "AI usage limit reached. Ask an admin to raise the limit."
+msgstr "AI usage limit reached. Ask an admin to raise the limit."
 
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -3121,11 +3136,6 @@ msgstr "Ascending"
 msgid "Ask & find"
 msgstr "Ask & find"
 
-#. js-lingui-id: LfkDyR
-#: src/modules/ai/components/AiChatErrorRenderer.tsx
-msgid "Ask a workspace admin to raise the limit."
-msgstr "Ask a workspace admin to raise the limit."
-
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
@@ -3134,6 +3144,11 @@ msgstr "Ask a workspace admin to raise the limit."
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
 msgid "Ask AI"
 msgstr "Ask AI"
+
+#. js-lingui-id: IRCQfx
+#: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
+msgid "Ask an admin to raise the limit."
+msgstr "Ask an admin to raise the limit."
 
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3289,6 +3304,7 @@ msgstr "Attach file"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/internal/AgentChatFileUploadButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
@@ -4912,6 +4928,7 @@ msgstr "Collapse sidebar"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Color"
 msgstr "Color"
 
@@ -5963,6 +5980,7 @@ msgstr "Counting recipients..."
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/ui/field/input/components/AddressInput.tsx
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Country"
 msgstr "Country"
 
@@ -6401,6 +6419,7 @@ msgstr "currencies"
 
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency"
 msgstr "Currency"
 
@@ -7619,6 +7638,7 @@ msgid "Direct REST metadata responses"
 msgstr "Direct REST metadata responses"
 
 #. js-lingui-id: MRB7nI
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Direction"
 msgstr "Direction"
@@ -13230,10 +13250,20 @@ msgstr "Loading metrics data..."
 msgid "Loading more..."
 msgstr "Loading more..."
 
+#. js-lingui-id: WepeNQ
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+msgid "Loading records"
+msgstr "Loading records"
+
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "Loading retention configuration..."
 msgstr "Loading retention configuration..."
+
+#. js-lingui-id: VeVIIk
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "Loading skills"
+msgstr "Loading skills"
 
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
@@ -13259,7 +13289,7 @@ msgstr "Loading..."
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
-#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "Loading…"
 
@@ -13493,6 +13523,11 @@ msgstr "Manage connections used by this app to call {0}."
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Manage feature flags for this workspace"
 msgstr "Manage feature flags for this workspace"
+
+#. js-lingui-id: BaAAPb
+#: src/modules/settings/billing/hooks/useManageUsageLimitsButton.ts
+msgid "Manage limits"
+msgstr "Manage limits"
 
 #. js-lingui-id: PxMD2N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -14572,6 +14607,11 @@ msgstr "New Password"
 msgid "New rollover limit"
 msgstr "New rollover limit"
 
+#. js-lingui-id: MdpSC1
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "New skill"
+msgstr "New skill"
+
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15253,6 +15293,7 @@ msgid "No record selected"
 msgstr "No record selected"
 
 #. js-lingui-id: EqGTpW
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 msgid "No records found"
@@ -15345,6 +15386,11 @@ msgstr "No sending address. Connect a verified domain in Settings."
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "No server administrators found."
 msgstr "No server administrators found."
+
+#. js-lingui-id: b5hW1u
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "No skills found"
+msgstr "No skills found"
 
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -16250,6 +16296,8 @@ msgid "Opened"
 msgstr "Opened"
 
 #. js-lingui-id: Fzfj4N
+#: src/modules/log-console/components/LogConsoleToolbar.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Operand"
 msgstr "Operand"
@@ -17829,6 +17877,8 @@ msgid "Recording Scheduled"
 msgstr "Recording Scheduled"
 
 #. js-lingui-id: PWlTvh
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -18975,8 +19025,12 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -19215,6 +19269,12 @@ msgstr "Search options"
 msgid "Search people or roles"
 msgstr "Search people or roles"
 
+#. js-lingui-id: IMeaSJ
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+msgid "Search records"
+msgstr "Search records"
+
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 msgid "Search records..."
@@ -19224,6 +19284,12 @@ msgstr "Search records..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "Search registrations..."
+
+#. js-lingui-id: BlLxpG
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "Search skills"
+msgstr "Search skills"
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -19603,6 +19669,7 @@ msgid "Select date & time"
 msgstr "Select date & time"
 
 #. js-lingui-id: hR/4+8
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Select entity"
 msgstr "Select entity"
@@ -20359,6 +20426,8 @@ msgid "Skill not found"
 msgstr "Skill not found"
 
 #. js-lingui-id: PCSkw2
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -23235,6 +23304,8 @@ msgstr "Unsupported image format"
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Untitled"
@@ -24797,11 +24868,6 @@ msgstr "Workflow Execution"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
 msgstr "Workflow index page"
-
-#. js-lingui-id: 975MSi
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
-msgid "Workflow name"
-msgstr "Workflow name"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx

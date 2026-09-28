@@ -31,7 +31,7 @@ type RecordReference = {
 
 type ThreadRecordArgs = RecordReference & {
   workspaceId: string;
-  userWorkspaceId: string;
+  workspaceMemberId: string;
   threadId: string;
 };
 
@@ -106,16 +106,16 @@ export class AgentChatThreadTargetService {
   // not found, so no one can probe for conversations they do not share.
   private async assertThreadIsEditableOrThrow({
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
     threadId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     threadId: string;
   }): Promise<void> {
     await this.agentChatSharingService.getThreadWithAccess({
       workspaceId,
-      userWorkspaceId,
+      workspaceMemberId,
       threadId,
       operationType: 'update',
     });

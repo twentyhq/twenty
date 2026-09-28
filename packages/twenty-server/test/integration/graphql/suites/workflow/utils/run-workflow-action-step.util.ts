@@ -12,7 +12,8 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 type WorkflowActionStepType =
   | 'SEND_EMAIL'
   | 'DRAFT_EMAIL'
-  | 'CREATE_CALENDAR_EVENT';
+  | 'CREATE_CALENDAR_EVENT'
+  | 'UPDATE_RECORD';
 
 type WorkflowVersionStep = {
   id: string;

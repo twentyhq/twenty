@@ -5,14 +5,15 @@ import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIden
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
 import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
@@ -22,6 +23,7 @@ import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/use
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
@@ -33,12 +35,17 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
+import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
+`;
+
+const StyledUntitled = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const CoreWorkflowShowContent = ({
@@ -97,7 +104,7 @@ const CoreWorkflowShowContent = ({
     return (
       <>
         {resource}
-        <Loader />
+        <PageContentSkeletonLoader />
       </>
     );
   }
@@ -139,9 +146,17 @@ const CoreWorkflowShowContent = ({
             links={[
               {
                 children: t`Workflows`,
-                href: getAppPath(AppPath.WorkflowCoreIndexPage),
+                href: getAppPath(AppPath.RecordIndexPage, {
+                  objectNamePlural: CoreObjectNamePlural.Workflow,
+                }),
               },
-              { children: record.name ?? '' },
+              {
+                children: isNonEmptyString(record.name) ? (
+                  record.name
+                ) : (
+                  <StyledUntitled>{t`Untitled`}</StyledUntitled>
+                ),
+              },
             ]}
             actionButton={
               <>
@@ -162,7 +177,7 @@ const CoreWorkflowShowContent = ({
           <CoreObjectIdentifierBar
             recordId={coreWorkflowId}
             name={record.name}
-            namePlaceholder={t`Workflow name`}
+            namePlaceholder={t`Untitled`}
             onRename={renameWorkflow}
             isReadOnly={isApplicationManaged}
           />

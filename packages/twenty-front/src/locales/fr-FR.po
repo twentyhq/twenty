@@ -184,7 +184,6 @@ msgstr "{0, plural, one {# tâche n'a pas pu être relancée} other {# tâches n
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# Objet} other {# Objets}}"
 
@@ -198,7 +197,7 @@ msgstr ""
 #. placeholder {0}: otherFieldDiffs.length
 #: src/modules/log-console/components/LogConsoleChangesCell.tsx
 msgid "{0, plural, one {and # more} other {and # more}}"
-msgstr ""
+msgstr "{0, plural, one {et # de plus} other {et # de plus}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -426,17 +425,17 @@ msgstr "{browser} sur {operatingSystem}"
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} modification} other {{formattedCount} modifications}}"
 
 #. js-lingui-id: wtKNU8
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} page view} other {{formattedCount} page views}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} vue de page} other {{formattedCount} vues de page}}"
 
 #. js-lingui-id: JBM5me
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} usage event} other {{formattedCount} usage events}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} événement d'utilisation} other {{formattedCount} événements d'utilisation}}"
 
 #. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -653,7 +652,7 @@ msgstr "{queuedMessage}, {skipReasons} ignoré(s)"
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "{retentionInDays, plural, one {# day} other {# days}}"
-msgstr ""
+msgstr "{retentionInDays, plural, one {# jour} other {# jours}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -714,7 +713,7 @@ msgstr "{selectedCount} types de source"
 #. js-lingui-id: px4Svg
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 msgid "{selectedOptionCount} options"
-msgstr ""
+msgstr "{selectedOptionCount} options"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1308,7 +1307,7 @@ msgstr "Visibilité de l'activité"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/utils/__tests__/getLogConsoleFieldFilters.test.ts
 msgid "Actor"
-msgstr ""
+msgstr "Acteur"
 
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -1531,6 +1530,12 @@ msgstr "Ajouter un champ"
 #: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "Add file"
 msgstr "Ajouter un fichier"
+
+#. js-lingui-id: yCsT+y
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenu.tsx
+msgid "Add files, records or skills"
+msgstr "Ajouter des fichiers, des enregistrements ou des compétences"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
@@ -2211,6 +2216,16 @@ msgstr "Utilisation de l'IA par utilisateur"
 msgid "AI Usage by Workspace"
 msgstr "Utilisation de l'IA par espace de travail"
 
+#. js-lingui-id: 6ktJa0
+#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+msgid "AI usage limit reached for this period."
+msgstr "Limite d'utilisation de l'IA atteinte pour cette période."
+
+#. js-lingui-id: JQW6M/
+#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+msgid "AI usage limit reached. Ask an admin to raise the limit."
+msgstr "Limite d'utilisation de l'IA atteinte. Demandez à un administrateur d'augmenter la limite."
+
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
@@ -2841,12 +2856,12 @@ msgstr "Application supprimée avec succès"
 #. js-lingui-id: Oh+wHS
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "App logs"
-msgstr ""
+msgstr "Journaux d'application"
 
 #. js-lingui-id: ZGfGyx
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "App logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "Les journaux d'application sont conservés pendant {retentionInDays} jours."
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -3126,11 +3141,6 @@ msgstr "Ascendant"
 msgid "Ask & find"
 msgstr "Demander et trouver"
 
-#. js-lingui-id: LfkDyR
-#: src/modules/ai/components/AiChatErrorRenderer.tsx
-msgid "Ask a workspace admin to raise the limit."
-msgstr "Demandez à un administrateur de l'espace de travail d'augmenter la limite."
-
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
@@ -3139,6 +3149,11 @@ msgstr "Demandez à un administrateur de l'espace de travail d'augmenter la limi
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
 msgid "Ask AI"
 msgstr "Demander à l'IA"
+
+#. js-lingui-id: IRCQfx
+#: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
+msgid "Ask an admin to raise the limit."
+msgstr "Demandez à un administrateur d'augmenter la limite."
 
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3294,6 +3309,7 @@ msgstr "Joindre un fichier"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/internal/AgentChatFileUploadButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
@@ -3331,7 +3347,7 @@ msgstr "Journaux d'audit"
 #. js-lingui-id: APXe7E
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Audit logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "Les journaux d'audit sont conservés pendant {retentionInDays} jours."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -4367,7 +4383,7 @@ msgstr "Passer au thème système"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
-msgstr ""
+msgstr "Modifications"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -4783,7 +4799,7 @@ msgstr "Fermer la bannière"
 #. js-lingui-id: n5fb8M
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Close details"
-msgstr ""
+msgstr "Fermer les détails"
 
 #. js-lingui-id: c2EYjZ
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
@@ -4798,7 +4814,7 @@ msgstr "Fermer les raccourcis clavier"
 #. js-lingui-id: hAei0W
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Close logs console"
-msgstr ""
+msgstr "Fermer la console des journaux"
 
 #. js-lingui-id: vcpc5o
 #: src/modules/blocknote-editor/components/BlockEditor.tsx
@@ -4917,6 +4933,7 @@ msgstr "Replier la barre latérale"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Color"
 msgstr "Couleur"
 
@@ -5606,7 +5623,7 @@ msgstr "Copier"
 #. js-lingui-id: Qv14oC
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Copy as JSON"
-msgstr ""
+msgstr "Copier au format JSON"
 
 #. js-lingui-id: 6gAr5+
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
@@ -5968,6 +5985,7 @@ msgstr "Comptage des destinataires..."
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/ui/field/input/components/AddressInput.tsx
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Country"
 msgstr "Pays"
 
@@ -6406,6 +6424,7 @@ msgstr "devises"
 
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency"
 msgstr "Devise"
 
@@ -6483,7 +6502,7 @@ msgstr "Applications personnalisées"
 #. js-lingui-id: GAD3Dx
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Custom domain"
-msgstr ""
+msgstr "Domaine personnalisé"
 
 #. js-lingui-id: XQ681Q
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6504,12 +6523,12 @@ msgstr "Domaine personnalisé (crm.yourco.com)"
 #. js-lingui-id: ML4S78
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain activated"
-msgstr ""
+msgstr "Domaine personnalisé activé"
 
 #. js-lingui-id: Kj25t7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain deactivated"
-msgstr ""
+msgstr "Domaine personnalisé désactivé"
 
 #. js-lingui-id: +ub6QN
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6968,7 +6987,7 @@ msgstr "Désactivé"
 #. js-lingui-id: Osn70z
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 msgid "Debug"
-msgstr ""
+msgstr "Débogage"
 
 #. js-lingui-id: Iotuxe
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -7560,7 +7579,7 @@ msgstr "Version de l'application détectée en cours d'exécution sur cette inst
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "developer"
-msgstr ""
+msgstr "développeur"
 
 #. js-lingui-id: 7aDnUb
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -7571,7 +7590,7 @@ msgstr "Développeur"
 #. js-lingui-id: JSEGvu
 #: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 msgid "Developer mode"
-msgstr ""
+msgstr "Mode développeur"
 
 #. js-lingui-id: n+SX4g
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -7624,6 +7643,7 @@ msgid "Direct REST metadata responses"
 msgstr "Réponses directes de métadonnées REST"
 
 #. js-lingui-id: MRB7nI
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Direction"
 msgstr "Direction"
@@ -8600,7 +8620,7 @@ msgstr "Fin"
 #. js-lingui-id: FCKppt
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 msgid "Endpoint"
-msgstr ""
+msgstr "Point de terminaison"
 
 #. js-lingui-id: T3juzf
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -9269,7 +9289,7 @@ msgstr "Copies signées"
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
-msgstr ""
+msgstr "Exécution"
 
 #. js-lingui-id: B0clc7
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -9294,7 +9314,7 @@ msgstr "Quitter"
 #. js-lingui-id: IkOhTI
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Exit full screen"
-msgstr ""
+msgstr "Quitter le plein écran"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -10634,7 +10654,7 @@ msgstr "Page complète"
 #. js-lingui-id: OwIqiD
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Full screen"
-msgstr ""
+msgstr "Plein écran"
 
 #. js-lingui-id: CU/Sq6
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -11612,12 +11632,12 @@ msgstr "Usurpation d'identité"
 #. js-lingui-id: 2Ay+wL
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation ended"
-msgstr ""
+msgstr "Usurpation d'identité terminée"
 
 #. js-lingui-id: 6C6HwH
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation failed"
-msgstr ""
+msgstr "Échec de l'usurpation d'identité"
 
 #. js-lingui-id: yImXof
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -11627,12 +11647,12 @@ msgstr "L'usurpation d'identité est désactivée pour cet espace de travail"
 #. js-lingui-id: Qzg4zX
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation requested"
-msgstr ""
+msgstr "Usurpation d'identité demandée"
 
 #. js-lingui-id: 5LAZwq
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation started"
-msgstr ""
+msgstr "Usurpation d'identité commencée"
 
 #. js-lingui-id: yHueLx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11812,7 +11832,7 @@ msgstr "Informations"
 #. js-lingui-id: XP/nZ1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Initial values"
-msgstr ""
+msgstr "Valeurs initiales"
 
 #. js-lingui-id: XU5AOg
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -12586,12 +12606,12 @@ msgstr "Dernières 12 heures (du plus ancien au plus récent)"
 #. js-lingui-id: evdQsU
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 15 minutes"
-msgstr ""
+msgstr "15 dernières minutes"
 
 #. js-lingui-id: aK4uBd
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 24 hours"
-msgstr ""
+msgstr "24 dernières heures"
 
 #. js-lingui-id: j5nqnO
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -13235,10 +13255,20 @@ msgstr "Chargement des données de métriques..."
 msgid "Loading more..."
 msgstr "Chargement supplémentaire..."
 
+#. js-lingui-id: WepeNQ
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+msgid "Loading records"
+msgstr "Chargement des enregistrements"
+
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "Loading retention configuration..."
 msgstr "Chargement de la configuration de rétention..."
+
+#. js-lingui-id: VeVIIk
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "Loading skills"
+msgstr "Chargement des compétences"
 
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
@@ -13264,7 +13294,7 @@ msgstr "Chargement..."
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
-#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "Chargement…"
 
@@ -13299,7 +13329,7 @@ msgstr "Enregistrer une nouvelle affaire (entreprise, montant, étape, clôture 
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
-msgstr ""
+msgstr "Journal copié au format JSON"
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
@@ -13323,7 +13353,7 @@ msgstr "Rétention des journaux"
 #. js-lingui-id: ZQMmpY
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Log sources"
-msgstr ""
+msgstr "Sources des journaux"
 
 #. js-lingui-id: hykMbH
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -13333,7 +13363,7 @@ msgstr "Connecté en tant que {impersonatedUser}"
 #. js-lingui-id: mxY4xF
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Logged out"
-msgstr ""
+msgstr "Déconnecté"
 
 #. js-lingui-id: ILNASD
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -13388,7 +13418,7 @@ msgstr "Déconnexion"
 #. js-lingui-id: yYOzWD
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "logs"
-msgstr ""
+msgstr "journaux"
 
 #. js-lingui-id: w/bY7R
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
@@ -13402,12 +13432,12 @@ msgstr "Journal"
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Logs console"
-msgstr ""
+msgstr "Console des journaux"
 
 #. js-lingui-id: fHuZPA
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Logs console hidden. Press {toggleHotkeyLabel} to open it again."
-msgstr ""
+msgstr "Console des journaux masquée. Appuyez sur {toggleHotkeyLabel} pour l'ouvrir à nouveau."
 
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
@@ -13498,6 +13528,11 @@ msgstr "Gérer les connexions utilisées par cette application pour appeler {0}.
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Manage feature flags for this workspace"
 msgstr "Gérer les drapeaux de fonctionnalités de cet espace de travail"
+
+#. js-lingui-id: BaAAPb
+#: src/modules/settings/billing/hooks/useManageUsageLimitsButton.ts
+msgid "Manage limits"
+msgstr "Gérer les limites"
 
 #. js-lingui-id: PxMD2N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13749,7 +13784,7 @@ msgstr ""
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Member"
-msgstr ""
+msgstr "Membre"
 
 #. js-lingui-id: lXyaAg
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -14208,7 +14243,7 @@ msgstr "Faites avancer le travail entre équipes et agents"
 #. js-lingui-id: Qf/mt6
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Moved to trash"
-msgstr ""
+msgstr "Déplacé vers la corbeille"
 
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -14576,6 +14611,11 @@ msgstr "Nouveau mot de passe"
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "New rollover limit"
 msgstr "Nouveau plafond de report"
+
+#. js-lingui-id: MdpSC1
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "New skill"
+msgstr "Nouvelle compétence"
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15258,6 +15298,7 @@ msgid "No record selected"
 msgstr "Aucun enregistrement sélectionné"
 
 #. js-lingui-id: EqGTpW
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 msgid "No records found"
@@ -15350,6 +15391,11 @@ msgstr "Aucune adresse d'envoi. Connectez un domaine vérifié dans les paramèt
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "No server administrators found."
 msgstr "Aucun administrateur de serveur trouvé."
+
+#. js-lingui-id: b5hW1u
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "No skills found"
+msgstr "Aucune compétence trouvée"
 
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -15461,7 +15507,7 @@ msgstr "Aucune valeur"
 #. js-lingui-id: P9sVTw
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "No values kept"
-msgstr ""
+msgstr "Aucune valeur conservée"
 
 #. js-lingui-id: 4jhave
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdown.tsx
@@ -16193,7 +16239,7 @@ msgstr "Ouvrir le lien"
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
-msgstr ""
+msgstr "Ouvrir la console des journaux"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16247,7 +16293,7 @@ msgstr "Ouvrez l'intégration ChatGPT officielle de Twenty pour votre espace de 
 #. js-lingui-id: tirDue
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Open webhook settings"
-msgstr ""
+msgstr "Ouvrir les paramètres du webhook"
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
@@ -16255,6 +16301,8 @@ msgid "Opened"
 msgstr "Ouvert"
 
 #. js-lingui-id: Fzfj4N
+#: src/modules/log-console/components/LogConsoleToolbar.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Operand"
 msgstr "Opérande"
@@ -16262,7 +16310,7 @@ msgstr "Opérande"
 #. js-lingui-id: FZg3wM
 #: src/modules/log-console/constants/LogConsoleUsageOperationColumn.tsx
 msgid "Operation"
-msgstr ""
+msgstr "Opération"
 
 #. js-lingui-id: 8m1COB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
@@ -16621,7 +16669,7 @@ msgstr "Style de page"
 #. js-lingui-id: QbrUIo
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Page views"
-msgstr ""
+msgstr "Vues de page"
 
 #. js-lingui-id: sF+Xp9
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
@@ -16831,12 +16879,12 @@ msgstr "Suppression permanente. Entrez le nombre de jours."
 #. js-lingui-id: e7kLp1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Supprimé définitivement"
 
 #. js-lingui-id: Qun2bc
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 msgid "Permanently deleted records keep no values."
-msgstr ""
+msgstr "Les enregistrements supprimés définitivement ne conservent aucune valeur."
 
 #. js-lingui-id: EPkrPQ
 #: src/modules/command-menu-item/engine-command/record/components/DestroyRecordsCommand.tsx
@@ -17448,7 +17496,7 @@ msgstr "Exécution du code Python"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
 msgid "Quantity"
-msgstr ""
+msgstr "Quantité"
 
 #. js-lingui-id: 2vudsu
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -17532,7 +17580,7 @@ msgstr "Ratio"
 #. js-lingui-id: 05e9XO
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Raw event"
-msgstr ""
+msgstr "Événement brut"
 
 #. js-lingui-id: wdlYqX
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -17740,12 +17788,12 @@ msgstr "Enregistrement (ID)"
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Record changes"
-msgstr ""
+msgstr "Modifications d'enregistrements"
 
 #. js-lingui-id: tpEWQj
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "Les modifications d'enregistrements et les journaux d'application sont disponibles avec votre forfait actuel. Les autres types de journaux nécessitent un abonnement Organization."
 
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17834,6 +17882,8 @@ msgid "Recording Scheduled"
 msgstr "Enregistrement planifié"
 
 #. js-lingui-id: PWlTvh
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -17877,7 +17927,7 @@ msgstr "URI de redirection"
 #. js-lingui-id: lCF0wC
 #: src/modules/log-console/components/LogConsoleResults.tsx
 msgid "Refresh"
-msgstr ""
+msgstr "Actualiser"
 
 #. js-lingui-id: pTGa/J
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -18485,12 +18535,12 @@ msgstr "Restaurer les paramètres du type d'activité définis par l'application
 #. js-lingui-id: o8va6N
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored"
-msgstr ""
+msgstr "Restauré"
 
 #. js-lingui-id: fkvsIG
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored from trash"
-msgstr ""
+msgstr "Restauré depuis la corbeille"
 
 #. js-lingui-id: rNDhLF
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
@@ -18519,7 +18569,7 @@ msgstr "Reprendre"
 #. js-lingui-id: nBz1I/
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "Retention"
-msgstr ""
+msgstr "Rétention"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -18980,8 +19030,12 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -19220,6 +19274,12 @@ msgstr "Options de recherche"
 msgid "Search people or roles"
 msgstr "Rechercher des personnes ou des rôles"
 
+#. js-lingui-id: IMeaSJ
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+msgid "Search records"
+msgstr "Rechercher des enregistrements"
+
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 msgid "Search records..."
@@ -19229,6 +19289,12 @@ msgstr "Rechercher des enregistrements..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "Rechercher des enregistrements..."
+
+#. js-lingui-id: BlLxpG
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "Search skills"
+msgstr "Rechercher des compétences"
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -19609,6 +19675,7 @@ msgstr "Sélectionnez la date et l'heure"
 
 #. js-lingui-id: hR/4+8
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Select entity"
 msgstr "Sélectionner l'entité"
 
@@ -19883,7 +19950,7 @@ msgstr "Accès au serveur"
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Server administrator access updated"
-msgstr ""
+msgstr "Accès administrateur au serveur mis à jour"
 
 #. js-lingui-id: 4Fpy78
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -19908,22 +19975,22 @@ msgstr "Détails du fournisseur de services"
 #. js-lingui-id: CqO9qC
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 msgid "Session"
-msgstr ""
+msgstr "Session"
 
 #. js-lingui-id: jvivc3
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Session ID"
-msgstr ""
+msgstr "ID de session"
 
 #. js-lingui-id: uRGnZ7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Session revoked"
-msgstr ""
+msgstr "Session révoquée"
 
 #. js-lingui-id: 4cEClj
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Sessions"
-msgstr ""
+msgstr "Sessions"
 
 #. js-lingui-id: 4FANIj
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellDisplayContainer.tsx
@@ -20146,7 +20213,7 @@ msgstr "Le changement de l'étiquette doit-il également modifier le nom de l'AP
 #. js-lingui-id: 3MO9Sa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr ""
+msgstr "Afficher une console des journaux en bas de l'application en mode avancé."
 
 #. js-lingui-id: vbXZ3k
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -20271,13 +20338,13 @@ msgstr "DPA signé généré et téléchargé"
 #. js-lingui-id: q2v4sG
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed in"
-msgstr ""
+msgstr "Connecté"
 
 #. js-lingui-id: t8SqKm
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed up"
-msgstr ""
+msgstr "Inscrit"
 
 #. js-lingui-id: X1zsRT
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
@@ -20364,6 +20431,8 @@ msgid "Skill not found"
 msgstr "Compétence introuvable"
 
 #. js-lingui-id: PCSkw2
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -21100,7 +21169,7 @@ msgstr "Support"
 #. js-lingui-id: y1H7Uc
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Support team"
-msgstr ""
+msgstr "Équipe d’assistance"
 
 #. js-lingui-id: yYneQW
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
@@ -22251,7 +22320,7 @@ msgstr "Tim"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleTimeColumn.tsx
 msgid "Time"
-msgstr ""
+msgstr "Heure"
 
 #. js-lingui-id: n9nSNJ
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -22745,12 +22814,12 @@ msgstr ""
 #. js-lingui-id: I94zOx
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn off developer mode"
-msgstr ""
+msgstr "Désactiver le mode développeur"
 
 #. js-lingui-id: mpTAWL
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn on developer mode"
-msgstr ""
+msgstr "Activer le mode développeur"
 
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -23072,7 +23141,7 @@ msgstr "Sujet inconnu"
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Unknown user"
-msgstr ""
+msgstr "Utilisateur inconnu"
 
 #. js-lingui-id: m/o1+r
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesByHealthAccordion.tsx
@@ -23240,6 +23309,8 @@ msgstr "Format d’image non pris en charge"
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Untitled"
@@ -23588,7 +23659,7 @@ msgstr "Téléversement en cours..."
 #. js-lingui-id: +Ueo4g
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Upserted"
-msgstr ""
+msgstr "Upserté"
 
 #. js-lingui-id: PZd7QF
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -23824,7 +23895,7 @@ msgstr "Contexte utilisateur"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User ID"
-msgstr ""
+msgstr "Identifiant de l'utilisateur"
 
 #. js-lingui-id: tNT8wT
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23858,7 +23929,7 @@ msgstr "Utilisation de l'utilisateur"
 #. js-lingui-id: UC8MH6
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User workspace ID"
-msgstr ""
+msgstr "ID de l'espace de travail de l'utilisateur"
 
 #. js-lingui-id: FYgCVU
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23945,7 +24016,7 @@ msgstr "Valeurs"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Values before deletion"
-msgstr ""
+msgstr "Valeurs avant suppression"
 
 #. js-lingui-id: M9lOpp
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
@@ -24529,7 +24600,7 @@ msgstr "Webhook supprimé avec succès"
 #. js-lingui-id: 0PSwb2
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Webhook ID"
-msgstr ""
+msgstr "ID du webhook"
 
 #. js-lingui-id: 8bfORM
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -24802,11 +24873,6 @@ msgstr "Exécution de flux de travail"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
 msgstr "Page d’index des workflows"
-
-#. js-lingui-id: 975MSi
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
-msgid "Workflow name"
-msgstr "Nom du workflow"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx

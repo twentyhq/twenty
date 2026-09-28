@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -82,6 +83,11 @@ export const CoreObjectIdentifierBar = ({
             disabled={isReadOnly}
             value={editedName ?? name ?? ''}
             placeholder={namePlaceholder}
+            textColor={
+              isNonEmptyString(editedName ?? name)
+                ? undefined
+                : themeCssVariables.font.color.tertiary
+            }
             onChange={setEditedName}
             onEnter={saveName}
             onEscape={() => setEditedName(undefined)}

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
@@ -16,7 +16,7 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 export class AgentChatStreamRecoveryService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
@@ -26,10 +26,10 @@ export class AgentChatStreamRecoveryService {
     thread,
     workspaceId,
   }: {
-    thread: Pick<AgentChatThreadEntity, 'id' | 'activeStreamId'>;
+    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'activeStreamId'>;
     workspaceId: string;
   }): Promise<AgentChatThreadLastStreamError | null> {
-    if (!isDefined(thread.activeStreamId)) {
+    if (!isNonEmptyString(thread.activeStreamId)) {
       return null;
     }
 
