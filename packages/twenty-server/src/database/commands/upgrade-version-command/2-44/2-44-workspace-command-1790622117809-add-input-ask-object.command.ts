@@ -21,7 +21,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.44.0', 1790609051454)
+@RegisteredWorkspaceCommand('2.44.0', 1790622117809)
 @Command({
   name: 'upgrade:2-44:add-input-ask-object',
   description: 'Create the inputAsk standard object in existing workspaces',
