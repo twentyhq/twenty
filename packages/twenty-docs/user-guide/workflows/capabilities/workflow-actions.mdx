@@ -91,16 +91,22 @@ Creates a new record or updates an existing one based on matching criteria. This
 Picks a single record out of a list of candidates, using a distribution strategy. Useful for assigning an incoming lead to a rep, or spreading records across a set of owners.
 
 **Configuration**:
-- Provide the list of candidate records (e.g., the output of a `Search Records` step)
+- Select the candidate records in the **Pick from** field
+<Note>
+**Pick from** only accepts a static, manually selected set of records, you cannot pass in a variable such as the output of a `Search Records` step.
+</Note>
 - Choose a strategy:
 
 | Strategy | Description |
 |---|---|
 | **Random** | Picks one candidate at random |
 | **Round Robin** | Cycles through candidates in order, remembering its position between runs |
-| **Load Balanced** | Picks the candidate currently linked to the fewest records on a field you choose (e.g., the sales rep with the fewest open opportunities) |
+| **Load Balanced** | Picks the candidate currently linked to the fewest records on a field you choose (e.g., the sales rep with the fewest linked opportunities) |
 
 - For **Load Balanced**, select the object and field used to count existing load per candidate
+<Note>
+Load Balanced counts every linked record on that field, regardless of status, for example, all opportunities linked to a rep, not just open ones.
+</Note>
 
 **Output**: The picked record is available for use in subsequent steps.
 
@@ -325,6 +331,10 @@ AI agents respect role-based permissions. You can assign specific roles to agent
 
 ### Classify
 Asks an AI model to answer one or more structured questions about data from previous steps — for example, scoring a lead or categorizing an inbound message. Unlike AI Agent, Classify always returns a value in the shape you defined, so it's suited for driving branches deterministically.
+
+<Note>
+**Prerequisite**: Classify runs on Twenty's evaluation model (Jev), which an admin must enable and configure with a TypeSafe AI API key. Without it, running this step fails.
+</Note>
 
 **Configuration**:
 - **Input**: The data to classify (e.g., a record or text from a previous step)
