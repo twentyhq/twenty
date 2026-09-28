@@ -19,6 +19,10 @@
 
 Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when upgrading Twenty apps.
 
+### Fixed
+
+- Device and keyboard shortcut utilities can be called without browser globals. `getUserDevice()` returns `unknown` when user-agent information is unavailable; shortcut helpers keep their `Ctrl` and space defaults. See [server rendering](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/docs/server-rendering.md) for package checks and runtime boundaries.
+
 ### Added
 
 - `twenty-ui/utilities` exports `useMediaQuery`, `MOBILE_MEDIA_QUERY`, and `TOUCH_DEVICE_MEDIA_QUERY`. `twenty-ui/testing` exports `overrideMediaQueryMatches`.

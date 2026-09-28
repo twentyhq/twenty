@@ -111,7 +111,16 @@
       "inputs": ["production"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsx scripts/checkOptionalDependencies.ts && tsx scripts/checkThemeExports.ts"
+        "command": "tsx scripts/checkOptionalDependencies.ts && tsx scripts/checkThemeExports.ts && tsx scripts/checkServerRendering.ts"
+      }
+    },
+    "test:package:packed": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/checkPackedServerRendering.ts"
       }
     },
     "clean": {
