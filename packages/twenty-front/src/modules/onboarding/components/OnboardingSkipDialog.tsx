@@ -12,14 +12,10 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledPopup = styled(Dialog.Popup)`
-  && {
-    align-items: center;
-    inline-size: 360px;
-    padding: ${themeCssVariables.spacing[6]};
-    position: relative;
-    text-align: center;
-  }
+const StyledHeader = styled(Dialog.Header)`
+  align-items: center;
+  position: relative;
+  text-align: center;
 `;
 
 const StyledCloseButton = styled.div`
@@ -29,27 +25,7 @@ const StyledCloseButton = styled.div`
 `;
 
 const StyledVisual = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[6]};
-`;
-
-const StyledTitle = styled(Dialog.Title)`
-  && {
-    margin-block-end: 0;
-  }
-`;
-
-const StyledActions = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 type OnboardingSkipDialogAction = {
@@ -94,29 +70,30 @@ export const OnboardingSkipDialog = ({
   return (
     <DialogInstance dialogId={dialogId} dismissible renderInDocumentBody>
       {({ container, backdrop, viewportProps, onKeyDown }) => (
-        <StyledPopup
+        <Dialog.Popup
           {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="compact"
           initialFocus={firstActionRef}
           data-globally-prevent-click-outside
         >
-          <StyledCloseButton>
-            <IconButton
-              variant="ghost"
-              size="sm"
-              aria-label={t`Close`}
-              onClick={() => closeDialog(dialogId)}
-            >
-              <IconX />
-            </IconButton>
-          </StyledCloseButton>
-          <StyledVisual>{visual}</StyledVisual>
-          <StyledText>
-            <StyledTitle>{title}</StyledTitle>
+          <StyledHeader>
+            <StyledCloseButton>
+              <IconButton
+                variant="ghost"
+                size="sm"
+                aria-label={t`Close`}
+                onClick={() => closeDialog(dialogId)}
+              >
+                <IconX />
+              </IconButton>
+            </StyledCloseButton>
+            <StyledVisual>{visual}</StyledVisual>
+            <Dialog.Title>{title}</Dialog.Title>
             {isDefined(description) && (
               <Dialog.Description>{description}</Dialog.Description>
             )}
-          </StyledText>
-          <StyledActions>
+          </StyledHeader>
+          <Dialog.Footer>
             {actions.map((action, index) => (
               <MainButton
                 key={action.label}
@@ -147,8 +124,8 @@ export const OnboardingSkipDialog = ({
             >
               {t`Skip anyway`}
             </Button>
-          </StyledActions>
-        </StyledPopup>
+          </Dialog.Footer>
+        </Dialog.Popup>
       )}
     </DialogInstance>
   );
