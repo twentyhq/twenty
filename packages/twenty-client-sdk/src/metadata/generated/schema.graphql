@@ -262,6 +262,7 @@ type LogicFunction {
   universalIdentifier: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+  canRunOnDemand: Boolean
 }
 
 enum LogicFunctionExecutionMode {
@@ -847,6 +848,8 @@ type Workspace {
   updatedAt: DateTime!
   allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  isCampaignClickTrackingEnabled: Boolean!
+  isCampaignOpenTrackingEnabled: Boolean!
   workspaceDiscoverability: WorkspaceDiscoverability!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
@@ -1173,6 +1176,7 @@ enum WidgetType {
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
   FORM_FIELD
+  CHAT_THREADS
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1206,7 +1210,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatThreadsConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1252,6 +1256,7 @@ enum WidgetConfigurationType {
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
   FORM_FIELD
+  CHAT_THREADS
 }
 
 """Format used to display the chart value"""
@@ -1424,6 +1429,10 @@ type CallRecordingSummaryConfiguration {
 }
 
 type CallRecordingTranscriptConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type ChatThreadsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -2069,6 +2078,7 @@ enum FeatureFlagKey {
   IS_EXECUTION_QUOTA_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
+  IS_CONVERSATIONS_TAB_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3137,6 +3147,7 @@ type CampaignAudiencePreviewDTO {
   hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
+  trackingRefused: Int!
   sendable: Int!
 }
 
@@ -3178,6 +3189,7 @@ enum MessageSuppressionReason {
   BOUNCE
   COMPLAINT
   UNSUBSCRIBE
+  TRACKING
 }
 
 enum MessageSuppressionSource {
@@ -4195,9 +4207,7 @@ type Mutation {
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
   deleteApplicationRegistration(id: String!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  deleteApplicationRegistrationVariable(id: String!): Boolean!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
@@ -5066,6 +5076,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  isCampaignClickTrackingEnabled: Boolean
   workspaceDiscoverability: WorkspaceDiscoverability
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
@@ -5109,14 +5120,6 @@ input UpdateApplicationRegistrationPayload {
   name: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-}
-
-input CreateApplicationRegistrationVariableInput {
-  applicationRegistrationId: String!
-  key: String!
-  value: String!
-  description: String
-  isSecret: Boolean
 }
 
 input UpdateApplicationRegistrationVariableInput {

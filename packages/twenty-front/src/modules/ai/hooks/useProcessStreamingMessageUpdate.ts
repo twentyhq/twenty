@@ -1,6 +1,8 @@
+import { useProcessConversationRecordAttachment } from '@/ai/hooks/useProcessConversationRecordAttachment';
 import { useProcessUIToolCallMessage } from '@/ai/hooks/useProcessUIToolCallMessage';
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { isSucceededAttachConversationToRecordToolPart } from '@/ai/utils/isSucceededAttachConversationToRecordToolPart';
 import { isUIToolCallMessage } from '@/ai/utils/isUIToolCallMessage';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,6 +21,9 @@ export const useProcessStreamingMessageUpdate = () => {
 
   const { processWorkspaceSetupCompletion } =
     useProcessWorkspaceSetupCompletion();
+
+  const { processConversationRecordAttachment } =
+    useProcessConversationRecordAttachment();
 
   const processStreamingMessageUpdate = (
     streamingMessage: ExtendedUIMessage,
@@ -53,6 +58,14 @@ export const useProcessStreamingMessageUpdate = () => {
 
     if (messageCompletesWorkspaceSetup) {
       processWorkspaceSetupCompletion(streamingMessage);
+    }
+
+    const messageAttachesConversationToRecord = streamingMessage.parts.some(
+      isSucceededAttachConversationToRecordToolPart,
+    );
+
+    if (messageAttachesConversationToRecord) {
+      processConversationRecordAttachment(streamingMessage);
     }
   };
 

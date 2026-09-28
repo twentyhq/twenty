@@ -66,4 +66,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Logs console`,
     description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
   },
+  [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: {
+    label: msg`Conversations tab`,
+    description: msg`Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces.`,
+  },
 };

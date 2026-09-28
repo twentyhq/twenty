@@ -19,6 +19,7 @@ import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/app
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -398,18 +399,21 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneById(
-    id: string,
-    ownerWorkspaceId: string,
-  ): Promise<ApplicationRegistrationEntity> {
+  async findOneById({
+    applicationRegistrationId,
+    ownerWorkspaceId,
+  }: {
+    applicationRegistrationId: string;
+    ownerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
       select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      where: { id, ownerWorkspaceId },
+      where: { id: applicationRegistrationId, ownerWorkspaceId },
     });
 
     if (!registration) {
       throw new ApplicationRegistrationException(
-        `Application registration with id ${id} not found`,
+        `Application registration with id ${applicationRegistrationId} not found`,
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
       );
     }
@@ -512,11 +516,15 @@ export class ApplicationRegistrationService {
     });
   }
 
-  async create(
-    input: CreateApplicationRegistrationInput,
-    ownerWorkspaceId: string,
-    createdByUserId: string | null,
-  ): Promise<{
+  async create({
+    input,
+    ownerWorkspaceId,
+    createdByUserId,
+  }: {
+    input: CreateApplicationRegistrationInput;
+    ownerWorkspaceId: string;
+    createdByUserId: string | null;
+  }): Promise<{
     applicationRegistration: ApplicationRegistrationEntity;
     clientSecret: string;
   }> {
@@ -576,7 +584,10 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    const existingRegistration = await this.findOneById(id, ownerWorkspaceId);
+    const existingRegistration = await this.findOneById({
+      applicationRegistrationId: id,
+      ownerWorkspaceId,
+    });
 
     await this.applyUpdate({ id, update });
 
@@ -585,7 +596,10 @@ export class ApplicationRegistrationService {
       existingRegistration,
     );
 
-    return this.findOneById(id, ownerWorkspaceId);
+    return this.findOneById({
+      applicationRegistrationId: id,
+      ownerWorkspaceId,
+    });
   }
 
   async updateGlobal(
@@ -772,24 +786,34 @@ export class ApplicationRegistrationService {
     );
   }
 
-  async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
-    const applicationRegistration = await this.findOneById(
-      id,
+  async delete({
+    applicationRegistrationId,
+    ownerWorkspaceId,
+  }: {
+    applicationRegistrationId: string;
+    ownerWorkspaceId: string;
+  }): Promise<boolean> {
+    const applicationRegistration = await this.findOneById({
+      applicationRegistrationId,
       ownerWorkspaceId,
-    );
+    });
 
     // Stored assets (logo, gallery images) go with the registration; deleting
     // them first also removes the bytes, which the row FK cascade cannot do.
     try {
-      await this.serverFileStorageService.deleteByApplicationRegistrationId(id);
+      await this.serverFileStorageService.deleteByApplicationRegistrationId(
+        applicationRegistrationId,
+      );
     } catch (error) {
       this.logger.error(
-        `Failed to delete server files for registration ${id}`,
+        `Failed to delete server files for registration ${applicationRegistrationId}`,
         error,
       );
     }
 
-    await this.applicationRegistrationRepository.delete(id);
+    await this.applicationRegistrationRepository.delete(
+      applicationRegistrationId,
+    );
 
     await this.invalidateMarketplaceAppsCache();
 
@@ -801,18 +825,24 @@ export class ApplicationRegistrationService {
     return true;
   }
 
-  async rotateClientSecret(
-    id: string,
-    ownerWorkspaceId: string,
-  ): Promise<string> {
-    await this.findOneById(id, ownerWorkspaceId);
+  async rotateClientSecret({
+    applicationRegistrationId,
+    ownerWorkspaceId,
+  }: {
+    applicationRegistrationId: string;
+    ownerWorkspaceId: string;
+  }): Promise<string> {
+    await this.findOneById({ applicationRegistrationId, ownerWorkspaceId });
 
     const { clientSecret, clientSecretHash } =
       await this.generateClientSecret();
 
-    await this.applicationRegistrationRepository.update(id, {
-      oAuthClientSecretHash: clientSecretHash,
-    });
+    await this.applicationRegistrationRepository.update(
+      applicationRegistrationId,
+      {
+        oAuthClientSecretHash: clientSecretHash,
+      },
+    );
 
     await this.invalidateMarketplaceAppsCache();
 
@@ -875,6 +905,19 @@ export class ApplicationRegistrationService {
     ) {
       this.logger.warn(
         `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} belongs to package ${expectedSourcePackage}`,
+      );
+
+      return null;
+    }
+
+    const reservedVariableNames =
+      findReservedVariableNamesInApplicationManifest(
+        params.manifest.application,
+      );
+
+    if (reservedVariableNames.length > 0) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: variable names are reserved: ${reservedVariableNames.join(', ')}`,
       );
 
       return null;
@@ -1063,11 +1106,14 @@ export class ApplicationRegistrationService {
     }));
   }
 
-  async getStats(
-    applicationRegistrationId: string,
-    ownerWorkspaceId: string,
-  ): Promise<ApplicationRegistrationStatsDTO> {
-    await this.findOneById(applicationRegistrationId, ownerWorkspaceId);
+  async getStats({
+    applicationRegistrationId,
+    ownerWorkspaceId,
+  }: {
+    applicationRegistrationId: string;
+    ownerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationStatsDTO> {
+    await this.findOneById({ applicationRegistrationId, ownerWorkspaceId });
 
     return this.computeStats(applicationRegistrationId);
   }
@@ -1288,10 +1334,10 @@ export class ApplicationRegistrationService {
     targetWorkspaceSubdomain: string;
     currentOwnerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.findOneById(
-      params.applicationRegistrationId,
-      params.currentOwnerWorkspaceId,
-    );
+    const registration = await this.findOneById({
+      applicationRegistrationId: params.applicationRegistrationId,
+      ownerWorkspaceId: params.currentOwnerWorkspaceId,
+    });
 
     const targetWorkspace = await this.workspaceRepository.findOne({
       where: { subdomain: params.targetWorkspaceSubdomain },
