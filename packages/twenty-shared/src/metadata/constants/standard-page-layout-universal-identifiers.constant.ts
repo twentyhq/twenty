@@ -89,7 +89,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       files: {
         title: 'Files',
         widgets: {
-          notes: 'Notes',
           files: 'Files',
         },
       },
@@ -99,11 +98,10 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           emails: 'Emails',
         },
       },
-      messages: {
-        title: 'Messages',
+      conversations: {
+        title: 'Conversations',
         widgets: {
           conversations: 'Conversations',
-          emails: 'Emails',
         },
       },
       calendar: {
@@ -147,7 +145,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       files: {
         title: 'Files',
         widgets: {
-          notes: 'Notes',
           files: 'Files',
         },
       },
@@ -157,11 +154,10 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           emails: 'Emails',
         },
       },
-      messages: {
-        title: 'Messages',
+      conversations: {
+        title: 'Conversations',
         widgets: {
           conversations: 'Conversations',
-          emails: 'Emails',
         },
       },
       calendar: {
@@ -206,7 +202,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       files: {
         title: 'Files',
         widgets: {
-          notes: 'Notes',
           files: 'Files',
         },
       },
@@ -216,11 +211,10 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           emails: 'Emails',
         },
       },
-      messages: {
-        title: 'Messages',
+      conversations: {
+        title: 'Conversations',
         widgets: {
           conversations: 'Conversations',
-          emails: 'Emails',
         },
       },
       calendar: {

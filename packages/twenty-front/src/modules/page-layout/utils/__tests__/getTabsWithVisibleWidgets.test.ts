@@ -444,8 +444,8 @@ describe('getTabsWithVisibleWidgets', () => {
     });
   });
   describe('with feature flags', () => {
-    const FLAG_ON_EXPRESSION = 'featureFlags.IS_MESSAGES_TAB_ENABLED';
-    const FLAG_OFF_EXPRESSION = 'not featureFlags.IS_MESSAGES_TAB_ENABLED';
+    const FLAG_ON_EXPRESSION = 'featureFlags.IS_CONVERSATIONS_TAB_ENABLED';
+    const FLAG_OFF_EXPRESSION = 'not featureFlags.IS_CONVERSATIONS_TAB_ENABLED';
 
     const createGatedWidget = (
       id: string,
@@ -496,7 +496,7 @@ describe('getTabsWithVisibleWidgets', () => {
         context: buildWidgetVisibilityContext({
           isMobile: false,
           isInSidePanel: false,
-          featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+          featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
         }),
       });
 

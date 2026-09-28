@@ -14,11 +14,11 @@ describe('expressionToOptionId', () => {
 
   it('should ignore the feature flag condition a layout ships with', () => {
     expect(
-      expressionToOptionId('not featureFlags.IS_MESSAGES_TAB_ENABLED'),
+      expressionToOptionId('not featureFlags.IS_CONVERSATIONS_TAB_ENABLED'),
     ).toBe(VISIBILITY_ANY_DEVICE);
     expect(
       expressionToOptionId(
-        '(not featureFlags.IS_MESSAGES_TAB_ENABLED) and (device == "MOBILE")',
+        '(not featureFlags.IS_CONVERSATIONS_TAB_ENABLED) and (device == "MOBILE")',
       ),
     ).toBe(VISIBILITY_MOBILE);
   });

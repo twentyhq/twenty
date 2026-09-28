@@ -11,14 +11,15 @@ const computeStandardFlatEntityMaps = (isWorkspaceCreation?: boolean) =>
     isWorkspaceCreation,
   }).allFlatEntityMaps;
 
-const COMPANY_MESSAGES_TAB =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.messages;
+const COMPANY_CONVERSATIONS_TAB =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+    .conversations;
 
 // Upgrades from before 2.31 backfill record pages from these definitions while
 // the widget type enum does not hold CHAT_THREADS yet: a single such widget in
 // them fails the whole upgrade.
 describe('widget types only workspace creation builds', () => {
-  it('should leave chat threads widgets out of what upgrade commands build', () => {
+  it('should leave chat threads widgets, and the tab they fill, out of what upgrade commands build', () => {
     const allFlatEntityMaps = computeStandardFlatEntityMaps();
 
     const chatThreadsWidgets = Object.values(
@@ -28,9 +29,9 @@ describe('widget types only workspace creation builds', () => {
     expect(chatThreadsWidgets).toEqual([]);
     expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        COMPANY_MESSAGES_TAB.universalIdentifier
-      ]?.widgetUniversalIdentifiers,
-    ).toEqual([COMPANY_MESSAGES_TAB.widgets.emails.universalIdentifier]);
+        COMPANY_CONVERSATIONS_TAB.universalIdentifier
+      ],
+    ).toBeUndefined();
   });
 
   it('should build them for a new workspace', () => {
@@ -38,16 +39,15 @@ describe('widget types only workspace creation builds', () => {
 
     expect(
       allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        COMPANY_MESSAGES_TAB.widgets.conversations.universalIdentifier
+        COMPANY_CONVERSATIONS_TAB.widgets.conversations.universalIdentifier
       ]?.type,
     ).toBe(WidgetType.CHAT_THREADS);
     expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        COMPANY_MESSAGES_TAB.universalIdentifier
+        COMPANY_CONVERSATIONS_TAB.universalIdentifier
       ]?.widgetUniversalIdentifiers,
     ).toEqual([
-      COMPANY_MESSAGES_TAB.widgets.conversations.universalIdentifier,
-      COMPANY_MESSAGES_TAB.widgets.emails.universalIdentifier,
+      COMPANY_CONVERSATIONS_TAB.widgets.conversations.universalIdentifier,
     ]);
   });
 });

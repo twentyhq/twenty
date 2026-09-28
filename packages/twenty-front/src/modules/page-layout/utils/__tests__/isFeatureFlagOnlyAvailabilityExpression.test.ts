@@ -2,16 +2,16 @@ import { isFeatureFlagOnlyAvailabilityExpression } from '@/page-layout/utils/isF
 
 describe('isFeatureFlagOnlyAvailabilityExpression', () => {
   it.each([
-    'featureFlags.IS_MESSAGES_TAB_ENABLED',
-    'not featureFlags.IS_MESSAGES_TAB_ENABLED',
-    'featureFlags.IS_MESSAGES_TAB_ENABLED and not featureFlags.IS_RECORD_SHARING_ENABLED',
+    'featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
+    'not featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
+    'featureFlags.IS_CONVERSATIONS_TAB_ENABLED and not featureFlags.IS_RECORD_SHARING_ENABLED',
   ])('should accept %s', (expression) => {
     expect(isFeatureFlagOnlyAvailabilityExpression(expression)).toBe(true);
   });
 
   it.each([
     'device == "MOBILE"',
-    'device == "DESKTOP" and featureFlags.IS_MESSAGES_TAB_ENABLED',
+    'device == "DESKTOP" and featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
     'true',
     'featureFlags.',
     '',

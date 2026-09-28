@@ -38,7 +38,7 @@ describe('getWidgetMoveWithinTab', () => {
         widgets,
         widgetId: 'widget-b',
         direction: 'up',
-        featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+        featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
       }),
     ).toEqual({ fromIndex: 2, toIndex: 1 });
   });

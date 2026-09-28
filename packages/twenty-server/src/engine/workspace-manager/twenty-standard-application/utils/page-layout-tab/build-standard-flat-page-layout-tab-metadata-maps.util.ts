@@ -1,3 +1,5 @@
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -30,6 +32,18 @@ export const buildStandardFlatPageLayoutTabMetadataMaps = ({
 
     for (const tabTitle of Object.keys(layout.tabs)) {
       const tab = layout.tabs[tabTitle];
+      const tabWidgets = Object.values(tab.widgets);
+
+      // A tab only excluded widgets fill would reach the page empty.
+      const isFilledOnlyWithExcludedWidgets =
+        isNonEmptyArray(tabWidgets) &&
+        tabWidgets.every(
+          ({ type }) => isDefined(type) && excludedWidgetTypes.includes(type),
+        );
+
+      if (isFilledOnlyWithExcludedWidgets) {
+        continue;
+      }
 
       allPageLayoutTabMetadatas.push(
         createStandardPageLayoutTabFlatMetadata({

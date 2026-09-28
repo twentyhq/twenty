@@ -5,5 +5,5 @@ import { FeatureFlagKey, WidgetType } from '~/generated-metadata/graphql';
 export const WIDGET_TYPE_REQUIRED_FEATURE_FLAG: Partial<
   Record<WidgetType, FeatureFlagKey>
 > = {
-  [WidgetType.CHAT_THREADS]: FeatureFlagKey.IS_MESSAGES_TAB_ENABLED,
+  [WidgetType.CHAT_THREADS]: FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
 };

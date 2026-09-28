@@ -71,10 +71,10 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: false,
-      featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+      featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
     });
 
-    expect(result.featureFlags).toEqual({ IS_MESSAGES_TAB_ENABLED: true });
+    expect(result.featureFlags).toEqual({ IS_CONVERSATIONS_TAB_ENABLED: true });
   });
 
   it('should expose an empty selection when there is no target record', () => {

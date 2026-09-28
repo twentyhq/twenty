@@ -2,7 +2,7 @@ import { replaceViewerConditionInAvailabilityExpression } from '@/page-layout/ut
 import { splitAvailabilityExpression } from '@/page-layout/utils/splitAvailabilityExpression';
 
 describe('replaceViewerConditionInAvailabilityExpression', () => {
-  const FLAG_CONDITION = 'not featureFlags.IS_MESSAGES_TAB_ENABLED';
+  const FLAG_CONDITION = 'not featureFlags.IS_CONVERSATIONS_TAB_ENABLED';
 
   it('should keep the feature flag condition next to a new viewer condition', () => {
     const expression = replaceViewerConditionInAvailabilityExpression({
@@ -11,7 +11,7 @@ describe('replaceViewerConditionInAvailabilityExpression', () => {
     });
 
     expect(expression).toBe(
-      '(not featureFlags.IS_MESSAGES_TAB_ENABLED) and (device == "DESKTOP")',
+      '(not featureFlags.IS_CONVERSATIONS_TAB_ENABLED) and (device == "DESKTOP")',
     );
     expect(splitAvailabilityExpression(expression)).toEqual({
       featureFlagCondition: FLAG_CONDITION,

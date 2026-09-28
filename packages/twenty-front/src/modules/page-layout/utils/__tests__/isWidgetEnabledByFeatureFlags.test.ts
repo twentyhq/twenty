@@ -14,13 +14,13 @@ describe('isWidgetEnabledByFeatureFlags', () => {
     expect(
       isWidgetEnabledByFeatureFlags({
         widget,
-        featureFlags: { IS_MESSAGES_TAB_ENABLED: false },
+        featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: false },
       }),
     ).toBe(false);
     expect(
       isWidgetEnabledByFeatureFlags({
         widget,
-        featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+        featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
       }),
     ).toBe(true);
   });
@@ -28,12 +28,13 @@ describe('isWidgetEnabledByFeatureFlags', () => {
   it('should evaluate an expression that reads only feature flags', () => {
     const flagOn = {
       type: WidgetType.EMAILS,
-      conditionalAvailabilityExpression: 'featureFlags.IS_MESSAGES_TAB_ENABLED',
+      conditionalAvailabilityExpression:
+        'featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
     };
     const flagOff = {
       type: WidgetType.EMAILS,
       conditionalAvailabilityExpression:
-        'not featureFlags.IS_MESSAGES_TAB_ENABLED',
+        'not featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
     };
 
     expect(
@@ -45,13 +46,13 @@ describe('isWidgetEnabledByFeatureFlags', () => {
     expect(
       isWidgetEnabledByFeatureFlags({
         widget: flagOn,
-        featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+        featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
       }),
     ).toBe(true);
     expect(
       isWidgetEnabledByFeatureFlags({
         widget: flagOff,
-        featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+        featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
       }),
     ).toBe(false);
   });
@@ -60,7 +61,7 @@ describe('isWidgetEnabledByFeatureFlags', () => {
     const widget = {
       type: WidgetType.EMAILS,
       conditionalAvailabilityExpression:
-        '(not featureFlags.IS_MESSAGES_TAB_ENABLED) and (device == "MOBILE")',
+        '(not featureFlags.IS_CONVERSATIONS_TAB_ENABLED) and (device == "MOBILE")',
     };
 
     expect(isWidgetEnabledByFeatureFlags({ widget, featureFlags: {} })).toBe(
@@ -69,7 +70,7 @@ describe('isWidgetEnabledByFeatureFlags', () => {
     expect(
       isWidgetEnabledByFeatureFlags({
         widget,
-        featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+        featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
       }),
     ).toBe(false);
   });
@@ -80,7 +81,7 @@ describe('isWidgetEnabledByFeatureFlags', () => {
         widget: {
           type: WidgetType.EMAILS,
           conditionalAvailabilityExpression:
-            'device == "DESKTOP" and featureFlags.IS_MESSAGES_TAB_ENABLED',
+            'device == "DESKTOP" and featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
         },
         featureFlags: {},
       }),

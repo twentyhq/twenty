@@ -36,7 +36,8 @@ export const makeFlagGatedWidget = (
   tabId = 'tab-1',
 ): PageLayoutWidget => ({
   ...makeWidget(id, index, tabId),
-  conditionalAvailabilityExpression: 'featureFlags.IS_MESSAGES_TAB_ENABLED',
+  conditionalAvailabilityExpression:
+    'featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
 });
 
 export const makeTab = (

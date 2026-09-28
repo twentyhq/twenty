@@ -28,7 +28,7 @@ describe('isPageLayoutTabHiddenByFeatureFlags', () => {
         persistedTabs: [
           makeTab('tab-1', [makeFlagGatedWidget('flag-gated-widget', 0)]),
         ],
-        featureFlags: { IS_MESSAGES_TAB_ENABLED: true },
+        featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
       }),
     ).toBe(false);
   });
