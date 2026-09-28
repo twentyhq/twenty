@@ -8,6 +8,7 @@ import { type MetadataEntityComparablePropertyName } from 'src/engine/metadata-m
 export const WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME: Partial<{
   [P in AllMetadataName]: MetadataEntityComparablePropertyName<P>[];
 }> = {
+  objectMetadata: ['validationRules'],
   pageLayout: ['isFirstTabPinned'],
   skill: ['isActive'],
   view: ['createdByUserWorkspaceId'],

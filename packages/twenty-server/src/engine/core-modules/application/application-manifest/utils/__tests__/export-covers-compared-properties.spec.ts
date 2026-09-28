@@ -360,7 +360,10 @@ const EXPORTED_KINDS: ExportedKind[] = [
       }),
     ),
     renamedProperties: {},
-    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
+    workspaceLocalProperties: [
+      ...WORKSPACE_LOCAL_PROPERTIES,
+      'validationRules',
+    ],
     knownGaps: {},
   },
   {
