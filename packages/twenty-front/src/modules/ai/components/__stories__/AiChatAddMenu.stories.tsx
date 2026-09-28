@@ -113,6 +113,25 @@ export const InsertRecord: Story = {
   },
 };
 
+export const IgnoreEnterOnOutdatedRecords: Story = {
+  play: async ({ canvasElement }) => {
+    const menu = await openAddMenu(canvasElement);
+
+    await userEvent.click(menu.getByRole('menuitem', { name: /Records/ }));
+    await menu.findByRole('button', { name: /Jeffery Griffin/ });
+
+    const searchbox = menu.getByRole('searchbox', { name: 'Search records' });
+    await userEvent.type(searchbox, 'ter{Enter}');
+
+    await expect(searchbox).toHaveFocus();
+    await expect(
+      within(within(canvasElement).getByRole('textbox')).queryByText(
+        'Jeffery Griffin',
+      ),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const InsertSkill: Story = {
   play: async ({ canvasElement }) => {
     const menu = await openAddMenu(canvasElement);
