@@ -37,3 +37,9 @@ export const Default: Story = {
     await expect(handleClick).toHaveBeenCalledTimes(1);
   },
 };
+
+export const Secondary: Story = {
+  args: {
+    color: 'secondary',
+  },
+};

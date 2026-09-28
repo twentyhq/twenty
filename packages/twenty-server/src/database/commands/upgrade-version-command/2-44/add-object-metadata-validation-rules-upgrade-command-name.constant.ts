@@ -1,2 +1,2 @@
 export const ADD_OBJECT_METADATA_VALIDATION_RULES_UPGRADE_COMMAND_NAME =
-  '2.44.0_AddObjectMetadataValidationRulesFastInstanceCommand_1790578013110';
+  '2.44.0_AddObjectMetadataValidationRulesFastInstanceCommand_1790601733110';

@@ -2301,8 +2301,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment {
     return {
-      isLegacyRecordAccessOpen:
-        this.options.internalContext.isLegacyRecordAccessOpen,
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
