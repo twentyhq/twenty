@@ -1,7 +1,7 @@
 import { VerifyCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790590808102-verify-common-record-sharing.command';
 import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790541986177-link-chat-message-senders-to-workspace-members.command';
+import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790591899563-link-chat-message-senders-to-workspace-members.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
