@@ -147,9 +147,7 @@ describe('MentionTag', () => {
         }),
       );
 
-      expect(editor.getText()).toBe(
-        '[[record:opportunity:test-id:Big Deal]] ',
-      );
+      expect(editor.getText()).toBe('[[record:opportunity:test-id:Big Deal]] ');
     });
   });
 
