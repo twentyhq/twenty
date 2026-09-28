@@ -184,6 +184,7 @@ export interface LogicFunction {
     universalIdentifier?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    canRunOnDemand?: Scalars['Boolean']
     __typename: 'LogicFunction'
 }
 
@@ -3944,6 +3945,7 @@ export interface LogicFunctionGenqlSelection{
     universalIdentifier?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    canRunOnDemand?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

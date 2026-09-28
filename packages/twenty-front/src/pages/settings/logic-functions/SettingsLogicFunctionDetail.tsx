@@ -71,6 +71,8 @@ export const SettingsLogicFunctionDetail = () => {
     logicFunctionId,
   });
 
+  const canTestFunction = logicFunction?.canRunOnDemand ?? false;
+
   const handleTestFunction = async () => {
     navigate(
       { search: location.search, hash: '#test' },
@@ -88,14 +90,20 @@ export const SettingsLogicFunctionDetail = () => {
       hide: isReadonly,
     },
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
-    { id: 'test', title: t`Test`, Icon: IconPlayerPlay },
+    {
+      id: 'test',
+      title: t`Test`,
+      Icon: IconPlayerPlay,
+      disabled: !canTestFunction,
+      hide: !canTestFunction,
+    },
     { id: 'triggers', title: t`Triggers`, Icon: IconBolt },
   ];
 
   const isEditorTab = activeTabId === 'editor';
   const isTriggersTab = activeTabId === 'triggers';
   const isSettingsTab = activeTabId === 'settings';
-  const isTestTab = activeTabId === 'test';
+  const isTestTab = activeTabId === 'test' && canTestFunction;
 
   const breadcrumbLinks = isDefined(applicationId)
     ? (() => {

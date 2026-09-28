@@ -543,6 +543,9 @@ export default {
             "updatedAt": [
                 4
             ],
+            "canRunOnDemand": [
+                8
+            ],
             "__typename": [
                 1
             ]
