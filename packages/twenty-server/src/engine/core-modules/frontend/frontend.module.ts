@@ -26,14 +26,12 @@ export class FrontendModule implements OnModuleInit {
     private readonly frontendService: FrontendService,
   ) {}
 
-  async onModuleInit() {
+  onModuleInit() {
     const adapter = this.httpAdapterHost.httpAdapter;
 
     if (!this.frontendService.isEnabled || !isDefined(adapter)) {
       return;
     }
-
-    await this.frontendService.initialize();
 
     const serveStatic = express.static(this.frontendService.frontPath, {
       index: false,

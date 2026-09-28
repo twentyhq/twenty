@@ -378,22 +378,25 @@ describe('frontend HTML delivery', () => {
 
     beforeEach(async () => {
       await app.close();
-      jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
       fetchTemplate = jest
         .spyOn(globalThis, 'fetch')
         .mockImplementation(async () => new Response(remoteTemplate));
+      await createApplication(indexUrl);
     });
 
-    it('fetches once at startup and serves documents without another origin request', async () => {
-      await createApplication(indexUrl);
+    it('fetches the current HTML per document and applies each workspace policy', async () => {
+      expect(fetchTemplate).not.toHaveBeenCalled();
       for (const host of ['customer.twenty.test', 'other.twenty.test']) {
+        fetchTemplate.mockResolvedValueOnce(
+          new Response(`<head></head><body>Latest ${host}</body>`),
+        );
         const response = await request(app.getHttpServer())
           .get('/')
           .set('Host', host)
           .set('X-Forwarded-Proto', 'https')
           .set('Accept', 'text/html')
           .expect(200);
-        expect(response.text).toContain('Remote release');
+        expect(response.text).toContain(`Latest ${host}`);
         expect(response.text).toContain('twenty-client-config');
         expect(response.headers['cache-control']).toBe('no-store');
         expect(
@@ -402,42 +405,15 @@ describe('frontend HTML delivery', () => {
           ),
         ).toBe(host === 'customer.twenty.test');
       }
-      expect(fetchTemplate).toHaveBeenCalledTimes(1);
+      expect(fetchTemplate).toHaveBeenCalledTimes(2);
       expect(fetchTemplate).toHaveBeenCalledWith(indexUrl, {
         signal: expect.any(AbortSignal),
       });
     });
 
-    it('refreshes the template while resolving configuration and framing policy for every response', async () => {
-      await createApplication(indexUrl);
-      fetchTemplate.mockResolvedValueOnce(
-        new Response('<head></head><body>Next release</body>'),
-      );
-      await jest.advanceTimersByTimeAsync(60_000);
-      getClientConfig.mockResolvedValue({
-        ...config,
-        frontDomain: 'updated.twenty.test',
-      });
-      resolveWorkspaceAndPublicDomain.mockResolvedValue({
-        workspace: { allowedIframeOrigins: [] },
-        isIsolatedOrigin: false,
-      });
-      const response = await request(app.getHttpServer())
-        .get('/')
-        .set('Host', 'customer.twenty.test')
-        .set('X-Forwarded-Proto', 'https')
-        .set('Accept', 'text/html')
-        .expect(200);
-      expect(response.text).toContain('Next release');
-      expect(response.text).toContain('updated.twenty.test');
-      expect(response.headers['x-frame-options']).toBe('SAMEORIGIN');
-      expect(fetchTemplate).toHaveBeenCalledTimes(2);
-    });
-
     it.each(['network', 'http', 'invalid HTML'])(
-      'retains the last good template after a %s refresh failure and retries later',
+      'returns 503 on %s failure and recovers on the next request',
       async (failure) => {
-        await createApplication(indexUrl);
         if (failure === 'network') {
           fetchTemplate.mockRejectedValueOnce(new Error('Origin unavailable'));
         } else {
@@ -447,33 +423,21 @@ describe('frontend HTML delivery', () => {
             }),
           );
         }
-        await jest.advanceTimersByTimeAsync(60_000);
         const response = await request(app.getHttpServer())
           .get('/')
           .set('Accept', 'text/html')
-          .expect(200);
-        expect(response.text).toContain('Remote release');
-        fetchTemplate.mockResolvedValueOnce(
-          new Response('<head></head><body>Recovered release</body>'),
-        );
-        await jest.advanceTimersByTimeAsync(60_000);
+          .expect(503);
+        expect(response.headers['cache-control']).toBe('no-store');
+        expect(response.headers['x-frame-options']).toBe('SAMEORIGIN');
         const recovered = await request(app.getHttpServer())
           .get('/')
           .set('Accept', 'text/html')
           .expect(200);
-        expect(recovered.text).toContain('Recovered release');
+        expect(recovered.text).toContain('Remote release');
       },
     );
 
-    it('does not initialize the API with no usable remote template', async () => {
-      fetchTemplate.mockRejectedValueOnce(new Error('Origin unavailable'));
-      await expect(createApplication(indexUrl)).rejects.toThrow(
-        'Origin unavailable',
-      );
-    });
-
-    it('times out an unresponsive origin during startup', async () => {
-      jest.useRealTimers();
+    it('bounds the wait for an unresponsive origin', async () => {
       fetchTemplate.mockImplementationOnce(
         async (_url, options) =>
           new Promise((_resolve, reject) => {
@@ -482,42 +446,19 @@ describe('frontend HTML delivery', () => {
             );
           }),
       );
-      await expect(createApplication(indexUrl)).rejects.toThrow('timeout');
+      await request(app.getHttpServer())
+        .get('/')
+        .set('Accept', 'text/html')
+        .expect(503);
     }, 10_000);
 
-    it('rejects malformed HTML on startup', async () => {
-      fetchTemplate.mockResolvedValueOnce(new Response('Not an HTML document'));
-      await expect(createApplication(indexUrl)).rejects.toThrow(
-        'closing head tag',
-      );
-    });
-
-    it('stops refreshing when the application closes', async () => {
-      await createApplication(indexUrl);
-      await app.close();
-      await jest.advanceTimersByTimeAsync(60_000);
-      expect(fetchTemplate).toHaveBeenCalledTimes(1);
-    });
-
-    it('does not fetch remote HTML in a worker or CLI context', async () => {
-      const module = await Test.createTestingModule({
-        imports: [FrontendModule],
-      })
-        .overrideProvider(FrontendService)
-        .useValue(
-          new FrontendService(
-            { getClientConfig } as unknown as ClientConfigService,
-            {
-              resolveWorkspaceAndPublicDomain,
-            } as unknown as WorkspaceDomainsService,
-            directory,
-            { get: () => indexUrl } as unknown as TwentyConfigService,
-          ),
-        )
-        .compile();
-      await module.init();
+    it('does not fetch HTML for health checks or missing API routes', async () => {
+      await request(app.getHttpServer()).get('/healthz').expect(200);
+      await request(app.getHttpServer())
+        .get('/graphql/missing')
+        .set('Accept', 'text/html')
+        .expect(404);
       expect(fetchTemplate).not.toHaveBeenCalled();
-      await module.close();
     });
   });
 });

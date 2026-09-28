@@ -1150,7 +1150,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Origin URL for the frontend HTML template. When set, fetch at startup and refresh every minute instead of reading bundled HTML.',
+      'Origin URL to fetch the current frontend HTML for each document request. Uses bundled HTML when unset.',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })

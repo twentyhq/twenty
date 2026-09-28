@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  type OnModuleDestroy,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
@@ -20,11 +15,10 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 
 @Injectable()
-export class FrontendService implements OnModuleDestroy {
+export class FrontendService {
   private readonly logger = new Logger(FrontendService.name);
-  private template: string | undefined;
+  private readonly template: string | undefined;
   private readonly indexUrl: string | undefined;
-  private refreshInterval: ReturnType<typeof setInterval> | undefined;
 
   constructor(
     private readonly clientConfigService: ClientConfigService,
@@ -53,32 +47,16 @@ export class FrontendService implements OnModuleDestroy {
     return isDefined(this.template) || isDefined(this.indexUrl);
   }
 
-  async initialize(): Promise<void> {
+  private async getTemplate(): Promise<string> {
     if (!isDefined(this.indexUrl)) {
-      return;
+      if (!isDefined(this.template)) {
+        throw new Error('Frontend HTML is not configured');
+      }
+
+      return this.template;
     }
 
-    await this.refreshTemplate(this.indexUrl);
-
-    const indexUrl = this.indexUrl;
-
-    this.refreshInterval = setInterval(() => {
-      void this.refreshTemplate(indexUrl).catch((error: unknown) => {
-        this.logger.warn(
-          'Unable to refresh frontend HTML; retaining last template',
-          error,
-        );
-      });
-    }, 60_000);
-    this.refreshInterval.unref();
-  }
-
-  onModuleDestroy(): void {
-    clearInterval(this.refreshInterval);
-  }
-
-  private async refreshTemplate(indexUrl: string): Promise<void> {
-    const response = await fetch(indexUrl, {
+    const response = await fetch(this.indexUrl, {
       signal: AbortSignal.timeout(5_000),
     });
 
@@ -92,7 +70,7 @@ export class FrontendService implements OnModuleDestroy {
       throw new Error('Frontend index.html must contain a closing head tag');
     }
 
-    this.template = template;
+    return template;
   }
 
   async serveDocument(
@@ -100,7 +78,7 @@ export class FrontendService implements OnModuleDestroy {
     response: Response,
     next: NextFunction,
   ): Promise<void> {
-    if (!isDefined(this.template) || !isFrontendDocumentRequest(request)) {
+    if (!this.isEnabled || !isFrontendDocumentRequest(request)) {
       next();
 
       return;
@@ -117,8 +95,9 @@ export class FrontendService implements OnModuleDestroy {
     );
 
     try {
-      const [clientConfig, { workspace, isIsolatedOrigin }] = await Promise.all(
-        [
+      const [template, clientConfig, { workspace, isIsolatedOrigin }] =
+        await Promise.all([
+          this.getTemplate(),
           this.clientConfigService.getClientConfig(),
           this.workspaceDomainsService
             .resolveWorkspaceAndPublicDomain(getRequestBaseUrl(request))
@@ -129,8 +108,7 @@ export class FrontendService implements OnModuleDestroy {
 
               throw error;
             }),
-        ],
-      );
+        ]);
 
       if (isIsolatedOrigin) {
         response.status(404).end();
@@ -150,9 +128,7 @@ export class FrontendService implements OnModuleDestroy {
         response.removeHeader('X-Frame-Options');
       }
 
-      response
-        .type('html')
-        .end(renderFrontendHtml(this.template, clientConfig));
+      response.type('html').end(renderFrontendHtml(template, clientConfig));
     } catch (error) {
       this.logger.error('Unable to serve frontend document', error);
       response
