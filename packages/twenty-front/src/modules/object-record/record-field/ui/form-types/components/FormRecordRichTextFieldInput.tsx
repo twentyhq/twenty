@@ -151,6 +151,13 @@ export const FormRecordRichTextFieldInput = ({
     }
   }, [hasUnreadableStoredValue, enqueueToast, t]);
 
+  useEffect(() => {
+    if (isMobile && isFullScreen) {
+      setIsFullScreen(false);
+      removeFocusItemFromFocusStackById({ focusId });
+    }
+  }, [isMobile, isFullScreen, focusId, removeFocusItemFromFocusStackById]);
+
   const handleFullScreenChange = (isFullScreenOpen: boolean) => {
     flushSync(() => {
       setIsFullScreen(isFullScreenOpen);
