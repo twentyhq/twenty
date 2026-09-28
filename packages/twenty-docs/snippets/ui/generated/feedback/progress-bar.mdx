@@ -39,10 +39,30 @@
   Called when the countdown animation ends.
 </ParamField>
 
+<ParamField body="onGrowInComplete" type="(() =&gt; void)">
+  Called when the grow-in animation ends.
+</ParamField>
+
 <ParamField body="value" type="number" required>
   Current progress from 0 to 100. Also supplies the accessible value during a countdown.
 </ParamField>
 
 <ParamField body="withBorderRadius" type="boolean" default="false">
   Rounds the track and indicator corners.
+</ParamField>
+
+<ParamField body="withGlint" type="boolean" default="false">
+  Sweeps a highlight across the filled bar each time the value changes.
+</ParamField>
+
+<ParamField body="withGrowIn" type="boolean" default="false">
+  Grows the bar in from zero width when it mounts.
+</ParamField>
+
+<ParamField body="withMinimumFillWidth" type="boolean" default="true">
+  Keeps a small visible fill for any value above zero.
+</ParamField>
+
+<ParamField body="withSpringFill" type="boolean" default="false">
+  Animates value changes with a spring that slightly overshoots the target.
 </ParamField>

@@ -208,6 +208,13 @@
         "description": "Called when the countdown animation ends."
       },
       {
+        "name": "onGrowInComplete",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when the grow-in animation ends."
+      },
+      {
         "name": "value",
         "type": "number",
         "required": true,
@@ -220,6 +227,34 @@
         "required": false,
         "defaultValue": "false",
         "description": "Rounds the track and indicator corners."
+      },
+      {
+        "name": "withGlint",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Sweeps a highlight across the filled bar each time the value changes."
+      },
+      {
+        "name": "withGrowIn",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Grows the bar in from zero width when it mounts."
+      },
+      {
+        "name": "withMinimumFillWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Keeps a small visible fill for any value above zero."
+      },
+      {
+        "name": "withSpringFill",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Animates value changes with a spring that slightly overshoots the target."
       }
     ]
   },
@@ -5755,6 +5790,13 @@
         "required": false,
         "defaultValue": null,
         "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
+      },
+      {
+        "name": "withExitAnimation",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fades and slides the popup out when it closes instead of hiding it at once."
       }
     ],
     "parts": [
@@ -6064,6 +6106,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Inline styles for the popup."
+          },
+          {
+            "name": "withExitAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Fades and slides the popup out when it closes instead of hiding it at once."
           }
         ]
       },
