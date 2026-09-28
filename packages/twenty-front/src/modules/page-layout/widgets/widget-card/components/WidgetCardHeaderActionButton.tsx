@@ -4,9 +4,7 @@ import { type IconComponent } from 'twenty-ui/icon';
 type WidgetCardHeaderActionButtonProps = {
   Icon: IconComponent;
   label: string;
-  // Optional so the button can act as a dropdown trigger, where the dropdown
-  // owns the click handling.
-  onClick?: () => void;
+  onClick: () => void;
   disabled?: boolean;
 };
 

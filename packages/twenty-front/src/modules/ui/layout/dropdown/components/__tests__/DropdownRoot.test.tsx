@@ -1,3 +1,4 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -18,7 +19,8 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { Dropdown } from 'twenty-ui/components';
+import { StrictMode, useRef } from 'react';
+import { Dropdown, type DropdownOpenChangeDetails } from 'twenty-ui/components';
 
 const BACKGROUND_FOCUS_ITEM: FocusStackItem = {
   focusId: 'record-page',
@@ -63,6 +65,21 @@ const SaveButton = () => {
   return <button onClick={() => closeDropdown()}>Save</button>;
 };
 
+const GroupRenamePanel = () => {
+  const groupHeaderRef = useRef<HTMLParagraphElement>(null);
+
+  return (
+    <>
+      <p ref={groupHeaderRef}>New group</p>
+      <DropdownRoot dropdownId="rename-dropdown" type="panel">
+        <DropdownContent anchor={groupHeaderRef} aria-label="Rename group">
+          <input aria-label="Group name" />
+        </DropdownContent>
+      </DropdownRoot>
+    </>
+  );
+};
+
 const DropdownOwners = ({
   isInnerOwnerVisible,
 }: {
@@ -84,14 +101,16 @@ const DropdownOwners = ({
 );
 
 describe('DropdownRoot', () => {
-  it('updates focus and global shortcuts before notifying opening and dismissal', async () => {
+  it('notifies the reason before updating focus and global shortcuts', async () => {
     const user = userEvent.setup();
     const store = createTestStore();
-    const onOpenChange = jest.fn((open: boolean) => ({
-      open,
-      focusStack: store.get(focusStackState.atom),
-      globalHotkeysConfig: store.get(currentGlobalHotkeysConfigSelector.atom),
-    }));
+    const onOpenChange = jest.fn(
+      (open: boolean, eventDetails: DropdownOpenChangeDetails) => ({
+        open,
+        reason: eventDetails.reason,
+        focusStack: store.get(focusStackState.atom),
+      }),
+    );
 
     render(
       <JotaiProvider store={store}>
@@ -108,38 +127,46 @@ describe('DropdownRoot', () => {
       </JotaiProvider>,
     );
 
-    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
-
     const trigger = screen.getByRole('button', { name: 'Actions' });
 
     await user.click(trigger);
 
     expect(screen.getByRole('menu', { name: 'Actions' })).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveLastReturnedWith({
       open: true,
-      focusStack: [
-        BACKGROUND_FOCUS_ITEM,
-        {
-          focusId: 'actions-dropdown',
-          componentInstance: {
-            componentType: FocusComponentType.DROPDOWN,
-            componentInstanceId: 'actions-dropdown',
-          },
-          globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
-        },
-      ],
-      globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
+      reason: 'trigger-press',
+      focusStack: [BACKGROUND_FOCUS_ITEM],
     });
+    expect(store.get(focusStackState.atom)).toEqual([
+      BACKGROUND_FOCUS_ITEM,
+      {
+        focusId: 'actions-dropdown',
+        componentInstance: {
+          componentType: FocusComponentType.DROPDOWN,
+          componentInstanceId: 'actions-dropdown',
+        },
+        globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
+      },
+    ]);
+    expect(store.get(currentGlobalHotkeysConfigSelector.atom)).toEqual(
+      DROPDOWN_HOTKEYS_CONFIG,
+    );
 
     const openedFocusStack = store.get(focusStackState.atom);
 
     await user.keyboard('{Escape}');
 
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
     expect(onOpenChange).toHaveLastReturnedWith({
       open: false,
-      focusStack: [BACKGROUND_FOCUS_ITEM],
-      globalHotkeysConfig: BACKGROUND_FOCUS_ITEM.globalHotkeysConfig,
+      reason: 'escape-key',
+      focusStack: openedFocusStack,
     });
+    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
+    expect(store.get(currentGlobalHotkeysConfigSelector.atom)).toEqual(
+      BACKGROUND_FOCUS_ITEM.globalHotkeysConfig,
+    );
     await waitFor(() =>
       expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
     );
@@ -148,6 +175,54 @@ describe('DropdownRoot', () => {
     await user.click(trigger);
 
     expect(store.get(focusStackState.atom)).toEqual(openedFocusStack);
+  });
+
+  it('keeps the dropdown open and its focus untouched when the consumer cancels', async () => {
+    const user = userEvent.setup();
+    const store = createTestStore();
+    const clickOutsideControl = jest.fn();
+
+    render(
+      <JotaiProvider store={store}>
+        <DropdownRoot
+          dropdownId="rename-dropdown"
+          type="panel"
+          onOpenChange={(open, eventDetails) => {
+            if (!open && eventDetails.reason !== 'escape-key') {
+              eventDetails.cancel();
+            }
+          }}
+        >
+          <Dropdown.Trigger>Rename</Dropdown.Trigger>
+          <DropdownOpenState />
+          <Dropdown.Content aria-label="Rename">
+            <input aria-label="Name" />
+          </Dropdown.Content>
+        </DropdownRoot>
+        <button onClick={clickOutsideControl}>Outside</button>
+      </JotaiProvider>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Rename' }));
+
+    const openedFocusStack = store.get(focusStackState.atom);
+
+    await user.click(screen.getByRole('button', { name: 'Outside' }));
+
+    expect(clickOutsideControl).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('dialog', { name: 'Rename' })).toBeVisible();
+    expect(
+      screen.getByRole('status', { name: 'Dropdown state' }),
+    ).toHaveTextContent('Open');
+    expect(store.get(focusStackState.atom)).toEqual(openedFocusStack);
+
+    await user.click(screen.getByRole('textbox', { name: 'Name' }));
+    await user.keyboard('{Escape}');
+
+    expect(
+      screen.getByRole('status', { name: 'Dropdown state' }),
+    ).toHaveTextContent('Closed');
+    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
   });
 
   it('closes the popup and restores focus through the close hook', async () => {
@@ -214,10 +289,12 @@ describe('DropdownRoot', () => {
       </JotaiProvider>,
     );
 
-    expect(store.get(focusStackState.atom)).toEqual([
-      BACKGROUND_FOCUS_ITEM,
-      remainingFocusItem,
-    ]);
+    await waitFor(() =>
+      expect(store.get(focusStackState.atom)).toEqual([
+        BACKGROUND_FOCUS_ITEM,
+        remainingFocusItem,
+      ]),
+    );
     expect(
       screen.getByRole('button', { name: 'Outer dropdown' }),
     ).toHaveAttribute('aria-expanded', 'true');
@@ -230,7 +307,9 @@ describe('DropdownRoot', () => {
 
     unmount();
 
-    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
+    await waitFor(() =>
+      expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]),
+    );
     expect(store.get(currentGlobalHotkeysConfigSelector.atom)).toEqual(
       BACKGROUND_FOCUS_ITEM.globalHotkeysConfig,
     );
@@ -310,7 +389,10 @@ describe('DropdownRoot', () => {
     expect(
       screen.queryByRole('menu', { name: 'Other actions' }),
     ).not.toBeInTheDocument();
-    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      true,
+      expect.objectContaining({ reason: 'imperative-action' }),
+    );
     expect(store.get(activeDropdownFocusIdState.atom)).toBe(
       'external-dropdown',
     );
@@ -330,14 +412,17 @@ describe('DropdownRoot', () => {
       expect(onOpenChange).toHaveBeenCalledTimes(2);
     });
 
-    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'imperative-action' }),
+    );
     expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
     await waitFor(() =>
       expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
     );
   });
 
-  it('uses the latest callback and stops notifying after unmount', () => {
+  it('uses the latest callback and stops notifying after unmount', async () => {
     const store = createTestStore();
     const initialOnOpenChange = jest.fn();
     const latestOnOpenChange = jest.fn();
@@ -380,31 +465,38 @@ describe('DropdownRoot', () => {
 
       expect(initialOnOpenChange).not.toHaveBeenCalled();
       expect(latestOnOpenChange).toHaveBeenCalledTimes(1);
-      expect(latestOnOpenChange).toHaveBeenLastCalledWith(true);
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(
+        true,
+        expect.objectContaining({ reason: 'imperative-action' }),
+      );
 
       result.current.closeDropdown('subscribed-dropdown');
 
       expect(latestOnOpenChange).toHaveBeenCalledTimes(2);
-      expect(latestOnOpenChange).toHaveBeenLastCalledWith(false);
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(
+        false,
+        expect.objectContaining({ reason: 'imperative-action' }),
+      );
 
       result.current.openDropdown({
         dropdownComponentInstanceIdFromProps: 'subscribed-dropdown',
       });
 
       expect(latestOnOpenChange).toHaveBeenCalledTimes(3);
-      expect(latestOnOpenChange).toHaveBeenLastCalledWith(true);
     });
 
     unmount();
 
+    await waitFor(() =>
+      expect(
+        store.get(
+          isDropdownOpenComponentState.atomFamily({
+            instanceId: 'subscribed-dropdown',
+          }),
+        ),
+      ).toBe(false),
+    );
     expect(latestOnOpenChange).toHaveBeenCalledTimes(3);
-    expect(
-      store.get(
-        isDropdownOpenComponentState.atomFamily({
-          instanceId: 'subscribed-dropdown',
-        }),
-      ),
-    ).toBe(false);
 
     act(() => {
       result.current.openDropdown({
@@ -438,13 +530,15 @@ describe('DropdownRoot', () => {
 
     unmount();
 
-    expect(
-      store.get(
-        isDropdownOpenComponentState.atomFamily({
-          instanceId: 'remounted-dropdown',
-        }),
-      ),
-    ).toBe(false);
+    await waitFor(() =>
+      expect(
+        store.get(
+          isDropdownOpenComponentState.atomFamily({
+            instanceId: 'remounted-dropdown',
+          }),
+        ),
+      ).toBe(false),
+    );
     expect(store.get(activeDropdownFocusIdState.atom)).toBeNull();
     expect(store.get(previousDropdownFocusIdStackState.atom)).toEqual([]);
     expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
@@ -461,5 +555,48 @@ describe('DropdownRoot', () => {
 
     expect(screen.getByRole('menu', { name: 'Actions' })).toBeVisible();
     expect(store.get(focusStackState.atom)).toHaveLength(2);
+  });
+
+  it('keeps a dropdown opened before its root mounts open under StrictMode', async () => {
+    const user = userEvent.setup();
+    const store = createTestStore();
+    const { result } = renderHook(() => useOpenDropdown(), {
+      wrapper: ({ children }) => (
+        <JotaiProvider store={store}>{children}</JotaiProvider>
+      ),
+    });
+
+    act(() => {
+      result.current.openDropdown({
+        dropdownComponentInstanceIdFromProps: 'rename-dropdown',
+      });
+    });
+
+    render(
+      <StrictMode>
+        <JotaiProvider store={store}>
+          <GroupRenamePanel />
+        </JotaiProvider>
+      </StrictMode>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole('textbox', { name: 'Group name' })).toHaveFocus(),
+    );
+    expect(screen.getByRole('dialog', { name: 'Rename group' })).toBeVisible();
+    expect(
+      store.get(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: 'rename-dropdown',
+        }),
+      ),
+    ).toBe(true);
+
+    await user.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
   });
 });

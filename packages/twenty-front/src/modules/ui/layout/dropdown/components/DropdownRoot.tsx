@@ -1,11 +1,17 @@
 import { useStore } from 'jotai';
-import { type ComponentProps, useCallback, useSyncExternalStore } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import {
+  type ComponentProps,
+  useCallback,
+  useRef,
+  useSyncExternalStore,
+} from 'react';
+import { Dropdown, type DropdownOpenChangeDetails } from 'twenty-ui/components';
 
 import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { createImperativeDropdownOpenChangeDetails } from '@/ui/layout/dropdown/utils/createImperativeDropdownOpenChangeDetails';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 
@@ -30,14 +36,25 @@ export const DropdownRoot = ({
   const dropdownOpenState = isDropdownOpenComponentState.atomFamily({
     instanceId: dropdownId,
   });
+  // oxlint-disable-next-line twenty/no-state-useref
+  const lastReportedOpenRef = useRef(false);
   const subscribeToDropdownOpenState = useCallback(
-    (onStoreChange: () => void) =>
-      store.sub(dropdownOpenState, () => {
+    (onStoreChange: () => void) => {
+      lastReportedOpenRef.current = store.get(dropdownOpenState);
+
+      return store.sub(dropdownOpenState, () => {
         const open = store.get(dropdownOpenState);
 
         onStoreChange();
-        onOpenChange?.(open);
-      }),
+
+        if (open === lastReportedOpenRef.current) {
+          return;
+        }
+
+        lastReportedOpenRef.current = open;
+        onOpenChange?.(open, createImperativeDropdownOpenChangeDetails());
+      });
+    },
     [dropdownOpenState, onOpenChange, store],
   );
   const getIsDropdownOpen = () => store.get(dropdownOpenState);
@@ -49,7 +66,22 @@ export const DropdownRoot = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const handleOpenChange = (open: boolean) => {
+  const handleOpenChange = (
+    open: boolean,
+    eventDetails: DropdownOpenChangeDetails,
+  ) => {
+    if (open === store.get(dropdownOpenState)) {
+      return;
+    }
+
+    onOpenChange?.(open, eventDetails);
+
+    if (eventDetails.isCanceled) {
+      return;
+    }
+
+    lastReportedOpenRef.current = open;
+
     if (!open) {
       closeDropdown(dropdownId);
       return;
