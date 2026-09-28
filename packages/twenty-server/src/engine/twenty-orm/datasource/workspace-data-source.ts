@@ -15,6 +15,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { runInWorkspaceSavepoint } from 'src/engine/twenty-orm/utils/run-in-workspace-savepoint.util';
 import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
@@ -102,8 +103,20 @@ export class WorkspaceDataSource {
         },
       },
     };
-    const result = await this.runInClientTransaction((executor) =>
-      work({
+    let savepointCount = 0;
+
+    const result = await this.runInClientTransaction((executor) => {
+      const runInSavepoint = <TResult>(
+        savepointWork: () => Promise<TResult>,
+      ): Promise<TResult> =>
+        runInWorkspaceSavepoint({
+          executor,
+          savepointName: `workspace_savepoint_${savepointCount++}`,
+          afterCommitCallbacks,
+          work: savepointWork,
+        });
+
+      return work({
         workspaceId: this.internalContext.workspaceId,
         getRepository: <T extends ObjectLiteral = ObjectRecord>(
           nameSingular: string,
@@ -115,6 +128,7 @@ export class WorkspaceDataSource {
             rolePermissionConfig,
             executor,
             isTransactional: true,
+            runInSavepoint,
             shouldSkipEventEmission:
               repositoryOptions?.shouldSkipEventEmission ?? false,
             internalContext: transactionalInternalContext,
@@ -122,8 +136,9 @@ export class WorkspaceDataSource {
         executeRawQuery: (sql, parameters = []) =>
           executor.execute({ text: sql, values: parameters }),
         afterCommit,
-      }),
-    );
+        runInSavepoint,
+      });
+    });
 
     for (const callback of afterCommitCallbacks) {
       try {
@@ -153,6 +168,7 @@ export class WorkspaceDataSource {
     rolePermissionConfig,
     executor,
     isTransactional = false,
+    runInSavepoint = null,
     shouldSkipEventEmission = false,
     internalContext = this.internalContext,
   }: {
@@ -160,6 +176,7 @@ export class WorkspaceDataSource {
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
+    runInSavepoint?: WorkspaceTransactionScope['runInSavepoint'] | null;
     shouldSkipEventEmission?: boolean;
     internalContext?: WorkspaceInternalContext;
   }): WorkspaceRepository<T> {
@@ -178,6 +195,7 @@ export class WorkspaceDataSource {
       rolePermissionConfig,
       executor,
       isTransactional,
+      runInSavepoint,
       shouldSkipEventEmission,
       internalContext,
     });
@@ -190,6 +208,7 @@ export class WorkspaceDataSource {
     rolePermissionConfig,
     executor,
     isTransactional = false,
+    runInSavepoint = null,
     shouldSkipEventEmission = false,
     internalContext = this.internalContext,
   }: {
@@ -197,6 +216,7 @@ export class WorkspaceDataSource {
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
+    runInSavepoint?: WorkspaceTransactionScope['runInSavepoint'] | null;
     shouldSkipEventEmission?: boolean;
     internalContext?: WorkspaceInternalContext;
   }): WorkspaceRepository<T> {
@@ -232,10 +252,12 @@ export class WorkspaceDataSource {
           rolePermissionConfig,
           executor,
           isTransactional,
+          runInSavepoint,
           shouldSkipEventEmission,
           internalContext,
         }),
       isTransactional,
+      runInSavepoint,
       runInNewTransaction: (work) =>
         this.transaction((transactionScope) =>
           work(

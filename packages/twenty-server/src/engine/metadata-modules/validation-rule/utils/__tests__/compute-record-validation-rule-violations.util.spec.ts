@@ -32,6 +32,7 @@ const BROKEN_RULE = {
 const compute = (
   records: Record<string, unknown>[],
   inputIndexByRecordId = new Map<string, number>(),
+  maxViolations = 100,
 ) =>
   computeRecordValidationRuleViolations({
     records: records as never,
@@ -39,9 +40,24 @@ const compute = (
     fields: FIELDS,
     now: '2026-09-23T10:00:00.000Z',
     inputIndexByRecordId,
+    maxViolations,
   });
 
 describe('computeRecordValidationRuleViolations', () => {
+  it('should stop once the reported violations reach the cap', () => {
+    const invalidRecords = ['first', 'second', 'third'].map((id) => ({
+      id,
+      stage: 'WON',
+      amount: { amountMicros: null, currencyCode: 'USD' },
+    }));
+
+    expect(
+      compute(invalidRecords, new Map(), 2).violations.map(
+        (violation) => violation.recordId,
+      ),
+    ).toEqual(['first', 'second']);
+  });
+
   it('should report the failing record with its rule, field and input index', () => {
     expect(
       compute(
@@ -96,6 +112,7 @@ describe('computeRecordValidationRuleViolations', () => {
         fields: FIELDS,
         now: '2026-09-23T10:00:00.000Z',
         inputIndexByRecordId: new Map(),
+        maxViolations: 100,
       }),
     ).toEqual({
       violations: [],

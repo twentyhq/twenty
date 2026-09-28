@@ -30,6 +30,7 @@ import {
   type OperationType,
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
@@ -62,6 +63,9 @@ import {
   RecordValidationRuleExceptionCode,
 } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
+import { VALIDATION_RULE_MAX_REPORTED_VIOLATIONS } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-max-reported-violations.constant';
+import { VALIDATION_RULE_RECORD_CHUNK_SIZE } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-record-chunk-size.constant';
+import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 import {
   TwentyOrmException,
@@ -113,7 +117,6 @@ import {
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
-const VALIDATION_RULE_SAVEPOINT_NAME = 'validation_rule_write';
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   MutationKind,
   DatabaseEventAction[]
@@ -150,6 +153,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
     objectMetadataId: string,
   ) => WorkspaceRepository<Entity>;
   isTransactional: boolean;
+  runInSavepoint: WorkspaceTransactionScope['runInSavepoint'] | null;
   runInNewTransaction: <T>(
     work: (transactionalRepository: WorkspaceRepository<TEntity>) => Promise<T>,
   ) => Promise<T>;
@@ -1111,6 +1115,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const recordsBefore: ObjectRecord[] = [];
     const recordsAfter: ObjectRecord[] = [];
+    const rawRecordsAfterWrite: ObjectRecord[] = [];
     const generatedMaps: ObjectRecord[] = [];
     const updateEventColumnsToReturn = getUpdateEventColumnsToReturn(
       columnsToReturn,
@@ -1220,6 +1225,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             noFormatting: true,
           });
 
+      rawRecordsAfterWrite.push(...recordsAfterWrite);
+
       recordsAfter.push(
         ...mergeReturnedUpdateTimestamps(
           mergeRecordsWithUpdateValues(
@@ -1236,6 +1243,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       inputIndexByRecordId: new Map(
         inputs.map((input, inputIndex) => [input.id, inputIndex]),
       ),
+      rawWrittenRecordSnapshots: this.options.shouldSkipEventEmission
+        ? undefined
+        : rawRecordsAfterWrite,
     });
 
     if (isDefined(filesFieldFileIds)) {
@@ -1386,16 +1396,34 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return queryBuilder.clone(this.options.executor);
   }
 
-  async findLiveRecordsForValidationRules(
-    ids: string[],
-  ): Promise<ObjectRecord[]> {
+  async findLiveRecordsForValidationRules({
+    ids,
+    fieldNames,
+  }: {
+    ids: string[];
+    fieldNames: string[];
+  }): Promise<ObjectRecord[]> {
     if (ids.length === 0) {
       return [];
     }
 
-    const rawRecords = await this.buildIdsEventSnapshotQueryBuilder(
-      ids,
-    ).getMany<ObjectRecord>({ noFormatting: true });
+    const { columnNames, columnShapeByColumnName } = this.options.tableShape;
+
+    const selectedColumnNames = columnNames.filter((columnName) => {
+      const columnShape = columnShapeByColumnName[columnName];
+
+      return (
+        columnName === 'id' ||
+        columnName === 'deletedAt' ||
+        (isDefined(columnShape) &&
+          (fieldNames.includes(columnShape.fieldName) ||
+            fieldNames.includes(columnShape.compositeParentFieldName ?? '')))
+      );
+    });
+
+    const rawRecords = await this.buildIdsEventSnapshotQueryBuilder(ids)
+      .select(selectedColumnNames)
+      .getMany<ObjectRecord>({ noFormatting: true });
 
     return this.formatResult<ObjectRecord[]>(
       rawRecords.filter((rawRecord) => !isDefined(rawRecord.deletedAt)),
@@ -1415,29 +1443,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return work(this);
     }
 
-    if (!this.options.isTransactional) {
+    const { runInSavepoint } = this.options;
+
+    if (!isDefined(runInSavepoint)) {
       return this.options.runInNewTransaction(work);
     }
 
-    await this.executeRaw(`SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`, {});
-
-    try {
-      const result = await work(this);
-
-      await this.executeRaw(
-        `RELEASE SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`,
-        {},
-      );
-
-      return result;
-    } catch (error) {
-      await this.executeRaw(
-        `ROLLBACK TO SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`,
-        {},
-      );
-
-      throw error;
-    }
+    return runInSavepoint(() => work(this));
   }
 
   private async attachRelatedRecordsForValidationRules({
@@ -1482,7 +1494,22 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       const relatedRecords = await this.options
         .getRepositoryForObjectMetadataId(relationShape.targetObjectMetadataId)
-        .findLiveRecordsForValidationRules(relatedRecordIds);
+        .findLiveRecordsForValidationRules({
+          ids: relatedRecordIds,
+          fieldNames: [
+            ...new Set(
+              validationRules.flatMap((validationRule) =>
+                Object.keys(validationRule.bindings)
+                  .filter((bindingPath) =>
+                    bindingPath.startsWith(`${relationShape.fieldName}.`),
+                  )
+                  .map((bindingPath) =>
+                    bindingPath.slice(relationShape.fieldName.length + 1),
+                  ),
+              ),
+            ),
+          ],
+        });
 
       const relatedRecordById = new Map(
         relatedRecords.map((relatedRecord) => [
@@ -1508,9 +1535,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private async validateWrittenRecordsAgainstValidationRulesOrThrow({
     recordIds,
     inputIndexByRecordId = new Map(),
+    rawWrittenRecordSnapshots,
   }: {
     recordIds: string[];
     inputIndexByRecordId?: Map<string, number>;
+    rawWrittenRecordSnapshots?: ObjectRecord[];
   }): Promise<void> {
     const validationRules = this.getActiveValidationRules();
 
@@ -1518,30 +1547,66 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    const rawWrittenRecords = await this.buildIdsEventSnapshotQueryBuilder(
-      recordIds,
-    ).getMany<ObjectRecord>({ noFormatting: true });
-
-    const records = await this.attachRelatedRecordsForValidationRules({
-      writtenRecords: this.formatResult<ObjectRecord[]>(rawWrittenRecords),
-      rawWrittenRecords,
-      validationRules,
+    const fields = buildValidationRuleFieldDescriptors({
+      objectMetadataId: this.options.flatObjectMetadata.id,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
     });
+    const now = new Date().toISOString();
+    const rawSnapshotById = new Map(
+      (rawWrittenRecordSnapshots ?? []).map((rawSnapshot) => [
+        String(rawSnapshot.id),
+        rawSnapshot,
+      ]),
+    );
 
-    const { violations, evaluationErrors } =
-      computeRecordValidationRuleViolations({
+    const violations: RecordValidationRuleViolation[] = [];
+    const evaluationErrors: RecordValidationRuleViolation[] = [];
+
+    for (
+      let chunkStart = 0;
+      chunkStart < recordIds.length &&
+      violations.length + evaluationErrors.length <
+        VALIDATION_RULE_MAX_REPORTED_VIOLATIONS;
+      chunkStart += VALIDATION_RULE_RECORD_CHUNK_SIZE
+    ) {
+      const chunkRecordIds = recordIds.slice(
+        chunkStart,
+        chunkStart + VALIDATION_RULE_RECORD_CHUNK_SIZE,
+      );
+      const snapshotRecords = chunkRecordIds
+        .map((recordId) => rawSnapshotById.get(recordId))
+        .filter(isDefined);
+
+      const rawWrittenRecords =
+        snapshotRecords.length === chunkRecordIds.length
+          ? snapshotRecords
+          : await this.buildIdsEventSnapshotQueryBuilder(
+              chunkRecordIds,
+            ).getMany<ObjectRecord>({ noFormatting: true });
+
+      const records = await this.attachRelatedRecordsForValidationRules({
+        writtenRecords: this.formatResult<ObjectRecord[]>(rawWrittenRecords),
+        rawWrittenRecords,
+        validationRules,
+      });
+
+      const chunkResult = computeRecordValidationRuleViolations({
         records,
         validationRules,
-        fields: buildValidationRuleFieldDescriptors({
-          objectMetadataId: this.options.flatObjectMetadata.id,
-          flatObjectMetadataMaps:
-            this.options.internalContext.flatObjectMetadataMaps,
-          flatFieldMetadataMaps:
-            this.options.internalContext.flatFieldMetadataMaps,
-        }),
-        now: new Date().toISOString(),
+        fields,
+        now,
         inputIndexByRecordId,
+        maxViolations:
+          VALIDATION_RULE_MAX_REPORTED_VIOLATIONS -
+          violations.length -
+          evaluationErrors.length,
       });
+
+      violations.push(...chunkResult.violations);
+      evaluationErrors.push(...chunkResult.evaluationErrors);
+    }
 
     if (evaluationErrors.length > 0) {
       throw new RecordValidationRuleException(

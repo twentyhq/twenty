@@ -17,4 +17,5 @@ export type WorkspaceTransactionScope = {
     parameters?: unknown[],
   ) => Promise<Record<string, unknown>[]>;
   afterCommit: (callback: () => void | Promise<void>) => void;
+  runInSavepoint: <T>(work: () => Promise<T>) => Promise<T>;
 };

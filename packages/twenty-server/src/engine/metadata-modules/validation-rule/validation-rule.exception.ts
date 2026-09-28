@@ -8,6 +8,7 @@ export enum ValidationRuleExceptionCode {
   VALIDATION_RULE_NOT_FOUND = 'VALIDATION_RULE_NOT_FOUND',
   INVALID_VALIDATION_RULE_INPUT = 'INVALID_VALIDATION_RULE_INPUT',
   INVALID_VALIDATION_RULE_EXPRESSION = 'INVALID_VALIDATION_RULE_EXPRESSION',
+  VALIDATION_RULE_CHANGE_IN_PROGRESS = 'VALIDATION_RULE_CHANGE_IN_PROGRESS',
 }
 
 const getValidationRuleExceptionUserFriendlyMessage = (
@@ -20,6 +21,8 @@ const getValidationRuleExceptionUserFriendlyMessage = (
       return msg`Invalid validation rule input.`;
     case ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_EXPRESSION:
       return msg`Invalid validation rule expression.`;
+    case ValidationRuleExceptionCode.VALIDATION_RULE_CHANGE_IN_PROGRESS:
+      return msg`Another change to this object's validation rules is in progress. Try again.`;
     default:
       assertUnreachable(code);
   }

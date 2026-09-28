@@ -309,6 +309,7 @@ export { safeDecodeURIComponent } from './url/safeDecodeURIComponent';
 export { uuidToBase36 } from './uuidToBase36';
 export { buildValidationRuleEvaluationContext } from './validation-rule/buildValidationRuleEvaluationContext';
 export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
+export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';

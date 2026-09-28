@@ -77,12 +77,12 @@ const descendIntoContainer = (
 
 export const buildValidationRuleEvaluationContext = ({
   record,
-  fields,
+  fieldByName,
   identifierPaths,
   now,
 }: {
   record: Record<string, unknown>;
-  fields: ValidationRuleFieldDescriptor[];
+  fieldByName: ReadonlyMap<string, ValidationRuleFieldDescriptor>;
   identifierPaths: string[];
   now: string;
 }): EvaluationContainer => {
@@ -102,7 +102,7 @@ export const buildValidationRuleEvaluationContext = ({
       continue;
     }
 
-    const rootField = fields.find((field) => field.name === rootSegment);
+    const rootField = fieldByName.get(rootSegment);
 
     if (!(rootSegment in context)) {
       const rootValue = normalizeLeafValue(record[rootSegment]);

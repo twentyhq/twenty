@@ -11,13 +11,22 @@ export const parseValidationRuleExpression = (source: string): Expression => {
   const cachedExpression = parsedExpressionBySource.get(source);
 
   if (isDefined(cachedExpression)) {
+    parsedExpressionBySource.delete(source);
+    parsedExpressionBySource.set(source, cachedExpression);
+
     return cachedExpression;
   }
 
   const parsedExpression = validationRuleParser.parse(source);
 
   if (parsedExpressionBySource.size >= PARSED_EXPRESSION_CACHE_MAX_SIZE) {
-    parsedExpressionBySource.clear();
+    const leastRecentlyUsedSource = parsedExpressionBySource
+      .keys()
+      .next().value;
+
+    if (isDefined(leastRecentlyUsedSource)) {
+      parsedExpressionBySource.delete(leastRecentlyUsedSource);
+    }
   }
 
   parsedExpressionBySource.set(source, parsedExpression);

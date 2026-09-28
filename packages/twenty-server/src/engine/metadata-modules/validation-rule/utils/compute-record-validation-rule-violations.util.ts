@@ -3,7 +3,7 @@ import {
   type ObjectValidationRule,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
-import { evaluateValidationRuleExpression } from 'twenty-shared/utils';
+import { createValidationRuleEvaluator } from 'twenty-shared/utils';
 
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
 
@@ -18,6 +18,7 @@ export const computeRecordValidationRuleViolations = ({
   fields,
   now,
   inputIndexByRecordId,
+  maxViolations,
 }: {
   records: ObjectRecord[];
   validationRules: Pick<
@@ -27,18 +28,26 @@ export const computeRecordValidationRuleViolations = ({
   fields: ValidationRuleFieldDescriptor[];
   now: string;
   inputIndexByRecordId: Map<string, number>;
+  maxViolations: number;
 }): ComputeRecordValidationRuleViolationsResult => {
   const violations: RecordValidationRuleViolation[] = [];
   const evaluationErrors: RecordValidationRuleViolation[] = [];
 
+  const ruleEvaluators = validationRules.map((validationRule) => ({
+    validationRule,
+    evaluate: createValidationRuleEvaluator({
+      expression: validationRule.expression,
+      fields,
+    }),
+  }));
+
   for (const record of records) {
-    for (const validationRule of validationRules) {
-      const evaluationResult = evaluateValidationRuleExpression({
-        expression: validationRule.expression,
-        record,
-        fields,
-        now,
-      });
+    for (const { validationRule, evaluate } of ruleEvaluators) {
+      if (violations.length + evaluationErrors.length >= maxViolations) {
+        return { violations, evaluationErrors };
+      }
+
+      const evaluationResult = evaluate({ record, now });
 
       if (evaluationResult.status === 'passed') {
         continue;

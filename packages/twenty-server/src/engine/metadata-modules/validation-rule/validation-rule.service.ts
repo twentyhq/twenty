@@ -3,8 +3,8 @@ import { type ObjectValidationRule } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -22,6 +22,9 @@ import {
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+const VALIDATION_RULE_LOCK_MAX_ATTEMPTS = 50;
+const VALIDATION_RULE_LOCK_RETRY_DELAY_MS = 200;
+
 type ValidationRuleFlatMaps = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -37,7 +40,7 @@ export class ValidationRuleService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly cacheLockService: CacheLockService,
+    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
   private getFlatMaps(workspaceId: string): Promise<ValidationRuleFlatMaps> {
@@ -157,16 +160,37 @@ export class ValidationRuleService {
     }
   }
 
-  private withObjectLock<T>(
+  private async withObjectLock<T>(
     {
       workspaceId,
       objectMetadataId,
     }: { workspaceId: string; objectMetadataId: string },
     work: () => Promise<T>,
   ): Promise<T> {
-    return this.cacheLockService.withLock(
-      work,
-      `validation-rules:${workspaceId}:${objectMetadataId}`,
+    const lockName = `validation-rules:${workspaceId}:${objectMetadataId}`;
+
+    for (
+      let attempt = 0;
+      attempt < VALIDATION_RULE_LOCK_MAX_ATTEMPTS;
+      attempt++
+    ) {
+      const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
+        lockName,
+        work,
+      );
+
+      if (lockResult.acquired) {
+        return lockResult.value;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, VALIDATION_RULE_LOCK_RETRY_DELAY_MS),
+      );
+    }
+
+    throw new ValidationRuleException(
+      `Could not lock the validation rules of object ${objectMetadataId}`,
+      ValidationRuleExceptionCode.VALIDATION_RULE_CHANGE_IN_PROGRESS,
     );
   }
 
