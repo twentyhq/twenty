@@ -83,7 +83,10 @@ const OpenDetailsAction = () => {
   const { goToPage } = useDropdownPage();
 
   return (
-    <Dropdown.ActionItem closeOnClick={false} onClick={() => goToPage('details')}>
+    <Dropdown.ActionItem
+      closeOnClick={false}
+      onClick={() => goToPage('details')}
+    >
       Open details
     </Dropdown.ActionItem>
   );

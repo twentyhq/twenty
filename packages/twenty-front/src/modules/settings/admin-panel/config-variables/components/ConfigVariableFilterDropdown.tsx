@@ -1,9 +1,9 @@
-import { type ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
 import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 import { IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { ConfigVariableOptionsDropdownContent } from './ConfigVariableOptionsDropdownContent';
@@ -26,40 +26,27 @@ export const ConfigVariableFilterDropdown = ({
   onSourceFilterChange,
   onGroupFilterChange,
   onShowHiddenChange,
-}: ConfigVariableFilterDropdownProps) => {
-  const [selectedCategory, setSelectedCategory] =
-    useState<ConfigVariableFilterCategory | null>(null);
-
-  const handleSelectCategory = (
-    category: ConfigVariableFilterCategory | null,
-  ) => {
-    setSelectedCategory(category);
-  };
-
-  return (
-    <Dropdown
-      clickableComponent={
+}: ConfigVariableFilterDropdownProps) => (
+  <DropdownRoot dropdownId="env-var-options-dropdown" type="picker">
+    <Dropdown.Trigger
+      render={
         <Button
           size="md"
           startIcon={<IconSettings />}
           variant="outline"
         >{t`Options`}</Button>
       }
-      dropdownId="env-var-options-dropdown"
-      dropdownOffset={{ x: 0, y: 10 }}
-      dropdownComponents={
-        <ConfigVariableOptionsDropdownContent
-          selectedCategory={selectedCategory}
-          onSelectCategory={handleSelectCategory}
-          sourceFilter={sourceFilter}
-          groupFilter={groupFilter}
-          groupOptions={groupOptions}
-          showHiddenGroupVariables={showHiddenGroupVariables}
-          onSourceFilterChange={onSourceFilterChange}
-          onGroupFilterChange={onGroupFilterChange}
-          onShowHiddenChange={onShowHiddenChange}
-        />
-      }
     />
-  );
-};
+    <DropdownContent align="end" sideOffset={10}>
+      <ConfigVariableOptionsDropdownContent
+        sourceFilter={sourceFilter}
+        groupFilter={groupFilter}
+        groupOptions={groupOptions}
+        showHiddenGroupVariables={showHiddenGroupVariables}
+        onSourceFilterChange={onSourceFilterChange}
+        onGroupFilterChange={onGroupFilterChange}
+        onShowHiddenChange={onShowHiddenChange}
+      />
+    </DropdownContent>
+  </DropdownRoot>
+);
