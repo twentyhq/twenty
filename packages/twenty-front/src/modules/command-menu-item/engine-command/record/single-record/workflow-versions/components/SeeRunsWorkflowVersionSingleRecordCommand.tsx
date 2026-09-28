@@ -10,9 +10,11 @@ import { isDefined } from 'twenty-shared/utils';
 const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
   workflowId,
   recordId,
+  versionLabel,
 }: {
   workflowId: string;
   recordId: string;
+  versionLabel?: string;
 }) => {
   const isCore = useIsWorkflowCoreEnabled();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
@@ -39,6 +41,14 @@ const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
                 },
               },
             },
+        filterDisplayValue: isCore
+          ? {
+              coreWorkflowId: {
+                [ViewFilterOperand.IS]: workflowWithCurrentVersion?.name,
+              },
+              coreWorkflowVersionId: { [ViewFilterOperand.IS]: versionLabel },
+            }
+          : undefined,
       }}
     />
   );
@@ -76,6 +86,7 @@ export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
     <SeeRunsWorkflowVersionSingleRecordCommandContent
       workflowId={workflowId}
       recordId={workflowVersionId}
+      versionLabel={coreWorkflowVersion?.label}
     />
   );
 };

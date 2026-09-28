@@ -35,6 +35,8 @@ export const useFiltersFromQueryParams = () => {
     if (!queryParamsValidation.success) return [];
 
     const filterQueryParams = queryParamsValidation.data.filter;
+    const filterDisplayValueQueryParams =
+      queryParamsValidation.data.filterDisplayValue;
 
     if (
       !isDefined(filterQueryParams) ||
@@ -84,7 +86,10 @@ export const useFiltersFromQueryParams = () => {
               ? JSON.stringify(filterValueFromURL)
               : (filterValueFromURL as string);
 
-          const displayValue = filterValueAsString;
+          const displayValue =
+            filterDisplayValueQueryParams?.[fieldName]?.[
+              filterOperandFromURL as ViewFilterOperand
+            ] ?? filterValueAsString;
 
           const filterId = `tmp-${[
             fieldName,

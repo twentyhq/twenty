@@ -246,7 +246,7 @@ export const WorkflowEditActionClassify = ({
         )}
       </WorkflowStepBody>
 
-      <WorkflowStepFooter stepId={action.id} />
+      {!readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };
