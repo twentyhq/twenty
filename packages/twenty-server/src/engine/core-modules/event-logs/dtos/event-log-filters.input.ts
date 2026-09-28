@@ -1,5 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { EventLogFieldFilterInput } from './event-log-field-filter.input';
+
 @InputType()
 export class EventLogDateRangeInput {
   @Field(() => Date, { nullable: true })
@@ -25,4 +27,7 @@ export class EventLogFiltersInput {
 
   @Field(() => String, { nullable: true })
   objectMetadataId?: string;
+
+  @Field(() => [EventLogFieldFilterInput], { nullable: true })
+  fieldFilters?: EventLogFieldFilterInput[];
 }

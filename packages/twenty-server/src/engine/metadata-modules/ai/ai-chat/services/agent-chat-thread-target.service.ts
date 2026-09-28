@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import {
   AiException,
   AiExceptionCode,
@@ -39,7 +39,7 @@ type ThreadRecordArgs = RecordReference & {
 export class AgentChatThreadTargetService {
   constructor(
     private readonly agentChatSharingService: AgentChatSharingService,
-    private readonly agentHistoryStorageService: AgentHistoryStorageService,
+    private readonly agentHistoryStorageService: AgentHistoryWorkspaceStorageService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
