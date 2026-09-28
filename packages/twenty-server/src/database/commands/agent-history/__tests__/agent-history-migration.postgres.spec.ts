@@ -775,10 +775,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
-    it('writes and resolves owner messages while workspace sender fields are still absent', async () => {
-      const legacyMessages = await prepareLegacyMessages();
-      const chat = createChatService(legacyMessages);
-      const actors = createActorService(legacyMessages);
+    it('persists senders for normal, queued and hidden kickoff messages after schema expansion', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const chat = createChatService(messages);
+      const actors = createActorService(messages);
       const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
         userWorkspaceId: OWNER_ID,
       });
@@ -786,7 +789,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,
-        text: 'Setup during deploy',
+        text: 'Setup after upgrade',
       });
       const message = await chat.addMessage({
         workspaceId: WORKSPACE_ID,
@@ -794,14 +797,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         threadId: thread.id,
         uiMessage: {
           role: AgentMessageRole.USER,
-          parts: [{ type: 'text', text: 'Live message during deploy' }],
+          parts: [{ type: 'text', text: 'Live message after upgrade' }],
         },
       });
       const queued = await chat.queueMessage({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,
-        text: 'Queued during deploy',
+        text: 'Queued after upgrade',
       });
       await chat.promoteQueuedMessage({
         workspaceId: WORKSPACE_ID,
@@ -819,23 +822,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           sender: { userWorkspaceId: OWNER_ID, applicationId: null },
         });
       }
-      const saved = await legacyMessages.findOneOrFail(WORKSPACE_ID, {
+      const saved = await messages.findOneOrFail(WORKSPACE_ID, {
         where: { id: message.id },
         relations: { parts: true },
       });
-      expect(saved.parts[0].textContent).toBe('Live message during deploy');
+      expect(saved.senderUserWorkspaceId).toBe(OWNER_ID);
+      expect(saved.parts[0].textContent).toBe('Live message after upgrade');
       expect(
-        await legacyMessages.findOneOrFail(WORKSPACE_ID, {
+        await messages.findOneOrFail(WORKSPACE_ID, {
           where: { id: queued.id },
         }),
       ).toMatchObject({ status: AgentMessageStatus.SENT });
     });
 
     it.each([
+      { senderUserWorkspaceId: OWNER_ID, senderApplicationId: null },
       { senderUserWorkspaceId: THREAD_ID, senderApplicationId: null },
       { senderUserWorkspaceId: OWNER_ID, senderApplicationId: TURN_ID },
     ])(
-      'refuses to discard unrecoverable attribution on an old workspace: %o',
+      'requires expanded metadata before accepting sender writes: %o',
       async (sender) => {
         const legacyMessages = await prepareLegacyMessages();
         const count = await legacyMessages.count(WORKSPACE_ID);
@@ -849,22 +854,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             },
             { threadId: THREAD_ID, role: AgentMessageRole.USER, ...sender },
           ]),
-        ).rejects.toThrow('Chat sender attribution is being upgraded');
+        ).rejects.toThrow(
+          'Complete upgrade:2-43:attribute-chat-message-senders',
+        );
         expect(await legacyMessages.count(WORKSPACE_ID)).toBe(count);
       },
     );
 
-    it('preserves available sender fields during partial expansion and resumes full attribution after upgrade', async () => {
+    it('rejects incomplete sender expansion and persists full attribution after upgrade', async () => {
       const legacyMessages = await prepareLegacyMessages([
         'senderApplicationId',
       ]);
-      const legacy = await legacyMessages.insertAndReturnOne(WORKSPACE_ID, {
-        threadId: THREAD_ID,
-        role: AgentMessageRole.USER,
-        senderUserWorkspaceId: TURN_ID,
-        senderApplicationId: null,
-      });
-      expect(legacy.senderUserWorkspaceId).toBe(TURN_ID);
+      await expect(
+        legacyMessages.insertAndReturnOne(WORKSPACE_ID, {
+          threadId: THREAD_ID,
+          role: AgentMessageRole.USER,
+          senderUserWorkspaceId: TURN_ID,
+          senderApplicationId: null,
+        }),
+      ).rejects.toThrow('Complete upgrade:2-43:attribute-chat-message-senders');
       await dataSource.query(
         `ALTER TABLE "${SCHEMA}"."agentMessage" ADD COLUMN "senderApplicationId" uuid`,
       );
@@ -885,10 +893,29 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
     });
 
-    it('still rejects unrelated unknown fields on an old workspace', async () => {
-      const legacyMessages = await prepareLegacyMessages();
+    it('preserves the owner fallback for historical null-sender messages', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
       await expect(
-        legacyMessages.insert(WORKSPACE_ID, {
+        createActorService(messages).resolveMessage({
+          workspaceId: WORKSPACE_ID,
+          threadId: THREAD_ID,
+          messageId: MESSAGE_ID,
+        }),
+      ).resolves.toMatchObject({
+        sender: { userWorkspaceId: OWNER_ID, applicationId: null },
+      });
+    });
+
+    it('still rejects unrelated unknown fields after sender expansion', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      await expect(
+        messages.insert(WORKSPACE_ID, {
           threadId: THREAD_ID,
           role: AgentMessageRole.USER,
           unexpectedField: null,
