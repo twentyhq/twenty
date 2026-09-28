@@ -11,6 +11,7 @@ import { getUsageLimitSpenderGroups } from '@/settings/billing/utils/getUsageLim
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
@@ -56,6 +57,7 @@ export const SettingsBillingLimitSpenderSelect = ({
   const workspaceAvatarUrl = getAbsoluteImageUrl(
     currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
   );
+  const workspaceAvatarColorSeed = getWorkspaceAvatarColorSeed(workspaceName);
 
   const handleSelect = (
     nextSpenderType: UsageLimitSpenderType,
@@ -88,6 +90,7 @@ export const SettingsBillingLimitSpenderSelect = ({
       return (
         <Avatar
           name={workspaceName}
+          colorSeed={workspaceAvatarColorSeed}
           src={workspaceAvatarUrl}
           shape="square"
           size="md"
@@ -146,6 +149,7 @@ export const SettingsBillingLimitSpenderSelect = ({
               startIcon={
                 <Avatar
                   name={workspaceName}
+                  colorSeed={workspaceAvatarColorSeed}
                   src={workspaceAvatarUrl}
                   shape="square"
                   size="md"
