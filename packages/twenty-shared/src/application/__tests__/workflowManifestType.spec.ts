@@ -1,5 +1,7 @@
 /** @jest-environment node */
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 import {
   workflowManifestSchema,
   type WorkflowManifest,
@@ -44,10 +46,16 @@ const workflow: WorkflowManifest = {
   },
 };
 
+const getStep = (definition: WorkflowManifest, index: number) => {
+  const step = definition.version.steps[index];
+  if (!isDefined(step)) throw new Error(`Missing fixture step ${index}`);
+  return step;
+};
+
 describe('workflow manifest iterator cycles', () => {
   it('rejects a loop body without a return edge', () => {
     const invalid = structuredClone(workflow);
-    invalid.version.steps[1].nextStepIds = [];
+    getStep(invalid, 1).nextStepIds = [];
     const result = workflowManifestSchema.safeParse(invalid);
     expect(result.success).toBe(false);
     if (!result.success)
@@ -57,10 +65,10 @@ describe('workflow manifest iterator cycles', () => {
   it('requires nested iterators to return to their enclosing iterator after completion', () => {
     const nested = structuredClone(workflow);
     const innerId = '77777777-7777-4777-8777-777777777777';
-    const outer = nested.version.steps[0];
+    const outer = getStep(nested, 0);
     if (outer.type !== 'ITERATOR') throw new Error('Expected iterator');
     outer.input.initialLoopStepIds = [innerId];
-    nested.version.steps[1].nextStepIds = [innerId];
+    getStep(nested, 1).nextStepIds = [innerId];
     nested.version.steps.push({
       universalIdentifier: innerId,
       name: 'Inner loop',
@@ -69,13 +77,13 @@ describe('workflow manifest iterator cycles', () => {
       nextStepIds: [],
     });
     expect(workflowManifestSchema.safeParse(nested).success).toBe(false);
-    nested.version.steps[3].nextStepIds = [iteratorId];
+    getStep(nested, 3).nextStepIds = [iteratorId];
     expect(workflowManifestSchema.safeParse(nested).success).toBe(true);
   });
 
   it('rejects references to a missing step', () => {
     const invalid = structuredClone(workflow);
-    const iterator = invalid.version.steps[0];
+    const iterator = getStep(invalid, 0);
     if (iterator.type !== 'ITERATOR') throw new Error('Expected iterator');
     iterator.input.items = '{{missing.items}}';
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
@@ -87,19 +95,19 @@ describe('workflow manifest iterator cycles', () => {
 
   it('rejects ordinary cycles inside a loop body', () => {
     const invalid = structuredClone(workflow);
-    invalid.version.steps[1].nextStepIds = [delayId];
+    getStep(invalid, 1).nextStepIds = [delayId];
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('rejects returning to an iterator from its completed branch', () => {
     const invalid = structuredClone(workflow);
-    invalid.version.steps[2].nextStepIds = [iteratorId];
+    getStep(invalid, 2).nextStepIds = [iteratorId];
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('rejects an iterator pointing to itself as its loop body', () => {
     const invalid = structuredClone(workflow);
-    const iterator = invalid.version.steps[0];
+    const iterator = getStep(invalid, 0);
     if (iterator.type !== 'ITERATOR') throw new Error('Expected iterator');
     iterator.input.initialLoopStepIds = [iteratorId, delayId];
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);

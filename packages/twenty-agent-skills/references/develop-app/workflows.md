@@ -62,3 +62,5 @@ Application workflows are experimental. Enable `IS_APPLICATION_WORKFLOWS_ENABLED
 Output schemas are populated during installation without executing steps. Explicit step `outputSchema` takes precedence. CODE and LOGIC_FUNCTION steps can reuse the referenced function's `workflowActionTriggerSettings.outputSchema`; otherwise provide an `expectedOutputSchema` containing a representative result. HTTP_REQUEST also uses `expectedOutputSchema`. AI_AGENT uses the referenced agent's response format. Arbitrary code and HTTP response shapes cannot be inferred without an output declaration. Keep declarations in sync with the implementation.
 
 Record-write field names are checked against metadata from the target workspace and the same app installation. UPDATE_RECORD must select existing fields and provide their values in `objectRecord`.
+
+For `FIND_RECORDS`, use `orderBy.recordSorts` with `fieldMetadataUniversalIdentifier` and `direction`. The installer resolves these references into runtime ordering. Application manifests reject raw `gqlOperationOrderBy`.

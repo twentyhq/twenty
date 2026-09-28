@@ -47,7 +47,11 @@ export const workflowManifestSchema = z
     };
     const graph = buildWorkflowGraph(validatableWorkflow);
     for (const issue of [
-      ...validateWorkflowGraph({ workflow: validatableWorkflow, graph }),
+      ...validateWorkflowGraph({
+        workflow: validatableWorkflow,
+        graph,
+        mode: 'executable',
+      }),
       ...validateWorkflowVariableReferences({
         workflow: validatableWorkflow,
         graph,
@@ -60,56 +64,6 @@ export const workflowManifestSchema = z
         context.addIssue({ code: 'custom', message: issue.message });
       }
     }
-
-    const visiting = new Set<string>();
-    const visited = new Set<string>();
-    const stepsById = new Map(
-      steps.map((step) => [step.universalIdentifier, step]),
-    );
-    const visit = (
-      id: string,
-      enclosingIterators: string[] = [],
-      sourceId?: string,
-    ): void => {
-      if (visiting.has(id)) {
-        if (
-          id !== sourceId &&
-          enclosingIterators[enclosingIterators.length - 1] === id
-        ) {
-          return;
-        }
-        context.addIssue({
-          code: 'custom',
-          message: `Workflow contains a cycle at step ${id}`,
-        });
-        return;
-      }
-      const visitKey = `${id}:${enclosingIterators.join(',')}`;
-      if (visited.has(visitKey)) {
-        return;
-      }
-      visiting.add(id);
-      const step = stepsById.get(id);
-      if (step?.type === 'ITERATOR') {
-        (step.input.initialLoopStepIds ?? []).forEach((nextId) =>
-          visit(nextId, [...enclosingIterators, id], id),
-        );
-      }
-      const destinations =
-        step?.type === 'ITERATOR'
-          ? step.nextStepIds
-          : (graph.childrenByStepId.get(id) ?? []);
-      if (enclosingIterators.length > 0 && destinations.length === 0) {
-        context.addIssue({
-          code: 'custom',
-          message: `Loop body step ${id} must return to iterator ${enclosingIterators[enclosingIterators.length - 1]}`,
-        });
-      }
-      destinations.forEach((nextId) => visit(nextId, enclosingIterators, id));
-      visiting.delete(id);
-      visited.add(visitKey);
-    };
-    trigger.nextStepIds.forEach((id) => visit(id));
   });
 
 export type WorkflowManifest = z.input<typeof workflowManifestSchema>;
