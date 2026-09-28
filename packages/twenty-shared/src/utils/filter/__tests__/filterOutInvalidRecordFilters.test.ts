@@ -66,7 +66,7 @@ describe('filterOutInvalidRecordFilters', () => {
     const result = filterOutInvalidRecordFilters(filters);
 
     expect(result).toEqual(filters);
-    expect(result[0].id).toBe('filter-1');
-    expect(result[0].fieldMetadataId).toBe('field-1');
+    expect(result[0]?.id).toBe('filter-1');
+    expect(result[0]?.fieldMetadataId).toBe('field-1');
   });
 });

@@ -63,7 +63,6 @@ export const Select = <TValue extends SelectValue>({
   renderAsTag = false,
 }: SelectProps<TValue>) => {
   const dropdownContentRef = useRef<HTMLDivElement>(null);
-  const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -115,11 +114,6 @@ export const Select = <TValue extends SelectValue>({
       normalizedSearchInputValue,
     });
 
-  const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
-      ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
-
   const controlSelectedOption = useMemo(() => {
     if (!isDefined(selectedOption)) {
       return selectedOption;
@@ -154,7 +148,6 @@ export const Select = <TValue extends SelectValue>({
 
         onBlur?.();
       }}
-      ref={selectContainerRef}
     >
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
@@ -186,7 +179,7 @@ export const Select = <TValue extends SelectValue>({
                 : () =>
                     getSelectDropdownInitialFocus(dropdownContentRef.current)
             }
-            width={dropDownMenuWidth}
+            width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
             align="start"
             sideOffset={dropdownOffset?.y ?? 0}
             alignOffset={dropdownOffset?.x ?? 0}
