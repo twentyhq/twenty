@@ -38,7 +38,7 @@ export const useDownloadFakeRecords = () => {
             SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[field.type].exampleValues;
 
           bodyRows.forEach((_, index) => {
-            bodyRows[index].push(exampleValues?.[index] || '');
+            bodyRows[index]!.push(exampleValues?.[index] || '');
           });
 
           break;
@@ -68,12 +68,12 @@ export const useDownloadFakeRecords = () => {
           );
 
           bodyRows.forEach((_, index) => {
+            const exampleValue = exampleValues[index] as
+              | Record<string, string>
+              | undefined;
+
             subFields.forEach(({ subFieldName }) => {
-              bodyRows[index].push(
-                exampleValues?.[index]?.[
-                  subFieldName as keyof (typeof exampleValues)[typeof index]
-                ] || '',
-              );
+              bodyRows[index]!.push(exampleValue?.[subFieldName] || '');
             });
           });
 
@@ -88,7 +88,7 @@ export const useDownloadFakeRecords = () => {
               .exampleValues;
 
           bodyRows.forEach((_, index) => {
-            bodyRows[index].push(exampleValues?.[index] || '');
+            bodyRows[index]!.push(exampleValues?.[index] || '');
           });
 
           break;
@@ -98,7 +98,7 @@ export const useDownloadFakeRecords = () => {
           headerRow.push(field.label);
 
           bodyRows.forEach((_, index) => {
-            bodyRows[index].push(
+            bodyRows[index]!.push(
               JSON.stringify(
                 field?.options
                   ?.map((option) => option?.value)
@@ -113,7 +113,7 @@ export const useDownloadFakeRecords = () => {
           headerRow.push(field.label);
 
           bodyRows.forEach((_, index) => {
-            bodyRows[index].push(field?.options?.[index]?.value || '');
+            bodyRows[index]!.push(field?.options?.[index]?.value || '');
           });
 
           break;

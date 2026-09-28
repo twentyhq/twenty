@@ -188,7 +188,7 @@ const SuggestionMenuInner = <TItem,>(
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsSelectedItemVisible(entry.isIntersecting);
+        setIsSelectedItemVisible(entry!.isIntersecting);
       },
       { root: scrollableContainer, threshold: 0.99 },
     );

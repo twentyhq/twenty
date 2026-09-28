@@ -37,7 +37,7 @@ export const useSidePanelHistory = () => {
           activeTabIdComponentState.atomFamily({
             instanceId: getShowPageTabListComponentId({
               pageId,
-              targetObjectId: morphItems[0].recordId,
+              targetObjectId: morphItems[0]!.recordId,
             }),
           }),
           null,
@@ -178,7 +178,7 @@ export const useSidePanelHistory = () => {
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
-                targetObjectId: morphItems[0].recordId,
+                targetObjectId: morphItems[0]!.recordId,
               }),
             }),
             null,

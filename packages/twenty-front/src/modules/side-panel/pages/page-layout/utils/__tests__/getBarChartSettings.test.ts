@@ -33,9 +33,9 @@ describe('getBarChartSettings', () => {
 
       expect(xAxisGroup).toBeDefined();
       expect(xAxisGroup?.items).toHaveLength(5);
-      expect(xAxisGroup?.items[0].id).toBe(DATA_DISPLAY_X_SETTING.id);
-      expect(xAxisGroup?.items[0].label).toBe(DATA_DISPLAY_X_SETTING.label);
-      expect(xAxisGroup?.items[0].Icon).toBe(IconAxisX);
+      expect(xAxisGroup?.items[0]!.id).toBe(DATA_DISPLAY_X_SETTING.id);
+      expect(xAxisGroup?.items[0]!.label).toBe(DATA_DISPLAY_X_SETTING.label);
+      expect(xAxisGroup?.items[0]!.Icon).toBe(IconAxisX);
       expect(xAxisGroup?.items[1]).toEqual(DATE_GRANULARITY_X_SETTING);
       expect(xAxisGroup?.items[2]).toEqual(PRIMARY_SORT_BY_SETTING);
       expect(xAxisGroup?.items[3]).toEqual(OMIT_NULL_VALUES_SETTING);
@@ -50,9 +50,9 @@ describe('getBarChartSettings', () => {
 
       expect(yAxisGroup).toBeDefined();
       expect(yAxisGroup?.items).toHaveLength(8);
-      expect(yAxisGroup?.items[0].id).toBe(DATA_DISPLAY_Y_SETTING.id);
-      expect(yAxisGroup?.items[0].label).toBe(DATA_DISPLAY_Y_SETTING.label);
-      expect(yAxisGroup?.items[0].Icon).toBe(IconAxisY);
+      expect(yAxisGroup?.items[0]!.id).toBe(DATA_DISPLAY_Y_SETTING.id);
+      expect(yAxisGroup?.items[0]!.label).toBe(DATA_DISPLAY_Y_SETTING.label);
+      expect(yAxisGroup?.items[0]!.Icon).toBe(IconAxisY);
       expect(yAxisGroup?.items[1]).toEqual(GROUP_BY_SETTING);
       expect(yAxisGroup?.items[2]).toEqual(DATE_GRANULARITY_Y_SETTING);
       expect(yAxisGroup?.items[3]).toEqual(SORT_BY_GROUP_BY_FIELD_SETTING);
@@ -65,10 +65,10 @@ describe('getBarChartSettings', () => {
       const result = getBarChartSettings(BarChartLayout.VERTICAL);
 
       expect(result).toHaveLength(4);
-      expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
-      expect(result[1].heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
-      expect(result[2].heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
-      expect(result[3].heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
+      expect(result[0]!.heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
+      expect(result[1]!.heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
+      expect(result[2]!.heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
+      expect(result[3]!.heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
     });
   });
 
@@ -82,9 +82,9 @@ describe('getBarChartSettings', () => {
 
       expect(xAxisGroup).toBeDefined();
       expect(xAxisGroup?.items).toHaveLength(8);
-      expect(xAxisGroup?.items[0].id).toBe(DATA_DISPLAY_Y_SETTING.id);
-      expect(xAxisGroup?.items[0].label).toBe(DATA_DISPLAY_Y_SETTING.label);
-      expect(xAxisGroup?.items[0].Icon).toBe(IconAxisX);
+      expect(xAxisGroup?.items[0]!.id).toBe(DATA_DISPLAY_Y_SETTING.id);
+      expect(xAxisGroup?.items[0]!.label).toBe(DATA_DISPLAY_Y_SETTING.label);
+      expect(xAxisGroup?.items[0]!.Icon).toBe(IconAxisX);
       expect(xAxisGroup?.items[1]).toEqual(GROUP_BY_SETTING);
       expect(xAxisGroup?.items[2]).toEqual(DATE_GRANULARITY_Y_SETTING);
       expect(xAxisGroup?.items[3]).toEqual(SORT_BY_GROUP_BY_FIELD_SETTING);
@@ -102,9 +102,9 @@ describe('getBarChartSettings', () => {
 
       expect(yAxisGroup).toBeDefined();
       expect(yAxisGroup?.items).toHaveLength(5);
-      expect(yAxisGroup?.items[0].id).toBe(DATA_DISPLAY_X_SETTING.id);
-      expect(yAxisGroup?.items[0].label).toBe(DATA_DISPLAY_X_SETTING.label);
-      expect(yAxisGroup?.items[0].Icon).toBe(IconAxisY);
+      expect(yAxisGroup?.items[0]!.id).toBe(DATA_DISPLAY_X_SETTING.id);
+      expect(yAxisGroup?.items[0]!.label).toBe(DATA_DISPLAY_X_SETTING.label);
+      expect(yAxisGroup?.items[0]!.Icon).toBe(IconAxisY);
       expect(yAxisGroup?.items[1]).toEqual(DATE_GRANULARITY_X_SETTING);
       expect(yAxisGroup?.items[2]).toEqual(PRIMARY_SORT_BY_SETTING);
       expect(yAxisGroup?.items[3]).toEqual(OMIT_NULL_VALUES_SETTING);
@@ -114,10 +114,10 @@ describe('getBarChartSettings', () => {
       const result = getBarChartSettings(BarChartLayout.HORIZONTAL);
 
       expect(result).toHaveLength(4);
-      expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
-      expect(result[1].heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
-      expect(result[2].heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
-      expect(result[3].heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
+      expect(result[0]!.heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
+      expect(result[1]!.heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
+      expect(result[2]!.heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
+      expect(result[3]!.heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
     });
   });
 

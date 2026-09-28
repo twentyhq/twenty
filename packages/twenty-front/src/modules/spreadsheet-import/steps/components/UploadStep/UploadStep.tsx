@@ -42,7 +42,10 @@ export const UploadStep = ({
       if (isSingleSheet) {
         if (
           maxRecords > 0 &&
-          exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
+          exceedsMaxRecords(
+            workbook.Sheets[workbook.SheetNames[0]!]!,
+            maxRecords,
+          )
         ) {
           const maxRecordsString = maxRecords.toString();
           onError(t`Too many records. Up to ${maxRecordsString} allowed`);
@@ -60,7 +63,7 @@ export const UploadStep = ({
             const trimmedData = mappedWorkbook.slice(1);
 
             const { importedRows: data, headerRow: headerValues } =
-              await selectHeaderStepHook(mappedWorkbook[0], trimmedData);
+              await selectHeaderStepHook(mappedWorkbook[0]!, trimmedData);
 
             await computeColumnSuggestionsAndAutoMatch({
               headerValues,

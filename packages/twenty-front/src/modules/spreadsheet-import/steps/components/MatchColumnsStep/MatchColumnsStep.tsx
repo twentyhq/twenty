@@ -110,7 +110,7 @@ export const MatchColumnsStep = ({
   const onChange = useCallback(
     (value: string, columnIndex: number) => {
       if (value === DO_NOT_IMPORT_OPTION_KEY) {
-        if (columns[columnIndex].type === SpreadsheetColumnType.ignored) {
+        if (columns[columnIndex]!.type === SpreadsheetColumnType.ignored) {
           onRevertIgnore(columnIndex);
         } else {
           onIgnore(columnIndex);
@@ -285,9 +285,9 @@ export const MatchColumnsStep = ({
             columns={columns}
             renderUserColumn={(columns, columnIndex) => (
               <UserTableColumn
-                column={columns[columnIndex]}
+                column={columns[columnIndex]!}
                 importedRow={dataExample.map(
-                  (row) => row[columns[columnIndex].index],
+                  (row) => row[columns[columnIndex]!.index],
                 )}
               />
             )}

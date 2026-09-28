@@ -22,7 +22,7 @@ const meta: Meta<typeof ExpandableList> = {
     children: Array.from({ length: 7 }, (_, index) => (
       <Tag
         key={index}
-        color={MAIN_COLOR_NAMES[index]}
+        color={MAIN_COLOR_NAMES[index]!}
       >{`Option ${index + 1}`}</Tag>
     )),
     isChipCountDisplayed: false,
@@ -61,7 +61,10 @@ const OPTIONS_COUNT = 7;
 const COLLAPSED_WIDTH_PX = 96;
 
 const optionTags = Array.from({ length: OPTIONS_COUNT }, (_, index) => (
-  <Tag key={index} color={MAIN_COLOR_NAMES[index]}>{`Option ${index + 1}`}</Tag>
+  <Tag
+    key={index}
+    color={MAIN_COLOR_NAMES[index]!}
+  >{`Option ${index + 1}`}</Tag>
 ));
 
 const countRenderedOptions = (canvas: ReturnType<typeof within>) =>

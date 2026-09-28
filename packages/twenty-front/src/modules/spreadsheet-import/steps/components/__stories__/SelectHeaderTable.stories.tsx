@@ -46,7 +46,7 @@ export const SingleRowSelection: Story = {
     const canvas = within(canvasElement);
     const radios = canvas.getAllByRole('radio', { name: 'Select' });
     await expect(radios[0]).toBeChecked();
-    await userEvent.click(radios[1]);
+    await userEvent.click(radios[1]!);
     await expect(radios[1]).toBeChecked();
     await expect(radios[0]).not.toBeChecked();
     await userEvent.keyboard('{ArrowDown}');

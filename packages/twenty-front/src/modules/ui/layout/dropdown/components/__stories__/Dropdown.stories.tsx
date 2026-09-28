@@ -85,7 +85,7 @@ export const Empty: Story = {
     const canvas = within(canvasElement.ownerDocument.body);
 
     const buttons = await canvas.findAllByRole('button');
-    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]!);
 
     const fakeMenu = await canvas.findByTestId('dropdown-content');
 
@@ -93,14 +93,14 @@ export const Empty: Story = {
       expect(fakeMenu).toBeInTheDocument();
     });
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]!);
 
     await waitFor(() => {
       const fakeMenuBis = canvas.queryByTestId('dropdown-content');
       expect(fakeMenuBis).not.toBeInTheDocument();
     });
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]!);
     const fakeMenuTer = await canvas.findByTestId('dropdown-content');
 
     await waitFor(() => {
@@ -267,7 +267,7 @@ const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
   const canvas = within(canvasElement.ownerDocument.body);
 
   const buttons = await canvas.findAllByRole('button');
-  await userEvent.click(buttons[0]);
+  await userEvent.click(buttons[0]!);
 
   await waitFor(() => {
     expect(canvas.getByText('Company A')).toBeInTheDocument();
@@ -325,13 +325,13 @@ export const SearchWithLoadingMenu: Story = {
 
     const buttons = await canvas.findAllByRole('button');
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]!);
 
     await waitFor(() => {
       expect(canvas.getByDisplayValue('query')).toBeInTheDocument();
     });
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]!);
 
     await waitFor(() => {
       expect(canvas.queryByDisplayValue('query')).not.toBeInTheDocument();

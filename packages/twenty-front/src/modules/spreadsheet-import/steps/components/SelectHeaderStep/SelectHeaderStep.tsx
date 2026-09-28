@@ -91,7 +91,7 @@ export const SelectHeaderStep = ({
 
     setIsLoading(true);
 
-    await handleContinue(importedRows[selectedRowIndex], trimmedData);
+    await handleContinue(importedRows[selectedRowIndex]!, trimmedData);
 
     setIsLoading(false);
   }, [handleContinue, importedRows, selectedRowIndex]);

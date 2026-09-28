@@ -37,7 +37,8 @@ export const usePageLayoutIdFromContextStore = () => {
     throw new Error('Only one record should be selected');
   }
 
-  const recordId: string = contextStoreTargetedRecordsRule.selectedRecordIds[0];
+  const recordId: string =
+    contextStoreTargetedRecordsRule.selectedRecordIds[0]!;
 
   const isDashboardContext =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;

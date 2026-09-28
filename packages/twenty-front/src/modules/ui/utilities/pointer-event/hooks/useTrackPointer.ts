@@ -14,9 +14,9 @@ export const useTrackPointer = ({
 }) => {
   const extractPosition = useCallback((event: MouseEvent | TouchEvent) => {
     const clientX =
-      'clientX' in event ? event.clientX : event.changedTouches[0].clientX;
+      'clientX' in event ? event.clientX : event.changedTouches[0]!.clientX;
     const clientY =
-      'clientY' in event ? event.clientY : event.changedTouches[0].clientY;
+      'clientY' in event ? event.clientY : event.changedTouches[0]!.clientY;
 
     return { clientX, clientY };
   }, []);

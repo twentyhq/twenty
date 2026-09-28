@@ -8,7 +8,7 @@ export const getTimezoneAbbreviationForZonedDateTime = (
     timeZone: zonedDateTime.timeZoneId,
   }).formatToParts(new Date(zonedDateTime.toInstant().toString()));
 
-  const timeZoneName = parts.filter((p) => p.type === 'timeZoneName')[0].value;
+  const timeZoneName = parts.filter((p) => p.type === 'timeZoneName')[0]!.value;
 
   return timeZoneName;
 };

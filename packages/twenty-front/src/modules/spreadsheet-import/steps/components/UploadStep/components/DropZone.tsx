@@ -138,13 +138,13 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
         enqueueToast({
           variant: 'error',
           children: t`${fileName} upload rejected`,
-          description: fileRejection.errors[0].message,
+          description: fileRejection.errors[0]!.message,
         });
       });
     },
     onDropAccepted: async ([file]) => {
       setLoading(true);
-      const arrayBuffer = await readFileAsync(file);
+      const arrayBuffer = await readFileAsync(file!);
       const workbook = read(arrayBuffer, {
         cellDates: true,
         codepage: 65001, // UTF-8 codepage
@@ -153,7 +153,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
         dense: true,
       });
       setLoading(false);
-      onContinue(workbook, file);
+      onContinue(workbook, file!);
     },
   });
 

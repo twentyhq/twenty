@@ -60,8 +60,10 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
           targetedRecordsRule.mode === 'selection' &&
           targetedRecordsRule.selectedRecordIds.length === 1
         ) {
-          const recordId = targetedRecordsRule.selectedRecordIds[0];
-          const record = store.get(recordStoreFamilyState.atomFamily(recordId));
+          const recordId = targetedRecordsRule.selectedRecordIds[0]!;
+          const record = store.get(
+            recordStoreFamilyState.atomFamily(recordId!),
+          );
 
           if (isDefined(record) && isDefined(record.pageLayoutId)) {
             store.set(
@@ -121,7 +123,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
           activeTabIdComponentState.atomFamily({
             instanceId: getShowPageTabListComponentId({
               pageId,
-              targetObjectId: morphItems[0].recordId,
+              targetObjectId: morphItems[0]!.recordId,
             }),
           }),
           null,

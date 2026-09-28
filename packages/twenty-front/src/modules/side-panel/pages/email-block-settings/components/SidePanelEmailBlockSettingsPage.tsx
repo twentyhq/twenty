@@ -167,10 +167,10 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
     const sideValues = [sides.top, sides.right, sides.bottom, sides.left];
 
     sideProperties.forEach((property, index) => {
-      if (sideValues[index].trim() === '') {
+      if (sideValues[index]!.trim() === '') {
         delete nextStyles[property];
       } else {
-        nextStyles[property] = sideValues[index];
+        nextStyles[property] = sideValues[index]!;
       }
     });
 

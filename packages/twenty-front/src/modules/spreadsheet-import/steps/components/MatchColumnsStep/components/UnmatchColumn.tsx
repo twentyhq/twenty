@@ -57,10 +57,11 @@ export const UnmatchColumn = ({
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
   const [isExpanded, setIsExpanded] = useState(false);
   const column = columns[columnIndex];
-  const isSelect = 'matchedOptions' in column;
+  const isSelect = 'matchedOptions' in column!;
   const { t } = useLingui();
 
-  const allMatched = column.type === SpreadsheetColumnType.matchedSelectOptions;
+  const allMatched =
+    column!.type === SpreadsheetColumnType.matchedSelectOptions;
 
   if (!isSelect) return null;
 

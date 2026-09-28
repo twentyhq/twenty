@@ -108,7 +108,7 @@ export const ColumnGrid = ({
             const userColumn = renderUserColumn(columns, index);
             const templateColumn = renderTemplateColumn(columns, index);
             const unmatchedColumn = renderUnmatchedColumn(columns, index);
-            const isSelect = 'matchedOptions' in columns[index];
+            const isSelect = 'matchedOptions' in columns[index]!;
             const isLast = index === columns.length - 1;
 
             if (React.isValidElement(userColumn)) {

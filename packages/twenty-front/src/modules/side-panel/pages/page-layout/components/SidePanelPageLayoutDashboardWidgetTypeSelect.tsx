@@ -210,7 +210,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       addDraftViewForRecordTableWidget(
         newRecordTableWidget.id,
-        firstAvailableObjectMetadataItem,
+        firstAvailableObjectMetadataItem!,
       );
     }
 

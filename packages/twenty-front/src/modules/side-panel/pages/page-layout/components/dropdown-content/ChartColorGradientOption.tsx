@@ -43,7 +43,7 @@ export const ChartColorGradientOption = ({
           const reversedIndex =
             CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT - 1 - index;
           const groupColor = generateGroupColor({
-            colorScheme,
+            colorScheme: colorScheme!,
             groupIndex: reversedIndex,
             totalGroups: CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT,
           });

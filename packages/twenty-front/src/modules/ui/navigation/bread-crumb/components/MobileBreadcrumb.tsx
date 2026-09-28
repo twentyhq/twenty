@@ -55,8 +55,8 @@ export const MobileBreadcrumb = ({
 
   const previousLink = links[links.length - 2];
 
-  const text = isNonEmptyString(previousLink.children)
-    ? previousLink.children
+  const text = isNonEmptyString(previousLink!.children)
+    ? previousLink!.children
     : '';
 
   return (

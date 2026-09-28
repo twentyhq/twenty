@@ -35,7 +35,7 @@ export const SidePanelDefaultSelectionEffect = ({
     }
 
     if (selectableItemIds.length > 0) {
-      setSelectedItemId(selectableItemIds[0]);
+      setSelectedItemId(selectableItemIds[0]!);
     }
   }, [
     hasUserSelectedSidePanelListItem,

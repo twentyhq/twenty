@@ -74,8 +74,8 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     }
 
     const updatedField = reorderVisibleRecordFields({
-      recordFieldToMove: draggableRecordFields[result.source.index],
-      targetRecordField: draggableRecordFields[result.destination.index],
+      recordFieldToMove: draggableRecordFields[result.source.index]!,
+      targetRecordField: draggableRecordFields[result.destination.index]!,
     });
 
     onFieldUpdated?.(updatedField.id, { position: updatedField.position });

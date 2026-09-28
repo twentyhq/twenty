@@ -146,7 +146,7 @@ export const ImageInput = ({
             accept="image/jpeg, image/png, image/gif" // to desired specification
             onChange={(event) => {
               if (isDefined(onUpload) && isDefined(event.target.files)) {
-                onUpload(event.target.files[0]);
+                onUpload(event.target.files[0]!);
               }
             }}
           />

@@ -56,7 +56,7 @@ export const SelectSheetStep = ({
       if (
         maxRecords > 0 &&
         exceedsMaxRecords(
-          currentStepState.workbook.Sheets[sheetName],
+          currentStepState.workbook.Sheets[sheetName]!,
           maxRecords,
         )
       ) {
@@ -91,7 +91,7 @@ export const SelectSheetStep = ({
   const handleOnContinue = useCallback(
     async (data: typeof value) => {
       setIsLoading(true);
-      await handleContinue(data);
+      await handleContinue(data!);
       setIsLoading(false);
     },
     [handleContinue],

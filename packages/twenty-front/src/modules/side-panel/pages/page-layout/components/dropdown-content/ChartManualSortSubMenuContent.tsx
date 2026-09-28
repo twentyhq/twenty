@@ -61,7 +61,7 @@ export const ChartManualSortSubMenuContent = ({
       toIndex: result.destination.index,
     });
 
-    const newManualSortOrder = reorderedOptions.map((option) => option.value);
+    const newManualSortOrder = reorderedOptions.map((option) => option!.value);
     const configKey = isWidgetConfigurationOfType(
       configuration,
       'PieChartConfiguration',

@@ -296,11 +296,11 @@ const meta = {
                 ...mockedCompanyRecords[0],
                 ...variables.input,
                 createdBy: {
-                  ...mockedCompanyRecords[0].createdBy,
+                  ...mockedCompanyRecords[0]!.createdBy,
                   provider: null,
                 },
                 updatedBy: {
-                  ...mockedCompanyRecords[0].updatedBy,
+                  ...mockedCompanyRecords[0]!.updatedBy,
                   provider: null,
                 },
               },

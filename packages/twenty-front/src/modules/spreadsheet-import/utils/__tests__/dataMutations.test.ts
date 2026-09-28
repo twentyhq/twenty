@@ -137,7 +137,7 @@ describe('addErrorsAndRunHooks', () => {
 
     expect(rowHook).toHaveBeenCalled();
     expect(tableHook).toHaveBeenCalled();
-    expect(result[0].__errors).toStrictEqual({
+    expect(result[0]!.__errors).toStrictEqual({
       name: nameError,
       age: ageError,
     });
@@ -153,7 +153,7 @@ describe('addErrorsAndRunHooks', () => {
 
     expect(rowHook).toHaveBeenCalled();
     expect(tableHook).toHaveBeenCalled();
-    expect(result[1].__errors).toStrictEqual({
+    expect(result[1]!.__errors).toStrictEqual({
       name: requiredError,
       age: regexError,
     });
@@ -162,7 +162,7 @@ describe('addErrorsAndRunHooks', () => {
   it('should add errors for required field', () => {
     const result = addErrorsAndRunHooks(data, [requiredField]);
 
-    expect(result[1].__errors).toStrictEqual({
+    expect(result[1]!.__errors).toStrictEqual({
       name: requiredError,
     });
   });
@@ -170,7 +170,7 @@ describe('addErrorsAndRunHooks', () => {
   it('should add errors for regex field', () => {
     const result = addErrorsAndRunHooks(data, [regexField]);
 
-    expect(result[1].__errors).toStrictEqual({
+    expect(result[1]!.__errors).toStrictEqual({
       age: regexError,
     });
   });
@@ -184,10 +184,10 @@ describe('addErrorsAndRunHooks', () => {
       [uniqueField],
     );
 
-    expect(result[0].__errors).toStrictEqual({
+    expect(result[0]!.__errors).toStrictEqual({
       country: duplicatedError,
     });
-    expect(result[1].__errors).toStrictEqual({
+    expect(result[1]!.__errors).toStrictEqual({
       country: duplicatedError,
     });
   });
@@ -198,10 +198,10 @@ describe('addErrorsAndRunHooks', () => {
       [uniqueField],
     );
 
-    expect(result[0].__errors).toStrictEqual({
+    expect(result[0]!.__errors).toStrictEqual({
       country: duplicatedError,
     });
-    expect(result[1].__errors).toStrictEqual({
+    expect(result[1]!.__errors).toStrictEqual({
       country: duplicatedError,
     });
   });
@@ -217,8 +217,8 @@ describe('addErrorsAndRunHooks', () => {
       ],
     );
 
-    expect(result[0].__errors).toBeUndefined();
-    expect(result[1].__errors).toBeUndefined();
+    expect(result[0]!.__errors).toBeUndefined();
+    expect(result[1]!.__errors).toBeUndefined();
   });
 
   it('should add errors for function validation if result is false', () => {
@@ -227,7 +227,7 @@ describe('addErrorsAndRunHooks', () => {
       [functionValidationFieldFalse],
     );
 
-    expect(result[0].__errors).toStrictEqual({
+    expect(result[0]!.__errors).toStrictEqual({
       email: basicError,
     });
   });
@@ -238,6 +238,6 @@ describe('addErrorsAndRunHooks', () => {
       [functionValidationFieldTrue],
     );
 
-    expect(result[0].__errors).toBeUndefined();
+    expect(result[0]!.__errors).toBeUndefined();
   });
 });

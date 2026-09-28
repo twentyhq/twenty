@@ -91,7 +91,7 @@ export const SidePanelWorkflowStepInfo = ({
 
   const logicFunctionId =
     stepDefinition?.type === 'action' &&
-    stepDefinition.definition.type === 'LOGIC_FUNCTION'
+    stepDefinition.definition!.type === 'LOGIC_FUNCTION'
       ? stepDefinition.definition.settings.input.logicFunctionId
       : undefined;
 

@@ -103,28 +103,28 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   const canUnpin = isAlreadyPinned;
 
   const isResetToDefaultDisabled =
-    !isNonEmptyString(tab.applicationId) ||
-    tab.applicationId === currentWorkspace?.workspaceCustomApplication?.id;
+    !isNonEmptyString(tab!.applicationId) ||
+    tab!.applicationId === currentWorkspace!.workspaceCustomApplication!.id;
 
   const handleDelete = () => {
-    deleteTab(tab.id);
+    deleteTab(tab!.id);
     setPageLayoutTabSettingsOpenTabId(null);
     closeSidePanelMenu();
   };
 
   const handleResetToDefault = () => {
-    resetPageLayoutTabToDefault(tab.id);
+    resetPageLayoutTabToDefault(tab!.id);
   };
 
   const handleUnpin = () => {
     unpinTab();
-    setActiveTabId(tab.id);
-    navigate(`#${tab.id}`);
+    setActiveTabId(tab!.id);
+    navigate(`#${tab!.id}`);
   };
 
-  const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
+  const activeWidgets = tab!.widgets.filter((widget) => widget.isActive);
 
-  const isSingleWidgetTab = getIsSingleWidgetTab({ tab });
+  const isSingleWidgetTab = getIsSingleWidgetTab({ tab: tab! });
 
   if (isSingleWidgetTab) {
     return (
@@ -137,9 +137,9 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         canMoveRight={canMoveRight}
         isResetToDefaultDisabled={isResetToDefaultDisabled}
         canDelete={canDelete}
-        onMoveLeft={() => moveLeft(tab.id)}
-        onMoveRight={() => moveRight(tab.id)}
-        onSetAsPinned={() => setAsPinnedTab(tab.id)}
+        onMoveLeft={() => moveLeft(tab!.id)}
+        onMoveRight={() => moveRight(tab!.id)}
+        onSetAsPinned={() => setAsPinnedTab(tab!.id)}
         onUnpin={handleUnpin}
         onResetToDefault={handleResetToDefault}
         onDelete={handleDelete}
@@ -155,12 +155,12 @@ export const SidePanelPageLayoutTabSettingsContent = ({
       canMoveRight={canMoveRight}
       isResetToDefaultDisabled={isResetToDefaultDisabled}
       canDelete={canDelete}
-      onMoveLeft={() => moveLeft(tab.id)}
-      onMoveRight={() => moveRight(tab.id)}
-      onSetAsPinned={() => setAsPinnedTab(tab.id)}
+      onMoveLeft={() => moveLeft(tab!.id)}
+      onMoveRight={() => moveRight(tab!.id)}
+      onSetAsPinned={() => setAsPinnedTab(tab!.id)}
       onUnpin={handleUnpin}
       onDuplicate={() => {
-        const newTabId = duplicateTab(tab.id);
+        const newTabId = duplicateTab(tab!.id);
         navigate(`#${newTabId}`);
       }}
       onResetToDefault={handleResetToDefault}

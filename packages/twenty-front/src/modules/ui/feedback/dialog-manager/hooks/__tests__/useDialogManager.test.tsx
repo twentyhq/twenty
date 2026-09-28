@@ -110,7 +110,7 @@ describe('useDialogManager', () => {
     it('Should enqueueDialog', () => {
       const result = renderHooks();
 
-      const expectReturn = expectedReturnFromEnqueue([dialogOptionsArray[0]]);
+      const expectReturn = expectedReturnFromEnqueue([dialogOptionsArray[0]!]);
 
       act(() => {
         result.current.dialogManager.enqueueDialog(dialogOptionsArray[0]);
@@ -127,8 +127,8 @@ describe('useDialogManager', () => {
       const result = renderHooks();
 
       const expectReturn = expectedReturnFromEnqueue([
-        dialogOptionsArray[0],
-        dialogOptionsArray[1],
+        dialogOptionsArray[0]!,
+        dialogOptionsArray[1]!,
       ]);
 
       act(() => {
@@ -147,8 +147,8 @@ describe('useDialogManager', () => {
       const result = renderHooks();
 
       const expectReturn = expectedReturnFromEnqueue([
-        dialogOptionsArray[1],
-        dialogOptionsArray[2],
+        dialogOptionsArray[1]!,
+        dialogOptionsArray[2]!,
       ]);
 
       act(() => {
@@ -175,8 +175,8 @@ describe('useDialogManager', () => {
       });
 
       const expectReturnWhenEnqueue = expectedReturnFromEnqueue([
-        dialogOptionsArray[0],
-        dialogOptionsArray[1],
+        dialogOptionsArray[0]!,
+        dialogOptionsArray[1]!,
       ]);
 
       const { dialogInternal: stateAfterEnqueue } = result.current;

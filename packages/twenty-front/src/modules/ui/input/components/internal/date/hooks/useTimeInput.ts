@@ -37,8 +37,8 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
       if (!match) return null;
 
       const [, hoursStr, minutesStr, amPmStr] = match;
-      const hours = parseInt(hoursStr, 10);
-      const minutes = parseInt(minutesStr, 10);
+      const hours = parseInt(hoursStr!, 10);
+      const minutes = parseInt(minutesStr!, 10);
 
       const isValidHour = hours >= 1 && hours <= 12;
       const isValidMinute = minutes >= 0 && minutes <= 59;
@@ -46,7 +46,7 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
         return null;
       }
 
-      const isPM = amPmStr.toUpperCase() === 'PM';
+      const isPM = amPmStr!.toUpperCase() === 'PM';
       const hour24 = (hours % 12) + (isPM ? 12 : 0);
       return { hour: hour24, minute: minutes };
     } else {
@@ -54,8 +54,8 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
       if (!match) return null;
 
       const [, hoursStr, minutesStr] = match;
-      const hours = parseInt(hoursStr, 10);
-      const minutes = parseInt(minutesStr, 10);
+      const hours = parseInt(hoursStr!, 10);
+      const minutes = parseInt(minutesStr!, 10);
 
       const isValidHour = hours >= 0 && hours <= 23;
       const isValidMinute = minutes >= 0 && minutes <= 59;

@@ -92,7 +92,7 @@ export const SidePanelWorkflowRunViewStepContent = () => {
     stepExecutionStatus,
     actionType:
       stepDefinition?.type === 'action'
-        ? stepDefinition.definition.type
+        ? stepDefinition.definition!.type
         : undefined,
   });
   const isInputTabDisabled = getIsInputTabDisabled({

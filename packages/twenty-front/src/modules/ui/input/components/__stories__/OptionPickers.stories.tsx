@@ -45,7 +45,7 @@ const InnerSelectExample = () => {
     { value: 'disabled', label: 'Disabled', disabled: true },
     { value: 'last', label: 'Last' },
   ];
-  const [option, setOption] = useState(options[0]);
+  const [option, setOption] = useState(options[0]!);
   return (
     <DropdownMenuInnerSelect
       dropdownId="inner-select-story"

@@ -117,8 +117,8 @@ describe('calculateNewPosition', () => {
       });
 
       expect(result).toBe(1.5);
-      expect(result).not.toBe(items[0].position);
-      expect(result).not.toBe(items[1].position);
+      expect(result).not.toBe(items[0]!.position);
+      expect(result).not.toBe(items[1]!.position);
     });
 
     it('should handle destinationIndex equal to sourceIndex', () => {

@@ -42,7 +42,7 @@ export const TemplateColumn = ({
     suggestedFieldsByColumnHeaderState,
   );
 
-  const column = columns[columnIndex];
+  const column = columns[columnIndex]!;
   const isIgnored = column.type === SpreadsheetColumnType.ignored;
 
   const { t } = useLingui();

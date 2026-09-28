@@ -5,5 +5,5 @@ export const exceedsMaxRecords = (workSheet: WorkSheet, maxRecords: number) => {
     workSheet['!ref']
       ?.split(':')
       .map((position) => parseInt(position.replace(/\D/g, ''), 10)) || [];
-  return bottom - top > maxRecords;
+  return bottom! - top! > maxRecords;
 };

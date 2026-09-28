@@ -26,7 +26,7 @@ export const useSelectableListHotKeys = (
     }
 
     for (let row = 0; row < selectableItemIds.length; row++) {
-      const col = selectableItemIds[row].indexOf(selectedItemId);
+      const col = selectableItemIds[row]!.indexOf(selectedItemId);
       if (col !== -1) {
         return { row, col };
       }
@@ -57,7 +57,7 @@ export const useSelectableListHotKeys = (
         }
 
         if (!selectedItemId || !currentPosition) {
-          return selectableItemIds[0][0];
+          return selectableItemIds[0]![0]!;
         }
 
         const { row: currentRow, col: currentCol } = currentPosition;
@@ -78,7 +78,7 @@ export const useSelectableListHotKeys = (
               : Math.min(selectableItemIds.length - 1, currentRow + 1);
             nextCol = isSingleRow
               ? Math.min(
-                  selectableItemIds[currentRow].length - 1,
+                  selectableItemIds[currentRow]!.length - 1,
                   currentCol + 1,
                 )
               : currentCol;
@@ -90,7 +90,7 @@ export const useSelectableListHotKeys = (
           case 'right':
             nextRow = currentRow;
             nextCol = Math.min(
-              selectableItemIds[currentRow].length - 1,
+              selectableItemIds[currentRow]!.length - 1,
               currentCol + 1,
             );
             break;
@@ -99,7 +99,7 @@ export const useSelectableListHotKeys = (
             nextCol = currentCol;
         }
 
-        return selectableItemIds[nextRow][nextCol];
+        return selectableItemIds[nextRow]![nextCol]!;
       };
 
       const nextId = computeNextId(direction);
