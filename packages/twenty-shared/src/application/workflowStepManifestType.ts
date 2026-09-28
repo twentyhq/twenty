@@ -128,9 +128,6 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
                 }),
               )
               .optional(),
-            gqlOperationOrderBy: z
-              .array(z.record(z.string(), z.unknown()))
-              .optional(),
           })
           .optional(),
       })

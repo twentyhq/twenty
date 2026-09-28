@@ -15,3 +15,5 @@ Running the demo creates, updates, upserts, reads and finally deletes its own ne
 Build the branch SDK, configure a local CLI remote and run `twenty dev` from this directory to install it. Open **All 20 step types — app demo** in Workflows. No automated triggers are included.
 
 The CODE step declares an expected result for output inspection; the greeting function declares its output schema. Agent outputs are derived from its response format. These declarations do not execute the integrations during installation. The HTTP example returns HTML rather than a structured object, so it declares no object properties.
+
+Use this POC only in a trusted development workspace. Existing explicit connected-account lookup validates workspace membership and email capability but does not enforce the runner's ownership/visibility of that account. The email branch is opt-in; the application workflow flag does not repair this permission gap. Account authorization must be fixed before rollout to untrusted application authors or runners.

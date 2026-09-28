@@ -39,6 +39,30 @@ describe('defineWorkflow POC', () => {
     });
   });
 
+  it('rejects raw GraphQL ordering in portable record queries', () => {
+    const invalid: WorkflowManifest = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        steps: [
+          {
+            universalIdentifier: workflow.version.steps[0].universalIdentifier,
+            name: 'Find records',
+            type: 'FIND_RECORDS',
+            nextStepIds: [],
+            input: { objectUniversalIdentifier: workflow.universalIdentifier },
+          },
+        ],
+      },
+    };
+    Object.assign(invalid.version.steps[0].input, {
+      orderBy: { gqlOperationOrderBy: [{ workspaceField: 'AscNullsLast' }] },
+    });
+    const result = defineWorkflow(invalid);
+    expect(result.success).toBe(false);
+    expect(result.errors.join(' ')).toContain('gqlOperationOrderBy');
+  });
+
   it('is discovered by the application manifest builder', () => {
     expect(extractDefineEntity('export default defineWorkflow({});')).toBe(
       TargetFunction.DefineWorkflow,
