@@ -24,7 +24,7 @@ const EVERYONE_PRINCIPAL_ID = '5047ca8f-514a-4609-8ef4-1bb63f3084c5';
 // runs. Runs are now private records whose grants mirror their core workflow's
 // visibility. Grants are written before readability changes, so no run is
 // unreadable in between, and a retry rewrites the same derived set.
-@RegisteredWorkspaceCommand('2.44.0', 1790590551687)
+@RegisteredWorkspaceCommand('2.44.0', 1790595877162)
 @Command({
   name: 'upgrade:2-44:follow-workflow-visibility-on-runs',
   description:
