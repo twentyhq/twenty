@@ -20,6 +20,8 @@ export const createStoryState = <TValue>(initialValue: TValue) => {
         listener();
       }
     },
-    useValue: () => useSyncExternalStore(subscribe, () => value),
+    useValue: () => {
+      return useSyncExternalStore(subscribe, () => value);
+    },
   };
 };

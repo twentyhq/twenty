@@ -43,12 +43,15 @@ const playDismissesOneLayerAtATime =
   (dismissal: 'escape' | 'outside press') =>
   async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const dismiss = () =>
-      dismissal === 'escape'
-        ? userEvent.keyboard('{Escape}')
-        : userEvent.click(
-            within(canvasElement).getByRole('button', { name: 'Outside' }),
-          );
+    const dismiss = () => {
+      if (dismissal === 'escape') {
+        return userEvent.keyboard('{Escape}');
+      }
+
+      return userEvent.click(
+        within(canvasElement).getByRole('button', { name: 'Outside' }),
+      );
+    };
 
     await openSortDirection(canvasElement);
     await dismiss();

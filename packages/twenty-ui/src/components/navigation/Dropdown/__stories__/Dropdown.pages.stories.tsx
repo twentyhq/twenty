@@ -160,10 +160,11 @@ const openFilters = async (canvasElement: HTMLElement) => {
   return trigger;
 };
 
-const openRecordActions = (canvasElement: HTMLElement) =>
-  userEvent.click(
+const openRecordActions = (canvasElement: HTMLElement) => {
+  return userEvent.click(
     within(canvasElement).getByRole('button', { name: 'Record actions' }),
   );
+};
 
 const playResetsToRootPageAfterDismissal = async ({
   canvasElement,

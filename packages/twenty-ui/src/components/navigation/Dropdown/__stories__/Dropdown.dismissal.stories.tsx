@@ -36,7 +36,9 @@ const DismissibleRecordActions = ({
   </>
 );
 
-const preventDismiss = (event: DropdownDismissEvent) => event.preventDefault();
+const preventDismiss = (event: DropdownDismissEvent) => {
+  event.preventDefault();
+};
 
 const openRecordActions = async (canvasElement: HTMLElement) => {
   const trigger = within(canvasElement).getByRole('button', {

@@ -442,7 +442,9 @@ export const TriggerInsideLink: Story = {
   play: async ({ canvasElement }) => {
     const ownerDocument = canvasElement.ownerDocument;
     const clickEvents: MouseEvent[] = [];
-    const recordClick = (event: MouseEvent) => clickEvents.push(event);
+    const recordClick = (event: MouseEvent) => {
+      clickEvents.push(event);
+    };
 
     ownerDocument.addEventListener('click', recordClick, true);
 
