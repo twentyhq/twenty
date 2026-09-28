@@ -23,6 +23,7 @@ const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
   'messageChannelMessageAssociationMessageFolder',
   'messageSuppression',
   'recordShare',
+  'shortLink',
   'workflowAutomatedTrigger',
 ];
 

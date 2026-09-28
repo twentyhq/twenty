@@ -11,6 +11,7 @@ export const PREVIEW_MESSAGE_CAMPAIGN_AUDIENCE = gql`
       hardSuppressed
       globallyUnsubscribed
       topicUnsubscribed
+      trackingRefused
       sendable
     }
   }

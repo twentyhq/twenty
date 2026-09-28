@@ -1621,6 +1621,12 @@ export default {
             "isPublicInviteLinkEnabled": [
                 8
             ],
+            "isCampaignClickTrackingEnabled": [
+                8
+            ],
+            "isCampaignOpenTrackingEnabled": [
+                8
+            ],
             "workspaceDiscoverability": [
                 72
             ],
@@ -6085,6 +6091,9 @@ export default {
                 30
             ],
             "topicUnsubscribed": [
+                30
+            ],
+            "trackingRefused": [
                 30
             ],
             "sendable": [
@@ -12999,6 +13008,9 @@ export default {
                 1
             ],
             "isPublicInviteLinkEnabled": [
+                8
+            ],
+            "isCampaignClickTrackingEnabled": [
                 8
             ],
             "workspaceDiscoverability": [
