@@ -9,6 +9,7 @@ import { type SelectorMatcher } from '@/polyfills/selectors/types/SelectorMatche
 import { type SelectorMatcherResolver } from '@/polyfills/selectors/types/SelectorMatcherResolver';
 import { buildSelectorPseudoClassMatchers } from '@/polyfills/selectors/utils/buildSelectorPseudoClassMatchers';
 import { createSelectorSyntaxError } from '@/polyfills/selectors/utils/createSelectorSyntaxError';
+import { parseSelectorsWithForgivingLists } from '@/polyfills/selectors/utils/parseSelectorsWithForgivingLists';
 import { resolveSelectorScopeTarget } from '@/polyfills/selectors/utils/resolveSelectorScopeTarget';
 
 export const createSelectorMatcherResolver = ({
@@ -30,7 +31,10 @@ export const createSelectorMatcherResolver = ({
   }): SelectorMatcher => {
     try {
       return compile(
-        selectorsText,
+        parseSelectorsWithForgivingLists({
+          selectorsText,
+          pseudoClassMatchers,
+        }),
         {
           adapter: WORKER_DOM_CSS_SELECT_ADAPTER,
           pseudos: pseudoClassMatchers,

@@ -153,6 +153,66 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(list.matches(':has(input)')).toBe(false);
     });
 
+    describe.each(['is', 'where'])(':%s forgiving selector lists', (pseudo) => {
+      it('should keep valid branches when another branch is unsupported', () => {
+        const { document } = createSelectorFixture();
+        const { list, firstTab, secondTab, label } = createTree(document);
+        const selector = `:${pseudo}(button, :unknown-pseudo)`;
+
+        expect(firstTab.matches(selector)).toBe(true);
+        expect(label.matches(selector)).toBe(false);
+        expect(label.closest(selector)).toBe(secondTab);
+        expect(list.querySelector(selector)).toBe(firstTab);
+        expect(Array.from(list.querySelectorAll(selector))).toEqual([
+          firstTab,
+          secondTab,
+        ]);
+      });
+
+      it('should match nothing when every branch is unsupported', () => {
+        const { document } = createSelectorFixture();
+        const { firstTab } = createTree(document);
+
+        expect(firstTab.matches(`:${pseudo}(:unknown-pseudo, ::before)`)).toBe(
+          false,
+        );
+        expect(firstTab.matches(`:not(:${pseudo}(:unknown-pseudo))`)).toBe(
+          true,
+        );
+      });
+
+      it('should discard a whole invalid branch including nested selectors', () => {
+        const { document } = createSelectorFixture();
+        const { firstTab, label } = createTree(document);
+        const selector = `:${pseudo}(span, :not(:unknown-pseudo))`;
+
+        expect(firstTab.matches(selector)).toBe(false);
+        expect(label.matches(selector)).toBe(true);
+        expect(
+          firstTab.matches(`:${pseudo}(span, :not(:where(:unknown-pseudo)))`),
+        ).toBe(true);
+      });
+
+      it('should retain scope and relative has semantics in valid branches', () => {
+        const { document } = createSelectorFixture();
+        const { list, firstTab, secondTab } = createTree(document);
+
+        expect(
+          Array.from(
+            list.querySelectorAll(
+              `:${pseudo}(:scope > button, :unknown-pseudo)`,
+            ),
+          ),
+        ).toEqual([firstTab, secondTab]);
+        expect(
+          list.querySelector(`:${pseudo}(:has(> span), :unknown-pseudo)`),
+        ).toBe(secondTab);
+        expect(
+          list.querySelector(`button:has(> :${pseudo}(span, :unknown-pseudo))`),
+        ).toBe(secondTab);
+      });
+    });
+
     it('should evaluate form state pseudo-classes from attributes', () => {
       const { document } = createSelectorFixture();
       const { firstTab, secondTab } = createTree(document);
@@ -236,6 +296,10 @@ describe('installSelectorMethodsPolyfill', () => {
       '> div',
       '[',
       ':unknown-pseudo',
+      'button, :unknown-pseudo',
+      ':not(button, :unknown-pseudo)',
+      ':has(button, :unknown-pseudo)',
+      ':is(button, :unknown-pseudo):unknown-pseudo',
       ':not(',
       ':disabled(x)',
       ':defined(tab)',
