@@ -23307,6 +23307,8 @@ msgstr "Định dạng hình ảnh không được hỗ trợ"
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Untitled"
@@ -24869,11 +24871,6 @@ msgstr "Thực thi quy trình làm việc"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
 msgstr "Trang chỉ mục quy trình công việc"
-
-#. js-lingui-id: 975MSi
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
-msgid "Workflow name"
-msgstr "Tên quy trình làm việc"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx

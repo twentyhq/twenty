@@ -23307,6 +23307,8 @@ msgstr "지원되지 않는 이미지 형식"
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Untitled"
@@ -24869,11 +24871,6 @@ msgstr "워크플로우 실행"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
 msgstr "워크플로 인덱스 페이지"
-
-#. js-lingui-id: 975MSi
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
-msgid "Workflow name"
-msgstr "워크플로우 이름"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
