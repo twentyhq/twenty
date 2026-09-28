@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 
@@ -30,12 +30,12 @@ const BROKEN_RULE = {
 };
 
 const compute = (
-  records: Record<string, unknown>[],
+  records: ObjectRecord[],
   inputIndexByRecordId = new Map<string, number>(),
   maxViolations = 100,
 ) =>
   computeRecordValidationRuleViolations({
-    records: records as never,
+    records,
     validationRules: [WON_WITHOUT_AMOUNT_RULE],
     fields: FIELDS,
     now: '2026-09-23T10:00:00.000Z',
@@ -107,7 +107,7 @@ describe('computeRecordValidationRuleViolations', () => {
   it('should report a rule that cannot be evaluated as an evaluation error', () => {
     expect(
       computeRecordValidationRuleViolations({
-        records: [{ id: 'record', stage: 'WON' }] as never,
+        records: [{ id: 'record', stage: 'WON' }],
         validationRules: [BROKEN_RULE],
         fields: FIELDS,
         now: '2026-09-23T10:00:00.000Z',
