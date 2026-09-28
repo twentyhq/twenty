@@ -11,6 +11,7 @@ import { DropdownNestedExample } from './DropdownNestedExample';
 import { DropdownPagesExample } from './DropdownPagesExample';
 import { DropdownPanelExample } from './DropdownPanelExample';
 import { DropdownPickerExample } from './DropdownPickerExample';
+import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 const DropdownMenuExample = () => (
   <Dropdown.Root type="menu">
@@ -63,18 +64,7 @@ type Story = StoryObj<typeof DropdownMenuExample>;
 export const Documentation: Story = {};
 
 export const Menu: Story = {
-  parameters: {
-    a11y: {
-      config: {
-        rules: [
-          {
-            id: 'aria-hidden-focus',
-            selector: '[aria-hidden="true"]:not([data-base-ui-focus-guard])',
-          },
-        ],
-      },
-    },
-  },
+  parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -344,8 +334,17 @@ export const ContextMenu: Story = {
         top: 60,
       }),
     );
+    await expect(body.getAllByRole('menu')).toHaveLength(1);
 
     await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await expect(canvasElement.ownerDocument.body).toHaveFocus();
+
+    await userEvent.pointer({ keys: '[MouseRight]', target: firstRecord });
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await userEvent.click(canvasElement);
     await waitFor(() =>
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
