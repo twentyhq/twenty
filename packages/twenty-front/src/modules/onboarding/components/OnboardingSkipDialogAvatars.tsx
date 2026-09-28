@@ -1,12 +1,35 @@
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { AvatarGroup } from 'twenty-ui/components';
-import { Avatar, type AvatarShape } from 'twenty-ui/primitives/data-display';
+import { IconPlus } from 'twenty-ui/icon';
+import {
+  AVATAR_PROPERTIES_BY_SIZE,
+  Avatar,
+  type AvatarShape,
+} from 'twenty-ui/primitives/data-display';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const MAX_VISIBLE_AVATARS = 5;
 
+const EMPTY_SEAT_SIZE = AVATAR_PROPERTIES_BY_SIZE.lg.width;
+
 const StyledItem = styled(motion.div)`
   display: flex;
+`;
+
+const StyledEmptySeat = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px dashed ${themeCssVariables.border.color.strong};
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px ${themeCssVariables.background.primary};
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.light};
+  corner-shape: round;
+  display: flex;
+  height: ${EMPTY_SEAT_SIZE};
+  justify-content: center;
+  width: ${EMPTY_SEAT_SIZE};
 `;
 
 type OnboardingSkipDialogAvatar = {
@@ -18,22 +41,47 @@ type OnboardingSkipDialogAvatar = {
 
 type OnboardingSkipDialogAvatarsProps = {
   avatars: OnboardingSkipDialogAvatar[];
+  emptySeatsCount?: number;
 };
 
 export const OnboardingSkipDialogAvatars = ({
   avatars,
+  emptySeatsCount = 0,
 }: OnboardingSkipDialogAvatarsProps) => {
+  const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
 
-  const visibleAvatars = avatars.slice(0, MAX_VISIBLE_AVATARS);
+  const items = [
+    ...avatars.slice(0, MAX_VISIBLE_AVATARS).map((avatar) => ({
+      key: avatar.id,
+      content: (
+        <Avatar
+          src={avatar.src}
+          name={avatar.name}
+          colorSeed={avatar.id}
+          size="lg"
+          shape={avatar.shape}
+          ring
+        />
+      ),
+    })),
+    ...Array.from({ length: emptySeatsCount }, (_, emptySeatIndex) => ({
+      key: `empty-seat-${emptySeatIndex}`,
+      content: (
+        <StyledEmptySeat>
+          <IconPlus size={theme.icon.size.sm} />
+        </StyledEmptySeat>
+      ),
+    })),
+  ];
 
   return (
     <AvatarGroup
-      maxVisible={visibleAvatars.length}
+      maxVisible={items.length}
       overlapOffset="4px"
-      avatars={visibleAvatars.map((avatar, index) => (
+      avatars={items.map((item, index) => (
         <StyledItem
-          key={avatar.id}
+          key={item.key}
           initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{
@@ -43,14 +91,7 @@ export const OnboardingSkipDialogAvatars = ({
             delay: index * 0.05,
           }}
         >
-          <Avatar
-            src={avatar.src}
-            name={avatar.name}
-            colorSeed={avatar.id}
-            size="lg"
-            shape={avatar.shape}
-            ring
-          />
+          {item.content}
         </StyledItem>
       ))}
     />

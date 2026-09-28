@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled(Dialog.Header)`
@@ -35,6 +35,8 @@ type OnboardingSkipDialogProps = {
   description?: string;
   actions: OnboardingRewardAction[];
   creditsReward: number;
+  isRewardPerItem?: boolean;
+  finalFocus?: DialogPopupProps['finalFocus'];
   onSkip: () => void;
 };
 
@@ -45,6 +47,8 @@ export const OnboardingSkipDialog = ({
   description,
   actions,
   creditsReward,
+  isRewardPerItem = false,
+  finalFocus,
   onSkip,
 }: OnboardingSkipDialogProps) => {
   const { t } = useLingui();
@@ -63,6 +67,7 @@ export const OnboardingSkipDialog = ({
           {...{ container, backdrop, viewportProps, onKeyDown }}
           size="compact"
           initialFocus={firstActionRef}
+          finalFocus={finalFocus}
           data-globally-prevent-click-outside
         >
           <StyledHeader>
@@ -90,6 +95,7 @@ export const OnboardingSkipDialog = ({
                 label={action.label}
                 Icon={action.Icon}
                 creditsReward={creditsReward}
+                isRewardPerItem={isRewardPerItem}
                 onClick={() => runAction(action)}
               />
             ))}

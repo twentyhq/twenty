@@ -32,6 +32,13 @@ export const Default: Story = {
   },
 };
 
+export const WithEmptySeats: Story = {
+  args: {
+    avatars: [{ id: 'Alice', name: 'Alice', shape: 'circle' }],
+    emptySeatsCount: 2,
+  },
+};
+
 export const CapsVisibleAvatars: Story = {
   args: {
     avatars: ['Alice', 'Bruno', 'Chloe', 'David', 'Emma', 'Farid'].map(

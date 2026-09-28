@@ -114,3 +114,20 @@ export const SkipAnyway: Story = {
     await expect(args.onSkip).toHaveBeenCalledTimes(1);
   },
 };
+
+export const PerItemCreditsReward: Story = {
+  args: {
+    actions: [{ label: 'Add teammates', onClick: fn() }],
+    creditsReward: 0.5,
+    isRewardPerItem: true,
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openSkipDialog(canvasElement);
+
+    await expect(
+      within(dialog).getByRole('button', {
+        name: 'Add teammates, earn 0.5 free credits each',
+      }),
+    ).toHaveTextContent('+0.5 each');
+  },
+};

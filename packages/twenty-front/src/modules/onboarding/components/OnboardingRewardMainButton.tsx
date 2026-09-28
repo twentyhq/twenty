@@ -10,6 +10,7 @@ import { useTheme } from 'twenty-ui/theme';
 
 type OnboardingRewardMainButtonProps = OnboardingRewardAction & {
   creditsReward: number;
+  isRewardPerItem?: boolean;
   ref?: Ref<HTMLButtonElement>;
 };
 
@@ -17,6 +18,7 @@ export const OnboardingRewardMainButton = ({
   label,
   Icon,
   creditsReward,
+  isRewardPerItem = false,
   onClick,
   ref,
 }: OnboardingRewardMainButtonProps) => {
@@ -39,6 +41,7 @@ export const OnboardingRewardMainButton = ({
         creditsReward > 0 ? (
           <OnboardingCreditsRewardChip
             formattedCreditsReward={formattedCreditsReward}
+            isRewardPerItem={isRewardPerItem}
           />
         ) : undefined
       }
@@ -46,6 +49,7 @@ export const OnboardingRewardMainButton = ({
         label,
         creditsReward,
         formattedCreditsReward,
+        isRewardPerItem,
       })}
     >
       {label}
