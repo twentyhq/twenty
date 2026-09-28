@@ -837,7 +837,7 @@ msgstr "IA"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
-msgstr ""
+msgstr "Conversas de IA pertencentes ao membro do espaço de trabalho"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -2351,7 +2351,7 @@ msgstr "O título do tópico do chat não pode estar vazio."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat threads"
-msgstr ""
+msgstr "Conversas"
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -12261,6 +12261,16 @@ msgstr "Este limite não pode ser salvo."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Este limite foi alterado enquanto você o editava. Recarregue e tente novamente."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr "Este filtro de logs não é válido."
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr "Esta tabela de logs não é válida."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -13097,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "O campo atualizado não é uma relação polimórfica nem uma relação."
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Não foi possível acessar o histórico de IA. Tente novamente."
@@ -14681,7 +14692,7 @@ msgstr "Cargo do membro do espaço de trabalho"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
-msgstr ""
+msgstr "Membro do espaço de trabalho responsável pela conversa"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

@@ -111,7 +111,7 @@ export const NavigationDrawer = ({
     setTableWidthResizeIsActive(true);
   };
 
-  const handleResizeStart = () => {
+  const handleResizeStart = (_size: number) => {
     setIsResizing(true);
     setTableWidthResizeIsActive(false);
   };
@@ -134,8 +134,8 @@ export const NavigationDrawer = ({
           <ResizablePanelEdge
             side="right"
             constraints={NAVIGATION_DRAWER_CONSTRAINTS}
-            currentWidth={navigationDrawerWidth}
-            onWidthChange={handleWidthChange}
+            currentSize={navigationDrawerWidth}
+            onSizeChange={handleWidthChange}
             onCollapse={handleCollapse}
             showHandle={false}
             cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}

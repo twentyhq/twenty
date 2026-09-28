@@ -837,7 +837,7 @@ msgstr "AI"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
-msgstr ""
+msgstr "Vlákna chatu AI vlastněná členem pracovního prostoru"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -2351,7 +2351,7 @@ msgstr "Název vlákna chatu nesmí být prázdný."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat threads"
-msgstr ""
+msgstr "Vlákna chatu"
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -12261,6 +12261,16 @@ msgstr "Tento limit nelze uložit."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Tento limit se změnil, zatímco jste jej upravovali. Znovu načtěte stránku a zkuste to znovu."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr "Tento filtr protokolu není platný."
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr "Tato tabulka protokolu není platná."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -13097,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Aktualizované pole není polymorfní relací ani běžnou relací"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Nelze získat přístup k historii AI. Zkuste to prosím znovu."
@@ -14681,7 +14692,7 @@ msgstr "Pozice člena pracovního prostoru"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
-msgstr ""
+msgstr "Člen pracovního prostoru, který vlastní vlákno"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

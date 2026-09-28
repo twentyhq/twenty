@@ -12256,6 +12256,16 @@ msgstr "This limit cannot be saved."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "This limit changed while you were editing it. Reload and try again."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr "This log filter is not valid."
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr "This log table is not valid."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -13092,6 +13102,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Udpated field is not a morph relation or a relation"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Unable to access AI history. Please try again."

@@ -6,10 +6,10 @@ import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
-import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
+import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type Storage = AgentHistoryStorageState['storage'];
+type Storage = AgentHistoryMigrationState['storage'];
 type HistoryTable = (typeof AGENT_HISTORY_TABLES)[number];
 
 @Injectable()

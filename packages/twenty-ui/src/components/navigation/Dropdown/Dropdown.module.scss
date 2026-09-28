@@ -24,6 +24,10 @@
   }
 }
 
+.section[data-scrollable] > .section {
+  padding: 0;
+}
+
 .separator[data-dropdown-separator] {
   margin-inline: 0;
 }

@@ -253,6 +253,7 @@ export interface WorkspaceMember {
     dateFormat?: WorkspaceMemberDateFormatEnum
     timeFormat?: WorkspaceMemberTimeFormatEnum
     roles?: Role[]
+    userId: Scalars['UUID']
     userWorkspaceId?: Scalars['UUID']
     numberFormat?: WorkspaceMemberNumberFormatEnum
     __typename: 'WorkspaceMember'
@@ -1669,7 +1670,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED'
+export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3018,6 +3019,7 @@ export interface AiChatUsage {
     limitValue: Scalars['BigInt']
     consumedValue?: Scalars['BigInt']
     periodEnd?: Scalars['DateTime']
+    kind: Scalars['String']
     __typename: 'AiChatUsage'
 }
 
@@ -3458,6 +3460,8 @@ export interface Query {
 }
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
+
+export type EventLogFilterOperand = 'IS' | 'IS_NOT'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -4030,6 +4034,7 @@ export interface WorkspaceMemberGenqlSelection{
     dateFormat?: boolean | number
     timeFormat?: boolean | number
     roles?: RoleGenqlSelection
+    userId?: boolean | number
     userWorkspaceId?: boolean | number
     numberFormat?: boolean | number
     __typename?: boolean | number
@@ -6903,6 +6908,7 @@ export interface AiChatUsageGenqlSelection{
     limitValue?: boolean | number
     consumedValue?: boolean | number
     periodEnd?: boolean | number
+    kind?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7394,9 +7400,11 @@ export interface RecordPermissionsTargetInput {objectMetadataId: Scalars['UUID']
 
 export interface EventLogQueryInput {table: EventLogTable,filters?: (EventLogFiltersInput | null),first?: (Scalars['Int'] | null),after?: (Scalars['String'] | null)}
 
-export interface EventLogFiltersInput {eventType?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),dateRange?: (EventLogDateRangeInput | null),recordId?: (Scalars['String'] | null),objectMetadataId?: (Scalars['String'] | null)}
+export interface EventLogFiltersInput {eventType?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),dateRange?: (EventLogDateRangeInput | null),recordId?: (Scalars['String'] | null),objectMetadataId?: (Scalars['String'] | null),fieldFilters?: (EventLogFieldFilterInput[] | null)}
 
 export interface EventLogDateRangeInput {start?: (Scalars['DateTime'] | null),end?: (Scalars['DateTime'] | null)}
+
+export interface EventLogFieldFilterInput {field: Scalars['String'],operand: EventLogFilterOperand,values: Scalars['String'][]}
 
 export interface PieChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
 
@@ -8129,7 +8137,7 @@ export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable} })
+    eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable, fieldFilters?: (EventLogFieldFilterInput[] | null)} })
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -11203,7 +11211,8 @@ export const enumFeatureFlagKey = {
    IS_WEBHOOK_RATE_LIMIT_ENABLED: 'IS_WEBHOOK_RATE_LIMIT_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
    IS_EXECUTION_QUOTA_ENABLED: 'IS_EXECUTION_QUOTA_ENABLED' as const,
-   IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const
+   IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
+   IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {
@@ -11512,6 +11521,11 @@ export const enumEventLogTable = {
    OBJECT_EVENT: 'OBJECT_EVENT' as const,
    USAGE_EVENT: 'USAGE_EVENT' as const,
    APPLICATION_LOG: 'APPLICATION_LOG' as const
+}
+
+export const enumEventLogFilterOperand = {
+   IS: 'IS' as const,
+   IS_NOT: 'IS_NOT' as const
 }
 
 export const enumMessageParticipantRole = {
