@@ -153,6 +153,11 @@ export class WorkflowExecutorWorkspaceService {
 
     let actionOutput: WorkflowActionOutput;
 
+    // A step that already holds its conversation is resuming after its
+    // question was answered. Its node run was charged, and the quota checked,
+    // when it first ran and paused, so neither happens a second time.
+    const isResumingAnsweredStep = isDefined(stepInfos[stepId]?.threadId);
+
     if (
       shouldExecuteStep({
         step: stepToExecute,
@@ -168,6 +173,7 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         workspaceId,
         billingSpenders,
+        shouldCheckNodeRunQuota: !isResumingAnsweredStep,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -233,7 +239,8 @@ export class WorkflowExecutorWorkspaceService {
     if (
       !isError &&
       !actionOutput.shouldFailSafely &&
-      !actionOutput.shouldSkipStepExecution
+      !actionOutput.shouldSkipStepExecution &&
+      !isResumingAnsweredStep
     ) {
       await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
@@ -509,6 +516,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     billingSpenders,
+    shouldCheckNodeRunQuota,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
@@ -516,6 +524,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
+    shouldCheckNodeRunQuota: boolean;
   }) {
     const stepId = step.id;
 
@@ -532,10 +541,9 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      const nodeRunRefusal = await this.getNodeRunRefusal({
-        workspaceId,
-        billingSpenders,
-      });
+      const nodeRunRefusal = shouldCheckNodeRunQuota
+        ? await this.getNodeRunRefusal({ workspaceId, billingSpenders })
+        : undefined;
 
       if (isDefined(nodeRunRefusal)) {
         return nodeRunRefusal;

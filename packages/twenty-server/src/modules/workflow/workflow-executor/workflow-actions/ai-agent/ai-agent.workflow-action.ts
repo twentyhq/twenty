@@ -26,6 +26,7 @@ import {
   type RecordedConversation,
   WorkflowAgentConversationWorkspaceService,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { mergeAiAgentStepLogs } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/merge-ai-agent-step-logs.util';
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
@@ -169,7 +170,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const durationMs = Date.now() - startedAtMs;
 
-    const recordedConversation = await recordConversation(executionResult);
+    // A step that runs out of credits fails even if its agent asked something,
+    // so its question must not be left open as though the run waited for it.
+    const recordedConversation = await recordConversation(
+      executionResult.hasNoMoreAvailableCredits
+        ? { ...executionResult, isPaused: false }
+        : executionResult,
+    );
 
     await this.persistStepLog({
       workflowRunId: runInfo.workflowRunId,
@@ -177,6 +184,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       stepId: currentStepId,
       executionResult,
       durationMs,
+      isResumed: isDefined(resumedThreadId),
     });
 
     if (executionResult.hasNoMoreAvailableCredits) {
@@ -250,12 +258,14 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     stepId,
     executionResult,
     durationMs,
+    isResumed,
   }: {
     workflowRunId: string;
     workspaceId: string;
     stepId: string;
     executionResult: AgentExecutionResult;
     durationMs: number;
+    isResumed: boolean;
   }): Promise<void> {
     const stepLog = buildAiAgentStepLog({ executionResult, durationMs });
 
@@ -268,7 +278,14 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workflowRunId,
         workspaceId,
         stepId,
-        stepLog,
+        stepLog: isResumed
+          ? mergeAiAgentStepLogs({
+              previousStepLog: await this.workflowRunStepLogService.getStepLog(
+                { workflowRunId, workspaceId, stepId },
+              ),
+              nextStepLog: stepLog,
+            })
+          : stepLog,
       });
     } catch (error) {
       this.logger.warn(

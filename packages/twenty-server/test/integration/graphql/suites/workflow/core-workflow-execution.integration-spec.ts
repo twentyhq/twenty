@@ -1038,7 +1038,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
     });
 
-    it('refuses an answer once the run is stopped and keeps the question open', async () => {
+    it('refuses an answer once the run is stopped and closes the question', async () => {
       mockAgent();
       const { runId, agent, threadId, questionMessageId } =
         await startAskingRun();
@@ -1056,8 +1056,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       const { thread, messages } = await getConversation(threadId);
+      const [questionPart] = await global.testDataSource.query(
+        `SELECT "toolOutput" FROM "${schema}"."agentMessagePart" WHERE "messageId" = $1 AND "toolName" = 'ask_questions'`,
+        [questionMessageId],
+      );
 
-      expect(thread.pendingQuestionMessageId).toBe(questionMessageId);
+      // Nothing can resume a stopped run, so the question stops being offered
+      // rather than coming back after every refused answer.
+      expect(thread.pendingQuestionMessageId).toBeNull();
+      expect(questionPart.toolOutput.result.status).toBe('skipped');
       expect(messages).toHaveLength(2);
       expect((await getRun(runId)).state.stepInfos[agent.id].status).toBe(
         'FAILED',

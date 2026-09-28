@@ -24,6 +24,11 @@ import {
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 
+export type StepAnswerRelease =
+  | 'RELEASED'
+  | 'NOT_YET_AWAITING'
+  | 'NO_LONGER_AWAITING';
+
 @Injectable()
 export class WorkflowRunWorkspaceService {
   constructor(
@@ -326,7 +331,8 @@ export class WorkflowRunWorkspaceService {
 
   // Hands a step whose agent asked a question back to the executor, once and
   // only for that question: a stop, a retry or another loop iteration has
-  // moved the step on or replaced its conversation.
+  // moved the step on or replaced its conversation. A step still RUNNING has
+  // asked but not yet been parked, which an answer only has to wait out.
   @WithLock('workflowRunId')
   async releaseStepAwaitingAnswer({
     stepId,
@@ -338,7 +344,7 @@ export class WorkflowRunWorkspaceService {
     threadId: string;
     workflowRunId: string;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<StepAnswerRelease> {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
@@ -348,11 +354,18 @@ export class WorkflowRunWorkspaceService {
 
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
-      currentStepInfo?.status !== StepStatus.PENDING ||
-      currentStepInfo.threadId !== threadId ||
-      isDefined(currentStepInfo.error)
+      currentStepInfo?.threadId !== threadId ||
+      isDefined(currentStepInfo?.error)
     ) {
-      return false;
+      return 'NO_LONGER_AWAITING';
+    }
+
+    if (currentStepInfo.status === StepStatus.RUNNING) {
+      return 'NOT_YET_AWAITING';
+    }
+
+    if (currentStepInfo.status !== StepStatus.PENDING) {
+      return 'NO_LONGER_AWAITING';
     }
 
     await this.updateWorkflowRun({
@@ -369,7 +382,7 @@ export class WorkflowRunWorkspaceService {
       },
     });
 
-    return true;
+    return 'RELEASED';
   }
 
   // Undoes releaseStepAwaitingAnswer when the resume it prepared could not be

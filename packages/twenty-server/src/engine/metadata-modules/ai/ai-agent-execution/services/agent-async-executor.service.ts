@@ -52,6 +52,7 @@ import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
+import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -405,10 +406,6 @@ export class AgentAsyncExecutorService {
         });
 
       const pausingToolNames = Object.keys(pausingTools);
-      const endsOnPausingToolCall = (steps: StepResult<ToolSet>[]) =>
-        steps[steps.length - 1]?.toolCalls.some((toolCall) =>
-          pausingToolNames.includes(toolCall.toolName),
-        ) ?? false;
 
       const textResponse = await generateText({
         instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
@@ -417,7 +414,7 @@ export class AgentAsyncExecutorService {
         messages: [...priorModelMessages, ...modelMessages],
         stopWhen: (step) =>
           isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-          endsOnPausingToolCall(step.steps) ||
+          endsOnPausingToolCall({ steps: step.steps, pausingToolNames }) ||
           hasNoMoreAvailableCredits,
         providerOptions,
         ...buildAiTelemetry({
@@ -522,7 +519,10 @@ export class AgentAsyncExecutorService {
 
       let result: object = { response: textResponse.text };
 
-      const isPaused = endsOnPausingToolCall(textResponse.steps);
+      const isPaused = endsOnPausingToolCall({
+        steps: textResponse.steps,
+        pausingToolNames,
+      });
 
       // A paused execution has no final answer yet to structure.
       if (isDefined(agentSchema) && !isPaused) {
