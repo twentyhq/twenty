@@ -180,7 +180,6 @@ export const useInviteTeam = () => {
         data.emails.map((emailData) => emailData.email),
       );
 
-      setInviteTeamFreeCredits(emails.length);
       setIsNavigating(true);
 
       try {
@@ -237,6 +236,9 @@ export const useInviteTeam = () => {
   );
 
   const handleSkip = async () => {
+    setInviteTeamFreeCredits(0);
+    store.set(onboardingInviteTeamEmailsDraftState.atom, null);
+
     await onSubmit({ emails: [] });
   };
 

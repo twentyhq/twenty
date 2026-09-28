@@ -228,4 +228,26 @@ describe('useInviteTeam', () => {
     await waitFor(() => expect(mockSetNextOnboardingStatus).toHaveBeenCalled());
     expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(1);
   });
+
+  it('should drop the typed invite emails and their credits on skip', async () => {
+    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
+      'grace@example.com',
+      '',
+    ]);
+    jotaiStore.set(onboardingFreeCreditsState.atom, {
+      ...jotaiStore.get(onboardingFreeCreditsState.atom),
+      inviteTeam: 0.5,
+    });
+
+    const { result } = renderInviteTeam();
+
+    await act(async () => {
+      await result.current.handleSkip();
+    });
+
+    expect(jotaiStore.get(onboardingFreeCreditsState.atom).inviteTeam).toBe(0);
+    expect(
+      jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom),
+    ).toBeNull();
+  });
 });
