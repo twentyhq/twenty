@@ -28,7 +28,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
-import { DevSeederWorkflowAgentQuestionService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.service';
+import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
@@ -76,7 +76,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     DevSeederPermissionsService,
     DevSeederDataService,
     TimelineActivitySeederService,
-    DevSeederWorkflowAgentQuestionService,
+    DevSeederWorkflowAgentQuestionWorkspaceService,
     WorkflowAgentConversationWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
