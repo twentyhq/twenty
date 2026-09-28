@@ -12,25 +12,28 @@ const buildAgentStepLog = ({
   tokens: number;
   toolCallNames: string[];
   durationMs: number;
-}) =>
-  ({
-    details: {
-      type: 'AI_AGENT',
-      modelId,
-      usage: {
-        inputTokens: tokens,
-        outputTokens: tokens,
-        reasoningTokens: tokens,
-        totalTokens: tokens * 2,
-      },
-      cost: { totalCostInDollars: tokens / 100, creditsUsedMicro: tokens },
-      nativeWebSearchCallCount: 1,
-      toolCalls: toolCallNames.map((toolName) => ({ toolName })),
-      durationMs,
+}): WorkflowRunStepLog => ({
+  details: {
+    type: 'AI_AGENT',
+    modelId,
+    usage: {
+      inputTokens: tokens,
+      outputTokens: tokens,
+      reasoningTokens: tokens,
+      totalTokens: tokens * 2,
     },
-    entries: [],
-    sizeBytes: 0,
-  }) as unknown as WorkflowRunStepLog;
+    cost: { totalCostInDollars: tokens / 100, creditsUsedMicro: tokens },
+    nativeWebSearchCallCount: 1,
+    toolCalls: toolCallNames.map((toolName) => ({
+      toolName,
+      toolCallId: `${toolName}-call`,
+      state: 'success',
+    })),
+    durationMs,
+  },
+  entries: [],
+  sizeBytes: 0,
+});
 
 describe('mergeAiAgentStepLogs', () => {
   it('adds the segment after an answer to the one before it', () => {
