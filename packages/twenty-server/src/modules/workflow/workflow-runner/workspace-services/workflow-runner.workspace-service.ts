@@ -183,7 +183,7 @@ export class WorkflowRunnerWorkspaceService {
       });
     } catch (error) {
       this.logger.warn(
-        `Could not record the answer to form step ${stepId} of workflow run ${workflowRunId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not record the answer to form step ${stepId} of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 

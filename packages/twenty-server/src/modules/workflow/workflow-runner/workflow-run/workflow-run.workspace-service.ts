@@ -207,7 +207,7 @@ export class WorkflowRunWorkspaceService {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to close the Asks of workflow run ${workflowRunId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to close the Asks of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 
