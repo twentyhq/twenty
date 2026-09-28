@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatNewThreadRecordTargetState } from '@/ai/states/agentChatNewThreadRecordTargetState';
+import { agentChatPendingRecordTargetByDraftKeyState } from '@/ai/states/agentChatPendingRecordTargetByDraftKeyState';
 import { type AgentChatRecordTarget } from '@/ai/types/AgentChatRecordTarget';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
@@ -18,41 +18,44 @@ export const useOpenNewAiChatWithRecord = () => {
   const store = useStore();
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { stageAiChatPrepromptDocument } = useStageAiChatPreprompt();
-  const setAgentChatNewThreadRecordTarget = useSetAtomState(
-    agentChatNewThreadRecordTargetState,
+  const setAgentChatPendingRecordTargetByDraftKey = useSetAtomState(
+    agentChatPendingRecordTargetByDraftKeyState,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const openNewAiChatWithRecord = ({
-    objectNameSingular,
-    recordId,
-  }: AgentChatRecordTarget) => {
+  const openNewAiChatWithRecord = (recordTarget: AgentChatRecordTarget) => {
+    const { objectNameSingular, recordId } = recordTarget;
     const objectMetadataItem = objectMetadataItems.find(
       (item) => item.nameSingular === objectNameSingular,
     );
-    const record = store.get(recordStoreFamilyState.atomFamily(recordId));
 
-    if (!isDefined(objectMetadataItem) || !isDefined(record)) {
+    if (!isDefined(objectMetadataItem)) {
       return;
     }
 
-    const recordIdentifier = getObjectRecordIdentifier({
-      objectMetadataItem,
-      record,
-      allowRequestsToTwentyIcons,
-    });
+    const record = store.get(recordStoreFamilyState.atomFamily(recordId));
+    const recordIdentifier = isDefined(record)
+      ? getObjectRecordIdentifier({
+          objectMetadataItem,
+          record,
+          allowRequestsToTwentyIcons,
+        })
+      : undefined;
 
     switchToNewChat();
-    setAgentChatNewThreadRecordTarget({ objectNameSingular, recordId });
+    setAgentChatPendingRecordTargetByDraftKey((previousRecordTargets) => ({
+      ...previousRecordTargets,
+      [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: recordTarget,
+    }));
     stageAiChatPrepromptDocument({
       serializedDocument: serializeMentionTagAsAdvancedTextEditorDocument({
         recordId,
         objectNameSingular,
-        label: recordIdentifier.name,
-        imageUrl: recordIdentifier.avatarUrl,
+        label: recordIdentifier?.name ?? objectMetadataItem.labelSingular,
+        imageUrl: recordIdentifier?.avatarUrl,
       }),
       mode: 'PREFILL',
       draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,

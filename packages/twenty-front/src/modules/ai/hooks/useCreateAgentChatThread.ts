@@ -6,6 +6,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatPendingRecordTargetByDraftKeyState } from '@/ai/states/agentChatPendingRecordTargetByDraftKeyState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
@@ -17,7 +18,7 @@ import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDr
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+import { isDefined, tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
 import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
@@ -78,6 +79,16 @@ export const useCreateAgentChatThread = () => {
           [newThreadId]: newDraft,
           [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
         }));
+        store.set(
+          agentChatPendingRecordTargetByDraftKeyState.atom,
+          ({
+            [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: newDraftRecordTarget,
+            ...otherRecordTargets
+          }) =>
+            isDefined(newDraftRecordTarget)
+              ? { ...otherRecordTargets, [newThreadId]: newDraftRecordTarget }
+              : otherRecordTargets,
+        );
         store.set(shouldFocusChatEditorState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
         store.set(threadIdCreatedFromDraftState.atom, newThreadId);

@@ -15,8 +15,7 @@ export const ChatThreadsCard = ({ widgetId }: ChatThreadsCardProps) => {
   const targetRecord = useTargetRecord();
   const { threads, loading, error, refetch } =
     useChatThreadsForRecord(targetRecord);
-  const { detachChatThreadFromRecord } =
-    useChatThreadRecordAttachmentActions(targetRecord);
+  const { detachChatThreadFromRecord } = useChatThreadRecordAttachmentActions();
 
   return (
     <>
@@ -25,7 +24,13 @@ export const ChatThreadsCard = ({ widgetId }: ChatThreadsCardProps) => {
         error={error}
         widgetId={widgetId}
         onRetry={() => void refetch()}
-        onDetachThread={(threadId) => void detachChatThreadFromRecord(threadId)}
+        onDetachThread={(threadId) =>
+          void detachChatThreadFromRecord({
+            threadId,
+            objectNameSingular: targetRecord.targetObjectNameSingular,
+            recordId: targetRecord.id,
+          })
+        }
         threads={threads}
       />
       {/* Each surface mounts its own confirmation: the row only opens a dialog

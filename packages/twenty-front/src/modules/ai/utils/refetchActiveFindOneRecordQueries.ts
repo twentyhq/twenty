@@ -1,25 +1,23 @@
 import { type ApolloClient } from '@apollo/client';
-import { capitalize } from 'twenty-shared/utils';
-
-import { type AgentChatRecordTarget } from '@/ai/types/AgentChatRecordTarget';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 // Links are written through the metadata API, which never updates the workspace
-// cache, so only the record queries currently on screen can go stale.
+// cache, so the record queries currently on screen are refetched instead.
 export const refetchActiveFindOneRecordQueries = async ({
   apolloCoreClient,
-  records,
+  objectNameSingular,
+  recordId,
 }: {
   apolloCoreClient: ApolloClient;
-  records: AgentChatRecordTarget[];
+  objectNameSingular: string;
+  recordId?: string;
 }) => {
   await apolloCoreClient.refetchQueries({
     include: 'active',
     onQueryUpdated: (observableQuery) =>
-      records.some(
-        ({ objectNameSingular, recordId }) =>
-          observableQuery.queryName ===
-            `FindOne${capitalize(objectNameSingular)}` &&
-          observableQuery.variables.objectRecordId === recordId,
-      ),
+      observableQuery.queryName ===
+        `FindOne${capitalize(objectNameSingular)}` &&
+      (!isDefined(recordId) ||
+        observableQuery.variables.objectRecordId === recordId),
   });
 };

@@ -8,7 +8,5 @@ export const serializeMentionTagAsAdvancedTextEditorDocument = (
   JSON.stringify({
     type: 'doc',
     attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
-    content: [
-      { type: 'paragraph', content: getMentionTagContent(mentionTag) },
-    ],
+    content: [{ type: 'paragraph', content: getMentionTagContent(mentionTag) }],
   });

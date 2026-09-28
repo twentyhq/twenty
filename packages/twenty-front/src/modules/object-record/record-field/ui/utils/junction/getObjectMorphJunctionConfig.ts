@@ -7,7 +7,7 @@ import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/ju
 import { type JunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/JunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
-type ObjectMorphJunctionConfig = JunctionConfig & {
+export type ObjectMorphJunctionConfig = JunctionConfig & {
   // Field on the object holding the junction records, e.g. `note.noteTargets`
   junctionField: FieldMetadataItem;
   // Field on the junction pointing back at the object, e.g. `noteTarget.note`

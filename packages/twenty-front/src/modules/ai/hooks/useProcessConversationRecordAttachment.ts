@@ -1,5 +1,8 @@
+import { AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadObjectNameSingular';
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
 import { isSucceededAttachConversationToRecordToolPart } from '@/ai/utils/isSucceededAttachConversationToRecordToolPart';
+import { refetchActiveFindOneRecordQueries } from '@/ai/utils/refetchActiveFindOneRecordQueries';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useApolloClient } from '@apollo/client/react';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -9,6 +12,7 @@ import { GetChatThreadsForRecordDocument } from '~/generated-metadata/graphql';
 
 export const useProcessConversationRecordAttachment = () => {
   const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const processedToolExecutionPartIdsCallbackState =
     useAtomComponentStateCallbackState(
@@ -47,6 +51,11 @@ export const useProcessConversationRecordAttachment = () => {
     apolloClient
       .refetchQueries({ include: [GetChatThreadsForRecordDocument] })
       .catch(() => undefined);
+    // The thread header reads the same links from the workspace API.
+    refetchActiveFindOneRecordQueries({
+      apolloCoreClient,
+      objectNameSingular: AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR,
+    }).catch(() => undefined);
   };
 
   return {

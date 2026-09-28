@@ -22,6 +22,7 @@ import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventNam
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { useAttachPendingRecordTargetOnSend } from '@/ai/hooks/useAttachPendingRecordTargetOnSend';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -57,6 +58,8 @@ export const useAgentChat = (
   const aiModels = useAtomStateValue(aiModelsState);
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
+  const { attachPendingRecordTargetOnSend } =
+    useAttachPendingRecordTargetOnSend();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -214,6 +217,8 @@ export const useAgentChat = (
         store.set(lastSentBrowsingContextAtom, browsingContext);
       }
 
+      void attachPendingRecordTargetOnSend({ draftKey, threadId });
+
       if (data?.sendChatMessage?.queued) {
         const latestMessages = store.get(messagesAtom);
 
@@ -281,6 +286,7 @@ export const useAgentChat = (
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
+    attachPendingRecordTargetOnSend,
   ]);
 
   useListenToBrowserEvent({

@@ -12,10 +12,15 @@ import {
 import { GetChatThreadsForRecordDocument } from '~/generated-metadata/graphql';
 
 const refetchQueriesMock = jest.fn(() => Promise.resolve([]));
+const refetchCoreQueriesMock = jest.fn(() => Promise.resolve([]));
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
   useApolloClient: () => ({ refetchQueries: refetchQueriesMock }),
+}));
+
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () => ({ refetchQueries: refetchCoreQueriesMock }),
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -80,6 +85,7 @@ describe('useProcessConversationRecordAttachment', () => {
     expect(refetchQueriesMock).toHaveBeenCalledWith({
       include: [GetChatThreadsForRecordDocument],
     });
+    expect(refetchCoreQueriesMock).toHaveBeenCalledTimes(1);
 
     act(() => {
       result.current.processConversationRecordAttachment(
@@ -113,5 +119,6 @@ describe('useProcessConversationRecordAttachment', () => {
     });
 
     expect(refetchQueriesMock).not.toHaveBeenCalled();
+    expect(refetchCoreQueriesMock).not.toHaveBeenCalled();
   });
 });
