@@ -11,6 +11,7 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -125,6 +126,12 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
         ],
       },
     });
+    // Run conversations only exist from 2.44 on; dropping their run link
+    // would leave them ownerless and unlinked, which no earlier version can
+    // hold (2.42's reverse copy, for one, requires an owner).
+    await global.testDataSource.query(
+      `DELETE FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
+    );
     await run({
       fieldMetadata: {
         flatEntityToCreate: [],
