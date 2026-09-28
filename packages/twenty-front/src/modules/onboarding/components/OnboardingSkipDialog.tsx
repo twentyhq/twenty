@@ -52,7 +52,7 @@ const StyledActions = styled.div`
   width: 100%;
 `;
 
-export type OnboardingSkipDialogAction = {
+type OnboardingSkipDialogAction = {
   label: string;
   Icon?: IconComponent;
   onClick: () => void;

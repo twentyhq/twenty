@@ -18,7 +18,7 @@ const StyledAvatar = styled(Avatar)`
   }
 `;
 
-export type OnboardingSkipDialogAvatar = {
+type OnboardingSkipDialogAvatar = {
   id: string;
   name: string;
   src?: string | null;
