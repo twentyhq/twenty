@@ -14,6 +14,7 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -175,12 +176,8 @@ export const useInviteTeam = () => {
 
   const onSubmit: SubmitHandler<InviteTeamFormInput> = useCallback(
     async (data) => {
-      const emails = Array.from(
-        new Set(
-          data.emails
-            .map((emailData) => emailData.email.trim())
-            .filter((email) => email.length > 0),
-        ),
+      const emails = sanitizeEmailList(
+        data.emails.map((emailData) => emailData.email),
       );
 
       setInviteTeamFreeCredits(emails.length);

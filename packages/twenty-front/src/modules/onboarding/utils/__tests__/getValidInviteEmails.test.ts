@@ -17,6 +17,16 @@ describe('getValidInviteEmails', () => {
     ).toEqual(['grace@example.com', 'alan@example.com']);
   });
 
+  it('should count an email once whatever its case', () => {
+    expect(
+      getValidInviteEmails([
+        'grace@example.com',
+        'Grace@Example.com',
+        'ALAN@example.com',
+      ]),
+    ).toEqual(['grace@example.com', 'alan@example.com']);
+  });
+
   it('should skip empty and undefined fields', () => {
     expect(getValidInviteEmails(['', undefined, 'grace@example.com'])).toEqual([
       'grace@example.com',
