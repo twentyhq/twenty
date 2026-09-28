@@ -10,18 +10,19 @@ import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// Upgrades from 2.42 must retain their route protocol when runtime storage changes.
+// This frozen protocol intentionally remains compatible with deployed 2.42 servers.
+// Runtime changes must not redefine the persisted migration cursor.
 @Injectable()
 export class AgentHistoryMigrationStateService {
   async readState(
-    runner: QueryRunner,
+    runner: Pick<QueryRunner, 'query'>,
     workspaceId: string,
   ): Promise<AgentHistoryMigrationState> {
     return (await this.readStates(runner, [workspaceId])).get(workspaceId)!;
   }
 
   private async readStates(
-    runner: QueryRunner,
+    runner: Pick<QueryRunner, 'query'>,
     workspaceIds: string[],
   ): Promise<Map<string, AgentHistoryMigrationState>> {
     const rows: { workspaceId: string; type: string; value: unknown }[] =
@@ -80,7 +81,7 @@ export class AgentHistoryMigrationStateService {
   }
 
   async writeState(
-    runner: QueryRunner,
+    runner: Pick<QueryRunner, 'query'>,
     workspaceId: string,
     state: AgentHistoryMigrationState,
   ): Promise<void> {
