@@ -57,6 +57,43 @@ export const computeStandardInputAskViewFields = (
       },
     }),
 
+    waitingOnMeName: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'inputAsk',
+      context: {
+        viewName: 'waitingOnMe',
+        viewFieldName: 'name',
+        fieldName: 'name',
+        position: 0,
+        isVisible: true,
+        size: 150,
+      },
+    }),
+    waitingOnMeWorkflowRun: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'inputAsk',
+      context: {
+        viewName: 'waitingOnMe',
+        viewFieldName: 'workflowRun',
+        fieldName: 'workflowRun',
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+    }),
+    waitingOnMeCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'inputAsk',
+      context: {
+        viewName: 'waitingOnMe',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+    }),
+
     inputAskRecordPageFieldsName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'inputAsk',
