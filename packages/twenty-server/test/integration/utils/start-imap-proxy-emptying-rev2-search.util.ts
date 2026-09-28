@@ -34,13 +34,20 @@ export const startImapProxyEmptyingRev2Search = async ({
     const upstream = connect(targetPort, targetHost);
     let isRev2Enabled = false;
     let lastSearchCommand: SearchCommand | undefined;
+    let pendingClientText = '';
     let pendingServerText = '';
 
     sockets.add(client);
     sockets.add(upstream);
 
     client.on('data', (chunk) => {
-      for (const line of chunk.toString('latin1').split('\r\n')) {
+      const lines = (pendingClientText + chunk.toString('latin1')).split(
+        '\r\n',
+      );
+
+      pendingClientText = lines.pop() ?? '';
+
+      for (const line of lines) {
         if (ENABLE_IMAP4REV2_COMMAND.test(line)) {
           isRev2Enabled = true;
         }
