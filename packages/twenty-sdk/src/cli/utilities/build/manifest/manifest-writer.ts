@@ -3,11 +3,15 @@ import path from 'path';
 import { ensureDir, writeJson } from '@/cli/utilities/file/fs-utils';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 
-export const writeManifestToOutput = async (
-  appPath: string,
-  manifest: Manifest,
+export const writeManifestToOutput = async ({
+  appPath,
+  manifest,
   relativeOutputDir = OUTPUT_DIR,
-): Promise<string> => {
+}: {
+  appPath: string;
+  manifest: Manifest;
+  relativeOutputDir?: string;
+}): Promise<string> => {
   const outputDir = path.join(appPath, relativeOutputDir);
   await ensureDir(outputDir);
 

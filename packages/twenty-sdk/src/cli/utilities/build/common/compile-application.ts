@@ -80,10 +80,10 @@ export const compileApplication = async ({
     onProgress?.('Generated cover image from logo');
   }
 
-  const translations = await compileApplicationTranslations(
+  const translations = await compileApplicationTranslations({
     appPath,
-    onTranslationWarning ?? warn,
-  );
+    onWarning: onTranslationWarning ?? warn,
+  });
 
   signal?.throwIfAborted();
   onProgress?.('Building application files...');
@@ -110,7 +110,11 @@ export const compileApplication = async ({
     translations,
   };
 
-  await writeManifestToOutput(appPath, updatedManifest, outputDir);
+  await writeManifestToOutput({
+    appPath,
+    manifest: updatedManifest,
+    relativeOutputDir: outputDir,
+  });
 
   return {
     success: true,

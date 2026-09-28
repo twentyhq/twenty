@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
@@ -70,9 +71,17 @@ export const collectBuildSnapshot = async ({
     });
   }
 
-  const sortedFiles = files.sort((first, second) =>
-    first.path < second.path ? -1 : first.path > second.path ? 1 : 0,
-  );
+  const sortedFiles = files.sort((first, second) => {
+    if (first.path < second.path) {
+      return -1;
+    }
+
+    if (first.path > second.path) {
+      return 1;
+    }
+
+    return 0;
+  });
   const manifestBytes = await readFile(join(filesDirectory, 'manifest.json'));
   const contentHash = createHash('sha256')
     .update(
@@ -87,7 +96,7 @@ export const collectBuildSnapshot = async ({
     await readFile(join(filesDirectory, 'package.json'), 'utf8'),
   );
 
-  if (typeof packageJson.name !== 'string' || packageJson.name.length === 0) {
+  if (!isNonEmptyString(packageJson.name)) {
     throw new Error('The app package.json must declare a name.');
   }
 

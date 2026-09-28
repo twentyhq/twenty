@@ -62,6 +62,9 @@ describe('buildAppSnapshot snapshots', () => {
     );
     originalTsconfig = await readFile(join(appPath, 'tsconfig.json'), 'utf8');
     await mkdir(join(appPath, 'public'), { recursive: true });
+    for (const fileName of ['z-last.txt', 'ä-unicode.txt', 'B-first.txt']) {
+      await writeFile(join(appPath, 'public', fileName), fileName);
+    }
     await writeFile(join(appPath, 'asset-source.txt'), 'original asset');
     await symlink(
       join(appPath, 'asset-source.txt'),
@@ -135,6 +138,19 @@ describe('buildAppSnapshot snapshots', () => {
     expect(first.directory).not.toBe(second.directory);
     expect(first.contentHash).toBe(second.contentHash);
     expect(first.files).toEqual(second.files);
+  });
+
+  it('orders artifact paths independently of locale collation', () => {
+    expect(
+      first.files
+        .map((file) => file.path)
+        .filter((filePath) => filePath.startsWith('public/')),
+    ).toEqual([
+      'public/B-first.txt',
+      'public/asset.txt',
+      'public/z-last.txt',
+      'public/ä-unicode.txt',
+    ]);
   });
 
   it('preserves the existing build output and symlink behavior beside snapshots', async () => {
