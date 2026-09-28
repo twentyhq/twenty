@@ -67,14 +67,18 @@ export const SidePanelAddToMessageListPage = () => {
     }
 
     try {
-      const addedPersonCount = await addPeopleToMessageList(messageListId);
+      const listedPersonCount = await addPeopleToMessageList(messageListId);
+
+      if (!isDefined(listedPersonCount)) {
+        return;
+      }
 
       enqueueToast({
         variant: 'success',
-        children: t`${plural(addedPersonCount, {
-          one: '# person',
-          other: '# people',
-        })} added to the list`,
+        children: plural(listedPersonCount, {
+          one: '# person is now on the list',
+          other: '# people are now on the list',
+        }),
       });
 
       closeSidePanelMenu();

@@ -1575,7 +1575,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))',
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and targetObjectWritePermissions.messageListMember and numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.person.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -1595,7 +1595,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and targetObjectWritePermissions.messageListMember and pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.person.universalIdentifier,
     frontComponentUniversalIdentifier: null,

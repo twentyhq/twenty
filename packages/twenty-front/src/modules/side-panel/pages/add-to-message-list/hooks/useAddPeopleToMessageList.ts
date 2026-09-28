@@ -1,5 +1,6 @@
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
+import { useState } from 'react';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationFilter,
@@ -10,6 +11,11 @@ export const useAddPeopleToMessageList = ({
 }: {
   personFilter: RecordGqlOperationFilter;
 }) => {
+  const [
+    messageListMembersAbortController,
+    setMessageListMembersAbortController,
+  ] = useState<AbortController | null>(null);
+
   const { createManyRecords: createManyMessageListMembers } =
     useCreateManyRecords({
       objectNameSingular: 'messageListMember',
@@ -29,7 +35,11 @@ export const useAddPeopleToMessageList = ({
   });
 
   const addPeopleToMessageList = async (messageListId: string) => {
-    let addedPersonCount = 0;
+    const runAbortController = new AbortController();
+
+    setMessageListMembersAbortController(runAbortController);
+
+    let listedPersonCount = 0;
 
     await incrementalFetchAndMutate(async ({ recordIds, totalCount }) => {
       await createManyMessageListMembers({
@@ -38,20 +48,30 @@ export const useAddPeopleToMessageList = ({
           personId,
         })),
         upsert: true,
+        abortController: runAbortController,
+      }).catch((error) => {
+        if (!runAbortController.signal.aborted) {
+          throw error;
+        }
       });
 
-      addedPersonCount += recordIds.length;
+      listedPersonCount += recordIds.length;
 
-      updateProgress(addedPersonCount, totalCount);
+      updateProgress(listedPersonCount, totalCount);
     });
 
-    return addedPersonCount;
+    return runAbortController.signal.aborted ? undefined : listedPersonCount;
+  };
+
+  const cancelAddingPeopleToMessageList = () => {
+    cancel();
+    messageListMembersAbortController?.abort();
   };
 
   return {
     addPeopleToMessageList,
     isAdding: isProcessing,
     progress,
-    cancel,
+    cancel: cancelAddingPeopleToMessageList,
   };
 };
