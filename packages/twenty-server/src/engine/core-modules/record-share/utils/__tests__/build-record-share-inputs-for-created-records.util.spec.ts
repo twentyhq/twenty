@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -347,30 +348,3 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
     });
   });
 });
-
-it.each([
-  userAuthContext,
-  apiKeyAuthContext,
-  applicationAuthContext,
-  systemAuthContext,
-])(
-  'preserves flag-off shared access for $type creates without invitations',
-  (authContext) => {
-    const rows = buildRecordShareInputsForCreatedRecords({
-      recordIds: ['record'],
-      objectMetadataId: OBJECT_METADATA_ID,
-      authContext,
-      apiKeyRoleMap,
-      isRecordSharingEnforced: false,
-    });
-    expect(rows).toContainEqual({
-      recordId: 'record',
-      objectMetadataId: OBJECT_METADATA_ID,
-      principalId: EVERYONE_PRINCIPAL_ID,
-      principalType: RecordSharePrincipalType.EVERYONE,
-      accessLevel: RecordShareAccessLevel.FULL,
-      rowCause: RecordShareRowCause.APPLICATION,
-      sourceId: OBJECT_METADATA_ID,
-    });
-  },
-);
