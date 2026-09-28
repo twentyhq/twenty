@@ -11,11 +11,17 @@ const PROPERTY_MAPPED_ATTRIBUTES = [
   { attributeName: 'srcdoc', elementPropertyName: 'srcDoc' },
 ];
 
+const PROPERTY_NAMES_WHOSE_ATTRIBUTE_HOLDS_THE_DEFAULT_STATE = [
+  'checked',
+  'selected',
+];
+
 const UNREFLECTED_REMOTE_PROPERTY_NAMES = new Set([
   'className',
   ...PROPERTY_MAPPED_ATTRIBUTES.map(
     ({ elementPropertyName }) => elementPropertyName,
   ),
+  ...PROPERTY_NAMES_WHOSE_ATTRIBUTE_HOLDS_THE_DEFAULT_STATE,
 ]);
 
 const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(

@@ -400,6 +400,26 @@ describe('patchRemoteElementAttributes', () => {
       expect(element.getAttribute('aria-label')).toBe('First label');
     });
 
+    it('should keep the checked attribute as the default checked state', () => {
+      const input = document.createElement(
+        'html-input',
+      ) as RemoteElementWithPropertyUpdater & { checked: boolean };
+
+      input.setAttribute('checked', '');
+      input.checked = false;
+
+      expect(input.getAttribute('checked')).toBe('');
+    });
+
+    it('should keep the selected attribute as the default selected state', () => {
+      const option = document.createElement(
+        'html-option',
+      ) as RemoteElementWithPropertyUpdater & { selected: boolean };
+
+      option.selected = true;
+
+      expect(option.hasAttribute('selected')).toBe(false);
+    });
   });
 
   describe('attribute names colliding with Object prototype keys', () => {
