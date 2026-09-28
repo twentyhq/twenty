@@ -882,7 +882,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             { threadId: THREAD_ID, role: AgentMessageRole.USER, ...sender },
           ]),
         ).rejects.toThrow(
-          'Field metadata for field "senderUserWorkspaceId" is missing',
+          'Complete upgrade:2-43:attribute-chat-message-senders',
         );
         expect(await legacyMessages.count(WORKSPACE_ID)).toBe(count);
       },
@@ -899,9 +899,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           senderUserWorkspaceId: TURN_ID,
           senderApplicationId: null,
         }),
-      ).rejects.toThrow(
-        'Field metadata for field "senderApplicationId" is missing',
-      );
+      ).rejects.toThrow('Complete upgrade:2-43:attribute-chat-message-senders');
       await dataSource.query(
         `ALTER TABLE "${SCHEMA}"."agentMessage" ADD COLUMN "senderApplicationId" uuid`,
       );
@@ -943,7 +941,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         } as never,
         { getOrRecompute: async () => metadata } as never,
         {} as never,
-        dataSource,
+        storage,
       );
       await command.up({
         workspaceId: WORKSPACE_ID,
@@ -1017,10 +1015,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
     });
 
-    it('still rejects unrelated unknown fields on an old workspace', async () => {
-      const legacyMessages = await prepareLegacyMessages();
+    it('still rejects unrelated unknown fields after sender expansion', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
       await expect(
-        legacyMessages.insert(WORKSPACE_ID, {
+        messages.insert(WORKSPACE_ID, {
           threadId: THREAD_ID,
           role: AgentMessageRole.USER,
           unexpectedField: null,
