@@ -46,7 +46,7 @@ export const ClickTrackingSwitch = () => {
   return (
     <>
       {currentWorkspace ? (
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconClick}
             title={t`Track link clicks`}
@@ -55,7 +55,7 @@ export const ClickTrackingSwitch = () => {
             disabled={loading}
             onChange={handleChange}
           />
-        </Card>
+        </Card.Root>
       ) : null}
     </>
   );
