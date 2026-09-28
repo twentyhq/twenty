@@ -7,6 +7,7 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import { onboardingInviteTeamHasTypedEmailState } from '@/onboarding/states/onboardingInviteTeamHasTypedEmailState';
+import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
 import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
@@ -55,13 +56,12 @@ export const useInviteTeam = () => {
     (invitedTeammatesCount: number) =>
       setOnboardingStepFreeCredits(
         'inviteTeam',
-        invitedTeammatesCount *
-          (onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0),
+        getInviteTeamCreditsReward({
+          invitedTeammatesCount,
+          onboardingConfig,
+        }),
       ),
-    [
-      onboardingConfig?.inviteTeamCreditsRewardPerUser,
-      setOnboardingStepFreeCredits,
-    ],
+    [onboardingConfig, setOnboardingStepFreeCredits],
   );
 
   const {
@@ -203,16 +203,7 @@ export const useInviteTeam = () => {
         const sentInvitationsCount =
           result.data?.sendInvitations.result.length ?? 0;
 
-        const creditsRewardPerUser =
-          onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-        const maxRewardedInvitationsCount =
-          onboardingConfig?.inviteTeamMaxInvites ?? 0;
-
-        setOnboardingStepFreeCredits(
-          'inviteTeam',
-          Math.min(sentInvitationsCount, maxRewardedInvitationsCount) *
-            creditsRewardPerUser,
-        );
+        setInviteTeamFreeCredits(sentInvitationsCount);
 
         if (emails.length > 0) {
           enqueueToast({
@@ -240,12 +231,9 @@ export const useInviteTeam = () => {
       enqueueToast,
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
-      onboardingConfig?.inviteTeamCreditsRewardPerUser,
-      onboardingConfig?.inviteTeamMaxInvites,
       sendInvitation,
       setNextOnboardingStatus,
       setInviteTeamFreeCredits,
-      setOnboardingStepFreeCredits,
       store,
       t,
     ],

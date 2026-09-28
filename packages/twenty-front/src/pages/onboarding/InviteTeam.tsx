@@ -14,6 +14,7 @@ import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/Onboardin
 import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
 import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -75,13 +76,12 @@ export const InviteTeam = () => {
   );
   const emailIndexToFocus = Math.max(firstInvalidEmailIndex, 0);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const inviteTeamMaxInvites = onboardingConfig?.inviteTeamMaxInvites ?? 0;
-  const inviteTeamCreditsRewardPerUser =
-    onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
   const creditsReward = hasInviteEmails
-    ? inviteTeamCreditsRewardPerUser *
-      Math.min(inviteEmails.length, inviteTeamMaxInvites)
-    : inviteTeamCreditsRewardPerUser;
+    ? getInviteTeamCreditsReward({
+        invitedTeammatesCount: inviteEmails.length,
+        onboardingConfig,
+      })
+    : (onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0);
 
   const handleSkipClick = () =>
     openDialog(ONBOARDING_SKIP_DIALOG_IDS.inviteTeam);
