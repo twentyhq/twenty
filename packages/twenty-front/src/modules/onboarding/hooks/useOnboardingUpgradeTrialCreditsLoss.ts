@@ -1,6 +1,4 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { currentWorkspaceOnboardingFreeCreditsSelector } from '@/onboarding/states/selectors/currentWorkspaceOnboardingFreeCreditsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 
@@ -11,10 +9,8 @@ type OnboardingUpgradeTrialCreditsLoss = {
 };
 
 export const useOnboardingUpgradeTrialCreditsLoss = () => {
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { upgradeTrial } = useAtomFamilyStateValue(
-    onboardingFreeCreditsFamilyState,
-    currentWorkspace?.id ?? '',
+  const { upgradeTrial } = useAtomStateValue(
+    currentWorkspaceOnboardingFreeCreditsSelector,
   );
   const [creditsLoss, setCreditsLoss] =
     useState<OnboardingUpgradeTrialCreditsLoss>({
