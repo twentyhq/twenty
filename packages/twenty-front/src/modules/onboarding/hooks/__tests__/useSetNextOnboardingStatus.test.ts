@@ -4,12 +4,15 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -25,6 +28,7 @@ import { OnboardingStatus } from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,
+  mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
@@ -185,6 +189,45 @@ describe('useSetNextOnboardingStatus', () => {
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
     expect(isWelcomeAnimationVisible).toBe(false);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should count the profile credits when the profile step opens with both names filled', () => {
+    jotaiStore.set(onboardingConfigState.atom, {
+      importContactsCreditsReward: 1,
+      inviteTeamCreditsRewardPerUser: 0.5,
+      installAppsCreditsReward: 0.5,
+      createProfileCreditsReward: 0.5,
+      upgradeCreditsReward: 2,
+      inviteTeamMaxInvites: 5,
+    });
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+
+    renderHooks(OnboardingStatus.APPS_INSTALLATION);
+
+    expect(jotaiStore.get(onboardingFreeCreditsState.atom).createProfile).toBe(
+      0.5,
+    );
+  });
+
+  it('should not count the profile credits when the profile step opens without a last name', () => {
+    jotaiStore.set(onboardingConfigState.atom, {
+      importContactsCreditsReward: 1,
+      inviteTeamCreditsRewardPerUser: 0.5,
+      installAppsCreditsReward: 0.5,
+      createProfileCreditsReward: 0.5,
+      upgradeCreditsReward: 2,
+      inviteTeamMaxInvites: 5,
+    });
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      ...mockedWorkspaceMemberData,
+      name: { firstName: 'Charles', lastName: '' },
+    });
+
+    renderHooks(OnboardingStatus.APPS_INSTALLATION);
+
+    expect(jotaiStore.get(onboardingFreeCreditsState.atom).createProfile).toBe(
+      0,
+    );
   });
 
   it('should invite the team right after profile creation', () => {

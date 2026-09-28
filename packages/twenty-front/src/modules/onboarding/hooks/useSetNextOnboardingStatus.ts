@@ -4,6 +4,7 @@ import {
   type CurrentUser,
   currentUserState,
 } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   type CurrentWorkspace,
   currentWorkspaceState,
@@ -11,6 +12,8 @@ import {
 import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -21,6 +24,7 @@ import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPrevi
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -94,6 +98,7 @@ export const useSetNextOnboardingStatus = () => {
   const isOnboardingAiChatEnabled = useAtomStateValue(
     isOnboardingAiChatEnabledState,
   );
+  const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
 
   return useCallback(
     ({
@@ -126,6 +131,23 @@ export const useSetNextOnboardingStatus = () => {
         return current;
       });
 
+      if (nextOnboardingStatus === OnboardingStatus.PROFILE_CREATION) {
+        const currentWorkspaceMemberName = store.get(
+          currentWorkspaceMemberState.atom,
+        )?.name;
+        const hasPrefilledName =
+          isNonEmptyString(currentWorkspaceMemberName?.firstName) &&
+          isNonEmptyString(currentWorkspaceMemberName?.lastName);
+
+        setOnboardingStepFreeCredits(
+          'createProfile',
+          hasPrefilledName && currentUser?.isWorkspaceCreator === true
+            ? (store.get(onboardingConfigState.atom)
+                ?.createProfileCreditsReward ?? 0)
+            : 0,
+        );
+      }
+
       if (
         getHasJustCompletedOnboarding({
           previousOnboardingStatus: currentUser?.onboardingStatus,
@@ -144,6 +166,7 @@ export const useSetNextOnboardingStatus = () => {
       currentWorkspace,
       isBillingEnabled,
       isOnboardingAiChatEnabled,
+      setOnboardingStepFreeCredits,
       store,
     ],
   );
