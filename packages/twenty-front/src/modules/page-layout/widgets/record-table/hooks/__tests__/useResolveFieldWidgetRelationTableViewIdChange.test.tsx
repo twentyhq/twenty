@@ -91,7 +91,7 @@ describe('useResolveFieldWidgetRelationTableViewIdChange', () => {
       }),
     );
 
-    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+    expect(draft[WIDGET_ID]?.view.objectMetadataId!).toBe(
       opportunityObjectMetadataItem.id,
     );
   });
@@ -120,12 +120,12 @@ describe('useResolveFieldWidgetRelationTableViewIdChange', () => {
       }),
     );
 
-    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+    expect(draft[WIDGET_ID]?.view.objectMetadataId!).toBe(
       opportunityObjectMetadataItem.id,
     );
     // The intermediate is the single record the current record points at, so
     // the seeded filter carries no relation traversal.
-    expect(draft[WIDGET_ID].viewFilters).toEqual([
+    expect(draft[WIDGET_ID]!.viewFilters).toEqual([
       expect.objectContaining({
         fieldMetadataId:
           companyOpportunitiesField?.relation?.targetFieldMetadata.id,
@@ -159,10 +159,10 @@ describe('useResolveFieldWidgetRelationTableViewIdChange', () => {
 
     // The view lists companies, not employment histories, scoped back to the
     // current person through the junction.
-    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+    expect(draft[WIDGET_ID]?.view.objectMetadataId!).toBe(
       companyObjectMetadataItem.id,
     );
-    expect(draft[WIDGET_ID].viewFilters).toEqual([
+    expect(draft[WIDGET_ID]!.viewFilters).toEqual([
       expect.objectContaining({
         fieldMetadataId: companyPreviousEmployeesField?.id,
         relationTargetFieldMetadataId: employmentHistoryPersonField?.id,

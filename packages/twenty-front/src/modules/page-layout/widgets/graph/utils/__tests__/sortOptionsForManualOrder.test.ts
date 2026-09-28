@@ -134,7 +134,7 @@ describe('sortOptionsForManualOrder', () => {
 
       const result = sortOptionsForManualOrder(options, manualOrder);
 
-      expect(result[0].value).toBe('z');
+      expect(result[0]!.value).toBe('z');
     });
 
     it('should not mutate the original options array', () => {

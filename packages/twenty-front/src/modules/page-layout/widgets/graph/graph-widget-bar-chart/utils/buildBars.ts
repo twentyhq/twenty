@@ -47,7 +47,7 @@ export const buildBars = ({
 
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];
-    const indexValue = String(dataPoint[indexBy]);
+    const indexValue = String(dataPoint![indexBy]);
     const effectiveIndex = isVertical ? dataIndex : dataLength - 1 - dataIndex;
     const categoryStart = outerPadding + effectiveIndex * categoryStep;
 
@@ -57,8 +57,8 @@ export const buildBars = ({
     };
 
     for (let keyIndex = 0; keyIndex < keysLength; keyIndex++) {
-      const key = keys[keyIndex];
-      const rawValue = dataPoint[key];
+      const key = keys[keyIndex]!;
+      const rawValue = dataPoint![key];
 
       if (!isNumber(rawValue) || (!includeZeroValues && rawValue === 0)) {
         continue;

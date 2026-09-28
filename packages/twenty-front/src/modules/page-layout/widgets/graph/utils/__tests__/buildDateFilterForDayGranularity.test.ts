@@ -17,9 +17,9 @@ describe('buildDateFilterForDayGranularity', () => {
       );
 
       expect(result).toHaveLength(1);
-      expect(result[0].fieldName).toBe('createdAt');
-      expect(result[0].operand).toBe(ViewFilterOperand.IS);
-      expect(result[0].value).toMatch('2024-03-15');
+      expect(result[0]!.fieldName).toBe('createdAt');
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS);
+      expect(result[0]!.value).toMatch('2024-03-15');
     });
   });
 
@@ -36,10 +36,10 @@ describe('buildDateFilterForDayGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
-      expect(result[0].value).toMatch('2024-03-15T00:00:00+01:00');
-      expect(result[1].value).toMatch('2024-03-16T00:00:00+01:00');
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.value).toMatch('2024-03-15T00:00:00+01:00');
+      expect(result[1]!.value).toMatch('2024-03-16T00:00:00+01:00');
     });
 
     it('should handle extreme timezone for DATE_TIME - Auckland GMT+13', () => {
@@ -54,10 +54,10 @@ describe('buildDateFilterForDayGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
-      expect(result[0].value).toMatch('2024-03-15T00:00:00+13:00');
-      expect(result[1].value).toMatch('2024-03-16T00:00:00+13:00');
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.value).toMatch('2024-03-15T00:00:00+13:00');
+      expect(result[1]!.value).toMatch('2024-03-16T00:00:00+13:00');
     });
 
     it('should handle extreme timezone for DATE_TIME - Samoa GMT-11', () => {
@@ -72,10 +72,10 @@ describe('buildDateFilterForDayGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
-      expect(result[0].value).toMatch('2024-03-15T00:00:00-11:00');
-      expect(result[1].value).toMatch('2024-03-16T00:00:00-11:00');
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.value).toMatch('2024-03-15T00:00:00-11:00');
+      expect(result[1]!.value).toMatch('2024-03-16T00:00:00-11:00');
     });
   });
 
@@ -107,7 +107,7 @@ describe('buildDateFilterForDayGranularity', () => {
         'customFieldName',
       );
 
-      expect(result[0].fieldName).toBe('customFieldName');
+      expect(result[0]!.fieldName).toBe('customFieldName');
     });
   });
 });

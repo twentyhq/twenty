@@ -100,7 +100,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     );
 
     expect(draftSnapshots[WIDGET_ID]).toBeDefined();
-    expect(draftSnapshots[WIDGET_ID].view.id).toBe(view.id);
+    expect(draftSnapshots[WIDGET_ID]?.view.id!).toBe(view.id);
     expect(persistedSnapshots[WIDGET_ID]).toBe(draftSnapshots[WIDGET_ID]);
   });
 

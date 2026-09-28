@@ -11,10 +11,10 @@ const makeDraft = (widgets: PageLayoutWidget[]): DraftPageLayout =>
   makeDraftFromTabs([makeTab('tab-1', widgets)]);
 
 const orderOf = (draft: DraftPageLayout) =>
-  draft.tabs[0].widgets.map((widget) => widget.id);
+  draft.tabs[0]?.widgets.map((widget) => widget.id);
 
 const indicesOf = (draft: DraftPageLayout) =>
-  draft.tabs[0].widgets.map((widget) =>
+  draft.tabs[0]?.widgets.map((widget) =>
     widget.position && 'index' in widget.position ? widget.position.index : -1,
   );
 

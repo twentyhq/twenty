@@ -99,7 +99,8 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       ]),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+    const sanitizedConfiguration = result.tabs[0]?.widgets[0]
+      ?.configuration! as {
       filter: ChartFilters;
     };
 
@@ -127,7 +128,8 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       ]),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+    const sanitizedConfiguration = result.tabs[0]?.widgets[0]
+      ?.configuration! as {
       filter: ChartFilters;
     };
 
@@ -165,7 +167,8 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       ]),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+    const sanitizedConfiguration = result.tabs[0]?.widgets[0]
+      ?.configuration! as {
       filter: ChartFilters;
     };
 
@@ -186,7 +189,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       ]),
     });
 
-    expect(result.tabs[0].widgets[0].configuration).toEqual(
+    expect(result.tabs[0]?.widgets[0]!.configuration).toEqual(
       TEST_FIELDS_CONFIGURATION,
     );
   });
@@ -210,7 +213,8 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
       validFieldMetadataIdsByObjectMetadataId: new Map(),
     });
 
-    const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
+    const sanitizedConfiguration = result.tabs[0]?.widgets[0]
+      ?.configuration! as {
       filter: ChartFilters;
     };
 

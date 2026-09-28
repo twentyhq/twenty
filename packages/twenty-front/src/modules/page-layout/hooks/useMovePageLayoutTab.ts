@@ -40,15 +40,15 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         }
 
         const neighborTab = sortedActiveTabs[neighborIndex];
-        const currentPosition = sortedActiveTabs[index].position;
+        const currentPosition = sortedActiveTabs[index]!.position;
 
         return {
           ...prev,
           tabs: prev.tabs.map((tab) => {
             if (tab.id === tabId) {
-              return { ...tab, position: neighborTab.position };
+              return { ...tab, position: neighborTab!.position };
             }
-            if (tab.id === neighborTab.id) {
+            if (tab.id === neighborTab!.id) {
               return { ...tab, position: currentPosition };
             }
             return tab;

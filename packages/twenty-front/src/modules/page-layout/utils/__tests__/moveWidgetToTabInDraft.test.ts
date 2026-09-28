@@ -11,7 +11,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 const indicesOf = (draft: DraftPageLayout, tabIndex: number) =>
-  draft.tabs[tabIndex].widgets.map((widget) =>
+  draft.tabs[tabIndex]?.widgets.map((widget) =>
     widget.position && 'index' in widget.position ? widget.position.index : -1,
   );
 
@@ -27,12 +27,12 @@ describe('moveWidgetToTabInDraft', () => {
       destinationTabId: 'tab-2',
     });
 
-    expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['widget-b']);
-    expect(result.tabs[1].widgets.map((w) => w.id)).toEqual([
+    expect(result.tabs[0]?.widgets.map((w) => w.id)).toEqual(['widget-b']);
+    expect(result.tabs[1]?.widgets.map((w) => w.id)).toEqual([
       'widget-x',
       'widget-a',
     ]);
-    const moved = result.tabs[1].widgets.find((w) => w.id === 'widget-a');
+    const moved = result.tabs[1]?.widgets.find((w) => w.id === 'widget-a');
     expect(moved?.position).toEqual(expect.objectContaining({ index: 1 }));
     expect(moved?.pageLayoutTabId).toBe('tab-2');
   });
@@ -74,7 +74,7 @@ describe('moveWidgetToTabInDraft', () => {
       destinationIndex: 1,
     });
 
-    expect(result.tabs[1].widgets.map((w) => w.id)).toEqual([
+    expect(result.tabs[1]?.widgets.map((w) => w.id)).toEqual([
       'widget-x',
       'widget-a',
       'widget-y',
@@ -94,7 +94,7 @@ describe('moveWidgetToTabInDraft', () => {
       destinationIndex: 99,
     });
 
-    expect(result.tabs[1].widgets.map((w) => w.id)).toEqual([
+    expect(result.tabs[1]?.widgets.map((w) => w.id)).toEqual([
       'widget-x',
       'widget-a',
     ]);
@@ -195,8 +195,8 @@ describe('moveWidgetToTabInDraft', () => {
       destinationTabId: 'tab-2',
     });
 
-    expect(result.tabs[0].widgets).toHaveLength(0);
-    expect(result.tabs[1].widgets.map(({ id }) => id)).toEqual([
+    expect(result.tabs[0]!.widgets).toHaveLength(0);
+    expect(result.tabs[1]?.widgets.map(({ id }) => id)).toEqual([
       'fields',
       'emails',
     ]);

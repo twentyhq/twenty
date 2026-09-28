@@ -44,7 +44,7 @@ export const ApplyColors: Story = {
       within(popup).getAllByRole('button', { name: 'Default' })[0],
     ).toHaveAttribute('aria-pressed', 'true');
     await userEvent.click(
-      within(popup).getAllByRole('button', { name: 'Red' })[0],
+      within(popup).getAllByRole('button', { name: 'Red' })[0]!,
     );
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -61,7 +61,7 @@ export const ApplyColors: Story = {
       within(reopened).getAllByRole('button', { name: 'Red' })[0],
     ).toHaveAttribute('aria-pressed', 'true');
     await userEvent.click(
-      within(reopened).getAllByRole('button', { name: 'Blue' })[1],
+      within(reopened).getAllByRole('button', { name: 'Blue' })[1]!,
     );
     await waitFor(() => expect(editor).toHaveFocus());
     await expect(

@@ -28,13 +28,13 @@ describe('removeWidgetLayoutFromTab', () => {
       'widget-2',
     );
 
-    expect(result['tab-1'].desktop).toHaveLength(2);
-    expect(result['tab-1'].desktop!.map((l) => l.i)).toEqual([
+    expect(result['tab-1']!.desktop).toHaveLength(2);
+    expect(result['tab-1']!.desktop!.map((l) => l.i)).toEqual([
       'widget-1',
       'widget-3',
     ]);
-    expect(result['tab-1'].mobile).toHaveLength(2);
-    expect(result['tab-1'].mobile!.map((l) => l.i)).toEqual([
+    expect(result['tab-1']!.mobile).toHaveLength(2);
+    expect(result['tab-1']!.mobile!.map((l) => l.i)).toEqual([
       'widget-1',
       'widget-3',
     ]);
@@ -48,7 +48,7 @@ describe('removeWidgetLayoutFromTab', () => {
     );
 
     expect(result['tab-2']).toEqual(mockTabLayouts['tab-2']);
-    expect(result['tab-2'].desktop).toHaveLength(1);
+    expect(result['tab-2']!.desktop).toHaveLength(1);
   });
 
   it('should handle non-existent tab gracefully', () => {
@@ -68,7 +68,7 @@ describe('removeWidgetLayoutFromTab', () => {
       'non-existent',
     );
 
-    expect(result['tab-1'].desktop).toHaveLength(3);
+    expect(result['tab-1']!.desktop).toHaveLength(3);
     expect(result['tab-1']).toEqual(mockTabLayouts['tab-1']);
   });
 
@@ -77,8 +77,8 @@ describe('removeWidgetLayoutFromTab', () => {
     result = removeWidgetLayoutFromTab(result, 'tab-1', 'widget-2');
     result = removeWidgetLayoutFromTab(result, 'tab-1', 'widget-3');
 
-    expect(result['tab-1'].desktop).toHaveLength(0);
-    expect(result['tab-1'].mobile).toHaveLength(0);
+    expect(result['tab-1']!.desktop).toHaveLength(0);
+    expect(result['tab-1']!.mobile).toHaveLength(0);
   });
 
   it('should handle empty tab layouts', () => {
@@ -91,8 +91,8 @@ describe('removeWidgetLayoutFromTab', () => {
 
     const result = removeWidgetLayoutFromTab(emptyLayouts, 'tab-1', 'widget-1');
 
-    expect(result['tab-1'].desktop).toHaveLength(0);
-    expect(result['tab-1'].mobile).toHaveLength(0);
+    expect(result['tab-1']!.desktop).toHaveLength(0);
+    expect(result['tab-1']!.mobile).toHaveLength(0);
   });
 
   it('should return a new object without mutating the original', () => {
@@ -105,8 +105,8 @@ describe('removeWidgetLayoutFromTab', () => {
 
     expect(result).not.toBe(mockTabLayouts);
     expect(mockTabLayouts).toEqual(originalLayouts);
-    expect(result['tab-1'].desktop).toHaveLength(2);
-    expect(mockTabLayouts['tab-1'].desktop).toHaveLength(3);
+    expect(result['tab-1']!.desktop).toHaveLength(2);
+    expect(mockTabLayouts['tab-1']!.desktop).toHaveLength(3);
   });
 
   it('should remove widget from both desktop and mobile layouts', () => {
@@ -116,8 +116,8 @@ describe('removeWidgetLayoutFromTab', () => {
       'widget-2',
     );
 
-    const desktopIds = result['tab-1'].desktop!.map((l) => l.i);
-    const mobileIds = result['tab-1'].mobile!.map((l) => l.i);
+    const desktopIds = result['tab-1']!.desktop!.map((l) => l.i);
+    const mobileIds = result['tab-1']!.mobile!.map((l) => l.i);
 
     expect(desktopIds).not.toContain('widget-2');
     expect(mobileIds).not.toContain('widget-2');

@@ -285,9 +285,9 @@ export const IdentifierBarNarrow: Story = {
 
     const [moreButton] = await canvas.findAllByRole('button', { name: /More/ });
 
-    await userEvent.click(moreButton);
+    await userEvent.click(moreButton!);
     await userEvent.click(await body.findByRole('option', { name: 'Revenue' }));
-    await userEvent.click(moreButton);
+    await userEvent.click(moreButton!);
 
     expect(
       await body.findByRole('option', { name: 'Revenue' }),
@@ -295,7 +295,7 @@ export const IdentifierBarNarrow: Story = {
 
     await userEvent.click(body.getByRole('option', { name: 'Revenue' }));
     await userEvent.click(canvas.getByRole('button', { name: 'New Tab' }));
-    await userEvent.click(moreButton);
+    await userEvent.click(moreButton!);
 
     expect(
       await body.findByRole('option', { name: 'New Tab 3' }),

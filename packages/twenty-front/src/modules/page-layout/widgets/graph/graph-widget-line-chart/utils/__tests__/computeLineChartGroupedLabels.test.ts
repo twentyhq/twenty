@@ -46,8 +46,8 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].key).toBe('value-revenue-Q1');
-      expect(result[1].key).toBe('value-revenue-Q2');
+      expect(result[0]!.key).toBe('value-revenue-Q1');
+      expect(result[1]!.key).toBe('value-revenue-Q2');
     });
   });
 
@@ -57,7 +57,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].x).toBe(250);
+      expect(result[0]!.x).toBe(250);
     });
 
     it('should use point y coordinate for label y', () => {
@@ -65,7 +65,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].y).toBe(75);
+      expect(result[0]!.y).toBe(75);
     });
   });
 
@@ -75,7 +75,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].shouldRenderBelow).toBe(false);
+      expect(result[0]!.shouldRenderBelow).toBe(false);
     });
 
     it('should set shouldRenderBelow to true for negative values', () => {
@@ -83,7 +83,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].shouldRenderBelow).toBe(true);
+      expect(result[0]!.shouldRenderBelow).toBe(true);
     });
 
     it('should set shouldRenderBelow to false for zero', () => {
@@ -91,7 +91,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].shouldRenderBelow).toBe(false);
+      expect(result[0]!.shouldRenderBelow).toBe(false);
     });
   });
 
@@ -101,7 +101,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].value).toBe(42.5);
+      expect(result[0]!.value).toBe(42.5);
     });
 
     it('should handle string y values by converting to number', () => {
@@ -111,7 +111,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].value).toBe(123);
+      expect(result[0]!.value).toBe(123);
     });
 
     it('should handle large numbers', () => {
@@ -119,7 +119,7 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].value).toBe(1000000);
+      expect(result[0]!.value).toBe(1000000);
     });
   });
 
@@ -132,8 +132,8 @@ describe('computeLineChartGroupedLabels', () => {
 
       const result = computeLineChartGroupedLabels(points);
 
-      expect(result[0].key).toBe('value-sales-Jan');
-      expect(result[1].key).toBe('value-revenue-Jan');
+      expect(result[0]!.key).toBe('value-sales-Jan');
+      expect(result[1]!.key).toBe('value-revenue-Jan');
     });
   });
 
@@ -152,7 +152,7 @@ describe('computeLineChartGroupedLabels', () => {
       const result = computeLineChartGroupedLabels(points);
 
       expect(result).toHaveLength(1);
-      expect(result[0].value).toBe(50);
+      expect(result[0]!.value).toBe(50);
     });
   });
 });

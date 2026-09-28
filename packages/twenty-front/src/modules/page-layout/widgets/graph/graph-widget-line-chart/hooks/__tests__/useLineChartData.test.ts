@@ -90,13 +90,13 @@ describe('useLineChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedSeries[0].label).toBe('Sales');
-    expect(result.current.enrichedSeries[0].areaFillId).toBe(
+    expect(result.current.enrichedSeries[0]!.label).toBe('Sales');
+    expect(result.current.enrichedSeries[0]!.areaFillId).toBe(
       'areaFill-test-chart-series1-0',
     );
 
-    expect(result.current.enrichedSeries[1].label).toBe('Costs');
-    expect(result.current.enrichedSeries[1].areaFillId).toBe(
+    expect(result.current.enrichedSeries[1]!.label).toBe('Costs');
+    expect(result.current.enrichedSeries[1]!.areaFillId).toBe(
       'areaFill-test-chart-series2-1',
     );
   });
@@ -189,7 +189,7 @@ describe('useLineChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedSeries[0].label).toBe('series1');
+    expect(result.current.enrichedSeries[0]!.label).toBe('series1');
   });
 
   it('should filter visible data based on hidden legend ids', () => {
@@ -205,7 +205,7 @@ describe('useLineChartData', () => {
     );
 
     expect(result.current.visibleData).toHaveLength(1);
-    expect(result.current.visibleData[0].key).toBe('series1');
+    expect(result.current.visibleData[0]!.key).toBe('series1');
     expect(result.current.enrichedSeries).toHaveLength(1);
     expect(result.current.nivoData).toHaveLength(1);
   });
@@ -222,7 +222,7 @@ describe('useLineChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedSeries[0].colorScheme.name).toBe('blue');
+    expect(result.current.enrichedSeries[0]?.colorScheme.name!).toBe('blue');
   });
 
   it('should keep all items in legend even when filtering', () => {
@@ -255,7 +255,7 @@ describe('useLineChartData', () => {
 
     expect(result.current.nivoData.length).toBe(result.current.colors.length);
     expect(result.current.nivoData.length).toBe(1);
-    expect(result.current.nivoData[0].id).toBe('series2');
+    expect(result.current.nivoData[0]!.id).toBe('series2');
   });
 
   it('should keep the same automatic palette color per key when series order changes', () => {

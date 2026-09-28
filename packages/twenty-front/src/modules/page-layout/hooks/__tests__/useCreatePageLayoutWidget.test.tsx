@@ -98,10 +98,10 @@ describe('useCreatePageLayoutWidget', () => {
       result.current.createPageLayoutWidget(IFRAME_WIDGET_PARAMS);
     });
 
-    const widgets = store.get(getDraftAtom()).tabs[0].widgets;
+    const widgets = store.get(getDraftAtom()).tabs[0]?.widgets;
 
     expect(widgets).toHaveLength(1);
-    expect(widgets[0]).toMatchObject({
+    expect(widgets![0]!).toMatchObject({
       id: 'mock-uuid',
       pageLayoutTabId: 'tab-1',
       type: WidgetType.IFRAME,
@@ -120,7 +120,7 @@ describe('useCreatePageLayoutWidget', () => {
 
     const currentLayouts = store.get(getCurrentLayoutsAtom());
 
-    expect(currentLayouts['tab-1'].desktop).toEqual([
+    expect(currentLayouts['tab-1']!.desktop).toEqual([
       { i: 'mock-uuid', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 5 },
     ]);
     expect(currentLayouts['tab-2']).toBeUndefined();
@@ -135,9 +135,9 @@ describe('useCreatePageLayoutWidget', () => {
       result.current.createPageLayoutWidget(IFRAME_WIDGET_PARAMS);
     });
 
-    expect(store.get(getDraftAtom()).tabs[0].widgets[0].position).toMatchObject(
-      { row: 3, column: 2, rowSpan: 5, columnSpan: 4 },
-    );
+    expect(
+      store.get(getDraftAtom()).tabs[0]?.widgets[0]?.position,
+    ).toMatchObject({ row: 3, column: 2, rowSpan: 5, columnSpan: 4 });
     expect(store.get(getDraggedAreaAtom())).toBeNull();
   });
 
@@ -153,7 +153,7 @@ describe('useCreatePageLayoutWidget', () => {
       });
     });
 
-    expect(store.get(getCurrentLayoutsAtom())['tab-1'].desktop).toEqual([
+    expect(store.get(getCurrentLayoutsAtom())['tab-1']?.desktop).toEqual([
       { i: 'mock-uuid', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 4 },
     ]);
   });
@@ -170,9 +170,9 @@ describe('useCreatePageLayoutWidget', () => {
 
     const currentLayouts = store.get(getCurrentLayoutsAtom());
 
-    expect(store.get(getDraftAtom()).tabs[0].widgets).toHaveLength(3);
-    expect(currentLayouts['tab-1'].desktop).toHaveLength(3);
-    expect(currentLayouts['tab-1'].mobile).toHaveLength(3);
+    expect(store.get(getDraftAtom()).tabs[0]?.widgets).toHaveLength(3);
+    expect(currentLayouts['tab-1']!.desktop).toHaveLength(3);
+    expect(currentLayouts['tab-1']!.mobile).toHaveLength(3);
   });
 
   it('should throw when no tab is active', () => {

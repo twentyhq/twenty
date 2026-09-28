@@ -30,7 +30,7 @@ describe('normalizeVerticalListWidgetsInDraftPageLayout', () => {
       normalizeVerticalListWidgetsInDraftPageLayout(draftPageLayout);
 
     expect(
-      normalizedDraft.tabs[0].widgets.map((widget) => ({
+      normalizedDraft.tabs[0]?.widgets.map((widget) => ({
         id: widget.id,
         position: widget.position,
       })),
@@ -62,12 +62,11 @@ describe('normalizeVerticalListWidgetsInDraftPageLayout', () => {
 
     normalizeVerticalListWidgetsInDraftPageLayout(draftPageLayout);
 
-    expect(draftPageLayout.tabs[0].widgets.map((widget) => widget.id)).toEqual([
-      'timeline',
-      'fields',
-    ]);
+    expect(draftPageLayout.tabs[0]?.widgets.map((widget) => widget.id)).toEqual(
+      ['timeline', 'fields'],
+    );
     expect(
-      draftPageLayout.tabs[0].widgets.map((widget) =>
+      draftPageLayout.tabs[0]?.widgets.map((widget) =>
         isDefined(widget.position) && isVerticalListPosition(widget.position)
           ? widget.position.index
           : undefined,
@@ -89,7 +88,7 @@ describe('normalizeVerticalListWidgetsInDraftPageLayout', () => {
       makeDraft([gridTab]),
     );
 
-    expect(normalizedDraft.tabs[0].widgets).toEqual([
+    expect(normalizedDraft.tabs[0]!.widgets).toEqual([
       firstWidget,
       secondWidget,
     ]);

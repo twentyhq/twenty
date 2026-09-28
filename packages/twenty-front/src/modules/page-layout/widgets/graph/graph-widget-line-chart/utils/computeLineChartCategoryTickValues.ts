@@ -15,18 +15,18 @@ export const computeLineChartCategoryTickValues = ({
   marginLeft: number;
   marginRight: number;
 }): (string | number)[] => {
-  if (data.length === 0 || data[0].data.length === 0) {
+  if (data.length === 0 || data[0]!.data.length === 0) {
     return [];
   }
 
-  const values = data[0].data.map((point) => {
+  const values = data[0]!.data.map((point) => {
     const value = point.x;
     return isNumber(value) || isString(value) ? value : String(value);
   });
 
   const availableWidth = width - (marginLeft + marginRight);
 
-  const dataPointCount = data[0].data.length;
+  const dataPointCount = data[0]!.data.length;
   const widthPerTick = dataPointCount > 0 ? availableWidth / dataPointCount : 0;
 
   return computeChartCategoryTickValues({

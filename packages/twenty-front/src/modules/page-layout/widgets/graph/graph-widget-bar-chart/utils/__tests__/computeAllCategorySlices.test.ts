@@ -83,10 +83,10 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].bars).toHaveLength(1);
-      expect(result[0].bars[0].indexValue).toBe('A');
-      expect(result[1].bars).toHaveLength(1);
-      expect(result[1].bars[0].indexValue).toBe('B');
+      expect(result[0]!.bars).toHaveLength(1);
+      expect(result[0]?.bars[0]!.indexValue).toBe('A');
+      expect(result[1]!.bars).toHaveLength(1);
+      expect(result[1]?.bars[0]!.indexValue).toBe('B');
     });
 
     it('should calculate slice boundaries correctly', () => {
@@ -102,11 +102,11 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].sliceLeft).toBeDefined();
-      expect(result[0].sliceRight).toBeDefined();
-      expect(result[0].sliceCenter).toBeDefined();
-      expect(result[0].sliceLeft).toBeLessThan(result[0].sliceCenter);
-      expect(result[0].sliceCenter).toBeLessThan(result[0].sliceRight);
+      expect(result[0]!.sliceLeft).toBeDefined();
+      expect(result[0]!.sliceRight).toBeDefined();
+      expect(result[0]!.sliceCenter).toBeDefined();
+      expect(result[0]!.sliceLeft).toBeLessThan(result[0]!.sliceCenter);
+      expect(result[0]!.sliceCenter).toBeLessThan(result[0]!.sliceRight);
     });
   });
 
@@ -153,11 +153,11 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].bars).toHaveLength(1);
-      expect(result[0].bars[0].indexValue).toBe('A');
-      expect(result[1].bars).toHaveLength(1);
-      expect(result[1].bars[0].indexValue).toBe('B');
-      expect(result[0].sliceLeft).toBeGreaterThan(result[1].sliceLeft);
+      expect(result[0]!.bars).toHaveLength(1);
+      expect(result[0]?.bars[0]!.indexValue).toBe('A');
+      expect(result[1]!.bars).toHaveLength(1);
+      expect(result[1]?.bars[0]!.indexValue).toBe('B');
+      expect(result[0]!.sliceLeft).toBeGreaterThan(result[1]!.sliceLeft);
     });
   });
 
@@ -202,7 +202,7 @@ describe('computeAllCategorySlices', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].bars).toHaveLength(2);
+      expect(result[0]!.bars).toHaveLength(2);
     });
   });
 
@@ -238,9 +238,9 @@ describe('computeAllCategorySlices', () => {
       });
 
       expect(result).toHaveLength(2);
-      expect(result[0].bars).toHaveLength(1);
-      expect(result[1].bars).toHaveLength(0);
-      expect(result[1].indexValue).toBe('B');
+      expect(result[0]!.bars).toHaveLength(1);
+      expect(result[1]!.bars).toHaveLength(0);
+      expect(result[1]!.indexValue).toBe('B');
     });
   });
 
@@ -258,7 +258,7 @@ describe('computeAllCategorySlices', () => {
         margins: defaultMargins,
       });
 
-      expect(result[0].indexValue).toBe('1');
+      expect(result[0]!.indexValue).toBe('1');
     });
   });
 });

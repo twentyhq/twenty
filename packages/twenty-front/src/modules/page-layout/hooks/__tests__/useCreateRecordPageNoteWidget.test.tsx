@@ -171,11 +171,11 @@ describe('useCreateRecordPageNoteWidget', () => {
       });
       const draft = store.get(draftAtom);
       expect(draft.tabs[0]).toEqual(otherTab);
-      expect(draft.tabs[1].widgets.map(({ title }) => title)).toEqual(
+      expect(draft.tabs[1]?.widgets.map(({ title }) => title)).toEqual(
         expectedTitles,
       );
       expect(
-        draft.tabs[1].widgets.map(({ position }) => position),
+        draft.tabs[1]?.widgets.map(({ position }) => position),
       ).toMatchObject(
         expectedTitles.map((_, index) => ({
           layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -183,7 +183,7 @@ describe('useCreateRecordPageNoteWidget', () => {
         })),
       );
       expect(
-        draft.tabs[1].widgets.find(
+        draft.tabs[1]?.widgets.find(
           ({ id }) => id === store.get(editingWidgetAtom),
         ),
       ).toMatchObject({ title: 'Note', type: WidgetType.STANDALONE_RICH_TEXT });
@@ -215,9 +215,9 @@ describe('useCreateRecordPageNoteWidget', () => {
     });
 
     const draft = store.get(draftAtom);
-    const note = draft.tabs[0].widgets[1];
+    const note = draft.tabs[0]?.widgets[1]!;
 
-    expect(draft.tabs[0].widgets).toHaveLength(2);
+    expect(draft.tabs[0]!.widgets).toHaveLength(2);
     expect(draft.tabs[1]).toEqual(otherTab);
     expect(note).toMatchObject({
       title: 'Note',
@@ -239,7 +239,7 @@ describe('useCreateRecordPageNoteWidget', () => {
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
         }),
       ),
-    ).toBe(note.id);
+    ).toBe(note?.id);
     expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
       sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
       pageTitle: 'Note',
@@ -270,7 +270,7 @@ describe('useCreateRecordPageNoteWidget', () => {
     act(() => result.current.createRecordPageNoteWidget({ tabId: 'tab-1' }));
 
     expect(store.get(editingWidgetAtom)).toBe(
-      store.get(draftAtom).tabs[0].widgets[0].id,
+      store.get(draftAtom).tabs[0]?.widgets[0]?.id,
     );
   });
 });

@@ -54,7 +54,7 @@ describe('filterDraftGroupsForDisplay', () => {
     const result = filterDraftGroupsForDisplay(groups);
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('g1');
+    expect(result[0]!.id).toBe('g1');
   });
 
   it('should filter out non-visible fields within groups', () => {
@@ -72,9 +72,9 @@ describe('filterDraftGroupsForDisplay', () => {
     const result = filterDraftGroupsForDisplay(groups);
 
     expect(result).toHaveLength(1);
-    expect(result[0].fields).toHaveLength(2);
-    expect(result[0].fields[0].viewFieldId).toBe('vf1');
-    expect(result[0].fields[1].viewFieldId).toBe('vf3');
+    expect(result[0]!.fields).toHaveLength(2);
+    expect(result[0]?.fields[0]!.viewFieldId).toBe('vf1');
+    expect(result[0]?.fields[1]!.viewFieldId).toBe('vf3');
   });
 
   it('should remove groups where all fields are hidden', () => {
@@ -128,7 +128,7 @@ describe('filterDraftGroupsForDisplay', () => {
 
     const result = filterDraftGroupsForDisplay(groups);
 
-    expect(result[0].fields.map((f) => f.viewFieldId)).toEqual([
+    expect(result[0]?.fields.map((f) => f.viewFieldId)).toEqual([
       'vf0',
       'vf1',
       'vf2',
@@ -154,9 +154,9 @@ describe('filterDraftGroupsForDisplay', () => {
 
     const result = filterDraftGroupsForDisplay(groups);
 
-    expect(result[0].fields[0].globalIndex).toBe(0);
-    expect(result[0].fields[1].globalIndex).toBe(1);
-    expect(result[1].fields[0].globalIndex).toBe(2);
+    expect(result[0]?.fields[0]!.globalIndex).toBe(0);
+    expect(result[0]?.fields[1]!.globalIndex).toBe(1);
+    expect(result[1]?.fields[0]!.globalIndex).toBe(2);
   });
 
   it('should not count hidden fields in globalIndex', () => {
@@ -180,8 +180,8 @@ describe('filterDraftGroupsForDisplay', () => {
 
     const result = filterDraftGroupsForDisplay(groups);
 
-    expect(result[0].fields).toHaveLength(1);
-    expect(result[0].fields[0].globalIndex).toBe(0);
-    expect(result[1].fields[0].globalIndex).toBe(1);
+    expect(result[0]!.fields).toHaveLength(1);
+    expect(result[0]?.fields[0]!.globalIndex).toBe(0);
+    expect(result[1]?.fields[0]!.globalIndex).toBe(1);
   });
 });

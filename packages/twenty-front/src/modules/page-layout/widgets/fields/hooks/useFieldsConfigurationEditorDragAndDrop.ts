@@ -90,7 +90,7 @@ export const useFieldsConfigurationEditorDragAndDrop = ({
 
     const reorderedGroupIds = sortedGroups.map((group) => group.id);
     const [movedGroupId] = reorderedGroupIds.splice(sourceIndex, 1);
-    reorderedGroupIds.splice(destinationIndex, 0, movedGroupId);
+    reorderedGroupIds.splice(destinationIndex, 0, movedGroupId!);
 
     reorderGroups(reorderedGroupIds);
   };

@@ -35,8 +35,8 @@ describe('buildMissingRecordTableWidgetViewDraftSnapshots', () => {
     });
 
     expect(snapshots['widget-1']).toBeDefined();
-    expect(snapshots['widget-1'].view.id).toBe(view.id);
-    expect(snapshots['widget-1'].viewFields.length).toBeGreaterThan(0);
+    expect(snapshots['widget-1']?.view.id!).toBe(view.id);
+    expect(snapshots['widget-1']?.viewFields.length!).toBeGreaterThan(0);
   });
 
   it('should not overwrite an existing snapshot', () => {

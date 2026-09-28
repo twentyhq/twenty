@@ -142,14 +142,14 @@ export const buildFilterFromChartBucket = ({
   const value = serializeChartBucketValueForFilter({
     fieldType: fieldMetadataItem.type,
     bucketRawValue,
-    operand,
+    operand: operand!,
     subFieldName,
   });
 
   return [
     {
       fieldName,
-      operand,
+      operand: operand!,
       value,
     },
   ];

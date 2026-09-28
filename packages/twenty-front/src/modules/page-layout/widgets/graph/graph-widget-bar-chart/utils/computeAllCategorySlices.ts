@@ -57,7 +57,7 @@ export const computeAllCategorySlices = ({
 
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];
-    const indexValue = String(dataPoint[indexBy]);
+    const indexValue = String(dataPoint![indexBy]);
 
     const effectiveIndex = isVerticalLayout
       ? dataIndex

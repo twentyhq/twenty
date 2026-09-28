@@ -14,7 +14,7 @@ export const getAdjacentFitContentWidgetIndex = ({
 }: GetAdjacentFitContentWidgetIndexParams): number | undefined => {
   if (
     !(widgetIndex in widgets) ||
-    isViewportFillingWidget(widgets[widgetIndex])
+    isViewportFillingWidget(widgets[widgetIndex]!)
   ) {
     return undefined;
   }

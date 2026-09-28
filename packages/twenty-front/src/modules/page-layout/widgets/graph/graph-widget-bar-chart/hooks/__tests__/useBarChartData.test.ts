@@ -121,7 +121,7 @@ describe('useBarChartData', () => {
         name: 'green',
       },
     });
-    expect(result.current.enrichedKeys[0].colorScheme.solid).toBeDefined();
+    expect(result.current.enrichedKeys[0]?.colorScheme.solid!).toBeDefined();
     expect(result.current.enrichedKeys[1]).toMatchObject({
       key: 'costs',
       label: 'Costs',
@@ -129,7 +129,7 @@ describe('useBarChartData', () => {
         name: 'purple',
       },
     });
-    expect(result.current.enrichedKeys[1].colorScheme.solid).toBeDefined();
+    expect(result.current.enrichedKeys[1]?.colorScheme.solid!).toBeDefined();
   });
 
   it('should use series labels when series config is not provided', () => {
@@ -143,8 +143,8 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedKeys[0].label).toBe('Revenue');
-    expect(result.current.enrichedKeys[1].label).toBe('Expenses');
+    expect(result.current.enrichedKeys[0]!.label).toBe('Revenue');
+    expect(result.current.enrichedKeys[1]!.label).toBe('Expenses');
   });
 
   it('should handle empty keys', () => {
@@ -172,8 +172,8 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedKeys[0].label).toBe('sales');
-    expect(result.current.enrichedKeys[1].label).toBe('costs');
+    expect(result.current.enrichedKeys[0]!.label).toBe('sales');
+    expect(result.current.enrichedKeys[1]!.label).toBe('costs');
   });
 
   it('should return legend items from all keys', () => {
@@ -208,7 +208,7 @@ describe('useBarChartData', () => {
 
     expect(result.current.visibleKeys).toEqual(['sales']);
     expect(result.current.enrichedKeys).toHaveLength(1);
-    expect(result.current.enrichedKeys[0].key).toBe('sales');
+    expect(result.current.enrichedKeys[0]!.key).toBe('sales');
   });
 
   it('should maintain colors after filtering', () => {
@@ -223,7 +223,7 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedKeys[0].colorScheme.name).toBe('purple');
+    expect(result.current.enrichedKeys[0]?.colorScheme.name!).toBe('purple');
   });
 
   it('should keep all items in legend even when filtering', () => {

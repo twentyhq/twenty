@@ -175,7 +175,7 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
     jotaiStore.set(
       EDITING_WIDGET_ATOM,
       isDefined(args.replacementPosition)
-        ? widgets[args.replacementPosition].id
+        ? widgets[args.replacementPosition]!.id
         : args.surface === 'widget'
           ? 'other-widget'
           : null,
@@ -270,7 +270,7 @@ export const SelectAndFormatText: Story = {
     await expect(await canvas.findByRole('textbox')).toBe(editor);
     await waitFor(() =>
       expect(
-        jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
+        jotaiStore.get(DRAFT_ATOM).tabs[0]!.widgets[0]!.configuration,
       ).toMatchObject({
         body: { blocknote: expect.stringContaining('"bold":true') },
       }),
@@ -292,7 +292,7 @@ export const CancelPendingEdit: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const initialBody =
-      jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration;
+      jotaiStore.get(DRAFT_ATOM).tabs[0]!.widgets[0]!.configuration;
     const editor = await canvas.findByRole('textbox');
     await userEvent.type(editor, 'New');
     await expect(editor).toHaveTextContent('New');
@@ -311,7 +311,7 @@ export const CancelPendingEdit: Story = {
     // A cancelled edit must stay discarded after the 300ms draft debounce.
     await new Promise((resolve) => setTimeout(resolve, 350));
     await expect(
-      jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
+      jotaiStore.get(DRAFT_ATOM).tabs[0]!.widgets[0]!.configuration,
     ).toEqual(initialBody);
   },
 };
@@ -329,9 +329,9 @@ export const AddFromInlinePicker: Story = {
       await canvas.findByText(/Static text shared across all record pages/),
     ).toBeVisible();
     await userEvent.click(canvas.getByText('Note', { exact: true }));
-    const note = jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0];
-    await expect(note.title).toBe('Note');
-    await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe(note.id);
+    const note = jotaiStore.get(DRAFT_ATOM).tabs[0]!.widgets[0];
+    await expect(note!.title).toBe('Note');
+    await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe(note!.id);
     await expect(jotaiStore.get(sidePanelPageInfoSelector.atom).page).toBe(
       SidePanelPages.PageLayoutWidgetSettings,
     );
@@ -349,7 +349,7 @@ export const ReplaceFirstFromSidePanel: Story = {
     await userEvent.click(
       await within(canvasElement).findByText('Note', { exact: true }),
     );
-    const widgets = jotaiStore.get(DRAFT_ATOM).tabs[0].widgets;
+    const widgets = jotaiStore.get(DRAFT_ATOM).tabs[0]!.widgets;
     await expect(widgets.map(({ title }) => title)).toEqual(
       ['first', 'second', 'tasks'].map((title, index) =>
         index === args.replacementPosition ? 'Note' : title,
@@ -381,7 +381,7 @@ export const MoreWidgets: Story = {
     await userEvent.click(
       await within(canvasElement).findByText('More widgets'),
     );
-    await expect(jotaiStore.get(DRAFT_ATOM).tabs[0].widgets).toHaveLength(0);
+    await expect(jotaiStore.get(DRAFT_ATOM).tabs[0]!.widgets).toHaveLength(0);
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
     await expect(jotaiStore.get(sidePanelPageInfoSelector.atom).page).toBe(
       SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,

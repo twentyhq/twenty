@@ -17,8 +17,8 @@ describe('getEmptyTabLayout', () => {
     const result = getEmptyTabLayout(mockTabLayouts, 'tab-3');
 
     expect(result['tab-3']).toBeDefined();
-    expect(result['tab-3'].desktop).toEqual([]);
-    expect(result['tab-3'].mobile).toEqual([]);
+    expect(result['tab-3']!.desktop).toEqual([]);
+    expect(result['tab-3']!.mobile).toEqual([]);
   });
 
   it('should preserve existing tabs', () => {
@@ -32,8 +32,8 @@ describe('getEmptyTabLayout', () => {
   it('should overwrite existing tab with empty layout', () => {
     const result = getEmptyTabLayout(mockTabLayouts, 'tab-1');
 
-    expect(result['tab-1'].desktop).toEqual([]);
-    expect(result['tab-1'].mobile).toEqual([]);
+    expect(result['tab-1']!.desktop).toEqual([]);
+    expect(result['tab-1']!.mobile).toEqual([]);
     expect(result['tab-2']).toEqual(mockTabLayouts['tab-2']);
   });
 
@@ -42,8 +42,8 @@ describe('getEmptyTabLayout', () => {
     const result = getEmptyTabLayout(emptyLayouts, 'tab-1');
 
     expect(result['tab-1']).toBeDefined();
-    expect(result['tab-1'].desktop).toEqual([]);
-    expect(result['tab-1'].mobile).toEqual([]);
+    expect(result['tab-1']!.desktop).toEqual([]);
+    expect(result['tab-1']!.mobile).toEqual([]);
     expect(Object.keys(result)).toHaveLength(1);
   });
 
@@ -63,9 +63,9 @@ describe('getEmptyTabLayout', () => {
     result = getEmptyTabLayout(result, 'tab-5');
 
     expect(Object.keys(result)).toHaveLength(5);
-    expect(result['tab-3'].desktop).toEqual([]);
-    expect(result['tab-4'].desktop).toEqual([]);
-    expect(result['tab-5'].desktop).toEqual([]);
+    expect(result['tab-3']!.desktop).toEqual([]);
+    expect(result['tab-4']!.desktop).toEqual([]);
+    expect(result['tab-5']!.desktop).toEqual([]);
   });
 
   it('should create consistent structure for desktop and mobile', () => {
@@ -73,7 +73,7 @@ describe('getEmptyTabLayout', () => {
 
     expect(result['new-tab']).toHaveProperty('desktop');
     expect(result['new-tab']).toHaveProperty('mobile');
-    expect(Array.isArray(result['new-tab'].desktop)).toBe(true);
-    expect(Array.isArray(result['new-tab'].mobile)).toBe(true);
+    expect(Array.isArray(result['new-tab']!.desktop)).toBe(true);
+    expect(Array.isArray(result['new-tab']!.mobile)).toBe(true);
   });
 });

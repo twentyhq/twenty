@@ -21,8 +21,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
     });
 
     it('should return ISO strings for DATE_TIME field', () => {
@@ -34,8 +34,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-      expect(result[1].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      expect(result[0]!.value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      expect(result[1]!.value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
   });
 
@@ -49,8 +49,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
     });
 
     it('should return ISO strings for DATE_TIME field without timezone', () => {
@@ -62,10 +62,10 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
-      expect(result[0].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-      expect(result[1].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      expect(result[1]!.value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
   });
 
@@ -85,8 +85,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
     });
 
     it('should return ISO strings for DATE_TIME field', () => {
@@ -98,10 +98,10 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
-      expect(result[0].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-      expect(result[1].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      expect(result[1]!.value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
   });
 
@@ -121,8 +121,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
-      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
+      expect(result[0]!.operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1]!.operand).toBe(ViewFilterOperand.IS_BEFORE);
     });
 
     it('should return ISO strings for DATE_TIME field', () => {
@@ -140,8 +140,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].value).toMatch(/^2024-01-01T/);
-      expect(result[1].value).toMatch(/^2025-01-01T/);
+      expect(result[0]!.value).toMatch(/^2024-01-01T/);
+      expect(result[1]!.value).toMatch(/^2025-01-01T/);
     });
   });
 
@@ -154,8 +154,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
         'customFieldName',
       );
 
-      expect(result[0].fieldName).toBe('customFieldName');
-      expect(result[1].fieldName).toBe('customFieldName');
+      expect(result[0]!.fieldName).toBe('customFieldName');
+      expect(result[1]!.fieldName).toBe('customFieldName');
     });
 
     it('should handle subField-style fieldName', () => {
@@ -166,8 +166,8 @@ describe('buildDateRangeFiltersForGranularity', () => {
         'parent.subField',
       );
 
-      expect(result[0].fieldName).toBe('parent.subField');
-      expect(result[1].fieldName).toBe('parent.subField');
+      expect(result[0]!.fieldName).toBe('parent.subField');
+      expect(result[1]!.fieldName).toBe('parent.subField');
     });
   });
 });

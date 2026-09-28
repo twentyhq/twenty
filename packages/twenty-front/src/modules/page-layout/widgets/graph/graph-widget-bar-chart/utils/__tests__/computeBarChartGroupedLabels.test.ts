@@ -36,8 +36,8 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].key).toBe('value-sales-Jan');
-      expect(result[1].key).toBe('value-sales-Feb');
+      expect(result[0]!.key).toBe('value-sales-Jan');
+      expect(result[1]!.key).toBe('value-sales-Feb');
     });
   });
 
@@ -47,7 +47,7 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].verticalX).toBe(125);
+      expect(result[0]!.verticalX).toBe(125);
     });
 
     it('should calculate center Y position for horizontal labels', () => {
@@ -55,7 +55,7 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].horizontalY).toBe(100);
+      expect(result[0]!.horizontalY).toBe(100);
     });
 
     it('should set verticalY to top of bar for positive values', () => {
@@ -63,8 +63,8 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].verticalY).toBe(50);
-      expect(result[0].shouldRenderBelow).toBe(false);
+      expect(result[0]!.verticalY).toBe(50);
+      expect(result[0]!.shouldRenderBelow).toBe(false);
     });
 
     it('should set verticalY to bottom of bar for negative values', () => {
@@ -72,8 +72,8 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].verticalY).toBe(150);
-      expect(result[0].shouldRenderBelow).toBe(true);
+      expect(result[0]!.verticalY).toBe(150);
+      expect(result[0]!.shouldRenderBelow).toBe(true);
     });
 
     it('should set horizontalX to right edge for positive values', () => {
@@ -81,7 +81,7 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].horizontalX).toBe(150);
+      expect(result[0]!.horizontalX).toBe(150);
     });
 
     it('should set horizontalX to left edge for negative values', () => {
@@ -89,7 +89,7 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].horizontalX).toBe(50);
+      expect(result[0]!.horizontalX).toBe(50);
     });
   });
 
@@ -99,7 +99,7 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].value).toBe(42);
+      expect(result[0]!.value).toBe(42);
     });
 
     it('should handle zero values', () => {
@@ -107,8 +107,8 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].value).toBe(0);
-      expect(result[0].shouldRenderBelow).toBe(false);
+      expect(result[0]!.value).toBe(0);
+      expect(result[0]!.shouldRenderBelow).toBe(false);
     });
 
     it('should handle decimal values', () => {
@@ -116,7 +116,7 @@ describe('computeBarChartGroupedLabels', () => {
 
       const result = computeBarChartGroupedLabels(bars);
 
-      expect(result[0].value).toBe(123.456);
+      expect(result[0]!.value).toBe(123.456);
     });
   });
 
@@ -133,8 +133,8 @@ describe('computeBarChartGroupedLabels', () => {
       const result = computeBarChartGroupedLabels(bars);
 
       expect(result).toHaveLength(1);
-      expect(result[0].verticalX).toBe(0);
-      expect(result[0].horizontalY).toBe(0);
+      expect(result[0]!.verticalX).toBe(0);
+      expect(result[0]!.horizontalY).toBe(0);
     });
   });
 });

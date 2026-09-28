@@ -63,7 +63,7 @@ export const getFieldWidgetJunctionCreateThrough = ({
     sourceJoinColumnName,
     sourceRecordId: recordId,
     targetJoinColumnName: computeRelationGqlFieldJoinColumnName({
-      name: junctionTargetField.name,
+      name: junctionTargetField!.name,
     }),
     targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
     targetRecordsFilter: {

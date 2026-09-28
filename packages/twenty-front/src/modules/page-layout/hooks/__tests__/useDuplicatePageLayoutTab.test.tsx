@@ -217,10 +217,10 @@ describe('useDuplicatePageLayoutTab', () => {
     expect(duplicatedWidget?.configuration).toMatchObject({
       viewId: 'new-view-id',
     });
-    expect(recordTableWidgetViewDraft['new-widget-id'].view.id).toBe(
+    expect(recordTableWidgetViewDraft['new-widget-id']?.view.id!).toBe(
       'new-view-id',
     );
-    expect(recordTableWidgetViewDraft['new-widget-id'].viewFields[0]).toEqual(
+    expect(recordTableWidgetViewDraft['new-widget-id']?.viewFields[0]!).toEqual(
       expect.objectContaining({
         id: 'new-view-field-id',
         viewId: 'new-view-id',
@@ -287,10 +287,10 @@ describe('useDuplicatePageLayoutTab', () => {
     expect(duplicatedWidget?.configuration).toMatchObject({
       viewId: 'new-view-id',
     });
-    expect(recordTableWidgetViewDraft['new-widget-id'].view.id).toBe(
+    expect(recordTableWidgetViewDraft['new-widget-id']?.view.id!).toBe(
       'new-view-id',
     );
-    expect(recordTableWidgetViewDraft['new-widget-id'].viewFields[0]).toEqual(
+    expect(recordTableWidgetViewDraft['new-widget-id']?.viewFields[0]!).toEqual(
       expect.objectContaining({
         id: 'new-view-field-id',
         viewId: 'new-view-id',

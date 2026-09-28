@@ -29,5 +29,5 @@ export const computeChartCategoryTickValues = ({
   const numberOfTicks = Math.floor(availableSize / minimumSizePerTick);
   const tickIndices = computeCategoryTickValues(numberOfTicks, values.length);
 
-  return tickIndices.map((index) => values[index]);
+  return tickIndices.map((index) => values[index]!);
 };

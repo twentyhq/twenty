@@ -30,8 +30,9 @@ export const moveWidgetWithinTabInDraft = (
     return draft;
   }
 
-  const reindexedWidgets =
-    reindexWidgetsToVerticalListPositions(reorderedWidgets);
+  const reindexedWidgets = reindexWidgetsToVerticalListPositions(
+    reorderedWidgets!,
+  );
 
   return {
     ...draft,

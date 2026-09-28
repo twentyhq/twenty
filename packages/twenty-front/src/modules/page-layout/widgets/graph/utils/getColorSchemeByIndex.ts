@@ -6,5 +6,5 @@ export const getColorSchemeByIndex = (
   index: number,
 ): GraphColorScheme => {
   const schemes = Object.values(registry);
-  return schemes[index % schemes.length];
+  return schemes[index % schemes.length]!;
 };

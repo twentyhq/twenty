@@ -34,7 +34,7 @@ export const useReorderRecordTableWidgetFields = ({
 
       const reorderedFields = [...visibleFieldItems];
       const [movedField] = reorderedFields.splice(sourceIndex, 1);
-      reorderedFields.splice(destinationIndex, 0, movedField);
+      reorderedFields.splice(destinationIndex, 0, movedField!);
 
       const updatedPositions = new Map(
         reorderedFields.map((fieldItem, index) => [

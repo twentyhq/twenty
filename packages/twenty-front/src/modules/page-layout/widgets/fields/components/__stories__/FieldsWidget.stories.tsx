@@ -495,10 +495,10 @@ const openEditModeOnEmployees = async ({
   const canvas = within(canvasElement);
 
   const [employeesValue] = await canvas.findAllByText('250');
-  await userEvent.hover(employeesValue);
+  await userEvent.hover(employeesValue!);
 
   const hoveredValues = await canvas.findAllByText('250');
-  await userEvent.click(hoveredValues[hoveredValues.length - 1]);
+  await userEvent.click(hoveredValues[hoveredValues.length - 1]!);
 
   await waitFor(() => {
     expect(canvasElement.querySelector('input')).not.toBeNull();

@@ -78,7 +78,7 @@ const getDraftWidgetIds = (store: ReturnType<typeof createStore>) =>
         instanceId: PAGE_LAYOUT_ID,
       }),
     )
-    .tabs[0].widgets.map((widget) => widget.id);
+    .tabs[0]!.widgets.map((widget) => widget.id);
 
 const waitForPageLayoutRegistration = (store: ReturnType<typeof createStore>) =>
   waitFor(() => {

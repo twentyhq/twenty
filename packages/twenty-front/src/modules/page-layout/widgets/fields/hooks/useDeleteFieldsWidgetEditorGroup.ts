@@ -88,7 +88,7 @@ export const useDeleteFieldsWidgetEditorGroup = ({
       store.set(fieldsWidgetGroupsDraftState, (prev) => ({
         ...prev,
         [widgetId]: remainingGroups.map((group) => {
-          if (group.id !== targetGroup.id) {
+          if (group.id !== targetGroup!.id) {
             return group;
           }
 

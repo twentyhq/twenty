@@ -37,7 +37,7 @@ const getDraft = (store: ReturnType<typeof createStore>) =>
     recordTableWidgetViewDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
     }),
-  )[WIDGET_ID];
+  )[WIDGET_ID]!;
 
 describe('record table widget view metadata updates', () => {
   it('updates a column width in the widget draft', () => {
@@ -55,10 +55,10 @@ describe('record table widget view metadata updates', () => {
     );
 
     act(() => {
-      result.current.handleFieldUpdated(viewField.id ?? '', { size: 320 });
+      result.current.handleFieldUpdated(viewField?.id ?? '', { size: 320 });
     });
 
-    expect(getDraft(store).viewFields[0].size).toBe(320);
+    expect(getDraft(store).viewFields[0]!.size).toBe(320);
   });
 
   it('updates kanban width and aggregate settings in the widget draft', () => {

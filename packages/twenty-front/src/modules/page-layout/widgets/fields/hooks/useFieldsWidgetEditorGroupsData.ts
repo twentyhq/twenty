@@ -146,8 +146,8 @@ export const useFieldsWidgetEditorGroupsData = ({
 
       const lastGroup = groups[groups.length - 1];
       const lastFieldPosition =
-        lastGroup.fields.length > 0
-          ? Math.max(...lastGroup.fields.map((f) => f.position)) + 1
+        lastGroup!.fields.length > 0
+          ? Math.max(...lastGroup!.fields.map((f) => f.position)) + 1
           : 0;
 
       const missingFields = buildMissingFields({
@@ -157,7 +157,7 @@ export const useFieldsWidgetEditorGroupsData = ({
       });
 
       if (missingFields.length > 0) {
-        lastGroup.fields = [...lastGroup.fields, ...missingFields];
+        lastGroup!.fields = [...lastGroup!.fields, ...missingFields];
       }
 
       return { groups, ungroupedFields: [], editorMode: 'grouped' };

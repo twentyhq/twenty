@@ -23,8 +23,8 @@ export const computeShouldRoundFreeEndMap = ({
     const indexValue = dataPoint[indexBy];
 
     for (let seriesIndex = 0; seriesIndex < keys.length; seriesIndex++) {
-      const key = keys[seriesIndex];
-      const value = dataPoint[key];
+      const key = keys[seriesIndex]!;
+      const value = dataPoint[key]!;
 
       if (!isNumber(value) || value === 0) {
         continue;

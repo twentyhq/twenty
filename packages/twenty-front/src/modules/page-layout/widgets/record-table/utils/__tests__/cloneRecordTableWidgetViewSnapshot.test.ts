@@ -91,24 +91,24 @@ describe('cloneRecordTableWidgetViewSnapshot', () => {
 
     const newViewId = clonedSnapshot.view.id;
 
-    expect(clonedSnapshot.viewFields[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewFilterGroups[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewFilters[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewSorts[0].viewId).toBe(newViewId);
-    expect(clonedSnapshot.viewGroups[0].viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewFields[0]!.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewFilterGroups[0]!.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewFilters[0]!.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewSorts[0]!.viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewGroups[0]!.viewId).toBe(newViewId);
   });
 
   it('should regenerate row ids so the duplicate persists without colliding with the source', () => {
     const clonedSnapshot = cloneRecordTableWidgetViewSnapshot(sourceSnapshot);
 
-    expect(clonedSnapshot.viewFields[0].id).not.toBe('view-field-id');
-    expect(clonedSnapshot.viewFilters[0].id).not.toBe('view-filter-id');
-    expect(clonedSnapshot.viewSorts[0].id).not.toBe('view-sort-id');
-    expect(clonedSnapshot.viewGroups[0].id).not.toBe('view-group-id');
-    expect(clonedSnapshot.viewFilterGroups[0].id).not.toBe(
+    expect(clonedSnapshot.viewFields[0]!.id).not.toBe('view-field-id');
+    expect(clonedSnapshot.viewFilters[0]!.id).not.toBe('view-filter-id');
+    expect(clonedSnapshot.viewSorts[0]!.id).not.toBe('view-sort-id');
+    expect(clonedSnapshot.viewGroups[0]!.id).not.toBe('view-group-id');
+    expect(clonedSnapshot.viewFilterGroups[0]!.id).not.toBe(
       PARENT_FILTER_GROUP_ID,
     );
-    expect(clonedSnapshot.viewFilterGroups[1].id).not.toBe(
+    expect(clonedSnapshot.viewFilterGroups[1]!.id).not.toBe(
       CHILD_FILTER_GROUP_ID,
     );
   });
@@ -118,8 +118,10 @@ describe('cloneRecordTableWidgetViewSnapshot', () => {
 
     const [parentGroup, childGroup] = clonedSnapshot.viewFilterGroups;
 
-    expect(childGroup.parentViewFilterGroupId).toBe(parentGroup.id);
-    expect(clonedSnapshot.viewFilters[0].viewFilterGroupId).toBe(childGroup.id);
+    expect(childGroup?.parentViewFilterGroupId).toBe(parentGroup?.id);
+    expect(clonedSnapshot.viewFilters[0]!.viewFilterGroupId).toBe(
+      childGroup?.id,
+    );
   });
 
   it('should preserve group content', () => {

@@ -67,7 +67,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     });
 
     const draft = store.get(getDraftAtom());
-    const widgetIds = draft.tabs[0].widgets.map((w) => w.id);
+    const widgetIds = draft.tabs[0]?.widgets.map((w) => w.id);
 
     expect(widgetIds).toEqual(['widget-a', 'widget-c', 'widget-b']);
   });
@@ -99,7 +99,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     });
 
     const draft = store.get(getDraftAtom());
-    const widgetIds = draft.tabs[0].widgets.map((w) => w.id);
+    const widgetIds = draft.tabs[0]?.widgets.map((w) => w.id);
 
     expect(widgetIds).toEqual(['widget-a', 'widget-c', 'widget-b']);
   });
@@ -137,7 +137,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
 
     const draft = store.get(getDraftAtom());
 
-    expect(draft.tabs[0].widgets.map(({ id }) => id)).toEqual([
+    expect(draft.tabs[0]?.widgets.map(({ id }) => id)).toEqual([
       'widget-a',
       'new-widget',
       'timeline-widget',
@@ -171,7 +171,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     });
 
     const draft = store.get(getDraftAtom());
-    const positions = draft.tabs[0].widgets.map((w) => w.position);
+    const positions = draft.tabs[0]!.widgets.map((w) => w.position);
 
     positions.forEach((position, index) => {
       expect(position).toEqual({
@@ -238,7 +238,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     });
 
     expect(
-      store.get(getDraftAtom()).tabs[0].widgets.map(({ id }) => id),
+      store.get(getDraftAtom()).tabs[0]?.widgets.map(({ id }) => id),
     ).toEqual(['new-widget', 'first', 'second']);
     expect(store.get(getInsertionContextAtom())).toBeNull();
   });
@@ -323,7 +323,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     });
 
     const draft = store.get(getDraftAtom());
-    const widgetIds = draft.tabs[0].widgets.map((w) => w.id);
+    const widgetIds = draft.tabs[0]?.widgets.map((w) => w.id);
 
     expect(widgetIds).toEqual(['widget-a', 'widget-b']);
   });
@@ -392,10 +392,10 @@ describe('useInsertCreatedWidgetAtContext', () => {
 
     const draft = store.get(getDraftAtom());
 
-    const tab1WidgetIds = draft.tabs[0].widgets.map((w) => w.id);
+    const tab1WidgetIds = draft.tabs[0]?.widgets.map((w) => w.id);
     expect(tab1WidgetIds).toEqual(['widget-c', 'widget-a', 'widget-b']);
 
-    const tab2WidgetIds = draft.tabs[1].widgets.map((w) => w.id);
+    const tab2WidgetIds = draft.tabs[1]?.widgets.map((w) => w.id);
     expect(tab2WidgetIds).toEqual(['widget-x', 'widget-y']);
   });
 });

@@ -109,10 +109,10 @@ describe('useCreatePageLayoutGraphWidget', () => {
       });
     });
 
-    const widgets = store.get(getDraftAtom()).tabs[0].widgets;
+    const widgets = store.get(getDraftAtom()).tabs[0]?.widgets;
 
     expect(widgets).toHaveLength(1);
-    expect(widgets[0]).toMatchObject({
+    expect(widgets![0]!).toMatchObject({
       id: 'mock-uuid',
       pageLayoutTabId: 'tab-1',
       type: WidgetType.GRAPH,
@@ -125,7 +125,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         aggregateFieldMetadataId: 'field-1',
       },
     });
-    expect(store.get(getCurrentLayoutsAtom())['tab-1'].desktop).toEqual([
+    expect(store.get(getCurrentLayoutsAtom())['tab-1']?.desktop).toEqual([
       { i: 'mock-uuid', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 4 },
     ]);
   });
@@ -141,10 +141,10 @@ describe('useCreatePageLayoutGraphWidget', () => {
       result.current.createPageLayoutGraphWidget({});
     });
 
-    const widgets = store.get(getDraftAtom()).tabs[0].widgets;
+    const widgets = store.get(getDraftAtom()).tabs[0]?.widgets;
 
     expect(widgets).toHaveLength(3);
-    expect(widgets[2]).toMatchObject({
+    expect(widgets![2]!).toMatchObject({
       title: 'Vertical Bar Chart 2',
       objectMetadataId: null,
     });

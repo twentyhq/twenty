@@ -71,8 +71,8 @@ describe('createAreaFillDef', () => {
 
     const result = createAreaFillDef(customColorScheme, 'custom-gradient');
 
-    expect(result.colors[0].color).toBe('#customSolid');
-    expect(result.colors[1].color).toBe('#customSolid');
+    expect(result.colors[0]!.color).toBe('#customSolid');
+    expect(result.colors[1]!.color).toBe('#customSolid');
   });
 
   it('should generate unique IDs for different gradients', () => {

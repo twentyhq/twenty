@@ -283,14 +283,14 @@ describe('PageLayoutTabsRenderer', () => {
     });
     const sidePanelScrollWrapper = screen.getAllByTestId('scroll-wrapper')[1];
 
-    expect(sidePanelScrollWrapper.id).not.toBe(mainViewScrollWrapper.id);
+    expect(sidePanelScrollWrapper!.id).not.toBe(mainViewScrollWrapper.id);
 
-    sidePanelScrollWrapper.scrollTop = 200;
+    sidePanelScrollWrapper!.scrollTop = 200;
     mockActiveTabId = 'hidden-transcript-tab-id';
 
     rerender(<PageLayoutTabsRenderer />);
 
     expect(mainViewScrollWrapper.scrollTop).toBe(200);
-    expect(sidePanelScrollWrapper.scrollTop).toBe(0);
+    expect(sidePanelScrollWrapper?.scrollTop).toBe(0);
   });
 });

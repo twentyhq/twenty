@@ -132,24 +132,24 @@ describe('removeWidgetFromTab', () => {
   it('should remove widget from the correct tab', () => {
     const result = removeWidgetFromTab(mockTabs, 'tab-1', 'widget-1');
 
-    expect(result[0].widgets).toHaveLength(1);
-    expect(result[0].widgets[0].id).toBe('widget-2');
-    expect(result[1].widgets).toHaveLength(1);
-    expect(result[1].widgets[0].id).toBe('widget-3');
+    expect(result[0]!.widgets).toHaveLength(1);
+    expect(result[0]?.widgets[0]!.id).toBe('widget-2');
+    expect(result[1]!.widgets).toHaveLength(1);
+    expect(result[1]?.widgets[0]!.id).toBe('widget-3');
   });
 
   it('should not affect other tabs', () => {
     const result = removeWidgetFromTab(mockTabs, 'tab-1', 'widget-1');
 
     expect(result[1]).toEqual(mockTabs[1]);
-    expect(result[1].widgets).toHaveLength(1);
+    expect(result[1]!.widgets).toHaveLength(1);
   });
 
   it('should handle removing non-existent widget gracefully', () => {
     const result = removeWidgetFromTab(mockTabs, 'tab-1', 'non-existent');
 
-    expect(result[0].widgets).toHaveLength(2);
-    expect(result[0].widgets).toEqual(mockTabs[0].widgets);
+    expect(result[0]!.widgets).toHaveLength(2);
+    expect(result[0]!.widgets).toEqual(mockTabs[0]?.widgets);
   });
 
   it('should handle removing from non-existent tab gracefully', () => {
@@ -162,8 +162,8 @@ describe('removeWidgetFromTab', () => {
     let result = removeWidgetFromTab(mockTabs, 'tab-1', 'widget-1');
     result = removeWidgetFromTab(result, 'tab-1', 'widget-2');
 
-    expect(result[0].widgets).toHaveLength(0);
-    expect(result[1].widgets).toHaveLength(1);
+    expect(result[0]!.widgets).toHaveLength(0);
+    expect(result[1]!.widgets).toHaveLength(1);
   });
 
   it('should return a new array without mutating the original', () => {
@@ -172,6 +172,6 @@ describe('removeWidgetFromTab', () => {
 
     expect(result).not.toBe(mockTabs);
     expect(mockTabs).toEqual(originalTabs);
-    expect(result[0].widgets).toHaveLength(1);
+    expect(result[0]!.widgets).toHaveLength(1);
   });
 });

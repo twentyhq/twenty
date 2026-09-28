@@ -131,7 +131,7 @@ describe('useSaveRecordTableWidgetViews', () => {
 
     expect(upsertViewWidgetResult).toHaveBeenCalledTimes(1);
 
-    const { input } = upsertViewWidgetResult.mock.calls[0][0];
+    const { input } = upsertViewWidgetResult.mock.calls[0]![0]!;
 
     expect(input.widgetId).toBe(WIDGET_ID);
     expect(input.viewFilters).toEqual([
@@ -179,9 +179,9 @@ describe('useSaveRecordTableWidgetViews', () => {
 
     expect(upsertViewWidgetResult).toHaveBeenCalledTimes(1);
 
-    const { input } = upsertViewWidgetResult.mock.calls[0][0];
+    const { input } = upsertViewWidgetResult.mock.calls[0]![0]!;
 
-    expect(input.viewFilters?.[0].relationTargetFieldMetadataId).toBe(
+    expect(input.viewFilters?.[0]?.relationTargetFieldMetadataId).toBe(
       undefined,
     );
   });

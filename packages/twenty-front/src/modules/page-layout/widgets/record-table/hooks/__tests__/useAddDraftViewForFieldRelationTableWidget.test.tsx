@@ -54,10 +54,10 @@ describe('useAddDraftViewForFieldRelationTableWidget', () => {
     );
 
     expect(viewId).toBeDefined();
-    expect(draft[WIDGET_ID].view.objectMetadataId).toBe(
+    expect(draft[WIDGET_ID]?.view.objectMetadataId!).toBe(
       opportunityObjectMetadataItem.id,
     );
-    expect(draft[WIDGET_ID].viewFilters).toEqual([
+    expect(draft[WIDGET_ID]!.viewFilters).toEqual([
       expect.objectContaining({
         fieldMetadataId: INVERSE_FIELD_METADATA_ID,
         relationTargetFieldMetadataId: RELATION_TARGET_FIELD_METADATA_ID,
@@ -97,7 +97,7 @@ describe('useAddDraftViewForFieldRelationTableWidget', () => {
       }),
     );
 
-    expect(draft[WIDGET_ID].viewFilters).toEqual([
+    expect(draft[WIDGET_ID]!.viewFilters).toEqual([
       expect.objectContaining({
         fieldMetadataId: INVERSE_FIELD_METADATA_ID,
         relationTargetFieldMetadataId: null,

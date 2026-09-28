@@ -70,7 +70,7 @@ export const buildGroupByFieldObject = ({
         } else {
           return {
             [field.name]: {
-              [nestedFieldName]: {
+              [nestedFieldName!]: {
                 granularity: usedDateGranularity,
                 timeZone,
               },
@@ -81,7 +81,7 @@ export const buildGroupByFieldObject = ({
 
       return {
         [field.name]: {
-          [nestedFieldName]: {
+          [nestedFieldName!]: {
             granularity: usedDateGranularity,
           },
         },
@@ -91,7 +91,7 @@ export const buildGroupByFieldObject = ({
     if (isDefined(nestedSubFieldName)) {
       return {
         [field.name]: {
-          [nestedFieldName]: {
+          [nestedFieldName!]: {
             [nestedSubFieldName]: true,
           },
         },
@@ -100,7 +100,7 @@ export const buildGroupByFieldObject = ({
 
     return {
       [field.name]: {
-        [nestedFieldName]: true,
+        [nestedFieldName!]: true,
       },
     };
   }

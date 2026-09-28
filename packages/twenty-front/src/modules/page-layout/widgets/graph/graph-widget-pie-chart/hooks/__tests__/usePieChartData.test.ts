@@ -89,8 +89,8 @@ describe('usePieChartData', () => {
       percentage: 30,
       colorScheme: mockColorRegistry.red,
     });
-    expect(result.current.enrichedData[1].percentage).toBe(50);
-    expect(result.current.enrichedData[2].percentage).toBe(20);
+    expect(result.current.enrichedData[1]!.percentage).toBe(50);
+    expect(result.current.enrichedData[2]!.percentage).toBe(20);
   });
 
   it('should handle empty data', () => {
@@ -118,7 +118,7 @@ describe('usePieChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedData[0].percentage).toBe(100);
+    expect(result.current.enrichedData[0]!.percentage).toBe(100);
   });
 
   it('should assign automatic palette colors by alphabetical rank', () => {
@@ -187,7 +187,7 @@ describe('usePieChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedData[0].colorScheme.name).toBe('blue');
+    expect(result.current.enrichedData[0]?.colorScheme.name!).toBe('blue');
   });
 
   it('should keep all items in legend even when filtering', () => {
@@ -217,8 +217,8 @@ describe('usePieChartData', () => {
     );
 
     expect(result.current.enrichedData).toHaveLength(2);
-    expect(result.current.enrichedData[0].percentage).toBe(30);
-    expect(result.current.enrichedData[1].percentage).toBe(20);
+    expect(result.current.enrichedData[0]!.percentage).toBe(30);
+    expect(result.current.enrichedData[1]!.percentage).toBe(20);
   });
 
   it('should handle hidden ids that do not exist in data', () => {

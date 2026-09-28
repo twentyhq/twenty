@@ -20,5 +20,5 @@ export const useFieldsWidgetEditorMode = ({
 
   const editorMode = fieldsWidgetEditorModeDraft[widgetId];
 
-  return { editorMode };
+  return { editorMode: editorMode! };
 };

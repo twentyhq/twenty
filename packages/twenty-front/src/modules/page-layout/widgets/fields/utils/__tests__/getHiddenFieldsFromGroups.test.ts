@@ -70,8 +70,8 @@ describe('getHiddenFieldsFromGroups', () => {
     const result = getHiddenFieldsFromGroups(groups);
 
     expect(result).toHaveLength(1);
-    expect(result[0].viewFieldId).toBe('vf2');
-    expect(result[0].isVisible).toBe(false);
+    expect(result[0]!.viewFieldId).toBe('vf2');
+    expect(result[0]!.isVisible).toBe(false);
   });
 
   it('should collect all fields from hidden groups', () => {
@@ -89,8 +89,8 @@ describe('getHiddenFieldsFromGroups', () => {
     const result = getHiddenFieldsFromGroups(groups);
 
     expect(result).toHaveLength(2);
-    expect(result[0].isVisible).toBe(false);
-    expect(result[1].isVisible).toBe(false);
+    expect(result[0]!.isVisible).toBe(false);
+    expect(result[1]!.isVisible).toBe(false);
   });
 
   it('should sort groups by position', () => {
@@ -111,8 +111,8 @@ describe('getHiddenFieldsFromGroups', () => {
 
     const result = getHiddenFieldsFromGroups(groups);
 
-    expect(result[0].viewFieldId).toBe('vf1');
-    expect(result[1].viewFieldId).toBe('vf2');
+    expect(result[0]!.viewFieldId).toBe('vf1');
+    expect(result[1]!.viewFieldId).toBe('vf2');
   });
 
   it('should sort fields by position within each group', () => {
@@ -154,9 +154,9 @@ describe('getHiddenFieldsFromGroups', () => {
 
     const result = getHiddenFieldsFromGroups(groups);
 
-    expect(result[0].globalIndex).toBe(0);
-    expect(result[1].globalIndex).toBe(1);
-    expect(result[2].globalIndex).toBe(2);
+    expect(result[0]!.globalIndex).toBe(0);
+    expect(result[1]!.globalIndex).toBe(1);
+    expect(result[2]!.globalIndex).toBe(2);
   });
 
   it('should not count visible fields in globalIndex', () => {
@@ -183,9 +183,9 @@ describe('getHiddenFieldsFromGroups', () => {
     const result = getHiddenFieldsFromGroups(groups);
 
     expect(result).toHaveLength(2);
-    expect(result[0].globalIndex).toBe(0);
-    expect(result[0].viewFieldId).toBe('vf2');
-    expect(result[1].globalIndex).toBe(1);
-    expect(result[1].viewFieldId).toBe('vf3');
+    expect(result[0]!.globalIndex).toBe(0);
+    expect(result[0]!.viewFieldId).toBe('vf2');
+    expect(result[1]!.globalIndex).toBe(1);
+    expect(result[1]!.viewFieldId).toBe('vf3');
   });
 });
