@@ -6775,6 +6775,9 @@ export default {
             "periodEnd": [
                 4
             ],
+            "kind": [
+                1
+            ],
             "__typename": [
                 1
             ]

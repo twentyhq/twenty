@@ -6,7 +6,7 @@ import { createGalleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/c
 
 export const inputReactTest: TwentyUiGalleryPlayFunction = async (context) => {
   await createGalleryRenderTest({
-    expectedFailedComponents: ['Radio', 'RadioGroup', 'SegmentedControl'],
+    expectedFailedComponents: ['RadioGroup', 'SegmentedControl'],
   })(context);
 
   expect(
