@@ -21,6 +21,7 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 const mockSendInvitation = jest.fn();
 const mockSetNextOnboardingStatus = jest.fn();
 const mockWaitForCompanyEnrichmentSettlement = jest.fn();
+const mockUseQuery = jest.fn();
 
 jest.mock('@/workspace-invitation/hooks/useCreateWorkspaceInvitation', () => ({
   useCreateWorkspaceInvitation: () => ({
@@ -38,7 +39,7 @@ jest.mock('@/onboarding/utils/waitForCompanyEnrichmentSettlement', () => ({
 }));
 
 jest.mock('@apollo/client/react', () => ({
-  useQuery: () => ({ data: undefined, loading: false }),
+  useQuery: () => mockUseQuery(),
 }));
 
 const mockEnqueueToast = jest.fn();
@@ -72,6 +73,7 @@ describe('useInviteTeam', () => {
     jest.clearAllMocks();
     mockSendInvitation.mockResolvedValue({});
     mockWaitForCompanyEnrichmentSettlement.mockResolvedValue(undefined);
+    mockUseQuery.mockReturnValue({ data: undefined, loading: false });
     jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, true);
     jotaiStore.set(isCompanyEnrichmentEnabledState.atom, true);
   });
@@ -266,6 +268,39 @@ describe('useInviteTeam', () => {
     });
 
     expect(mockSendInvitation).toHaveBeenCalledTimes(1);
+  });
+
+  it('should count the invite suggestions prefilled from the cache', () => {
+    jotaiStore.set(onboardingConfigState.atom, {
+      importContactsCreditsReward: 1,
+      inviteTeamCreditsRewardPerUser: 0.5,
+      installAppsCreditsReward: 0.5,
+      createProfileCreditsReward: 0.5,
+      upgradeCreditsReward: 2,
+      inviteTeamMaxInvites: 10,
+    });
+    mockUseQuery.mockReturnValue({
+      data: {
+        getInviteSuggestions: [
+          { email: 'grace@example.com' },
+          { email: 'alan@example.com' },
+        ],
+      },
+      loading: false,
+    });
+
+    renderInviteTeam();
+
+    expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
+      'grace@example.com',
+      'alan@example.com',
+      '',
+    ]);
+    expect(
+      jotaiStore.get(
+        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      ).inviteTeam,
+    ).toBe(1);
   });
 
   it('should drop the invite credits on skip and keep the typed emails', async () => {
