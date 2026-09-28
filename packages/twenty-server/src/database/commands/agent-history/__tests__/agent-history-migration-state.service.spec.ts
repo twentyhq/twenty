@@ -1,5 +1,3 @@
-import { type QueryRunner } from 'typeorm';
-
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
 
@@ -10,7 +8,7 @@ const TABLE_NAME =
 describe('AgentHistoryMigrationStateService', () => {
   const service = new AgentHistoryMigrationStateService();
   const query = jest.fn();
-  const runner = { query } as unknown as QueryRunner;
+  const runner = { query };
 
   beforeEach(() => {
     query.mockReset();

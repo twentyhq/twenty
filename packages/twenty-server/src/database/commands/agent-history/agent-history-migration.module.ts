@@ -12,7 +12,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
-  exports: [AgentHistorySchemaService, AgentHistoryMigrationService],
+  exports: [
+    AgentHistorySchemaService,
+    AgentHistoryMigrationService,
+    AgentHistoryMigrationStateService,
+  ],
   imports: [
     WorkspaceIteratorModule,
     ApplicationModule,
