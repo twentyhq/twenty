@@ -29,7 +29,7 @@ const WORKSPACE_MEMBER_SENDER_INDEX_UNIVERSAL_IDENTIFIERS = [
 
 // Keep legacy sender attribution throughout the expand release so older servers
 // can still read messages created by this version.
-@RegisteredWorkspaceCommand('2.44.0', 1790541986177)
+@RegisteredWorkspaceCommand('2.44.0', 1790591899563)
 @Command({
   name: 'upgrade:2-44:link-chat-message-senders-to-workspace-members',
   description:
