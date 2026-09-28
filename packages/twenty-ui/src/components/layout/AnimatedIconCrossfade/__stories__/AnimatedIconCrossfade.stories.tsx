@@ -47,7 +47,9 @@ export const AnimatedIcon: Story = {
     });
     await document.fonts.load('500 1em Inter');
     await document.fonts.ready;
-    const [pencil, cross] = button.querySelectorAll('svg');
+    const icons = button.querySelectorAll('svg');
+    const pencil = icons[0]!;
+    const cross = icons[1]!;
     const originalWidth = button.getBoundingClientRect().width;
 
     await expect(button.getBoundingClientRect().height).toBe(24);

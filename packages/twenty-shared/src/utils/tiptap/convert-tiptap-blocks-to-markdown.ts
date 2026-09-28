@@ -42,7 +42,7 @@ export const convertTipTapBlocksToMarkdown = (
 
   const [firstNode] = nodes;
 
-  return nodes.length === 1 && firstNode.type === TIPTAP_NODE_TYPES.DOCUMENT
+  return nodes.length === 1 && firstNode?.type === TIPTAP_NODE_TYPES.DOCUMENT
     ? tipTapDocumentToMarkdown(firstNode as TipTapDocument)
     : tipTapDocumentToMarkdown({
         type: TIPTAP_NODE_TYPES.DOCUMENT,
