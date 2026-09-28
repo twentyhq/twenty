@@ -31,6 +31,9 @@ const FIELDS = [
 const AMOUNT_RULE = {
   id: 'amount-rule',
   objectMetadataId: 'opportunity',
+  name: 'Customer needs an amount',
+  description: null,
+  icon: null,
   errorFieldMetadataId: 'amount-field',
   expression: 'stage != "CUSTOMER" or not isEmpty(amount)',
   message: 'A customer deal needs an amount',
@@ -40,6 +43,9 @@ const AMOUNT_RULE = {
 const COMPANY_RULE = {
   id: 'company-rule',
   objectMetadataId: 'opportunity',
+  name: 'Company is big enough',
+  description: null,
+  icon: null,
   errorFieldMetadataId: null,
   expression: 'company.employees >= 10',
   message: 'Company is too small',

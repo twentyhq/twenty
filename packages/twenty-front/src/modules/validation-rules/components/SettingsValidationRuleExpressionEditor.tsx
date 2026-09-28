@@ -1,85 +1,341 @@
-import { type Monaco } from '@monaco-editor/react';
-import { type editor } from 'monaco-editor';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type JSONContent } from '@tiptap/core';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import { Placeholder } from '@tiptap/extensions/placeholder';
+import { UndoRedo } from '@tiptap/extensions/undo-redo';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
+import { useState } from 'react';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { compileValidationRuleExpression } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/components/code-editor';
-
-import { VALIDATION_RULE_LANGUAGE_ID } from '@/validation-rules/constants/ValidationRuleLanguageId';
 import {
-  registerValidationRuleLanguage,
-  setValidationRuleEditorFields,
-  unsetValidationRuleEditorFields,
-} from '@/validation-rules/utils/registerValidationRuleLanguage';
+  compileValidationRuleExpression,
+  isDefined,
+} from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
+import { SettingsValidationRuleHelperPanel } from '@/validation-rules/components/SettingsValidationRuleHelperPanel';
+import { VALIDATION_RULE_FIELD_NODE_NAME } from '@/validation-rules/constants/ValidationRuleFieldNodeName';
+import { VALIDATION_RULE_HIGHLIGHT_COLORS } from '@/validation-rules/constants/ValidationRuleHighlightColors';
+import { ValidationRuleExpressionExtension } from '@/validation-rules/extensions/ValidationRuleExpressionExtension';
+import { ValidationRuleFieldNode } from '@/validation-rules/extensions/ValidationRuleFieldNode';
+import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
+import { type ValidationRuleFieldNodeAttributes } from '@/validation-rules/types/ValidationRuleFieldNodeAttributes';
+import { type ValidationRuleHelperContext } from '@/validation-rules/types/ValidationRuleHelperContext';
+import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
+import { buildValidationRuleEditorParagraphContent } from '@/validation-rules/utils/buildValidationRuleEditorParagraphContent';
+import { computeValidationRuleEditorSegments } from '@/validation-rules/utils/computeValidationRuleEditorSegments';
+import { computeValidationRuleHelperContext } from '@/validation-rules/utils/computeValidationRuleHelperContext';
+import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
+import { getValidationRuleEditorPositionFromTextOffset } from '@/validation-rules/utils/getValidationRuleEditorPositionFromTextOffset';
+import { getValidationRuleEditorText } from '@/validation-rules/utils/getValidationRuleEditorText';
+
+const SingleParagraphDocument = Document.extend({ content: 'paragraph' });
+
+const LINE_BREAK_PATTERN = /\s*\n\s*/g;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledEditor = styled.div<{ hasError: boolean }>`
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid
+    ${({ hasError }) =>
+      hasError
+        ? themeCssVariables.border.color.danger
+        : themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.code.font.family};
+  font-size: ${themeCssVariables.font.size.md};
+
+  &:focus-within {
+    border-color: ${themeCssVariables.color.blue};
+  }
+
+  .tiptap {
+    line-height: 24px;
+    min-height: 56px;
+    outline: none;
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    p {
+      margin: 0;
+    }
+
+    p.is-editor-empty:first-of-type::before {
+      ${FORM_FIELD_PLACEHOLDER_STYLES}
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
+  }
+
+  .validation-rule-token-string {
+    color: ${VALIDATION_RULE_HIGHLIGHT_COLORS.string};
+  }
+
+  .validation-rule-token-number {
+    color: ${VALIDATION_RULE_HIGHLIGHT_COLORS.number};
+  }
+
+  .validation-rule-token-function {
+    color: ${VALIDATION_RULE_HIGHLIGHT_COLORS.function};
+  }
+
+  .validation-rule-token-keyword {
+    color: ${VALIDATION_RULE_HIGHLIGHT_COLORS.keyword};
+  }
+
+  .validation-rule-token-operator {
+    color: ${VALIDATION_RULE_HIGHLIGHT_COLORS.operator};
+  }
+`;
+
+const StyledError = styled.div`
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
 
 type SettingsValidationRuleExpressionEditorProps = {
   value: string;
   fields: ValidationRuleFieldDescriptor[];
-  onChange: (value: string) => void;
+  editorFields: ValidationRuleEditorField[];
+  onChange: (expression: string) => void;
 };
 
 export const SettingsValidationRuleExpressionEditor = ({
   value,
   fields,
+  editorFields,
   onChange,
 }: SettingsValidationRuleExpressionEditorProps) => {
-  const handleMount = (
-    mountedEditor: editor.IStandaloneCodeEditor,
-    monaco: Monaco,
-  ) => {
-    registerValidationRuleLanguage(monaco);
+  const { t } = useLingui();
 
-    const model = mountedEditor.getModel();
+  const [helperContext, setHelperContext] =
+    useState<ValidationRuleHelperContext>(() =>
+      computeValidationRuleHelperContext({
+        textBeforeCursor: '',
+        isCursorAfterField: false,
+        fields: editorFields,
+      }),
+    );
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [hasNavigatedHelper, setHasNavigatedHelper] = useState(false);
 
-    if (model === null) {
+  const getFieldNodeAttributes = (
+    path: string,
+  ): ValidationRuleFieldNodeAttributes | null => {
+    const field = editorFields.find((candidate) => candidate.path === path);
+
+    return isDefined(field)
+      ? {
+          path,
+          label: getValidationRuleEditorFieldChipLabel(field),
+          iconName: field.iconName,
+        }
+      : null;
+  };
+
+  const computeHelperContextAtCursor = (
+    editor: Editor,
+  ): ValidationRuleHelperContext => {
+    const { doc, selection } = editor.state;
+
+    return computeValidationRuleHelperContext({
+      textBeforeCursor: getValidationRuleEditorText(doc, selection.from),
+      isCursorAfterField:
+        selection.$from.nodeBefore?.type.name ===
+        VALIDATION_RULE_FIELD_NODE_NAME,
+      fields: editorFields,
+    });
+  };
+
+  const refreshHelperContext = (editor: Editor) => {
+    setHelperContext(computeHelperContextAtCursor(editor));
+    setHighlightedIndex(0);
+    setHasNavigatedHelper(false);
+  };
+
+  const initialContent: JSONContent = {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: buildValidationRuleEditorParagraphContent({
+          segments: computeValidationRuleEditorSegments({
+            expression: value,
+            isFieldPath: (path) => isDefined(getFieldNodeAttributes(path)),
+            cursorOffset: null,
+            fieldRanges: [],
+          }),
+          getFieldNodeAttributes,
+        }),
+      },
+    ],
+  };
+
+  const editor = useEditor({
+    extensions: [
+      SingleParagraphDocument,
+      Paragraph,
+      Text,
+      UndoRedo,
+      Placeholder.configure({
+        placeholder: t`Type a field name or a function`,
+      }),
+      ValidationRuleFieldNode,
+      ValidationRuleExpressionExtension.configure({ getFieldNodeAttributes }),
+    ],
+    content: initialContent,
+    onUpdate: ({ editor: updatedEditor }) => {
+      onChange(getValidationRuleEditorText(updatedEditor.state.doc));
+      refreshHelperContext(updatedEditor);
+    },
+    onSelectionUpdate: ({ editor: updatedEditor }) =>
+      refreshHelperContext(updatedEditor),
+    editorProps: {
+      attributes: {
+        role: 'textbox',
+        'aria-label': t`Condition`,
+        spellcheck: 'false',
+      },
+      handleKeyDown: (_view, event) => handleEditorKeyDown(event),
+      handlePaste: (view, event) => {
+        const pastedText = event.clipboardData?.getData('text/plain') ?? '';
+
+        view.dispatch(
+          view.state.tr.insertText(pastedText.replace(LINE_BREAK_PATTERN, ' ')),
+        );
+
+        return true;
+      },
+    },
+    enableInputRules: false,
+    enablePasteRules: false,
+    injectCSS: false,
+  });
+
+  const insertHelperItem = (item: ValidationRuleHelperItem) => {
+    if (!isDefined(editor)) {
       return;
     }
 
-    monaco.editor.setModelLanguage(model, VALIDATION_RULE_LANGUAGE_ID);
+    const { replaceFromOffset } = computeHelperContextAtCursor(editor);
+    const from = getValidationRuleEditorPositionFromTextOffset(
+      editor.state.doc,
+      replaceFromOffset,
+    );
+    const range = { from, to: editor.state.selection.from };
 
-    const modelUri = model.uri.toString();
-
-    setValidationRuleEditorFields({ modelUri, fields });
-    mountedEditor.onDidDispose(() => unsetValidationRuleEditorFields(modelUri));
+    switch (item.kind) {
+      case 'field':
+        editor
+          .chain()
+          .focus()
+          .insertContentAt(range, [
+            {
+              type: VALIDATION_RULE_FIELD_NODE_NAME,
+              attrs: getFieldNodeAttributes(item.field.path),
+            },
+          ])
+          .run();
+        return;
+      case 'function':
+        editor
+          .chain()
+          .focus()
+          .insertContentAt(range, [
+            { type: 'text', text: `${item.definition.name}()` },
+          ])
+          .setTextSelection(from + item.definition.name.length + 1)
+          .run();
+        return;
+      case 'keyword':
+        editor
+          .chain()
+          .focus()
+          .insertContentAt(range, [
+            { type: 'text', text: `${item.definition.name} ` },
+          ])
+          .run();
+        return;
+    }
   };
 
-  const computeMarkers = (expression: string): editor.IMarkerData[] => {
-    const compilationResult = compileValidationRuleExpression({
-      expression,
-      fields,
-    });
+  const handleEditorKeyDown = (event: KeyboardEvent): boolean => {
+    const { items, replaceFromOffset } = helperContext;
 
-    if (compilationResult.isValid) {
-      return [];
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (items.length === 0) {
+        return false;
+      }
+
+      const step = event.key === 'ArrowDown' ? 1 : -1;
+
+      setHighlightedIndex(
+        (index) => (index + step + items.length) % items.length,
+      );
+      setHasNavigatedHelper(true);
+
+      return true;
     }
 
-    const lines = expression.split('\n');
+    if (event.key !== 'Enter') {
+      return false;
+    }
 
-    return [
-      {
-        severity: 8,
-        message: compilationResult.errorMessage,
-        startLineNumber: 1,
-        startColumn: 1,
-        endLineNumber: lines.length,
-        endColumn: (lines.at(-1)?.length ?? 0) + 1,
-      },
-    ];
+    const highlightedItem = items[highlightedIndex];
+    const isWordBeingTyped =
+      isDefined(editor) &&
+      replaceFromOffset <
+        getValidationRuleEditorText(
+          editor.state.doc,
+          editor.state.selection.from,
+        ).length;
+
+    if (
+      isDefined(highlightedItem) &&
+      (hasNavigatedHelper || isWordBeingTyped)
+    ) {
+      insertHelperItem(highlightedItem);
+    }
+
+    return true;
   };
 
+  const compilationResult = compileValidationRuleExpression({
+    expression: value,
+    fields,
+  });
+  const errorMessage =
+    value.trim().length > 0 && !compilationResult.isValid
+      ? compilationResult.errorMessage
+      : null;
+
   return (
-    <CodeEditor
-      value={value}
-      language={VALIDATION_RULE_LANGUAGE_ID}
-      height={96}
-      onMount={handleMount}
-      onChange={onChange}
-      setMarkers={computeMarkers}
-      options={{
-        lineNumbers: 'off',
-        minimap: { enabled: false },
-        wordWrap: 'on',
-        scrollBeyondLastLine: false,
-      }}
-    />
+    <StyledContainer>
+      <StyledEditor hasError={isDefined(errorMessage)}>
+        <EditorContent editor={editor} />
+      </StyledEditor>
+      {isDefined(errorMessage) && (
+        <StyledError role="alert">{errorMessage}</StyledError>
+      )}
+      <SettingsValidationRuleHelperPanel
+        items={helperContext.items}
+        highlightedIndex={highlightedIndex}
+        editorFields={editorFields}
+        onHighlight={setHighlightedIndex}
+        onSelect={insertHelperItem}
+      />
+    </StyledContainer>
   );
 };

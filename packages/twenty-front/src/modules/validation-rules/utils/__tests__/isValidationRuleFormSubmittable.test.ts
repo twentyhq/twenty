@@ -11,17 +11,28 @@ const FIELDS = [
 ];
 
 const VALID_VALUES = {
+  name: 'No won deals yet',
+  description: null,
+  icon: 'IconListCheck',
   expression: 'stage != "WON"',
   message: 'Deals cannot be won yet',
   errorFieldMetadataId: null,
-  isActive: true,
 };
 
 describe('isValidationRuleFormSubmittable', () => {
-  it('should accept a compiling expression with a message', () => {
+  it('should accept a compiling expression with a name and a message', () => {
     expect(
       isValidationRuleFormSubmittable({ values: VALID_VALUES, fields: FIELDS }),
     ).toBe(true);
+  });
+
+  it('should refuse a blank name', () => {
+    expect(
+      isValidationRuleFormSubmittable({
+        values: { ...VALID_VALUES, name: '  ' },
+        fields: FIELDS,
+      }),
+    ).toBe(false);
   });
 
   it('should refuse a blank message', () => {

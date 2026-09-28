@@ -13,6 +13,7 @@ export const isValidationRuleFormSubmittable = ({
   values: ValidationRuleFormValues;
   fields: ValidationRuleFieldDescriptor[];
 }): boolean =>
+  isNonEmptyString(values.name.trim()) &&
   isNonEmptyString(values.message.trim()) &&
   compileValidationRuleExpression({ expression: values.expression, fields })
     .isValid;

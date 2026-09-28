@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { IconPlus, useIcons } from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
@@ -12,6 +12,8 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
+import { VALIDATION_RULE_DEFAULT_ICON } from '@/validation-rules/constants/ValidationRuleDefaultIcon';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
 
 const VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 1fr 80px';
@@ -26,8 +28,20 @@ const StyledTableContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
-const StyledExpression = styled.span`
-  font-family: ${themeCssVariables.code.font.family};
+const StyledNameCell = styled.span`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
+
+const StyledName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledExpression = styled(SettingsValidationRuleExpressionText)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -56,6 +70,8 @@ export const SettingsObjectValidationRulesSection = ({
   isReadOnly,
 }: SettingsObjectValidationRulesSectionProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
+  const { getIcon } = useIcons();
   const { validationRules } = useValidationRules({
     objectMetadataId: objectMetadataItem.id,
   });
@@ -69,7 +85,7 @@ export const SettingsObjectValidationRulesSection = ({
           <TableRow
             gridTemplateColumns={VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS}
           >
-            <TableHeader>{t`Message`}</TableHeader>
+            <TableHeader>{t`Name`}</TableHeader>
             <TableHeader>{t`Condition`}</TableHeader>
             <TableHeader align="right">{t`Status`}</TableHeader>
           </TableRow>
@@ -77,30 +93,43 @@ export const SettingsObjectValidationRulesSection = ({
             {validationRules.length === 0 ? (
               <StyledEmpty>{t`No rules yet.`}</StyledEmpty>
             ) : (
-              validationRules.map((validationRule) => (
-                <TableRow
-                  key={validationRule.id}
-                  gridTemplateColumns={
-                    VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS
-                  }
-                  to={getSettingsPath(SettingsPath.ObjectValidationRuleEdit, {
-                    objectNamePlural,
-                    validationRuleId: validationRule.id,
-                  })}
-                >
-                  <TableCell color={themeCssVariables.font.color.primary}>
-                    {validationRule.message}
-                  </TableCell>
-                  <TableCell minWidth="0" overflow="hidden">
-                    <StyledExpression>
-                      {validationRule.expression}
-                    </StyledExpression>
-                  </TableCell>
-                  <TableCell align="right">
-                    {validationRule.isActive ? t`Active` : t`Inactive`}
-                  </TableCell>
-                </TableRow>
-              ))
+              validationRules.map((validationRule) => {
+                const RuleIcon = getIcon(
+                  validationRule.icon ?? VALIDATION_RULE_DEFAULT_ICON,
+                );
+
+                return (
+                  <TableRow
+                    key={validationRule.id}
+                    gridTemplateColumns={
+                      VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS
+                    }
+                    to={getSettingsPath(SettingsPath.ObjectValidationRuleEdit, {
+                      objectNamePlural,
+                      validationRuleId: validationRule.id,
+                    })}
+                  >
+                    <TableCell
+                      color={themeCssVariables.font.color.primary}
+                      minWidth="0"
+                      overflow="hidden"
+                    >
+                      <StyledNameCell>
+                        <RuleIcon size={theme.icon.size.md} />
+                        <StyledName>{validationRule.name}</StyledName>
+                      </StyledNameCell>
+                    </TableCell>
+                    <TableCell minWidth="0" overflow="hidden">
+                      <StyledExpression
+                        expression={validationRule.expression}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      {validationRule.isActive ? t`Active` : t`Inactive`}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
