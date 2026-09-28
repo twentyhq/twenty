@@ -12,7 +12,7 @@ const StyledRewardCredits = styled.span`
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-variant-numeric: tabular-nums;
-  gap: 2px;
+  gap: ${themeCssVariables.spacing[0.5]};
   height: 18px;
   padding: 0 ${themeCssVariables.spacing['1.5']};
 `;
