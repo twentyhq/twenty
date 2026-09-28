@@ -1190,7 +1190,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('asks the queue to redeliver a batch whose reads fail, before writing anything', async () => {
+    it('asks the queue to redeliver a batch when the recording On echo lookup fails', async () => {
       const calendarEventId = await createCalendarEvent();
 
       recall.failCallRecordingReads = true;
@@ -1198,9 +1198,9 @@ describe('call recorder app lifecycle (integration)', () => {
       await expect(
         deliverCalendarEventUpdates({
           calendarEventId,
-          updatedFields: ['title'],
-          before: { title: 'Customer Sync' },
-          after: { title: 'Customer Sync (renamed)' },
+          updatedFields: ['callRecorderPreference'],
+          before: { callRecorderPreference: null },
+          after: { callRecorderPreference: 'ON' },
         }),
       ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
       expect(
