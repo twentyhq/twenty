@@ -16,7 +16,11 @@ import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -847,6 +851,14 @@ describe('core workflow visibility (e2e)', () => {
       expect(
         await findRecordIds(asOtherMember, 'workflows', apiKeyWorkflowId),
       ).toEqual([]);
+      // The API key's creator role grant would keep every member holding
+      // that role reading the workflow and its runs.
+      expect(
+        await global.testDataSource.query(
+          `SELECT "principalType", "rowCause" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."recordShare" WHERE "recordId" = $1`,
+          [apiKeyWorkflowId],
+        ),
+      ).toEqual([{ principalType: 'WORKSPACE_MEMBER', rowCause: 'OWNER' }]);
       expect(
         await findRecordIds(
           workflowGraphqlRequest,
@@ -854,6 +866,88 @@ describe('core workflow visibility (e2e)', () => {
           apiKeyWorkflowId,
         ),
       ).toEqual([apiKeyWorkflowId]);
+    });
+  });
+
+  // Removing a member deletes their membership, and the database then clears
+  // the creator of every workflow they created.
+  describe('a private workflow whose creator is removed from the workspace', () => {
+    const removedUserId = randomUUID();
+    const removedUserWorkspaceId = randomUUID();
+    let orphanedWorkflowId: string;
+    let orphanedCoreWorkflowId: string;
+
+    beforeAll(async () => {
+      const createResponse = await workflowGraphqlRequest(
+        CREATE_CORE_WORKFLOW_MUTATION,
+        { input: { name: 'Workflow Of A Removed Member' } },
+      );
+
+      expect(createResponse.body.errors).toBeUndefined();
+      orphanedCoreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
+      orphanedWorkflowId =
+        createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
+
+      expect(
+        (
+          await setVisibility(
+            orphanedCoreWorkflowId,
+            WorkflowVisibility.PRIVATE,
+          )
+        ).body.errors,
+      ).toBeUndefined();
+
+      await global.testDataSource.query(
+        `INSERT INTO core."user" (id, email) VALUES ($1, $2)`,
+        [removedUserId, `removed-${removedUserId}@apple.dev`],
+      );
+      await global.testDataSource.query(
+        `INSERT INTO core."userWorkspace" (id, "userId", "workspaceId") VALUES ($1, $2, $3)`,
+        [removedUserWorkspaceId, removedUserId, SEED_APPLE_WORKSPACE_ID],
+      );
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = $2 WHERE id = $1`,
+        [orphanedCoreWorkflowId, removedUserWorkspaceId],
+      );
+    });
+
+    afterAll(async () => {
+      if (isDefined(orphanedWorkflowId)) {
+        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
+          id: orphanedWorkflowId,
+        });
+      }
+      await global.testDataSource.query(
+        `DELETE FROM core."userWorkspace" WHERE id = $1`,
+        [removedUserWorkspaceId],
+      );
+      await global.testDataSource.query(
+        `DELETE FROM core."user" WHERE id = $1`,
+        [removedUserId],
+      );
+    });
+
+    it('becomes readable to the workspace, as core now shows it', async () => {
+      expect(
+        await findRecordIds(asOtherMember, 'workflows', orphanedWorkflowId),
+      ).toEqual([]);
+
+      await getAppProviderByClassName<UserWorkspaceService>(
+        'UserWorkspaceService',
+      ).deleteUserWorkspace({
+        userWorkspaceId: removedUserWorkspaceId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+
+      const [coreWorkflow] = await global.testDataSource.query(
+        `SELECT "createdByUserWorkspaceId" FROM core."workflow" WHERE id = $1`,
+        [orphanedCoreWorkflowId],
+      );
+
+      expect(coreWorkflow.createdByUserWorkspaceId).toBeNull();
+      expect(
+        await findRecordIds(asOtherMember, 'workflows', orphanedWorkflowId),
+      ).toEqual([orphanedWorkflowId]);
     });
   });
 });
