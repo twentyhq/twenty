@@ -78,8 +78,8 @@ const StyledContainer = styled.div<{
   height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE});
   justify-content: ${({ centerTabs }) =>
     centerTabs ? 'center' : 'flex-start'};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${({ isInIdentifierBar }) =>
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${({ isInIdentifierBar }) =>
     isInIdentifierBar ? themeCssVariables.spacing[2] : '0'};
   position: relative;
   user-select: none;
@@ -107,7 +107,7 @@ const StyledAddButton = styled.div`
   align-items: center;
   display: flex;
   height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}, ${TAB_LIST_HEIGHT});
-  margin-left: ${TAB_LIST_GAP}px;
+  margin-inline-start: ${TAB_LIST_GAP}px;
 `;
 
 type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {

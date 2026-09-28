@@ -70,11 +70,11 @@ const StyledContent = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   min-height: 0;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     gap: ${themeCssVariables.spacing[4]};
-    padding-right: ${themeCssVariables.spacing[2]};
+    padding-inline-end: ${themeCssVariables.spacing[2]};
   }
 `;
 

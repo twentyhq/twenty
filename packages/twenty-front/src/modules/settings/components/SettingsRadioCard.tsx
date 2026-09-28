@@ -26,7 +26,7 @@ const StyledRadioCardContentContainer = styled.label`
 const StyledRadioContainer = styled.span`
   align-items: center;
   display: flex;
-  margin-left: auto;
+  margin-inline-start: auto;
   padding: ${themeCssVariables.spacing[1]};
 `;
 

@@ -27,7 +27,7 @@ const StyledRecordTableTd = styled.div<{
 
   padding: 0;
 
-  text-align: left;
+  text-align: start;
 
   z-index: ${({ zIndex }) => zIndex};
 `;

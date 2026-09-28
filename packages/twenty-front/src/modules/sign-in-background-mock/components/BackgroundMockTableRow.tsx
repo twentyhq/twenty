@@ -30,7 +30,7 @@ const StyledCheckboxColumn = styled.div`
   flex-shrink: 0;
   height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   justify-content: center;
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
   width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.checkboxColumnWidth}px;
 `;
 
@@ -44,7 +44,7 @@ const StyledCell = styled.div<{ width: number }>`
   flex-shrink: 0;
   height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   white-space: nowrap;
   width: ${({ width }) => width}px;
 `;

@@ -47,7 +47,7 @@ const StyledInput = styled.input<{
   font-weight: ${({ $variant }) =>
     $variant === 'transparent' ? themeCssVariables.font.weight.regular : 500};
   outline: none;
-  padding-left: ${({ $variant }) =>
+  padding-inline-start: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : themeCssVariables.spacing[2]};
   width: 140px;
 `;

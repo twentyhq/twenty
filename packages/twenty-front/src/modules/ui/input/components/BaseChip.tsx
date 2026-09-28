@@ -43,8 +43,8 @@ const StyledChip = styled.div<{
   flex-shrink: 0;
   height: 20px;
   max-width: 100%;
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${({ deletable }) =>
+  padding-inline-start: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${({ deletable }) =>
     deletable ? '0' : themeCssVariables.spacing[1]};
 
   user-select: none;

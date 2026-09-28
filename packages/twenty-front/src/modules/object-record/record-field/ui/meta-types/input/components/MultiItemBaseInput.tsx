@@ -43,7 +43,7 @@ const StyledInput = styled.input<{
   height: 32px;
   outline: none;
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
-  padding-right: ${({ withRightComponent }) =>
+  padding-inline-end: ${({ withRightComponent }) =>
     withRightComponent ? '32px' : '0'};
   position: relative;
 

@@ -16,6 +16,7 @@ export const SIDE_PANEL_ANIMATION_VARIANTS = {
     top: '0',
   },
   closed: {
+    // Positive x leaves through the physical right. Callers in rtl pass -100%.
     x: '100%',
     width: themeCssVariables.sidePanelWidth,
     height: '100%',

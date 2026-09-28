@@ -56,7 +56,7 @@ const StyledDueDate = styled.div<{
       : themeCssVariables.font.color.secondary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 `;
 

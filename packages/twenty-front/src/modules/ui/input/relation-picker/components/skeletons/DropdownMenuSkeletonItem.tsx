@@ -16,9 +16,9 @@ const StyledDropdownMenuSkeletonContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 
   height: ${themeCssVariables.spacing[8]};
-  padding-left: var(--horizontal-padding);
+  padding-inline-start: var(--horizontal-padding);
 
-  padding-right: var(--horizontal-padding);
+  padding-inline-end: var(--horizontal-padding);
 `;
 
 export const DropdownMenuSkeletonItem = ({

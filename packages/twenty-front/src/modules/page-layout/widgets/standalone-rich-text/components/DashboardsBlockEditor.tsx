@@ -132,7 +132,7 @@ const editorStyles = css`
     margin-bottom: 5px;
   }
   & .bn-color-picker-dropdown {
-    margin-left: 8px;
+    margin-inline-start: 8px;
   }
 
   & .bn-inline-content a {

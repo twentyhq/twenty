@@ -46,7 +46,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   font-weight: ${themeCssVariables.font.weight.medium};
   height: 24px;
   padding: ${themeCssVariables.spacing[0.5]};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
   user-select: none;
   white-space: nowrap;
 `;

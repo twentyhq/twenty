@@ -19,24 +19,26 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useStore } from 'jotai';
 
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@/ui/navigation/link/constants/LinkChipClickOutsideId';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useRef } from 'react';
+import { getLocaleTextDirection } from 'twenty-shared/translations';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
-  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  border-inline-start: 1px solid ${themeCssVariables.border.color.medium};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
   flex-direction: column;
   font-family: ${themeCssVariables.font.family};
   height: 100%;
+  inset-inline-end: 0;
   overflow: hidden;
   padding: 0;
   position: fixed;
-  right: 0%;
-  top: 0%;
+  top: 0;
   z-index: ${RootStackingContextZIndices.SidePanel};
 `;
 const StyledCommandMenu = motion.create(StyledCommandMenuBase);
@@ -45,6 +47,8 @@ export const CommandMenuOpenContainer = ({
   children,
 }: React.PropsWithChildren) => {
   const theme = useTheme();
+  const { i18n } = useLingui();
+  const isRightToLeft = getLocaleTextDirection(i18n.locale) === 'rtl';
   const isMobile = useIsMobile();
 
   const targetVariantForAnimation: SidePanelAnimationVariant = isMobile
@@ -95,7 +99,13 @@ export const CommandMenuOpenContainer = ({
       animate={targetVariantForAnimation}
       initial="closed"
       exit="closed"
-      variants={SIDE_PANEL_ANIMATION_VARIANTS}
+      variants={{
+        ...SIDE_PANEL_ANIMATION_VARIANTS,
+        closed: {
+          ...SIDE_PANEL_ANIMATION_VARIANTS.closed,
+          x: isRightToLeft ? '-100%' : '100%',
+        },
+      }}
       transition={{
         duration: theme.animation.duration.normal,
       }}

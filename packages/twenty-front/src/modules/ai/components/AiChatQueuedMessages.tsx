@@ -23,7 +23,7 @@ const StyledQueueContainer = styled(StyledAiChatContentContainer)`
 const StyledQueueLabel = styled.div`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledQueuedItem = styled.div`

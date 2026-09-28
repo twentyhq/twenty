@@ -17,7 +17,7 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
 
   &[data-expanded='true'] {
     box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.medium};
@@ -34,7 +34,7 @@ const StyledToggle = styled.button`
   height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
   min-width: 0;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   text-align: left;
 
   &:hover {

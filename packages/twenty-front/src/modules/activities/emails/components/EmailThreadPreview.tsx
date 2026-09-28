@@ -30,7 +30,7 @@ const StyledParticipantsContainer = styled.div`
 `;
 
 const StyledAvatarWrapper = styled.div`
-  margin-left: calc(-1 * ${themeCssVariables.spacing[1]});
+  margin-inline-start: calc(-1 * ${themeCssVariables.spacing[1]});
 `;
 
 const StyledSenderNames = styled.span`

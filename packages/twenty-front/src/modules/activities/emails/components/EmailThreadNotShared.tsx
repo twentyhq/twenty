@@ -21,7 +21,7 @@ const StyledContainer = styled.div<{ isCompact?: boolean }>`
   gap: ${themeCssVariables.spacing[1]};
   height: 20px;
 
-  margin-left: auto;
+  margin-inline-start: auto;
   min-width: ${themeCssVariables.spacing[21]};
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
   width: ${({ isCompact }) => (isCompact ? 'auto' : '100%')};

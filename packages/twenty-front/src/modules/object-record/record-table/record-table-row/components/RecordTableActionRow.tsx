@@ -80,9 +80,9 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
 const StyledText = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
-  margin-left: ${themeCssVariables.spacing[2]};
+  margin-inline-start: ${themeCssVariables.spacing[2]};
   position: absolute;
-  text-align: left;
+  text-align: start;
   vertical-align: middle;
 
   white-space: nowrap;

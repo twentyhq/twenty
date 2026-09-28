@@ -24,7 +24,7 @@ const StyledChip = styled.div<{ deletable: boolean }>`
   flex-direction: row;
   flex-shrink: 0;
   max-width: 140px;
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabel = styled.span`

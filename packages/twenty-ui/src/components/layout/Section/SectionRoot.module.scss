@@ -2,7 +2,7 @@
   inline-size: auto;
 
   &:where([data-align='left']) {
-    text-align: left;
+    text-align: start;
   }
 
   &:where([data-align='center']) {

@@ -10,7 +10,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAvatarContainer = styled.span`
-  margin-right: ${themeCssVariables.spacing[1]};
+  margin-inline-end: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSenderName = styled.span<{ variant?: 'default' | 'bold' }>`

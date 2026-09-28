@@ -10,7 +10,7 @@ const StyledEditor = styled.div<{
   box-sizing: border-box;
   display: flex;
   height: 100%;
-  padding-right: ${({ multiline }) =>
+  padding-inline-end: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[8] : '0'};
   width: 100%;
   .editor-content {

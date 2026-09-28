@@ -21,7 +21,7 @@ const StyledDescription = styled.span`
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
@@ -35,7 +35,7 @@ const StyledSwitchContainer = styled.div`
   border-top-right-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 

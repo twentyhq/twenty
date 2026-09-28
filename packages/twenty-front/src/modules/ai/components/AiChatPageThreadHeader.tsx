@@ -55,7 +55,7 @@ const StyledActions = styled.div`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 type AiChatPageThreadHeaderProps = {

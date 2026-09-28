@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   height: 100%;
   padding: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 export const RecordList = () => {

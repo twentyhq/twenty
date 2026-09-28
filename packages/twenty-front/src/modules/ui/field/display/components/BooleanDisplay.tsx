@@ -4,7 +4,7 @@ import { IconCheck, IconX } from 'twenty-ui/icon';
 const iconSizeSm = 14;
 
 const StyledBooleanFieldValue = styled.div`
-  margin-left: 4px;
+  margin-inline-start: 4px;
 `;
 
 type BooleanDisplayProps = {

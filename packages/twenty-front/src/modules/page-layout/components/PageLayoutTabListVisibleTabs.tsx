@@ -32,8 +32,8 @@ const StyledTabSlot = styled.div`
 
 const StyledLeadingDropTarget = styled.div`
   flex: 0 0 2px;
-  margin-left: -1px;
-  margin-right: -1px;
+  margin-inline-start: -1px;
+  margin-inline-end: -1px;
 `;
 
 export const PageLayoutTabListVisibleTabs = ({

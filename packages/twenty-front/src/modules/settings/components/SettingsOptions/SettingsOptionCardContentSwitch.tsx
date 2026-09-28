@@ -42,7 +42,7 @@ const StyledSettingsCardSwitchButtonContainer = styled.span`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 const StyledSettingsCardSwitchCover = styled.span`

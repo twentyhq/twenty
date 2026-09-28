@@ -14,7 +14,7 @@ const StyledSettingsNameCellSecondaryLabel = styled.span`
 
   &::before {
     content: '·';
-    margin-right: ${themeCssVariables.spacing[1]};
+    margin-inline-end: ${themeCssVariables.spacing[1]};
   }
 `;
 

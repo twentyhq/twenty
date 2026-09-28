@@ -50,8 +50,8 @@ const StyledIdentifierCell = styled.div<{ hasPinnedTab: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
   min-width: 0;
-  padding-left: ${themeCssVariables.spacing[3]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[3]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 // The pinned-tab control stays over the left panel when editing.
@@ -77,8 +77,8 @@ const StyledCreatedAtCell = styled.div`
   display: flex;
   justify-content: flex-end;
   min-width: 0;
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[3]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[3]};
 `;
 
 type PageLayoutRecordIdentifierBarProps = {

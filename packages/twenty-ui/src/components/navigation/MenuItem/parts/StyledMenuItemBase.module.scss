@@ -179,7 +179,7 @@
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  margin-right: var(--t-spacing-1);
+  margin-inline-end: var(--t-spacing-1);
 }
 
 .menuItemContextualText {
@@ -187,7 +187,7 @@
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
-  padding-left: var(--t-spacing-1);
+  padding-inline-start: var(--t-spacing-1);
   flex-shrink: 1;
   overflow: hidden;
 }
@@ -197,7 +197,7 @@
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
-  padding-left: var(--t-spacing-1);
+  padding-inline-start: var(--t-spacing-1);
   flex-shrink: 1;
   overflow: hidden;
   text-align: right;

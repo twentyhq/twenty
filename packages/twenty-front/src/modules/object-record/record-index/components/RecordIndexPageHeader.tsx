@@ -25,12 +25,12 @@ const StyledTitleWithSelectedRecords = styled.div`
 
 const StyledTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
-  padding-right: ${themeCssVariables.spacing['0.5']};
+  padding-inline-end: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledSelectedRecordsCount = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
-  padding-left: ${themeCssVariables.spacing['0.5']};
+  padding-inline-start: ${themeCssVariables.spacing['0.5']};
 `;
 
 export const RecordIndexPageHeader = () => {

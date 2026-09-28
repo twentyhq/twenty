@@ -42,7 +42,7 @@ const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
       : themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledBodySkeleton = styled.div<{ isActive?: boolean }>`

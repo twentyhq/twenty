@@ -9,8 +9,8 @@ const StyledTitleSkeleton = styled.div`
   align-items: center;
   display: flex;
   height: ${themeCssVariables.spacing[5]};
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing['0.5']};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledRowsContainer = styled.div`
@@ -18,7 +18,7 @@ const StyledRowsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 

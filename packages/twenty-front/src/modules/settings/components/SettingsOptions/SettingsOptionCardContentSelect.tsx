@@ -26,7 +26,7 @@ type SettingsOptionCardContentSelectProps = {
 const StyledSelectContainer = styled.div`
   flex-shrink: 0;
   justify-content: flex-end;
-  margin-left: auto;
+  margin-inline-start: auto;
   max-width: var(--settings-select-control-width, 120px);
   width: var(--settings-select-control-width, auto);
 

@@ -58,7 +58,7 @@ const StyledContent = styled.div`
   gap: ${themeCssVariables.spacing[3]};
   justify-content: start;
 
-  margin-left: ${themeCssVariables.spacing[4]};
+  margin-inline-start: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledButtonContainer = styled.div`

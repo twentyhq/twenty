@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
 const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
   flex: 1;
-  margin-left: ${themeCssVariables.spacing[2]};
+  margin-inline-start: ${themeCssVariables.spacing[2]};
   min-height: 0;
 `;
 

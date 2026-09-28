@@ -37,8 +37,8 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
         ? themeCssVariables.border.color.medium
         : 'transparent'};
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div`

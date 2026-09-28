@@ -19,7 +19,7 @@ const StyledComboInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${themeCssVariables.spacing[4]};
+    margin-inline-start: ${themeCssVariables.spacing[4]};
   }
 `;
 

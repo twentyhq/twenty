@@ -1,6 +1,7 @@
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
+  unicode-bidi: plaintext;
   white-space: nowrap;
 }
 

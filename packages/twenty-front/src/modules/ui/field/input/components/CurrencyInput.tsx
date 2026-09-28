@@ -52,7 +52,7 @@ const StyledIcon = styled.div`
   & > svg {
     color: ${themeCssVariables.font.color.tertiary};
     height: ${themeCssVariables.icon.size.md}px;
-    padding-left: ${themeCssVariables.spacing[1]};
+    padding-inline-start: ${themeCssVariables.spacing[1]};
     width: ${themeCssVariables.icon.size.md}px;
   }
 `;

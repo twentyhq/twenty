@@ -71,7 +71,7 @@ const StyledErrorSwitchDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
-  margin-left: ${themeCssVariables.spacing[2]};
+  margin-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledScrollContainer = styled.div`

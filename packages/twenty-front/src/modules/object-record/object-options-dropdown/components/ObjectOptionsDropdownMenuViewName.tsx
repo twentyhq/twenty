@@ -24,8 +24,8 @@ const StyledDropdownMenuIconAndNameContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  margin-left: 0;
-  margin-right: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
 `;
 
 const StyledMenuTitleContainer = styled.div`

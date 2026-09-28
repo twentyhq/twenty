@@ -4,6 +4,10 @@ import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
+import '@fontsource/vazirmatn/400.css';
+import '@fontsource/vazirmatn/500.css';
+import '@fontsource/vazirmatn/600.css';
+import '@fontsource/vazirmatn/700.css';
 
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';

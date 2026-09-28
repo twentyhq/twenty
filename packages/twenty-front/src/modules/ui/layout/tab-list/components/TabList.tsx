@@ -61,7 +61,7 @@ const StyledNodeDimension = styled(NodeDimension)`
 const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 export const TabList = ({

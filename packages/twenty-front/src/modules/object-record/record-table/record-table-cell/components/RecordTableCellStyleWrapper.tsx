@@ -24,7 +24,7 @@ export const StyledCell = styled.div<{
 
   padding: 0;
 
-  text-align: left;
+  text-align: start;
 `;
 
 export const RecordTableCellStyleWrapper = ({

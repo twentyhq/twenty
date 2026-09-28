@@ -35,8 +35,8 @@ const StyledDebugColumn = styled.div<{ width: number }>`
   min-width: ${({ width }) => width}px;
 
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing['0.5']};
-  padding-right: ${themeCssVariables.spacing['0.5']};
+  padding-inline-start: ${themeCssVariables.spacing['0.5']};
+  padding-inline-end: ${themeCssVariables.spacing['0.5']};
   text-wrap-mode: nowrap;
 `;
 

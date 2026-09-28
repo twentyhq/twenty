@@ -45,11 +45,11 @@ const StyledGridCell = styled.div<PositionProps>`
   flex: 1;
   overflow-x: auto;
   padding-bottom: ${themeCssVariables.spacing[4]};
-  padding-left: ${({ position }) =>
+  padding-inline-start: ${({ position }) =>
     position === 'left'
       ? themeCssVariables.spacing[4]
       : themeCssVariables.spacing[2]};
-  padding-right: ${({ position }) =>
+  padding-inline-end: ${({ position }) =>
     position === 'left'
       ? themeCssVariables.spacing[2]
       : themeCssVariables.spacing[4]};
@@ -70,8 +70,8 @@ const StyledGridHeader = styled.div<PositionProps>`
   flex: 1;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-left: ${themeCssVariables.spacing[4]};
-  padding-right: ${themeCssVariables.spacing[4]};
+  padding-inline-start: ${themeCssVariables.spacing[4]};
+  padding-inline-end: ${themeCssVariables.spacing[4]};
 `;
 
 type ColumnGridProps = {

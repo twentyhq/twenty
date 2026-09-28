@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
 
 const StyledLinkContainer = styled.div`
   flex: 1;
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsApplicationRegistrationRedirectURIsInputProps = {

@@ -11,7 +11,7 @@ const StyledText = styled.div`
   display: flex;
   height: ${themeCssVariables.spacing[8]};
 
-  padding-left: 9px;
+  padding-inline-start: 9px;
 `;
 
 const StyledContainer = styled.div`

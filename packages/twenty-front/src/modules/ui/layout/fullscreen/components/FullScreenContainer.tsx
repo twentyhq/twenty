@@ -31,7 +31,7 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledPageHeaderContainer = styled.div`
-  padding-left: ${themeCssVariables.spacing[3]};
+  padding-inline-start: ${themeCssVariables.spacing[3]};
 `;
 
 export const FullScreenContainer = ({

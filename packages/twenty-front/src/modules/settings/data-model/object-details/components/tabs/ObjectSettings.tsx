@@ -44,7 +44,7 @@ const StyledContentContainer = styled.div`
 
 const StyledFormSectionContainer = styled.div`
   > * {
-    padding-left: 0 !important;
+    padding-inline-start: 0 !important;
   }
 `;
 

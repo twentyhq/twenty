@@ -42,7 +42,7 @@ const StyledOverflowingTextWithTooltip = styled.div`
 
 const StyledNumber = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIconContainer = styled.div`

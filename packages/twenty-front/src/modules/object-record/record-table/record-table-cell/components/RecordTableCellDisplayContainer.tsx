@@ -9,7 +9,7 @@ const StyledOuterContainer = styled.div`
   display: flex;
   height: 100%;
   overflow: hidden;
-  padding-left: 8px;
+  padding-inline-start: 8px;
   width: 100%;
 `;
 
@@ -24,7 +24,7 @@ const StyledInnerContainer = styled.div`
 
 const StyledEmptyPlaceholderField = styled.div`
   color: ${themeCssVariables.font.color.light};
-  padding-left: 4px;
+  padding-inline-start: 4px;
 `;
 
 export type EditableCellDisplayContainerProps = {

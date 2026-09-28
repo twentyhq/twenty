@@ -29,8 +29,8 @@ const StyledCustomDatePickerHeader = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-end;
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 
   padding-top: ${themeCssVariables.spacing[2]};
 `;

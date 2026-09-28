@@ -40,7 +40,7 @@ const StyledHeaderLeft = styled.div<{ hasNote: boolean }>`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   min-width: 0;
-  padding-right: ${({ hasNote }) =>
+  padding-inline-end: ${({ hasNote }) =>
     hasNote ? themeCssVariables.spacing[8] : '0'};
 `;
 

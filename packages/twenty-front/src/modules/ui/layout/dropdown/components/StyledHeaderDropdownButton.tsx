@@ -20,8 +20,8 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
   font-family: inherit;
   padding: ${themeCssVariables.spacing[1]};
 
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
 
   user-select: none;
 

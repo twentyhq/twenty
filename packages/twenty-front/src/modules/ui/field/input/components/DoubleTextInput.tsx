@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
 
   & > input:last-child {
     border-left: 1px solid ${themeCssVariables.border.color.strong};
-    padding-left: ${themeCssVariables.spacing[2]};
+    padding-inline-start: ${themeCssVariables.spacing[2]};
   }
 `;
 

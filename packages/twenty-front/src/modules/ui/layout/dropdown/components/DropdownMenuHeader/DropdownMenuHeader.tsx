@@ -43,8 +43,8 @@ const StyledChildrenWrapper = styled.span`
 const StyledEndComponent = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: inline-flex;
-  margin-left: auto;
-  margin-right: 0;
+  margin-inline-start: auto;
+  margin-inline-end: 0;
 
   & > svg {
     height: ${themeCssVariables.icon.size.md}px;

@@ -25,7 +25,7 @@ const StyledContainer = styled.div`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
   min-width: 24px;
-  padding-right: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledColumnHeaderCell = styled.div`

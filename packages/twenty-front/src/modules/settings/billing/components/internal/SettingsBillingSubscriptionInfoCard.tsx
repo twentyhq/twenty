@@ -116,12 +116,12 @@ const StyledBillingFieldList = styled.div`
 
 const StyledBillingFieldListWithDivider = styled(StyledBillingFieldList)`
   border-left: 1px solid ${themeCssVariables.background.transparent.light};
-  padding-left: ${themeCssVariables.spacing[6]};
+  padding-inline-start: ${themeCssVariables.spacing[6]};
 
   @media (max-width: 640px) {
     border-left: 0;
     border-top: 1px solid ${themeCssVariables.background.transparent.light};
-    padding-left: 0;
+    padding-inline-start: 0;
     padding-top: ${themeCssVariables.spacing[4]};
   }
 `;
@@ -139,7 +139,7 @@ const StyledBillingIntervalSeparator = styled.span`
 
 const StyledSecondaryText = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
-  margin-left: ${themeCssVariables.spacing[1]};
+  margin-inline-start: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledScheduledChangeHeader = styled.div`

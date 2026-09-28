@@ -60,20 +60,20 @@ const StyledRightActions = styled.div`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing['0.5']};
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 const StyledNavigationDrawerCollapseButtonContainer = styled.div`
   > * {
     height: ${themeCssVariables.spacing[6]};
-    padding-right: 0;
+    padding-inline-end: 0;
     width: ${themeCssVariables.spacing[6]};
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     > * {
       height: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
-      padding-right: 0;
+      padding-inline-end: 0;
       width: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
     }
   }

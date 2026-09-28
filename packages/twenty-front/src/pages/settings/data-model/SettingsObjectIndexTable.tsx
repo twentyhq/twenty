@@ -23,7 +23,7 @@ const StyledTableContainer = styled.div`
 
 const StyledActionCell = styled(TableCell)`
   justify-content: flex-end;
-  padding-right: 0;
+  padding-inline-end: 0;
 `;
 
 const StyledEmpty = styled.div`

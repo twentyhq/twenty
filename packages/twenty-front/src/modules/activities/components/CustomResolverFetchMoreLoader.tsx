@@ -18,8 +18,8 @@ const StyledText = styled.div`
   color: ${themeCssVariables.grayScale.gray9};
   display: flex;
   height: 32px;
-  margin-left: ${themeCssVariables.spacing[8]};
-  padding-left: ${themeCssVariables.spacing[2]};
+  margin-inline-start: ${themeCssVariables.spacing[8]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
 export const CustomResolverFetchMoreLoader = ({

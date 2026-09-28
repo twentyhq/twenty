@@ -41,14 +41,14 @@ const StyledScheduledChangeItem = styled.div`
 
   & + & {
     border-left: 1px solid ${themeCssVariables.background.transparent.light};
-    padding-left: ${themeCssVariables.spacing[6]};
+    padding-inline-start: ${themeCssVariables.spacing[6]};
   }
 
   @media (max-width: 640px) {
     & + & {
       border-left: 0;
       border-top: 1px solid ${themeCssVariables.background.transparent.light};
-      padding-left: 0;
+      padding-inline-start: 0;
       padding-top: ${themeCssVariables.spacing[3]};
     }
 

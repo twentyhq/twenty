@@ -9,8 +9,8 @@ type NestedSettingsRowProps = {
 };
 
 const StyledNestedRow = styled.div`
-  margin-left: ${themeCssVariables.spacing[8]};
-  padding-left: ${themeCssVariables.spacing[4]};
+  margin-inline-start: ${themeCssVariables.spacing[8]};
+  padding-inline-start: ${themeCssVariables.spacing[4]};
   position: relative;
 `;
 
