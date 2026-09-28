@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useMediaQuery } from 'twenty-ui/utilities';
 
 const StyledBackground = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -16,15 +17,10 @@ const StyledBackground = styled.div`
 `;
 
 const StyledBackgroundLayer = styled.div`
-  display: none;
   inset: 0;
   pointer-events: none;
   position: absolute;
   z-index: -1;
-
-  @media (min-width: ${ONBOARDING_BACKGROUND_COMPONENT_MIN_VIEWPORT_WIDTH}px) {
-    display: block;
-  }
 `;
 
 type OnboardingLayoutProps = {
@@ -41,16 +37,22 @@ export const OnboardingLayout = ({
   isBackDisabled,
   freeCredits,
   backgroundComponent,
-}: OnboardingLayoutProps) => (
-  <StyledBackground>
-    {isDefined(backgroundComponent) && (
-      <StyledBackgroundLayer>{backgroundComponent}</StyledBackgroundLayer>
-    )}
-    <OnboardingHeader
-      onBack={onBack}
-      isBackDisabled={isBackDisabled}
-      freeCredits={freeCredits}
-    />
-    {children}
-  </StyledBackground>
-);
+}: OnboardingLayoutProps) => {
+  const isBackgroundComponentVisible = useMediaQuery(
+    `(min-width: ${ONBOARDING_BACKGROUND_COMPONENT_MIN_VIEWPORT_WIDTH}px)`,
+  );
+
+  return (
+    <StyledBackground>
+      {isDefined(backgroundComponent) && isBackgroundComponentVisible && (
+        <StyledBackgroundLayer>{backgroundComponent}</StyledBackgroundLayer>
+      )}
+      <OnboardingHeader
+        onBack={onBack}
+        isBackDisabled={isBackDisabled}
+        freeCredits={freeCredits}
+      />
+      {children}
+    </StyledBackground>
+  );
+};

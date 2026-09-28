@@ -7,10 +7,11 @@ import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { OnboardingConstructionSiteCanvasEffect } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteCanvasEffect';
 import { getOnboardingConstructionSiteStage } from '@/onboarding/components/OnboardingConstructionSite/getOnboardingConstructionSiteStage';
-import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
+import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getIsLastOnboardingStep } from '@/onboarding/utils/getIsLastOnboardingStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
+import { useMediaQuery } from 'twenty-ui/utilities';
 
 const StyledCanvas = styled.canvas`
   animation: onboardingConstructionSiteIn 0.8s ease-out both;
@@ -46,6 +47,9 @@ export const OnboardingConstructionSite = () => {
     isBookCallOnboardingStepEnabledState,
   );
   const colorScheme = useThemeColorScheme();
+  const prefersReducedMotion = useMediaQuery(
+    '(prefers-reduced-motion: reduce)',
+  );
 
   const { stageIndex, isFinale } = getOnboardingConstructionSiteStage({
     onboardingStatus: currentUser?.onboardingStatus,
@@ -53,9 +57,10 @@ export const OnboardingConstructionSite = () => {
       currentUser,
       currentWorkspace,
       isBillingEnabled: billing?.isBillingEnabled ?? false,
-      isBookCallRequired:
-        isBookCallOnboardingStepEnabled &&
-        getIsBookCallOnboardingStepPending(currentUser),
+      isBookCallRequired: getIsBookCallRequired({
+        isBookCallOnboardingStepEnabled,
+        currentUser,
+      }),
     }),
   });
 
@@ -67,6 +72,7 @@ export const OnboardingConstructionSite = () => {
         stageIndex={stageIndex}
         isFinale={isFinale}
         colorScheme={colorScheme}
+        prefersReducedMotion={prefersReducedMotion}
       />
     </>
   );

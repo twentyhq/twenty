@@ -9,7 +9,7 @@ import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAni
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
-import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
+import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getNextOnboardingStatus } from '@/onboarding/utils/getNextOnboardingStatus';
 import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPreviousOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
@@ -38,9 +38,12 @@ export const useSetNextOnboardingStatus = () => {
         currentUser,
         currentWorkspace,
         isBillingEnabled,
-        isBookCallRequired:
-          store.get(isBookCallOnboardingStepEnabledState.atom) &&
-          getIsBookCallOnboardingStepPending(store.get(currentUserState.atom)),
+        isBookCallRequired: getIsBookCallRequired({
+          isBookCallOnboardingStepEnabled: store.get(
+            isBookCallOnboardingStepEnabledState.atom,
+          ),
+          currentUser: store.get(currentUserState.atom),
+        }),
       });
 
       store.set(onboardingNavigationDirectionState.atom, 'forward');

@@ -35,6 +35,7 @@ type OnboardingConstructionSiteCanvasEffectProps = {
   stageIndex: number;
   isFinale: boolean;
   colorScheme: 'light' | 'dark';
+  prefersReducedMotion: boolean;
 };
 
 export const OnboardingConstructionSiteCanvasEffect = ({
@@ -42,6 +43,7 @@ export const OnboardingConstructionSiteCanvasEffect = ({
   stageIndex,
   isFinale,
   colorScheme,
+  prefersReducedMotion,
 }: OnboardingConstructionSiteCanvasEffectProps) => {
   const [renderer, setRenderer] =
     useState<OnboardingConstructionSiteRenderer | null>(null);
@@ -62,9 +64,7 @@ export const OnboardingConstructionSiteCanvasEffect = ({
       colors,
       settings: ONBOARDING_CONSTRUCTION_SITE_DEFAULT_SETTINGS,
       contentColumnWidth: ONBOARDING_CONTENT_BLOCK_WIDTH,
-      prefersReducedMotion:
-        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ??
-        false,
+      prefersReducedMotion,
     });
     if (!isDefined(activeRenderer)) {
       return;
@@ -79,7 +79,7 @@ export const OnboardingConstructionSiteCanvasEffect = ({
       activeRenderer.destroy();
       setRenderer(null);
     };
-  }, [canvasRef]);
+  }, [canvasRef, prefersReducedMotion]);
 
   useEffect(() => {
     renderer?.setStage({ stageIndex, isFinale });
