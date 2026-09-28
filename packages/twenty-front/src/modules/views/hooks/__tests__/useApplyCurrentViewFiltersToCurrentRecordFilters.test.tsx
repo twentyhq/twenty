@@ -47,7 +47,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
 
   const mockViewFilter: ViewFilter = {
     id: 'filter-1',
-    fieldMetadataId: mockFieldMetadataItem.id,
+    fieldMetadataId: mockFieldMetadataItem!.id,
     operand: ViewFilterOperand.CONTAINS,
     value: 'test',
     displayValue: 'test',
@@ -58,7 +58,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
 
   const mockGqlViewFilter: Omit<GqlViewFilter, 'workspaceId'> = {
     id: 'filter-1',
-    fieldMetadataId: mockFieldMetadataItem.id,
+    fieldMetadataId: mockFieldMetadataItem!.id,
     operand: GqlViewFilterOperand.CONTAINS,
     value: 'test',
     createdAt: new Date().toISOString(),
@@ -122,8 +122,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         operand: mockViewFilter.operand,
         recordFilterGroupId: mockViewFilter.viewFilterGroupId ?? undefined,
         positionInRecordFilterGroup: mockViewFilter.positionInViewFilterGroup,
-        label: mockFieldMetadataItem.label,
-        type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
+        label: mockFieldMetadataItem!.label,
+        type: getFilterTypeFromFieldType(mockFieldMetadataItem!.type),
         subFieldName: null,
         relationTargetFieldMetadataId: null,
       } satisfies RecordFilter,

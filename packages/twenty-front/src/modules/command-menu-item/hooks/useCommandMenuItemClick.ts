@@ -113,7 +113,7 @@ export const useCommandMenuItemClick = ({
       const { selectedRecords, objectMetadataItem } = commandMenuContextApi;
 
       const recordId =
-        selectedRecords.length === 1 ? selectedRecords[0].id : undefined;
+        selectedRecords.length === 1 ? selectedRecords[0]!.id : undefined;
 
       const objectNameSingular = objectMetadataItem.nameSingular as
         | string

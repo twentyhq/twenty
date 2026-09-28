@@ -49,7 +49,7 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('item-id');
+    expect(result[0]!.id).toBe('item-id');
   });
 
   it('keeps a readable object-backed item in normal mode', () => {
@@ -63,6 +63,6 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('item-id');
+    expect(result[0]!.id).toBe('item-id');
   });
 });

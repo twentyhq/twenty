@@ -242,7 +242,7 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
     const mockExistingFilterOnCity: RecordFilter = {
       id: 'existing-filter-id',
       fieldMetadataId: personCityFieldMetadataItemMock.id,
-      operand: defaultOperand,
+      operand: defaultOperand!,
       displayValue: 'Test City',
       label: personCityFieldMetadataItemMock.label,
       type: getFilterTypeFromFieldType(personCityFieldMetadataItemMock.type),

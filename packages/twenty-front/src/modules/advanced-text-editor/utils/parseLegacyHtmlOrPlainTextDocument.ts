@@ -35,10 +35,10 @@ const hasLeadingHtmlTag = (serializedDocument: string): boolean => {
     return false;
   }
 
-  const tagName = openingTagMatch[1].toLowerCase();
+  const tagName = openingTagMatch[1]!.toLowerCase();
 
   return (
-    openingTagMatch[2] === '/' ||
+    openingTagMatch[2]! === '/' ||
     HTML_VOID_TAG_NAMES.has(tagName) ||
     new RegExp(`</${tagName}\\s*>`, 'i').test(documentWithoutLeadingComments)
   );

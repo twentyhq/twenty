@@ -56,9 +56,9 @@ export const AiModelTierDropdown = ({
           <AiModelTierBars
             selectedTier={selectedTier}
             label={
-              isDefined(selectedResolvedTier.model)
-                ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
-                : selectedResolvedTier.label
+              isDefined(selectedResolvedTier!.model)
+                ? t`${selectedResolvedTier!.label}: ${selectedResolvedTier!.model.label}`
+                : selectedResolvedTier!.label
             }
             disabled={disabled}
           />

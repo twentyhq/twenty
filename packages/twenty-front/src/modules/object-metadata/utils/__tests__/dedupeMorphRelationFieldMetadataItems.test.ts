@@ -40,7 +40,7 @@ describe('dedupeMorphRelationFieldMetadataItems', () => {
     const result = dedupeMorphRelationFieldMetadataItems(fields);
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('a');
+    expect(result[0]!.id).toBe('a');
   });
 
   it('should preserve the position of the surviving morph field', () => {
@@ -83,7 +83,7 @@ describe('dedupeMorphRelationFieldMetadataItems', () => {
     const result = dedupeMorphRelationFieldMetadataItems(fields);
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('z');
+    expect(result[0]!.id).toBe('z');
   });
 
   it('should keep the active morph field over an inactive one', () => {
@@ -105,7 +105,7 @@ describe('dedupeMorphRelationFieldMetadataItems', () => {
     const result = dedupeMorphRelationFieldMetadataItems(fields);
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('z');
+    expect(result[0]!.id).toBe('z');
   });
 
   it('should dedupe each morphId independently', () => {

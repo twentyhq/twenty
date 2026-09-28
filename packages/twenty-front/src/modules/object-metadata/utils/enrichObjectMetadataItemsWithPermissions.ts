@@ -30,13 +30,13 @@ export const enrichObjectMetadataItemsWithPermissions = ({
       const nonReadableFieldMetadataIds = !isDefined(objectPermissions)
         ? []
         : getNonReadableFieldMetadataIdsFromObjectPermissions({
-            objectPermissions: objectPermissions,
+            objectPermissions: objectPermissions!,
           });
 
       const nonUpdatableFieldMetadataIds = !isDefined(objectPermissions)
         ? []
         : getNonUpdatableFieldMetadataIdsFromObjectPermissions({
-            objectPermissions: objectPermissions,
+            objectPermissions: objectPermissions!,
           });
 
       const { fields, ...objectWithoutFields } = object;

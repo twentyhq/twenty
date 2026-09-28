@@ -431,7 +431,7 @@ export const useFrontComponentExecutionContext = ({
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
     userId: currentUser?.id ?? null,
-    recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
+    recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0]! : null,
     selectedRecordIds: selectedRecordIds ?? [],
     selectedObjectMetadata: isDefined(selectedObjectMetadataItem)
       ? {
@@ -539,7 +539,7 @@ export const useFrontComponentExecutionContext = ({
             path: uploadedFile.path,
             url: uploadedFile.url,
             size: uploadedFile.size,
-            mimeType: file.type.split(';')[0],
+            mimeType: file.type.split(';')[0]!,
           },
         };
       } catch {

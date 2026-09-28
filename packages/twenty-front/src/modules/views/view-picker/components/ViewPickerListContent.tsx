@@ -110,9 +110,9 @@ export const ViewPickerListContent = () => {
 
       Promise.all(
         viewsReordered.map(async (view, index) => {
-          if (view.position !== index) {
+          if (view!.position !== index) {
             await performViewApiUpdate({
-              id: view.id,
+              id: view!.id,
               input: { position: index },
             });
           }
@@ -133,9 +133,9 @@ export const ViewPickerListContent = () => {
 
       Promise.all(
         viewsReordered.map(async (view, index) => {
-          if (view.position !== index) {
+          if (view!.position !== index) {
             await performViewApiUpdate({
-              id: view.id,
+              id: view!.id,
               input: { position: index },
             });
           }

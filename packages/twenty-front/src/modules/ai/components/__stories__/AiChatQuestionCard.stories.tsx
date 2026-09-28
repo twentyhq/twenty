@@ -46,7 +46,7 @@ const multipleQuestions: AgentChatPendingQuestion = {
   messageId: 'assistant-1',
   toolCallId: 'call-2',
   questions: [
-    singleQuestion.questions[0],
+    singleQuestion.questions[0]!,
     {
       header: 'Tone',
       question: 'Which tone should the email use?',
@@ -73,7 +73,7 @@ const longQuestion: AgentChatPendingQuestion = {
         { label: 'Fewer steps' },
       ],
     },
-    multipleQuestions.questions[1],
+    multipleQuestions.questions[1]!,
   ],
 };
 

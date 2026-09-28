@@ -20,7 +20,7 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
     const placeholderSrc = URL.createObjectURL(file);
 
     const { tr, schema } = view.state;
-    const imageNode = schema.nodes.image.create({
+    const imageNode = schema.nodes.image!.create({
       src: placeholderSrc,
       alt: file.name,
     });

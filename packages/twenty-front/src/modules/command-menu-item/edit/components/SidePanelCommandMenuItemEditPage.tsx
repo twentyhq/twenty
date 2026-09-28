@@ -117,7 +117,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
       const nextOtherPosition =
         allOtherItems.length === 0
           ? 0
-          : allOtherItems[allOtherItems.length - 1].position + 1;
+          : allOtherItems[allOtherItems.length - 1]!.position + 1;
 
       updateCommandMenuItemInDraft(itemId, {
         isPinned: false,
@@ -130,7 +130,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
     const nextPinnedPosition =
       allPinnedItems.length === 0
         ? 0
-        : allPinnedItems[allPinnedItems.length - 1].position + 1;
+        : allPinnedItems[allPinnedItems.length - 1]!.position + 1;
 
     updateCommandMenuItemInDraft(itemId, {
       isPinned: true,

@@ -143,7 +143,7 @@ const isPrivateUrl = (url: string): boolean => {
     const ipParts = hostname.split('.').map(Number);
     if (ipParts.length === 4 && ipParts.every((part) => !isNaN(part))) {
       if (ipParts[0] === 10) return true;
-      if (ipParts[0] === 172 && ipParts[1] >= 16 && ipParts[1] <= 31)
+      if (ipParts[0] === 172 && ipParts[1]! >= 16 && ipParts[1]! <= 31)
         return true;
       if (ipParts[0] === 192 && ipParts[1] === 168) return true;
     }

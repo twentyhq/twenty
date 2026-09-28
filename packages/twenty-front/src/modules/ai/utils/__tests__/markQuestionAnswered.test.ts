@@ -41,7 +41,7 @@ describe('markQuestionAnswered', () => {
       answers,
     );
 
-    const output = (result[0].parts[0] as { output?: { result?: unknown } })
+    const output = (result[0]?.parts[0]! as { output?: { result?: unknown } })
       .output;
 
     expect(output).toMatchObject({
@@ -58,7 +58,7 @@ describe('markQuestionAnswered', () => {
     );
 
     const output = (
-      result[0].parts[0] as {
+      result[0]?.parts[0]! as {
         output?: { result?: { questions?: unknown[] } };
       }
     ).output;
@@ -75,7 +75,7 @@ describe('markQuestionAnswered', () => {
     );
 
     const output = (
-      result[0].parts[0] as { output?: { result?: { status?: string } } }
+      result[0]?.parts[0]! as { output?: { result?: { status?: string } } }
     ).output;
 
     expect(output?.result?.status).toBe('pending');

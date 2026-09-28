@@ -149,7 +149,7 @@ export const useEmailRecipientsField = ({
 
   const beginEditingChip = (chipIndex: number) => {
     setEditingIndex(chipIndex);
-    setInputValue(formatEmailRecipient(recipients[chipIndex]));
+    setInputValue(formatEmailRecipient(recipients[chipIndex]!));
     setChipSelection(null);
   };
 
@@ -241,7 +241,7 @@ export const useEmailRecipientsField = ({
 
       // Removing must not leave the anchor or the cursor on a chip that is no
       // longer selected, or Enter and shift+arrow would act on it.
-      const fallbackKey = nextKeys[nextKeys.length - 1];
+      const fallbackKey = nextKeys[nextKeys.length - 1]!;
 
       return {
         anchorKey:

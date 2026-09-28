@@ -9,7 +9,7 @@ const MIME_TYPE_TO_FILE_EXTENSION: Record<string, string> = {
 };
 
 export const getMediaFileExtension = (mimeType: string): string => {
-  const baseMimeType = mimeType.split(';')[0].trim().toLowerCase();
+  const baseMimeType = mimeType.split(';')[0]!.trim().toLowerCase();
 
   return MIME_TYPE_TO_FILE_EXTENSION[baseMimeType] ?? 'webm';
 };

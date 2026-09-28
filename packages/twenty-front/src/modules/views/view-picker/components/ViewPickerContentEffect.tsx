@@ -133,7 +133,7 @@ export const ViewPickerContentEffect = () => {
         isDefined(referenceView.mainGroupByFieldMetadataId) &&
           referenceView.mainGroupByFieldMetadataId !== ''
           ? referenceView.mainGroupByFieldMetadataId
-          : availableFieldsForGrouping[0].id,
+          : availableFieldsForGrouping[0]!.id,
       );
     }
   }, [

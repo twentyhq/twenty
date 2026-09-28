@@ -71,7 +71,7 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
     }
 
     if (shouldChangeView) {
-      changeView(remainingViews[0].id);
+      changeView(remainingViews[0]!.id);
     }
 
     await performViewApiDestroy({ id: viewPickerReferenceViewId });

@@ -71,7 +71,7 @@ describe('useGetAvailableFieldsToGroupRecordsBy', () => {
     );
 
     expect(result.current.availableFieldsForGrouping).toHaveLength(1);
-    expect(result.current.availableFieldsForGrouping[0].label).toBe(
+    expect(result.current.availableFieldsForGrouping[0]!.label).toBe(
       'Active Status',
     );
   });

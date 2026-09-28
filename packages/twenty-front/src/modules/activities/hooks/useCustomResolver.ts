@@ -90,7 +90,7 @@ export const useCustomResolver = <
                 ...prev?.[queryName],
                 [objectName]: [...(prev?.[queryName]?.[objectName] ?? [])],
               },
-            };
+            } as CustomResolverQueryResult<T>;
           }
 
           return {
@@ -101,7 +101,7 @@ export const useCustomResolver = <
                 ...(fetchMoreResult?.[queryName]?.[objectName] ?? []),
               ],
             },
-          };
+          } as CustomResolverQueryResult<T>;
         },
       });
 

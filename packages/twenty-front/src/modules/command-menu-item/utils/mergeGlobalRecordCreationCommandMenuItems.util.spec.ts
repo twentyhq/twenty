@@ -3,7 +3,7 @@ import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/u
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
-const template = mockedCommandMenuItems[0];
+const template = mockedCommandMenuItems[0]!;
 const pageCommand = { ...template, id: 'page', position: 20 };
 const navigationCommand = {
   ...template,
@@ -31,8 +31,9 @@ const globalRecordCreationCommandMenuItems = ['company', 'task'].map((id) => ({
 it('places global creation after page commands and before navigation, replacing legacy creation', () => {
   expect(
     mergeGlobalRecordCreationCommandMenuItems({
-      commandMenuItems,
-      globalRecordCreationCommandMenuItems,
+      commandMenuItems: commandMenuItems!,
+      globalRecordCreationCommandMenuItems:
+        globalRecordCreationCommandMenuItems!,
       shouldDisplayGlobalRecordCreationCommands: true,
     }),
   ).toEqual([
@@ -50,8 +51,9 @@ it('places global creation after page commands and before navigation, replacing 
 it('preserves position ordering and legacy creation when global creation is disabled', () => {
   expect(
     mergeGlobalRecordCreationCommandMenuItems({
-      commandMenuItems,
-      globalRecordCreationCommandMenuItems,
+      commandMenuItems: commandMenuItems!,
+      globalRecordCreationCommandMenuItems:
+        globalRecordCreationCommandMenuItems!,
       shouldDisplayGlobalRecordCreationCommands: false,
     }),
   ).toEqual([legacyCreationCommand, navigationCommand, pageCommand]);
@@ -60,7 +62,7 @@ it('preserves position ordering and legacy creation when global creation is disa
 it('hides legacy creation even when no objects are eligible for global creation', () => {
   expect(
     mergeGlobalRecordCreationCommandMenuItems({
-      commandMenuItems,
+      commandMenuItems: commandMenuItems!,
       globalRecordCreationCommandMenuItems: [],
       shouldDisplayGlobalRecordCreationCommands: true,
     }),
@@ -75,7 +77,7 @@ it('preserves object-scoped creation when a missing template disables replacemen
 
   expect(
     mergeGlobalRecordCreationCommandMenuItems({
-      commandMenuItems: [pageCommand, objectScopedCreationCommand],
+      commandMenuItems: [pageCommand!, objectScopedCreationCommand!],
       globalRecordCreationCommandMenuItems: [],
       shouldDisplayGlobalRecordCreationCommands: false,
     }),
@@ -90,14 +92,14 @@ const pinnedCreationCommand = {
   icon: 'IconPlus',
 };
 const companyCreationCommand = {
-  ...globalRecordCreationCommandMenuItems[0],
+  ...globalRecordCreationCommandMenuItems[0]!,
   isPinned: false,
   label: 'Create Company',
   shortLabel: null,
   icon: 'IconBuildingSkyscraper',
 };
 const taskCreationCommand = {
-  ...globalRecordCreationCommandMenuItems[1],
+  ...globalRecordCreationCommandMenuItems[1]!,
   isPinned: false,
   label: 'Create Task',
   shortLabel: null,

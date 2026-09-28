@@ -10,7 +10,7 @@ export const splitFieldNameIntoBaseAndSubField = (
     fieldParts.length > 1 ? fieldParts.slice(1).join('.') : undefined;
 
   return {
-    baseFieldName,
+    baseFieldName: baseFieldName!,
     subFieldName,
   };
 };

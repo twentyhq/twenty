@@ -14,8 +14,8 @@ describe('groupEventsByMonth', () => {
       } as TimelineActivity,
     ]);
 
-    expect(group.month).toBe(1);
-    expect(group.year).toBe(2026);
+    expect(group?.month).toBe(1);
+    expect(group?.year).toBe(2026);
   });
 
   it('should group activities by month', () => {
@@ -43,8 +43,8 @@ describe('groupEventsByMonth', () => {
       const previous = grouped[index - 1];
       const current = grouped[index];
       const isPreviousMoreRecent =
-        previous.year > current.year ||
-        (previous.year === current.year && previous.month > current.month);
+        previous!.year > current!.year ||
+        (previous!.year === current!.year && previous!.month > current!.month);
       expect(isPreviousMoreRecent).toBe(true);
     }
   });

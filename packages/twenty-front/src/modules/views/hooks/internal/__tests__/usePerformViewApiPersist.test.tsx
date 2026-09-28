@@ -18,7 +18,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
-const viewToDestroy = { ...mockedViews[0], name: 'View to delete' };
+const viewToDestroy = { ...mockedViews[0]!, name: 'View to delete' };
 const otherView = { ...viewToDestroy, id: 'other-view-id', name: 'Other view' };
 const destroyRequest = {
   query: DestroyViewDocument,
@@ -48,7 +48,10 @@ const renderViewDeletion = (
     apolloMocks,
     onInitializeJotaiStore: (initializedStore) => {
       store = initializedStore;
-      setTestViewsInMetadataStore(initializedStore, [viewToDestroy, otherView]);
+      setTestViewsInMetadataStore(initializedStore, [
+        viewToDestroy!,
+        otherView!,
+      ]);
       initializedStore.set(metadataStoreState.atomFamily('views'), (entry) => ({
         ...entry,
         currentCollectionHash: 'original-views-hash',

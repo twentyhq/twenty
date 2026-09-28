@@ -93,7 +93,7 @@ describe('groupThreadsByDate', () => {
 
     const [group] = groupThreadsByDate([thread], today);
 
-    expect(group.id).toBe('yesterday');
+    expect(group?.id).toBe('yesterday');
   });
 
   describe('timezone handling', () => {
@@ -121,7 +121,7 @@ describe('groupThreadsByDate', () => {
         today,
       );
 
-      expect(group.id).toBe('yesterday');
+      expect(group?.id).toBe('yesterday');
     });
 
     it('does not slip a thread from yesterday into Today when local times differ by hours', () => {
@@ -132,7 +132,7 @@ describe('groupThreadsByDate', () => {
         today,
       );
 
-      expect(group.id).toBe('yesterday');
+      expect(group?.id).toBe('yesterday');
     });
   });
 });

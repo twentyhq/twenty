@@ -22,7 +22,7 @@ const extractOrderByDirection = (value: unknown): OrderBy | null => {
   if (typeof value === 'object' && value !== null) {
     const entries = Object.entries(value);
     if (entries.length > 0) {
-      return extractOrderByDirection(entries[0][1]);
+      return extractOrderByDirection(entries[0]![1]);
     }
   }
   return null;
@@ -38,19 +38,19 @@ export const sortCachedObjectEdges = ({
   readCacheField: ReadFieldFunction;
 }) => {
   const [orderByFieldName, orderByFieldValueOrDirection] = Object.entries(
-    orderBy[0],
-  )[0];
+    orderBy[0]!,
+  )[0]!;
   const [orderBySubFieldName, orderBySubFieldValueOrDirection] =
     isNonEmptyString(orderByFieldValueOrDirection)
       ? []
-      : Object.entries(orderByFieldValueOrDirection)[0];
+      : Object.entries(orderByFieldValueOrDirection)[0]!;
 
   // For relation fields with composite nested fields (e.g., accountOwner.name.firstName)
   const [orderBySubSubFieldNameOrDirection] =
     isNonEmptyString(orderBySubFieldValueOrDirection) ||
     !isDefined(orderBySubFieldValueOrDirection)
       ? []
-      : Object.entries(orderBySubFieldValueOrDirection)[0];
+      : Object.entries(orderBySubFieldValueOrDirection)[0]!;
 
   const readFieldValueToSort = (
     edge: RecordGqlRefEdge,

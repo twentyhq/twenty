@@ -163,14 +163,14 @@ describe('useResolveDefaultEmailRecipient', () => {
 
     const personCall = mockUseFindOneRecord.mock.calls.find(
       (call: { objectNameSingular: string }[]) =>
-        call[0].objectNameSingular === CoreObjectNameSingular.Person,
+        call[0]!.objectNameSingular === CoreObjectNameSingular.Person,
     );
 
     expect(personCall?.[0].skip).toBe(false);
 
     const oppCall = mockUseFindOneRecord.mock.calls.find(
       (call: { objectNameSingular: string }[]) =>
-        call[0].objectNameSingular === CoreObjectNameSingular.Opportunity,
+        call[0]!.objectNameSingular === CoreObjectNameSingular.Opportunity,
     );
 
     expect(oppCall?.[0].skip).toBe(true);

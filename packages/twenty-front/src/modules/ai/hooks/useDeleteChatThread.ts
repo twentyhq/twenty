@@ -51,7 +51,7 @@ export const useDeleteChatThread = () => {
       const draftsByThreadId = store.get(agentChatDraftsByThreadIdState.atom);
 
       if (remaining.length > 0) {
-        const nextThreadId = remaining[0].id;
+        const nextThreadId = remaining[0]!.id;
 
         setCurrentAiChatThread(nextThreadId);
         projectAiChatThreadToUrl(nextThreadId);

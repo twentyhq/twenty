@@ -38,7 +38,7 @@ export const SignInUpWithSso = () => {
       isDefined(workspaceAuthProviders) &&
       workspaceAuthProviders.sso.length === 1
     ) {
-      return redirectToSsoLoginPage(workspaceAuthProviders.sso[0].id);
+      return redirectToSsoLoginPage(workspaceAuthProviders.sso[0]!.id);
     }
 
     setSignInUpStep(SignInUpStep.SsoIdentityProviderSelection);

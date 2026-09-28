@@ -19,7 +19,7 @@ export const getFirstAvailableWorkspaces = ({
   availableWorkspacesForSignIn,
   availableWorkspacesForSignUp,
 }: AvailableWorkspaces): AvailableWorkspace => {
-  return availableWorkspacesForSignIn[0] ?? availableWorkspacesForSignUp[0];
+  return availableWorkspacesForSignIn[0]! ?? availableWorkspacesForSignUp[0]!;
 };
 
 const getAvailableWorkspacePathname = (

@@ -19,7 +19,7 @@ export const doesRecordBelongToGroup = (
     );
 
     for (let i = 0; i < groupByFieldNames.length; i++) {
-      const fieldName = groupByFieldNames[i];
+      const fieldName = groupByFieldNames[i]!;
       const expectedValue = groupByDimensionValues[i];
 
       if (!isDefined(expectedValue)) {
@@ -32,7 +32,7 @@ export const doesRecordBelongToGroup = (
         return false;
       }
 
-      const fieldConfig = groupByConfig[i][fieldName];
+      const fieldConfig = groupByConfig[i]![fieldName]!;
       const recordValueStr = normalizeGroupByDimensionValue(
         recordValue,
         fieldConfig,

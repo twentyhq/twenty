@@ -152,14 +152,14 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
             const recordDimensionValues: string[] = [];
 
             for (let i = 0; i < groupByFieldNames.length; i++) {
-              const fieldName = groupByFieldNames[i];
+              const fieldName = groupByFieldNames[i]!;
               let recordValue = record[fieldName];
 
               if (!isDefined(recordValue)) {
                 break;
               }
 
-              const fieldConfig = groupByConfig[i][fieldName];
+              const fieldConfig = groupByConfig[i]![fieldName]!;
               const normalizedValue = normalizeGroupByDimensionValue(
                 recordValue,
                 fieldConfig,
@@ -210,8 +210,9 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
                 pageInfo: {
                   hasNextPage: false,
                   hasPreviousPage: false,
-                  startCursor: groupData.edges[0].cursor,
-                  endCursor: groupData.edges[groupData.edges.length - 1].cursor,
+                  startCursor: groupData.edges[0]!.cursor,
+                  endCursor:
+                    groupData.edges[groupData.edges.length - 1]!.cursor,
                 },
                 totalCount: groupData.edges.length,
                 groupByDimensionValues: groupData.dimensionValues,

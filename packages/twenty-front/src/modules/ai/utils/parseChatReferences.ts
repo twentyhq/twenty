@@ -9,10 +9,10 @@ export const parseChatReferences = (text: string): ChatReferenceMatch[] => {
   }
 
   return [...text.matchAll(CHAT_REFERENCE_REGEX)].flatMap((match) => {
-    const reference = parseChatReferenceBody(match[1]);
+    const reference = parseChatReferenceBody(match[1]!);
 
     return isDefined(reference)
-      ? [{ ...reference, fullMatch: match[0], index: match.index }]
+      ? [{ ...reference, fullMatch: match[0]!, index: match.index }]
       : [];
   });
 };

@@ -64,7 +64,7 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
-  const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
+  const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]!));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
   const weekDayLabel = format(endOfDayDate, 'EE');

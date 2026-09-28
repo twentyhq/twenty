@@ -32,7 +32,7 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
       currentSourceRecord: currentRecord,
-      updatedSourceRecord: updatedRecords[index],
+      updatedSourceRecord: updatedRecords[index]!,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       upsertRecordsInStore,

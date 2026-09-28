@@ -17,7 +17,7 @@ export const CancelMessageCampaignSingleRecordCommand = () => {
     throw new Error('Record ID is required to cancel the campaign');
   }
 
-  const campaignStatus: MessageCampaignStatus = selectedRecord.status;
+  const campaignStatus: MessageCampaignStatus = selectedRecord!.status;
   const isScheduled = campaignStatus === MessageCampaignStatus.SCHEDULED;
 
   return (

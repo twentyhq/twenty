@@ -12,5 +12,5 @@ export const parseCssSizeValue = (value: string | undefined): CssSizeValue => {
     return { amount: '', unit: 'px' };
   }
 
-  return { amount: match[1], unit: match[2] as CssSizeValue['unit'] };
+  return { amount: match[1]!, unit: match[2]! as CssSizeValue['unit'] };
 };

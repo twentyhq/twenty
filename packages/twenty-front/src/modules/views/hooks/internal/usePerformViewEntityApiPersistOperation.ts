@@ -118,11 +118,11 @@ export const usePerformViewEntityApiPersistOperation = (
       const fulfilledMutations = settledMutations.flatMap(
         (settledMutation, index) =>
           settledMutation.status === 'fulfilled'
-            ? [{ input: inputs[index], result: settledMutation.value }]
+            ? [{ input: inputs[index]!, result: settledMutation.value }]
             : [],
       );
 
-      applyResultToDraft(fulfilledMutations, {
+      applyResultToDraft(fulfilledMutations!, {
         addToDraft,
         updateInDraft,
         removeFromDraft,

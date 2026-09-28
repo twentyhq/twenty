@@ -78,8 +78,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
     }
 
     handleReorderFields({
-      recordFieldToMove: draggableRecordFields[result.source.index],
-      targetRecordField: draggableRecordFields[result.destination.index],
+      recordFieldToMove: draggableRecordFields[result.source.index]!,
+      targetRecordField: draggableRecordFields[result.destination.index]!,
     });
   };
 

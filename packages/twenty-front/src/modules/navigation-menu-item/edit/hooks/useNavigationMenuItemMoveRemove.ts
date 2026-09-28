@@ -44,7 +44,7 @@ export const useNavigationMenuItemMoveRemove = (
     const prev = siblings[currentIndex - 1];
     const prevPrev = siblings[currentIndex - 2];
     await updateItem(navigationMenuItemId, {
-      position: getPositionBetween(prevPrev?.position, prev.position),
+      position: getPositionBetween(prevPrev?.position, prev!.position),
     });
   };
 
@@ -62,7 +62,7 @@ export const useNavigationMenuItemMoveRemove = (
     const next = siblings[currentIndex + 1];
     const nextNext = siblings[currentIndex + 2];
     await updateItem(navigationMenuItemId, {
-      position: getPositionBetween(next.position, nextNext?.position),
+      position: getPositionBetween(next!.position, nextNext?.position),
     });
   };
 

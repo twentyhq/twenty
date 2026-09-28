@@ -93,13 +93,13 @@ export const EditLink: Story = {
     await userEvent.type(label, 'Documentation{Enter}');
     await expect(await canvas.findByText('Documentation')).toBeVisible();
     await userEvent.click(
-      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
+      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0]!,
     );
     const url = await body.findByDisplayValue('https://example.com');
     await userEvent.clear(url);
     await userEvent.type(url, 'https://twenty.com/docs{Enter}');
     await userEvent.click(
-      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
+      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0]!,
     );
     await expect(
       await body.findByDisplayValue('https://twenty.com/docs'),
@@ -115,7 +115,7 @@ export const OrganizeFromBothMenus: Story = {
     const docs = await canvas.findByText('Docs');
     await userEvent.tab();
     await userEvent.click(
-      (await canvas.findAllByRole('button', { name: 'Menu item actions' }))[0],
+      (await canvas.findAllByRole('button', { name: 'Menu item actions' }))[0]!,
     );
     await userEvent.click(await body.findByText('Move down'));
     await expect(
@@ -179,7 +179,7 @@ export const EditFolderInPlace: Story = {
   beforeEach: () => {
     jotaiStore.set(navigationMenuItemsDraftState.atom, [
       {
-        ...ITEMS[0],
+        ...ITEMS[0]!,
         id: 'folder',
         name: 'Projects',
         type: NavigationMenuItemType.FOLDER,
@@ -234,11 +234,11 @@ export const TooltipsStayOutOfActionMenus: Story = {
       const actions = (
         await canvas.findAllByRole('button', { name: 'Menu item actions' })
       )[name === 'Docs' ? 0 : 1];
-      await user.hover(actions);
+      await user.hover(actions!);
       await waitFor(() =>
         expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
       );
-      await user.click(actions);
+      await user.click(actions!);
       await expect(await body.findByText('Remove from sidebar')).toBeVisible();
       await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
       await user.keyboard('{Escape}');

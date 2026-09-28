@@ -86,12 +86,12 @@ export const useGetBrowsingContext = () => {
       const recordContext: BrowsingContext = {
         type: 'recordPage',
         objectNameSingular: objectMetadataItem.nameSingular,
-        recordId: targetedRecordsRule.selectedRecordIds[0],
+        recordId: targetedRecordsRule.selectedRecordIds[0]!,
       };
 
       const pageLayoutId = store.get(
         recordStoreFamilySelector.selectorFamily({
-          recordId: targetedRecordsRule.selectedRecordIds[0],
+          recordId: targetedRecordsRule.selectedRecordIds[0]!,
           fieldName: 'pageLayoutId',
         }),
       ) as string | null | undefined;
@@ -107,7 +107,7 @@ export const useGetBrowsingContext = () => {
 
         return {
           ...recordContext,
-          pageLayoutId,
+          pageLayoutId: pageLayoutId!,
           activeTabId,
         };
       }

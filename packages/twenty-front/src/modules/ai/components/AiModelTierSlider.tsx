@@ -156,8 +156,8 @@ export const AiModelTierSlider = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle>{title ?? resolvedTier.label}</StyledTitle>
-        <AiModelTierInformationButton resolvedTier={resolvedTier} />
+        <StyledTitle>{title ?? resolvedTier!.label}</StyledTitle>
+        <AiModelTierInformationButton resolvedTier={resolvedTier!} />
       </StyledHeader>
       <StyledTrack
         disabled={disabled}
@@ -180,7 +180,7 @@ export const AiModelTierSlider = ({
           onChange={handleChange}
           disabled={disabled}
           aria-label={t`Model`}
-          aria-valuetext={resolvedTier.label}
+          aria-valuetext={resolvedTier!.label}
         />
       </StyledTrack>
     </StyledContainer>

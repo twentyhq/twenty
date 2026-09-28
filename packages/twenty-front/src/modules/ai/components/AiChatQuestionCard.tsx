@@ -253,7 +253,7 @@ export const AiChatQuestionCard = ({
   };
 
   const handleSelectOption = (optionIndex: number) => {
-    if (currentQuestion.allowMultiSelect === true) {
+    if (currentQuestion!.allowMultiSelect === true) {
       setSelectedByQuestion((previous) => {
         const current = previous[currentIndex] ?? [];
         const next = current.includes(optionIndex)
@@ -302,7 +302,7 @@ export const AiChatQuestionCard = ({
       [currentIndex]: true,
     }));
 
-    if (currentQuestion.allowMultiSelect !== true) {
+    if (currentQuestion!.allowMultiSelect !== true) {
       setSelectedByQuestion((previous) => ({
         ...previous,
         [currentIndex]: [],
@@ -312,7 +312,7 @@ export const AiChatQuestionCard = ({
 
   const handleToggleOther = () => {
     if (
-      currentQuestion.allowMultiSelect === true &&
+      currentQuestion!.allowMultiSelect === true &&
       otherSelectedByQuestion[currentIndex]
     ) {
       setOtherSelectedByQuestion((previous) => ({
@@ -380,7 +380,7 @@ export const AiChatQuestionCard = ({
       <StyledQuestionSection>
         <StyledQuestionHeaderRow>
           <StyledQuestionText>
-            <TextWithChatReferences text={currentQuestion.question} />
+            <TextWithChatReferences text={currentQuestion!.question} />
           </StyledQuestionText>
           {hasMultipleQuestions && (
             <StyledPager>
@@ -414,10 +414,10 @@ export const AiChatQuestionCard = ({
         </StyledQuestionHeaderRow>
 
         <StyledOptionsList>
-          {currentQuestion.options.map((option, optionIndex) => {
+          {currentQuestion!.options.map((option, optionIndex) => {
             const NumberIcon =
               NUMBER_ICONS[optionIndex] ??
-              NUMBER_ICONS[NUMBER_ICONS.length - 1];
+              NUMBER_ICONS[NUMBER_ICONS.length - 1]!;
             const isSelected = (
               selectedByQuestion[currentIndex] ?? []
             ).includes(optionIndex);
@@ -483,8 +483,8 @@ export const AiChatQuestionCard = ({
           })}
           <AiChatQuestionOtherOption
             NumberIcon={
-              NUMBER_ICONS[currentQuestion.options.length] ??
-              NUMBER_ICONS[NUMBER_ICONS.length - 1]
+              NUMBER_ICONS[currentQuestion!.options.length] ??
+              NUMBER_ICONS[NUMBER_ICONS.length - 1]!
             }
             isHighlighted={otherSelectedByQuestion[currentIndex] ?? false}
             value={freeTextByQuestion[currentIndex] ?? ''}

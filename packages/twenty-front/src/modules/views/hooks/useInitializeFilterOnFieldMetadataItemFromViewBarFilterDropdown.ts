@@ -119,18 +119,18 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
               duplicateFilterInCurrentRecordFilters.operand,
             );
           } else {
-            store.set(selectedOperandInDropdownCallbackState, defaultOperand);
+            store.set(selectedOperandInDropdownCallbackState, defaultOperand!);
 
             if (filterType === 'DATE' || filterType === 'DATE_TIME') {
               const { displayValue, value } = getInitialFilterValue(
                 filterType,
-                defaultOperand,
+                defaultOperand!,
               );
 
               const initialDateRecordFilter: RecordFilter = {
                 id: v4(),
                 fieldMetadataId: fieldMetadataItem.id,
-                operand: defaultOperand,
+                operand: defaultOperand!,
                 displayValue,
                 label: fieldMetadataItem.label,
                 type: filterType,

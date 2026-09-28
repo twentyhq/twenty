@@ -52,8 +52,8 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
     ...(hasEditorExtension(currentEditor, 'heading')
       ? ([1, 2, 3] as const).map((level) => ({
           id: `heading${level}`,
-          title: headingTitles[level],
-          icon: HEADING_ICONS[level],
+          title: headingTitles[level]!,
+          icon: HEADING_ICONS[level]!,
           onClick: () => {
             return currentEditor.chain().focus().setHeading({ level }).run();
           },

@@ -19,27 +19,27 @@ const getChatReferenceIdentity = ({
     case 'record':
       return {
         kind,
-        objectNameSingular: firstSegment,
-        recordId: secondSegment,
+        objectNameSingular: firstSegment!,
+        recordId: secondSegment!,
       };
     case 'records':
-      return { kind, objectMetadataId: firstSegment };
+      return { kind, objectMetadataId: firstSegment! };
     case 'object':
-      return { kind, objectNameSingular: firstSegment };
+      return { kind, objectNameSingular: firstSegment! };
     case 'field':
       return {
         kind,
-        objectNameSingular: firstSegment,
-        fieldName: secondSegment,
+        objectNameSingular: firstSegment!,
+        fieldName: secondSegment!,
       };
     case 'view':
-      return { kind, viewId: firstSegment };
+      return { kind, viewId: firstSegment! };
     case 'role':
-      return { kind, roleId: firstSegment };
+      return { kind, roleId: firstSegment! };
     case 'app':
-      return { kind, applicationId: firstSegment };
+      return { kind, applicationId: firstSegment! };
     case 'skill':
-      return { kind, skillId: firstSegment };
+      return { kind, skillId: firstSegment! };
     default:
       return assertUnreachable(kind);
   }
@@ -58,7 +58,7 @@ const parseSegments = ({
 
   if (
     !hasLabel ||
-    !shape.every((regex, index) => regex.test(identitySegments[index]))
+    !shape.every((regex, index) => regex.test(identitySegments[index]!))
   ) {
     return undefined;
   }
@@ -78,7 +78,7 @@ export const parseChatReferenceBody = (
   // A recognised prefix followed by an identity of the wrong shape is a
   // retired or malformed marker, not a record of an object bearing that
   // name, so it must not fall through to the unprefixed record form.
-  if (isChatReferenceKind(kindPrefix)) {
+  if (isChatReferenceKind(kindPrefix!)) {
     return parseSegments({ kind: kindPrefix, segments: identityAndLabel });
   }
 

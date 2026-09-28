@@ -46,7 +46,7 @@ const flatPersonRecords = mockedPersonRecords.map((record) =>
 export const WithTasks: Story = {
   args: {
     targetableObject: {
-      id: flatPersonRecords[0].id,
+      id: flatPersonRecords[0]!.id,
       targetObjectNameSingular: 'person',
     } as ActivityTargetableObject,
   },

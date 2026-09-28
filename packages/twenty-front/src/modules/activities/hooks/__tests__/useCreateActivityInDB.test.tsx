@@ -24,7 +24,7 @@ const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
-const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
+const { id, title, bodyV2, status, dueAt } = mockedTasks[0]!;
 const bodyV2WithoutTypename = isDefined(bodyV2)
   ? { blocknote: bodyV2.blocknote, markdown: bodyV2.markdown }
   : bodyV2;

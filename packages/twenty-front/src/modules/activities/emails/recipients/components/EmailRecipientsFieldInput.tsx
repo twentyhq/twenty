@@ -363,8 +363,8 @@ export const EmailRecipientsFieldInput = ({
     const shouldCommitAsChips =
       parsedRecipients.length > 1 ||
       (parsedRecipients.length === 1 &&
-        (isNonEmptyString(parsedRecipients[0].displayName) ||
-          isValidEmailRecipientAddress(parsedRecipients[0].address)));
+        (isNonEmptyString(parsedRecipients[0]!.displayName) ||
+          isValidEmailRecipientAddress(parsedRecipients[0]!.address)));
 
     if (!shouldCommitAsChips) {
       return;

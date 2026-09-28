@@ -71,12 +71,12 @@ export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
 
       const nonReadableFieldMetadataIds =
         getNonReadableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions,
+          objectPermissions: objectPermissions!,
         });
 
       const nonUpdatableFieldMetadataIds =
         getNonUpdatableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions,
+          objectPermissions: objectPermissions!,
         });
 
       return {

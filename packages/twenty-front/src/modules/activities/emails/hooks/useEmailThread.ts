@@ -75,7 +75,7 @@ export const useEmailThread = (threadId: string | null) => {
     if (messages.length > 0 && isMessagesFetchComplete) {
       const lastMessage = messages[messages.length - 1];
 
-      setLastMessageId(lastMessage.id);
+      setLastMessageId(lastMessage!.id);
     }
   }, [messages, isMessagesFetchComplete]);
 

@@ -21,9 +21,9 @@ const readTranscripts = (event: WebSpeechRecognitionEvent) => {
 
   for (let index = event.resultIndex; index < event.results.length; index++) {
     const result = event.results[index];
-    const transcript = result[0]?.transcript ?? '';
+    const transcript = result![0]!.transcript ?? '';
 
-    if (result.isFinal) {
+    if (result!.isFinal) {
       finalText += transcript;
     } else {
       interimText += transcript;

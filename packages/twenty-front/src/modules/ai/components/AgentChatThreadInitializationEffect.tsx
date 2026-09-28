@@ -127,7 +127,7 @@ export const AgentChatThreadInitializationEffect = () => {
     );
 
     if (sortedThreads.length > 0) {
-      const firstThread = sortedThreads[0];
+      const firstThread = sortedThreads[0]!;
       const draftForThread =
         store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
 

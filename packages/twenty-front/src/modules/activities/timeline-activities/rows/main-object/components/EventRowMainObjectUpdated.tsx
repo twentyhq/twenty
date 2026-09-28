@@ -70,8 +70,8 @@ export const EventRowMainObjectUpdated = ({
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
-              diffKey={diffEntries[0][0]}
-              fieldDiff={diffEntries[0][1]}
+              diffKey={diffEntries[0]![0]}
+              fieldDiff={diffEntries[0]![1]}
               eventId={event.id}
             />
           )}

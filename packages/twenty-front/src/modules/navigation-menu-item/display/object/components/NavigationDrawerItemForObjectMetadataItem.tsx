@@ -137,7 +137,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const recordIdentifier =
     isRecord && isDefined(navigationMenuItem?.targetRecordIdentifier)
       ? recordIdentifierToObjectRecordIdentifier({
-          recordIdentifier: navigationMenuItem!.targetRecordIdentifier!,
+          recordIdentifier: navigationMenuItem!.targetRecordIdentifier,
           objectMetadataItem,
         })
       : null;
