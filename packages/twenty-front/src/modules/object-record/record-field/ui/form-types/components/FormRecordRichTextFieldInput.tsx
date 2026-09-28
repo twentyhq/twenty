@@ -161,7 +161,6 @@ export const FormRecordRichTextFieldInput = ({
   const { renderFullScreenModal } = useFullScreenModal({
     links: [{ children: t`Text Editor` }],
     onClose: () => handleFullScreenChange(false),
-    hasClosePageButton: !isMobile,
   });
 
   const isReadonly = readonly || hasUnreadableStoredValue;
@@ -180,7 +179,7 @@ export const FormRecordRichTextFieldInput = ({
               readonly={isReadonly}
               compact
             />
-            {!isReadonly && (
+            {!isReadonly && !isMobile && (
               <StyledExpandButtonContainer>
                 <LightIconButton
                   size="sm"
@@ -196,17 +195,15 @@ export const FormRecordRichTextFieldInput = ({
         )}
       </FormFieldInputContainer>
       {renderFullScreenModal(
-        <div>
-          <StyledFullScreenEditorContainer>
-            <BlockEditor
-              editor={editor}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              readonly={isReadonly}
-            />
-          </StyledFullScreenEditorContainer>
-        </div>,
+        <StyledFullScreenEditorContainer>
+          <BlockEditor
+            editor={editor}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            readonly={isReadonly}
+          />
+        </StyledFullScreenEditorContainer>,
         isFullScreen,
       )}
     </>
