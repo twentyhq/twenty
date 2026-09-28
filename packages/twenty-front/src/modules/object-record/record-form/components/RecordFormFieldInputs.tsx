@@ -59,7 +59,9 @@ export const RecordFormFieldInputs = ({
             settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
           />
           {isDefined(errorMessage) && (
-            <StyledFieldErrorMessage>{errorMessage}</StyledFieldErrorMessage>
+            <StyledFieldErrorMessage role="alert">
+              {errorMessage}
+            </StyledFieldErrorMessage>
           )}
         </div>
       );

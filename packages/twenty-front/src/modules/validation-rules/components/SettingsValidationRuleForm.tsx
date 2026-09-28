@@ -92,7 +92,7 @@ export const SettingsValidationRuleForm = ({
           title={t`Status`}
           description={t`An inactive rule is kept but not enforced.`}
         />
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconListCheck}
             title={t`Active`}
@@ -100,7 +100,7 @@ export const SettingsValidationRuleForm = ({
             checked={values.isActive}
             onChange={(isActive) => onChange({ ...values, isActive })}
           />
-        </Card>
+        </Card.Root>
       </Section.Root>
     </>
   );

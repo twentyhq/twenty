@@ -21,13 +21,12 @@ import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/bu
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -91,7 +90,6 @@ const SidePanelRecordCreationForm = ({
   const theme = useTheme();
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
-  const { enqueueToast } = useToast();
 
   const [recordCreationFormDraft, setRecordCreationFormDraft] =
     useAtomComponentState(recordCreationFormDraftComponentState);
@@ -105,6 +103,8 @@ const SidePanelRecordCreationForm = ({
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
+
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
     objectMetadataItem,
@@ -174,17 +174,11 @@ const SidePanelRecordCreationForm = ({
     setValidationRuleViolations(draftViolations);
 
     if (draftViolations.length > 0) {
-      const [firstViolation, ...otherViolations] = draftViolations;
-      const firstViolationMessage = firstViolation.message;
-      const otherViolationCount = otherViolations.length;
-
-      enqueueToast({
-        variant: 'error',
-        children:
-          otherViolationCount > 0
-            ? t`${firstViolationMessage} and ${otherViolationCount} more`
-            : firstViolationMessage,
-      });
+      requestAnimationFrame(() =>
+        contentRef.current
+          ?.querySelector('[role="alert"]')
+          ?.scrollIntoView({ block: 'center', behavior: 'smooth' }),
+      );
 
       return;
     }
@@ -227,9 +221,9 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent>
+      <StyledContent ref={contentRef}>
         {recordLevelViolations.map((violation) => (
-          <StyledRecordLevelError key={violation.ruleId}>
+          <StyledRecordLevelError key={violation.ruleId} role="alert">
             {violation.message}
           </StyledRecordLevelError>
         ))}
