@@ -10,6 +10,8 @@ import { Dropdown } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { getSelectDropdownInitialFocus } from '@/ui/input/components/internal/select/utils/getSelectDropdownInitialFocus';
+import { isFocusMovingWithinSelect } from '@/ui/input/components/internal/select/utils/isFocusMovingWithinSelect';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
@@ -135,13 +137,12 @@ export const Select = <TValue extends SelectValue>({
       className={className}
       fullWidth={fullWidth}
       onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-        const isFocusWithinSelect =
-          nextFocus instanceof Node &&
-          (event.currentTarget.contains(nextFocus) ||
-            dropdownContentRef.current?.contains(nextFocus));
-
-        if (isFocusWithinSelect) {
+        if (
+          isFocusMovingWithinSelect({
+            event,
+            dropdownContent: dropdownContentRef.current,
+          })
+        ) {
           return;
         }
 
@@ -176,13 +177,7 @@ export const Select = <TValue extends SelectValue>({
               withSearchInput
                 ? undefined
                 : () =>
-                    dropdownContentRef.current?.querySelector<HTMLElement>(
-                      '[data-dropdown-item][aria-pressed="true"]:not([aria-disabled="true"])',
-                    ) ??
-                    dropdownContentRef.current?.querySelector<HTMLElement>(
-                      '[data-dropdown-item]:not([aria-disabled="true"])',
-                    ) ??
-                    true
+                    getSelectDropdownInitialFocus(dropdownContentRef.current)
             }
             width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
             align="start"
