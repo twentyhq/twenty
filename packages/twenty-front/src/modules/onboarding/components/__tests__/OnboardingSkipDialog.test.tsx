@@ -20,11 +20,9 @@ const DIALOG_ID = 'onboarding-skip-dialog-test';
 
 const TestSkipDialog = ({
   rewardCredits,
-  isRewardPerItem,
   onSkip,
 }: {
   rewardCredits: number;
-  isRewardPerItem: boolean;
   onSkip: () => void;
 }) => {
   const { openDialog } = useDialog();
@@ -40,7 +38,6 @@ const TestSkipDialog = ({
         title="Start with your whole network"
         actions={[{ label: 'Continue with Google', onClick: jest.fn() }]}
         rewardCredits={rewardCredits}
-        isRewardPerItem={isRewardPerItem}
         onSkip={onSkip}
       />
     </>
@@ -49,14 +46,13 @@ const TestSkipDialog = ({
 
 const renderSkipDialog = (
   rewardCredits: number,
-  { onSkip = jest.fn(), isRewardPerItem = false } = {},
+  { onSkip = jest.fn() } = {},
 ) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <TestSkipDialog
           rewardCredits={rewardCredits}
-          isRewardPerItem={isRewardPerItem}
           onSkip={onSkip}
         />
       </I18nProvider>
@@ -78,18 +74,6 @@ describe('OnboardingSkipDialog', () => {
         name: 'Continue with Google, earn 2.5 free credits',
       }),
     ).toHaveTextContent('+2.5');
-  });
-
-  it('shows a per-item reward', async () => {
-    renderSkipDialog(0.5, { isRewardPerItem: true });
-
-    await userEvent.click(screen.getByRole('button', { name: 'Open' }));
-
-    expect(
-      await screen.findByRole('button', {
-        name: 'Continue with Google, earn 0.5 free credits each',
-      }),
-    ).toHaveTextContent('+0.5 each');
   });
 
   it('skips without showing credits on the skip button', async () => {

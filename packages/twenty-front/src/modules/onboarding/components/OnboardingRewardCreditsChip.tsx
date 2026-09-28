@@ -1,6 +1,5 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { IconCoins } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -19,14 +18,11 @@ const StyledRewardCredits = styled.span`
 
 type OnboardingRewardCreditsChipProps = {
   rewardCredits: number;
-  isRewardPerItem?: boolean;
 };
 
 export const OnboardingRewardCreditsChip = ({
   rewardCredits,
-  isRewardPerItem = false,
 }: OnboardingRewardCreditsChipProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
   const formattedRewardCredits = formatNumber(rewardCredits, { decimals: 2 });
@@ -34,9 +30,7 @@ export const OnboardingRewardCreditsChip = ({
   return (
     <StyledRewardCredits>
       <IconCoins size={theme.icon.size.sm} />
-      {isRewardPerItem
-        ? t`+${formattedRewardCredits} each`
-        : `+${formattedRewardCredits}`}
+      {`+${formattedRewardCredits}`}
     </StyledRewardCredits>
   );
 };

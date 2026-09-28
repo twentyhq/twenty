@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton, MainButton } from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledPopup = styled(Dialog.Popup)`
@@ -65,8 +65,6 @@ type OnboardingSkipDialogProps = {
   description?: string;
   actions: OnboardingSkipDialogAction[];
   rewardCredits: number;
-  isRewardPerItem?: boolean;
-  finalFocus?: DialogPopupProps['finalFocus'];
   onSkip: () => void;
 };
 
@@ -77,8 +75,6 @@ export const OnboardingSkipDialog = ({
   description,
   actions,
   rewardCredits,
-  isRewardPerItem = false,
-  finalFocus,
   onSkip,
 }: OnboardingSkipDialogProps) => {
   const { t } = useLingui();
@@ -92,17 +88,14 @@ export const OnboardingSkipDialog = ({
   };
 
   const rewardCreditsChip = (
-    <OnboardingRewardCreditsChip
-      rewardCredits={rewardCredits}
-      isRewardPerItem={isRewardPerItem}
-    />
+    <OnboardingRewardCreditsChip rewardCredits={rewardCredits} />
   );
 
   return (
     <DialogInstance dialogId={dialogId} dismissible renderInDocumentBody>
       {({ container, backdrop, viewportProps, onKeyDown }) => (
         <StyledPopup
-          {...{ container, backdrop, viewportProps, onKeyDown, finalFocus }}
+          {...{ container, backdrop, viewportProps, onKeyDown }}
           initialFocus={firstActionRef}
           data-globally-prevent-click-outside
         >
@@ -139,7 +132,6 @@ export const OnboardingSkipDialog = ({
                 aria-label={getOnboardingRewardCreditsAriaLabel({
                   label: action.label,
                   rewardCredits,
-                  isRewardPerItem,
                 })}
               >
                 {action.label}
