@@ -25,17 +25,19 @@ const convertFlatVariablesToNestedContext = (flatVariables: {
 
   for (const [key, value] of Object.entries(flatVariables)) {
     const parts = key.split('.');
+    const lastPart = parts.pop();
     let current = result;
 
-    for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i];
+    for (const part of parts) {
       if (!(part in current)) {
         current[part] = {};
       }
       current = current[part] as Record<string, unknown>;
     }
 
-    current[parts[parts.length - 1]] = value;
+    if (isDefined(lastPart)) {
+      current[lastPart] = value;
+    }
   }
 
   return result;

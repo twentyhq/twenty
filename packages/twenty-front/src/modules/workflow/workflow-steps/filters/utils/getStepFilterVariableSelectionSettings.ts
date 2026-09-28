@@ -1,6 +1,6 @@
 import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
 import { FieldMetadataType, type StepFilter } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 type StepFilterVariableSelectionSettings = Pick<
   StepFilter,
@@ -45,6 +45,11 @@ export const getStepFilterVariableSelectionSettings = ({
     filterType,
     subFieldName: compositeFieldSubFieldName,
   });
+
+  assertIsDefinedOrThrow(
+    defaultOperand,
+    new Error(`No operand available for filter type: ${filterType}`),
+  );
 
   return {
     stepOutputKey: rawVariableName,

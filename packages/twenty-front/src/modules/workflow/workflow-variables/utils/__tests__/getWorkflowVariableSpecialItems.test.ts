@@ -116,6 +116,6 @@ describe('getWorkflowVariableSpecialItems', () => {
     });
 
     expect(specialItems).toHaveLength(1);
-    expect(specialItems[0].id).toBe('wholeList');
+    expect(specialItems[0]?.id).toBe('wholeList');
   });
 });

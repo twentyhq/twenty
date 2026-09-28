@@ -43,9 +43,7 @@ const filterRecordOutputSchema = ({
   const filteredFields: Record<string, FieldOutputSchemaV2> = {};
   let hasValidFields = false;
 
-  for (const key in outputSchema.fields) {
-    const field = outputSchema.fields[key];
-
+  for (const [key, field] of Object.entries(outputSchema.fields)) {
     if (field.isLeaf) {
       if (isFieldTypeCompatibleWithRecordId(field.type)) {
         filteredFields[key] = field;
@@ -147,9 +145,7 @@ const filterRecordOutputSchemaFieldsByType = ({
 }): RecordOutputSchemaV2 => {
   const filteredFields: Record<string, FieldOutputSchemaV2> = {};
 
-  for (const key in outputSchema.fields) {
-    const field = outputSchema.fields[key];
-
+  for (const [key, field] of Object.entries(outputSchema.fields)) {
     if (isDefined(field.type) && fieldTypesToExclude.includes(field.type)) {
       continue;
     }

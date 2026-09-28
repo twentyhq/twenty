@@ -6,6 +6,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '@/workflow/workflow-trigger/utils/cron-to-human/types/CronDescriptionOptions';
+import { splitCronValuePair } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/splitCronValuePair';
 
 export const getDayOfMonthDescription = (
   dayOfMonth: string,
@@ -36,7 +37,7 @@ export const getDayOfMonthDescription = (
 
   // Step values (e.g., "*/5" = every 5 days)
   if (isStepValue(dayOfMonth)) {
-    const [range, step] = dayOfMonth.split('/');
+    const [range, step] = splitCronValuePair(dayOfMonth, '/');
     const stepNum = parseInt(step, 10);
 
     if (range === '*') {
@@ -49,7 +50,7 @@ export const getDayOfMonthDescription = (
 
     // Range with step (e.g., "1-15/3")
     if (range.includes('-')) {
-      const [start, end] = range.split('-');
+      const [start, end] = splitCronValuePair(range, '-');
       const stepNumStr = stepNum.toString();
       const startOrdinal = getOrdinalNumber(parseInt(start, 10));
       const endOrdinal = getOrdinalNumber(parseInt(end, 10));
@@ -62,7 +63,7 @@ export const getDayOfMonthDescription = (
 
   // Range values (e.g., "1-15")
   if (isNumericRange(dayOfMonth) && dayOfMonth.includes('-')) {
-    const [start, end] = dayOfMonth.split('-');
+    const [start, end] = splitCronValuePair(dayOfMonth, '-');
     const startNum = parseInt(start, 10);
     const endNum = parseInt(end, 10);
     const startOrdinal = getOrdinalNumber(startNum);
@@ -77,9 +78,12 @@ export const getDayOfMonthDescription = (
       return !isNaN(dayNum) ? getOrdinalNumber(dayNum) : day;
     });
 
-    if (ordinalDays.length === 2) {
-      const firstDay = ordinalDays[0];
-      const secondDay = ordinalDays[1];
+    const [firstDay, secondDay] = ordinalDays;
+    if (
+      ordinalDays.length === 2 &&
+      isDefined(firstDay) &&
+      isDefined(secondDay)
+    ) {
       return t`on the ${firstDay} and ${secondDay} of the month`;
     }
     const lastDay = ordinalDays.pop();

@@ -5,6 +5,7 @@ import { I18nProvider } from '@lingui/react';
 import { Position } from '@xyflow/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const mockStartNodeCreation = jest.fn();
 
@@ -150,9 +151,14 @@ describe('WorkflowDiagramDefaultEdgeEditable', () => {
       { wrapper: Wrapper },
     );
 
-    const buttons = screen.getAllByRole('button', { name: 'Insert action' });
-    await user.click(buttons[0]);
-    await user.click(buttons[1]);
+    const [firstInsertButton, secondInsertButton] = screen.getAllByRole(
+      'button',
+      { name: 'Insert action' },
+    );
+    assertIsDefinedOrThrow(firstInsertButton);
+    assertIsDefinedOrThrow(secondInsertButton);
+    await user.click(firstInsertButton);
+    await user.click(secondInsertButton);
 
     expect(
       mockStartNodeCreation.mock.calls.map(([options]) => options),

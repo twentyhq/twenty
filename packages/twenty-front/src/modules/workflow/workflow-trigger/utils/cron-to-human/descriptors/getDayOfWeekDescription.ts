@@ -6,6 +6,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '@/workflow/workflow-trigger/utils/cron-to-human/types/CronDescriptionOptions';
+import { splitCronValuePair } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/splitCronValuePair';
 
 const getDayName = (
   dayNum: number,
@@ -57,7 +58,7 @@ export const getDayOfWeekDescription = (
 
   // Nth occurrence of a weekday (e.g., "1#2" = second Monday)
   if (dayOfWeek.includes('#')) {
-    const [day, occurrence] = dayOfWeek.split('#');
+    const [day, occurrence] = splitCronValuePair(dayOfWeek, '#');
     const dayNum = parseInt(day, 10);
     const occurrenceNum = parseInt(occurrence, 10);
 
@@ -82,7 +83,7 @@ export const getDayOfWeekDescription = (
 
   // Step values (e.g., "*/2" = every other day)
   if (isStepValue(dayOfWeek)) {
-    const [range, step] = dayOfWeek.split('/');
+    const [range, step] = splitCronValuePair(dayOfWeek, '/');
     const stepNum = parseInt(step, 10);
 
     if (range === '*') {
@@ -98,7 +99,7 @@ export const getDayOfWeekDescription = (
 
   // Range values (e.g., "1-5" = Monday to Friday)
   if (isNumericRange(dayOfWeek) && dayOfWeek.includes('-')) {
-    const [start, end] = dayOfWeek.split('-');
+    const [start, end] = splitCronValuePair(dayOfWeek, '-');
     const startDay = getDayName(
       parseInt(start, 10),
       dayOfWeekStartIndexZero,
@@ -129,13 +130,12 @@ export const getDayOfWeekDescription = (
         : day;
     });
 
-    if (dayNames.length === 1) {
-      const dayName = dayNames[0];
+    const [dayName] = dayNames;
+    if (dayNames.length === 1 && isDefined(dayName)) {
       return t`only on ${dayName}`;
     }
-    if (dayNames.length === 2) {
-      const firstDay = dayNames[0];
-      const secondDay = dayNames[1];
+    const [firstDay, secondDay] = dayNames;
+    if (dayNames.length === 2 && isDefined(firstDay) && isDefined(secondDay)) {
       return t`only on ${firstDay} and ${secondDay}`;
     }
     const lastDay = dayNames.pop();

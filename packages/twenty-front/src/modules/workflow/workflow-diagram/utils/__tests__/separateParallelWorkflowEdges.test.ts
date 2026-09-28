@@ -90,7 +90,7 @@ describe('parallel workflow branches', () => {
         expect(new Set(paths.map((path) => path.overlayPosition[0])).size).toBe(
           3,
         );
-        expect(new Set(paths.map((path) => path.segments[0].path)).size).toBe(
+        expect(new Set(paths.map((path) => path.segments[0]?.path)).size).toBe(
           3,
         );
       }
@@ -116,12 +116,12 @@ describe('parallel workflow branches', () => {
         ...branchStep.settings,
         input: {
           ...branchStep.settings.input,
-          branches: [
-            {
-              ...branchStep.settings.input.branches[0],
+          branches: branchStep.settings.input.branches
+            .slice(0, 1)
+            .map((branch) => ({
+              ...branch,
               nextStepIds: ['target', 'target'],
-            },
-          ],
+            })),
         },
       },
     };
@@ -154,8 +154,8 @@ describe('parallel workflow branches', () => {
     expect(new Set(diagram.edges.map((edge) => edge.targetHandle)).size).toBe(
       4,
     );
-    expect(diagram.edges[0].data?.parallelEdgeOffset).toBeUndefined();
-    expect(diagram.edges[0].data?.edgePathStrategy).toBeUndefined();
+    expect(diagram.edges[0]?.data?.parallelEdgeOffset).toBeUndefined();
+    expect(diagram.edges[0]?.data?.edgePathStrategy).toBeUndefined();
   });
 
   it('restores default routing once branches no longer share a destination', () => {

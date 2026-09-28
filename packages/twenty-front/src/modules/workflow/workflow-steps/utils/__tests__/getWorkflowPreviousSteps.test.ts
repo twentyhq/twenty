@@ -1,9 +1,15 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 describe('getWorkflowPreviousSteps', () => {
   describe('using a simple workflow', () => {
-    const mockWorkflow: WorkflowStep[] = [
+    const mockWorkflow: [
+      WorkflowStep,
+      WorkflowStep,
+      WorkflowStep,
+      WorkflowStep,
+    ] = [
       {
         id: 'step1',
         name: 'First Step',
@@ -107,7 +113,7 @@ describe('getWorkflowPreviousSteps', () => {
     });
 
     it('should handle circular dependencies', () => {
-      const circularWorkflow = [...mockWorkflow];
+      const circularWorkflow: typeof mockWorkflow = [...mockWorkflow];
       circularWorkflow[3].nextStepIds = ['step1']; // Make step4 point back to step1
 
       const result = getPreviousSteps({
@@ -154,19 +160,24 @@ describe('getWorkflowPreviousSteps', () => {
       },
     ] as WorkflowStep[];
 
+    const [iteratorStep, loopStep, stepAfterLoop] = mockWorkflowWithIterator;
+    assertIsDefinedOrThrow(iteratorStep);
+    assertIsDefinedOrThrow(loopStep);
+    assertIsDefinedOrThrow(stepAfterLoop);
+
     it('should consider iterator step as parent of loop steps', () => {
       const result = getPreviousSteps({
         steps: mockWorkflowWithIterator,
-        currentStep: mockWorkflowWithIterator[1],
+        currentStep: loopStep,
       });
 
-      expect(result).toEqual([mockWorkflowWithIterator[0]]);
+      expect(result).toEqual([iteratorStep]);
     });
 
     it('should not consider loop step as parent of iterator', () => {
       const result = getPreviousSteps({
         steps: mockWorkflowWithIterator,
-        currentStep: mockWorkflowWithIterator[0],
+        currentStep: iteratorStep,
       });
 
       expect(result).toEqual([]);
@@ -175,10 +186,10 @@ describe('getWorkflowPreviousSteps', () => {
     it('should consider iterator step as parent of non-loop steps', () => {
       const result = getPreviousSteps({
         steps: mockWorkflowWithIterator,
-        currentStep: mockWorkflowWithIterator[2],
+        currentStep: stepAfterLoop,
       });
 
-      expect(result).toEqual([mockWorkflowWithIterator[0]]);
+      expect(result).toEqual([iteratorStep]);
     });
   });
 });

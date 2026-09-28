@@ -5,7 +5,7 @@ describe('getWrongExportedFunctionMarkers', () => {
     const value = 'const main = async () => {}';
     const result = getWrongExportedFunctionMarkers(value);
     expect(result.length).toEqual(1);
-    expect(result[0].message).toEqual(
+    expect(result[0]?.message).toEqual(
       'An exported "main" arrow function is required.',
     );
   });

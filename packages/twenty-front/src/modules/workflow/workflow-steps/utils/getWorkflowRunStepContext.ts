@@ -41,9 +41,13 @@ export const getWorkflowRunStepContext = ({
   let isInLoop = isDefined(currentLoopIterationIndex);
 
   for (const step of reversedPreviousSteps) {
-    const stepInfoHistory = getWorkflowRunAllStepInfoHistory({
-      stepInfo: stepInfos[step.id],
-    });
+    const stepInfo = stepInfos[step.id];
+
+    if (!isDefined(stepInfo)) {
+      continue;
+    }
+
+    const stepInfoHistory = getWorkflowRunAllStepInfoHistory({ stepInfo });
 
     const historyItemIndex =
       isDefined(currentLoopIterationIndex) && isInLoop
@@ -53,7 +57,7 @@ export const getWorkflowRunStepContext = ({
     reversedPreviousStepsContext.push({
       id: step.id,
       name: step.name,
-      context: stepInfoHistory[historyItemIndex].result,
+      context: stepInfoHistory[historyItemIndex]?.result,
     });
 
     if (step.type === 'ITERATOR') {
@@ -65,7 +69,7 @@ export const getWorkflowRunStepContext = ({
     {
       id: TRIGGER_STEP_ID,
       name: flow.trigger.name ?? 'Trigger',
-      context: stepInfos[TRIGGER_STEP_ID].result,
+      context: stepInfos[TRIGGER_STEP_ID]?.result,
     },
     ...reversedPreviousStepsContext.toReversed(),
   ];

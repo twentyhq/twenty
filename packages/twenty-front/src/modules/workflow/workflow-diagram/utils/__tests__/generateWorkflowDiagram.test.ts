@@ -91,12 +91,12 @@ describe('generateWorkflowDiagram', () => {
     expect(result.nodes).toHaveLength(steps.length + 1); // All steps + trigger
     expect(result.edges).toHaveLength(steps.length - 1 + 1); // Edges are one less than nodes + the edge from the trigger to the first node
 
-    expect(result.nodes[0].data.nodeType).toBe('trigger');
+    expect(result.nodes[0]?.data.nodeType).toBe('trigger');
 
     const stepNodes = result.nodes.slice(1);
 
     for (const [index, step] of steps.entries()) {
-      expect(stepNodes[index].data).toEqual({
+      expect(stepNodes[index]?.data).toEqual({
         nodeType: 'action',
         actionType: 'CODE',
         name: step.name,
@@ -168,11 +168,11 @@ describe('generateWorkflowDiagram', () => {
     expect(result.edges.length).toEqual(2);
     expect(result.nodes.length).toEqual(3);
 
-    expect(result.edges[0].source).toEqual('trigger');
-    expect(result.edges[0].target).toEqual('step1');
+    expect(result.edges[0]?.source).toEqual('trigger');
+    expect(result.edges[0]?.target).toEqual('step1');
 
-    expect(result.edges[1].source).toEqual('step1');
-    expect(result.edges[1].target).toEqual('step2');
+    expect(result.edges[1]?.source).toEqual('step1');
+    expect(result.edges[1]?.target).toEqual('step2');
   });
 
   it('should take nextStepIds into account', () => {
@@ -233,11 +233,11 @@ describe('generateWorkflowDiagram', () => {
     expect(result.edges.length).toEqual(2);
     expect(result.nodes.length).toEqual(3);
 
-    expect(result.edges[0].source).toEqual('trigger');
-    expect(result.edges[0].target).toEqual('step2');
+    expect(result.edges[0]?.source).toEqual('trigger');
+    expect(result.edges[0]?.target).toEqual('step2');
 
-    expect(result.edges[1].source).toEqual('step2');
-    expect(result.edges[1].target).toEqual('step1');
+    expect(result.edges[1]?.source).toEqual('step2');
+    expect(result.edges[1]?.target).toEqual('step1');
   });
 
   it('should take nextStepIds into account for complex diagram', () => {
@@ -316,17 +316,17 @@ describe('generateWorkflowDiagram', () => {
     expect(result.edges.length).toEqual(4);
     expect(result.nodes.length).toEqual(4);
 
-    expect(result.edges[0].source).toEqual('trigger');
-    expect(result.edges[0].target).toEqual('step2');
+    expect(result.edges[0]?.source).toEqual('trigger');
+    expect(result.edges[0]?.target).toEqual('step2');
 
-    expect(result.edges[1].source).toEqual('trigger');
-    expect(result.edges[1].target).toEqual('step3');
+    expect(result.edges[1]?.source).toEqual('trigger');
+    expect(result.edges[1]?.target).toEqual('step3');
 
-    expect(result.edges[2].source).toEqual('step2');
-    expect(result.edges[2].target).toEqual('step1');
+    expect(result.edges[2]?.source).toEqual('step2');
+    expect(result.edges[2]?.target).toEqual('step1');
 
-    expect(result.edges[3].source).toEqual('step3');
-    expect(result.edges[3].target).toEqual('step1');
+    expect(result.edges[3]?.source).toEqual('step3');
+    expect(result.edges[3]?.target).toEqual('step1');
   });
 
   it('makes If/Else branch edges reconnectable only in editable workflows', () => {

@@ -6,6 +6,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '@/workflow/workflow-trigger/utils/cron-to-human/types/CronDescriptionOptions';
+import { splitCronValuePair } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/splitCronValuePair';
 
 const getMonthName = (
   monthNum: number,
@@ -40,7 +41,7 @@ export const getMonthsDescription = (
 
   // Step values (e.g., "*/3" = every 3 months)
   if (isStepValue(months)) {
-    const [range, step] = months.split('/');
+    const [range, step] = splitCronValuePair(months, '/');
     const stepNum = parseInt(step, 10);
     const stepNumStr = stepNum.toString();
 
@@ -53,7 +54,7 @@ export const getMonthsDescription = (
 
     // Range with step (e.g., "1-6/2")
     if (range.includes('-')) {
-      const [start, end] = range.split('-');
+      const [start, end] = splitCronValuePair(range, '-');
       const startMonth = getMonthName(
         parseInt(start, 10),
         monthStartIndexZero,
@@ -72,7 +73,7 @@ export const getMonthsDescription = (
 
   // Range values (e.g., "1-6")
   if (isNumericRange(months) && months.includes('-')) {
-    const [start, end] = months.split('-');
+    const [start, end] = splitCronValuePair(months, '-');
     const startMonth = getMonthName(
       parseInt(start, 10),
       monthStartIndexZero,
@@ -95,13 +96,16 @@ export const getMonthsDescription = (
         : month;
     });
 
-    if (monthNames.length === 1) {
-      const monthName = monthNames[0];
+    const [monthName] = monthNames;
+    if (monthNames.length === 1 && isDefined(monthName)) {
       return t`only in ${monthName}`;
     }
-    if (monthNames.length === 2) {
-      const firstMonth = monthNames[0];
-      const secondMonth = monthNames[1];
+    const [firstMonth, secondMonth] = monthNames;
+    if (
+      monthNames.length === 2 &&
+      isDefined(firstMonth) &&
+      isDefined(secondMonth)
+    ) {
       return t`only in ${firstMonth} and ${secondMonth}`;
     }
     const lastMonth = monthNames.pop();

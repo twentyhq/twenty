@@ -6,6 +6,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '@/workflow/workflow-trigger/utils/cron-to-human/types/CronDescriptionOptions';
+import { splitCronValuePair } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/splitCronValuePair';
 
 export const getHoursDescription = (
   hours: string,
@@ -23,7 +24,7 @@ export const getHoursDescription = (
   }
 
   if (isStepValue(hours)) {
-    const [range, step] = hours.split('/');
+    const [range, step] = splitCronValuePair(hours, '/');
     const stepNum = parseInt(step, 10);
 
     if (range === '*') {
@@ -35,7 +36,7 @@ export const getHoursDescription = (
     }
 
     if (range.includes('-')) {
-      const [start, end] = range.split('-');
+      const [start, end] = splitCronValuePair(range, '-');
       const stepNumStr = stepNum.toString();
       const startTime = formatCronTime({
         hour: start,
@@ -57,7 +58,7 @@ export const getHoursDescription = (
   }
 
   if (isNumericRange(hours) && hours.includes('-')) {
-    const [start, end] = hours.split('-');
+    const [start, end] = splitCronValuePair(hours, '-');
     const startTime = formatCronTime({
       hour: start,
       minute: '0',
@@ -84,9 +85,12 @@ export const getHoursDescription = (
       }),
     );
 
-    if (formattedTimes.length === 2) {
-      const firstTime = formattedTimes[0];
-      const secondTime = formattedTimes[1];
+    const [firstTime, secondTime] = formattedTimes;
+    if (
+      formattedTimes.length === 2 &&
+      isDefined(firstTime) &&
+      isDefined(secondTime)
+    ) {
       return t`at ${firstTime} and ${secondTime}`;
     }
     const lastTime = formattedTimes.pop();

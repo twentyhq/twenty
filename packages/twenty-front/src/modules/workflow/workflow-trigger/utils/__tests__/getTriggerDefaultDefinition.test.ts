@@ -26,7 +26,7 @@ describe('getTriggerDefaultDefinition', () => {
       type: 'DATABASE_EVENT',
       name: 'Record is created',
       settings: {
-        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.created`,
+        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0]?.nameSingular}.created`,
         outputSchema: {},
       },
       position: {
@@ -48,7 +48,7 @@ describe('getTriggerDefaultDefinition', () => {
       type: 'DATABASE_EVENT',
       name: 'Record is updated',
       settings: {
-        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.updated`,
+        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0]?.nameSingular}.updated`,
         outputSchema: {},
       },
       position: {
@@ -70,7 +70,7 @@ describe('getTriggerDefaultDefinition', () => {
       type: 'DATABASE_EVENT',
       name: 'Record is deleted',
       settings: {
-        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.deleted`,
+        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0]?.nameSingular}.deleted`,
         outputSchema: {},
       },
       position: {

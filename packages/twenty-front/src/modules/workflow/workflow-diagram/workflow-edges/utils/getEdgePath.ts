@@ -21,6 +21,13 @@ type GetEdgePathParams = Pick<
   parallelEdgeOffset?: number;
 };
 
+type EdgePath = {
+  segments: Array<
+    Pick<GetEdgePathParams, 'markerStart' | 'markerEnd'> & { path: string }
+  >;
+  overlayPosition: [number, number];
+};
+
 export const getEdgePath = ({
   sourceX,
   sourceY,
@@ -32,7 +39,7 @@ export const getEdgePath = ({
   markerEnd,
   strategy,
   parallelEdgeOffset,
-}: GetEdgePathParams) => {
+}: GetEdgePathParams): EdgePath => {
   if (strategy === 'parallel-edge' && sourceY < targetY) {
     const middleX = (sourceX + targetX) / 2 + (parallelEdgeOffset ?? 0);
     const middleY = (sourceY + targetY) / 2;

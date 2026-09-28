@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type FakeValueTypes =
   | string
@@ -38,6 +39,10 @@ const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
       const [key, propertyValueType] = property
         .split(':')
         .map((segment) => segment.trim());
+
+      if (!isDefined(key) || !isDefined(propertyValueType)) {
+        return;
+      }
 
       objData[key] = generateFakeValue(propertyValueType);
     });
