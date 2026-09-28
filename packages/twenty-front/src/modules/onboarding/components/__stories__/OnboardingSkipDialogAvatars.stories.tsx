@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { OnboardingSkipDialogAvatars } from '@/onboarding/components/OnboardingSkipDialogAvatars';
@@ -22,7 +22,15 @@ const meta: Meta<typeof OnboardingSkipDialogAvatars> = {
 export default meta;
 type Story = StoryObj<typeof OnboardingSkipDialogAvatars>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    await waitFor(() =>
+      expect(within(canvasElement).getAllByRole('presentation')).toHaveLength(
+        ONBOARDING_NETWORK_PREVIEW_PEOPLE.length,
+      ),
+    );
+  },
+};
 
 export const CapsVisibleAvatars: Story = {
   args: {

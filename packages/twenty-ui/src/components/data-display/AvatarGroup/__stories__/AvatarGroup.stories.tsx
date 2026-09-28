@@ -73,6 +73,13 @@ export const WithRing: Story = {
       overlapOffset="4px"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('S')).toBeVisible();
+    await expect(canvas.getByText('L')).toBeVisible();
+    await expect(canvas.getAllByText('J')).toHaveLength(2);
+  },
 };
 
 export const Catalog: Story = {

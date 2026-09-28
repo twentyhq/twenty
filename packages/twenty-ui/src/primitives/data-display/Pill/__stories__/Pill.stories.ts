@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { IconCoins } from '@ui/icon';
 import { Pill } from '@ui/primitives/data-display/Pill/Pill';
@@ -45,4 +46,13 @@ export const Catalog: CatalogStory<Story, typeof Pill> = {
     },
   },
   decorators: [CatalogDecorator],
+  play: async ({ canvasElement }) => {
+    const pills = await within(canvasElement).findAllByText('+2');
+
+    await expect(pills).toHaveLength(4);
+
+    for (const pill of pills) {
+      await expect(pill).toBeVisible();
+    }
+  },
 };
