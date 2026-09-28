@@ -16,7 +16,6 @@ const StyledCard = styled.div`
 `;
 
 const StyledHeader = styled.label<{ hasBody: boolean; hasNote: boolean }>`
-  align-items: center;
   background-color: transparent;
   border: none;
   border-bottom: ${({ hasBody }) =>
@@ -24,30 +23,28 @@ const StyledHeader = styled.label<{ hasBody: boolean; hasNote: boolean }>`
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
   padding: ${({ hasNote }) =>
     hasNote
       ? `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]}`
       : themeCssVariables.spacing[3]};
-  position: relative;
   text-align: left;
   width: 100%;
-`;
-
-const StyledHeaderLeft = styled.div<{ hasNote: boolean }>`
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  min-width: 0;
-  padding-right: ${({ hasNote }) =>
-    hasNote ? themeCssVariables.spacing[8] : '0'};
 `;
 
 const StyledTitleRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledTitleText = styled.div`
+  align-items: baseline;
+  display: flex;
+  flex: 1 1 0;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
 const StyledTitle = styled.span`
@@ -80,13 +77,6 @@ const StyledNote = styled.span`
   line-height: 1.4;
 `;
 
-const StyledHeaderRight = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  min-height: ${themeCssVariables.spacing[6]};
-`;
-
 const StyledBadge = styled.span`
   align-items: center;
   background-color: ${themeCssVariables.grayScale.gray3};
@@ -106,21 +96,20 @@ const StyledRadioContainer = styled.div`
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;
-  position: absolute;
-  right: ${themeCssVariables.spacing[2]};
-  top: ${themeCssVariables.spacing[2]};
   width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledBody = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
   padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
 `;
 
 type OnboardingPlanCardProps = {
   title: string;
   titleSuffix?: string;
+  tags?: ReactNode;
   note?: string;
   badge?: string;
   value: boolean;
@@ -130,6 +119,7 @@ type OnboardingPlanCardProps = {
 export const OnboardingPlanCard = ({
   title,
   titleSuffix,
+  tags,
   note,
   badge,
   value,
@@ -143,31 +133,26 @@ export const OnboardingPlanCard = ({
   return (
     <StyledCard>
       <StyledHeader hasBody={hasBody} hasNote={hasNote}>
-        <StyledHeaderLeft hasNote={hasNote}>
-          <StyledTitleRow>
+        <StyledTitleRow>
+          <StyledTitleText>
             <StyledTitle id={titleId}>{title}</StyledTitle>
             {isDefined(titleSuffix) && (
               <StyledTitleSuffix isEmphasized={hasNote}>
                 {titleSuffix}
               </StyledTitleSuffix>
             )}
-          </StyledTitleRow>
-          {hasNote && <StyledNote id={noteId}>{note}</StyledNote>}
-        </StyledHeaderLeft>
-        {hasNote ? (
+          </StyledTitleText>
+          {tags}
+          {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
           <StyledRadioContainer>
             <Radio
               value={value}
               aria-labelledby={titleId}
-              aria-describedby={noteId}
+              aria-describedby={hasNote ? noteId : undefined}
             />
           </StyledRadioContainer>
-        ) : (
-          <StyledHeaderRight>
-            {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
-            <Radio value={value} aria-labelledby={titleId} />
-          </StyledHeaderRight>
-        )}
+        </StyledTitleRow>
+        {hasNote && <StyledNote id={noteId}>{note}</StyledNote>}
       </StyledHeader>
       {hasBody && <StyledBody>{children}</StyledBody>}
     </StyledCard>

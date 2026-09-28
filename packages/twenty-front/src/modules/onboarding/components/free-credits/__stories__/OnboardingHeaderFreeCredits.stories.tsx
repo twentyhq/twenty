@@ -196,6 +196,37 @@ export const NewlyEarned: Story = {
   },
 };
 
+export const LostUpgradeCredits: Story = {
+  beforeEach: () => {
+    seedOnboardingFreeCredits({
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      onboardingFreeCredits: {
+        importContacts: 1,
+        upgradeTrial: 2,
+        seenCredits: 3,
+      },
+    });
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByRole('button', {
+      name: /free credits/,
+    });
+
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      (onboardingFreeCredits) => ({
+        ...onboardingFreeCredits,
+        upgradeTrial: 0,
+        seenCredits: 1,
+      }),
+    );
+
+    await expect(
+      await within(canvasElement).findByText('−2'),
+    ).toBeInTheDocument();
+  },
+};
+
 export const CreditsWorth: Story = {
   beforeEach: () => {
     seedOnboardingFreeCredits({

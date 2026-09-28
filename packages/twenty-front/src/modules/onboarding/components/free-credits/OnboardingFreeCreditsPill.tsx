@@ -7,6 +7,7 @@ import { StyledOnboardingFreeCreditsLabel } from '@/onboarding/components/free-c
 import { StyledOnboardingFreeCreditsText } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsText';
 import { useOnboardingFreeCreditsTooltipContent } from '@/onboarding/hooks/useOnboardingFreeCreditsTooltipContent';
 import { useMarkOnboardingFreeCreditsAsSeen } from '@/onboarding/hooks/useMarkOnboardingFreeCreditsAsSeen';
+import { useOnboardingUpgradeTrialCreditsLoss } from '@/onboarding/hooks/useOnboardingUpgradeTrialCreditsLoss';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
@@ -143,6 +144,8 @@ export const OnboardingFreeCreditsPill = ({
     isFirstCreditsGain,
   } = progress;
   const markCreditsAsSeen = useMarkOnboardingFreeCreditsAsSeen();
+  const { lostCredits, lossCount, clearCreditsLoss } =
+    useOnboardingUpgradeTrialCreditsLoss();
   const tooltipContent = useOnboardingFreeCreditsTooltipContent({
     currentStep,
     newlyEarnedCredits,
@@ -150,6 +153,7 @@ export const OnboardingFreeCreditsPill = ({
   });
 
   const hasNewlyEarnedCredits = newlyEarnedCredits > 0;
+  const shouldShowLostCredits = lostCredits > 0 && !hasNewlyEarnedCredits;
   const isEarningFirstCredits = goalCredits <= 0;
   const highlight =
     isEarningFirstCredits || hasNewlyEarnedCredits ? 'earned' : undefined;
@@ -158,6 +162,10 @@ export const OnboardingFreeCreditsPill = ({
     currentStepCredits,
     numberFormat,
   );
+
+  const creditsChangeDelay = hasTrackGrown
+    ? theme.animation.duration.normal
+    : theme.animation.duration.normal * 2;
 
   const tooltipSlideOffset = shouldReduceMotion
     ? 0
@@ -170,12 +178,19 @@ export const OnboardingFreeCreditsPill = ({
           <OnboardingFreeCreditsChange
             key={newlyEarnedCredits}
             label={`+${formatOnboardingCredits(newlyEarnedCredits, numberFormat)}`}
-            delay={
-              hasTrackGrown
-                ? theme.animation.duration.normal
-                : theme.animation.duration.normal * 2
-            }
+            delay={creditsChangeDelay}
             onDisplayed={markCreditsAsSeen}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {shouldShowLostCredits && (
+          <OnboardingFreeCreditsChange
+            key={`lost-${lossCount}`}
+            label={`−${formatOnboardingCredits(lostCredits, numberFormat)}`}
+            isLost
+            delay={creditsChangeDelay}
+            onDisplayed={clearCreditsLoss}
           />
         )}
       </AnimatePresence>

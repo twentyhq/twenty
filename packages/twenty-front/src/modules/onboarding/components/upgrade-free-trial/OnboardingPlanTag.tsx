@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { IconCoins } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledTag = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.color.green3};
   border: 1px solid ${themeCssVariables.color.green4};
-  border-radius: ${themeCssVariables.border.radius.xxl};
+  border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: ${themeCssVariables.color.green9};
   corner-shape: round;
@@ -19,37 +19,36 @@ const StyledTag = styled.div`
 `;
 
 const StyledLabel = styled.span`
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: 1.4;
-`;
-
-const StyledSuffix = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: 1.4;
 `;
 
-type OnboardingCreditsRewardTagProps = {
-  amount: number;
+const StyledValue = styled.span`
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
+type OnboardingPlanTagProps = {
+  Icon: IconComponent;
+  prefix?: string;
+  value: string;
   suffix?: string;
 };
 
-export const OnboardingCreditsRewardTag = ({
-  amount,
+export const OnboardingPlanTag = ({
+  Icon,
+  prefix,
+  value,
   suffix,
-}: OnboardingCreditsRewardTagProps) => {
-  const { t } = useLingui();
+}: OnboardingPlanTagProps) => {
   const theme = useTheme();
 
   return (
     <StyledTag>
-      <IconCoins
-        size={theme.icon.size.md}
-        color={themeCssVariables.color.green9}
-      />
-      <StyledLabel>{t`Earn +${amount}`}</StyledLabel>
-      <StyledSuffix>{suffix ?? t`free credits`}</StyledSuffix>
+      <Icon size={theme.icon.size.md} color={themeCssVariables.color.green9} />
+      {isDefined(prefix) && <StyledLabel>{prefix}</StyledLabel>}
+      <StyledValue>{value}</StyledValue>
+      {isDefined(suffix) && <StyledLabel>{suffix}</StyledLabel>}
     </StyledTag>
   );
 };

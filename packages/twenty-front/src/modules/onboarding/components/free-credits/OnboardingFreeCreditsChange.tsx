@@ -1,3 +1,4 @@
+import { ONBOARDING_LOST_CREDITS_DISPLAY_DURATION_S } from '@/onboarding/constants/OnboardingLostCreditsDisplayDurationS';
 import { ONBOARDING_NEWLY_EARNED_CREDITS_DISPLAY_DURATION_S } from '@/onboarding/constants/OnboardingNewlyEarnedCreditsDisplayDurationS';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -7,16 +8,22 @@ const StyledChange = styled(motion.span)`
   color: ${themeCssVariables.color.green9};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
+
+  &[data-lost] {
+    color: ${themeCssVariables.font.color.tertiary};
+  }
 `;
 
 type OnboardingFreeCreditsChangeProps = {
   label: string;
+  isLost?: boolean;
   delay: number;
   onDisplayed: () => void;
 };
 
 export const OnboardingFreeCreditsChange = ({
   label,
+  isLost = false,
   delay,
   onDisplayed,
 }: OnboardingFreeCreditsChangeProps) => {
@@ -25,18 +32,21 @@ export const OnboardingFreeCreditsChange = ({
 
   const fadeInDuration = theme.animation.duration.normal;
   const fadeOutDuration = theme.animation.duration.fast;
-  const displayDuration =
-    ONBOARDING_NEWLY_EARNED_CREDITS_DISPLAY_DURATION_S + fadeOutDuration;
+  const visibleDuration = isLost
+    ? ONBOARDING_LOST_CREDITS_DISPLAY_DURATION_S
+    : ONBOARDING_NEWLY_EARNED_CREDITS_DISPLAY_DURATION_S;
+  const displayDuration = visibleDuration + fadeOutDuration;
   const fadeTimes = [
     0,
     fadeInDuration / displayDuration,
-    ONBOARDING_NEWLY_EARNED_CREDITS_DISPLAY_DURATION_S / displayDuration,
+    visibleDuration / displayDuration,
     1,
   ];
   const slideOffset = shouldReduceMotion ? 0 : theme.spacingMultiplicator * 2;
 
   return (
     <StyledChange
+      data-lost={isLost || undefined}
       variants={{
         hidden: {
           opacity: 0,

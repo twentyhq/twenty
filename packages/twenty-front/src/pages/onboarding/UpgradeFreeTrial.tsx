@@ -3,58 +3,64 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
 import { CAL_LINK } from '@/onboarding/constants/CalLink';
+import { OnboardingPlanTag } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanTag';
 import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
+import { useSubmitUpgradeFreeTrialPayment } from '@/onboarding/hooks/useSubmitUpgradeFreeTrialPayment';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
-import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Elements, PaymentElement } from '@stripe/react-stripe-js';
+import {
+  Elements,
+  ExpressCheckoutElement,
+  PaymentElement,
+} from '@stripe/react-stripe-js';
+import { type ReactNode, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, MainButton } from 'twenty-ui/components';
+import { IconCalendarEvent, IconCoins } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button, RadioGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
   type BillingPlanKey,
   type SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
-const StyledPage = styled(StyledOnboardingStepPage)`
-  gap: ${themeCssVariables.spacing[5]};
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
-  }
+const StyledSubtitleEmphasis = styled.span`
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledCards = styled(StyledOnboardingContentBlock)`
-  gap: ${themeCssVariables.spacing['1.5']};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledFooter = styled(StyledOnboardingContentBlock)`
   align-items: center;
-  gap: ${themeCssVariables.spacing['1.5']};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledLinkGroup = styled.div`
@@ -74,36 +80,67 @@ const StyledLinkGroup = styled.div`
 
 type UpgradeFreeTrialProps = {
   billing: Billing;
-  creditsReward?: number;
+};
+
+const EXPRESS_CHECKOUT_BUTTON_HEIGHT_PX = 40;
+
+const StyledExpressCheckout = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+`;
+
+type UpgradeFreeTrialExpressCheckoutProps = {
+  plan: BillingPlanKey;
+  recurringInterval: SubscriptionInterval;
+};
+
+const UpgradeFreeTrialExpressCheckout = ({
+  plan,
+  recurringInterval,
+}: UpgradeFreeTrialExpressCheckoutProps) => {
+  const { t } = useLingui();
+  const [hasExpressCheckout, setHasExpressCheckout] = useState(false);
+
+  const { handleSubmit } = useSubmitUpgradeFreeTrialPayment({
+    plan,
+    recurringInterval,
+  });
+
+  return (
+    <div hidden={!hasExpressCheckout}>
+      <StyledExpressCheckout>
+        <ExpressCheckoutElement
+          options={{
+            buttonHeight: EXPRESS_CHECKOUT_BUTTON_HEIGHT_PX,
+            paymentMethods: { link: 'never' },
+          }}
+          onReady={({ availablePaymentMethods }) =>
+            setHasExpressCheckout(isDefined(availablePaymentMethods))
+          }
+          onConfirm={handleSubmit}
+        />
+        <HorizontalSeparator text={t`Or`} noMargin />
+      </StyledExpressCheckout>
+    </div>
+  );
 };
 
 type UpgradeFreeTrialSubmitButtonProps = {
   plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
+  endIcon: ReactNode;
 };
 
 const UpgradeFreeTrialSubmitButton = ({
   plan,
   recurringInterval,
+  endIcon,
 }: UpgradeFreeTrialSubmitButtonProps) => {
   const { t } = useLingui();
 
-  const { submit, isSubmitting, isStripeReady } = useSubmitSubscriptionPayment({
-    plan,
-    recurringInterval,
-  });
-
-  const setIsOnboardingCheckoutPending = useSetAtomState(
-    isOnboardingCheckoutPendingState,
-  );
-  const setOnboardingUpgradeTrialFreeCredits =
-    useSetOnboardingUpgradeTrialFreeCredits();
-
-  const handleSubmit = () => {
-    setOnboardingUpgradeTrialFreeCredits(true);
-    setIsOnboardingCheckoutPending(true);
-    void submit();
-  };
+  const { handleSubmit, isSubmitting, isStripeReady } =
+    useSubmitUpgradeFreeTrialPayment({ plan, recurringInterval });
 
   return (
     <MainButton
@@ -111,24 +148,35 @@ const UpgradeFreeTrialSubmitButton = ({
       fullWidth
       startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
-    >{t`Continue`}</MainButton>
+      endIcon={endIcon}
+    >
+      {t`Continue`}
+    </MainButton>
   );
 };
 
 type UpgradeFreeTrialContentProps = {
   billing: Billing;
   isPaymentAvailable: boolean;
+  trialDuration?: number;
 };
 
 const UpgradeFreeTrialContent = ({
   billing,
   isPaymentAvailable,
+  trialDuration,
 }: UpgradeFreeTrialContentProps) => {
   const { t } = useLingui();
 
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
     useBaseLicensedPriceByPlanKeyAndInterval();
 
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const upgradeCreditsReward = onboardingConfig?.upgradeCreditsReward ?? 0;
+  const { formatNumber } = useNumberFormat();
+  const formattedUpgradeCreditsReward = formatNumber(upgradeCreditsReward, {
+    decimals: 2,
+  });
   const [billingCheckoutSession, setBillingCheckoutSession] = useAtomState(
     billingCheckoutSessionState,
   );
@@ -186,10 +234,16 @@ const UpgradeFreeTrialContent = ({
   };
 
   const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
+  const upgradeCreditsChip =
+    upgradeCreditsReward > 0 ? (
+      <OnboardingCreditsRewardChip
+        formattedCreditsReward={formattedUpgradeCreditsReward}
+      />
+    ) : undefined;
 
   return (
     <>
-      <OnboardingStepAnimatedItem index={3}>
+      <OnboardingStepAnimatedItem index={2}>
         <RadioGroup
           render={<StyledCards />}
           aria-label={t`Trial plan`}
@@ -199,20 +253,47 @@ const UpgradeFreeTrialContent = ({
           <OnboardingPlanCard
             title={t`Upgraded`}
             titleSuffix={t`· FREE`}
+            tags={
+              <>
+                {isDefined(trialDuration) && (
+                  <OnboardingPlanTag
+                    Icon={IconCalendarEvent}
+                    value={`${trialDuration}`}
+                    suffix={t`days`}
+                  />
+                )}
+                {upgradeCreditsReward > 0 && (
+                  <OnboardingPlanTag
+                    Icon={IconCoins}
+                    value={`+${formattedUpgradeCreditsReward}`}
+                  />
+                )}
+              </>
+            }
             note={t`No charge will be made. You'll receive an email reminder 7 days before it ends.`}
             value={true}
           >
             {requirePaymentMethod &&
               (isPaymentAvailable ? (
-                <PaymentElement
-                  options={{
-                    layout: 'tabs',
-                    defaultValues: isDefined(customerEmail)
-                      ? { billingDetails: { email: customerEmail } }
-                      : undefined,
-                    terms: { card: 'never' },
-                  }}
-                />
+                <>
+                  <UpgradeFreeTrialExpressCheckout
+                    plan={billingCheckoutSession.plan}
+                    recurringInterval={billingCheckoutSession.interval}
+                  />
+                  <PaymentElement
+                    options={{
+                      layout: 'tabs',
+                      defaultValues: isDefined(customerEmail)
+                        ? { billingDetails: { email: customerEmail } }
+                        : undefined,
+                      terms: { card: 'never' },
+                      wallets: {
+                        applePay: 'never',
+                        googlePay: 'never',
+                      },
+                    }}
+                  />
+                </>
               ) : (
                 <Info
                   accent="danger"
@@ -232,16 +313,19 @@ const UpgradeFreeTrialContent = ({
         </RadioGroup>
       </OnboardingStepAnimatedItem>
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
           {requirePaymentMethod ? (
             isPaymentAvailable ? (
               <UpgradeFreeTrialSubmitButton
                 plan={billingCheckoutSession.plan}
                 recurringInterval={billingCheckoutSession.interval}
+                endIcon={upgradeCreditsChip}
               />
             ) : (
-              <MainButton fullWidth disabled>{t`Continue`}</MainButton>
+              <MainButton fullWidth disabled endIcon={upgradeCreditsChip}>
+                {t`Continue`}
+              </MainButton>
             )
           ) : (
             <MainButton
@@ -249,7 +333,9 @@ const UpgradeFreeTrialContent = ({
               fullWidth
               startIcon={isCheckoutSubmitting ? <Loader /> : null}
               disabled={isCheckoutSubmitting}
-            >{t`Continue`}</MainButton>
+            >
+              {t`Continue`}
+            </MainButton>
           )}
           <StyledLinkGroup>
             <Button variant="link" onClick={signOut}>
@@ -271,10 +357,7 @@ const UpgradeFreeTrialContent = ({
   );
 };
 
-export const UpgradeFreeTrial = ({
-  billing,
-  creditsReward,
-}: UpgradeFreeTrialProps) => {
+export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const { t } = useLingui();
 
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
@@ -303,27 +386,27 @@ export const UpgradeFreeTrial = ({
   const trialDuration = withCreditCardTrialPeriod?.duration;
 
   return (
-    <StyledPage>
+    <StyledOnboardingStepPage>
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Upgrade your free trial`}</StyledOnboardingStepTitle>
         </OnboardingStepAnimatedItem>
         <OnboardingStepAnimatedItem index={1}>
           <StyledOnboardingStepSubtitle>
-            {isDefined(trialDuration)
-              ? t`Insert your billing details to get a ${trialDuration}-day free trial and more AI credits`
-              : t`Insert your billing details to get a free trial and more AI credits`}
+            {isDefined(trialDuration) ? (
+              <Trans>
+                Insert your billing details to get a {trialDuration}-day{' '}
+                <StyledSubtitleEmphasis>free</StyledSubtitleEmphasis> trial and
+                more AI credits
+              </Trans>
+            ) : (
+              <Trans>
+                Insert your billing details to get a{' '}
+                <StyledSubtitleEmphasis>free</StyledSubtitleEmphasis> trial and
+                more AI credits
+              </Trans>
+            )}
           </StyledOnboardingStepSubtitle>
-        </OnboardingStepAnimatedItem>
-        <OnboardingStepAnimatedItem index={2}>
-          <StyledOnboardingStepTagsRow>
-            {isDefined(trialDuration) && (
-              <OnboardingTrialExtensionTag duration={trialDuration} />
-            )}
-            {isDefined(creditsReward) && (
-              <OnboardingCreditsRewardTag amount={creditsReward} />
-            )}
-          </StyledOnboardingStepTagsRow>
         </OnboardingStepAnimatedItem>
       </StyledOnboardingStepHeading>
 
@@ -338,11 +421,19 @@ export const UpgradeFreeTrial = ({
             appearance,
           }}
         >
-          <UpgradeFreeTrialContent billing={billing} isPaymentAvailable />
+          <UpgradeFreeTrialContent
+            billing={billing}
+            isPaymentAvailable
+            trialDuration={trialDuration}
+          />
         </Elements>
       ) : (
-        <UpgradeFreeTrialContent billing={billing} isPaymentAvailable={false} />
+        <UpgradeFreeTrialContent
+          billing={billing}
+          isPaymentAvailable={false}
+          trialDuration={trialDuration}
+        />
       )}
-    </StyledPage>
+    </StyledOnboardingStepPage>
   );
 };
