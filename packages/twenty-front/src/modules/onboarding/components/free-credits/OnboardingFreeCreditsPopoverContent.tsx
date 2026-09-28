@@ -1,6 +1,7 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
+import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { getOnboardingCreditWorth } from '@/onboarding/utils/getOnboardingCreditWorth';
 import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { styled } from '@linaria/react';
@@ -66,12 +67,9 @@ export const OnboardingFreeCreditsPopoverContent = ({
 }: OnboardingFreeCreditsPopoverContentProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { formatNumber } = useNumberFormat();
+  const { formatNumber, numberFormat } = useNumberFormat();
 
   const { earnedCredits, earnedCreditsByStep } = progress;
-
-  const formatCredits = (credits: number) =>
-    formatNumber(credits, { decimals: 2 });
 
   const creditsSteps: Record<
     OnboardingCreditsStep,
@@ -119,8 +117,8 @@ export const OnboardingFreeCreditsPopoverContent = ({
                 value={null}
                 valueLabel={
                   credits < rewardCredits
-                    ? `${formatCredits(credits)}/${formatCredits(rewardCredits)}`
-                    : formatCredits(credits)
+                    ? `${formatOnboardingCredits(credits, numberFormat)}/${formatOnboardingCredits(rewardCredits, numberFormat)}`
+                    : formatOnboardingCredits(credits, numberFormat)
                 }
               />
             ))}
