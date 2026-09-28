@@ -23,6 +23,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 // A workflow agent's question is answered in its run's conversation, but what
@@ -38,6 +39,7 @@ export class AgentChatWorkflowQuestionService {
     private readonly agentChatService: AgentChatService,
     private readonly permissionsService: PermissionsService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -148,6 +150,15 @@ export class AgentChatWorkflowQuestionService {
       { id: thread.id, activeStreamId: claimId },
       { activeStreamId: null },
     );
+
+    // Recorded once the step is released, so an Ask reads answered only for
+    // an answer the run accepted, and before the resume so a run that then
+    // ends cannot cancel it.
+    await this.inputAskWorkspaceService.answerPendingForThread({
+      workspaceId,
+      threadId: thread.id,
+      response: { answers, answerText: resolved.answerText },
+    });
 
     // Re-executing the released step is what a retry does; the step is no
     // longer awaiting a retry, so the retry path runs it without resetting it.

@@ -1,3 +1,4 @@
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -27,6 +28,7 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
     RoleModule,
     AgentHistoryModule,
     WorkspaceCacheModule,
+    InputAskModule,
   ],
   providers: [
     WorkflowExecutionContextService,

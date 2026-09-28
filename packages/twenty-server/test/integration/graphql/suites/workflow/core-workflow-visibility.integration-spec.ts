@@ -20,6 +20,7 @@ import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
@@ -972,6 +973,142 @@ describe('core workflow visibility (e2e)', () => {
 
       expect(asCreator.body.errors).toBeUndefined();
       expect(asCreator.body.data.chatThread.id).toBe(threadId);
+    });
+  });
+
+  // An Ask has no grants of its own either: whoever reads the run reads its
+  // questions, and nobody else.
+  describe('the Ask an agent question records on a run', () => {
+    let askCoreWorkflowId: string;
+    let askWorkspaceWorkflowId: string;
+    let threadId: string;
+
+    const QUESTIONS = [
+      {
+        header: 'Quote',
+        question: 'Send the quote to the customer?',
+        options: [{ label: 'Send it' }, { label: 'Hold it' }],
+      },
+    ];
+
+    const readAsks = async (
+      requester: (query: string, variables?: object) => request.Test,
+    ) => {
+      const response = await requester(
+        `
+          query ReadAsks($threadId: UUID!) {
+            inputAsks(filter: { threadId: { eq: $threadId } }) {
+              edges {
+                node {
+                  id
+                  status
+                }
+              }
+            }
+          }
+        `,
+        { threadId },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.inputAsks.edges;
+    };
+
+    beforeAll(async () => {
+      let workspaceWorkflowVersionId: string;
+
+      ({
+        coreWorkflowId: askCoreWorkflowId,
+        workspaceWorkflowId: askWorkspaceWorkflowId,
+        workspaceWorkflowVersionId,
+      } = await createActiveManualWorkflow('Workflow With A Question'));
+
+      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
+        input: { workflowVersionId: workspaceWorkflowVersionId },
+      });
+
+      expect(runResponse.body.errors).toBeUndefined();
+
+      const askRunId: string =
+        runResponse.body.data.runWorkflowVersion.workflowRunId;
+      const [{ state }] = await global.testDataSource.query(
+        `SELECT state FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workflowRun" WHERE id = $1`,
+        [askRunId],
+      );
+      const askStepId = state.flow.steps[0].id as string;
+
+      const conversationService =
+        getAppProviderByClassName<WorkflowAgentConversationWorkspaceService>(
+          'WorkflowAgentConversationWorkspaceService',
+        );
+
+      const recordedConversation = await conversationService.recordExecution({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workflowRunId: askRunId,
+        stepId: askStepId,
+        title: 'Draft the quote',
+        agentId: null,
+        prompt: 'Draft the quote',
+        initiatorUserWorkspaceId: null,
+        executionResult: {
+          isPaused: true,
+          steps: [
+            {
+              content: [
+                {
+                  type: 'tool-call',
+                  toolCallId: 'ask-1',
+                  toolName: 'ask_questions',
+                  input: { questions: QUESTIONS },
+                },
+                {
+                  type: 'tool-result',
+                  toolCallId: 'ask-1',
+                  toolName: 'ask_questions',
+                  input: { questions: QUESTIONS },
+                  output: {
+                    success: true,
+                    message: 'Awaiting an answer.',
+                    result: { questions: QUESTIONS, status: 'pending' },
+                  },
+                },
+              ],
+            },
+          ] as AgentExecutionResult['steps'],
+        },
+      });
+
+      expect(recordedConversation?.isAwaitingAnswer).toBe(true);
+      threadId = recordedConversation!.threadId;
+    });
+
+    afterAll(async () => {
+      if (isDefined(askWorkspaceWorkflowId)) {
+        await setVisibility(askCoreWorkflowId, WorkflowVisibility.WORKSPACE);
+        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
+          id: askWorkspaceWorkflowId,
+        });
+      }
+    });
+
+    it('is readable by another member while the workflow is visible to the workspace', async () => {
+      expect(
+        (await setVisibility(askCoreWorkflowId, WorkflowVisibility.WORKSPACE))
+          .body.errors,
+      ).toBeUndefined();
+      // Its status depends on whether the run has finished meanwhile, which
+      // has nothing to do with who may read it.
+      expect(await readAsks(asOtherMember)).toHaveLength(1);
+    });
+
+    it('is hidden from another member once the workflow is private, but not from its creator', async () => {
+      expect(
+        (await setVisibility(askCoreWorkflowId, WorkflowVisibility.PRIVATE))
+          .body.errors,
+      ).toBeUndefined();
+      expect(await readAsks(asOtherMember)).toEqual([]);
+      expect(await readAsks(workflowGraphqlRequest)).toHaveLength(1);
     });
   });
 

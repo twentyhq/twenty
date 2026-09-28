@@ -145,6 +145,86 @@ export class InputAskWorkspaceService {
     });
   }
 
+  // An agent can ask several times in one conversation, each question its own
+  // Ask keyed on the tool call that asked it. The conversation's pending
+  // marker and the run's step stay what gate the answer; this only records
+  // the question where people can find it.
+  async openForAgentQuestion({
+    workspaceId,
+    workflowRunId,
+    stepId,
+    threadId,
+    toolCallId,
+    name,
+    questions,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+    threadId: string;
+    toolCallId: string;
+    name: string;
+    questions: unknown[];
+  }): Promise<void> {
+    if (!(await this.hasInputAskObject(workspaceId))) {
+      return;
+    }
+
+    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      const position = await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
+        workspaceId,
+      });
+
+      try {
+        await inputAskRepository.insert({
+          name,
+          status: InputAskStatus.PENDING,
+          source: InputAskSource.WORKFLOW_RUN_STEP,
+          form: { questions },
+          workflowRunId,
+          stepId,
+          threadId,
+          toolCallId,
+          position,
+        });
+      } catch (error) {
+        // A retried recording of the same question wants the existing row.
+        if (!isDuplicateEntry(error)) {
+          throw error;
+        }
+      }
+    });
+  }
+
+  // A conversation has at most one question pending at a time, the one its
+  // pending marker points at, so the thread alone identifies the Ask.
+  async answerPendingForThread({
+    workspaceId,
+    threadId,
+    response,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    response: Record<string, unknown>;
+  }): Promise<void> {
+    if (!(await this.hasInputAskObject(workspaceId))) {
+      return;
+    }
+
+    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      await inputAskRepository.update(
+        { threadId, status: InputAskStatus.PENDING },
+        {
+          status: InputAskStatus.ANSWERED,
+          response,
+          answeredAt: new Date().toISOString(),
+        },
+      );
+    });
+  }
+
   // A run that ends before its answer arrives leaves the question unanswerable,
   // and an unanswerable question left PENDING sits in someone's list forever.
   async cancelPendingForWorkflowRun({

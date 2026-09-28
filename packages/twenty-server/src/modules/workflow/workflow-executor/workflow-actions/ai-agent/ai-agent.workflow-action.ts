@@ -111,6 +111,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           isDefined(resumedThreadId)
             ? this.workflowAgentConversationService.recordContinuation({
                 workspaceId,
+                workflowRunId: runInfo.workflowRunId,
+                stepId: currentStepId,
                 threadId: resumedThreadId,
                 agentId: agent?.id ?? null,
                 executionResult,

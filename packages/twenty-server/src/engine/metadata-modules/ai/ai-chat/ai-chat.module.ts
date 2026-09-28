@@ -47,6 +47,7 @@ import { MessagePruningService } from './services/message-pruning.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
 
 import { AgentChatWorkflowQuestionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-workflow-question.service';
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
@@ -78,6 +79,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     DashboardToolsModule,
     WorkflowToolsModule,
     WorkflowRunModule,
+    InputAskModule,
   ],
   providers: [
     AgentChatActorService,
