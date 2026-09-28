@@ -16,6 +16,7 @@ import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetCompute
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
@@ -26,6 +27,7 @@ import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/installWindowAliasesPolyfill';
 import { exposeGlobals } from '@/utils/exposeGlobals';
+import { installAriaBooleanPropertyAccessors } from '@/remote/elements/utils/installAriaBooleanPropertyAccessors';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
@@ -41,6 +43,7 @@ import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/c
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
+installAriaBooleanPropertyAccessors();
 installErrorEventBridge();
 
 installDocumentGetElementById(document);
@@ -51,6 +54,16 @@ installClassAttributeAccessors({
   remoteElementPrototypes: resolveRemoteElementPrototypes(),
 });
 installLocalStyleOnBaseElements(Element.prototype);
+
+installSelectorMethodsPolyfill({
+  elementPrototype: Element.prototype,
+  querySelectorTargets: [
+    Element.prototype,
+    DocumentFragment.prototype,
+    document,
+  ],
+  resolveActiveElement: () => null,
+});
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));
 

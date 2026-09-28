@@ -1,17 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
-import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { syncWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-run-record-shares.util';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
@@ -44,8 +42,7 @@ export class WorkflowRunWorkspaceService {
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
     private readonly inputAskWorkspaceService: InputAskWorkspaceService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -119,8 +116,7 @@ export class WorkflowRunWorkspaceService {
 
       // A run is a private record written by the system, so nobody reads it
       // until it carries its workflow's grants.
-      await syncWorkflowRunRecordShares({
-        manager: this.coreDataSource.manager,
+      await this.workflowRunRecordShareService.syncRuns({
         workspaceId,
         workflowRunIds: [id],
       });

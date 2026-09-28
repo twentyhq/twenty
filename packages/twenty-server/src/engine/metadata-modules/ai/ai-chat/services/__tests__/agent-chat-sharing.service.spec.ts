@@ -1,3 +1,4 @@
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 
@@ -12,26 +13,41 @@ const THREAD_ID = '20202020-0000-4000-8000-000000000002';
 const args = {
   workspaceId: WORKSPACE_ID,
   threadId: THREAD_ID,
-  userWorkspaceId: 'reader',
+  workspaceMemberId: 'reader',
 };
 
-const buildService = () => {
+const buildService = (legacyOwnerFieldPresent = true) => {
+  const query = jest.fn().mockResolvedValue([{ id: THREAD_ID }]);
   const thread: Record<string, unknown> = {
     id: THREAD_ID,
-    userWorkspaceId: 'owner',
+    workspaceMemberId: 'owner',
   };
   const threadRepository = {
+    query: jest
+      .fn()
+      .mockImplementation(
+        async (
+          _workspaceId: string,
+          work: (context: AgentHistoryStorageContext) => Promise<unknown>,
+        ) =>
+          work({
+            manager: { query },
+            table: () => '"workspace"."agentChatThread"',
+          } as never),
+      ),
     findOne: jest.fn().mockResolvedValue(thread),
     find: jest.fn().mockResolvedValue([thread]),
   };
   const authContext = {
     workspace: { id: WORKSPACE_ID },
-    userWorkspaceId: 'reader',
+    workspaceMemberId: 'reader',
+    userWorkspaceId: 'reader-membership',
   };
   const userAuthContextService = {
-    resolve: jest.fn().mockResolvedValue(authContext),
+    resolveWorkspaceMember: jest.fn().mockResolvedValue(authContext),
   };
   const repository = {
+    validateWriteIsPermitted: jest.fn(),
     findRecordIdsAllowedForOperation: jest.fn().mockResolvedValue([THREAD_ID]),
     find: jest.fn().mockResolvedValue([{ id: THREAD_ID }]),
   };
@@ -46,7 +62,9 @@ const buildService = () => {
     readability: MetadataReadability.PRIVATE,
   };
   const flatFieldMetadataMaps = {
-    byUniversalIdentifier: {} as Record<string, unknown>,
+    byUniversalIdentifier: (legacyOwnerFieldPresent
+      ? { 'bf830886-b6dc-46e9-a229-eecbb0e66032': { id: 'legacy' } }
+      : {}) as Record<string, unknown>,
   };
   const cache = {
     getOrRecompute: jest.fn().mockResolvedValue({
@@ -77,13 +95,14 @@ const buildService = () => {
   const service = new AgentChatSharingService(
     threadRepository as never,
     userAuthContextService as never,
-    {} as never,
+    { deleteByRecordIdsInTransaction: jest.fn() } as never,
     cache as never,
     aiPermissions as never,
     sharing as never,
     manager as never,
   );
   return {
+    query,
     service,
     thread,
     flatFieldMetadataMaps,
@@ -100,6 +119,31 @@ const buildService = () => {
 };
 
 describe('Conversation common record access', () => {
+  it.each([true, false])(
+    'creates threads before and after legacy owner contraction (legacy field: %s)',
+    async (legacyOwnerFieldPresent) => {
+      const { service, query } = buildService(legacyOwnerFieldPresent);
+      await expect(
+        service.createThread({
+          workspaceId: WORKSPACE_ID,
+          workspaceMemberId: 'reader',
+          id: THREAD_ID,
+        }),
+      ).resolves.toMatchObject({ id: THREAD_ID });
+      const [insert, parameters] = query.mock.calls[0];
+      expect(insert).toContain('"workspaceMemberId"');
+      expect(insert.includes('"userWorkspaceId"')).toBe(
+        legacyOwnerFieldPresent,
+      );
+      expect(parameters).toEqual([
+        THREAD_ID,
+        null,
+        'reader',
+        ...(legacyOwnerFieldPresent ? ['reader-membership'] : []),
+      ]);
+    },
+  );
+
   it('uses the common record policy for a non-owner reader', async () => {
     const { service, repository } = buildService();
     await expect(service.getReadableThread(args)).resolves.toMatchObject({
@@ -124,7 +168,7 @@ describe('Conversation common record access', () => {
       await expect(
         service.getThreadWithAccess({
           ...args,
-          userWorkspaceId: 'owner',
+          workspaceMemberId: 'owner',
           operationType: operation,
         }),
       ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
@@ -153,13 +197,15 @@ describe('Conversation common record access', () => {
     await expect(service.getReadableThread(args)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
-    expect(userAuthContextService.resolve).toHaveBeenCalledTimes(2);
+    expect(userAuthContextService.resolveWorkspaceMember).toHaveBeenCalledTimes(
+      2,
+    );
   });
 
   it('hides history from removed members', async () => {
     const { service, userAuthContextService, threadRepository } =
       buildService();
-    userAuthContextService.resolve.mockRejectedValue(
+    userAuthContextService.resolveWorkspaceMember.mockRejectedValue(
       new AuthException('Removed', AuthExceptionCode.UNAUTHENTICATED),
     );
     await expect(service.getReadableThread(args)).rejects.toMatchObject({
@@ -170,7 +216,7 @@ describe('Conversation common record access', () => {
 
   it('does not hide infrastructure failures as missing records', async () => {
     const { service, userAuthContextService } = buildService();
-    userAuthContextService.resolve.mockRejectedValue(
+    userAuthContextService.resolveWorkspaceMember.mockRejectedValue(
       new Error('Database unavailable'),
     );
     await expect(service.getReadableThread(args)).rejects.toThrow(
@@ -194,7 +240,7 @@ describe('Conversation common record access', () => {
       code: 'THREAD_NOT_FOUND',
     });
     await expect(
-      service.getReadableThread({ ...args, userWorkspaceId: 'owner' }),
+      service.getReadableThread({ ...args, workspaceMemberId: 'owner' }),
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
     expect(repository.findRecordIdsAllowedForOperation).toHaveBeenCalledTimes(
       2,

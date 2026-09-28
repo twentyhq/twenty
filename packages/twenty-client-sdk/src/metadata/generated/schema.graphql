@@ -3250,30 +3250,6 @@ type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
 }
 
-type Webhook {
-  id: UUID!
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-}
-
-type ToolIndexEntry {
-  name: String!
-  label: String!
-  description: String!
-  category: String!
-  objectName: String
-  icon: String
-  widgetName: String
-  frontComponentId: String
-  inputSchema: JSON
-}
-
 type AgentMessagePart {
   id: UUID!
   messageId: UUID!
@@ -3302,6 +3278,43 @@ type AgentMessagePart {
   fileUrl: String
   providerMetadata: JSON
   createdAt: DateTime!
+}
+
+type AgentMessage {
+  id: UUID!
+  threadId: UUID!
+  turnId: UUID
+  agentId: UUID
+  senderUserWorkspaceId: UUID
+  role: String!
+  status: String!
+  parts: [AgentMessagePart!]!
+  processedAt: DateTime
+  createdAt: DateTime!
+}
+
+type Webhook {
+  id: UUID!
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+type ToolIndexEntry {
+  name: String!
+  label: String!
+  description: String!
+  category: String!
+  objectName: String
+  icon: String
+  widgetName: String
+  frontComponentId: String
+  inputSchema: JSON
 }
 
 type RunAgentResult {
@@ -3430,6 +3443,7 @@ type AiChatUsage {
   limitValue: BigInt!
   consumedValue: BigInt
   periodEnd: DateTime
+  kind: String!
 }
 
 type Skill {
@@ -3445,19 +3459,6 @@ type Skill {
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type AgentMessage {
-  id: UUID!
-  threadId: UUID!
-  turnId: UUID
-  agentId: UUID
-  senderUserWorkspaceId: UUID
-  role: String!
-  status: String!
-  parts: [AgentMessagePart!]!
-  processedAt: DateTime
-  createdAt: DateTime!
 }
 
 type AgentChatThread {

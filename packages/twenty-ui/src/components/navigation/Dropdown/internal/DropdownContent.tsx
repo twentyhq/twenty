@@ -32,11 +32,20 @@ export const DropdownContent = ({
   onClick,
   onMouseDown,
   onPointerDown,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   ref,
   ...props
 }: DropdownContentProps) => {
-  const { type, isSubmenu, setOpen, initialFocusEdge, focusOnOpen } =
-    useDropdownContext();
+  const {
+    type,
+    isSubmenu,
+    setOpen,
+    initialFocusEdge,
+    focusOnOpen,
+    triggerId,
+    titleId,
+  } = useDropdownContext();
   const contentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<HTMLDivElement | null>(null);
   const mergedRef = useMergedRefs(contentRef, ref, setContent);
@@ -45,6 +54,9 @@ export const DropdownContent = ({
     isSubmenu,
     setOpen,
   });
+  const defaultAriaLabelledBy = isDefined(ariaLabel)
+    ? undefined
+    : (titleId ?? triggerId);
 
   return (
     <>
@@ -59,6 +71,8 @@ export const DropdownContent = ({
         container={container}
         keepMounted={keepMounted}
         role={type === 'menu' ? 'menu' : 'dialog'}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy ?? defaultAriaLabelledBy}
         data-dropdown-content=""
         data-type={type}
         className={mergeClassNames(styles.content, className)}
