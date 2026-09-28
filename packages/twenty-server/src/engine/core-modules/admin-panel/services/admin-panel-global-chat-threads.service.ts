@@ -27,7 +27,7 @@ type GlobalChatThreadRawRow = {
   title: string | null;
   workspaceId: string;
   workspaceDisplayName: string | null;
-  userWorkspaceId: string;
+  userWorkspaceId: string | null;
   userEmail: string | null;
   userFirstName: string | null;
   userLastName: string | null;

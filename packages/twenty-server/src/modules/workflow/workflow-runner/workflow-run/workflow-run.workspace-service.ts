@@ -17,6 +17,7 @@ import {
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
@@ -238,6 +239,58 @@ export class WorkflowRunWorkspaceService {
     };
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+  }
+
+  // Built from the persisted step info rather than the executor's snapshot:
+  // the attempt that just failed recorded its conversation while it ran, and
+  // only the stored step info carries it into the history entry.
+  @WithLock('workflowRunId')
+  async moveStepToRetry({
+    stepId,
+    error,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    error: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...workflowRunToUpdate.state?.stepInfos,
+            [stepId]: {
+              ...currentStepInfo,
+              status: StepStatus.PENDING,
+              error,
+              threadId: undefined,
+              history: [
+                ...(currentStepInfo?.history ?? []),
+                {
+                  status: StepStatus.FAILED,
+                  error,
+                  retryAttempt:
+                    getStepRetryAttempt({ stepInfo: currentStepInfo }) + 1,
+                  threadId: currentStepInfo?.threadId,
+                },
+              ],
+            },
+          },
+        },
+      },
+    });
   }
 
   @WithLock('workflowRunId')

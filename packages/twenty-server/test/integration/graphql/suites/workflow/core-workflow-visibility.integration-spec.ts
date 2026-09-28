@@ -20,9 +20,11 @@ import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -972,6 +974,32 @@ describe('core workflow visibility (e2e)', () => {
 
       expect(asCreator.body.errors).toBeUndefined();
       expect(asCreator.body.data.chatThread.id).toBe(threadId);
+    });
+
+    it('keeps the conversation of an attempt that is retried in the step history', async () => {
+      await getAppProviderByClassName<WorkflowRunWorkspaceService>(
+        'WorkflowRunWorkspaceService',
+      ).moveStepToRetry({
+        stepId: 'trigger',
+        error: 'The agent failed',
+        workflowRunId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+
+      const [{ state }] = await global.testDataSource.query(
+        `SELECT state FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workflowRun" WHERE id = $1`,
+        [workflowRunId],
+      );
+
+      expect(state.stepInfos.trigger.status).toBe('PENDING');
+      expect(state.stepInfos.trigger.threadId).toBeUndefined();
+      const { history } = state.stepInfos.trigger;
+
+      expect(history[history.length - 1]).toMatchObject({
+        status: 'FAILED',
+        error: 'The agent failed',
+        threadId,
+      });
     });
   });
 
