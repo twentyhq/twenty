@@ -21,6 +21,7 @@ import {
   EmailBoxSidesInput,
   type CssBoxSides,
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
+import { EmailSidePanelHint } from '@/side-panel/pages/email-block-settings/components/EmailSidePanelHint';
 import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -29,12 +30,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledHint = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
   padding: ${themeCssVariables.spacing[4]};
 `;
 
@@ -77,7 +72,9 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   );
 
   if (!isDefined(target)) {
-    return <StyledHint>{t`Select a block to edit its style.`}</StyledHint>;
+    return (
+      <EmailSidePanelHint>{t`Select a block to edit its style.`}</EmailSidePanelHint>
+    );
   }
 
   const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];
@@ -253,7 +250,7 @@ export const SidePanelEmailBlockSettingsPage = () => {
 
   if (!isDefined(activeEmailEditor) || activeEmailEditor.isDestroyed) {
     return (
-      <StyledHint>{t`Open an email editor to edit block settings.`}</StyledHint>
+      <EmailSidePanelHint>{t`Open an email editor to edit block settings.`}</EmailSidePanelHint>
     );
   }
 
