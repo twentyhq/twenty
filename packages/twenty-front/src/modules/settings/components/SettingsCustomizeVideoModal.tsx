@@ -12,6 +12,7 @@ import { styled } from '@linaria/react';
 import { IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsCustomizeVideoModalProps = {
   modalInstanceId: string;
@@ -89,11 +90,12 @@ export const SettingsCustomizeVideoModal = ({
     tabsInstanceId,
   );
 
-  if (tabs.length === 0) {
+  const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
+
+  if (!isDefined(activeTab)) {
     return null;
   }
 
-  const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
   const hasMultipleTabs = tabs.length > 1;
   const ActiveTabIcon = activeTab.Icon;
 

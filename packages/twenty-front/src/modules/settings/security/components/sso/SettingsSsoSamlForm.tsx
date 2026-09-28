@@ -55,8 +55,10 @@ export const SettingsSsoSamlForm = () => {
   const { copyToClipboard } = useCopyToClipboard();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (isDefined(e.target.files)) {
-      const text = await e.target.files[0].text();
+    const file = e.target.files?.[0];
+
+    if (isDefined(file)) {
+      const text = await file.text();
       const samlMetadataParsed = parseSamlMetadataFromXmlFile(text);
       e.target.value = '';
       if (!samlMetadataParsed.success) {

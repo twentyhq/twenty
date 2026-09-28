@@ -15,13 +15,7 @@ export const convertBulkTextToOptions = (
 
   const newBulkSelectOptions: FieldMetadataItemOption[] = [];
 
-  for (
-    let optionIndex = 0;
-    optionIndex < parsedBulkTextOptions.length;
-    optionIndex++
-  ) {
-    const label = parsedBulkTextOptions[optionIndex];
-
+  for (const [optionIndex, label] of parsedBulkTextOptions.entries()) {
     // try to find an existing option with the same label, so we can keep its id, color, value, and label
     const existingOption = currentOptions.find(
       (opt) => opt.label.toLowerCase() === label.toLowerCase(),

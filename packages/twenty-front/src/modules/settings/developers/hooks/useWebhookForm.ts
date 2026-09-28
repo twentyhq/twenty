@@ -157,13 +157,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     field: 'object' | 'action',
     value: string | null,
   ) => {
-    const currentOperations = formConfig.getValues('operations');
-    const newOperations = [...currentOperations];
-
-    newOperations[index] = {
-      ...newOperations[index],
-      [field]: value,
-    };
+    const newOperations = formConfig
+      .getValues('operations')
+      .map((operation, operationIndex) =>
+        operationIndex === index ? { ...operation, [field]: value } : operation,
+      );
 
     formConfig.setValue(
       'operations',

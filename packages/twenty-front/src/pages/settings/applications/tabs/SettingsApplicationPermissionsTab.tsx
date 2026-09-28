@@ -132,16 +132,25 @@ const buildSyntheticRole = (
     canReadFieldValue: permission.canReadFieldValue,
     canUpdateFieldValue: permission.canUpdateFieldValue,
   })),
-  permissionFlags: (defaultRole.permissionFlagUniversalIdentifiers ?? []).map(
-    (permissionFlagUniversalIdentifier) => ({
-      __typename: 'RolePermissionFlag' as const,
-      id: uuidv4(),
-      roleId: defaultRole.universalIdentifier,
-      flag: SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER[
+  permissionFlags: (
+    defaultRole.permissionFlagUniversalIdentifiers ?? []
+  ).flatMap((permissionFlagUniversalIdentifier) => {
+    const flag =
+      SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER[
         permissionFlagUniversalIdentifier
-      ],
-    }),
-  ),
+      ];
+
+    return isDefined(flag)
+      ? [
+          {
+            __typename: 'RolePermissionFlag' as const,
+            id: uuidv4(),
+            roleId: defaultRole.universalIdentifier,
+            flag,
+          },
+        ]
+      : [];
+  }),
 });
 
 const buildObjectMetadataItemsFromMarketplaceApp = (

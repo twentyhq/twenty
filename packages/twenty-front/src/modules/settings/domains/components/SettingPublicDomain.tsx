@@ -144,7 +144,7 @@ export const SettingPublicDomain = () => {
     const result = validationSchema.safeParse(newPublicDomain);
 
     if (!result.success) {
-      setNewPublicDomainError(result.error?.issues[0].message);
+      setNewPublicDomainError(result.error?.issues[0]?.message);
       return;
     }
 

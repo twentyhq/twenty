@@ -4,7 +4,8 @@ import { INDEXABLE_OPTION_SEPARATOR } from '@/settings/data-model/indexes/utils/
 export const decodeIndexableOptionValue = (
   value: string,
 ): { fieldMetadataId: string; subFieldName: string | null } => {
-  const [fieldMetadataId, subFieldName] = value.split(
+  // split always returns at least one element
+  const [fieldMetadataId = value, subFieldName] = value.split(
     INDEXABLE_OPTION_SEPARATOR,
   );
 

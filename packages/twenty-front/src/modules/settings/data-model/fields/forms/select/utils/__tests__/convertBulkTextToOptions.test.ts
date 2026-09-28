@@ -9,12 +9,12 @@ describe('convertBulkTextToOptions', () => {
     const result = convertBulkTextToOptions(text, currentOptions);
 
     expect(result).toHaveLength(3);
-    expect(result[0].label).toBe('Option 1');
-    expect(result[0].position).toBe(0);
-    expect(result[1].label).toBe('Option 2');
-    expect(result[1].position).toBe(1);
-    expect(result[2].label).toBe('Option 3');
-    expect(result[2].position).toBe(2);
+    expect(result[0]?.label).toBe('Option 1');
+    expect(result[0]?.position).toBe(0);
+    expect(result[1]?.label).toBe('Option 2');
+    expect(result[1]?.position).toBe(1);
+    expect(result[2]?.label).toBe('Option 3');
+    expect(result[2]?.position).toBe(2);
   });
 
   it('returns empty array for empty text', () => {
@@ -42,8 +42,8 @@ describe('convertBulkTextToOptions', () => {
     const result = convertBulkTextToOptions(text, currentOptions);
 
     expect(result).toHaveLength(2);
-    expect(result[0].label).toBe('Option 1');
-    expect(result[1].label).toBe('Option 2');
+    expect(result[0]?.label).toBe('Option 1');
+    expect(result[1]?.label).toBe('Option 2');
   });
 
   it('filters out empty lines', () => {
@@ -53,9 +53,9 @@ describe('convertBulkTextToOptions', () => {
     const result = convertBulkTextToOptions(text, currentOptions);
 
     expect(result).toHaveLength(3);
-    expect(result[0].label).toBe('Option 1');
-    expect(result[1].label).toBe('Option 2');
-    expect(result[2].label).toBe('Option 3');
+    expect(result[0]?.label).toBe('Option 1');
+    expect(result[1]?.label).toBe('Option 2');
+    expect(result[2]?.label).toBe('Option 3');
   });
 
   it('preserves existing option metadata when label matches (case-insensitive)', () => {
@@ -80,14 +80,14 @@ describe('convertBulkTextToOptions', () => {
     const result = convertBulkTextToOptions(text, currentOptions);
 
     expect(result).toHaveLength(2);
-    expect(result[0].id).toBe('existing-id-1');
-    expect(result[0].color).toBe('blue');
-    expect(result[0].label).toBe('Option 1'); // preserves original label casing
-    expect(result[0].position).toBe(0);
-    expect(result[1].id).toBe('existing-id-2');
-    expect(result[1].color).toBe('green');
-    expect(result[1].label).toBe('Option 2'); // preserves original label casing
-    expect(result[1].position).toBe(1);
+    expect(result[0]?.id).toBe('existing-id-1');
+    expect(result[0]?.color).toBe('blue');
+    expect(result[0]?.label).toBe('Option 1'); // preserves original label casing
+    expect(result[0]?.position).toBe(0);
+    expect(result[1]?.id).toBe('existing-id-2');
+    expect(result[1]?.color).toBe('green');
+    expect(result[1]?.label).toBe('Option 2'); // preserves original label casing
+    expect(result[1]?.position).toBe(1);
   });
 
   it('creates new options for labels that do not exist', () => {
@@ -105,10 +105,10 @@ describe('convertBulkTextToOptions', () => {
     const result = convertBulkTextToOptions(text, currentOptions);
 
     expect(result).toHaveLength(2);
-    expect(result[0].id).toBe('existing-id');
-    expect(result[1].label).toBe('New Option');
-    expect(result[1].id).toBeDefined();
-    expect(result[1].id).not.toBe('existing-id');
+    expect(result[0]?.id).toBe('existing-id');
+    expect(result[1]?.label).toBe('New Option');
+    expect(result[1]?.id).toBeDefined();
+    expect(result[1]?.id).not.toBe('existing-id');
   });
 
   it('updates positions correctly when reordering', () => {
@@ -133,10 +133,10 @@ describe('convertBulkTextToOptions', () => {
     const result = convertBulkTextToOptions(text, currentOptions);
 
     expect(result).toHaveLength(2);
-    expect(result[0].id).toBe('id-2');
-    expect(result[0].position).toBe(0);
-    expect(result[1].id).toBe('id-1');
-    expect(result[1].position).toBe(1);
+    expect(result[0]?.id).toBe('id-2');
+    expect(result[0]?.position).toBe(0);
+    expect(result[1]?.id).toBe('id-1');
+    expect(result[1]?.position).toBe(1);
   });
 
   it('handles mixed existing and new options', () => {
@@ -161,13 +161,13 @@ describe('convertBulkTextToOptions', () => {
     const result = convertBulkTextToOptions(text, currentOptions);
 
     expect(result).toHaveLength(4);
-    expect(result[0].id).toBe('existing-1');
-    expect(result[0].position).toBe(0);
-    expect(result[1].label).toBe('New 1');
-    expect(result[1].position).toBe(1);
-    expect(result[2].id).toBe('existing-2');
-    expect(result[2].position).toBe(2);
-    expect(result[3].label).toBe('New 2');
-    expect(result[3].position).toBe(3);
+    expect(result[0]?.id).toBe('existing-1');
+    expect(result[0]?.position).toBe(0);
+    expect(result[1]?.label).toBe('New 1');
+    expect(result[1]?.position).toBe(1);
+    expect(result[2]?.id).toBe('existing-2');
+    expect(result[2]?.position).toBe(2);
+    expect(result[3]?.label).toBe('New 2');
+    expect(result[3]?.position).toBe(3);
   });
 });

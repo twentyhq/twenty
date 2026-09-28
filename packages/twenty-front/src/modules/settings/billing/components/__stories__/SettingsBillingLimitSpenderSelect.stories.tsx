@@ -97,7 +97,7 @@ export const SpenderPagesAndSelection: Story = {
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(args.onChange).toHaveBeenCalledWith({
       spenderType: 'apiKey',
-      spenderId: mockedApiKeys[0].id,
+      spenderId: mockedApiKeys[0]?.id,
     });
 
     await userEvent.click(trigger);

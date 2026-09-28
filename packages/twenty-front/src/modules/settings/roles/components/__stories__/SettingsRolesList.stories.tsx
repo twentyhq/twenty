@@ -7,11 +7,16 @@ import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsSta
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const [, secondMockedRole] = mockedRoles;
+
+assertIsDefinedOrThrow(secondMockedRole);
 
 const ROLES = [
   ...mockedRoles,
   {
-    ...mockedRoles[1],
+    ...secondMockedRole,
     id: 'agent-only-role',
     label: 'Agent only',
     canBeAssignedToUsers: false,
@@ -20,7 +25,7 @@ const ROLES = [
     workspaceMembers: [],
   },
   {
-    ...mockedRoles[1],
+    ...secondMockedRole,
     id: 'api-key-only-role',
     label: 'API key only',
     canBeAssignedToUsers: false,

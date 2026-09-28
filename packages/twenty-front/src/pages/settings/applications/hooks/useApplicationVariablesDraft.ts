@@ -45,7 +45,7 @@ export const useApplicationVariablesDraft = ({
 
   const editedApplicationVariables = draftApplicationVariables.filter(
     (draftApplicationVariable, index) =>
-      draftApplicationVariable.value !== applicationVariables[index].value,
+      draftApplicationVariable.value !== applicationVariables[index]?.value,
   );
 
   const setApplicationVariableValue = (key: string, value: string) => {

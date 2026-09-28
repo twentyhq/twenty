@@ -1,6 +1,7 @@
 import { BillingProductKey } from '~/generated-metadata/graphql';
 
 import { isSellableBillingProduct } from '@/settings/billing/utils/isSellableBillingProduct';
+import { isDefined } from 'twenty-shared/utils';
 
 type SellableBaseProductCandidate = {
   metadata: { productKey: BillingProductKey; isLegacy?: string | null };
@@ -18,11 +19,14 @@ export const findSellableBaseProductOrThrow = <
       isSellableBillingProduct(product),
   );
 
-  if (sellableBaseProducts.length !== 1) {
+  const [sellableBaseProduct, ...otherSellableBaseProducts] =
+    sellableBaseProducts;
+
+  if (!isDefined(sellableBaseProduct) || otherSellableBaseProducts.length > 0) {
     throw new Error(
       `Expected a single sellable base product, found ${sellableBaseProducts.length}`,
     );
   }
 
-  return sellableBaseProducts[0];
+  return sellableBaseProduct;
 };

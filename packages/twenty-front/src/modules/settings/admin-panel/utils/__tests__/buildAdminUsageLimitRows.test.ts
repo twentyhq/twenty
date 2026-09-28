@@ -4,6 +4,7 @@ import {
   UsageResourceType,
   type WorkspaceUsageLimitsQuery,
 } from '~/generated-admin/graphql';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 type WorkspaceUsageLimits = WorkspaceUsageLimitsQuery['workspaceUsageLimits'];
 
@@ -67,6 +68,7 @@ describe('buildAdminUsageLimitRows', () => {
         limits: [buildLimit({ limitValue: 50 })],
       }),
     );
+    assertIsDefinedOrThrow(row);
 
     expect(row.isOverridden).toBe(true);
     expect(row.usageLimitId).toBe('limit-1');
@@ -78,6 +80,7 @@ describe('buildAdminUsageLimitRows', () => {
     const [row] = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({ defaults: [buildDefault()] }),
     );
+    assertIsDefinedOrThrow(row);
 
     expect(row.isOverridden).toBe(false);
     expect(row.usageLimitId).toBeNull();
@@ -91,6 +94,7 @@ describe('buildAdminUsageLimitRows', () => {
         limits: [buildLimit({ id: 'a-limit-of-its-own' })],
       }),
     );
+    assertIsDefinedOrThrow(row);
 
     expect(row.isOverridden).toBe(false);
     expect(row.usageLimitId).toBeNull();
@@ -112,6 +116,7 @@ describe('buildAdminUsageLimitRows', () => {
         limits: [buildLimit({ periodCount: 60, periodUnit: 'second' })],
       }),
     );
+    assertIsDefinedOrThrow(row);
 
     expect(row.periodCount).toBe(60);
     expect(row.periodUnit).toBe('second');
@@ -145,6 +150,7 @@ describe('buildAdminUsageLimitRows', () => {
         limits: [buildLimit({ burstValue: 20 })],
       }),
     );
+    assertIsDefinedOrThrow(row);
 
     expect(row.burstValue).toBe(20);
   });

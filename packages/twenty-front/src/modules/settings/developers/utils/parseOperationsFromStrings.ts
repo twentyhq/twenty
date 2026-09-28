@@ -5,16 +5,15 @@ export const parseOperationsFromStrings = (
 ): WebhookOperationType[] => {
   return operations.map((op: string) => {
     const parts = op.split('.');
+    const [firstPart = '', secondPart = '', thirdPart = ''] = parts;
 
-    if (parts[0] === 'metadata' && parts.length === 3) {
+    if (firstPart === 'metadata' && parts.length === 3) {
       return {
-        object: `${parts[0]}.${parts[1]}`,
-        action: parts[2],
+        object: `${firstPart}.${secondPart}`,
+        action: thirdPart,
       };
     }
 
-    const [object, action] = parts;
-
-    return { object, action };
+    return { object: firstPart, action: secondPart };
   });
 };

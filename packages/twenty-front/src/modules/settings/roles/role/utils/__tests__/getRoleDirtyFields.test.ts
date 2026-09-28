@@ -1,7 +1,11 @@
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-const role = { ...mockedRoles[1], permissionFlags: [] };
+const [, mockedRole] = mockedRoles;
+assertIsDefinedOrThrow(mockedRole);
+
+const role = { ...mockedRole, permissionFlags: [] };
 const draftFlag = {
   id: 'temporary-id',
   roleId: role.id,

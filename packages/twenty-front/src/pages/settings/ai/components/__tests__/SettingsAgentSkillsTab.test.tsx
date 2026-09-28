@@ -17,6 +17,7 @@ import { FindManySkillsDocument } from '~/generated-metadata/graphql';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const STANDARD_APPLICATION = {
   id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -160,6 +161,9 @@ describe('SettingsAgentSkillsTab', () => {
     await screen.findByText('Research');
 
     const [firstRow, secondRow, thirdRow] = screen.getAllByRole('link');
+    assertIsDefinedOrThrow(firstRow);
+    assertIsDefinedOrThrow(secondRow);
+    assertIsDefinedOrThrow(thirdRow);
 
     expect(within(firstRow).getByText('Quarterly Report')).toBeInTheDocument();
     expect(within(secondRow).getByText('Research')).toBeInTheDocument();

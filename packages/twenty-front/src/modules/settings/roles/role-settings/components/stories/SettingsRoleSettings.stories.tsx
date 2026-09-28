@@ -41,7 +41,7 @@ type Story = StoryObj<typeof SettingsRoleSettingsWrapper>;
 
 export const Default: Story = {
   args: {
-    roleId: mockedRoles[0].id,
+    roleId: mockedRoles[0]?.id,
     isEditable: true,
     isCreateMode: false,
   },
@@ -49,7 +49,7 @@ export const Default: Story = {
 
 export const ReadOnly: Story = {
   args: {
-    roleId: mockedRoles[0].id,
+    roleId: mockedRoles[0]?.id,
     isEditable: false,
     isCreateMode: false,
   },
@@ -65,7 +65,7 @@ export const PendingRole: Story = {
 
 export const CreateMode: Story = {
   args: {
-    roleId: mockedRoles[0].id,
+    roleId: mockedRoles[0]?.id,
     isEditable: true,
     isCreateMode: true,
   },

@@ -59,9 +59,9 @@ export const useGetNextResourceCreditPrice =
         stripePriceId === currentResourceCreditItem.stripePriceId,
     );
 
-    if (currentIndex === -1 || currentIndex === pricesForInterval.length - 1) {
+    if (currentIndex === -1) {
       return null;
     }
 
-    return pricesForInterval[currentIndex + 1];
+    return pricesForInterval[currentIndex + 1] ?? null;
   };

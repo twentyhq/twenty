@@ -11,6 +11,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   title: 'Modules/Settings/Developers/Components/SettingsDevelopersWebhookForm',
@@ -83,6 +84,8 @@ export const EntityPicker: Story = {
       { name: 'All Objects' },
       { timeout: 3000 },
     );
+
+    assertIsDefinedOrThrow(trigger);
 
     await userEvent.click(trigger);
     const picker = await body.findByRole('dialog', { name: 'Select entity' });

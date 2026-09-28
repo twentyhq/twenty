@@ -10,6 +10,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { SettingsRoleEdit } from '~/pages/settings/members/roles/SettingsRoleEdit';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const OBJECT_RESTRICTED_ROLE_ID = '1e5b6baf-cd29-4d78-a3f1-55fb1fd27a81';
 
@@ -51,6 +52,8 @@ export const ObjectPermissionRowMenu: Story = {
       { name: 'Object permission options' },
       { timeout: 5000 },
     );
+
+    assertIsDefinedOrThrow(trigger);
 
     await userEvent.click(trigger);
     const menu = await body.findByRole('menu', {
