@@ -6,4 +6,5 @@ export type InputAskStandardUniversalIdentifiers = {
   view: string[];
   viewFieldGroup: string[];
   viewField: string[];
+  viewFilter: string[];
 };
