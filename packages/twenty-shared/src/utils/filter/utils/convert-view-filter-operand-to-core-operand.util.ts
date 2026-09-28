@@ -1,6 +1,9 @@
 import { ViewFilterOperand, ViewFilterOperandDeprecated } from '@/types';
 
-const operandMapping: Record<string, ViewFilterOperand> = {
+const operandMapping: Record<
+  ViewFilterOperand | ViewFilterOperandDeprecated,
+  ViewFilterOperand
+> = {
   [ViewFilterOperandDeprecated.Is]: ViewFilterOperand.IS,
   [ViewFilterOperandDeprecated.IsNotNull]: ViewFilterOperand.IS_NOT_NULL,
   [ViewFilterOperandDeprecated.IsNot]: ViewFilterOperand.IS_NOT,
@@ -39,7 +42,7 @@ const operandMapping: Record<string, ViewFilterOperand> = {
 };
 
 export const convertViewFilterOperandToCoreOperand = (
-  sharedOperand: string,
+  sharedOperand: ViewFilterOperand | ViewFilterOperandDeprecated,
 ): ViewFilterOperand => {
   return operandMapping[sharedOperand];
 };
