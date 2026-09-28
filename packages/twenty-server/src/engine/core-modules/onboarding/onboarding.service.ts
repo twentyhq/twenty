@@ -527,7 +527,10 @@ export class OnboardingService {
       return;
     }
 
-    await this.creditImportContactsRewardForFirstWorkspaceUser({ workspaceId });
+    await this.creditImportContactsRewardForWorkspaceCreator({
+      userId,
+      workspaceId,
+    });
   }
 
   async skipOnboardingConnectAccountStep({
@@ -564,16 +567,20 @@ export class OnboardingService {
     );
   }
 
-  private async isFirstWorkspaceUser({
+  private async isWorkspaceCreator({
+    userId,
     workspaceId,
   }: {
+    userId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const workspaceUserCount = await this.userWorkspaceRepository.countBy({
-      workspaceId,
+    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId },
+      order: { createdAt: 'ASC' },
+      withDeleted: true,
     });
 
-    return workspaceUserCount === 1;
+    return earliestUserWorkspace?.userId === userId;
   }
 
   private async claimOnboardingConnectAccountStep(
@@ -598,17 +605,20 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
-  private async creditImportContactsRewardForFirstWorkspaceUser({
+  private async creditImportContactsRewardForWorkspaceCreator({
+    userId,
     workspaceId,
   }: {
+    userId: string;
     workspaceId: string;
   }) {
     try {
-      const isFirstWorkspaceUser = await this.isFirstWorkspaceUser({
+      const isWorkspaceCreator = await this.isWorkspaceCreator({
+        userId,
         workspaceId,
       });
 
-      if (!isFirstWorkspaceUser) {
+      if (!isWorkspaceCreator) {
         return;
       }
 
