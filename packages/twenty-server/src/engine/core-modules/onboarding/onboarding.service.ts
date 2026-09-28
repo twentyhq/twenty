@@ -843,28 +843,32 @@ export class OnboardingService {
     userId: string;
   }) {
     try {
-      await this.cacheLockService.withLock(async () => {
-        const { joinedTeammatesCount } = getOnboardingCreditRewardsMicro(
-          await this.billingCreditGrantService.listGrants(workspaceId),
-        );
+      await this.cacheLockService.withLock(
+        async () => {
+          const { joinedTeammatesCount } = getOnboardingCreditRewardsMicro(
+            await this.billingCreditGrantService.listGrants(workspaceId),
+          );
 
-        if (
-          joinedTeammatesCount >=
-          this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
-        ) {
-          return;
-        }
+          if (
+            joinedTeammatesCount >=
+            this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
+          ) {
+            return;
+          }
 
-        await this.billingCreditService.grantCredits({
-          workspaceId,
-          amountMicro: this.twentyConfigService.get(
-            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-          ),
-          type: BillingCreditGrantType.ONBOARDING_REWARD,
-          reason: 'Onboarding reward: invited teammate signed up',
-          idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:${userId}`,
-        });
-      }, `onboarding-invite-team-reward:${workspaceId}`);
+          await this.billingCreditService.grantCredits({
+            workspaceId,
+            amountMicro: this.twentyConfigService.get(
+              'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+            ),
+            type: BillingCreditGrantType.ONBOARDING_REWARD,
+            reason: 'Onboarding reward: invited teammate signed up',
+            idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:${userId}`,
+          });
+        },
+        `onboarding-invite-team-reward:${workspaceId}`,
+        { ttl: 30_000, maxRetries: 300 },
+      );
     } catch (error) {
       this.logger.error(
         `Failed to credit onboarding invite reward for workspace ${workspaceId}`,

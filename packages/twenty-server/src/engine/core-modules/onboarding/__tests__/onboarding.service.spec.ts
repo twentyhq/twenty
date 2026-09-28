@@ -301,6 +301,7 @@ describe('OnboardingService', () => {
       expect(withLock).toHaveBeenCalledWith(
         expect.any(Function),
         `onboarding-invite-team-reward:${workspaceId}`,
+        { ttl: 30_000, maxRetries: 300 },
       );
       expect(grantCredits).toHaveBeenCalledWith(
         expect.objectContaining({
