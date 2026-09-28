@@ -1,6 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   APPLICATION_CATEGORIES,
+  APPLICATION_VARIABLE_SCOPES,
+  isApplicationVariableScope,
   isKnownApplicationCategory,
   isRecurringChargePeriod,
   isRecurringChargeUnit,
@@ -46,6 +48,29 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (variable.isRequired && variable.isDeprecated) {
       warnings.push(
         `Application variable "${variableName}" is both required and deprecated. \`isDeprecated\` wins: the variable is excluded from the application configuration check.`,
+      );
+    }
+
+    if (
+      isDefined(variable.scope) &&
+      !isApplicationVariableScope(variable.scope)
+    ) {
+      errors.push(
+        `Application variable "${variableName}" must have a known scope (${APPLICATION_VARIABLE_SCOPES.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (variable.scope === 'USER' && variable.isSecret) {
+      errors.push(
+        `Application variable "${variableName}" is a user variable and cannot be secret`,
+      );
+    }
+
+    if (variable.scope === 'USER' && variable.isRequired) {
+      errors.push(
+        `Application variable "${variableName}" is a user variable and cannot be required`,
       );
     }
   }

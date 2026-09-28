@@ -627,6 +627,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             isRequired: applicationVariableManifest.isRequired,
             type,
             options: applicationVariableManifest.options,
+            scope: applicationVariableManifest.scope,
             applicationUniversalIdentifier,
             now,
           }),

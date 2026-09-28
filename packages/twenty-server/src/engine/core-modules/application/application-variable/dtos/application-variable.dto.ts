@@ -1,10 +1,22 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { type ApplicationVariableOption } from 'twenty-shared/application';
+import {
+  APPLICATION_VARIABLE_SCOPES,
+  type ApplicationVariableOption,
+  type ApplicationVariableScope,
+} from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+const ApplicationVariableScopeEnum = Object.fromEntries(
+  APPLICATION_VARIABLE_SCOPES.map((scope) => [scope, scope]),
+) as { [P in ApplicationVariableScope]: P };
+
+registerEnumType(ApplicationVariableScopeEnum, {
+  name: 'ApplicationVariableScope',
+});
 
 @ObjectType('ApplicationVariable')
 export class ApplicationVariableEntityDTO {
@@ -46,4 +58,8 @@ export class ApplicationVariableEntityDTO {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   options?: ApplicationVariableOption[] | null;
+
+  @IsIn(APPLICATION_VARIABLE_SCOPES)
+  @Field(() => ApplicationVariableScopeEnum)
+  scope: ApplicationVariableScope;
 }

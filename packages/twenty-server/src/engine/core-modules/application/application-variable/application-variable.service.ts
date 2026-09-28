@@ -57,7 +57,9 @@ export class ApplicationVariableEntityService {
     const flatApplicationVariables =
       await this.findFlatApplicationVariables(args);
 
-    return this.toEnvVariables(flatApplicationVariables);
+    return this.toEnvVariables(
+      flatApplicationVariables.filter(({ scope }) => scope !== 'USER'),
+    );
   }
 
   async getPublicEnvVariables(
@@ -67,7 +69,9 @@ export class ApplicationVariableEntityService {
       await this.findFlatApplicationVariables(args);
 
     return this.toEnvVariables(
-      flatApplicationVariables.filter(({ isSecret }) => !isSecret),
+      flatApplicationVariables.filter(
+        ({ isSecret, scope }) => !isSecret && scope !== 'USER',
+      ),
     );
   }
 

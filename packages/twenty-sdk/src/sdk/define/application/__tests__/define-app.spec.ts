@@ -1,4 +1,5 @@
 import { MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { defineApplication } from '@/sdk/define';
 
@@ -162,6 +163,84 @@ describe('defineApplication', () => {
     });
 
     expect(result.warnings ?? []).toEqual([]);
+  });
+
+  it('should accept a user application variable', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        RECORD_MY_MEETINGS: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          type: FieldMetadataType.BOOLEAN,
+          value: false,
+          scope: 'USER',
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should return error when a user application variable is secret', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        API_KEY: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isSecret: true,
+          scope: 'USER',
+        },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'Application variable "API_KEY" is a user variable and cannot be secret',
+    ]);
+  });
+
+  it('should return error when a user application variable is required', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        RECORD_MY_MEETINGS: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isRequired: true,
+          scope: 'USER',
+        },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'Application variable "RECORD_MY_MEETINGS" is a user variable and cannot be required',
+    ]);
+  });
+
+  it('should return error when an application variable scope is unknown', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        RECORD_MY_MEETINGS: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          scope: 'TEAM' as never,
+        },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'Application variable "RECORD_MY_MEETINGS" must have a known scope (WORKSPACE, USER)',
+    ]);
   });
 
   it('should accept a billable operation mapped to a known operationType', () => {

@@ -53,11 +53,17 @@ export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
   ApplicationVariableOption,
+  ApplicationVariableScope,
   ApplicationVariableValue,
   ApplicationVariable,
   ApplicationVariables,
 } from './applicationVariablesType';
-export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
+export {
+  APPLICATION_VARIABLE_FIELD_METADATA_TYPES,
+  APPLICATION_VARIABLE_SCOPES,
+  isApplicationVariableScope,
+  DEFAULT_APPLICATION_VARIABLE_SCOPE,
+} from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
 export type { AssetManifest } from './assetManifestType';
 export type {
