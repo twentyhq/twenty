@@ -9,12 +9,14 @@ export const resolveCampaignAudience = ({
   hardSuppressedEmails,
   globallySuppressedEmails,
   topicSuppressedEmails,
+  trackingRefusedEmails,
 }: {
   rawRecipients: RawCampaignRecipient[];
   totalMemberCount: number;
   hardSuppressedEmails: Set<string>;
   globallySuppressedEmails: Set<string>;
   topicSuppressedEmails: Set<string>;
+  trackingRefusedEmails: Set<string>;
 }): CampaignAudienceResolution => {
   const { recipients, skipped } = normalizeCampaignRecipients(rawRecipients);
 
@@ -49,6 +51,9 @@ export const resolveCampaignAudience = ({
       hardSuppressed: excluded.hardSuppressed,
       globallyUnsubscribed: excluded.globally,
       topicUnsubscribed: excluded.byTopic,
+      trackingRefused: sendableRecipients.filter((recipient) =>
+        trackingRefusedEmails.has(recipient.email),
+      ).length,
       sendable: sendableRecipients.length,
     },
   };
