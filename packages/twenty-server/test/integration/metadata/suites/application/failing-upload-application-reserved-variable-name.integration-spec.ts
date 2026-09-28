@@ -3,7 +3,10 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
-import { type ServerVariables } from 'twenty-shared/application';
+import {
+  type ApplicationVariables,
+  type ServerVariables,
+} from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
 // The upload flow runs cache-lock retries with real delays, so fake timers
@@ -12,10 +15,12 @@ jest.setTimeout(120000);
 
 const buildTarball = ({
   universalIdentifier,
-  serverVariables,
+  serverVariables = {},
+  applicationVariables = {},
 }: {
   universalIdentifier: string;
-  serverVariables: ServerVariables;
+  serverVariables?: ServerVariables;
+  applicationVariables?: ApplicationVariables;
 }): Promise<Buffer> => {
   const baseManifest = buildBaseManifest({
     appId: universalIdentifier,
@@ -25,7 +30,11 @@ const buildTarball = ({
   return createAppTarball({
     'manifest.json': JSON.stringify({
       ...baseManifest,
-      application: { ...baseManifest.application, serverVariables },
+      application: {
+        ...baseManifest.application,
+        serverVariables,
+        applicationVariables,
+      },
     }),
     'package.json': JSON.stringify({
       name: `test-reserved-variable-name-${universalIdentifier}`,
@@ -57,8 +66,9 @@ const readRegistrationServerVariableKeys = async (
   return variables.map(({ key }: { key: string }) => key);
 };
 
-describe('Publish application should fail on reserved server variable names', () => {
+describe('Publish application should fail on reserved variable names', () => {
   const universalIdentifier = uuidv4();
+  const applicationVariableAppUniversalIdentifier = uuidv4();
 
   beforeAll(() => {
     jest.useRealTimers();
@@ -69,10 +79,57 @@ describe('Publish application should fail on reserved server variable names', ()
       applicationUniversalIdentifier: universalIdentifier,
     });
 
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: applicationVariableAppUniversalIdentifier,
+    });
+
     jest.useFakeTimers();
   });
 
-  it('should refuse the tarball before creating a registration', async () => {
+  it('should refuse a reserved application variable before creating a registration', async () => {
+    const { errors } = await uploadAppTarball({
+      tarballBuffer: await buildTarball({
+        universalIdentifier: applicationVariableAppUniversalIdentifier,
+        applicationVariables: {
+          TWENTY_API_URL: {
+            universalIdentifier: uuidv4(),
+            description: 'Reserved',
+            isSecret: false,
+          },
+        },
+      }),
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+    expect(
+      await readRegistrationServerVariableKeys(
+        applicationVariableAppUniversalIdentifier,
+      ),
+    ).toBe(null);
+
+    await uploadAppTarball({
+      tarballBuffer: await buildTarball({
+        universalIdentifier: applicationVariableAppUniversalIdentifier,
+        applicationVariables: {
+          APP_SETTING: {
+            universalIdentifier: uuidv4(),
+            description: 'A workspace setting',
+            isSecret: false,
+          },
+        },
+      }),
+      expectToFail: false,
+    });
+
+    expect(
+      await readRegistrationServerVariableKeys(
+        applicationVariableAppUniversalIdentifier,
+      ),
+    ).toEqual([]);
+  });
+
+  it('should refuse a reserved server variable before creating a registration', async () => {
     const { errors } = await uploadAppTarball({
       tarballBuffer: await buildTarball({
         universalIdentifier,

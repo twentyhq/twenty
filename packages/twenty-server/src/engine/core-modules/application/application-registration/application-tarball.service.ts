@@ -408,6 +408,17 @@ export class ApplicationTarballService {
       );
     }
 
+    const reservedApplicationVariableKeys = findEngineInjectedEnvVariableNames(
+      Object.keys(manifest.application.applicationVariables ?? {}),
+    );
+
+    if (reservedApplicationVariableKeys.length > 0) {
+      throw new ApplicationRegistrationException(
+        `Application variable names are reserved: ${reservedApplicationVariableKeys.join(', ')}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const versionValidation =
       await this.applicationVersionValidationService.validateServerCompatibility(
         packageJson?.engines?.twenty,

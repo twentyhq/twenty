@@ -910,13 +910,14 @@ export class ApplicationRegistrationService {
       return null;
     }
 
-    const reservedServerVariableKeys = findEngineInjectedEnvVariableNames(
-      Object.keys(params.manifest.application.serverVariables ?? {}),
-    );
+    const reservedVariableKeys = findEngineInjectedEnvVariableNames([
+      ...Object.keys(params.manifest.application.serverVariables ?? {}),
+      ...Object.keys(params.manifest.application.applicationVariables ?? {}),
+    ]);
 
-    if (reservedServerVariableKeys.length > 0) {
+    if (reservedVariableKeys.length > 0) {
       this.logger.warn(
-        `Skipping catalog entry from package ${params.sourcePackage}: server variable names are reserved: ${reservedServerVariableKeys.join(', ')}`,
+        `Skipping catalog entry from package ${params.sourcePackage}: variable names are reserved: ${reservedVariableKeys.join(', ')}`,
       );
 
       return null;
