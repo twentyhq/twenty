@@ -141,7 +141,7 @@ export const useSetNextOnboardingStatus = () => {
 
         setOnboardingStepFreeCredits(
           'createProfile',
-          hasPrefilledName && currentUser?.isWorkspaceCreator === true
+          hasPrefilledName && currentUser?.isWorkspaceCreator
             ? (store.get(onboardingConfigState.atom)
                 ?.createProfileCreditsReward ?? 0)
             : 0,

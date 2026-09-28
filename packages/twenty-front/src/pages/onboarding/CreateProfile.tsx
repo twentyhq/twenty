@@ -92,10 +92,9 @@ export const CreateProfile = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const setCurrentUser = useSetAtomState(currentUserState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsReward =
-    currentUser?.isWorkspaceCreator === true
-      ? (onboardingConfig?.createProfileCreditsReward ?? 0)
-      : 0;
+  const creditsReward = currentUser?.isWorkspaceCreator
+    ? (onboardingConfig?.createProfileCreditsReward ?? 0)
+    : 0;
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );

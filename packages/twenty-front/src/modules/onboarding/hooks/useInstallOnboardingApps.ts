@@ -18,10 +18,9 @@ export const useInstallOnboardingApps = (
   const [deselectedUniversalIdentifiers, setDeselectedUniversalIdentifiers] =
     useState<string[]>([]);
   const [isCompleting, setIsCompleting] = useState(false);
-  const creditsReward =
-    currentUser?.isWorkspaceCreator === true
-      ? (onboardingConfig?.installAppsCreditsReward ?? 0)
-      : 0;
+  const creditsReward = currentUser?.isWorkspaceCreator
+    ? (onboardingConfig?.installAppsCreditsReward ?? 0)
+    : 0;
 
   const selectedUniversalIdentifiers = availableUniversalIdentifiers.filter(
     (universalIdentifier) =>
