@@ -3,12 +3,15 @@ import {
   Controller,
   Get,
   Header,
+  Headers,
   NotFoundException,
   Param,
   Redirect,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,6 +21,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
+import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
 const FOUND_STATUS_CODE = 302;
 
@@ -26,7 +30,10 @@ const CAMPAIGN_TRACKING_TOKEN_FORMAT = /^[A-Za-z0-9_-]+$/;
 @Controller(ApiPath.Emailing)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class CampaignTrackingController {
-  constructor(private readonly shortLinkService: ShortLinkService) {}
+  constructor(
+    private readonly shortLinkService: ShortLinkService,
+    private readonly campaignEngagementCaptureService: CampaignEngagementCaptureService,
+  ) {}
 
   @Get('c/:token')
   @Redirect()
@@ -34,6 +41,8 @@ export class CampaignTrackingController {
   @Header('Referrer-Policy', 'no-referrer')
   async handleTrackedLinkClick(
     @Param('token') token: string,
+    @Headers('user-agent') userAgent: string | undefined,
+    @Req() request: Request,
   ): Promise<{ url: string; statusCode: number }> {
     const payload = this.decodeTokenOrThrow(token);
     const shortLink = await this.shortLinkService.findById({
@@ -54,6 +63,12 @@ export class CampaignTrackingController {
     ) {
       throw new NotFoundException('Invalid tracked link destination');
     }
+
+    await this.campaignEngagementCaptureService.capture({
+      payload,
+      userAgent: userAgent ?? null,
+      requesterIp: request.ip ?? null,
+    });
 
     return { url: destinationUrl, statusCode: FOUND_STATUS_CODE };
   }
