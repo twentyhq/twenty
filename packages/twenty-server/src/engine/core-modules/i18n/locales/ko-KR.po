@@ -837,7 +837,7 @@ msgstr "AI"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
-msgstr ""
+msgstr "워크스페이스 멤버가 소유한 AI 채팅 스레드"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -2351,7 +2351,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat threads"
-msgstr ""
+msgstr "채팅 스레드"
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -12264,12 +12264,12 @@ msgstr "편집하는 동안 이 제한이 변경되었습니다. 새로고침한
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
-msgstr ""
+msgstr "이 로그 필터는 유효하지 않습니다."
 
 #. js-lingui-id: BuvBj9
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
-msgstr ""
+msgstr "이 로그 테이블은 유효하지 않습니다."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13107,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "업데이트된 필드는 다형 관계(morph relation)도 일반 관계도 아닙니다"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "AI 기록에 액세스할 수 없습니다. 다시 시도해 주세요."
@@ -14691,7 +14692,7 @@ msgstr "워크스페이스 멤버 위치"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
-msgstr ""
+msgstr "스레드를 소유한 워크스페이스 멤버"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

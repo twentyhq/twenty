@@ -31,6 +31,7 @@ type DropdownMenuInnerSelectProps = {
   options: SelectOption[];
   dropdownId: string;
   widthInPixels?: number;
+  'aria-label': string;
 };
 
 export const DropdownMenuInnerSelect = ({
@@ -39,6 +40,7 @@ export const DropdownMenuInnerSelect = ({
   options,
   dropdownId,
   widthInPixels,
+  'aria-label': ariaLabel,
 }: DropdownMenuInnerSelectProps) => {
   const theme = useTheme();
 
@@ -62,6 +64,7 @@ export const DropdownMenuInnerSelect = ({
         side="bottom"
         align="end"
         alignOffset={-8}
+        aria-label={ariaLabel}
       >
         <Dropdown.Section>
           {options.map((selectOption) => (

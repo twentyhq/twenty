@@ -156,6 +156,7 @@ export const ObjectSortDropdownButton = () => {
         </Dropdown.Header>
         <DropdownMenuInnerSelect
           dropdownId={`${dropdownId}-direction`}
+          aria-label={t`Direction`}
           options={[ViewSortDirection.ASC, ViewSortDirection.DESC].map(
             (sortDirection) => ({
               value: sortDirection,
