@@ -88,6 +88,6 @@ describe('useCompleteTask', () => {
       await result.current.completeTask(true);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks[0]?.result).toHaveBeenCalled();
   });
 });

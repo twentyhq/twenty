@@ -2,8 +2,11 @@
 import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-const template = mockedCommandMenuItems[0];
+const [template] = mockedCommandMenuItems;
+assertIsDefinedOrThrow(template);
+
 const pageCommand = { ...template, id: 'page', position: 20 };
 const navigationCommand = {
   ...template,
@@ -89,15 +92,20 @@ const pinnedCreationCommand = {
   shortLabel: 'Create',
   icon: 'IconPlus',
 };
+const [companyGlobalCreationCommand, taskGlobalCreationCommand] =
+  globalRecordCreationCommandMenuItems;
+assertIsDefinedOrThrow(companyGlobalCreationCommand);
+assertIsDefinedOrThrow(taskGlobalCreationCommand);
+
 const companyCreationCommand = {
-  ...globalRecordCreationCommandMenuItems[0],
+  ...companyGlobalCreationCommand,
   isPinned: false,
   label: 'Create Company',
   shortLabel: null,
   icon: 'IconBuildingSkyscraper',
 };
 const taskCreationCommand = {
-  ...globalRecordCreationCommandMenuItems[1],
+  ...taskGlobalCreationCommand,
   isPinned: false,
   label: 'Create Task',
   shortLabel: null,

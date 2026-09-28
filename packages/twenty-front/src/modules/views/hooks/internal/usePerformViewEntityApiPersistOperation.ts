@@ -113,13 +113,12 @@ export const usePerformViewEntityApiPersistOperation = (
         };
       }
 
-      const settledMutations = await Promise.allSettled(inputs.map(mutate));
+      const settledMutations = await Promise.allSettled(
+        inputs.map(async (input) => ({ input, result: await mutate(input) })),
+      );
 
-      const fulfilledMutations = settledMutations.flatMap(
-        (settledMutation, index) =>
-          settledMutation.status === 'fulfilled'
-            ? [{ input: inputs[index], result: settledMutation.value }]
-            : [],
+      const fulfilledMutations = settledMutations.flatMap((settledMutation) =>
+        settledMutation.status === 'fulfilled' ? [settledMutation.value] : [],
       );
 
       applyResultToDraft(fulfilledMutations, {

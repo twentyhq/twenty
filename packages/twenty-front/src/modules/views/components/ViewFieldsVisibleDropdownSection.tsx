@@ -73,14 +73,16 @@ export const ViewFieldsVisibleDropdownSection = () => {
     .toSorted(sortByProperty('position'));
 
   const handleDragEnd = (result: DraggableListDropResult) => {
-    if (!isDefined(result.destination)) {
+    const recordFieldToMove = draggableRecordFields[result.source.index];
+    const targetRecordField = isDefined(result.destination)
+      ? draggableRecordFields[result.destination.index]
+      : undefined;
+
+    if (!isDefined(recordFieldToMove) || !isDefined(targetRecordField)) {
       return;
     }
 
-    handleReorderFields({
-      recordFieldToMove: draggableRecordFields[result.source.index],
-      targetRecordField: draggableRecordFields[result.destination.index],
-    });
+    handleReorderFields({ recordFieldToMove, targetRecordField });
   };
 
   return (

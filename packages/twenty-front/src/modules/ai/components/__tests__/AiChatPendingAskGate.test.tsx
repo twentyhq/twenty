@@ -21,14 +21,14 @@ jest.mock('@/ai/components/AiChatQuestionCard', () => ({
     pendingQuestion: AgentChatPendingQuestion;
   }) => (
     <div role="group" aria-label="Questions">
-      {pendingQuestion.questions[0].question}
+      {pendingQuestion.questions[0]?.question}
     </div>
   ),
 }));
 jest.mock('@/ai/components/AiChatFormCard', () => ({
   AiChatFormCard: ({ fields }: { fields: RequestFormField[] }) => (
     <div role="group" aria-label="Form">
-      {fields[0].label}
+      {fields[0]?.label}
     </div>
   ),
 }));

@@ -131,11 +131,17 @@ const isPrivateUrl = (url: string): boolean => {
     }
 
     const ipParts = hostname.split('.').map(Number);
-    if (ipParts.length === 4 && ipParts.every((part) => !isNaN(part))) {
-      if (ipParts[0] === 10) return true;
-      if (ipParts[0] === 172 && ipParts[1] >= 16 && ipParts[1] <= 31)
+    const [firstOctet, secondOctet] = ipParts;
+    if (
+      ipParts.length === 4 &&
+      ipParts.every((part) => !isNaN(part)) &&
+      isDefined(firstOctet) &&
+      isDefined(secondOctet)
+    ) {
+      if (firstOctet === 10) return true;
+      if (firstOctet === 172 && secondOctet >= 16 && secondOctet <= 31)
         return true;
-      if (ipParts[0] === 192 && ipParts[1] === 168) return true;
+      if (firstOctet === 192 && secondOctet === 168) return true;
     }
 
     if (

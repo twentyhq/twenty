@@ -1,6 +1,7 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { groupEventsByMonth } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { mockedTimelineActivityRecords } from '~/testing/mock-data/generated/data/timelineActivities/mock-timelineActivities-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const mockedTimelineActivities =
   mockedTimelineActivityRecords as unknown as TimelineActivity[];
@@ -14,8 +15,8 @@ describe('groupEventsByMonth', () => {
       } as TimelineActivity,
     ]);
 
-    expect(group.month).toBe(1);
-    expect(group.year).toBe(2026);
+    expect(group?.month).toBe(1);
+    expect(group?.year).toBe(2026);
   });
 
   it('should group activities by month', () => {
@@ -42,6 +43,9 @@ describe('groupEventsByMonth', () => {
     for (let index = 1; index < grouped.length; index++) {
       const previous = grouped[index - 1];
       const current = grouped[index];
+      assertIsDefinedOrThrow(previous);
+      assertIsDefinedOrThrow(current);
+
       const isPreviousMoreRecent =
         previous.year > current.year ||
         (previous.year === current.year && previous.month > current.month);

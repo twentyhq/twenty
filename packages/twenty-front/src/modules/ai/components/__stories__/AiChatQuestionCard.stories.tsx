@@ -22,38 +22,36 @@ const StyledContainer = styled.div`
 
 const INSTANCE_ID = 'agentChatQuestionCardStory';
 
+type PendingQuestion = AgentChatPendingQuestion['questions'][number];
+
+const emailTypeQuestion: PendingQuestion = {
+  header: 'Email type',
+  question: 'What type of emails would you like to send?',
+  options: [
+    {
+      label: 'A welcome email',
+      description: 'A short, friendly note to introduce yourself.',
+      isRecommended: true,
+    },
+    { label: 'A presentation of Twenty' },
+    { label: 'An offer for a potential partnership' },
+  ],
+};
+
+const toneQuestion: PendingQuestion = {
+  header: 'Tone',
+  question: 'Which tone should the email use?',
+  options: [{ label: 'Friendly', isRecommended: true }, { label: 'Formal' }],
+};
+
 const singleQuestion: AgentChatPendingQuestion = {
   toolCallId: 'call-1',
-  questions: [
-    {
-      header: 'Email type',
-      question: 'What type of emails would you like to send?',
-      options: [
-        {
-          label: 'A welcome email',
-          description: 'A short, friendly note to introduce yourself.',
-          isRecommended: true,
-        },
-        { label: 'A presentation of Twenty' },
-        { label: 'An offer for a potential partnership' },
-      ],
-    },
-  ],
+  questions: [emailTypeQuestion],
 };
 
 const multipleQuestions: AgentChatPendingQuestion = {
   toolCallId: 'call-2',
-  questions: [
-    singleQuestion.questions[0],
-    {
-      header: 'Tone',
-      question: 'Which tone should the email use?',
-      options: [
-        { label: 'Friendly', isRecommended: true },
-        { label: 'Formal' },
-      ],
-    },
-  ],
+  questions: [emailTypeQuestion, toneQuestion],
 };
 
 const longQuestion: AgentChatPendingQuestion = {
@@ -70,7 +68,7 @@ const longQuestion: AgentChatPendingQuestion = {
         { label: 'Fewer steps' },
       ],
     },
-    multipleQuestions.questions[1],
+    toneQuestion,
   ],
 };
 

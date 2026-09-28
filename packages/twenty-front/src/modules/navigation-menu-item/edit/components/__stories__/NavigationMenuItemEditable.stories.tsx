@@ -19,6 +19,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const ITEMS: NavigationMenuItem[] = ['Docs', 'Status'].map(
   (name, position) => ({
@@ -92,15 +93,19 @@ export const EditLink: Story = {
     await userEvent.clear(label);
     await userEvent.type(label, 'Documentation{Enter}');
     await expect(await canvas.findByText('Documentation')).toBeVisible();
-    await userEvent.click(
-      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
-    );
+    const [editLinkButton] = await canvas.findAllByRole('button', {
+      name: 'Edit link',
+    });
+    assertIsDefinedOrThrow(editLinkButton);
+    await userEvent.click(editLinkButton);
     const url = await body.findByDisplayValue('https://example.com');
     await userEvent.clear(url);
     await userEvent.type(url, 'https://twenty.com/docs{Enter}');
-    await userEvent.click(
-      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
-    );
+    const [editLinkButtonAfterUpdate] = await canvas.findAllByRole('button', {
+      name: 'Edit link',
+    });
+    assertIsDefinedOrThrow(editLinkButtonAfterUpdate);
+    await userEvent.click(editLinkButtonAfterUpdate);
     await expect(
       await body.findByDisplayValue('https://twenty.com/docs'),
     ).toBeVisible();
@@ -114,9 +119,11 @@ export const OrganizeFromBothMenus: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const docs = await canvas.findByText('Docs');
     await userEvent.tab();
-    await userEvent.click(
-      (await canvas.findAllByRole('button', { name: 'Menu item actions' }))[0],
-    );
+    const [menuItemActionsButton] = await canvas.findAllByRole('button', {
+      name: 'Menu item actions',
+    });
+    assertIsDefinedOrThrow(menuItemActionsButton);
+    await userEvent.click(menuItemActionsButton);
     await userEvent.click(await body.findByText('Move down'));
     await expect(
       (await canvas.findAllByText(/^(Docs|Status)$/)).map(
@@ -177,9 +184,12 @@ export const PreviewInsertion: Story = {
 
 export const EditFolderInPlace: Story = {
   beforeEach: () => {
+    const [firstItem] = ITEMS;
+    assertIsDefinedOrThrow(firstItem);
+
     jotaiStore.set(navigationMenuItemsDraftState.atom, [
       {
-        ...ITEMS[0],
+        ...firstItem,
         id: 'folder',
         name: 'Projects',
         type: NavigationMenuItemType.FOLDER,
@@ -234,6 +244,7 @@ export const TooltipsStayOutOfActionMenus: Story = {
       const actions = (
         await canvas.findAllByRole('button', { name: 'Menu item actions' })
       )[name === 'Docs' ? 0 : 1];
+      assertIsDefinedOrThrow(actions);
       await user.hover(actions);
       await waitFor(() =>
         expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),

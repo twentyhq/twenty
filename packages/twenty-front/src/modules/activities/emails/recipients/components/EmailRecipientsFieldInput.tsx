@@ -356,11 +356,13 @@ export const EmailRecipientsFieldInput = ({
     const pastedText = event.clipboardData.getData('text/plain');
     const parsedRecipients = parseEmailRecipients(pastedText);
 
+    const [firstParsedRecipient, ...otherParsedRecipients] = parsedRecipients;
+
     const shouldCommitAsChips =
-      parsedRecipients.length > 1 ||
-      (parsedRecipients.length === 1 &&
-        (isNonEmptyString(parsedRecipients[0].displayName) ||
-          isValidEmailRecipientAddress(parsedRecipients[0].address)));
+      otherParsedRecipients.length > 0 ||
+      (isDefined(firstParsedRecipient) &&
+        (isNonEmptyString(firstParsedRecipient.displayName) ||
+          isValidEmailRecipientAddress(firstParsedRecipient.address)));
 
     if (!shouldCommitAsChips) {
       return;

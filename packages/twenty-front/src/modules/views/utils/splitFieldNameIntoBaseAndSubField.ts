@@ -4,13 +4,14 @@ export const splitFieldNameIntoBaseAndSubField = (
   baseFieldName: string;
   subFieldName?: string;
 } => {
-  const fieldParts = fieldName.split('.');
-  const baseFieldName = fieldParts[0];
-  const subFieldName =
-    fieldParts.length > 1 ? fieldParts.slice(1).join('.') : undefined;
+  const separatorIndex = fieldName.indexOf('.');
+
+  if (separatorIndex === -1) {
+    return { baseFieldName: fieldName, subFieldName: undefined };
+  }
 
   return {
-    baseFieldName,
-    subFieldName,
+    baseFieldName: fieldName.slice(0, separatorIndex),
+    subFieldName: fieldName.slice(separatorIndex + 1),
   };
 };

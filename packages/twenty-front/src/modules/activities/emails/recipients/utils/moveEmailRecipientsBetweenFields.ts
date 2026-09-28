@@ -42,8 +42,8 @@ export const moveEmailRecipientsBetweenFields = ({
   }
 
   const movedIndexSet = new Set(sortedMovedIndices);
-  const movedRecipients = sortedMovedIndices.map(
-    (index) => sourceRecipients[index],
+  const movedRecipients = sourceRecipients.filter((_recipient, index) =>
+    movedIndexSet.has(index),
   );
   const remainingSourceRecipients = sourceRecipients.filter(
     (_recipient, index) => !movedIndexSet.has(index),

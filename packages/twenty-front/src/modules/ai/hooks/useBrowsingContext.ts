@@ -81,22 +81,25 @@ export const useGetBrowsingContext = () => {
         }),
       );
 
-      if (
-        targetedRecordsRule.mode !== 'selection' ||
-        targetedRecordsRule.selectedRecordIds.length !== 1
-      ) {
+      const recordId =
+        targetedRecordsRule.mode === 'selection' &&
+        targetedRecordsRule.selectedRecordIds.length === 1
+          ? targetedRecordsRule.selectedRecordIds[0]
+          : undefined;
+
+      if (!isDefined(recordId)) {
         return null;
       }
 
       const recordContext: BrowsingContext = {
         type: 'recordPage',
         objectNameSingular: objectMetadataItem.nameSingular,
-        recordId: targetedRecordsRule.selectedRecordIds[0],
+        recordId,
       };
 
       const pageLayoutId = store.get(
         recordStoreFamilySelector.selectorFamily({
-          recordId: targetedRecordsRule.selectedRecordIds[0],
+          recordId,
           fieldName: 'pageLayoutId',
         }),
       ) as string | null | undefined;

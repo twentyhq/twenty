@@ -40,7 +40,7 @@ const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
 
 const readToolOutput = () =>
   (
-    jotaiStore.get(messagesAtom)[0].parts[0] as unknown as {
+    jotaiStore.get(messagesAtom)[0]?.parts[0] as unknown as {
       output: unknown;
     }
   ).output;

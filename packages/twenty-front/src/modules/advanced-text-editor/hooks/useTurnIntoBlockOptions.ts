@@ -19,7 +19,7 @@ export type TurnIntoBlockOptions = {
   icon: IconComponent;
 };
 
-const HEADING_ICONS: Record<number, IconComponent> = {
+const HEADING_ICONS: Record<1 | 2 | 3, IconComponent> = {
   1: IconH1,
   2: IconH2,
   3: IconH3,
@@ -28,7 +28,7 @@ const HEADING_ICONS: Record<number, IconComponent> = {
 export const useTurnIntoBlockOptions = (editor: Editor) => {
   const { t } = useLingui();
 
-  const headingTitles: Record<number, string> = {
+  const headingTitles: Record<1 | 2 | 3, string> = {
     1: t`Heading 1`,
     2: t`Heading 2`,
     3: t`Heading 3`,

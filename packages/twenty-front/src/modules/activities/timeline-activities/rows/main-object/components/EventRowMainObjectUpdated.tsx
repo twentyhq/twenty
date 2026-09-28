@@ -13,6 +13,7 @@ import {
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isDefined } from 'twenty-shared/utils';
 
 type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
@@ -57,6 +58,7 @@ export const EventRowMainObjectUpdated = ({
   }
 
   const fieldCount = diffEntries.length;
+  const [firstDiffEntry] = diffEntries;
   const recordLabel = labelIdentifierValue;
 
   return (
@@ -67,11 +69,11 @@ export const EventRowMainObjectUpdated = ({
           <EventRowItem variant="action">
             {eventTypeLabel ?? t`updated`}
           </EventRowItem>
-          {diffEntries.length === 1 && (
+          {fieldCount === 1 && isDefined(firstDiffEntry) && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
-              diffKey={diffEntries[0][0]}
-              fieldDiff={diffEntries[0][1]}
+              diffKey={firstDiffEntry[0]}
+              fieldDiff={firstDiffEntry[1]}
               eventId={event.id}
             />
           )}

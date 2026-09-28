@@ -114,10 +114,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const handleTogglePin = (itemId: string, currentlyPinned: boolean) => {
     if (currentlyPinned) {
-      const nextOtherPosition =
-        allOtherItems.length === 0
-          ? 0
-          : allOtherItems[allOtherItems.length - 1].position + 1;
+      const nextOtherPosition = (allOtherItems.at(-1)?.position ?? -1) + 1;
 
       updateCommandMenuItemInDraft(itemId, {
         isPinned: false,
@@ -127,10 +124,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
       return;
     }
 
-    const nextPinnedPosition =
-      allPinnedItems.length === 0
-        ? 0
-        : allPinnedItems[allPinnedItems.length - 1].position + 1;
+    const nextPinnedPosition = (allPinnedItems.at(-1)?.position ?? -1) + 1;
 
     updateCommandMenuItemInDraft(itemId, {
       isPinned: true,

@@ -3,7 +3,7 @@ import { act, renderHook, screen } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
 import { type Store } from 'jotai/vanilla/store';
 import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,7 +18,10 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
-const viewToDestroy = { ...mockedViews[0], name: 'View to delete' };
+const [mockedView] = mockedViews;
+assertIsDefinedOrThrow(mockedView);
+
+const viewToDestroy = { ...mockedView, name: 'View to delete' };
 const otherView = { ...viewToDestroy, id: 'other-view-id', name: 'Other view' };
 const destroyRequest = {
   query: DestroyViewDocument,

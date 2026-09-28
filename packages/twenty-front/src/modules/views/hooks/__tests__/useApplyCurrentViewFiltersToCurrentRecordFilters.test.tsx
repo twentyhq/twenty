@@ -11,7 +11,11 @@ import { type View } from '@/views/types/View';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { act } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  getFilterTypeFromFieldType,
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   type ViewFilter as GqlViewFilter,
   ViewFilterOperand as GqlViewFilterOperand,
@@ -43,7 +47,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
   )!;
   const allCompaniesView = allCompaniesViewData as unknown as View;
 
-  const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
+  const [mockFieldMetadataItem] = mockObjectMetadataItem.fields;
+  assertIsDefinedOrThrow(mockFieldMetadataItem);
 
   const mockViewFilter: ViewFilter = {
     id: 'filter-1',

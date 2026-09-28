@@ -33,6 +33,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
   title: 'Modules/Views/ViewBarFilterDropdown',
@@ -219,7 +220,8 @@ export const AdvancedFilterCountBadge: Story = {
         instanceId,
       );
 
-      const firstFieldMetadataItem = companyObjectMetadataItem.fields[0];
+      const [firstFieldMetadataItem] = companyObjectMetadataItem.fields;
+      assertIsDefinedOrThrow(firstFieldMetadataItem);
 
       useEffect(() => {
         setCurrentRecordFilterGroups([

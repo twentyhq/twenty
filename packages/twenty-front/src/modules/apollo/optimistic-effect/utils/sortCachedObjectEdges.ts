@@ -20,9 +20,9 @@ const extractOrderByDirection = (value: unknown): OrderBy | null => {
     return value as OrderBy;
   }
   if (typeof value === 'object' && value !== null) {
-    const entries = Object.entries(value);
-    if (entries.length > 0) {
-      return extractOrderByDirection(entries[0][1]);
+    const [firstEntry] = Object.entries(value);
+    if (isDefined(firstEntry)) {
+      return extractOrderByDirection(firstEntry[1]);
     }
   }
   return null;
@@ -37,20 +37,25 @@ export const sortCachedObjectEdges = ({
   orderBy: RecordGqlOperationOrderBy;
   readCacheField: ReadFieldFunction;
 }) => {
-  const [orderByFieldName, orderByFieldValueOrDirection] = Object.entries(
-    orderBy[0],
-  )[0];
+  const [orderByFieldName, orderByFieldValueOrDirection] =
+    Object.entries(orderBy[0] ?? {})[0] ?? [];
+
+  if (!isDefined(orderByFieldName)) {
+    return edges;
+  }
+
   const [orderBySubFieldName, orderBySubFieldValueOrDirection] =
-    isNonEmptyString(orderByFieldValueOrDirection)
+    isNonEmptyString(orderByFieldValueOrDirection) ||
+    !isDefined(orderByFieldValueOrDirection)
       ? []
-      : Object.entries(orderByFieldValueOrDirection)[0];
+      : (Object.entries(orderByFieldValueOrDirection)[0] ?? []);
 
   // For relation fields with composite nested fields (e.g., accountOwner.name.firstName)
   const [orderBySubSubFieldNameOrDirection] =
     isNonEmptyString(orderBySubFieldValueOrDirection) ||
     !isDefined(orderBySubFieldValueOrDirection)
       ? []
-      : Object.entries(orderBySubFieldValueOrDirection)[0];
+      : (Object.entries(orderBySubFieldValueOrDirection)[0] ?? []);
 
   const readFieldValueToSort = (
     edge: RecordGqlRefEdge,

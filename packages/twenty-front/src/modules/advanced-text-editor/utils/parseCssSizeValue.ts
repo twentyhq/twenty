@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 export type CssSizeValue = {
   amount: string;
   unit: 'px' | '%' | 'em';
@@ -6,11 +7,11 @@ export type CssSizeValue = {
 const CSS_SIZE_PATTERN = /^(-?(?:\d+|\d*\.\d+))(px|%|em)$/;
 
 export const parseCssSizeValue = (value: string | undefined): CssSizeValue => {
-  const match = (value ?? '').trim().match(CSS_SIZE_PATTERN);
+  const [, amount, unit] = (value ?? '').trim().match(CSS_SIZE_PATTERN) ?? [];
 
-  if (!match) {
+  if (!isDefined(amount) || !isDefined(unit)) {
     return { amount: '', unit: 'px' };
   }
 
-  return { amount: match[1], unit: match[2] as CssSizeValue['unit'] };
+  return { amount, unit: unit as CssSizeValue['unit'] };
 };

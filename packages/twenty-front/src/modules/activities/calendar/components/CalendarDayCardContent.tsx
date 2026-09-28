@@ -6,6 +6,7 @@ import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalend
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type CalendarDayCardContentProps = {
   calendarEvents: TimelineCalendarEvent[];
@@ -64,7 +65,13 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
-  const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
+  const [firstCalendarEvent] = calendarEvents;
+
+  if (!isDefined(firstCalendarEvent)) {
+    return null;
+  }
+
+  const endOfDayDate = endOfDay(getCalendarEventStartDate(firstCalendarEvent));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
   const weekDayLabel = format(endOfDayDate, 'EE');

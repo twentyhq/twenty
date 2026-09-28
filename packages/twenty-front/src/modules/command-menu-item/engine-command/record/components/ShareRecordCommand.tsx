@@ -8,15 +8,20 @@ export const ShareRecordCommand = () => {
   const { objectMetadataItem, selectedRecords } =
     useHeadlessCommandContextApi();
   const { openShareRecordInSidePanel } = useOpenShareRecordInSidePanel();
+  const [selectedRecord, ...otherSelectedRecords] = selectedRecords;
 
-  if (!isDefined(objectMetadataItem) || selectedRecords.length !== 1) {
+  if (
+    !isDefined(objectMetadataItem) ||
+    !isDefined(selectedRecord) ||
+    otherSelectedRecords.length > 0
+  ) {
     throw new Error('Sharing needs exactly one selected record');
   }
 
   const handleExecute = () =>
     openShareRecordInSidePanel({
       objectMetadataItem,
-      recordId: selectedRecords[0].id,
+      recordId: selectedRecord.id,
     });
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

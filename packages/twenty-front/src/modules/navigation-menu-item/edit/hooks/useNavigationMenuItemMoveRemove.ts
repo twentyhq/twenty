@@ -38,10 +38,10 @@ export const useNavigationMenuItemMoveRemove = (
     const currentIndex = siblings.findIndex(
       (item) => item.id === navigationMenuItemId,
     );
-    if (currentIndex <= 0) {
+    const prev = currentIndex > 0 ? siblings[currentIndex - 1] : undefined;
+    if (!isDefined(prev)) {
       return;
     }
-    const prev = siblings[currentIndex - 1];
     const prevPrev = siblings[currentIndex - 2];
     await updateItem(navigationMenuItemId, {
       position: getPositionBetween(prevPrev?.position, prev.position),
@@ -56,10 +56,10 @@ export const useNavigationMenuItemMoveRemove = (
     const currentIndex = siblings.findIndex(
       (item) => item.id === navigationMenuItemId,
     );
-    if (currentIndex < 0 || currentIndex >= siblings.length - 1) {
+    const next = currentIndex >= 0 ? siblings[currentIndex + 1] : undefined;
+    if (!isDefined(next)) {
       return;
     }
-    const next = siblings[currentIndex + 1];
     const nextNext = siblings[currentIndex + 2];
     await updateItem(navigationMenuItemId, {
       position: getPositionBetween(next.position, nextNext?.position),

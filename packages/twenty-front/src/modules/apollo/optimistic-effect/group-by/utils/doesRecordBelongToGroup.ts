@@ -14,16 +14,16 @@ export const doesRecordBelongToGroup = (
   }
 
   if (Array.isArray(groupByConfig)) {
-    const groupByFieldNames = groupByConfig.map(
-      (groupByField) => Object.keys(groupByField)[0],
-    );
-
-    for (let i = 0; i < groupByFieldNames.length; i++) {
-      const fieldName = groupByFieldNames[i];
+    for (const [i, groupByField] of groupByConfig.entries()) {
+      const [fieldName] = Object.keys(groupByField);
       const expectedValue = groupByDimensionValues[i];
 
       if (!isDefined(expectedValue)) {
         continue;
+      }
+
+      if (!isDefined(fieldName)) {
+        return false;
       }
 
       let recordValue = record[fieldName];
@@ -32,7 +32,7 @@ export const doesRecordBelongToGroup = (
         return false;
       }
 
-      const fieldConfig = groupByConfig[i][fieldName];
+      const fieldConfig = groupByField[fieldName];
       const recordValueStr = normalizeGroupByDimensionValue(
         recordValue,
         fieldConfig,

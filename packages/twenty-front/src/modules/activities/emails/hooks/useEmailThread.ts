@@ -14,6 +14,7 @@ import {
   CoreObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -72,9 +73,9 @@ export const useEmailThread = (threadId: string | null) => {
   }, [messagesLoading, hasNextPage]);
 
   useEffect(() => {
-    if (messages.length > 0 && isMessagesFetchComplete) {
-      const lastMessage = messages[messages.length - 1];
+    const lastMessage = messages.at(-1);
 
+    if (isDefined(lastMessage) && isMessagesFetchComplete) {
       setLastMessageId(lastMessage.id);
     }
   }, [messages, isMessagesFetchComplete]);

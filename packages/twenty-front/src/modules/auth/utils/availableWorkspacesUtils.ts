@@ -18,7 +18,7 @@ export const countAvailableWorkspaces = ({
 export const getFirstAvailableWorkspaces = ({
   availableWorkspacesForSignIn,
   availableWorkspacesForSignUp,
-}: AvailableWorkspaces): AvailableWorkspace => {
+}: AvailableWorkspaces): AvailableWorkspace | undefined => {
   return availableWorkspacesForSignIn[0] ?? availableWorkspacesForSignUp[0];
 };
 

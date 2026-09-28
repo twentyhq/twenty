@@ -13,6 +13,7 @@ import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAn
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
@@ -66,12 +67,14 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
       (view) => view.id !== viewPickerReferenceViewId,
     );
 
-    if (remainingViews.length === 0) {
+    const [nextView] = remainingViews;
+
+    if (!isDefined(nextView)) {
       return;
     }
 
     if (shouldChangeView) {
-      changeView(remainingViews[0].id);
+      changeView(nextView.id);
     }
 
     await performViewApiDestroy({ id: viewPickerReferenceViewId });

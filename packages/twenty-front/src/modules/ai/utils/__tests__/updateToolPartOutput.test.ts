@@ -34,11 +34,11 @@ describe('updateToolPartOutput', () => {
       output: answeredOutput,
     });
 
-    expect(result[0].parts[1]).toMatchObject({
+    expect(result[0]?.parts[1]).toMatchObject({
       toolCallId: 'call-1',
       output: answeredOutput,
     });
-    expect(result[0].parts[0]).toBe(messages[0].parts[0]);
+    expect(result[0]?.parts[0]).toBe(messages[0]?.parts[0]);
     expect(result[1]).toBe(messages[1]);
   });
 

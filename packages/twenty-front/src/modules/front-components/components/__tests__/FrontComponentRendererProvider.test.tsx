@@ -121,7 +121,7 @@ describe('FrontComponentRendererProvider', () => {
     });
 
     expect(getFocusStack()).toHaveLength(1);
-    expect(getFocusStack()[0].focusId).toBe(EXPECTED_FOCUS_ID);
+    expect(getFocusStack()[0]?.focusId).toBe(EXPECTED_FOCUS_ID);
   });
 
   it('should remove the focus item on unmount', () => {

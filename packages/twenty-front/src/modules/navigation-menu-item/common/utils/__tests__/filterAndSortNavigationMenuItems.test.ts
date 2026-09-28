@@ -127,7 +127,7 @@ describe('filterAndSortNavigationMenuItems', () => {
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('item-id');
+    expect(result[0]?.id).toBe('item-id');
   });
 
   it('should filter out view items when view is not found', () => {
@@ -169,7 +169,7 @@ describe('filterAndSortNavigationMenuItems', () => {
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('item-id');
+    expect(result[0]?.id).toBe('item-id');
   });
 
   it('should filter out record items when targetRecordId is not defined', () => {
@@ -258,9 +258,9 @@ describe('filterAndSortNavigationMenuItems', () => {
     );
 
     expect(result).toHaveLength(3);
-    expect(result[0].id).toBe('item-1');
-    expect(result[1].id).toBe('item-2');
-    expect(result[2].id).toBe('item-3');
+    expect(result[0]?.id).toBe('item-1');
+    expect(result[1]?.id).toBe('item-2');
+    expect(result[2]?.id).toBe('item-3');
   });
 
   it('should keep link items', () => {
@@ -279,7 +279,7 @@ describe('filterAndSortNavigationMenuItems', () => {
       false,
     );
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('link-1');
+    expect(result[0]?.id).toBe('link-1');
   });
 
   it('should keep object items when objectMetadata exists', () => {
@@ -297,7 +297,7 @@ describe('filterAndSortNavigationMenuItems', () => {
       false,
     );
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('obj-1');
+    expect(result[0]?.id).toBe('obj-1');
   });
 
   it('should filter out object items when objectMetadata is not found', () => {
@@ -385,6 +385,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       false,
     );
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('folder-1');
+    expect(result[0]?.id).toBe('folder-1');
   });
 });
