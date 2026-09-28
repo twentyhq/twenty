@@ -333,6 +333,9 @@ export const STANDARD_OBJECTS = {
       workflowRunStepUniqueIndex: {
         universalIdentifier: 'c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41',
       },
+      workflowRunStatusIndex: {
+        universalIdentifier: '77615052-0e81-4210-b259-37a9e939bb41',
+      },
       threadToolCallUniqueIndex: {
         universalIdentifier: '6a0ac44d-84f3-4bfa-8939-ce3d82f0d043',
       },
@@ -352,6 +355,12 @@ export const STANDARD_OBJECTS = {
           },
           workflowRun: {
             universalIdentifier: '52e80140-79f9-43b6-b051-ea2c47587392',
+          },
+          thread: {
+            universalIdentifier: 'c81b54d7-ffaf-4222-8beb-4479e662426e',
+          },
+          source: {
+            universalIdentifier: '76633724-5037-45cb-871a-08c576e3059b',
           },
           createdAt: {
             universalIdentifier: 'a5b4b662-28bf-46a3-a89a-6f555280c6bb',
@@ -377,6 +386,7 @@ export const STANDARD_OBJECTS = {
           'answeredAt',
           'source',
           'workflowRun',
+          'thread',
         ],
         viewFieldGroupNames: {
           general: 'General',

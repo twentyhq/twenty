@@ -81,6 +81,32 @@ export const computeStandardInputAskViewFields = (
         size: 150,
       },
     }),
+    // An agent's question has no run to open, and is answered in its
+    // conversation, so the thread is how the inbox reaches it.
+    waitingOnMeThread: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'inputAsk',
+      context: {
+        viewName: 'waitingOnMe',
+        viewFieldName: 'thread',
+        fieldName: 'thread',
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+    }),
+    waitingOnMeSource: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'inputAsk',
+      context: {
+        viewName: 'waitingOnMe',
+        viewFieldName: 'source',
+        fieldName: 'source',
+        position: 3,
+        isVisible: true,
+        size: 150,
+      },
+    }),
     waitingOnMeCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'inputAsk',
@@ -88,7 +114,7 @@ export const computeStandardInputAskViewFields = (
         viewName: 'waitingOnMe',
         viewFieldName: 'createdAt',
         fieldName: 'createdAt',
-        position: 2,
+        position: 4,
         isVisible: true,
         size: 150,
       },
@@ -167,6 +193,19 @@ export const computeStandardInputAskViewFields = (
         viewFieldName: 'workflowRun',
         fieldName: 'workflowRun',
         position: 5,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    inputAskRecordPageFieldsThread: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'inputAsk',
+      context: {
+        viewName: 'inputAskRecordPageFields',
+        viewFieldName: 'thread',
+        fieldName: 'thread',
+        position: 6,
         isVisible: true,
         size: 150,
         viewFieldGroupName: 'general',

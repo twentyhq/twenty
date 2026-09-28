@@ -25,8 +25,6 @@ export const computeStandardInputAskViews = (
         icon: 'IconTable',
       },
     }),
-    // What an inbox of questions reads: the Asks still waiting on whoever is
-    // looking.
     waitingOnMe: createStandardViewFlatMetadata({
       ...args,
       objectName: 'inputAsk',

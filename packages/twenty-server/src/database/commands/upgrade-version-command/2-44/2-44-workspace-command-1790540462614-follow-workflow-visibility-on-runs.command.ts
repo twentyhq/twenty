@@ -209,7 +209,8 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
            AND metadata."workspaceId" = $1
            AND metadata."universalIdentifier" = $2
            AND (
-             (share."sourceId" = share."recordId" AND share."rowCause" IN ('OWNER', 'RULE'))
+             share."sourceId" = share."recordId"
+             OR share."rowCause" = 'APPLICATION'
              OR share."principalType" = 'EVERYONE'
            )`,
         parameters,
