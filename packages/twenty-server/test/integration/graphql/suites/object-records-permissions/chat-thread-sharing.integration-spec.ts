@@ -3,7 +3,7 @@ import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-ch
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790599104004-add-workflow-run-to-chat-threads.command';
+import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -485,12 +485,14 @@ describe('Conversation sharing through the authenticated API', () => {
         chatService.archiveThread(owner),
       ]);
       for (const retried of retriedArchives) {
-        expect(retried.deletedAt).toEqual(archived.deletedAt);
+        expect(retried.archivedAt).toEqual(archived.archivedAt);
         expect(retried.updatedAt).toEqual(archived.updatedAt);
       }
-      expect(archived.deletedAt?.toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-      expect((await chatService.getWritableThread(owner)).deletedAt).toEqual(
-        archived.deletedAt,
+      expect(new Date(archived.archivedAt!).toISOString()).toMatch(
+        /^\d{4}-\d{2}-\d{2}T/,
+      );
+      expect((await chatService.getWritableThread(owner)).archivedAt).toEqual(
+        archived.archivedAt,
       );
       expect(
         (await chatService.getThreadsForUser(owner)).some(

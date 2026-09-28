@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type AddWorkflowRunToChatThreadsCommand,
   LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790599104004-add-workflow-run-to-chat-threads.command';
+} from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -32,7 +32,7 @@ const FIELD_UNIVERSAL_IDENTIFIERS = [
 const INDEX_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.indexes.workflowRunIndex.universalIdentifier;
 
-describe('2-44 workspace command 1790599104004 - AddWorkflowRunToChatThreadsCommand (integration)', () => {
+describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsCommand (integration)', () => {
   let command: AddWorkflowRunToChatThreadsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let workspaceCacheService: WorkspaceCacheService;

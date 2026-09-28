@@ -172,7 +172,7 @@ describe('Chat execution sender', () => {
     const { service, chat } = build();
     chat.getWritableThread.mockResolvedValue({
       id: threadId,
-      deletedAt: new Date(),
+      archivedAt: new Date().toISOString(),
     } as never);
     await expect(service.authorizeJob(job)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
