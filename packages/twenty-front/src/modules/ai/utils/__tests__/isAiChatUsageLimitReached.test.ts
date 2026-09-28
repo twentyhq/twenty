@@ -5,7 +5,7 @@ const buildUsage = (overrides: Partial<AiChatUsage> = {}): AiChatUsage => ({
   limitValue: 1000,
   consumedValue: 100,
   periodEnd: '2026-10-01T00:00:00.000Z',
-  isUsageLimit: true,
+  kind: 'limit',
   ...overrides,
 });
 
@@ -37,7 +37,7 @@ describe('isAiChatUsageLimitReached', () => {
   it('ignores the plan allowance, which the credits banner owns', () => {
     expect(
       isAiChatUsageLimitReached(
-        buildUsage({ consumedValue: 1000, isUsageLimit: false }),
+        buildUsage({ consumedValue: 1000, kind: 'allowance' }),
       ),
     ).toBe(false);
   });

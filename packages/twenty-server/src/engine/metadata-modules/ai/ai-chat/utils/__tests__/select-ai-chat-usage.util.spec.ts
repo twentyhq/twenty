@@ -43,7 +43,7 @@ describe('selectAiChatUsage', () => {
       limitValue: 1000,
       consumedValue: 200,
       periodEnd,
-      isUsageLimit: true,
+      kind: 'limit',
     });
   });
 
@@ -63,7 +63,7 @@ describe('selectAiChatUsage', () => {
       limitValue: 100,
       consumedValue: 90,
       periodEnd,
-      isUsageLimit: true,
+      kind: 'limit',
     });
   });
 
@@ -92,7 +92,7 @@ describe('selectAiChatUsage', () => {
       limitValue: 1000,
       consumedValue: null,
       periodEnd: null,
-      isUsageLimit: true,
+      kind: 'limit',
     });
   });
 
@@ -109,7 +109,7 @@ describe('selectAiChatUsage', () => {
       limitValue: 100,
       consumedValue: null,
       periodEnd: null,
-      isUsageLimit: true,
+      kind: 'limit',
     });
   });
 

@@ -3429,6 +3429,7 @@ type AiChatUsage {
   limitValue: BigInt!
   consumedValue: BigInt
   periodEnd: DateTime
+  kind: String!
 }
 
 type Skill {

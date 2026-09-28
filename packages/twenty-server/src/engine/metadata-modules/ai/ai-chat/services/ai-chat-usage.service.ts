@@ -40,7 +40,7 @@ export class AiChatUsageService {
         await this.usageLimitQuotaService.getAllowanceUsage(workspaceId);
 
       return isDefined(allowanceUsage)
-        ? { ...allowanceUsage, isUsageLimit: false }
+        ? { ...allowanceUsage, kind: 'allowance' }
         : null;
     }
 

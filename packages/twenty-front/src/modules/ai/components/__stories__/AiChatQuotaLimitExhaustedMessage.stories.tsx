@@ -17,10 +17,10 @@ const meta: Meta<typeof AiChatQuotaLimitExhaustedMessage> = {
 export default meta;
 type Story = StoryObj<typeof AiChatQuotaLimitExhaustedMessage>;
 
-export const WithBillingPermission: Story = {
-  parameters: { permissionFlags: [PermissionFlagType.BILLING] },
+export const WithWorkspacePermission: Story = {
+  parameters: { permissionFlags: [PermissionFlagType.WORKSPACE] },
 };
 
-export const WithoutBillingPermission: Story = {
+export const WithoutWorkspacePermission: Story = {
   parameters: { permissionFlags: [] },
 };

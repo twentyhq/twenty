@@ -14,10 +14,10 @@ const meta: Meta<typeof AiChatUsageLimitReachedBanner> = {
 export default meta;
 type Story = StoryObj<typeof AiChatUsageLimitReachedBanner>;
 
-export const WithBillingPermission: Story = {
-  parameters: { permissionFlags: [PermissionFlagType.BILLING] },
+export const WithWorkspacePermission: Story = {
+  parameters: { permissionFlags: [PermissionFlagType.WORKSPACE] },
 };
 
-export const WithoutBillingPermission: Story = {
+export const WithoutWorkspacePermission: Story = {
   parameters: { permissionFlags: [] },
 };

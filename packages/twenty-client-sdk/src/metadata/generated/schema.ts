@@ -3018,6 +3018,7 @@ export interface AiChatUsage {
     limitValue: Scalars['BigInt']
     consumedValue?: Scalars['BigInt']
     periodEnd?: Scalars['DateTime']
+    kind: Scalars['String']
     __typename: 'AiChatUsage'
 }
 
@@ -6900,6 +6901,7 @@ export interface AiChatUsageGenqlSelection{
     limitValue?: boolean | number
     consumedValue?: boolean | number
     periodEnd?: boolean | number
+    kind?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

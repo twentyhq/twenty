@@ -1,20 +1,24 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ComponentProps } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { type InlineBanner } from 'twenty-ui/components';
 import { IconSettings } from 'twenty-ui/icon';
 
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const useManageUsageLimitsButton = () => {
+export const useManageUsageLimitsButton = (): ComponentProps<
+  typeof InlineBanner
+>['button'] => {
   const { t } = useLingui();
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
+  const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageUsageLimits } =
     usePermissionFlagMap();
 
   const navigateSettings = useNavigateSettings();
 
-  if (!hasPermissionToManageBilling) {
+  if (!hasPermissionToManageUsageLimits) {
     return undefined;
   }
 

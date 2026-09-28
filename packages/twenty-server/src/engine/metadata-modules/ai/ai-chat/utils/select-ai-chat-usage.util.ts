@@ -19,14 +19,14 @@ export const selectAiChatUsage = ({
   limits: FlatUsageLimit[];
   consumptionById: Map<string, LimitConsumption>;
 }): AiChatUsageDTO | null => {
-  const usages = limits.map((limit) => {
+  const usages = limits.map((limit): AiChatUsageDTO => {
     const consumption = consumptionById.get(limit.id);
 
     return {
       limitValue: limit.limitValue,
       consumedValue: consumption?.consumedValue ?? null,
       periodEnd: consumption?.periodEnd ?? null,
-      isUsageLimit: true,
+      kind: 'limit',
     };
   });
 
@@ -37,9 +37,9 @@ export const selectAiChatUsage = ({
   }
 
   const knownUsages = usages.flatMap(
-    ({ limitValue, consumedValue, periodEnd, isUsageLimit }) =>
+    ({ limitValue, consumedValue, periodEnd, kind }) =>
       isDefined(consumedValue)
-        ? [{ limitValue, consumedValue, periodEnd, isUsageLimit }]
+        ? [{ limitValue, consumedValue, periodEnd, kind }]
         : [],
   );
 

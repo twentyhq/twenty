@@ -4,6 +4,6 @@ import { type AiChatUsage } from '@/ai/types/AiChatUsage';
 
 export const isAiChatUsageLimitReached = (usage: AiChatUsage | null): boolean =>
   isDefined(usage) &&
-  usage.isUsageLimit &&
+  usage.kind === 'limit' &&
   isDefined(usage.consumedValue) &&
   usage.consumedValue >= usage.limitValue;

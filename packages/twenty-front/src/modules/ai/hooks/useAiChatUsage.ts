@@ -26,7 +26,7 @@ export const useAiChatUsage = ({
           ? Number(aiChatUsage.consumedValue)
           : null,
         periodEnd: aiChatUsage.periodEnd ?? null,
-        isUsageLimit: aiChatUsage.isUsageLimit,
+        kind: aiChatUsage.kind,
       }
     : null;
 
