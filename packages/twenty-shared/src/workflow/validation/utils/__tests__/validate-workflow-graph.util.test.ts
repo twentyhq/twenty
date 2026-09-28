@@ -8,13 +8,47 @@ import { validateWorkflowGraph } from '../validate-workflow-graph.util';
 
 const getCodes = (
   workflow: ValidatableWorkflow,
+  mode: 'structure' | 'executable' = 'structure',
 ): WorkflowValidationIssueCode[] =>
   validateWorkflowGraph({
     workflow,
     graph: buildWorkflowGraph(workflow),
+    mode,
   }).map((issue) => issue.code);
 
 describe('validateWorkflowGraph', () => {
+  it('checks cycles in executable mode while preserving structure-only validation', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['step'] },
+      steps: [{ id: 'step', type: 'CODE', nextStepIds: ['step'] }],
+    };
+    expect(getCodes(workflow)).toEqual([]);
+    expect(getCodes(workflow, 'executable')).toContain('WORKFLOW_CYCLE');
+  });
+
+  it.each([
+    { nextStepIds: ['loop'], expected: [] },
+    { nextStepIds: [], expected: ['ITERATOR_MISSING_RETURN'] },
+  ])(
+    'validates iterator returns through the shared executable mode: $nextStepIds',
+    ({ nextStepIds, expected }) => {
+      const workflow: ValidatableWorkflow = {
+        trigger: { type: 'MANUAL', nextStepIds: ['loop'] },
+        steps: [
+          {
+            id: 'loop',
+            type: WorkflowActionType.ITERATOR,
+            settings: { input: { initialLoopStepIds: ['body'] } },
+            nextStepIds: ['end'],
+          },
+          { id: 'body', type: 'DELAY', nextStepIds },
+          { id: 'end', type: 'EMPTY', nextStepIds: [] },
+        ],
+      };
+      expect(getCodes(workflow, 'executable')).toEqual(expected);
+    },
+  );
+
   it('should return no issues for a valid linear workflow', () => {
     const workflow: ValidatableWorkflow = {
       trigger: { type: 'MANUAL', nextStepIds: ['s1'] },

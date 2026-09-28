@@ -249,3 +249,7 @@ export type {
   ViewManifest,
 } from './viewManifestType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';
+export type { WorkflowManifest } from './workflowManifestType';
+export { workflowManifestSchema } from './workflowManifestType';
+export type { WorkflowStepManifest } from './workflowStepManifestType';
+export { workflowStepManifestSchema } from './workflowStepManifestType';

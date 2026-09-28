@@ -1,3 +1,4 @@
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -21,11 +22,46 @@ import {
 @Injectable()
 export class CoreWorkflowAccessService {
   constructor(
+    private readonly applicationService: ApplicationService,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
   ) {}
+
+  async assertCoreWorkflowsAreEditableOrThrow(args: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowIds: string[];
+  }): Promise<void> {
+    if (args.coreWorkflowIds.length === 0) {
+      return;
+    }
+
+    await this.assertCoreWorkflowsAreAccessibleOrThrow(args);
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId: args.workspaceId },
+      );
+    const workflows = await this.coreWorkflowRepository.find(args.workspaceId, {
+      where: { id: In(args.coreWorkflowIds) },
+    });
+    if (
+      workflows.some(
+        (workflow) =>
+          workflow.applicationId !== workspaceCustomFlatApplication.id &&
+          workflow.applicationId !== twentyStandardFlatApplication.id,
+      )
+    ) {
+      throw new WorkflowQueryValidationException(
+        'Application workflows can only be changed by synchronizing their application',
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`This workflow is managed by an application and is read-only`,
+        },
+      );
+    }
+  }
 
   async assertCoreWorkflowsAreAccessibleOrThrow({
     workspaceId,

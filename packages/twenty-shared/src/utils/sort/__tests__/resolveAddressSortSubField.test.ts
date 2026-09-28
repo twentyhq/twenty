@@ -1,4 +1,4 @@
-import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddressSortSubField';
+import { resolveAddressSortSubField } from '@/utils/sort/resolveAddressSortSubField';
 
 describe('resolveAddressSortSubField', () => {
   it('returns the requested sub-field when it is enabled', () => {

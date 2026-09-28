@@ -1,4 +1,4 @@
-import { resolvePrimaryFullNameSortSubField } from '@/object-metadata/utils/resolvePrimaryFullNameSortSubField';
+import { resolvePrimaryFullNameSortSubField } from '@/utils/sort/resolvePrimaryFullNameSortSubField';
 
 describe('resolvePrimaryFullNameSortSubField', () => {
   it('returns the requested sub-field when it is a recognized full-name sub-field', () => {

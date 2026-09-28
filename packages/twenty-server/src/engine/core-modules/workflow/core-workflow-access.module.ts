@@ -1,3 +1,4 @@
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -9,7 +10,10 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 // The rule is reached from the command menu as well as from the workflow API,
 // and those two modules already depend on each other, so it lives on its own.
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkflowEntity, WorkflowVersionEntity])],
+  imports: [
+    ApplicationModule,
+    TypeOrmModule.forFeature([WorkflowEntity, WorkflowVersionEntity]),
+  ],
   providers: [
     CoreWorkflowAccessService,
     provideWorkspaceScopedRepository(WorkflowEntity),
