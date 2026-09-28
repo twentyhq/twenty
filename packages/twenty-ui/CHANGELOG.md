@@ -26,4 +26,3 @@ Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when up
 ### Fixed
 
 - `getUserDevice()` returns `unknown` without a user agent, so device and shortcut helpers work without browser globals. It detects iPhone, iPad and Android user agents as `ios` and `android` instead of `mac` and `linux`; shortcut helpers keep `⌘` on iOS.
-- Server-rendered `Button` hotkeys no longer cause a hydration mismatch on Mac.
