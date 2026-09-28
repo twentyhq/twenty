@@ -1266,6 +1266,51 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         'FAILED',
       );
     });
+
+    it('keeps the question open when the resume cannot be scheduled, so it can be answered again', async () => {
+      mockAgent();
+      const { runId, agent, threadId, questionMessageId } =
+        await startAskingRun();
+
+      const enqueue = jest
+        .spyOn(
+          global.app.get<MessageQueueService>(
+            getQueueToken(MessageQueue.workflowQueue),
+          ),
+          'add',
+        )
+        .mockRejectedValueOnce(new Error('Queue unavailable'));
+
+      const failedAnswer = await answer({
+        threadId,
+        messageId: questionMessageId,
+      });
+
+      enqueue.mockRestore();
+
+      expect(failedAnswer.body.errors).toBeDefined();
+      expect((await getRun(runId)).state.stepInfos[agent.id]).toMatchObject({
+        status: 'PENDING',
+        threadId,
+      });
+
+      const { thread, messages } = await getConversation(threadId);
+
+      expect(thread.pendingQuestionMessageId).toBe(questionMessageId);
+      expect(messages).toHaveLength(2);
+      expect(await getThreadInputAsks(threadId)).toMatchObject([
+        { status: 'PENDING', response: null },
+      ]);
+
+      expect(
+        (await answer({ threadId, messageId: questionMessageId })).body.errors,
+      ).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+
+      expect(await getThreadInputAsks(threadId)).toMatchObject([
+        { status: 'ANSWERED' },
+      ]);
+    });
   });
 
   it('stops a pending delay and ignores its later resume job', async () => {
