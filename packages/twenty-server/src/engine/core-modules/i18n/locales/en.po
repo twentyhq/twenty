@@ -12256,6 +12256,16 @@ msgstr "This limit cannot be saved."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "This limit changed while you were editing it. Reload and try again."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr "This log filter is not valid."
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr "This log table is not valid."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."

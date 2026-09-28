@@ -12261,6 +12261,16 @@ msgstr "Цей ліміт не можна зберегти."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Цей ліміт змінився, поки ви його редагували. Перезавантажте сторінку та спробуйте ще раз."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr ""
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."

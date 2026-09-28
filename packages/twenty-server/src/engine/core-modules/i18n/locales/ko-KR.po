@@ -12261,6 +12261,16 @@ msgstr "이 한도는 저장할 수 없습니다."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "편집하는 동안 이 제한이 변경되었습니다. 새로고침한 후 다시 시도하세요."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr ""
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
