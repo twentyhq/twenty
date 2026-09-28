@@ -1,6 +1,7 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
 import {
   validationRuleCompositeFieldTypeByValue,
@@ -17,11 +18,8 @@ const normalizeLeafValue = (value: unknown): unknown => {
   return value instanceof Date ? value.toISOString() : value;
 };
 
-const isPlainObject = (value: unknown): value is EvaluationContainer =>
-  typeof value === 'object' &&
-  isDefined(value) &&
-  !Array.isArray(value) &&
-  !(value instanceof Date);
+const isEvaluationContainer = (value: unknown): value is EvaluationContainer =>
+  isPlainObject(value) && !(value instanceof Date);
 
 const registerCompositeValue = (
   value: unknown,
@@ -29,7 +27,7 @@ const registerCompositeValue = (
 ) => {
   if (
     isDefined(field) &&
-    isPlainObject(value) &&
+    isEvaluationContainer(value) &&
     compositeTypeDefinitions.has(field.type)
   ) {
     validationRuleCompositeFieldTypeByValue.set(value, field.type);
@@ -53,7 +51,7 @@ const descendIntoContainer = (
     return nullPlaceholder;
   }
 
-  if (!isPlainObject(value)) {
+  if (!isEvaluationContainer(value)) {
     return null;
   }
 
