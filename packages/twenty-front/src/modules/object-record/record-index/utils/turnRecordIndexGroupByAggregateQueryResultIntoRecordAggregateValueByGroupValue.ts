@@ -22,7 +22,7 @@ export const turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueB
     const queryResultGqlFieldName =
       getGroupByQueryResultGqlFieldName(objectMetadataItem);
 
-    const groupByQueryResultItems = queryResult[queryResultGqlFieldName];
+    const groupByQueryResultItems = queryResult[queryResultGqlFieldName] ?? [];
 
     for (const groupByQueryResultItem of groupByQueryResultItems) {
       if (groupByQueryResultItem.groupByDimensionValues.length === 1) {

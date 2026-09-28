@@ -11,6 +11,10 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const [mockedCompanyRecord] = mockedCompanyRecords;
+assertIsDefinedOrThrow(mockedCompanyRecord);
 
 const RecordListRowStory = () => <RecordList />;
 
@@ -42,7 +46,7 @@ export const ResponsiveFields: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     const recordIdentifier = await canvas.findByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecord.name,
       {},
       { timeout: 3000 },
     );
@@ -51,7 +55,8 @@ export const ResponsiveFields: Story = {
     const overflowChips = await canvas.findAllByRole('link', {
       name: /^\+\d+$/,
     });
-    const firstOverflowChip = overflowChips[0];
+    const [firstOverflowChip] = overflowChips;
+    assertIsDefinedOrThrow(firstOverflowChip);
 
     await expect(firstOverflowChip).toHaveAttribute('href');
     await expect(firstOverflowChip.getAttribute('href')).toContain(
@@ -68,16 +73,18 @@ export const SelectsRecordsWithModifierClicks: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText(
-      mockedCompanyRecords[0].name,
-      {},
-      { timeout: 3000 },
-    );
+    const [firstCompanyRecord] = mockedCompanyRecords;
+    assertIsDefinedOrThrow(firstCompanyRecord);
+
+    await canvas.findByText(firstCompanyRecord.name, {}, { timeout: 3000 });
 
     const rows = canvas.getAllByRole('button', { name: 'Open record' });
+    const [firstRow, , thirdRow] = rows;
+    assertIsDefinedOrThrow(firstRow);
+    assertIsDefinedOrThrow(thirdRow);
 
-    fireEvent.click(rows[0], { metaKey: true });
-    fireEvent.click(rows[2], { shiftKey: true });
+    fireEvent.click(firstRow, { metaKey: true });
+    fireEvent.click(thirdRow, { shiftKey: true });
 
     await waitFor(() =>
       expect(rows[2]).toHaveAttribute('data-selected', 'true'),

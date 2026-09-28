@@ -172,13 +172,9 @@ export const FilesFieldInput = () => {
 
   const formatInput = useCallback(
     (_input: string, index?: number): FieldFilesValue => {
-      if (
-        index !== undefined &&
-        index >= 0 &&
-        index < files.length &&
-        isDefined(files)
-      ) {
-        const fileToEdit = files[index];
+      const fileToEdit = isDefined(index) ? files[index] : undefined;
+
+      if (isDefined(fileToEdit)) {
         return {
           ...fileToEdit,
           label: _input.trim(),

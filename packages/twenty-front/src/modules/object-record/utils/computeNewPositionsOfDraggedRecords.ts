@@ -76,8 +76,9 @@ export const computeNewPositionsOfDraggedRecords = ({
     numberOfRecordsToInsertBetween: sourceRecordIds.length,
   });
 
-  return sourceRecordIds.map((recordId, index) => ({
-    id: recordId,
-    position: newPositions[index],
-  }));
+  return sourceRecordIds.flatMap((recordId, index) => {
+    const position = newPositions[index];
+
+    return isDefined(position) ? [{ id: recordId, position }] : [];
+  });
 };

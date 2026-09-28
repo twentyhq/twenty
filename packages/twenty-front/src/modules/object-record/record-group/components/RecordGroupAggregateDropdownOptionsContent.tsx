@@ -84,7 +84,7 @@ export const RecordGroupAggregateDropdownOptionsContent = ({
                   } else {
                     updateViewAggregate({
                       kanbanAggregateOperationFieldMetadataId:
-                        availableAggregationFieldsIdsForOperation[0],
+                        availableAggregationFieldsIdsForOperation[0] ?? null,
                       kanbanAggregateOperation:
                         availableAggregationOperation as AggregateOperations,
                       objectMetadataItem,

@@ -1,4 +1,5 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -110,6 +111,7 @@ export const EditExistingItem: Story = {
     const openSecondItemMenuButton = within(panel).getAllByRole('button', {
       name: 'More options',
     })[1];
+    assertIsDefinedOrThrow(openSecondItemMenuButton);
 
     await userEvent.click(openSecondItemMenuButton);
 
@@ -165,6 +167,7 @@ export const DeleteExistingItem: Story = {
     const openSecondItemMenuButton = within(panel).getAllByRole('button', {
       name: 'More options',
     })[1];
+    assertIsDefinedOrThrow(openSecondItemMenuButton);
 
     await userEvent.click(openSecondItemMenuButton);
 
@@ -209,9 +212,11 @@ export const ItemLimit: Story = {
 
     const panel = body.getByRole('dialog', { name: 'Items' });
 
-    await userEvent.click(
-      within(panel).getAllByRole('button', { name: 'More options' })[1],
-    );
+    const secondItemMenuButton = within(panel).getAllByRole('button', {
+      name: 'More options',
+    })[1];
+    assertIsDefinedOrThrow(secondItemMenuButton);
+    await userEvent.click(secondItemMenuButton);
     await userEvent.click(
       await body.findByRole('menuitem', { name: 'Delete' }),
     );

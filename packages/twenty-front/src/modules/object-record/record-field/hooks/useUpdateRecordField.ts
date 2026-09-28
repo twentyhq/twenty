@@ -34,21 +34,13 @@ export const useUpdateRecordField = (
         );
       }
 
-      store.set(currentRecordFields, (previousRecordFields) => {
-        const newCurrentRecordFields = [...previousRecordFields];
-
-        const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
-          (existingRecordField) =>
-            existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
-        );
-
-        newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
-          ...newCurrentRecordFields[indexOfRecordFieldToUpdate],
-          ...partialRecordField,
-        };
-
-        return newCurrentRecordFields;
-      });
+      store.set(currentRecordFields, (previousRecordFields) =>
+        previousRecordFields.map((existingRecordField) =>
+          existingRecordField.fieldMetadataItemId === fieldMetadataItemId
+            ? { ...existingRecordField, ...partialRecordField }
+            : existingRecordField,
+        ),
+      );
 
       return {
         ...foundRecordFieldInCurrentRecordFields,

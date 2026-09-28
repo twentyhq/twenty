@@ -2,6 +2,7 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { gql } from '@apollo/client';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 export const query = gql`
   mutation UpdateManyPeople(
@@ -24,8 +25,15 @@ const flatPersonRecords = mockedPersonRecords.map((record) =>
   getRecordFromRecordNode({ recordNode: record }),
 );
 
+const getFlatPersonRecordOrThrow = (index: number) => {
+  const flatPersonRecord = flatPersonRecords[index];
+  assertIsDefinedOrThrow(flatPersonRecord);
+
+  return flatPersonRecord;
+};
+
 export const personRecords = personIds.map<ObjectRecord>((personId, index) => ({
-  ...flatPersonRecords[index],
+  ...getFlatPersonRecordOrThrow(index),
   id: personId,
 }));
 
@@ -44,7 +52,7 @@ export const variables = {
 
 export const updatedPersonRecords = personIds.map<ObjectRecord>(
   (personId, index) => ({
-    ...flatPersonRecords[index],
+    ...getFlatPersonRecordOrThrow(index),
     id: personId,
     city: 'Updated City',
   }),

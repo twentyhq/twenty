@@ -212,8 +212,14 @@ export const MultipleRecordPicker = ({
       return;
     }
 
-    if (creatableObjectMetadataItems.length === 1) {
-      void handleCreate(creatableObjectMetadataItems[0].id);
+    const [singleCreatableObjectMetadataItem, ...otherCreatableItems] =
+      creatableObjectMetadataItems;
+
+    if (
+      isDefined(singleCreatableObjectMetadataItem) &&
+      otherCreatableItems.length === 0
+    ) {
+      void handleCreate(singleCreatableObjectMetadataItem.id);
       return;
     }
 

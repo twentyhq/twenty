@@ -170,7 +170,7 @@ export const Submit: Story = {
     expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
     const item = await canvas.findByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecords[0]?.name,
       undefined,
       {
         timeout: 3000,
@@ -190,7 +190,7 @@ export const Cancel: Story = {
     const canvas = within(canvasElement);
 
     expect(handleCancelMocked).toHaveBeenCalledTimes(0);
-    await canvas.findByText(mockedCompanyRecords[0].name, undefined, {
+    await canvas.findByText(mockedCompanyRecords[0]?.name, undefined, {
       timeout: 3000,
     });
 

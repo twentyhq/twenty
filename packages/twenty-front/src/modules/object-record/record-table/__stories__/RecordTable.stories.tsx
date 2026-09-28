@@ -18,6 +18,10 @@ import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { sleep } from '~/utils/sleep';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const firstCompanyRecord = mockedCompanyRecords[0];
+assertIsDefinedOrThrow(firstCompanyRecord);
 
 const companyView = mockedViews.find((v) => v.name === 'All Companies')!;
 
@@ -89,8 +93,13 @@ export const HeaderMenuStaysOpenAfterMoveRight: Story = {
 export const NestedCurrencyPickerPreservesCellEditMode: Story = {
   beforeEach: () => {
     const originalViewFields = companyView.viewFields;
-    const originalCurrencyValue =
-      mockedCompanyRecords[0].annualRecurringRevenue;
+    const [firstViewField] = originalViewFields;
+    const [firstCompanyRecord] = mockedCompanyRecords;
+
+    assertIsDefinedOrThrow(firstViewField);
+    assertIsDefinedOrThrow(firstCompanyRecord);
+
+    const originalCurrencyValue = firstCompanyRecord.annualRecurringRevenue;
     const currencyField = getMockFieldMetadataItemOrThrow({
       objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
       fieldName: 'annualRecurringRevenue',
@@ -102,20 +111,20 @@ export const NestedCurrencyPickerPreservesCellEditMode: Story = {
         position: viewField.position === 0 ? 0 : viewField.position + 1,
       })),
       {
-        ...originalViewFields[0],
+        ...firstViewField,
         id: 'currency-focus-story-field',
         fieldMetadataId: currencyField.id,
         position: 1,
       },
     ];
-    mockedCompanyRecords[0].annualRecurringRevenue = {
+    firstCompanyRecord.annualRecurringRevenue = {
       amountMicros: 123_000_000,
       currencyCode: 'USD',
     };
 
     return () => {
       companyView.viewFields = originalViewFields;
-      mockedCompanyRecords[0].annualRecurringRevenue = originalCurrencyValue;
+      firstCompanyRecord.annualRecurringRevenue = originalCurrencyValue;
     };
   },
   render: (args) => (
@@ -128,11 +137,7 @@ export const NestedCurrencyPickerPreservesCellEditMode: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await canvas.findByText(
-      mockedCompanyRecords[0].name,
-      {},
-      { timeout: 3000 },
-    );
+    await canvas.findByText(firstCompanyRecord?.name, {}, { timeout: 3000 });
     const amountDisplay = await canvas.findByText('123', {}, { timeout: 3000 });
 
     await userEvent.click(amountDisplay);
@@ -169,11 +174,7 @@ export const ScrolledLeft: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findAllByText(
-      mockedCompanyRecords[0].name,
-      {},
-      { timeout: 3000 },
-    );
+    await canvas.findAllByText(firstCompanyRecord?.name, {}, { timeout: 3000 });
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(
       '.scroll-wrapper-x-enabled',
@@ -191,7 +192,7 @@ export const ScrolledLeft: Story = {
       },
     });
 
-    await canvas.findByText(mockedCompanyRecords[1].name);
+    await canvas.findByText(mockedCompanyRecords[1]?.name);
   },
 };
 
@@ -203,11 +204,7 @@ export const ScrolledBottom: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findAllByText(
-      mockedCompanyRecords[0].name,
-      {},
-      { timeout: 3000 },
-    );
+    await canvas.findAllByText(firstCompanyRecord?.name, {}, { timeout: 3000 });
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(
       '.scroll-wrapper-y-enabled',
@@ -225,7 +222,7 @@ export const ScrolledBottom: Story = {
       },
     });
 
-    await canvas.findByText(mockedCompanyRecords[1].name);
+    await canvas.findByText(mockedCompanyRecords[1]?.name);
   },
 };
 
@@ -250,7 +247,9 @@ export const MultiSelectPickerAnchorsToTableCell: Story = {
   },
   beforeEach: () => {
     const originalViewFields = companyView.viewFields;
-    const originalWorkPolicy = mockedCompanyRecords[0].workPolicy;
+    const [firstViewField] = originalViewFields;
+    assertIsDefinedOrThrow(firstViewField);
+    const originalWorkPolicy = firstCompanyRecord.workPolicy;
     const workPolicyField = getMockFieldMetadataItemOrThrow({
       objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
       fieldName: 'workPolicy',
@@ -262,29 +261,27 @@ export const MultiSelectPickerAnchorsToTableCell: Story = {
         position: viewField.position === 0 ? 0 : viewField.position + 1,
       })),
       {
-        ...originalViewFields[0],
+        ...firstViewField,
         id: 'work-policy-anchor-story-field',
         fieldMetadataId: workPolicyField.id,
         position: 1,
       },
     ];
-    mockedCompanyRecords[0].workPolicy = ['ON_SITE'];
+    firstCompanyRecord.workPolicy = ['ON_SITE'];
 
     return () => {
       companyView.viewFields = originalViewFields;
-      mockedCompanyRecords[0].workPolicy = originalWorkPolicy;
+      firstCompanyRecord.workPolicy = originalWorkPolicy;
     };
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await canvas.findByText(
-      mockedCompanyRecords[0].name,
-      {},
-      { timeout: 3000 },
-    );
-    await userEvent.click((await canvas.findAllByText('On-Site'))[0]);
+    await canvas.findByText(firstCompanyRecord.name, {}, { timeout: 3000 });
+    const [onSiteOption] = await canvas.findAllByText('On-Site');
+    assertIsDefinedOrThrow(onSiteOption);
+    await userEvent.click(onSiteOption);
 
     const picker = await body.findByRole('dialog', { name: 'Work Policy' });
     const anchor = canvas.getByTestId('editable-cell-edit-mode-container');

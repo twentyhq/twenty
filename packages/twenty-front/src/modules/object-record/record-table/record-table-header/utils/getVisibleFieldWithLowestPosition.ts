@@ -1,15 +1,15 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getVisibleFieldWithLowestPosition = (
   visibleRecordFields: RecordField[],
 ) => {
-  if (visibleRecordFields.length === 0) {
-    return undefined;
-  }
-  return visibleRecordFields.reduce((lowestPositionField, currentField) => {
-    if (currentField?.position < lowestPositionField?.position) {
-      return currentField;
-    }
-    return lowestPositionField;
-  }, visibleRecordFields[0]);
+  return visibleRecordFields.reduce<RecordField | undefined>(
+    (lowestPositionField, currentField) =>
+      !isDefined(lowestPositionField) ||
+      currentField.position < lowestPositionField.position
+        ? currentField
+        : lowestPositionField,
+    undefined,
+  );
 };

@@ -8,6 +8,7 @@ import { FileUploadProvider } from '@/file-upload/components/FileUploadProvider'
 import { RecordTargetsInlineCell } from '@/object-record/record-field/ui/components/RecordTargetsInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 // Opening the picker searches records over the network, unreachable through MockedProvider.
 jest.mock(
@@ -65,13 +66,14 @@ describe('RecordTargetsInlineCell', () => {
   it('opens the record picker when the cell is clicked', async () => {
     renderCell('note');
 
-    const relationsTexts = await screen.findAllByText('Relations');
+    const relationsText = (await screen.findAllByText('Relations')).at(-1);
+    assertIsDefinedOrThrow(relationsText);
 
     expect(
       screen.queryByTestId('inline-cell-edit-mode-container'),
     ).not.toBeInTheDocument();
 
-    await userEvent.click(relationsTexts[relationsTexts.length - 1]);
+    await userEvent.click(relationsText);
 
     expect(
       screen.getByTestId('inline-cell-edit-mode-container'),
@@ -81,9 +83,10 @@ describe('RecordTargetsInlineCell', () => {
   it('closes the record picker on escape', async () => {
     renderCell('note');
 
-    const relationsTexts = await screen.findAllByText('Relations');
+    const relationsText = (await screen.findAllByText('Relations')).at(-1);
+    assertIsDefinedOrThrow(relationsText);
 
-    await userEvent.click(relationsTexts[relationsTexts.length - 1]);
+    await userEvent.click(relationsText);
 
     expect(
       screen.getByTestId('inline-cell-edit-mode-container'),

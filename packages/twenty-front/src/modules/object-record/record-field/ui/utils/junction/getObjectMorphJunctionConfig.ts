@@ -76,7 +76,10 @@ export const getObjectMorphJunctionConfig = ({
   }
 
   // Older workspaces can lack the junction target marker; infer when the graph shows exactly one morph junction.
-  return inferredJunctionConfigs.length === 1
-    ? inferredJunctionConfigs[0]
+  const [inferredJunctionConfig, ...otherInferredJunctionConfigs] =
+    inferredJunctionConfigs;
+
+  return otherInferredJunctionConfigs.length === 0
+    ? (inferredJunctionConfig ?? null)
     : null;
 };

@@ -38,8 +38,10 @@ export const RecordIdentifierBarTitle = ({
   const navigateApp = useNavigateApp();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isDefined(event.target.files)) {
-      onUploadPicture?.(event.target.files[0]);
+    const file = event.target.files?.[0];
+
+    if (isDefined(file)) {
+      onUploadPicture?.(file);
     }
   };
 

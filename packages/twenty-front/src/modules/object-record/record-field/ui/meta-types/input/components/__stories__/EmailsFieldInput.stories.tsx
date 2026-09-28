@@ -14,6 +14,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const updateRecord = fn();
 
@@ -190,11 +191,14 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
 
     await userEvent.hover(primaryEmail);
 
-    const openDropdownButtons = await canvas.findAllByRole('button', {
-      name: 'More options',
-      expanded: false,
-    });
-    await userEvent.click(openDropdownButtons[0]);
+    const openDropdownButton = (
+      await canvas.findAllByRole('button', {
+        name: 'More options',
+        expanded: false,
+      })
+    )[0];
+    assertIsDefinedOrThrow(openDropdownButton);
+    await userEvent.click(openDropdownButton);
 
     const editOption = await within(
       canvasElement.ownerDocument.body,

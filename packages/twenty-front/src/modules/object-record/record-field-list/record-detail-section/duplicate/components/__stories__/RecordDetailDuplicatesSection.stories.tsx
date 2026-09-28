@@ -10,6 +10,10 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const [mockedCompanyRecord] = mockedCompanyRecords;
+assertIsDefinedOrThrow(mockedCompanyRecord);
 
 const meta: Meta<typeof RecordDetailDuplicatesSection> = {
   title:
@@ -20,7 +24,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
       <LayoutRenderingProvider
         value={{
           targetRecordIdentifier: {
-            id: mockedCompanyRecords[0].id,
+            id: mockedCompanyRecord.id,
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
@@ -35,7 +39,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
     MemoryRouterDecorator,
   ],
   args: {
-    objectRecordId: mockedCompanyRecords[0].id,
+    objectRecordId: mockedCompanyRecord.id,
     objectNameSingular: CoreObjectNameSingular.Company,
   },
   parameters: {

@@ -239,9 +239,9 @@ export const useRecordShowPagePagination = (
           ) ?? '') === (viewIdQueryParam ?? ''),
       );
 
-      if (previousIndexPageIndex >= 0) {
-        const previousIndexPage = navigationStack[previousIndexPageIndex];
+      const previousIndexPage = navigationStack[previousIndexPageIndex];
 
+      if (isDefined(previousIndexPage)) {
         store.set(
           lastShowPageRecordIdState.atomFamily({
             instanceId: previousIndexPage.pageId,

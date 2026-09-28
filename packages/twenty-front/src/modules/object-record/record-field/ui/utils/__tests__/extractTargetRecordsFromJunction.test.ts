@@ -183,7 +183,7 @@ describe('extractTargetRecordsFromJunction', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].recordId).toBe('company-1');
+      expect(result[0]?.recordId).toBe('company-1');
     });
   });
 
@@ -228,7 +228,7 @@ describe('extractTargetRecordsFromJunction', () => {
         objectMetadataItems: mockObjectMetadataItems,
       });
 
-      expect(result[0].objectMetadataId).toBe('person-metadata-id');
+      expect(result[0]?.objectMetadataId).toBe('person-metadata-id');
     });
 
     it('should include record when includeRecord is true', () => {

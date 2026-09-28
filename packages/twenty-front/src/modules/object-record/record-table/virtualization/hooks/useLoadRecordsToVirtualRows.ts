@@ -67,17 +67,15 @@ export const useLoadRecordsToVirtualRows = () => {
         recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),
       );
 
-      const recordIds = records.map((record) => record.id);
-
       const newAllRecordIds = currentAllRecordIds.concat();
 
-      for (let i = 0; i < records.length; i++) {
-        newAllRecordIds[i + startingRealIndex] = recordIds[i];
+      records.forEach((record, index) => {
+        newAllRecordIds[index + startingRealIndex] = record.id;
 
         if (isAllRowsSelected) {
-          store.set(isRowSelectedFamilyState(recordIds[i]), true);
+          store.set(isRowSelectedFamilyState(record.id), true);
         }
-      }
+      });
 
       store.set(
         recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),

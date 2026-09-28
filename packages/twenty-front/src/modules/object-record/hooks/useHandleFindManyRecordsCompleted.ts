@@ -20,11 +20,12 @@ export const useHandleFindManyRecordsCompleted = <T>({
   const store = useStore();
   const handleFindManyRecordsCompleted = useCallback(
     (data: RecordGqlOperationFindManyResult) => {
-      const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
+      const recordConnection = data?.[objectMetadataItem.namePlural];
+      const pageInfo = recordConnection?.pageInfo;
 
-      const records = getRecordsFromRecordConnection({
-        recordConnection: data?.[objectMetadataItem.namePlural],
-      }) as T[];
+      const records = isDefined(recordConnection)
+        ? (getRecordsFromRecordConnection({ recordConnection }) as T[])
+        : [];
 
       onCompleted?.(records, {
         pageInfo,

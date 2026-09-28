@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 export const recordGroupSortedInsert = <T>(
   array: T[],
   item: T,
@@ -8,8 +9,13 @@ export const recordGroupSortedInsert = <T>(
 
   while (low < high) {
     const mid = Math.floor((low + high) / 2);
+    const midItem = array[mid];
 
-    if (comparator(item, array[mid]) < 0) {
+    if (!isDefined(midItem)) {
+      break;
+    }
+
+    if (comparator(item, midItem) < 0) {
       high = mid;
     } else {
       low = mid + 1;

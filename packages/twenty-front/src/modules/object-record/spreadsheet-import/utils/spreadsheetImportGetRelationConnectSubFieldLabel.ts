@@ -8,13 +8,13 @@ export const getRelationConnectSubFieldLabel = (
   uniqueFieldMetadataItem: FieldMetadataItem,
   compositeSubFieldKey?: string,
 ) => {
-  const compositeSubFieldLabel =
-    isCompositeFieldType(uniqueFieldMetadataItem.type) &&
-    isDefined(compositeSubFieldKey)
-      ? COMPOSITE_FIELD_SUB_FIELD_LABELS[uniqueFieldMetadataItem.type][
-          compositeSubFieldKey
-        ]
-      : undefined;
+  const compositeSubFieldLabels: Record<string, string | undefined> =
+    isCompositeFieldType(uniqueFieldMetadataItem.type)
+      ? COMPOSITE_FIELD_SUB_FIELD_LABELS[uniqueFieldMetadataItem.type]
+      : {};
+  const compositeSubFieldLabel = isDefined(compositeSubFieldKey)
+    ? compositeSubFieldLabels[compositeSubFieldKey]
+    : undefined;
 
   return `${fieldMetadataItem.label} / ${uniqueFieldMetadataItem.label}${compositeSubFieldLabel ? ` / ${compositeSubFieldLabel}` : ''}`;
 };

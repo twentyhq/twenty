@@ -13,6 +13,7 @@ import {
   type OrderBy,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
+import { splitFieldNameIntoBaseAndSubField } from '@/views/utils/splitFieldNameIntoBaseAndSubField';
 
 export const useRecordsForSelect = ({
   searchFilterText,
@@ -67,7 +68,8 @@ export const useRecordsForSelect = ({
 
     return makeOrFilterVariables(
       fieldNames.map((fieldName) => {
-        const [parentFieldName, subFieldName] = fieldName.split('.');
+        const { baseFieldName: parentFieldName, subFieldName } =
+          splitFieldNameIntoBaseAndSubField(fieldName);
 
         if (isNonEmptyString(subFieldName)) {
           return {

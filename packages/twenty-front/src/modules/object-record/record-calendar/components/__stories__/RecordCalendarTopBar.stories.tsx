@@ -12,6 +12,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const CALENDAR_ID = 'calendar-top-bar-story';
 const SECOND_CALENDAR_ID = 'second-calendar-top-bar-story';
@@ -159,13 +160,15 @@ export const WidgetCalendarsKeepIndependentDates: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const triggers = await canvas.findAllByRole(
+    const [trigger] = await canvas.findAllByRole(
       'button',
       { name: 'January 2026' },
       { timeout: 10000 },
     );
 
-    await userEvent.click(triggers[0]);
+    assertIsDefinedOrThrow(trigger);
+
+    await userEvent.click(trigger);
     const panel = await body.findByRole('dialog', { name: 'Select date' });
     await userEvent.click(
       await within(panel).findByRole('button', { name: '2026' }),

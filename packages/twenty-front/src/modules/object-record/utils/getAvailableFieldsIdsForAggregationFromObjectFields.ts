@@ -19,8 +19,10 @@ export const getAvailableFieldsIdsForAggregationFromObjectFields = ({
   const allAggregations = getAvailableAggregationsFromObjectFields(fields);
 
   return fields.reduce((acc, field) => {
-    if (isDefined(allAggregations[field.name])) {
-      Object.keys(allAggregations[field.name]).forEach((aggregation) => {
+    const fieldAggregations = allAggregations[field.name];
+
+    if (isDefined(fieldAggregations)) {
+      Object.keys(fieldAggregations).forEach((aggregation) => {
         const typedAggregation = aggregation as ExtendedAggregateOperations;
         if (targetAggregateOperations.includes(typedAggregation)) {
           if (!isDefined(acc[typedAggregation])) {

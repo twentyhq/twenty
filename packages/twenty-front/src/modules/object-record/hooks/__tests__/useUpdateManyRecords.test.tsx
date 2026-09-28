@@ -112,7 +112,7 @@ describe('useUpdateManyRecords', () => {
         assertCachedRecordsIsNull(personIds);
       });
 
-      expect(apolloMocks[0].result).toHaveBeenCalled();
+      expect(apolloMocks[0]?.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
   });
@@ -157,7 +157,7 @@ describe('useUpdateManyRecords', () => {
         assertCachedRecordsMatch(expectedCachedRecordsWithUpdatedCity);
       });
 
-      expect(apolloMocks[0].result).toHaveBeenCalled();
+      expect(apolloMocks[0]?.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
 
@@ -185,7 +185,7 @@ describe('useUpdateManyRecords', () => {
         );
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]?.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
@@ -216,7 +216,7 @@ describe('useUpdateManyRecords', () => {
         }
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]?.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
   });

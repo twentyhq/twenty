@@ -268,7 +268,7 @@ describe('useBuildSpreadSheetImportFields', () => {
       result.current.buildSpreadsheetImportFields(fieldMetadataItems);
 
     expect(spreadsheetImportFields).toHaveLength(1);
-    expect(spreadsheetImportFields[0].fieldMetadataType).toBe(
+    expect(spreadsheetImportFields[0]?.fieldMetadataType).toBe(
       FieldMetadataType.TEXT,
     );
   });

@@ -12,6 +12,7 @@ import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
   mockedWorkspaceMemberRecords.map((record) => {
@@ -29,7 +30,9 @@ const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
   });
 
 describe('computeOptimisticRecordFromInput', () => {
-  const currentWorkspaceMember = mockCurrentWorkspaceMembers[0];
+  const [currentWorkspaceMember] = mockCurrentWorkspaceMembers;
+  assertIsDefinedOrThrow(currentWorkspaceMember);
+
   const currentWorkspaceMemberFullname = `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`;
   it('should generate correct optimistic record if no relation field is present', () => {
     const cache = new InMemoryCache();
@@ -76,7 +79,7 @@ describe('computeOptimisticRecordFromInput', () => {
         context: {},
         name: currentWorkspaceMemberFullname,
         source: 'API',
-        workspaceMemberId: currentWorkspaceMember.id,
+        workspaceMemberId: currentWorkspaceMember?.id,
       },
     });
   });
@@ -105,7 +108,7 @@ describe('computeOptimisticRecordFromInput', () => {
         context: {},
         name: currentWorkspaceMemberFullname,
         source: 'SYSTEM',
-        workspaceMemberId: currentWorkspaceMember.id,
+        workspaceMemberId: currentWorkspaceMember?.id,
       },
     });
   });

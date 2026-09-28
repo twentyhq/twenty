@@ -7,6 +7,7 @@ import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextWrapperProps = {
   children: ReactNode;
@@ -26,6 +27,10 @@ export const RecordTableCellFieldContextWrapper = ({
 
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+
+  if (!isDefined(fieldMetadataItem)) {
+    return null;
+  }
 
   const instanceId = getRecordFieldInputInstanceId({
     recordId,

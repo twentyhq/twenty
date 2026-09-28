@@ -6,6 +6,7 @@ import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const meta: Meta<typeof FormPhoneFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormPhoneFieldInput',
@@ -123,8 +124,9 @@ export const SelectingVariables: Story = {
     const phoneNumberDefaultValue = await canvas.findByRole('textbox');
     expect(phoneNumberDefaultValue).toHaveTextContent('');
 
-    const addVariableButtons = await canvas.findAllByText('Add variable');
-    const phoneNumberVariablePicker = addVariableButtons[1];
+    const [, phoneNumberVariablePicker] =
+      await canvas.findAllByText('Add variable');
+    assertIsDefinedOrThrow(phoneNumberVariablePicker);
 
     await userEvent.click(phoneNumberVariablePicker);
 

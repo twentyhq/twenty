@@ -11,6 +11,7 @@ import {
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 jest.mock('uuid', () => ({
   ...jest.requireActual('uuid'),
@@ -26,11 +27,15 @@ jest.mocked(useRefetchAggregateQueries).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 
+const [firstPersonInput, secondPersonInput] = variables.data;
+assertIsDefinedOrThrow(firstPersonInput);
+assertIsDefinedOrThrow(secondPersonInput);
+
 jest
   // uuid v11+ adds a Uint8Array overload to v4; pin the string signature for the mocks.
   .mocked(v4 as () => string)
-  .mockReturnValueOnce(variables.data[0].id)
-  .mockReturnValueOnce(variables.data[1].id);
+  .mockReturnValueOnce(firstPersonInput.id)
+  .mockReturnValueOnce(secondPersonInput.id);
 
 const input = variables.data.map(({ id: _id, ...personInput }) => personInput);
 
@@ -88,7 +93,7 @@ describe('useCreateManyRecords', () => {
       expect(res).toEqual(response);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks[0]?.result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 
@@ -111,8 +116,8 @@ describe('useCreateManyRecords', () => {
       expect(res).toEqual(response);
     });
 
-    expect(mocks[1].request.variables.data).toEqual(input);
-    mocks[1].request.variables.data.forEach((record: any) => {
+    expect(mocks[1]?.request.variables.data).toEqual(input);
+    mocks[1]?.request.variables.data.forEach((record) => {
       expect(record).not.toHaveProperty('id');
     });
     expect(triggerCreateRecordsOptimisticEffect).toHaveBeenCalledTimes(1);

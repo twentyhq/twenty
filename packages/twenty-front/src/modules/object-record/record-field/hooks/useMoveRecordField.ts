@@ -6,6 +6,7 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useMoveRecordField = (recordTableId?: string) => {
   const store = useStore();
@@ -33,25 +34,18 @@ export const useMoveRecordField = (recordTableId?: string) => {
           recordField.fieldMetadataItemId === fieldMetadataItemIdToMove,
       );
 
-      if (indexOfRecordFieldToMove === -1) {
-        return;
-      }
-
       const targetArrayIndex =
         direction === 'before'
           ? indexOfRecordFieldToMove - 1
           : indexOfRecordFieldToMove + 1;
 
-      if (
-        targetArrayIndex < 0 ||
-        targetArrayIndex > visibleRecordFieldsValue.length - 1
-      ) {
-        return;
-      }
-
       const currentRecordField =
         visibleRecordFieldsValue[indexOfRecordFieldToMove];
       const targetRecordField = visibleRecordFieldsValue[targetArrayIndex];
+
+      if (!isDefined(currentRecordField) || !isDefined(targetRecordField)) {
+        return;
+      }
 
       const targetRecordFieldNewPosition = currentRecordField.position;
       const currentRecordFieldNewPosition = targetRecordField.position;

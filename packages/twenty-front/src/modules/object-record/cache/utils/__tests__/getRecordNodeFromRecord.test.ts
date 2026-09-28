@@ -4,8 +4,10 @@ import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/m
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-const peopleMock = [...mockedPersonRecords];
+const [personRecord] = mockedPersonRecords;
+assertIsDefinedOrThrow(personRecord);
 
 describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
@@ -28,7 +30,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = peopleMock[0];
+    const record = personRecord;
 
     const result = getRecordNodeFromRecord({
       objectMetadataItems,
@@ -70,7 +72,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = peopleMock[0];
+    const record = personRecord;
     const computeReferences = false;
 
     const result = getRecordNodeFromRecord({
@@ -114,7 +116,7 @@ describe('getRecordNodeFromRecord', () => {
     }
 
     const record = {
-      ...peopleMock[0],
+      ...personRecord,
       [oneToManyRelationField.name]: null,
     };
     const recordGqlFields = {

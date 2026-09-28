@@ -96,9 +96,16 @@ export const useRecordTableHeaderDndKit = (): {
       destinationDroppableId: RECORD_TABLE_HEADER_DROPPABLE_ID,
     });
 
+    const recordFieldToMove = sortableRecordFields[sourceIndex];
+    const targetRecordField = sortableRecordFields[destinationIndex];
+
+    if (!isDefined(recordFieldToMove) || !isDefined(targetRecordField)) {
+      return;
+    }
+
     const updatedRecordField = reorderVisibleRecordFields({
-      recordFieldToMove: sortableRecordFields[sourceIndex],
-      targetRecordField: sortableRecordFields[destinationIndex],
+      recordFieldToMove,
+      targetRecordField,
     });
 
     saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
