@@ -174,12 +174,11 @@ export class TwoFactorAuthenticationService {
   ) {
     // Counted per (user, workspace) and consumed before any lookup so that
     // every guess, including ones against a missing method, spends a token.
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `two-factor-authentication-otp:${userId}:${workspaceId}`,
-      1,
-      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
-      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
-    );
+    await this.throttlerService.atomicTokenBucketThrottleOrThrow({
+      key: `two-factor-authentication-otp:${userId}:${workspaceId}`,
+      maxTokens: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+      timeWindow: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+    });
 
     const userTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
@@ -287,16 +286,21 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    await this.twoFactorAuthenticationMethodRepository.delete(workspaceId, {
-      id: twoFactorAuthenticationMethodId,
-    });
+    const deleteResult =
+      await this.twoFactorAuthenticationMethodRepository.delete(workspaceId, {
+        id: twoFactorAuthenticationMethodId,
+      });
 
-    this.emitTwoFactorAuthenticationEvent({
-      workspaceId,
-      userId,
-      action: 'method_deleted',
-      strategy: twoFactorMethod.strategy,
-    });
+    // A concurrent request may have removed the row after our lookup; only the
+    // request that actually deleted it records the deletion.
+    if ((deleteResult.affected ?? 0) > 0) {
+      this.emitTwoFactorAuthenticationEvent({
+        workspaceId,
+        userId,
+        action: 'method_deleted',
+        strategy: twoFactorMethod.strategy,
+      });
+    }
 
     return { success: true };
   }

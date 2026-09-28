@@ -7,6 +7,10 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
+import {
+  TOKEN_BUCKETS_DENY_PARTIAL_ARG,
+  TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
+} from 'src/engine/core-modules/usage-limit/constants/try-consume-token-buckets-script.constant';
 
 @Injectable()
 export class ThrottlerService {
@@ -46,6 +50,38 @@ export class ThrottlerService {
     );
 
     return availableTokens - tokensToConsume;
+  }
+
+  // Same bucket semantics as tokenBucketThrottleOrThrow, but the read and the
+  // write happen in one Redis script, so concurrent callers cannot all spend
+  // the same token. Use it wherever the limit guards against guessing.
+  async atomicTokenBucketThrottleOrThrow({
+    key,
+    maxTokens,
+    timeWindow,
+  }: {
+    key: string;
+    maxTokens: number;
+    timeWindow: number;
+  }): Promise<void> {
+    const [admittedCount] = await this.cacheStorage.runScript<number[]>({
+      script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
+      keys: [key],
+      args: [
+        '1',
+        JSON.stringify([
+          { burst: maxTokens, refill: maxTokens, windowMs: timeWindow },
+        ]),
+        TOKEN_BUCKETS_DENY_PARTIAL_ARG,
+      ],
+    });
+
+    if (admittedCount !== 1) {
+      throw new ThrottlerException(
+        `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
+        ThrottlerExceptionCode.LIMIT_REACHED,
+      );
+    }
   }
 
   async consumeTokens(

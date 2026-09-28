@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -63,10 +64,13 @@ export class TwoFactorAuthenticationResolver {
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningDTO> {
-    const { sub: userEmail, workspaceId: tokenWorkspaceId } =
-      await this.loginTokenService.verifyLoginToken(
-        initiateTwoFactorAuthenticationProvisioningInput.loginToken,
-      );
+    const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
+      initiateTwoFactorAuthenticationProvisioningInput.loginToken,
+    );
+
+    assertLoginTokenIsNotForImpersonation(loginTokenPayload);
+
+    const { sub: userEmail, workspaceId: tokenWorkspaceId } = loginTokenPayload;
 
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(

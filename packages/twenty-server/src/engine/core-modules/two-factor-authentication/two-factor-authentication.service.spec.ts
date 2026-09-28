@@ -41,7 +41,7 @@ describe('TwoFactorAuthenticationService', () => {
     update: jest.Mock;
     delete: jest.Mock;
   };
-  let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
+  let throttlerService: { atomicTokenBucketThrottleOrThrow: jest.Mock };
   let insertWorkspaceEvent: jest.Mock;
   let secret: string;
 
@@ -88,7 +88,7 @@ describe('TwoFactorAuthenticationService', () => {
         },
         {
           provide: ThrottlerService,
-          useValue: { tokenBucketThrottleOrThrow: jest.fn() },
+          useValue: { atomicTokenBucketThrottleOrThrow: jest.fn() },
         },
         {
           provide: EventLogEmitterService,
@@ -121,16 +121,17 @@ describe('TwoFactorAuthenticationService', () => {
         TwoFactorAuthenticationStrategy.TOTP,
       );
 
-      expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
-        `two-factor-authentication-otp:${USER_ID}:${WORKSPACE_ID}`,
-        1,
-        expect.any(Number),
-        expect.any(Number),
-      );
+      expect(
+        throttlerService.atomicTokenBucketThrottleOrThrow,
+      ).toHaveBeenCalledWith({
+        key: `two-factor-authentication-otp:${USER_ID}:${WORKSPACE_ID}`,
+        maxTokens: expect.any(Number),
+        timeWindow: expect.any(Number),
+      });
     });
 
     it('rejects the attempt without touching the method when the limit is reached', async () => {
-      throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
+      throttlerService.atomicTokenBucketThrottleOrThrow.mockRejectedValue(
         new ThrottlerException(
           'Limit reached',
           ThrottlerExceptionCode.LIMIT_REACHED,
@@ -254,6 +255,7 @@ describe('TwoFactorAuthenticationService', () => {
   describe('deleteTwoFactorAuthenticationMethodForAuthenticatedUser', () => {
     it('deletes the caller-owned method and records the deletion', async () => {
       repository.findOne.mockResolvedValue(buildVerifiedMethod());
+      repository.delete.mockResolvedValue({ affected: 1, raw: [] });
 
       const result =
         await service.deleteTwoFactorAuthenticationMethodForAuthenticatedUser({
@@ -278,6 +280,21 @@ describe('TwoFactorAuthenticationService', () => {
           targetUserId: USER_ID,
         },
       );
+    });
+
+    it('does not record a deletion when a concurrent request already removed the method', async () => {
+      repository.findOne.mockResolvedValue(buildVerifiedMethod());
+      repository.delete.mockResolvedValue({ affected: 0, raw: [] });
+
+      const result =
+        await service.deleteTwoFactorAuthenticationMethodForAuthenticatedUser({
+          userId: USER_ID,
+          workspaceId: WORKSPACE_ID,
+          twoFactorAuthenticationMethodId: METHOD_ID,
+        });
+
+      expect(result).toEqual({ success: true });
+      expect(insertWorkspaceEvent).not.toHaveBeenCalled();
     });
 
     it('throws INVALID_INPUT when the method does not exist in the workspace', async () => {

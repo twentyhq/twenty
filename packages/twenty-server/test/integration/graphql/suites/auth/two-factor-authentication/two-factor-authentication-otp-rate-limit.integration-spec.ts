@@ -1,4 +1,5 @@
 import IORedis from 'ioredis';
+import { isDefined } from 'twenty-shared/utils';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -20,9 +21,33 @@ const clearRateLimitBucket = async (): Promise<void> => {
   }
 };
 
+const isLimitReachedError = (error: {
+  extensions?: { subCode?: string };
+}): boolean => error.extensions?.subCode === 'LIMIT_REACHED';
+
 describe('Two-factor authentication OTP rate limiting (integration)', () => {
-  beforeAll(clearRateLimitBucket);
+  beforeEach(clearRateLimitBucket);
   afterAll(clearRateLimitBucket);
+
+  it('admits no more than the limit when attempts arrive concurrently', async () => {
+    const concurrentAttempts = TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX * 2;
+
+    const responses = await Promise.all(
+      Array.from({ length: concurrentAttempts }, () =>
+        verifyTwoFactorAuthenticationMethod({
+          otp: '000000',
+          accessToken: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+          expectToFail: true,
+        }),
+      ),
+    );
+
+    const admittedAttempts = responses.filter(
+      ({ errors }) => !(errors ?? []).some(isLimitReachedError),
+    ).length;
+
+    expect(admittedAttempts).toBe(TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX);
+  });
 
   it('rejects further attempts once the per-user bucket is spent', async () => {
     let limitReachedError:
@@ -41,11 +66,9 @@ describe('Two-factor authentication OTP rate limiting (integration)', () => {
         expectToFail: true,
       });
 
-      limitReachedError = errors?.find(
-        (error) => error.extensions?.subCode === 'LIMIT_REACHED',
-      );
+      limitReachedError = errors?.find(isLimitReachedError);
 
-      if (limitReachedError !== undefined) {
+      if (isDefined(limitReachedError)) {
         break;
       }
 
