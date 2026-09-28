@@ -12232,6 +12232,11 @@ msgstr "Den här filsökvägen är för lång för att laddas upp."
 msgid "This file upload has already been finalized."
 msgstr "Denna filuppladdning har redan slutförts."
 
+#. js-lingui-id: Ee9ncG
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "This form is no longer awaiting a submission"
+msgstr ""
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
