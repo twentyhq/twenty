@@ -12,6 +12,7 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const agentChatThreadTableName = 'agentChatThread';
 const agentTurnTableName = 'agentTurn';
@@ -67,6 +68,10 @@ const seedChatThreads = async ({
     );
   }
 
+  const workspaceScope =
+    schemaName === 'core'
+      ? { workspaceId }
+      : { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM };
   const now = new Date();
   const title =
     workspaceId === SEED_APPLE_WORKSPACE_ID
@@ -78,7 +83,7 @@ const seedChatThreads = async ({
     .insert()
     .into(`${schemaName}.${agentChatThreadTableName}`, [
       'id',
-      ...(schemaName === 'core' ? ['workspaceId'] : []),
+      ...(schemaName === 'core' ? ['workspaceId'] : ['workspaceMemberId']),
       'userWorkspaceId',
       'title',
       'createdAt',
@@ -88,7 +93,7 @@ const seedChatThreads = async ({
     .values([
       {
         id: threadId,
-        ...(schemaName === 'core' ? { workspaceId } : {}),
+        ...workspaceScope,
         userWorkspaceId,
         title,
         createdAt: now,
@@ -119,7 +124,7 @@ const seedChatThreads = async ({
       .insert()
       .into(`${schemaName}.${agentChatThreadTableName}`, [
         'id',
-        ...(schemaName === 'core' ? ['workspaceId'] : []),
+        ...(schemaName === 'core' ? ['workspaceId'] : ['workspaceMemberId']),
         'userWorkspaceId',
         'title',
         'createdAt',
@@ -138,7 +143,7 @@ const seedChatThreads = async ({
           },
         ].map((thread) => ({
           id: thread.id,
-          ...(schemaName === 'core' ? { workspaceId } : {}),
+          ...workspaceScope,
           userWorkspaceId,
           title: thread.title,
           createdAt: now,

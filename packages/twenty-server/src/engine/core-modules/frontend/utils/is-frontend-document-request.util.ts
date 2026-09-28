@@ -1,8 +1,8 @@
-import { extname } from 'path';
-
 import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 import { ApiPath } from 'twenty-shared/types';
+
+const NAVIGATION_DESTINATIONS = ['document', 'iframe', 'frame'];
 
 export const isFrontendDocumentRequest = (request: Request): boolean => {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
@@ -18,9 +18,7 @@ export const isFrontendDocumentRequest = (request: Request): boolean => {
 
   return (
     !isApiPath &&
-    (pathname === '/index.html' || extname(pathname) === '') &&
     request.accepts().includes('text/html') &&
-    (!isDefined(destination) ||
-      ['document', 'iframe', 'frame'].includes(destination))
+    (!isDefined(destination) || NAVIGATION_DESTINATIONS.includes(destination))
   );
 };

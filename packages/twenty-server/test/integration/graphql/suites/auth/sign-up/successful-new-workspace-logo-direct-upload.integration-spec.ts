@@ -9,7 +9,7 @@ import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/fil
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { settings } from 'src/engine/constants/settings';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const createNewWorkspaceLogoUploadMutation = gql`

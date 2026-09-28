@@ -10,4 +10,5 @@ export enum UsageUnit {
   REQUEST = 'REQUEST',
   SEAT = 'SEAT',
   RECORD = 'RECORD',
+  COMPLEXITY = 'COMPLEXITY',
 }

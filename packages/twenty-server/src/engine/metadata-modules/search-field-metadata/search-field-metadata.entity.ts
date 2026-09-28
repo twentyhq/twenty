@@ -20,15 +20,18 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'searchFieldMetadata', schema: 'core' })
+@Index('IDX_SEARCH_FIELD_METADATA_APPLICATION_ID', ['applicationId'])
 @WasIntroducedInUpgrade({
   upgradeCommandName:
     ADD_UNIVERSAL_IDENTIFIER_AND_APPLICATION_ID_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME,
 })
-@Unique('IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE', [
-  'objectMetadataId',
+@Unique('IDX_SEARCH_FIELD_METADATA_FIELD_OBJECT_UNIQUE', [
   'fieldMetadataId',
+  'objectMetadataId',
 ])
-@Index('IDX_SEARCH_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_SEARCH_FIELD_METADATA_TS_VECTOR_FIELD_METADATA_ID', [
+  'tsVectorFieldMetadataId',
+])
 @Index('IDX_SEARCH_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
 export class SearchFieldMetadataEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')

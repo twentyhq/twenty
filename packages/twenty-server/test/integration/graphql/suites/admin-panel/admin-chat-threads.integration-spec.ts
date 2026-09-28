@@ -119,15 +119,9 @@ describe('Admin panel global chat threads (integration)', () => {
     onConflict = '',
   ): Promise<void> => {
     await storage.run(SEED_APPLE_WORKSPACE_ID, async (context) => {
-      const scopedColumns = [...columns];
-      const scopedValues = [...values];
-      if (context.storage === 'core') {
-        scopedColumns.push('workspaceId');
-        scopedValues.push(SEED_APPLE_WORKSPACE_ID);
-      }
       await context.manager.query(
-        `INSERT INTO ${context.table(name)} (${scopedColumns.map(escapeIdentifier).join(', ')}) VALUES (${scopedValues.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
-        scopedValues,
+        `INSERT INTO ${context.table(name)} (${columns.map(escapeIdentifier).join(', ')}) VALUES (${values.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
+        values,
       );
     });
   };

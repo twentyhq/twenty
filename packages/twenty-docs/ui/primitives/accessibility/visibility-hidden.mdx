@@ -1,0 +1,37 @@
+---
+title: VisibilityHidden
+description: Keep supporting text available to assistive technology without displaying it visually.
+---
+
+import VisibilityHiddenReference from '/snippets/ui/generated/accessibility/visibility-hidden.mdx';
+
+`VisibilityHidden` renders a visually hidden `span`. Its content stays in the accessibility tree and can supply an accessible name. It has no state and accepts only `children`.
+
+## Usage
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { IconPlus } from 'twenty-ui/icon';
+
+type AddRecordActionProps = { onAdd: () => void };
+
+export const AddRecordAction = ({ onAdd }: AddRecordActionProps) => (
+  <Button onClick={onAdd}>
+    <IconPlus aria-hidden />
+    <VisibilityHidden>Add record</VisibilityHidden>
+  </Button>
+);
+```
+
+Use a visible label when space permits. For controls that already accept `aria-label`, that attribute is another way to supply an accessible name.
+
+## Hidden content
+
+Place supporting text inside the wrapper. Avoid placing focusable controls inside it: the wrapper stays visually hidden when its children receive focus. It does not add a live region, remove content from assistive technology, or hide confidential data.
+
+The component does not forward `id`, `className`, or other native attributes. See [accessibility](/ui/accessibility) for labeling and announcement patterns.
+
+## Props
+
+<VisibilityHiddenReference />

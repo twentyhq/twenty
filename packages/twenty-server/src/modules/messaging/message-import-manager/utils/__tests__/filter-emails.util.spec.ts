@@ -1,7 +1,7 @@
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { messagingGetMessagesServiceGetMessages } from 'src/modules/messaging/message-import-manager/utils/__mocks__/messages';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 

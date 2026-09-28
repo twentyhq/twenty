@@ -14,7 +14,7 @@ import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
-import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/ApplicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const StyledTableRowsContainer = styled.div`

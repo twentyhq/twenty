@@ -2,6 +2,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { ServiceUnavailableException } from '@nestjs/common';
 
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 describe('AgentHistoryStorageService', () => {
   const workspaceId = '20202020-1111-4111-8111-111111111111';
@@ -26,14 +27,17 @@ describe('AgentHistoryStorageService', () => {
   });
 
   it('reads the authoritative route on every operation and keeps the fence through completion', async () => {
-    runner.query
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([
-        { workspaceId, type: 'CONFIG_VARIABLE', value: { storage: 'core' } },
-      ]);
-    await service.run(workspaceId, async ({ storage, table }) => {
-      expect(storage).toBe('core');
-      expect(table('agentMessage')).toBe('"core"."agentMessage"');
+    runner.query.mockResolvedValueOnce([]).mockResolvedValueOnce([
+      {
+        workspaceId,
+        type: 'CONFIG_VARIABLE',
+        value: { storage: 'workspace' },
+      },
+    ]);
+    await service.run(workspaceId, async ({ table }) => {
+      expect(table('agentMessage')).toBe(
+        `"${getWorkspaceSchemaName(workspaceId)}"."agentMessage"`,
+      );
       expect(runner.commitTransaction).not.toHaveBeenCalled();
     });
     expect(runner.query.mock.calls[0][0]).toContain(
@@ -41,6 +45,20 @@ describe('AgentHistoryStorageService', () => {
     );
     expect(runner.commitTransaction).toHaveBeenCalledTimes(1);
     expect(runner.release).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses history still stored in core', async () => {
+    runner.query
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        { workspaceId, type: 'CONFIG_VARIABLE', value: { storage: 'core' } },
+      ]);
+    const operation = jest.fn();
+    await expect(service.run(workspaceId, operation)).rejects.toBeInstanceOf(
+      ServiceUnavailableException,
+    );
+    expect(operation).not.toHaveBeenCalled();
+    expect(runner.rollbackTransaction).toHaveBeenCalledTimes(1);
   });
 
   it('does not fall back or execute writes while a migration is incomplete', async () => {
@@ -73,62 +91,5 @@ describe('AgentHistoryStorageService', () => {
     await expect(
       service.readState(runner as unknown as QueryRunner, workspaceId),
     ).rejects.toThrow('Invalid agent history storage state');
-  });
-  it.each([
-    {
-      hasSchema: false,
-      storage: 'core',
-      migration: undefined,
-      history: [],
-      empty: true,
-    },
-    {
-      hasSchema: true,
-      storage: 'core',
-      migration: undefined,
-      history: [],
-      empty: false,
-    },
-    {
-      hasSchema: false,
-      storage: 'workspace',
-      migration: undefined,
-      history: [],
-      empty: false,
-    },
-    {
-      hasSchema: false,
-      storage: 'core',
-      migration: {
-        phase: 'copying',
-        target: 'workspace',
-        tableIndex: 0,
-        lastId: null,
-      },
-      history: [],
-      empty: false,
-    },
-    {
-      hasSchema: false,
-      storage: 'core',
-      migration: undefined,
-      history: [{ exists: 1 }],
-      empty: false,
-    },
-  ])('recognizes only empty unprovisioned workspaces: %j', async (scenario) => {
-    runner.hasSchema.mockResolvedValue(scenario.hasSchema);
-    runner.query
-      .mockResolvedValueOnce([
-        {
-          workspaceId,
-          type: 'CONFIG_VARIABLE',
-          value: { storage: scenario.storage, migration: scenario.migration },
-        },
-      ])
-      .mockResolvedValueOnce(scenario.history);
-    await expect(
-      service.isEmptyUnprovisionedWorkspace(workspaceId),
-    ).resolves.toBe(scenario.empty);
-    expect(runner.release).toHaveBeenCalledTimes(1);
   });
 });

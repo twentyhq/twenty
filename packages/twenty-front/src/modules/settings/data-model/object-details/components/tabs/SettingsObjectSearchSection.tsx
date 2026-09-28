@@ -185,7 +185,7 @@ export const SettingsObjectSearchSection = ({
   return (
     <StyledSearchSectionContent>
       {!isReadOnly && (
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Global search`}
@@ -194,7 +194,7 @@ export const SettingsObjectSearchSection = ({
             advancedMode
             onChange={handleToggleSearchable}
           />
-        </Card>
+        </Card.Root>
       )}
       {searchFields.length > 0 && (
         <>

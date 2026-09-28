@@ -1,7 +1,6 @@
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
 import { AgentHistoryCleanupCommand } from 'src/database/commands/agent-history/agent-history-cleanup.command';
-import { AgentHistoryDefaultCommand } from 'src/database/commands/agent-history/agent-history-default.command';
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
@@ -24,7 +23,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AgentHistoryCleanupCommand,
-    AgentHistoryDefaultCommand,
     AgentHistoryMigrateCommand,
     AgentHistoryMigrationService,
     AgentHistoryMigrationDataService,

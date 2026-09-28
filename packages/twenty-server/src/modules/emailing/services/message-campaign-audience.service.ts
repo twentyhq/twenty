@@ -7,7 +7,6 @@ import { In } from 'typeorm';
 import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailing-domain/types/campaign-audience-resolution.type';
 import { resolveCampaignAudience } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-audience.util';
 import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
-import { MAX_CAMPAIGN_RECIPIENTS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -93,7 +92,6 @@ export class MessageCampaignAudienceService {
     return resolveCampaignAudience({
       rawRecipients,
       totalMemberCount,
-      maxRecipients: MAX_CAMPAIGN_RECIPIENTS,
       hardSuppressedEmails,
       globallySuppressedEmails,
       topicSuppressedEmails,

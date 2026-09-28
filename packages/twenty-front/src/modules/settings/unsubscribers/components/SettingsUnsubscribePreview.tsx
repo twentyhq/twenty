@@ -19,7 +19,7 @@ const StyledViewport = styled.div`
   padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
 `;
 
-const StyledCard = styled(Card)`
+const StyledCard = styled(Card.Root)`
   --card-background-color: ${themeCssVariables.background.primary};
 
   display: flex;

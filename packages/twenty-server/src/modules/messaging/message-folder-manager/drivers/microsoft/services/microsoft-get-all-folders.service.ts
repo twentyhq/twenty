@@ -18,7 +18,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { shouldCreateFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-create-folder-by-default.util';
 import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-sync-folder-by-default.util';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
-import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
+import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder.type';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 type MicrosoftGraphFolder = {
