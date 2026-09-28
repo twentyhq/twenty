@@ -374,4 +374,25 @@ describe('DatabaseToolProvider', () => {
       expect(descriptorNames).toContain('create_one_person');
     });
   });
+
+  it('emits merge tools only for objects with duplicateCriteria and update permission', async () => {
+    const personWithDupes = createFlatObject({
+      nameSingular: 'person',
+      namePlural: 'people',
+      duplicateCriteria: [['emails'], ['phones']],
+    });
+    const taskWithoutDupes = createFlatObject({
+      nameSingular: 'task',
+      namePlural: 'tasks',
+      duplicateCriteria: null,
+    });
+
+    const descriptorNames = await generateDescriptorNames([
+      personWithDupes,
+      taskWithoutDupes,
+    ]);
+
+    expect(descriptorNames).toContain('merge_people');
+    expect(descriptorNames).not.toContain('merge_tasks');
+  });
 });

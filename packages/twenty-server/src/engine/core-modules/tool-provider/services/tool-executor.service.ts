@@ -18,6 +18,7 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { MergeRecordsService } from 'src/engine/core-modules/record-crud/services/merge-records.service';
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
@@ -47,6 +48,7 @@ export class ToolExecutorService {
     private readonly updateRecordService: UpdateRecordService,
     private readonly updateManyRecordsService: UpdateManyRecordsService,
     private readonly upsertManyRecordsService: UpsertManyRecordsService,
+    private readonly mergeRecordsService: MergeRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
@@ -255,6 +257,16 @@ export class ToolExecutorService {
         return this.deleteManyRecordsService.execute({
           objectName: ref.objectNameSingular,
           filter: args.filter as Record<string, unknown>,
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
+        });
+
+      case 'merge':
+        return this.mergeRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          ids: args.ids as string[],
+          conflictPriorityIndex: args.conflictPriorityIndex as number,
+          dryRun: args.dryRun as boolean | undefined,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
         });
