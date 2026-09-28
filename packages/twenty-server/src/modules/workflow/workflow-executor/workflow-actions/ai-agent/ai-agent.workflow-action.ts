@@ -108,24 +108,31 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       this.recordConversation({
         workflowRunId: runInfo.workflowRunId,
         stepId: currentStepId,
-        record: () =>
-          isDefined(resumedThreadId)
-            ? this.workflowAgentConversationService.recordContinuation({
-                workspaceId,
-                threadId: resumedThreadId,
-                agentId: agent?.id ?? null,
-                executionResult,
-              })
-            : this.workflowAgentConversationService.recordExecution({
-                workspaceId,
-                workflowRunId: runInfo.workflowRunId,
-                stepId: currentStepId,
-                title: step.name,
-                agentId: agent?.id ?? null,
-                prompt: resolvedPrompt,
-                initiatorUserWorkspaceId: userWorkspaceId,
-                executionResult,
-              }),
+        record: async () => {
+          if (isDefined(resumedThreadId)) {
+            return this.workflowAgentConversationService.recordContinuation({
+              workspaceId,
+              threadId: resumedThreadId,
+              agentId: agent?.id ?? null,
+              executionResult,
+            });
+          }
+
+          if (!isDefined(executionResult)) {
+            return null;
+          }
+
+          return this.workflowAgentConversationService.recordExecution({
+            workspaceId,
+            workflowRunId: runInfo.workflowRunId,
+            stepId: currentStepId,
+            title: step.name,
+            agentId: agent?.id ?? null,
+            prompt: resolvedPrompt,
+            initiatorUserWorkspaceId: userWorkspaceId,
+            executionResult,
+          });
+        },
       });
 
     const startedAtMs = Date.now();
