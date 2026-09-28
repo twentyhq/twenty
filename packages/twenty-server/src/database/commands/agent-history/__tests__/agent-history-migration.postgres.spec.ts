@@ -1,3 +1,4 @@
+import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -155,6 +156,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       storage,
       orm,
     );
+
     const messages = new AgentHistoryRepository<AgentMessageWorkspaceEntity>(
       'agentMessage',
       storage,
@@ -239,6 +241,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             workspaceId: string;
             threadId: string;
           }) => threads.findOne(workspaceId, { where: { id: threadId } }),
+          getAuthContext: jest.fn().mockResolvedValue({
+            userWorkspaceId: OWNER_ID,
+            workspaceMemberId: MEMBER_ID,
+          }),
           getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
         } as never,
       );
@@ -248,7 +254,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         messageRepository,
         threads,
         createChatService(messageRepository),
-        {} as never,
+        {
+          resolveWorkspaceMember: jest.fn().mockResolvedValue({
+            userWorkspaceId: OWNER_ID,
+            workspaceMemberId: MEMBER_ID,
+          }),
+        } as never,
         {} as never,
         {} as never,
       );
@@ -287,7 +298,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         await senderRunner.release();
       }
       await dataSource.query(
-        'CREATE TABLE core."userWorkspace" (id uuid PRIMARY KEY, "workspaceId" uuid, "userId" uuid); CREATE TABLE core.file (id uuid PRIMARY KEY, "workspaceId" uuid)',
+        'CREATE TABLE core."userWorkspace" (id uuid PRIMARY KEY, "workspaceId" uuid, "userId" uuid, "deletedAt" timestamptz); CREATE TABLE core.file (id uuid PRIMARY KEY, "workspaceId" uuid)',
       );
       await dataSource.query(
         'INSERT INTO core."userWorkspace" (id, "workspaceId") VALUES ($1, $2)',
@@ -765,6 +776,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(message.parts[0].createdAt).toBeInstanceOf(Date);
       const created = await threads.insertAndReturnOne(WORKSPACE_ID, {
         userWorkspaceId: OWNER_ID,
+        workspaceMemberId: MEMBER_ID,
         title: 'New workspace chat',
       });
       expect(created.createdAt).toBeInstanceOf(Date);
@@ -792,6 +804,61 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
+    it('grants ownership from the native member relation without the legacy owner column', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      await dataSource.query(
+        `UPDATE "${SCHEMA}"."agentChatThread" SET "workspaceMemberId" = $1 WHERE id = $2`,
+        [MEMBER_ID, THREAD_ID],
+      );
+      await dataSource.query(
+        `ALTER TABLE "${SCHEMA}"."agentChatThread" DROP COLUMN "userWorkspaceId"`,
+      );
+      await dataSource.query(
+        'CREATE TABLE core."objectMetadata" (id uuid, "workspaceId" uuid, "universalIdentifier" uuid)',
+      );
+      await dataSource.query(
+        'INSERT INTO core."objectMetadata" VALUES ($1, $2, $3)',
+        [
+          TURN_ID,
+          WORKSPACE_ID,
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        ],
+      );
+      await dataSource.query(
+        `CREATE TABLE "${SCHEMA}"."recordShare" (id uuid DEFAULT public.uuid_generate_v4(), "objectMetadataId" uuid, "recordId" uuid, "principalId" uuid, "principalType" text, "accessLevel" text, "rowCause" text, "sourceId" uuid, UNIQUE ("recordId", "principalId"))`,
+      );
+      const args = {
+        manager: dataSource.manager,
+        workspaceId: WORKSPACE_ID,
+        threadTableExpression: `"${SCHEMA}"."agentChatThread"`,
+        recordIds: [THREAD_ID],
+      };
+      await expect(backfillWorkspaceChatThreadOwnerGrants(args)).resolves.toBe(
+        1,
+      );
+      await expect(backfillWorkspaceChatThreadOwnerGrants(args)).resolves.toBe(
+        0,
+      );
+      expect(
+        await dataSource.query(
+          `SELECT "recordId", "principalId", "rowCause" FROM "${SCHEMA}"."recordShare"`,
+        ),
+      ).toEqual([
+        { recordId: THREAD_ID, principalId: MEMBER_ID, rowCause: 'OWNER' },
+      ]);
+      await dataSource.query(`DELETE FROM "${SCHEMA}"."recordShare"`);
+      await dataSource.query(
+        'UPDATE core."userWorkspace" SET "deletedAt" = NOW() WHERE id = $1',
+        [OWNER_ID],
+      );
+      await expect(backfillWorkspaceChatThreadOwnerGrants(args)).resolves.toBe(
+        0,
+      );
+    });
+
     it('persists senders for normal, queued and hidden kickoff messages after schema expansion', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
@@ -801,6 +868,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const actors = createActorService(messages);
       const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
         userWorkspaceId: OWNER_ID,
+        workspaceMemberId: MEMBER_ID,
       });
       const kickoff = await chat.ensureHiddenKickoffMessage({
         workspaceId: WORKSPACE_ID,
@@ -818,6 +886,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         },
       });
       const queued = await chat.queueMessage({
+        workspaceMemberId: MEMBER_ID,
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,
@@ -1004,6 +1073,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
+      await dataSource.query(
+        `UPDATE "${SCHEMA}"."agentChatThread" SET "workspaceMemberId" = $1 WHERE id = $2`,
+        [MEMBER_ID, THREAD_ID],
+      );
       await expect(
         createActorService(messages).resolveMessage({
           workspaceId: WORKSPACE_ID,
@@ -1471,6 +1544,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       await storage.runReadOnlyReport(workspaceIds, async ({ partitions }) =>
         expect(partitions).toHaveLength(1),
+      );
+      await dataSource.query(
+        'INSERT INTO core."userWorkspace" (id, "workspaceId", "userId", "deletedAt") VALUES ($1, $2, $3, now())',
+        ['20202020-0000-4000-8000-000000009999', WORKSPACE_ID, OWNER_ID],
       );
       expect(await support.getGlobalChatThreads(options)).toMatchObject({
         totalCount: 1,

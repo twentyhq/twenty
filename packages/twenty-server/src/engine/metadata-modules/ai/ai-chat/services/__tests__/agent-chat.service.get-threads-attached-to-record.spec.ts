@@ -2,7 +2,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
-const USER_WORKSPACE_ID = '20202020-0000-4000-8000-000000000002';
+const WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000002';
 const RECORD_ID = '20202020-0000-4000-8000-000000000003';
 const OLDER_THREAD_ID = '20202020-0000-4000-8000-000000000004';
 const NEWER_THREAD_ID = '20202020-0000-4000-8000-000000000005';
@@ -60,7 +60,7 @@ const listThreadsAttachedToCompany = (service: AgentChatService) =>
   service.getThreadsAttachedToRecord({
     joinColumnName: 'targetCompanyId',
     recordId: RECORD_ID,
-    userWorkspaceId: USER_WORKSPACE_ID,
+    workspaceMemberId: WORKSPACE_MEMBER_ID,
     workspaceId: WORKSPACE_ID,
     limit: 20,
     offset: 40,
@@ -100,8 +100,8 @@ describe('Listing the conversations attached to a record', () => {
   it('leaves the chat list unscoped and unpaged', async () => {
     const { service, rankedThreadsQuery } = buildService();
 
-    await service.getThreadsForUser({
-      userWorkspaceId: USER_WORKSPACE_ID,
+    await service.getThreadsForMember({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
       workspaceId: WORKSPACE_ID,
     });
 
