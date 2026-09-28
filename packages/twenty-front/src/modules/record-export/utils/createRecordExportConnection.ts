@@ -51,8 +51,10 @@ export const createRecordExportConnection = () => {
             if (isSettled) {
               return;
             }
-            if (isDefined(errors) && errors.length > 0) {
-              finish(new Error(errors[0].message));
+            const [firstError] = errors ?? [];
+
+            if (isDefined(firstError)) {
+              finish(new Error(firstError.message));
               return;
             }
             const recordExport = data?.exportRecords;

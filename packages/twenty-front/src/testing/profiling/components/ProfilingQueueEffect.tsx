@@ -8,6 +8,7 @@ import { profilingSessionRunsState } from '~/testing/profiling/states/profilingS
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 import { getTestArray } from '~/testing/profiling/utils/getTestArray';
 import { sleep } from '~/utils/sleep';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ProfilingQueueEffect = ({
   profilingId,
@@ -54,19 +55,31 @@ export const ProfilingQueueEffect = ({
 
         setProfilingSessionRuns(newTestRuns);
 
+        const [firstRunName] = newTestRuns;
+
+        if (!isDefined(firstRunName)) {
+          return;
+        }
+
         const testArray = getTestArray(
           profilingId,
           numberOfTestsPerRun,
-          newTestRuns[0],
+          firstRunName,
         );
 
         setProfilingQueue((currentProfilingQueue) => ({
           ...currentProfilingQueue,
-          [newTestRuns[0]]: testArray,
+          [firstRunName]: testArray,
         }));
       } else if (profilingSessionStatus === 'running') {
-        const testsStillToRun =
-          profilingQueue[profilingSessionRuns[currentProfilingRunIndex]];
+        const currentRunName = profilingSessionRuns[currentProfilingRunIndex];
+        const testsStillToRun = isDefined(currentRunName)
+          ? profilingQueue[currentRunName]
+          : undefined;
+
+        if (!isDefined(testsStillToRun)) {
+          return;
+        }
 
         const allTestsAreRun = testsStillToRun.length > 0;
 
@@ -79,27 +92,30 @@ export const ProfilingQueueEffect = ({
             return;
           }
 
-          const timeInMs = profilingSessionRuns[
-            currentProfilingRunIndex
-          ].startsWith('warm-up')
+          const timeInMs = currentRunName?.startsWith('warm-up')
             ? TIME_BETWEEN_TEST_RUNS_IN_MS * 2
             : TIME_BETWEEN_TEST_RUNS_IN_MS;
 
           await sleep(timeInMs);
 
           const nextIndex = currentProfilingRunIndex + 1;
+          const nextRunName = profilingSessionRuns[nextIndex];
 
           setCurrentProfilingRunIndex(nextIndex);
+
+          if (!isDefined(nextRunName)) {
+            return;
+          }
 
           const testArray = getTestArray(
             profilingId,
             numberOfTestsPerRun,
-            profilingSessionRuns[nextIndex],
+            nextRunName,
           );
 
           setProfilingQueue((currentProfilingQueue) => ({
             ...currentProfilingQueue,
-            [profilingSessionRuns[nextIndex]]: testArray,
+            [nextRunName]: testArray,
           }));
         }
       }

@@ -113,7 +113,7 @@ describe('useEventTracker', () => {
       result.current(AnalyticsType['TRACK'], payload);
     });
     await waitFor(() => {
-      expect(mocks[0].result).toHaveBeenCalled();
+      expect(mocks[0]?.result).toHaveBeenCalled();
     });
   });
 
@@ -137,7 +137,7 @@ describe('useEventTracker', () => {
       result.current(AnalyticsType['PAGEVIEW'], payload);
     });
     await waitFor(() => {
-      expect(mocks[1].result).toHaveBeenCalled();
+      expect(mocks[1]?.result).toHaveBeenCalled();
     });
   });
 });

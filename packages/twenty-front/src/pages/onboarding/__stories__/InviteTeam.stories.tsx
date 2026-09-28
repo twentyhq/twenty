@@ -13,6 +13,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/InviteTeam',
@@ -70,13 +71,17 @@ export const RemovesAllInputsButTheLast: Story = {
 
     expect(getRemoveButtons(canvasElement)).toHaveLength(3);
 
-    await userEvent.click(getRemoveButtons(canvasElement)[2]);
+    const [, , thirdRemoveButton] = getRemoveButtons(canvasElement);
+    assertIsDefinedOrThrow(thirdRemoveButton);
+    await userEvent.click(thirdRemoveButton);
     await waitFor(async () =>
       expect(await findEmailInputs(canvas)).toHaveLength(2),
     );
     expect(getRemoveButtons(canvasElement)).toHaveLength(2);
 
-    await userEvent.click(getRemoveButtons(canvasElement)[1]);
+    const [, secondRemoveButton] = getRemoveButtons(canvasElement);
+    assertIsDefinedOrThrow(secondRemoveButton);
+    await userEvent.click(secondRemoveButton);
     await waitFor(async () =>
       expect(await findEmailInputs(canvas)).toHaveLength(1),
     );

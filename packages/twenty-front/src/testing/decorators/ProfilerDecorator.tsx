@@ -23,7 +23,8 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
 
   const skip = profilingSessionRuns.length === 0;
 
-  const currentRunName = profilingSessionRuns[currentProfilingRunIndex];
+  // No run name only happens before the session starts, when skip is true
+  const currentRunName = profilingSessionRuns[currentProfilingRunIndex] ?? '';
 
   const testArray = getTestArray(id, numberOfTests, currentRunName);
 

@@ -19,7 +19,12 @@ const readColorChannels = (cssColor: string) => {
   }
   probeContext.fillStyle = cssColor;
   probeContext.fillRect(0, 0, 1, 1);
-  const [red, green, blue] = probeContext.getImageData(0, 0, 1, 1).data;
+  const [red = 0, green = 0, blue = 0] = probeContext.getImageData(
+    0,
+    0,
+    1,
+    1,
+  ).data;
   return [red / 255, green / 255, blue / 255] as const;
 };
 

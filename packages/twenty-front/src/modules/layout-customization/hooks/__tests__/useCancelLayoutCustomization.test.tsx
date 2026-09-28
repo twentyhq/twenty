@@ -74,7 +74,7 @@ describe('useCancelLayoutCustomization', () => {
             instanceId: PAGE_LAYOUT_ID,
           }),
         )
-        ?.tabs[0].widgets.map((widget) => widget.id),
+        ?.tabs[0]?.widgets.map((widget) => widget.id),
     ).toEqual(['timeline', 'fields']);
     expect(
       store
@@ -83,7 +83,7 @@ describe('useCancelLayoutCustomization', () => {
             instanceId: PAGE_LAYOUT_ID,
           }),
         )
-        .tabs[0].widgets.map((widget) => widget.id),
+        .tabs[0]?.widgets.map((widget) => widget.id),
     ).toEqual(['timeline', 'fields']);
     expect(mockExitLayoutCustomizationMode).toHaveBeenCalledTimes(1);
   });

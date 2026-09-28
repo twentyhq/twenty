@@ -38,8 +38,8 @@ describe('cleanMorphRelationsTargetingObjectMetadataId', () => {
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('morph-field');
-    expect(result[0].morphRelations).toEqual([
+    expect(result[0]?.id).toBe('morph-field');
+    expect(result[0]?.morphRelations).toEqual([
       buildMorphRelation('company-id'),
     ]);
   });
@@ -51,8 +51,8 @@ describe('cleanMorphRelationsTargetingObjectMetadataId', () => {
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('exclusive-morph');
-    expect(result[0].morphRelations).toEqual([]);
+    expect(result[0]?.id).toBe('exclusive-morph');
+    expect(result[0]?.morphRelations).toEqual([]);
   });
 
   it('should return an empty array when no morph relation targets the deleted object', () => {

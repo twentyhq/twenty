@@ -1,4 +1,5 @@
 import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 // Keep function wrappers as aliases for backward compatibility — they just
 // return the pre-computed constants so callers can be migrated gradually.
@@ -1534,9 +1535,15 @@ export const workflowQueryResult = {
   },
 } satisfies { workflows: RecordGqlConnection };
 
-export const mockedWorkflow = workflowQueryResult.workflows.edges[0].node;
+const [mockedWorkflowEdge] = workflowQueryResult.workflows.edges;
+assertIsDefinedOrThrow(mockedWorkflowEdge);
 
-export const mockedWorkflowVersion = mockedWorkflow.versions.edges[0].node;
+export const mockedWorkflow = mockedWorkflowEdge.node;
+
+const [mockedWorkflowVersionEdge] = mockedWorkflow.versions.edges;
+assertIsDefinedOrThrow(mockedWorkflowVersionEdge);
+
+export const mockedWorkflowVersion = mockedWorkflowVersionEdge.node;
 
 export const mockedWorkflowVersions = {
   ...mockedWorkflow.versions,
@@ -1553,4 +1560,7 @@ export const mockedWorkflowVersions = {
   },
 };
 
-export const mockedWorkflowNodeId = mockedWorkflowVersion.steps[0].id;
+const [mockedWorkflowFirstStep] = mockedWorkflowVersion.steps;
+assertIsDefinedOrThrow(mockedWorkflowFirstStep);
+
+export const mockedWorkflowNodeId = mockedWorkflowFirstStep.id;

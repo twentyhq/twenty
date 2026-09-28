@@ -13,6 +13,7 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 export const ObjectMetadataItemsDecorator: Decorator = (
   Story,
@@ -28,9 +29,12 @@ export const ObjectMetadataItemsDecorator: Decorator = (
   const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
 
   useEffect(() => {
+    const [mockedWorkspaceMemberRecord] = mockedWorkspaceMemberRecords;
+    assertIsDefinedOrThrow(mockedWorkspaceMemberRecord);
+
     setCurrentWorkspaceMember(
       getRecordFromRecordNode<WorkspaceMember>({
-        recordNode: mockedWorkspaceMemberRecords[0],
+        recordNode: mockedWorkspaceMemberRecord,
       }),
     );
     setCurrentUser(mockedUserData);

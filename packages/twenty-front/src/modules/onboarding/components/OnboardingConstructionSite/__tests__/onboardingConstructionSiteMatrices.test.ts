@@ -4,15 +4,25 @@ import {
   multiplyMatrices,
   writeTransformMatrix,
 } from '@/onboarding/components/OnboardingConstructionSite/onboardingConstructionSiteMatrices';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-const transformPoint = (matrix: Float32Array, point: readonly number[]) => {
-  const [x, y, z] = point;
-  const w = matrix[3] * x + matrix[7] * y + matrix[11] * z + matrix[15];
+const getValueOrThrow = (values: ArrayLike<number>, index: number) => {
+  const value = values[index];
+  assertIsDefinedOrThrow(value);
+  return value;
+};
+
+const transformPoint = (
+  matrix: Float32Array,
+  [x, y, z]: readonly [number, number, number],
+) => {
+  const entry = (index: number) => getValueOrThrow(matrix, index);
+  const w = entry(3) * x + entry(7) * y + entry(11) * z + entry(15);
   return [
-    (matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12]) / w,
-    (matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13]) / w,
-    (matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14]) / w,
-  ];
+    (entry(0) * x + entry(4) * y + entry(8) * z + entry(12)) / w,
+    (entry(1) * x + entry(5) * y + entry(9) * z + entry(13)) / w,
+    (entry(2) * x + entry(6) * y + entry(10) * z + entry(14)) / w,
+  ] as const;
 };
 
 describe('onboardingConstructionSiteMatrices', () => {

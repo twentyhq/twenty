@@ -3,6 +3,13 @@ import {
   createOnboardingConstructionSiteTimeline,
   type OnboardingConstructionSiteTimeline,
 } from '@/onboarding/components/OnboardingConstructionSite/createOnboardingConstructionSiteTimeline';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const getValueOrThrow = (values: ArrayLike<number>, index: number) => {
+  const value = values[index];
+  assertIsDefinedOrThrow(value);
+  return value;
+};
 
 const FRAME_SECONDS = 1 / 60;
 
@@ -77,12 +84,12 @@ describe('createOnboardingConstructionSiteTimeline', () => {
       expect(builtStageIndex).toBe(3);
       expect(growingStageGrowths).toHaveLength(2);
       expect(growingStageGrowths[1]).toBe(growingStageGrowths[0]);
-      growths.push(growingStageGrowths[0]);
+      growths.push(getValueOrThrow(growingStageGrowths, 0));
       timeline.advance(FRAME_SECONDS);
     }
 
     growths.slice(1).forEach((growth, index) => {
-      expect(growth).toBeGreaterThanOrEqual(growths[index]);
+      expect(growth).toBeGreaterThanOrEqual(getValueOrThrow(growths, index));
     });
     expect(timeline.getConstruction().builtStageIndex).toBe(
       ONBOARDING_CONSTRUCTION_SITE_FINAL_STAGE_INDEX,
@@ -123,6 +130,7 @@ describe('createOnboardingConstructionSiteTimeline', () => {
     advanceBySeconds(timeline, 0.8);
     const [growthWhenGoingBack] =
       timeline.getConstruction().growingStageGrowths;
+    assertIsDefinedOrThrow(growthWhenGoingBack);
     timeline.setTargetStageIndex(3);
     timeline.advance(FRAME_SECONDS);
     const [growthAfterGoingBack] =
@@ -159,7 +167,7 @@ describe('createOnboardingConstructionSiteTimeline', () => {
 
       expect(builtStageIndex).toBe(0);
       expect(growingStageGrowths[1]).toBeLessThanOrEqual(
-        growingStageGrowths[0],
+        getValueOrThrow(growingStageGrowths, 0),
       );
       timeline.advance(FRAME_SECONDS);
     }

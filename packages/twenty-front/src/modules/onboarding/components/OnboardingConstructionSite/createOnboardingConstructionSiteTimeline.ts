@@ -43,8 +43,8 @@ export const createOnboardingConstructionSiteTimeline = ({
   let pendingStageIndex: number | null = null;
 
   const getUpperStageIndex = (activeTransition: Transition) =>
-    activeTransition.segments[activeTransition.segments.length - 1]
-      .upperStageIndex;
+    activeTransition.segments.at(-1)?.upperStageIndex ??
+    activeTransition.lowerStageIndex;
 
   const getTargetStageIndex = (activeTransition: Transition) =>
     activeTransition.direction > 0
@@ -156,9 +156,7 @@ export const createOnboardingConstructionSiteTimeline = ({
       const growingStageGrowths = segments.flatMap(
         ({ upperStageIndex, startPosition }, segmentIndex) => {
           const segmentLowerStageIndex =
-            segmentIndex === 0
-              ? lowerStageIndex
-              : segments[segmentIndex - 1].upperStageIndex;
+            segments[segmentIndex - 1]?.upperStageIndex ?? lowerStageIndex;
           const growth = easing(
             clampToUnitRange((position - startPosition) / (1 - startPosition)),
           );

@@ -511,6 +511,10 @@ export const LogConsole = () => {
       );
     }
 
+    if (!isDefined(activeSource)) {
+      return null;
+    }
+
     if (isSourceLocked(activeSource)) {
       return (
         <StyledUpgradeCardContainer>

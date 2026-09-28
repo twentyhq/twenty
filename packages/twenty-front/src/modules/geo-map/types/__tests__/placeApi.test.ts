@@ -107,8 +107,8 @@ describe('placeApi types', () => {
       ];
 
       expect(results).toHaveLength(2);
-      expect(results[0].text).toBe('New York, NY, USA');
-      expect(results[1].placeId).toBe('place-2');
+      expect(results[0]?.text).toBe('New York, NY, USA');
+      expect(results[1]?.placeId).toBe('place-2');
     });
 
     it('should handle empty results array', () => {
@@ -231,7 +231,7 @@ describe('placeApi types', () => {
         } as PlaceDetailsResult,
       };
 
-      expect(apiResponse.getAutoCompleteAddress[0].text).toBe(
+      expect(apiResponse.getAutoCompleteAddress[0]?.text).toBe(
         'New York, NY, USA',
       );
       expect(apiResponse.getAddressDetails.city).toBe('New York');

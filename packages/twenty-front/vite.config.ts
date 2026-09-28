@@ -73,8 +73,8 @@ export default defineConfig(({ mode }) => {
         ? {
             protocol: 'https',
             https: {
-              key: fs.readFileSync(env.SSL_KEY_PATH),
-              cert: fs.readFileSync(env.SSL_CERT_PATH),
+              key: fs.readFileSync(SSL_KEY_PATH),
+              cert: fs.readFileSync(SSL_CERT_PATH),
             },
           }
         : {

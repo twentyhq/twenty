@@ -18,7 +18,7 @@ export const getNavigationDrawerHomeDestination = ({
     return defaultHomePagePath;
   }
 
-  const [pathname] = memorizedUrl.split('?');
+  const [pathname = memorizedUrl] = memorizedUrl.split('?');
 
   return isSettingsPath(pathname) || isAiChatPath(pathname)
     ? defaultHomePagePath

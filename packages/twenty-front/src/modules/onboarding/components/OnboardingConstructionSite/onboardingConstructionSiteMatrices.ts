@@ -83,7 +83,7 @@ export const multiplyMatrices = (left: Float32Array, right: Float32Array) => {
     for (let row = 0; row < 4; row++) {
       let sum = 0;
       for (let index = 0; index < 4; index++) {
-        sum += left[index * 4 + row] * right[column * 4 + index];
+        sum += (left[index * 4 + row] ?? 0) * (right[column * 4 + index] ?? 0);
       }
       product[column * 4 + row] = sum;
     }

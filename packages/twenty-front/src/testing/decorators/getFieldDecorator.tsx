@@ -10,7 +10,11 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  CustomError,
+  isDefined,
+} from 'twenty-shared/utils';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
@@ -58,32 +62,25 @@ export const getFieldDecorator =
     fieldValue?: any,
   ): Decorator =>
   (Story) => {
-    const companiesMock = [...mockedCompanyRecords];
+    const overrideFirstRecordField = <TRecord,>(records: TRecord[]) =>
+      records.map((record, index) =>
+        index === 0 ? { ...record, [fieldName]: fieldValue } : record,
+      );
 
     const companies =
       objectNameSingular === 'company' && isDefined(fieldValue)
-        ? [
-            { ...companiesMock[0], [fieldName]: fieldValue },
-            ...companiesMock.slice(1),
-          ]
-        : companiesMock;
-
-    const peopleMock = [...mockedPersonRecords];
+        ? overrideFirstRecordField(mockedCompanyRecords)
+        : [...mockedCompanyRecords];
 
     const people =
       objectNameSingular === 'person' && isDefined(fieldValue)
-        ? [
-            { ...peopleMock[0], [fieldName]: fieldValue },
-            ...peopleMock.slice(1),
-          ]
-        : peopleMock;
-
-    const tasksMock = mockedTasks;
+        ? overrideFirstRecordField(mockedPersonRecords)
+        : [...mockedPersonRecords];
 
     const tasks =
       objectNameSingular === 'task'
-        ? [{ ...tasksMock[0], [fieldName]: fieldValue }, ...tasksMock.slice(1)]
-        : tasksMock;
+        ? overrideFirstRecordField(mockedTasks)
+        : mockedTasks;
 
     const record =
       objectNameSingular === 'company'
@@ -91,6 +88,8 @@ export const getFieldDecorator =
         : objectNameSingular === 'person'
           ? people[0]
           : tasks[0];
+
+    assertIsDefinedOrThrow(record);
 
     if (isDefined(fieldValue)) {
       (record as any)[fieldName] = fieldValue;

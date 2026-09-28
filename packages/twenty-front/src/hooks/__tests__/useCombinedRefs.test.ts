@@ -17,7 +17,7 @@ describe('useCombinedRefs', () => {
       return [ref1, ref2];
     });
 
-    expect(result.current[0].current).toBe('test');
-    expect(result.current[1].current).toBe('test');
+    expect(result.current[0]?.current).toBe('test');
+    expect(result.current[1]?.current).toBe('test');
   });
 });

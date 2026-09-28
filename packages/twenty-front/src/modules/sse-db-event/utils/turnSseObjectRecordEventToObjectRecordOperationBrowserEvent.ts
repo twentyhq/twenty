@@ -29,7 +29,8 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
     const objectRecordEventsForThisEventType =
       objectRecordEventsByEventType.get(eventType) ?? [];
 
-    const hasSingleEvent = objectRecordEventsForThisEventType.length === 1;
+    const [firstEvent, ...otherEvents] = objectRecordEventsForThisEventType;
+    const singleEvent = otherEvents.length === 0 ? firstEvent : undefined;
 
     switch (eventType) {
       case DatabaseEventAction.UPDATED: {
@@ -37,12 +38,14 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
           objectRecordEventsForThisEventType,
         );
 
-        if (hasSingleEvent) {
+        const [singleUpdateInput] = updateInputs;
+
+        if (isDefined(singleEvent) && isDefined(singleUpdateInput)) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
             operation: {
               type: 'update-one',
-              result: { updateInput: updateInputs[0] },
+              result: { updateInput: singleUpdateInput },
             },
           });
         } else {
@@ -57,7 +60,7 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         break;
       }
       case DatabaseEventAction.DESTROYED:
-        if (hasSingleEvent) {
+        if (isDefined(singleEvent)) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
             operation: {
@@ -74,13 +77,12 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         }
         break;
       case DatabaseEventAction.RESTORED:
-        if (hasSingleEvent) {
+        if (isDefined(singleEvent)) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
             operation: {
               type: 'restore-one',
-              restoredRecord:
-                objectRecordEventsForThisEventType[0].properties.after,
+              restoredRecord: singleEvent.properties.after,
             },
           });
         } else {
@@ -96,13 +98,12 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         }
         break;
       case DatabaseEventAction.UPSERTED:
-        if (hasSingleEvent) {
+        if (isDefined(singleEvent)) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
             operation: {
               type: 'create-one',
-              createdRecord:
-                objectRecordEventsForThisEventType[0].properties.after,
+              createdRecord: singleEvent.properties.after,
             },
           });
         } else {
@@ -113,13 +114,12 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         }
         break;
       case DatabaseEventAction.CREATED:
-        if (hasSingleEvent) {
+        if (isDefined(singleEvent)) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
             operation: {
               type: 'create-one',
-              createdRecord:
-                objectRecordEventsForThisEventType[0].properties.after,
+              createdRecord: singleEvent.properties.after,
             },
           });
         } else {
@@ -130,13 +130,12 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         }
         break;
       case DatabaseEventAction.DELETED:
-        if (hasSingleEvent) {
+        if (isDefined(singleEvent)) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
             operation: {
               type: 'delete-one',
-              deletedRecordId:
-                objectRecordEventsForThisEventType[0].properties.before.id,
+              deletedRecordId: singleEvent.properties.before.id,
             },
           });
         } else {

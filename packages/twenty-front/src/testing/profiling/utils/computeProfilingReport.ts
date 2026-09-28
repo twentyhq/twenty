@@ -1,5 +1,6 @@
 import { type ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
 import { type ProfilingReport } from '~/testing/profiling/types/ProfilingReportByRun';
+import { isDefined } from 'twenty-shared/utils';
 
 export const computeProfilingReport = (
   dataPoints: ProfilingDataPoint[],
@@ -19,34 +20,30 @@ export const computeProfilingReport = (
       sum:
         (profilingReport.runs[dataPoint.runName]?.sum ?? 0) +
         dataPoint.durationInMs,
-    };
+    } as ProfilingReport['runs'][string];
   }
 
-  for (const runName of Object.keys(profilingReport.runs)) {
-    const ids = Object.keys(profilingReport.runs[runName].sumById);
-    const valuesUnsorted = Object.values(profilingReport.runs[runName].sumById);
+  for (const run of Object.values(profilingReport.runs)) {
+    const ids = Object.keys(run.sumById);
+    const valuesUnsorted = Object.values(run.sumById);
 
     const valuesSortedAsc = [...valuesUnsorted].sort((a, b) => a - b);
 
     const numberOfIds = ids.length;
 
-    const mean = profilingReport.runs[runName].sum / numberOfIds;
+    const mean = run.sum / numberOfIds;
 
-    profilingReport.runs[runName].average = mean;
+    run.average = mean;
 
-    profilingReport.runs[runName].min = Math.min(
-      ...Object.values(profilingReport.runs[runName].sumById),
-    );
+    run.min = Math.min(...valuesUnsorted);
 
-    profilingReport.runs[runName].max = Math.max(
-      ...Object.values(profilingReport.runs[runName].sumById),
-    );
+    run.max = Math.max(...valuesUnsorted);
 
     const intermediaryValuesForVariance = valuesUnsorted.map((value) =>
       Math.pow(value - mean, 2),
     );
 
-    profilingReport.runs[runName].variance =
+    run.variance =
       intermediaryValuesForVariance.reduce((acc, curr) => acc + curr) /
       numberOfIds;
 
@@ -56,11 +53,11 @@ export const computeProfilingReport = (
     const p95Index = Math.floor(numberOfIds * 0.95);
     const p99Index = Math.floor(numberOfIds * 0.99);
 
-    profilingReport.runs[runName].p50 = valuesSortedAsc[p50Index];
-    profilingReport.runs[runName].p80 = valuesSortedAsc[p80Index];
-    profilingReport.runs[runName].p90 = valuesSortedAsc[p90Index];
-    profilingReport.runs[runName].p95 = valuesSortedAsc[p95Index];
-    profilingReport.runs[runName].p99 = valuesSortedAsc[p99Index];
+    run.p50 = valuesSortedAsc[p50Index] ?? 0;
+    run.p80 = valuesSortedAsc[p80Index] ?? 0;
+    run.p90 = valuesSortedAsc[p90Index] ?? 0;
+    run.p95 = valuesSortedAsc[p95Index] ?? 0;
+    run.p99 = valuesSortedAsc[p99Index] ?? 0;
   }
 
   const runNamesForTotal = Object.keys(profilingReport.runs).filter((runName) =>
@@ -69,6 +66,7 @@ export const computeProfilingReport = (
 
   const runsForTotal = runNamesForTotal
     .map((runName) => profilingReport.runs[runName])
+    .filter(isDefined)
     .filter((run) => run.variance < (varianceThreshold ?? 0.2));
 
   profilingReport.total = {

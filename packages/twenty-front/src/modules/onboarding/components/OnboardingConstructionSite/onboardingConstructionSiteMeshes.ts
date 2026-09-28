@@ -1,13 +1,17 @@
 const ROUND_MESH_SEGMENT_COUNT = 48;
 
+import { isDefined } from 'twenty-shared/utils';
+
 type Vertex = readonly [number, number, number, number, number, number];
+
+type Corner = readonly [number, number, number];
 
 const toVertexData = (vertices: Vertex[]) => Float32Array.from(vertices.flat());
 
 const buildCubeVertices = () => {
   const faces: {
     normal: readonly [number, number, number];
-    corners: readonly (readonly [number, number, number])[];
+    corners: readonly [Corner, Corner, Corner, Corner];
   }[] = [
     {
       normal: [1, 0, 0],
@@ -67,7 +71,7 @@ const buildCubeVertices = () => {
 
   return toVertexData(
     faces.flatMap(({ normal, corners }) =>
-      [0, 1, 2, 0, 2, 3].map(
+      ([0, 1, 2, 0, 2, 3] as const).map(
         (cornerIndex): Vertex => [...corners[cornerIndex], ...normal],
       ),
     ),
@@ -78,6 +82,12 @@ type RoundProfile = readonly (readonly [height: number, radius: number])[];
 
 const buildRoundVertices = (profile: RoundProfile) => {
   const vertices: Vertex[] = [];
+  const [firstProfilePoint] = profile;
+  const lastProfilePoint = profile.at(-1);
+
+  if (!isDefined(firstProfilePoint) || !isDefined(lastProfilePoint)) {
+    return toVertexData(vertices);
+  }
 
   for (let segment = 0; segment < ROUND_MESH_SEGMENT_COUNT; segment++) {
     const startAngle = (segment / ROUND_MESH_SEGMENT_COUNT) * Math.PI * 2;
@@ -88,8 +98,15 @@ const buildRoundVertices = (profile: RoundProfile) => {
     const endSine = Math.sin(endAngle);
 
     for (let ringIndex = 0; ringIndex < profile.length - 1; ringIndex++) {
-      const [bottomHeight, bottomRadius] = profile[ringIndex];
-      const [topHeight, topRadius] = profile[ringIndex + 1];
+      const bottomProfilePoint = profile[ringIndex];
+      const topProfilePoint = profile[ringIndex + 1];
+
+      if (!isDefined(bottomProfilePoint) || !isDefined(topProfilePoint)) {
+        continue;
+      }
+
+      const [bottomHeight, bottomRadius] = bottomProfilePoint;
+      const [topHeight, topRadius] = topProfilePoint;
       const slope = (bottomRadius - topRadius) / (topHeight - bottomHeight);
       const sideNormalLength = Math.hypot(1, slope);
       const sideNormal = (cosine: number, sine: number) =>
@@ -134,8 +151,8 @@ const buildRoundVertices = (profile: RoundProfile) => {
       );
     }
 
-    const [bottomHeight, bottomRadius] = profile[0];
-    const [topHeight, topRadius] = profile[profile.length - 1];
+    const [bottomHeight, bottomRadius] = firstProfilePoint;
+    const [topHeight, topRadius] = lastProfilePoint;
     vertices.push(
       [0, bottomHeight, 0, 0, -1, 0],
       [
