@@ -2,8 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatWorkflowMaps } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow-maps.type';
+import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   WorkflowStepExecutorException,
@@ -12,23 +11,18 @@ import {
 
 export const resolveWorkflowRunOwningApplication = ({
   workflowRun,
-  flatWorkflowMaps,
+  coreWorkflow,
   flatApplicationMaps,
   workspaceOwnedApplicationIds,
 }: {
   workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>;
-  flatWorkflowMaps: FlatWorkflowMaps;
+  coreWorkflow: Pick<WorkflowEntity, 'applicationId'> | null;
   flatApplicationMaps: FlatApplicationCacheMaps;
   workspaceOwnedApplicationIds: string[];
 }): FlatApplication | null => {
   if (!isDefined(workflowRun.coreWorkflowId)) {
     return null;
   }
-
-  const coreWorkflow = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: workflowRun.coreWorkflowId,
-    flatEntityMaps: flatWorkflowMaps,
-  });
 
   if (!isDefined(coreWorkflow)) {
     throw new WorkflowStepExecutorException(

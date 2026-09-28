@@ -1,7 +1,5 @@
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FlatWorkflowMaps } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow-maps.type';
-import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { resolveWorkflowRunOwningApplication } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-owning-application.util';
 
 const CUSTOM_APPLICATION_ID = 'custom-app-id';
@@ -15,55 +13,23 @@ const INSTALLED_APPLICATION = {
   deletedAt: null,
 } as unknown as FlatApplication;
 
-const buildFlatWorkflowMaps = (
-  workflows: Pick<
-    FlatWorkflow,
-    'id' | 'universalIdentifier' | 'applicationId'
-  >[],
-): FlatWorkflowMaps =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      workflows.map((workflow) => [workflow.universalIdentifier, workflow]),
-    ),
-    universalIdentifierById: Object.fromEntries(
-      workflows.map((workflow) => [workflow.id, workflow.universalIdentifier]),
-    ),
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatWorkflowMaps;
-
-const FLAT_WORKFLOW_MAPS = buildFlatWorkflowMaps([
-  {
-    id: 'workspace-workflow-id',
-    universalIdentifier: 'workspace-workflow',
-    applicationId: CUSTOM_APPLICATION_ID,
-  },
-  {
-    id: 'standard-workflow-id',
-    universalIdentifier: 'standard-workflow',
-    applicationId: STANDARD_APPLICATION_ID,
-  },
-  {
-    id: 'app-workflow-id',
-    universalIdentifier: 'app-workflow',
-    applicationId: INSTALLED_APPLICATION_ID,
-  },
-]);
-
 const FLAT_APPLICATION_MAPS: FlatApplicationCacheMaps = {
   byId: { [INSTALLED_APPLICATION_ID]: INSTALLED_APPLICATION },
   idByUniversalIdentifier: {},
 };
 
 const resolve = ({
-  coreWorkflowId,
+  coreWorkflowId = 'core-workflow-id',
+  applicationId,
   flatApplicationMaps = FLAT_APPLICATION_MAPS,
 }: {
-  coreWorkflowId: string | null;
+  coreWorkflowId?: string | null;
+  applicationId?: string;
   flatApplicationMaps?: FlatApplicationCacheMaps;
 }) =>
   resolveWorkflowRunOwningApplication({
     workflowRun: { coreWorkflowId },
-    flatWorkflowMaps: FLAT_WORKFLOW_MAPS,
+    coreWorkflow: applicationId === undefined ? null : { applicationId },
     flatApplicationMaps,
     workspaceOwnedApplicationIds: [
       CUSTOM_APPLICATION_ID,
@@ -73,8 +39,8 @@ const resolve = ({
 
 describe('resolveWorkflowRunOwningApplication', () => {
   it('treats workspace and standard workflows as owned by the workspace', () => {
-    expect(resolve({ coreWorkflowId: 'workspace-workflow-id' })).toBeNull();
-    expect(resolve({ coreWorkflowId: 'standard-workflow-id' })).toBeNull();
+    expect(resolve({ applicationId: CUSTOM_APPLICATION_ID })).toBeNull();
+    expect(resolve({ applicationId: STANDARD_APPLICATION_ID })).toBeNull();
   });
 
   it('treats runs that predate core workflows as owned by the workspace', () => {
@@ -82,27 +48,27 @@ describe('resolveWorkflowRunOwningApplication', () => {
   });
 
   it('returns the installed application that owns the workflow', () => {
-    expect(resolve({ coreWorkflowId: 'app-workflow-id' })).toBe(
+    expect(resolve({ applicationId: INSTALLED_APPLICATION_ID })).toBe(
       INSTALLED_APPLICATION,
     );
   });
 
   it('fails closed when the workflow is deleted or belongs to another workspace', () => {
-    expect(() =>
-      resolve({ coreWorkflowId: 'other-workspace-workflow-id' }),
-    ).toThrow('The workflow of this run no longer exists');
+    expect(() => resolve({})).toThrow(
+      'The workflow of this run no longer exists',
+    );
   });
 
   it('fails closed when the owning application is uninstalled', () => {
     expect(() =>
       resolve({
-        coreWorkflowId: 'app-workflow-id',
+        applicationId: INSTALLED_APPLICATION_ID,
         flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
       }),
     ).toThrow('The application that owns this workflow is no longer installed');
     expect(() =>
       resolve({
-        coreWorkflowId: 'app-workflow-id',
+        applicationId: INSTALLED_APPLICATION_ID,
         flatApplicationMaps: {
           byId: {
             [INSTALLED_APPLICATION_ID]: {

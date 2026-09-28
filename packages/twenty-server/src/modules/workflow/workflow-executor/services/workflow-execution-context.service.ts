@@ -17,6 +17,7 @@ import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-us
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -24,6 +25,8 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -59,6 +62,8 @@ export class WorkflowExecutionContextService {
     private readonly permissionsService: PermissionsService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectWorkspaceScopedRepository(WorkflowEntity)
+    private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
   ) {}
 
   async getExecutionContext(
@@ -205,16 +210,22 @@ export class WorkflowExecutionContextService {
     workspaceId: string,
   ): Promise<WorkflowRunApplications> {
     const [
-      { flatWorkflowMaps, flatApplicationMaps },
+      { flatApplicationMaps },
       { workspaceCustomFlatApplication, twentyStandardFlatApplication },
+      coreWorkflow,
     ] = await Promise.all([
       this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkflowMaps',
         'flatApplicationMaps',
       ]),
       this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       ),
+      isDefined(workflowRun.coreWorkflowId)
+        ? this.coreWorkflowRepository.findOne(workspaceId, {
+            where: { id: workflowRun.coreWorkflowId },
+            select: { id: true, applicationId: true },
+          })
+        : null,
     ]);
 
     const workspaceOwnedApplicationIds = [
@@ -224,7 +235,7 @@ export class WorkflowExecutionContextService {
 
     const owningApplication = resolveWorkflowRunOwningApplication({
       workflowRun,
-      flatWorkflowMaps,
+      coreWorkflow,
       flatApplicationMaps,
       workspaceOwnedApplicationIds,
     });

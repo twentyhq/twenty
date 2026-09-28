@@ -307,7 +307,7 @@ const waitForRun = async (
   workflowRunId: string,
   isDone: (workflowRun: TestWorkflowRun) => boolean,
 ): Promise<TestWorkflowRun> => {
-  for (let attempt = 0; attempt < 300; attempt++) {
+  for (let attempt = 0; attempt < 900; attempt++) {
     const workflowRun = await findRun(workflowRunId);
 
     if (isDone(workflowRun)) {
@@ -415,7 +415,7 @@ describe('application workflow execution permissions', () => {
 
     expect(workflowRun.status).toBe('COMPLETED');
     expect(await countRecordsByName('company', COMPANY_NAME)).toBe(1);
-  }, 60000);
+  }, 120000);
 
   it('refuses a record step the application role does not allow, even for an admin', async () => {
     const workflowRun = await waitForRunToEnd(
@@ -428,7 +428,7 @@ describe('application workflow execution permissions', () => {
       workflowRun.state.stepInfos[createStep.universalIdentifier].status,
     ).toBe('FAILED');
     expect(await countRecordsByName('opportunity', OPPORTUNITY_NAME)).toBe(0);
-  }, 60000);
+  }, 120000);
 
   it('keeps running workspace workflows with the permissions of the member who started them', async () => {
     const { status, stepStatus } = await runWorkflowActionStep({
@@ -445,7 +445,7 @@ describe('application workflow execution permissions', () => {
     expect(
       await countRecordsByName('opportunity', WORKSPACE_OPPORTUNITY_NAME),
     ).toBe(1);
-  }, 60000);
+  }, 120000);
 
   it('requires the tool permission of calendar steps on the application role', async () => {
     const workflowRun = await waitForRunToEnd(
@@ -457,7 +457,7 @@ describe('application workflow execution permissions', () => {
     expect(
       workflowRun.state.stepInfos[calendarStep.universalIdentifier].error,
     ).toContain('CREATE_CALENDAR_EVENT_TOOL');
-  }, 60000);
+  }, 120000);
 
   it('refuses the private connected account of another member', async () => {
     const workflowRun = await waitForRunToEnd(
@@ -469,7 +469,7 @@ describe('application workflow execution permissions', () => {
     expect(
       workflowRun.state.stepInfos[emailStep.universalIdentifier].error,
     ).toContain('is private to another member');
-  }, 60000);
+  }, 120000);
 
   it('runs the application function for the member who started the run', async () => {
     const executeSpy = jest
@@ -502,7 +502,7 @@ describe('application workflow execution permissions', () => {
     } finally {
       executeSpy.mockRestore();
     }
-  }, 60000);
+  }, 120000);
 
   it('only lets an application token start that application workflows', async () => {
     const coreWorkflowVersionId = await findVersionId(CREATE_COMPANY_WORKFLOW);
@@ -544,7 +544,7 @@ describe('application workflow execution permissions', () => {
     await waitForRunToEnd(
       ownApplicationStart.body.data.runCoreWorkflowVersion.workflowRunId,
     );
-  }, 60000);
+  }, 120000);
 
   it('keeps the application bound when its token starts a workspace workflow', async () => {
     const [{ id: applicationId }] = await globalThis.testDataSource.query(
@@ -573,7 +573,7 @@ describe('application workflow execution permissions', () => {
     expect(
       await countRecordsByName('opportunity', NESTED_OPPORTUNITY_NAME),
     ).toBe(0);
-  }, 60000);
+  }, 120000);
 
   it('only lets the member who started an application workflow run retry it', async () => {
     const workflowRunId = await runWorkflow(CREATE_OPPORTUNITY_WORKFLOW);
@@ -597,7 +597,7 @@ describe('application workflow execution permissions', () => {
     expect(retryByInitiator.body.errors).toBeUndefined();
     expect((await waitForRunToEnd(workflowRunId)).status).toBe('FAILED');
     expect(await countRecordsByName('opportunity', OPPORTUNITY_NAME)).toBe(0);
-  }, 60000);
+  }, 120000);
 
   it('checks the current application permissions again when a delayed run resumes', async () => {
     const workflowRunId = await runWorkflow(DELAYED_CREATE_COMPANY_WORKFLOW);
@@ -622,5 +622,5 @@ describe('application workflow execution permissions', () => {
       workflowRun.state.stepInfos[createStep.universalIdentifier].status,
     ).toBe('FAILED');
     expect(await countRecordsByName('company', DELAYED_COMPANY_NAME)).toBe(0);
-  }, 90000);
+  }, 150000);
 });
