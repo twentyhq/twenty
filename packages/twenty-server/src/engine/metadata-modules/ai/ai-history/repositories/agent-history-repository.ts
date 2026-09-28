@@ -1,3 +1,4 @@
+import { assertAgentMessageSenderFields } from 'src/engine/metadata-modules/ai/ai-history/utils/assert-agent-message-sender-fields.util';
 import {
   mapAgentHistorySelectToWorkspace,
   mapAgentHistoryValuesToWorkspace,
@@ -178,11 +179,12 @@ export class AgentHistoryRepository<
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(workspaceId, (repository) =>
-      repository.insert(
+    return this.run(workspaceId, (repository) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
+      return repository.insert(
         mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
-      ),
-    );
+      );
+    });
   }
 
   insertAndReturnOne(
@@ -190,6 +192,7 @@ export class AgentHistoryRepository<
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
     return this.run(workspaceId, async (repository) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       const result = await repository.insert(
         mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
       );
@@ -258,6 +261,7 @@ export class AgentHistoryRepository<
           `agent-history-upsert:${workspaceId}:${this.name}:${JSON.stringify(identity)}`,
         ],
       );
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       return repository.upsert(
         mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
         conflictPaths,
