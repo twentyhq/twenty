@@ -454,7 +454,7 @@ export class AgentChatResolver {
   ): Promise<SendChatMessageResultDTO> {
     const readableThread = await this.sharingService.getReadableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
 

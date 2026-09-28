@@ -1,13 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+
 export type WorkflowRunThreadFields = {
   workflowRunId: string;
   workflowStepId?: string | null;
 };
 
-// Agent history records carry every workspace column, including the run link
-// the legacy thread entity type does not declare.
-export const isWorkflowRunThread = <TThread extends object>(
+export const isWorkflowRunThread = <
+  TThread extends Pick<AgentChatThreadWorkspaceEntity, 'workflowRunId'>,
+>(
   thread: TThread,
 ): thread is TThread & WorkflowRunThreadFields =>
-  'workflowRunId' in thread && isDefined(thread.workflowRunId);
+  isDefined(thread.workflowRunId);
