@@ -1,3 +1,4 @@
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 /* @license Enterprise */
 
@@ -172,6 +173,7 @@ describe('recordShare object', () => {
     const args = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       threadId: randomUUID(),
     };
     await chatService.createThread({

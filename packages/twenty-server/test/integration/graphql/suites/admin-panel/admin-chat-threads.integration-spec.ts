@@ -1,3 +1,4 @@
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { randomUUID } from 'crypto';
 
 import { gql } from 'graphql-tag';
@@ -102,6 +103,7 @@ describe('Admin panel global chat threads (integration)', () => {
   let dataSource: DataSource;
   let storage: AgentHistoryStorageService;
   let userWorkspaceId: string;
+  let workspaceMemberId: string;
   let userEmail: string;
   let kickoffThreadId: string;
   let deterministicThreadId: string;
@@ -137,9 +139,16 @@ describe('Admin panel global chat threads (integration)', () => {
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      ['id', 'userWorkspaceId', 'title', 'lastStreamError'],
+      [
+        'id',
+        'workspaceMemberId',
+        'userWorkspaceId',
+        'title',
+        'lastStreamError',
+      ],
       [
         id,
+        workspaceMemberId,
         userWorkspaceId,
         title,
         lastStreamError ? JSON.stringify(lastStreamError) : null,
@@ -256,9 +265,10 @@ describe('Admin panel global chat threads (integration)', () => {
     );
 
     const [firstUserWorkspace] = await dataSource.query(
-      `SELECT "userWorkspace".id, "user".email
+      `SELECT "userWorkspace".id, "user".email, "workspaceMember".id AS "workspaceMemberId"
        FROM core."userWorkspace" "userWorkspace"
        JOIN core."user" "user" ON "user".id = "userWorkspace"."userId"
+       JOIN "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workspaceMember" "workspaceMember" ON "workspaceMember"."userId" = "user".id AND "workspaceMember"."deletedAt" IS NULL
        WHERE "userWorkspace"."workspaceId" = $1
          AND "userWorkspace"."deletedAt" IS NULL
        ORDER BY "userWorkspace"."createdAt" ASC
@@ -267,6 +277,7 @@ describe('Admin panel global chat threads (integration)', () => {
     );
 
     userWorkspaceId = firstUserWorkspace.id;
+    workspaceMemberId = firstUserWorkspace.workspaceMemberId;
     userEmail = firstUserWorkspace.email;
 
     kickoffThreadId = await insertThread({

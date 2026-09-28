@@ -44,7 +44,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     const threadRepository = {
       findOneOrFail: jest
         .fn()
-        .mockResolvedValue({ userWorkspaceId: 'user-workspace-id' }),
+        .mockResolvedValue({ workspaceMemberId: 'member' }),
       findOne: jest.fn().mockResolvedValue(thread),
       update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
@@ -89,7 +89,9 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       {
         authorizeJob: jest.fn().mockResolvedValue(undefined),
         authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest.fn().mockResolvedValue({}),
+        authorize: jest
+          .fn()
+          .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
         resolveMessage: jest.fn().mockResolvedValue({
           sender: {
             userWorkspaceId: 'user-workspace-id',
@@ -103,6 +105,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
   };
 
   const retryArguments = {
+    workspaceMemberId: 'member',
     threadId: 'thread-id',
     userWorkspaceId: 'user-workspace-id',
     workspace,
@@ -120,7 +123,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     expect(agentChatService.getWritableThread).toHaveBeenCalledWith({
       workspaceId: workspace.id,
       threadId: retryArguments.threadId,
-      userWorkspaceId: retryArguments.userWorkspaceId,
+      workspaceMemberId: retryArguments.workspaceMemberId,
     });
     expect(threadRepository.update).not.toHaveBeenCalled();
     expect(

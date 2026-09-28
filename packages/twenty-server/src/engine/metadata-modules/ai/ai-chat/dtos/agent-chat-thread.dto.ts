@@ -1,4 +1,4 @@
-import { Field, Float, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('AgentChatThread')
 export class AgentChatThreadDTO {
@@ -42,7 +42,4 @@ export class AgentChatThreadDTO {
 
   @Field(() => Date, { nullable: true })
   lastMessageAt: Date | null;
-
-  @HideField()
-  userWorkspaceId: string;
 }
