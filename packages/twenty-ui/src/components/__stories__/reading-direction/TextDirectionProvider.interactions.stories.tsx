@@ -76,9 +76,9 @@ export const LeftToRight: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'Open dropdown' }),
     );
-    expect(getComputedStyle(body.getByTestId('header-icon')).transform).toBe(
-      'none',
-    );
+    expect(
+      getComputedStyle(await body.findByTestId('header-icon')).transform,
+    ).toBe('none');
     await userEvent.click(
       await body.findByRole('menuitem', { name: 'Details page' }),
     );

@@ -16,12 +16,14 @@
 - Field displays, application links, placeholders, and feature animations are no longer package exports. External applications must own these integrations or compose supported primitives. Internal implementation parts are private.
 - `Info` uses `href` and `render` in place of `to`. Replace `AnimatedEaseInOut` with `AnimatedExpandableContainer`.
 - `SegmentedControl` is a radio group. Use `aria-label` or `aria-labelledby` (one is required), `value` or `defaultValue`, and `onValueChange(value, eventDetails)` in place of `ariaLabel`, `value`, and `onChange(value)`. Options take `startIcon` and `'aria-label'` in place of `Icon` and `ariaLabel`. `role` and `width` are removed: use `Tabs` for tab lists and `className` or `style` to size the control. Arrow keys select the next option, Enter no longer selects, and choosing the selected option again no longer calls `onValueChange`.
+- Dropdown submenu arrow keys follow `TextDirectionProvider` instead of the computed CSS direction. RTL content set only through `dir` or `direction` now uses LTR keys; wrap it in `TextDirectionProvider`. A Base UI `DirectionProvider` on its own no longer sets `dir` on Select, Dialog, AlertDialog, or Toaster portals; use `TextDirectionProvider`.
+- `Dropdown.Header` and `Dropdown.Back` no longer rotate caller-supplied icons in RTL. Pass an icon that already points the intended way.
 
 Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when upgrading Twenty apps.
 
 ### Fixed
 
-- Reading-direction spacing, JSON disclosure arrows, theme picker corners, avatar overlap, and the Dropdown Back chevron now follow RTL layouts. Menu, Popover, Tooltip, Select, Dialog, AlertDialog, and Toaster portals set the `TextDirectionProvider` direction as `dir`, and inherit their container's direction when no provider is present. A Base UI `DirectionProvider` on its own no longer sets `dir` on Select, Dialog, AlertDialog, or Toaster portals; use `TextDirectionProvider`. Dropdown uses the provider for submenu keys and keeps caller-supplied icons unchanged. Pair the provider with the matching HTML `dir` attribute.
+- Reading-direction spacing, JSON disclosure arrows, theme picker corners, avatar overlap, and the Dropdown Back chevron now follow RTL layouts. Menu, Popover, Tooltip, Select, Dialog, AlertDialog, and Toaster portals set the `TextDirectionProvider` direction as `dir`, and inherit their container's direction when no provider is present. Pair the provider with the matching HTML `dir` attribute.
 
 ### Added
 

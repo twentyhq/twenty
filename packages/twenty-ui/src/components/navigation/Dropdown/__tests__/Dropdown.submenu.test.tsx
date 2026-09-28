@@ -2,6 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
+import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+
 import { Dropdown } from '../Dropdown';
 
 describe('Dropdown submenu hover', () => {
@@ -15,23 +17,22 @@ describe('Dropdown submenu hover', () => {
       const user = userEvent.setup();
 
       render(
-        <Dropdown.Root type="menu">
-          <Dropdown.Trigger>Record actions</Dropdown.Trigger>
-          <Dropdown.Content aria-label="Record actions" style={{ direction }}>
-            <Dropdown.Submenu>
-              <Dropdown.SubmenuTrigger delay={0} style={{ direction }}>
-                Export
-              </Dropdown.SubmenuTrigger>
-              <Dropdown.Content
-                aria-label="Export formats"
-                style={{ direction }}
-              >
-                <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
-                <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
-              </Dropdown.Content>
-            </Dropdown.Submenu>
-          </Dropdown.Content>
-        </Dropdown.Root>,
+        <TextDirectionProvider direction={direction}>
+          <Dropdown.Root type="menu">
+            <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+            <Dropdown.Content aria-label="Record actions">
+              <Dropdown.Submenu>
+                <Dropdown.SubmenuTrigger delay={0}>
+                  Export
+                </Dropdown.SubmenuTrigger>
+                <Dropdown.Content aria-label="Export formats">
+                  <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+                  <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+                </Dropdown.Content>
+              </Dropdown.Submenu>
+            </Dropdown.Content>
+          </Dropdown.Root>
+        </TextDirectionProvider>,
       );
 
       await user.tab();

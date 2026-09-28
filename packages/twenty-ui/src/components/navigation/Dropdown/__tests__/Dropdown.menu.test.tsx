@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Button } from '@ui/primitives/input/Button/Button';
+import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
 
 import { Dropdown } from '../Dropdown';
 
@@ -291,28 +292,25 @@ describe('Dropdown menu', () => {
       const user = userEvent.setup();
 
       render(
-        <Dropdown.Root type="menu">
-          <Dropdown.Trigger>Filters</Dropdown.Trigger>
-          <Dropdown.Content aria-label="Filters" style={{ direction }}>
-            <Dropdown.Submenu type="picker">
-              <Dropdown.SubmenuTrigger style={{ direction }}>
-                People
-              </Dropdown.SubmenuTrigger>
-              <Dropdown.Content
-                aria-label="Choose person"
-                style={{ direction }}
-              >
-                <Dropdown.Search
-                  aria-label="Search people"
-                  defaultValue="Ada"
-                />
-                <Dropdown.OptionItem selected={false}>
-                  Ada Lovelace
-                </Dropdown.OptionItem>
-              </Dropdown.Content>
-            </Dropdown.Submenu>
-          </Dropdown.Content>
-        </Dropdown.Root>,
+        <TextDirectionProvider direction={direction}>
+          <Dropdown.Root type="menu">
+            <Dropdown.Trigger>Filters</Dropdown.Trigger>
+            <Dropdown.Content aria-label="Filters">
+              <Dropdown.Submenu type="picker">
+                <Dropdown.SubmenuTrigger>People</Dropdown.SubmenuTrigger>
+                <Dropdown.Content aria-label="Choose person">
+                  <Dropdown.Search
+                    aria-label="Search people"
+                    defaultValue="Ada"
+                  />
+                  <Dropdown.OptionItem selected={false}>
+                    Ada Lovelace
+                  </Dropdown.OptionItem>
+                </Dropdown.Content>
+              </Dropdown.Submenu>
+            </Dropdown.Content>
+          </Dropdown.Root>
+        </TextDirectionProvider>,
       );
 
       await user.tab();
