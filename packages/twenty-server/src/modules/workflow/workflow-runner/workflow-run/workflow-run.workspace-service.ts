@@ -19,6 +19,7 @@ import {
   type WorkflowRunState,
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -291,6 +292,100 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
       partialUpdate,
     });
+  }
+
+  // Written from the state read under the lock rather than from the caller's
+  // snapshot, or a step-info write that landed in between, such as an accepted
+  // form submission, would be put back as it was.
+  @WithLock('workflowRunId')
+  async markWorkflowRunAsStopping({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
+      !isDefined(workflowRunToUpdate.state)
+    ) {
+      return false;
+    }
+
+    const { stepInfos, flow } = workflowRunToUpdate.state;
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        status: WorkflowRunStatus.STOPPING,
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...stepInfos,
+            ...setAllIteratorsStepInfosAsStopped({
+              stepInfos,
+              steps: flow.steps,
+            }),
+          },
+        },
+      },
+    });
+
+    return true;
+  }
+
+  // A step waiting on a person must move on exactly once. This shares the lock
+  // every step-info write takes, so of two concurrent callers the second finds
+  // the step no longer PENDING. A stop is refused too: endWorkflowRun turns a
+  // pending step into FAILED, and a stop still waiting on another branch
+  // leaves the run STOPPING with the step PENDING but nothing left to resume.
+  @WithLock('workflowRunId')
+  async updateStepInfoIfPending({
+    stepId,
+    stepInfo,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    stepInfo: Partial<WorkflowRunStepInfo>;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
+      currentStepInfo?.status !== StepStatus.PENDING
+    ) {
+      return false;
+    }
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...workflowRunToUpdate.state?.stepInfos,
+            [stepId]: { ...currentStepInfo, ...stepInfo },
+          },
+        },
+      },
+    });
+
+    return true;
   }
 
   @WithLock('workflowRunId')
