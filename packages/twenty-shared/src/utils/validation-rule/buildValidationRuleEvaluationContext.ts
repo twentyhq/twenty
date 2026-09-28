@@ -93,6 +93,10 @@ export const buildValidationRuleEvaluationContext = ({
     const segments = path.split('.');
     const [rootSegment] = segments;
 
+    if (rootSegment === undefined) {
+      continue;
+    }
+
     if (rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME) {
       context[VALIDATION_RULE_NOW_VARIABLE_NAME] = now;
       continue;
@@ -121,12 +125,14 @@ export const buildValidationRuleEvaluationContext = ({
 
       container = descendIntoContainer(container, segment, ownedContainers);
 
-      if (index === 0 && container !== null) {
+      const nextSegment = segments[index + 1];
+
+      if (index === 0 && container !== null && nextSegment !== undefined) {
         const targetField = rootField?.relationTargetFields?.find(
-          (field) => field.name === segments[1],
+          (field) => field.name === nextSegment,
         );
 
-        registerCompositeValue(container[segments[1]], targetField);
+        registerCompositeValue(container[nextSegment], targetField);
       }
     }
   }

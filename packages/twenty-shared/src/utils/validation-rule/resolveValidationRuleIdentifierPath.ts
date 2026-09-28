@@ -46,6 +46,10 @@ export const resolveValidationRuleIdentifierPath = ({
 }): ResolveValidationRuleIdentifierPathResult => {
   const [rootSegment, ...memberSegments] = path.split('.');
 
+  if (rootSegment === undefined) {
+    return { isResolved: false, errorMessage: `"${path}" is not a value` };
+  }
+
   if (rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME) {
     return memberSegments.length === 0
       ? { isResolved: true, bindings: {} }
