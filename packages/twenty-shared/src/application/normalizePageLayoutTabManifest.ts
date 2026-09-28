@@ -189,16 +189,19 @@ export const normalizePageLayoutTabManifest = ({
       );
     }
 
+    const singleViewportWidget =
+      viewportWidgets.length === 1 ? viewportWidgets[0] : undefined;
+
     if (
-      viewportWidgets.length === 1 &&
+      isDefined(singleViewportWidget) &&
       pageLayoutTab.widgets.some(
         (widget) =>
-          widget !== viewportWidgets[0] &&
+          widget !== singleViewportWidget &&
           widget.position.layoutMode ===
             PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          viewportWidgets[0].position.layoutMode ===
+          singleViewportWidget.position.layoutMode ===
             PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          widget.position.index >= viewportWidgets[0].position.index,
+          widget.position.index >= singleViewportWidget.position.index,
       )
     ) {
       errors.push(
