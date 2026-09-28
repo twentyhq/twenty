@@ -81,6 +81,13 @@ export class AgentChatActorService {
           where: { id: threadId },
         })
       ).userWorkspaceId;
+    // A workflow run's thread has no owner to fall back to.
+    if (!isDefined(userWorkspaceId)) {
+      throw new AiException(
+        'Message sender not found',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
     const sender: AgentChatSender = {
       userWorkspaceId,
       applicationId: message.senderApplicationId ?? null,

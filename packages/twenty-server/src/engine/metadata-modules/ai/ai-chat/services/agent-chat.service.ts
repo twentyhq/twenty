@@ -1288,12 +1288,15 @@ export class AgentChatService {
       { title },
     );
 
-    await this.broadcastThreadUpdated(
-      { ...thread, title },
-      workspaceId,
-      ['title'],
-      thread.userWorkspaceId,
-    );
+    // A workflow run's thread has no owner whose thread list needs the title.
+    if (isDefined(thread.userWorkspaceId)) {
+      await this.broadcastThreadUpdated(
+        { ...thread, title },
+        workspaceId,
+        ['title'],
+        thread.userWorkspaceId,
+      );
+    }
 
     return title;
   }

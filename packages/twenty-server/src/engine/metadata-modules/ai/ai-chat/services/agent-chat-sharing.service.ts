@@ -303,7 +303,9 @@ export class AgentChatSharingService {
     );
   }
 
-  private assertNotWorkflowRunThread(thread: AgentChatThreadWorkspaceEntity): void {
+  private assertNotWorkflowRunThread(
+    thread: AgentChatThreadWorkspaceEntity,
+  ): void {
     if (isWorkflowRunThread(thread)) {
       throw new AiException(
         'A workflow run conversation is read-only',
