@@ -1,5 +1,6 @@
 import { useDuplicateWorkflow } from '@/workflow/hooks/useDuplicateWorkflow';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,6 +17,7 @@ export const CoreWorkflowDuplicateButton = ({
   coreWorkflowId,
   coreWorkflowVersionId,
 }: CoreWorkflowDuplicateButtonProps) => {
+  const { t } = useLingui();
   const { duplicateWorkflow } = useDuplicateWorkflow();
   const [isDuplicating, setIsDuplicating] = useState(false);
   const navigate = useNavigateApp();
@@ -24,27 +26,28 @@ export const CoreWorkflowDuplicateButton = ({
   const handleDuplicate = async () => {
     setIsDuplicating(true);
 
-    try {
-      const result = await duplicateWorkflow({
-        workflowIdToDuplicate: coreWorkflowId,
-        workflowVersionIdToCopy: coreWorkflowVersionId,
-      });
+    const result = await duplicateWorkflow({
+      workflowIdToDuplicate: coreWorkflowId,
+      workflowVersionIdToCopy: coreWorkflowVersionId,
+    }).catch(() => undefined);
 
-      if (!isDefined(result?.workflowId)) {
-        throw new Error('Workflow duplication returned no workflow');
-      }
+    setIsDuplicating(false);
 
-      navigate(AppPath.WorkflowCoreShowPage, {
-        coreWorkflowId: result.workflowId,
-      });
-    } catch {
+    if (!isDefined(result) || !isNonEmptyString(result.workflowId)) {
       enqueueToast({
         variant: 'error',
         children: t`Failed to duplicate workflow`,
       });
-    } finally {
-      setIsDuplicating(false);
+      return;
     }
+
+    enqueueToast({
+      variant: 'success',
+      children: t`Workflow duplicated successfully`,
+    });
+    navigate(AppPath.WorkflowCoreShowPage, {
+      coreWorkflowId: result.workflowId,
+    });
   };
 
   return (

@@ -76,8 +76,7 @@ const CoreWorkflowShowContent = ({
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
-  const isReadOnlyVersion =
-    isApplicationManaged || isDefined(requestedVersionId);
+  const isReadOnly = isApplicationManaged || isDefined(requestedVersionId);
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -152,7 +151,7 @@ const CoreWorkflowShowContent = ({
                     coreWorkflowVersionId={selectedVersion.id}
                   />
                 )}
-                {!isReadOnlyVersion && <RecordShowCommandMenu />}
+                {!isReadOnly && <RecordShowCommandMenu />}
                 <SidePanelToggleButton />
               </>
             }
@@ -172,7 +171,7 @@ const CoreWorkflowShowContent = ({
               key={selectedVersion.id}
               coreWorkflowId={coreWorkflowId}
               coreWorkflowVersionId={selectedVersion.id}
-              readonly={isReadOnlyVersion}
+              readonly={isReadOnly}
             />
           ) : (
             <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>

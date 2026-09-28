@@ -167,10 +167,12 @@ export class AiAgentRoleService {
   public async deleteAgentOnlyRoleIfUnused({
     roleId,
     roleTargetId,
+    roleTargetApplicationId,
     workspaceId,
   }: {
     roleId: string;
     roleTargetId: string;
+    roleTargetApplicationId: string;
     workspaceId: string;
   }): Promise<void> {
     const role = await this.roleRepository.findOne(workspaceId, {
@@ -179,6 +181,7 @@ export class AiAgentRoleService {
 
     if (
       !isDefined(role) ||
+      role.applicationId !== roleTargetApplicationId ||
       !role.canBeAssignedToAgents ||
       role.canBeAssignedToUsers ||
       role.canBeAssignedToApiKeys
