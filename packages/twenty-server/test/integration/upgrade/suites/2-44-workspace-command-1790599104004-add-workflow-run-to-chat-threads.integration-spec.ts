@@ -3,7 +3,10 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790599104004-add-workflow-run-to-chat-threads.command';
+import {
+  type AddWorkflowRunToChatThreadsCommand,
+  LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790599104004-add-workflow-run-to-chat-threads.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -61,11 +64,10 @@ describe('2-44 workspace command 1790599104004 - AddWorkflowRunToChatThreadsComm
       hasIndex: isDefined(
         flatIndexMaps.byUniversalIdentifier[INDEX_UNIVERSAL_IDENTIFIER],
       ),
-      isOwnerNullable:
+      isOwnerRequired:
         flatFieldMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.fields.userWorkspaceId
-            .universalIdentifier
-        ]?.isNullable,
+          LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER
+        ]?.isNullable === false,
       readability: threadObject?.readability,
       readabilityParentFieldUniversalIdentifiers:
         threadObject?.readabilityParentFieldUniversalIdentifiers,
@@ -186,7 +188,7 @@ describe('2-44 workspace command 1790599104004 - AddWorkflowRunToChatThreadsComm
     expect(await readState()).toEqual({
       fieldCount: FIELD_UNIVERSAL_IDENTIFIERS.length,
       hasIndex: true,
-      isOwnerNullable: true,
+      isOwnerRequired: false,
       readability: MetadataReadability.INHERITED,
       readabilityParentFieldUniversalIdentifiers: [
         STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier,

@@ -22,6 +22,11 @@ const WORKFLOW_RUN_THREAD_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.workflowRun.fields.agentChatThreads.universalIdentifier,
 ];
 
+// Pinned here rather than read from the standard objects, which drop the
+// legacy owner column: this command must still build and run without it.
+export const LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER =
+  'bf830886-b6dc-46e9-a229-eecbb0e66032';
+
 const WORKFLOW_RUN_THREAD_INDEX_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.indexes.workflowRunIndex.universalIdentifier,
 ];
@@ -101,8 +106,7 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
 
     const ownerField =
       flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.userWorkspaceId
-          .universalIdentifier
+        LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER
       ];
     const fieldsToUpdate: FlatFieldMetadata[] =
       isDefined(ownerField) && !ownerField.isNullable
