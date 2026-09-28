@@ -231,7 +231,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
         // and skipping them left field-less indexMetadata rows whose name then
         // collided when the field was recreated.
         const isEngineOwnedIndexOfObject =
-          belongsToObject && flatIndexMetadata.isSystemSideEffect === true;
+          belongsToObject && flatIndexMetadata.isSystemSideEffect;
 
         if (!referencesDeletedField && !isEngineOwnedIndexOfObject) {
           continue;
