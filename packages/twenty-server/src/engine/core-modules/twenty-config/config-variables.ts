@@ -1150,12 +1150,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Origin URL to fetch the current frontend HTML for each document request. Uses bundled HTML when unset.',
+      'Direct HTTPS origin URL to fetch the current frontend HTML for each document request. Uses bundled HTML when unset.',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
   @IsUrl({
-    protocols: ['http', 'https'],
+    protocols: ['https'],
     require_tld: false,
     require_protocol: true,
   })

@@ -108,23 +108,55 @@ describe('frontend HTML delivery', () => {
     jest.useRealTimers();
   });
 
-  it('initializes CLI application contexts with bundled HTML and no HTTP adapter', async () => {
-    const module = await Test.createTestingModule({ imports: [FrontendModule] })
-      .overrideProvider(FrontendService)
-      .useValue(
-        new FrontendService(
-          { getClientConfig } as unknown as ClientConfigService,
-          {
-            resolveWorkspaceAndPublicDomain,
-          } as unknown as WorkspaceDomainsService,
-          directory,
-          { get: () => undefined } as unknown as TwentyConfigService,
-        ),
-      )
-      .compile();
-    expect(module.get(HttpAdapterHost).httpAdapter).toBeUndefined();
-    await expect(module.init()).resolves.toBeDefined();
-    await module.close();
+  it.each([undefined, 'https://frontend.s3.example.com/index.html'])(
+    'initializes CLI application contexts without fetching HTML (origin: %s)',
+    async (indexUrl) => {
+      const fetchTemplate = jest.spyOn(globalThis, 'fetch');
+      const module = await Test.createTestingModule({
+        imports: [FrontendModule],
+      })
+        .overrideProvider(FrontendService)
+        .useValue(
+          new FrontendService(
+            { getClientConfig } as unknown as ClientConfigService,
+            {
+              resolveWorkspaceAndPublicDomain,
+            } as unknown as WorkspaceDomainsService,
+            directory,
+            { get: () => indexUrl } as unknown as TwentyConfigService,
+          ),
+        )
+        .compile();
+      expect(module.get(HttpAdapterHost).httpAdapter).toBeUndefined();
+      await expect(module.init()).resolves.toBeDefined();
+      expect(fetchTemplate).not.toHaveBeenCalled();
+      await module.close();
+    },
+  );
+
+  it('serves bundled HTML without an external request when the URL is unset', async () => {
+    const fetchTemplate = jest.spyOn(globalThis, 'fetch');
+    const response = await request(app.getHttpServer())
+      .get('/')
+      .set('Accept', 'text/html')
+      .expect(200);
+    expect(response.text).toContain('<div id="root"></div>');
+    expect(response.text).toContain('twenty-client-config');
+    expect(fetchTemplate).not.toHaveBeenCalled();
+  });
+
+  it('preserves API-only development when neither bundled HTML nor a URL exists', async () => {
+    await app.close();
+    rmSync(join(directory, 'index.html'));
+    const fetchTemplate = jest.spyOn(globalThis, 'fetch');
+    await createApplication();
+    await request(app.getHttpServer()).get('/healthz').expect(200);
+    await request(app.getHttpServer())
+      .get('/')
+      .set('Accept', 'text/html')
+      .expect(404);
+    expect(fetchTemplate).not.toHaveBeenCalled();
+    expect(getClientConfig).not.toHaveBeenCalled();
   });
 
   it.each(['/', '/index.html', '/objects/people'])(
@@ -378,6 +410,7 @@ describe('frontend HTML delivery', () => {
 
     beforeEach(async () => {
       await app.close();
+      rmSync(join(directory, 'index.html'));
       fetchTemplate = jest
         .spyOn(globalThis, 'fetch')
         .mockImplementation(async () => new Response(remoteTemplate));
@@ -399,17 +432,59 @@ describe('frontend HTML delivery', () => {
         expect(response.text).toContain(`Latest ${host}`);
         expect(response.text).toContain('twenty-client-config');
         expect(response.headers['cache-control']).toBe('no-store');
-        expect(
-          response.headers['content-security-policy'].includes(
-            'https://portal.customer.com',
-          ),
-        ).toBe(host === 'customer.twenty.test');
+        expect(response.headers['content-security-policy']).toBe(
+          host === 'customer.twenty.test'
+            ? "frame-ancestors 'self' https://portal.customer.com; object-src 'none'; base-uri 'self'"
+            : "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+        );
       }
       expect(fetchTemplate).toHaveBeenCalledTimes(2);
       expect(fetchTemplate).toHaveBeenCalledWith(indexUrl, {
         signal: expect.any(AbortSignal),
+        redirect: 'error',
       });
     });
+
+    it('rejects isolated origins without contacting an unavailable HTML origin', async () => {
+      resolveWorkspaceAndPublicDomain.mockResolvedValue({
+        workspace: undefined,
+        isIsolatedOrigin: true,
+      });
+      fetchTemplate.mockRejectedValue(new Error('Origin unavailable'));
+      await request(app.getHttpServer())
+        .get('/')
+        .set('Accept', 'text/html')
+        .expect(404);
+      expect(fetchTemplate).not.toHaveBeenCalled();
+      expect(getClientConfig).not.toHaveBeenCalled();
+    });
+
+    it.each([undefined, '1'])(
+      'stops oversized HTML downloads independently of Content-Length: %s',
+      async (contentLength) => {
+        const cancel = jest.fn();
+        const body = new ReadableStream<Uint8Array>({
+          pull(controller) {
+            controller.enqueue(
+              Buffer.from('<head></head>' + 'x'.repeat(64 * 1024)),
+            );
+          },
+          cancel,
+        });
+        fetchTemplate.mockResolvedValueOnce(
+          new Response(body, {
+            headers: contentLength ? { 'Content-Length': contentLength } : {},
+          }),
+        );
+        const response = await request(app.getHttpServer())
+          .get('/')
+          .set('Accept', 'text/html')
+          .expect(503);
+        expect(response.headers['cache-control']).toBe('no-store');
+        expect(response.headers['x-frame-options']).toBe('SAMEORIGIN');
+        expect(cancel).toHaveBeenCalled();
+      },
+    );
 
     it.each(['network', 'http', 'invalid HTML'])(
       'returns 503 on %s failure and recovers on the next request',
