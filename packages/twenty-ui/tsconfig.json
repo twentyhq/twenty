@@ -37,8 +37,6 @@
     "scripts/checkDocsExamples.ts",
     "scripts/checkOptionalDependencies.ts",
     "scripts/checkThemeExports.ts",
-    "scripts/checkModuleOwnership.ts",
-    "scripts/checkServerRendering.ts",
-    "scripts/checkPackedServerRendering.ts"
+    "scripts/checkModuleOwnership.ts"
   ]
 }

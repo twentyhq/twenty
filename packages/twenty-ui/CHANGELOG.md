@@ -25,6 +25,5 @@ Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when up
 
 ### Fixed
 
-- Device and keyboard shortcut utilities can be called without browser globals. `getUserDevice()` returns `unknown` when user-agent information is unavailable; shortcut helpers keep their `Ctrl` and space defaults. See [server rendering](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/docs/server-rendering.md) for package checks and runtime boundaries.
-- `getUserDevice()` returns `ios` for iPhone and iPad user agents and `android` for Android user agents instead of `mac` and `linux`. Shortcut helpers keep the `⌘` symbol and no separator on iOS.
-- `Button` hotkeys hydrate with the server separator and switch to the platform separator after hydration, so server-rendered buttons no longer cause a hydration mismatch on Mac.
+- `getUserDevice()` returns `unknown` without a user agent, so device and shortcut helpers work without browser globals. It detects iPhone, iPad and Android user agents as `ios` and `android` instead of `mac` and `linux`; shortcut helpers keep `⌘` on iOS.
+- Server-rendered `Button` hotkeys no longer cause a hydration mismatch on Mac.
