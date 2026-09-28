@@ -13,6 +13,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -109,9 +110,7 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
       );
 
     if (result.status === 'fail') {
-      throw new Error(
-        `Failed to make workflow runs follow workflow visibility for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
-      );
+      throw new WorkspaceMigrationBuilderException(result);
     }
   }
 
@@ -156,9 +155,7 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
       );
 
     if (result.status === 'fail') {
-      throw new Error(
-        `Failed to reopen workflow runs for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
-      );
+      throw new WorkspaceMigrationBuilderException(result);
     }
   }
 
