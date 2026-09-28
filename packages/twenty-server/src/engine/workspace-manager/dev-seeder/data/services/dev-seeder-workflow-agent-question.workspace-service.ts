@@ -97,7 +97,7 @@ const SEEDED_AGENT_QUESTION_RUNS: {
 // the paused conversation and its question card can be tried without calling
 // a model.
 @Injectable()
-export class DevSeederWorkflowAgentQuestionService {
+export class DevSeederWorkflowAgentQuestionWorkspaceService {
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
