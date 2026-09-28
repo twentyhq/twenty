@@ -3,14 +3,13 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownOpenChangeDetails } from '../types/DropdownOpenChangeDetails';
 import { type DropdownRootProps } from '../types/DropdownRootProps';
 import { type DropdownType } from '../types/DropdownType';
-import { createDropdownOpenChangeDetails } from './createDropdownOpenChangeDetails';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
+import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { preventDismissingClickActivation } from './preventDismissingClickActivation';
 import { useRegisteredElementId } from './useRegisteredElementId';
 
@@ -22,6 +21,8 @@ export const DropdownRoot = ({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
   multiple = false,
   defaultPage = 'root',
   isSubmenu = false,
@@ -70,31 +71,19 @@ export const DropdownRoot = ({
     }
   }
 
-  const setOpen = (
-    nextOpen: boolean,
-    eventDetails: DropdownOpenChangeDetails,
-  ) => {
-    onOpenChange?.(nextOpen, eventDetails);
-
-    if (eventDetails.isCanceled) {
-      return;
-    }
-
+  const setOpen = (nextOpen: boolean) => {
     if (!isDefined(controlledOpen)) {
       setUncontrolledOpen(nextOpen);
     }
+
+    onOpenChange?.(nextOpen);
   };
 
-  const closeTree = (event: MouseEvent | KeyboardEvent) => {
-    const eventDetails = createDropdownOpenChangeDetails({
-      reason: 'item-press',
-      event,
-    });
+  const closeTree = () => {
+    setOpen(false);
 
-    setOpen(false, eventDetails);
-
-    if (isSubmenu && !eventDetails.isCanceled) {
-      parent?.closeTree(event);
+    if (isSubmenu) {
+      parent?.closeTree();
     }
   };
 
@@ -155,9 +144,21 @@ export const DropdownRoot = ({
           return;
         }
 
-        setOpen(nextOpen, eventDetails);
+        const isEscapeDismissPrevented =
+          eventDetails.reason === 'escape-key' &&
+          isDropdownDismissPrevented({
+            onDismiss: onEscapeKeyDown,
+            event: eventDetails.event,
+          });
+        const isOutsideDismissPrevented =
+          isOutsideDismissal &&
+          isDropdownDismissPrevented({
+            onDismiss: onInteractOutside,
+            event: eventDetails.event,
+          });
 
-        if (eventDetails.isCanceled) {
+        if (isEscapeDismissPrevented || isOutsideDismissPrevented) {
+          eventDetails.cancel();
           return;
         }
 
@@ -166,6 +167,7 @@ export const DropdownRoot = ({
         }
 
         setFocusOnOpen(eventDetails.reason !== 'trigger-hover');
+        setOpen(nextOpen);
       }}
     >
       <DropdownContext.Provider

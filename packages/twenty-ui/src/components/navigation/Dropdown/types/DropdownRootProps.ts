@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { type DropdownOpenChangeDetails } from './DropdownOpenChangeDetails';
+import { type DropdownDismissEvent } from './DropdownDismissEvent';
 import { type DropdownType } from './DropdownType';
 
 export type DropdownRootProps = {
@@ -8,10 +8,9 @@ export type DropdownRootProps = {
   type: DropdownType;
   open?: boolean;
   defaultOpen?: boolean;
-  onOpenChange?: (
-    open: boolean,
-    eventDetails: DropdownOpenChangeDetails,
-  ) => void;
+  onOpenChange?: (open: boolean) => void;
+  onEscapeKeyDown?: (event: DropdownDismissEvent) => void;
+  onInteractOutside?: (event: DropdownDismissEvent) => void;
   multiple?: boolean;
   defaultPage?: string;
 };

@@ -6803,8 +6803,22 @@
             "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
           },
           {
+            "name": "onEscapeKeyDown",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "onInteractOutside",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: DropdownOpenChangeDetails) => void)",
+            "type": "((open: boolean) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Called with the next open state when the popup opens or closes."
@@ -7503,7 +7517,7 @@
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: DropdownOpenChangeDetails) => void)",
+            "type": "((open: boolean) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Called with the next open state when the popup opens or closes."

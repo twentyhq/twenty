@@ -3,9 +3,7 @@ import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownOpenChangeDetails } from '../types/DropdownOpenChangeDetails';
 import { type DropdownType } from '../types/DropdownType';
-import { createDropdownOpenChangeDetails } from './createDropdownOpenChangeDetails';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
@@ -21,7 +19,7 @@ export const useDropdownKeyboardNavigation = ({
 }: {
   type: DropdownType;
   isSubmenu: boolean;
-  setOpen: (open: boolean, eventDetails: DropdownOpenChangeDetails) => void;
+  setOpen: (open: boolean) => void;
 }) => {
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
@@ -54,18 +52,8 @@ export const useDropdownKeyboardNavigation = ({
     if (shouldCloseSubmenu) {
       event.preventDefault();
       event.stopPropagation();
-
-      const eventDetails = createDropdownOpenChangeDetails({
-        reason: event.key === 'Escape' ? 'escape-key' : 'list-navigation',
-        event: event.nativeEvent,
-      });
-
-      setOpen(false, eventDetails);
-
-      if (!eventDetails.isCanceled) {
-        getDropdownTrigger(content)?.focus();
-      }
-
+      getDropdownTrigger(content)?.focus();
+      setOpen(false);
       return;
     }
 

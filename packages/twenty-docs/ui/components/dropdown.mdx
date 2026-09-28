@@ -229,22 +229,9 @@ Use `type="panel"` for form inputs. Input interaction keeps the panel open; a sa
 
 Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
 
-## Open state changes
+## Dismissal
 
-`onOpenChange` receives the next open state and a `DropdownOpenChangeDetails` object. Its `reason` tells what caused the change, and `event` holds the DOM event behind it.
-
-| Reason            | Change                                                                                                       |
-| ----------------- | ------------------------------------------------------------------------------------------------------------ |
-| `trigger-press`   | The trigger was pressed.                                                                                     |
-| `list-navigation` | ArrowDown or ArrowUp on the trigger opened the popup, or ArrowRight or ArrowLeft opened or closed a submenu. |
-| `item-press`      | An action or option closed the popup. In a submenu, every open level reports it.                             |
-| `escape-key`      | Escape closed the popup.                                                                                     |
-| `outside-press`   | A press outside the popup closed it.                                                                         |
-| `focus-out`       | Focus moved outside the popup, for example when an outside press lands on a focusable element.               |
-| `close-press`     | `Close` was pressed.                                                                                         |
-| `trigger-hover`   | Hovering a submenu trigger opened or closed its submenu.                                                     |
-
-Call `eventDetails.cancel()` to keep the popup as it is. A canceled outside press also lets the click reach the element it lands on. Cancel `focus-out` as well, since a press on a focusable element moves focus before the click happens:
+Escape, a press outside the popup and Tab out of it close the dropdown. Pass `onEscapeKeyDown` or `onInteractOutside` to `Root` to react before it closes, and call `event.preventDefault()` to keep it open. `event.target` is the element pressed outside, or `null` when focus leaves with Tab. A prevented outside press still reaches the element it lands on.
 
 ```tsx
 import { Dropdown } from 'twenty-ui/components';
@@ -253,13 +240,9 @@ import { Button } from 'twenty-ui/primitives/input';
 export const ViewSettings = ({ isEditing }: { isEditing: boolean }) => (
   <Dropdown.Root
     type="panel"
-    onOpenChange={(open, eventDetails) => {
-      const isOutsideDismissal =
-        eventDetails.reason === 'outside-press' ||
-        eventDetails.reason === 'focus-out';
-
-      if (!open && isEditing && isOutsideDismissal) {
-        eventDetails.cancel();
+    onInteractOutside={(event) => {
+      if (isEditing) {
+        event.preventDefault();
       }
     }}
   >

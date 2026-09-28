@@ -7,7 +7,6 @@ import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
-import { createDropdownOpenChangeDetails } from './createDropdownOpenChangeDetails';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
@@ -86,13 +85,7 @@ export const DropdownSubmenuTrigger = ({
             return;
           }
 
-          setOpen(
-            true,
-            createDropdownOpenChangeDetails({
-              reason: 'list-navigation',
-              event: event.nativeEvent,
-            }),
-          );
+          setOpen(true);
         }
       }}
       render={(renderProps) => (

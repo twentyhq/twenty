@@ -25,7 +25,15 @@
   Allows selecting several options. Options then keep the popup open and show a checkbox by default.
 </ParamField>
 
-<ParamField body="Root.onOpenChange" type="((open: boolean, eventDetails: DropdownOpenChangeDetails) =&gt; void)">
+<ParamField body="Root.onEscapeKeyDown" type="((event: DropdownDismissEvent) =&gt; void)">
+
+</ParamField>
+
+<ParamField body="Root.onInteractOutside" type="((event: DropdownDismissEvent) =&gt; void)">
+
+</ParamField>
+
+<ParamField body="Root.onOpenChange" type="((open: boolean) =&gt; void)">
   Called with the next open state when the popup opens or closes.
 </ParamField>
 
@@ -481,7 +489,7 @@
   Allows selecting several options. Options then keep the popup open and show a checkbox by default.
 </ParamField>
 
-<ParamField body="Submenu.onOpenChange" type="((open: boolean, eventDetails: DropdownOpenChangeDetails) =&gt; void)">
+<ParamField body="Submenu.onOpenChange" type="((open: boolean) =&gt; void)">
   Called with the next open state when the popup opens or closes.
 </ParamField>
 

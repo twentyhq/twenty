@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useRef } from 'react';
-import { type DropdownOpenChangeDetails } from 'twenty-ui/components';
+import { type DropdownDismissEvent } from 'twenty-ui/components';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldsConfigurationEmptyGroupDropZone } from '@/page-layout/widgets/fields/components/FieldsConfigurationEmptyGroupDropZone';
@@ -17,7 +17,6 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOutsideDismissalWithinElement } from '@/ui/layout/dropdown/utils/isDropdownOutsideDismissalWithinElement';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
@@ -104,17 +103,12 @@ export const FieldsConfigurationGroupEditor = ({
     });
   };
 
-  const handleRenameOpenChange = (
-    open: boolean,
-    eventDetails: DropdownOpenChangeDetails,
-  ) => {
-    const isPressOnGroupHeader = isDropdownOutsideDismissalWithinElement({
-      eventDetails,
-      element: groupHeaderRef.current,
-    });
+  const handleRenameInteractOutside = (event: DropdownDismissEvent) => {
+    const isGroupHeaderPress =
+      groupHeaderRef.current?.contains(event.target) ?? false;
 
-    if (!open && isPressOnGroupHeader) {
-      eventDetails.cancel();
+    if (isGroupHeaderPress) {
+      event.preventDefault();
     }
   };
 
@@ -133,7 +127,7 @@ export const FieldsConfigurationGroupEditor = ({
         <DropdownRoot
           dropdownId={renameDropdownId}
           type="panel"
-          onOpenChange={handleRenameOpenChange}
+          onInteractOutside={handleRenameInteractOutside}
         >
           <DropdownContent
             anchor={groupHeaderRef}

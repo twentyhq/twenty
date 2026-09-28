@@ -1,6 +1,5 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -12,7 +11,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const onModifierShortcut = fn();
-const onOpenChange = fn();
+const onOutsideClick = fn();
 
 const ModifierShortcutListener = () => {
   useGlobalHotkeys({
@@ -22,20 +21,6 @@ const ModifierShortcutListener = () => {
   });
 
   return null;
-};
-
-const OpenFromShortcutButton = ({ dropdownId }: { dropdownId: string }) => {
-  const { openDropdown } = useOpenDropdown();
-
-  return (
-    <Button
-      onClick={() =>
-        openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId })
-      }
-    >
-      Open from shortcut
-    </Button>
-  );
 };
 
 const GroupRenamePanel = () => {
@@ -61,11 +46,10 @@ const meta: Meta<typeof DropdownRoot> = {
     dropdownId: 'options-dropdown',
     type: 'menu',
     globalHotkeysConfig: { enableGlobalHotkeysWithModifiers: true },
-    onOpenChange,
   },
   beforeEach: () => {
     onModifierShortcut.mockClear();
-    onOpenChange.mockClear();
+    onOutsideClick.mockClear();
   },
   render: (args) => (
     <>
@@ -76,7 +60,7 @@ const meta: Meta<typeof DropdownRoot> = {
           <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
         </Dropdown.Content>
       </DropdownRoot>
-      <OpenFromShortcutButton dropdownId={args.dropdownId} />
+      <Button onClick={onOutsideClick}>Outside</Button>
     </>
   ),
 };
@@ -101,68 +85,10 @@ export const PreservesModifierShortcuts: Story = {
   },
 };
 
-export const ReportsWhyItOpensAndCloses: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Options' });
-
-    await userEvent.click(trigger);
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      true,
-      expect.objectContaining({ reason: 'trigger-press' }),
-    );
-
-    await userEvent.click(
-      await body.findByRole('menuitem', { name: 'Duplicate' }),
-    );
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      false,
-      expect.objectContaining({ reason: 'item-press' }),
-    );
-    await waitFor(() => expect(trigger).toHaveFocus());
-
-    await userEvent.keyboard('{ArrowDown}');
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      true,
-      expect.objectContaining({ reason: 'list-navigation' }),
-    );
-
-    await userEvent.keyboard('{Escape}');
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      false,
-      expect.objectContaining({ reason: 'escape-key' }),
-    );
-    await waitFor(() =>
-      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
-    );
-
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Open from shortcut' }),
-    );
-    expect(await body.findByRole('menu', { name: 'Options' })).toBeVisible();
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      true,
-      expect.objectContaining({ reason: 'imperative-action' }),
-    );
-    expect(onOpenChange).toHaveBeenCalledTimes(5);
-  },
-};
-
-export const CanceledDismissalKeepsItOpen: Story = {
+export const PreventedOutsidePressKeepsItOpen: Story = {
   args: {
     type: 'panel',
-    onOpenChange: (open, eventDetails) => {
-      onOpenChange(open, eventDetails);
-
-      if (
-        !open &&
-        (eventDetails.reason === 'outside-press' ||
-          eventDetails.reason === 'focus-out')
-      ) {
-        eventDetails.cancel();
-      }
-    },
+    onInteractOutside: (event) => event.preventDefault(),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -171,10 +97,9 @@ export const CanceledDismissalKeepsItOpen: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Options' }));
     const panel = await body.findByRole('dialog', { name: 'Options' });
 
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Open from shortcut' }),
-    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Outside' }));
 
+    expect(onOutsideClick).toHaveBeenCalledOnce();
     expect(panel).toBeVisible();
     expect(
       jotaiStore.get(

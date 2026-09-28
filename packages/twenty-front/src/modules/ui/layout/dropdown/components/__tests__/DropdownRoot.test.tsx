@@ -20,7 +20,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { StrictMode, useRef } from 'react';
-import { Dropdown, type DropdownOpenChangeDetails } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components';
 
 const BACKGROUND_FOCUS_ITEM: FocusStackItem = {
   focusId: 'record-page',
@@ -101,16 +101,14 @@ const DropdownOwners = ({
 );
 
 describe('DropdownRoot', () => {
-  it('notifies the reason before updating focus and global shortcuts', async () => {
+  it('updates focus and global shortcuts before notifying opening and dismissal', async () => {
     const user = userEvent.setup();
     const store = createTestStore();
-    const onOpenChange = jest.fn(
-      (open: boolean, eventDetails: DropdownOpenChangeDetails) => ({
-        open,
-        reason: eventDetails.reason,
-        focusStack: store.get(focusStackState.atom),
-      }),
-    );
+    const onOpenChange = jest.fn((open: boolean) => ({
+      open,
+      focusStack: store.get(focusStackState.atom),
+      globalHotkeysConfig: store.get(currentGlobalHotkeysConfigSelector.atom),
+    }));
 
     render(
       <JotaiProvider store={store}>
@@ -127,46 +125,38 @@ describe('DropdownRoot', () => {
       </JotaiProvider>,
     );
 
+    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
+
     const trigger = screen.getByRole('button', { name: 'Actions' });
 
     await user.click(trigger);
 
     expect(screen.getByRole('menu', { name: 'Actions' })).toBeVisible();
-    expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveLastReturnedWith({
       open: true,
-      reason: 'trigger-press',
-      focusStack: [BACKGROUND_FOCUS_ITEM],
-    });
-    expect(store.get(focusStackState.atom)).toEqual([
-      BACKGROUND_FOCUS_ITEM,
-      {
-        focusId: 'actions-dropdown',
-        componentInstance: {
-          componentType: FocusComponentType.DROPDOWN,
-          componentInstanceId: 'actions-dropdown',
+      focusStack: [
+        BACKGROUND_FOCUS_ITEM,
+        {
+          focusId: 'actions-dropdown',
+          componentInstance: {
+            componentType: FocusComponentType.DROPDOWN,
+            componentInstanceId: 'actions-dropdown',
+          },
+          globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
         },
-        globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
-      },
-    ]);
-    expect(store.get(currentGlobalHotkeysConfigSelector.atom)).toEqual(
-      DROPDOWN_HOTKEYS_CONFIG,
-    );
+      ],
+      globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
+    });
 
     const openedFocusStack = store.get(focusStackState.atom);
 
     await user.keyboard('{Escape}');
 
-    expect(onOpenChange).toHaveBeenCalledTimes(2);
     expect(onOpenChange).toHaveLastReturnedWith({
       open: false,
-      reason: 'escape-key',
-      focusStack: openedFocusStack,
+      focusStack: [BACKGROUND_FOCUS_ITEM],
+      globalHotkeysConfig: BACKGROUND_FOCUS_ITEM.globalHotkeysConfig,
     });
-    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
-    expect(store.get(currentGlobalHotkeysConfigSelector.atom)).toEqual(
-      BACKGROUND_FOCUS_ITEM.globalHotkeysConfig,
-    );
     await waitFor(() =>
       expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
     );
@@ -177,7 +167,7 @@ describe('DropdownRoot', () => {
     expect(store.get(focusStackState.atom)).toEqual(openedFocusStack);
   });
 
-  it('keeps the dropdown open and its focus untouched when the consumer cancels', async () => {
+  it('keeps the dropdown open and its focus untouched when an outside press is prevented', async () => {
     const user = userEvent.setup();
     const store = createTestStore();
     const clickOutsideControl = jest.fn();
@@ -187,11 +177,7 @@ describe('DropdownRoot', () => {
         <DropdownRoot
           dropdownId="rename-dropdown"
           type="panel"
-          onOpenChange={(open, eventDetails) => {
-            if (!open && eventDetails.reason !== 'escape-key') {
-              eventDetails.cancel();
-            }
-          }}
+          onInteractOutside={(event) => event.preventDefault()}
         >
           <Dropdown.Trigger>Rename</Dropdown.Trigger>
           <DropdownOpenState />
@@ -389,10 +375,7 @@ describe('DropdownRoot', () => {
     expect(
       screen.queryByRole('menu', { name: 'Other actions' }),
     ).not.toBeInTheDocument();
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      true,
-      expect.objectContaining({ reason: 'imperative-action' }),
-    );
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
     expect(store.get(activeDropdownFocusIdState.atom)).toBe(
       'external-dropdown',
     );
@@ -412,10 +395,7 @@ describe('DropdownRoot', () => {
       expect(onOpenChange).toHaveBeenCalledTimes(2);
     });
 
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      false,
-      expect.objectContaining({ reason: 'imperative-action' }),
-    );
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
     expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
     await waitFor(() =>
       expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
@@ -465,24 +445,19 @@ describe('DropdownRoot', () => {
 
       expect(initialOnOpenChange).not.toHaveBeenCalled();
       expect(latestOnOpenChange).toHaveBeenCalledTimes(1);
-      expect(latestOnOpenChange).toHaveBeenLastCalledWith(
-        true,
-        expect.objectContaining({ reason: 'imperative-action' }),
-      );
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(true);
 
       result.current.closeDropdown('subscribed-dropdown');
 
       expect(latestOnOpenChange).toHaveBeenCalledTimes(2);
-      expect(latestOnOpenChange).toHaveBeenLastCalledWith(
-        false,
-        expect.objectContaining({ reason: 'imperative-action' }),
-      );
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(false);
 
       result.current.openDropdown({
         dropdownComponentInstanceIdFromProps: 'subscribed-dropdown',
       });
 
       expect(latestOnOpenChange).toHaveBeenCalledTimes(3);
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(true);
     });
 
     unmount();

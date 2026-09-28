@@ -116,10 +116,7 @@ export const OwnerControlledVisibility: Story = {
     const dialog = await body.findByRole('dialog', { name: 'Details' });
 
     await userEvent.keyboard('{Escape}');
-    expect(onOpenChange).toHaveBeenCalledWith(
-      false,
-      expect.objectContaining({ reason: 'escape-key' }),
-    );
+    expect(onOpenChange).toHaveBeenCalledWith(false);
     expect(dialog).toBeVisible();
 
     detailsPanelOpen.set(false);

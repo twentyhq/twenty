@@ -244,10 +244,7 @@ export const TitleAndClose: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
-    expect(onOpenChange).toHaveBeenLastCalledWith(
-      false,
-      expect.objectContaining({ reason: 'close-press' }),
-    );
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
   },
 };
 

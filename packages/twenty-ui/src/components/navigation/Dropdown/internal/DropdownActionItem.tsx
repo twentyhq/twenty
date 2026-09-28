@@ -80,7 +80,7 @@ export const DropdownActionItem = ({
         }
 
         if (closeOnClick) {
-          closeTree(event.nativeEvent);
+          closeTree();
         }
       }}
       render={(renderProps) => (
