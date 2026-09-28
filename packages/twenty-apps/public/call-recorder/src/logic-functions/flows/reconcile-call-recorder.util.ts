@@ -23,6 +23,7 @@ import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fe
 import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
+import { findCallRecordingsByIdOrCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-id-or-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
@@ -444,27 +445,18 @@ const reconcileCanceledMeeting = async ({
     ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
-  const linkedCallRecordings = await findCallRecordingsByCalendarEventIds(
-    client,
-    calendarEventIds,
-  );
-  // Destroying a calendar event nulls its recordings' calendarEventId before
-  // this runs, so the policy-managed recording is also found by the id its
-  // meeting key derives; otherwise a canceled meeting keeps its bot. Only an
-  // unlinked one qualifies: a re-imported event that already re-requested the
-  // recording has linked it again and keeps its bot.
-  const orphanedPolicyManagedCallRecordings = (
-    await findCallRecordingsByIds(client, [
-      computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
-    ])
-  ).filter((callRecording) => isUndefined(callRecording.calendarEventId));
-  const meetingCallRecordings = [
-    ...new Map(
-      [...linkedCallRecordings, ...orphanedPolicyManagedCallRecordings].map(
-        (callRecording) => [callRecording.id, callRecording],
+  const meetingCallRecordings = (
+    await findCallRecordingsByIdOrCalendarEventIds(client, {
+      callRecordingId: computeCallRecordingIdForMeeting(
+        meetingPolicyResult.realMeetingKey,
       ),
-    ).values(),
-  ];
+      calendarEventIds,
+    })
+  ).filter(
+    (callRecording) =>
+      isUndefined(callRecording.calendarEventId) ||
+      calendarEventIds.includes(callRecording.calendarEventId),
+  );
   const cancellableCallRecordings = meetingCallRecordings.filter(
     (callRecording) =>
       callRecording.status === CallRecordingStatus.SCHEDULED &&

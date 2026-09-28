@@ -107,6 +107,22 @@ class FakeCoreApiClient {
     if (query.callRecordings !== undefined) {
       const filter = query.callRecordings.__args.filter;
 
+      if (filter.or !== undefined) {
+        return {
+          callRecordings: buildConnection(
+            this.callRecordings.filter((callRecording) =>
+              filter.or.some((orFilter: any) =>
+                orFilter.id !== undefined
+                  ? callRecording.id === orFilter.id.eq
+                  : orFilter.calendarEventId.in.includes(
+                      callRecording.calendarEventId,
+                    ),
+              ),
+            ),
+          ),
+        };
+      }
+
       if (filter.id?.in !== undefined) {
         return {
           callRecordings: buildConnection(
@@ -849,8 +865,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   });
 
   it('cancels the bot of a destroyed calendar event whose recording lost its calendar event link', async () => {
-    // Destroying the event nulls calendarEventId on its recordings before the
-    // destroyed event reaches the app.
     const client = buildFakeCoreApiClient({
       calendarEvents: [],
       callRecordings: [
@@ -898,8 +912,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   });
 
   it('keeps the bot of a recording a re-imported event already re-requested', async () => {
-    // The replacement event re-linked the recording after this reconcile read
-    // the meeting's calendar events.
     const client = buildFakeCoreApiClient({
       calendarEvents: [],
       callRecordings: [
