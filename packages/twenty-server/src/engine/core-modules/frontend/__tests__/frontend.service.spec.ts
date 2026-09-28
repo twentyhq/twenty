@@ -12,6 +12,7 @@ import request from 'supertest';
 import { type ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FrontendService } from 'src/engine/core-modules/frontend/frontend.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 jest.mock(
@@ -21,6 +22,13 @@ jest.mock(
 jest.mock(
   'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service',
   () => ({ WorkspaceDomainsService: class {} }),
+);
+
+jest.mock(
+  'src/engine/core-modules/twenty-config/twenty-config.service',
+  () => ({
+    TwentyConfigService: class {},
+  }),
 );
 
 jest.mock('src/engine/core-modules/client-config/client-config.module', () => ({
@@ -51,6 +59,26 @@ describe('frontend HTML delivery', () => {
   let directory: string;
   let app: INestApplication;
 
+  const createApplication = async (indexUrl?: string) => {
+    const service = new FrontendService(
+      { getClientConfig } as unknown as ClientConfigService,
+      { resolveWorkspaceAndPublicDomain } as unknown as WorkspaceDomainsService,
+      directory,
+      { get: () => indexUrl } as unknown as TwentyConfigService,
+    );
+    const module = await Test.createTestingModule({
+      imports: [FrontendModule],
+      controllers: [HealthController],
+    })
+      .overrideProvider(FrontendService)
+      .useValue(service)
+      .compile();
+
+    app = module.createNestApplication();
+    app.getHttpAdapter().getInstance().set('trust proxy', 'loopback');
+    await app.init();
+  };
+
   beforeEach(async () => {
     jest.useRealTimers();
     getClientConfig.mockReset().mockResolvedValue(config);
@@ -70,27 +98,14 @@ describe('frontend HTML delivery', () => {
       join(directory, 'index.html'),
       '<html><head><!-- BEGIN: Twenty Config --><script>window._env_={REACT_APP_SERVER_BASE_URL:"wrong"}</script><!-- END: Twenty Config --></head><body><div id="root"></div></body></html>',
     );
-    const service = new FrontendService(
-      { getClientConfig } as unknown as ClientConfigService,
-      { resolveWorkspaceAndPublicDomain } as unknown as WorkspaceDomainsService,
-      directory,
-    );
-    const module = await Test.createTestingModule({
-      imports: [FrontendModule],
-      controllers: [HealthController],
-    })
-      .overrideProvider(FrontendService)
-      .useValue(service)
-      .compile();
-
-    app = module.createNestApplication();
-    app.getHttpAdapter().getInstance().set('trust proxy', 'loopback');
-    await app.init();
+    await createApplication();
   });
 
   afterEach(async () => {
     await app.close();
     rmSync(directory, { recursive: true, force: true });
+    jest.restoreAllMocks();
+    jest.useRealTimers();
   });
 
   it('initializes CLI application contexts with bundled HTML and no HTTP adapter', async () => {
@@ -103,6 +118,7 @@ describe('frontend HTML delivery', () => {
             resolveWorkspaceAndPublicDomain,
           } as unknown as WorkspaceDomainsService,
           directory,
+          { get: () => undefined } as unknown as TwentyConfigService,
         ),
       )
       .compile();
@@ -352,5 +368,156 @@ describe('frontend HTML delivery', () => {
       "frame-ancestors 'self'",
     );
     expect(response.text).toBeUndefined();
+  });
+
+  describe('remote HTML template', () => {
+    const indexUrl = 'https://frontend.s3.example.com/index.html';
+    const remoteTemplate =
+      '<html><head></head><body>Remote release</body></html>';
+    let fetchTemplate: jest.SpiedFunction<typeof fetch>;
+
+    beforeEach(async () => {
+      await app.close();
+      jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+      fetchTemplate = jest
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation(async () => new Response(remoteTemplate));
+    });
+
+    it('fetches once at startup and serves documents without another origin request', async () => {
+      await createApplication(indexUrl);
+      for (const host of ['customer.twenty.test', 'other.twenty.test']) {
+        const response = await request(app.getHttpServer())
+          .get('/')
+          .set('Host', host)
+          .set('X-Forwarded-Proto', 'https')
+          .set('Accept', 'text/html')
+          .expect(200);
+        expect(response.text).toContain('Remote release');
+        expect(response.text).toContain('twenty-client-config');
+        expect(response.headers['cache-control']).toBe('no-store');
+        expect(
+          response.headers['content-security-policy'].includes(
+            'https://portal.customer.com',
+          ),
+        ).toBe(host === 'customer.twenty.test');
+      }
+      expect(fetchTemplate).toHaveBeenCalledTimes(1);
+      expect(fetchTemplate).toHaveBeenCalledWith(indexUrl, {
+        signal: expect.any(AbortSignal),
+      });
+    });
+
+    it('refreshes the template while resolving configuration and framing policy for every response', async () => {
+      await createApplication(indexUrl);
+      fetchTemplate.mockResolvedValueOnce(
+        new Response('<head></head><body>Next release</body>'),
+      );
+      await jest.advanceTimersByTimeAsync(60_000);
+      getClientConfig.mockResolvedValue({
+        ...config,
+        frontDomain: 'updated.twenty.test',
+      });
+      resolveWorkspaceAndPublicDomain.mockResolvedValue({
+        workspace: { allowedIframeOrigins: [] },
+        isIsolatedOrigin: false,
+      });
+      const response = await request(app.getHttpServer())
+        .get('/')
+        .set('Host', 'customer.twenty.test')
+        .set('X-Forwarded-Proto', 'https')
+        .set('Accept', 'text/html')
+        .expect(200);
+      expect(response.text).toContain('Next release');
+      expect(response.text).toContain('updated.twenty.test');
+      expect(response.headers['x-frame-options']).toBe('SAMEORIGIN');
+      expect(fetchTemplate).toHaveBeenCalledTimes(2);
+    });
+
+    it.each(['network', 'http', 'invalid HTML'])(
+      'retains the last good template after a %s refresh failure and retries later',
+      async (failure) => {
+        await createApplication(indexUrl);
+        if (failure === 'network') {
+          fetchTemplate.mockRejectedValueOnce(new Error('Origin unavailable'));
+        } else {
+          fetchTemplate.mockResolvedValueOnce(
+            new Response('Invalid template', {
+              status: failure === 'http' ? 503 : 200,
+            }),
+          );
+        }
+        await jest.advanceTimersByTimeAsync(60_000);
+        const response = await request(app.getHttpServer())
+          .get('/')
+          .set('Accept', 'text/html')
+          .expect(200);
+        expect(response.text).toContain('Remote release');
+        fetchTemplate.mockResolvedValueOnce(
+          new Response('<head></head><body>Recovered release</body>'),
+        );
+        await jest.advanceTimersByTimeAsync(60_000);
+        const recovered = await request(app.getHttpServer())
+          .get('/')
+          .set('Accept', 'text/html')
+          .expect(200);
+        expect(recovered.text).toContain('Recovered release');
+      },
+    );
+
+    it('does not initialize the API with no usable remote template', async () => {
+      fetchTemplate.mockRejectedValueOnce(new Error('Origin unavailable'));
+      await expect(createApplication(indexUrl)).rejects.toThrow(
+        'Origin unavailable',
+      );
+    });
+
+    it('times out an unresponsive origin during startup', async () => {
+      jest.useRealTimers();
+      fetchTemplate.mockImplementationOnce(
+        async (_url, options) =>
+          new Promise((_resolve, reject) => {
+            options?.signal?.addEventListener('abort', () =>
+              reject(options.signal?.reason),
+            );
+          }),
+      );
+      await expect(createApplication(indexUrl)).rejects.toThrow('timeout');
+    }, 10_000);
+
+    it('rejects malformed HTML on startup', async () => {
+      fetchTemplate.mockResolvedValueOnce(new Response('Not an HTML document'));
+      await expect(createApplication(indexUrl)).rejects.toThrow(
+        'closing head tag',
+      );
+    });
+
+    it('stops refreshing when the application closes', async () => {
+      await createApplication(indexUrl);
+      await app.close();
+      await jest.advanceTimersByTimeAsync(60_000);
+      expect(fetchTemplate).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not fetch remote HTML in a worker or CLI context', async () => {
+      const module = await Test.createTestingModule({
+        imports: [FrontendModule],
+      })
+        .overrideProvider(FrontendService)
+        .useValue(
+          new FrontendService(
+            { getClientConfig } as unknown as ClientConfigService,
+            {
+              resolveWorkspaceAndPublicDomain,
+            } as unknown as WorkspaceDomainsService,
+            directory,
+            { get: () => indexUrl } as unknown as TwentyConfigService,
+          ),
+        )
+        .compile();
+      await module.init();
+      expect(fetchTemplate).not.toHaveBeenCalled();
+      await module.close();
+    });
   });
 });

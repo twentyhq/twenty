@@ -1,4 +1,9 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  type OnModuleDestroy,
+} from '@nestjs/common';
 
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
@@ -10,19 +15,29 @@ import { ClientConfigService } from 'src/engine/core-modules/client-config/servi
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { isFrontendDocumentRequest } from 'src/engine/core-modules/frontend/utils/is-frontend-document-request.util';
 import { renderFrontendHtml } from 'src/engine/core-modules/frontend/utils/render-frontend-html.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 
 @Injectable()
-export class FrontendService {
+export class FrontendService implements OnModuleDestroy {
   private readonly logger = new Logger(FrontendService.name);
-  private readonly template: string | undefined;
+  private template: string | undefined;
+  private readonly indexUrl: string | undefined;
+  private refreshInterval: ReturnType<typeof setInterval> | undefined;
 
   constructor(
     private readonly clientConfigService: ClientConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     @Inject('FRONTEND_PATH') readonly frontPath: string,
+    twentyConfigService: TwentyConfigService,
   ) {
+    this.indexUrl = twentyConfigService.get('FRONTEND_INDEX_URL');
+
+    if (isDefined(this.indexUrl)) {
+      return;
+    }
+
     const indexPath = join(this.frontPath, 'index.html');
 
     if (existsSync(indexPath)) {
@@ -35,7 +50,49 @@ export class FrontendService {
   }
 
   get isEnabled(): boolean {
-    return isDefined(this.template);
+    return isDefined(this.template) || isDefined(this.indexUrl);
+  }
+
+  async initialize(): Promise<void> {
+    if (!isDefined(this.indexUrl)) {
+      return;
+    }
+
+    await this.refreshTemplate(this.indexUrl);
+
+    const indexUrl = this.indexUrl;
+
+    this.refreshInterval = setInterval(() => {
+      void this.refreshTemplate(indexUrl).catch((error: unknown) => {
+        this.logger.warn(
+          'Unable to refresh frontend HTML; retaining last template',
+          error,
+        );
+      });
+    }, 60_000);
+    this.refreshInterval.unref();
+  }
+
+  onModuleDestroy(): void {
+    clearInterval(this.refreshInterval);
+  }
+
+  private async refreshTemplate(indexUrl: string): Promise<void> {
+    const response = await fetch(indexUrl, {
+      signal: AbortSignal.timeout(5_000),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Unable to fetch frontend HTML: HTTP ${response.status}`);
+    }
+
+    const template = await response.text();
+
+    if (!template.includes('</head>')) {
+      throw new Error('Frontend index.html must contain a closing head tag');
+    }
+
+    this.template = template;
   }
 
   async serveDocument(
