@@ -68,7 +68,7 @@ describe('useUpdateOneRecord', () => {
       expect(res).toHaveProperty('name', updateInput.name);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks[0]?.result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 });

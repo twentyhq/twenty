@@ -14,6 +14,10 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const [mockedCompanyRecord] = mockedCompanyRecords;
+assertIsDefinedOrThrow(mockedCompanyRecord);
 
 const RecordListRowStory = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -65,7 +69,7 @@ export const ResponsiveFields: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     const recordIdentifier = await canvas.findByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecord.name,
       {},
       { timeout: 3000 },
     );
@@ -74,7 +78,8 @@ export const ResponsiveFields: Story = {
     const overflowChips = await canvas.findAllByRole('link', {
       name: /^\+\d+$/,
     });
-    const firstOverflowChip = overflowChips[0];
+    const [firstOverflowChip] = overflowChips;
+    assertIsDefinedOrThrow(firstOverflowChip);
 
     await expect(firstOverflowChip).toHaveAttribute('href');
     await expect(firstOverflowChip.getAttribute('href')).toContain(

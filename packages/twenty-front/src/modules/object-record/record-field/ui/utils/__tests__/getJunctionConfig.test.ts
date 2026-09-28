@@ -193,7 +193,7 @@ describe('getJunctionConfig', () => {
       expect(result!.isValid).toBe(true);
       expect(result!.isMorphRelation).toBe(false);
       expect(result!.targetFields).toHaveLength(1);
-      expect(result!.targetFields[0].name).toBe('company');
+      expect(result?.targetFields[0]?.name).toBe('company');
     });
 
     it('should return an invalid junction when configured target field is not found', () => {
@@ -263,7 +263,7 @@ describe('getJunctionConfig', () => {
       expect(result!.isValid).toBe(true);
       expect(result!.isMorphRelation).toBe(true);
       expect(result!.targetFields).toHaveLength(1);
-      expect(result!.targetFields[0].name).toBe('linkedObject');
+      expect(result?.targetFields[0]?.name).toBe('linkedObject');
     });
 
     it('should resolve a merged morph field referenced through another member ID', () => {

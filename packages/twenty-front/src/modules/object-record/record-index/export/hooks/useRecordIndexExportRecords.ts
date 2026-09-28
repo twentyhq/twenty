@@ -72,10 +72,14 @@ export const generateCsv: GenerateExport = ({
     const columnType = col.type;
     if (!isCompositeFieldType(columnType)) return [column];
 
-    const nestedFieldsWithoutTypename = Object.keys(rows[0][column.field])
+    const nestedFieldsWithoutTypename = Object.keys(
+      rows[0]?.[column.field] ?? {},
+    )
       .filter((key) => key !== '__typename')
       .map((key) => {
-        const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
+        const subFieldLabels = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType];
+        const subFieldLabel =
+          subFieldLabels[key as keyof typeof subFieldLabels];
         return {
           field: `${column.field}.${key}`,
           title: formatValueForCSV(

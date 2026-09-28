@@ -18,7 +18,6 @@ import { produce } from 'immer';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type useObjectOptionsForBoardParams = {
   objectNameSingular: string;
@@ -109,14 +108,17 @@ export const useObjectOptionsForBoard = ({
       const modifiedRecordIndexFieldDefinitions = produce(
         recordIndexFieldDefinitions,
         (draftRecordIndexFieldDefinitions) => {
-          const indexToModify = draftRecordIndexFieldDefinitions.findIndex(
-            (recordIndexFieldDefinitionToModify) =>
-              recordIndexFieldDefinitionToModify.fieldMetadataId ===
-              updatedRecordField.fieldMetadataItemId,
-          );
+          const recordIndexFieldDefinitionToModify =
+            draftRecordIndexFieldDefinitions.find(
+              (draftRecordIndexFieldDefinition) =>
+                draftRecordIndexFieldDefinition.fieldMetadataId ===
+                updatedRecordField.fieldMetadataItemId,
+            );
 
-          draftRecordIndexFieldDefinitions[indexToModify].position =
-            updatedRecordField.position;
+          if (isDefined(recordIndexFieldDefinitionToModify)) {
+            recordIndexFieldDefinitionToModify.position =
+              updatedRecordField.position;
+          }
         },
       );
 
@@ -147,9 +149,10 @@ export const useObjectOptionsForBoard = ({
         'fieldMetadataId' | 'isVisible'
       >,
     ) => {
-      const lastPosition = currentRecordFields.toSorted(
-        sortByProperty('position', 'desc'),
-      )[0].position;
+      const lastPosition = Math.max(
+        -1,
+        ...currentRecordFields.map((recordField) => recordField.position),
+      );
 
       const shouldShowFieldMetadataItem =
         updatedFieldDefinition.isVisible === true;
@@ -216,14 +219,17 @@ export const useObjectOptionsForBoard = ({
         const modifiedRecordIndexFieldDefinitions = produce(
           recordIndexFieldDefinitions,
           (draftRecordIndexFieldDefinitions) => {
-            const indexToModify = draftRecordIndexFieldDefinitions.findIndex(
-              (recordIndexFieldDefinitionToModify) =>
-                recordIndexFieldDefinitionToModify.fieldMetadataId ===
-                updatedRecordField.fieldMetadataItemId,
-            );
+            const recordIndexFieldDefinitionToModify =
+              draftRecordIndexFieldDefinitions.find(
+                (draftRecordIndexFieldDefinition) =>
+                  draftRecordIndexFieldDefinition.fieldMetadataId ===
+                  updatedRecordField.fieldMetadataItemId,
+              );
 
-            draftRecordIndexFieldDefinitions[indexToModify].isVisible =
-              shouldShowFieldMetadataItem;
+            if (isDefined(recordIndexFieldDefinitionToModify)) {
+              recordIndexFieldDefinitionToModify.isVisible =
+                shouldShowFieldMetadataItem;
+            }
           },
         );
 

@@ -10,6 +10,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 jest.mock(
   '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect',
@@ -111,6 +112,7 @@ describe('ObjectFilterDropdownOptionSelect', () => {
     const { findByText, getByText } = render(<Wrapper />);
 
     const [firstOption, ...otherOptions] = selectField.options ?? [];
+    assertIsDefinedOrThrow(firstOption);
 
     await findByText(firstOption.label);
 

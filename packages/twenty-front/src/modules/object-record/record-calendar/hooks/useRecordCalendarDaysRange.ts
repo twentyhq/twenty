@@ -29,7 +29,7 @@ export const useRecordCalendarDaysRange = (
 
   return {
     ...range,
-    weekDayLabels: range.days[0].map((day) =>
+    weekDayLabels: (range.days[0] ?? []).map((day) =>
       format(turnPlainDateToShiftedDateInSystemTimeZone(day), 'EEE', {
         locale: dateLocale.localeCatalog,
       }),

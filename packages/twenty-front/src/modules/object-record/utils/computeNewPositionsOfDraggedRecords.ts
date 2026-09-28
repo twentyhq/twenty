@@ -42,90 +42,58 @@ export const computeNewPositionsOfDraggedRecords = ({
 
   const shouldGoToFirstPosition = indexOfTargetItem === 0;
 
-  if (shouldGoToFirstPosition) {
+  const assignPositionsToSourceRecords = ({
+    startingPosition,
+    endingPosition,
+  }: {
+    startingPosition: number;
+    endingPosition: number;
+  }): RecordWithPosition[] => {
     const newPositions = computeNewEvenlySpacedPositions({
+      startingPosition,
+      endingPosition,
+      numberOfRecordsToInsertBetween: sourceRecordIds.length,
+    });
+
+    return sourceRecordIds.flatMap((recordId, index) => {
+      const position = newPositions[index];
+
+      return isDefined(position) ? [{ id: recordId, position }] : [];
+    });
+  };
+
+  const itemBeforeTargetItem =
+    arrayOfRecordsWithPosition[indexOfTargetItem - 1];
+  const itemAfterTargetItem = arrayOfRecordsWithPosition[indexOfTargetItem + 1];
+
+  if (shouldGoToFirstPosition) {
+    return assignPositionsToSourceRecords({
       startingPosition: targetPosition - 1,
       endingPosition: targetPosition,
-      numberOfRecordsToInsertBetween: sourceRecordIds.length,
     });
+  }
 
-    const newSourceRecordsWithPosition: RecordWithPosition[] =
-      sourceRecordIds.map((recordId, index) => ({
-        id: recordId,
-        position: newPositions[index],
-      }));
-
-    return newSourceRecordsWithPosition;
-  } else if (isDroppedAfterList) {
-    const newPositions = computeNewEvenlySpacedPositions({
+  if (isDroppedAfterList) {
+    return assignPositionsToSourceRecords({
       startingPosition: targetPosition,
       endingPosition: targetPosition + sourceRecordIds.length + 1,
-      numberOfRecordsToInsertBetween: sourceRecordIds.length,
     });
-
-    const newSourceRecordsWithPosition: RecordWithPosition[] =
-      sourceRecordIds.map((recordId, index) => ({
-        id: recordId,
-        position: newPositions[index],
-      }));
-
-    return newSourceRecordsWithPosition;
-  } else {
-    if (itemToMoveIsNotInTable) {
-      const itemBeforeTargetItem =
-        arrayOfRecordsWithPosition[indexOfTargetItem - 1];
-
-      const newPositions = computeNewEvenlySpacedPositions({
-        startingPosition: itemBeforeTargetItem.position,
-        endingPosition: targetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
-      });
-
-      const newSourceRecordsWithPosition: RecordWithPosition[] =
-        sourceRecordIds.map((recordId, index) => ({
-          id: recordId,
-          position: newPositions[index],
-        }));
-
-      return newSourceRecordsWithPosition;
-    }
-
-    const shouldGoAfterTargetItem = indexOfItemToMove < indexOfTargetItem;
-
-    if (shouldGoAfterTargetItem) {
-      const itemAfterTargetItem =
-        arrayOfRecordsWithPosition[indexOfTargetItem + 1];
-
-      const newPositions = computeNewEvenlySpacedPositions({
-        startingPosition: targetItem.position,
-        endingPosition: itemAfterTargetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
-      });
-
-      const newSourceRecordsWithPosition: RecordWithPosition[] =
-        sourceRecordIds.map((recordId, index) => ({
-          id: recordId,
-          position: newPositions[index],
-        }));
-
-      return newSourceRecordsWithPosition;
-    } else {
-      const itemBeforeTargetItem =
-        arrayOfRecordsWithPosition[indexOfTargetItem - 1];
-
-      const newPositions = computeNewEvenlySpacedPositions({
-        startingPosition: itemBeforeTargetItem.position,
-        endingPosition: targetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
-      });
-
-      const newSourceRecordsWithPosition: RecordWithPosition[] =
-        sourceRecordIds.map((recordId, index) => ({
-          id: recordId,
-          position: newPositions[index],
-        }));
-
-      return newSourceRecordsWithPosition;
-    }
   }
+
+  const shouldGoAfterTargetItem =
+    !itemToMoveIsNotInTable && indexOfItemToMove < indexOfTargetItem;
+
+  if (shouldGoAfterTargetItem) {
+    return assignPositionsToSourceRecords({
+      startingPosition: targetPosition,
+      endingPosition:
+        itemAfterTargetItem?.position ??
+        targetPosition + sourceRecordIds.length + 1,
+    });
+  }
+
+  return assignPositionsToSourceRecords({
+    startingPosition: itemBeforeTargetItem?.position ?? targetPosition - 1,
+    endingPosition: targetPosition,
+  });
 };

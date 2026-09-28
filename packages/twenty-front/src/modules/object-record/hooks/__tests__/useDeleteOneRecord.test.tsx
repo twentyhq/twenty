@@ -13,6 +13,7 @@ import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/compani
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
 const mockRefetchAggregateQueries = jest.fn();
@@ -29,14 +30,18 @@ const flatCompanyRecords = mockedCompanyRecords.map((record) =>
 );
 
 describe('useDeleteOneRecord', () => {
-  const matchingCompanyId = flatCompanyRecords[0].id;
+  const [flatPersonRecord] = flatPersonRecords;
+  const [relatedCompanyRecord] = flatCompanyRecords;
+  assertIsDefinedOrThrow(flatPersonRecord);
+  assertIsDefinedOrThrow(relatedCompanyRecord);
+
+  const matchingCompanyId = relatedCompanyRecord.id;
   const personRecord = {
-    ...flatPersonRecords[0],
+    ...flatPersonRecord,
     deletedAt: null,
     companyId: matchingCompanyId,
-    company: { ...flatCompanyRecords[0] },
+    company: { ...relatedCompanyRecord },
   };
-  const relatedCompanyRecord = flatCompanyRecords[0];
   const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
   const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
   const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
@@ -118,7 +123,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(defaultMocks[0].result).toHaveBeenCalled();
+      expect(defaultMocks[0]?.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
 
@@ -154,7 +159,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(defaultMocks[0].result).not.toHaveBeenCalled();
+      expect(defaultMocks[0]?.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
@@ -251,7 +256,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(defaultMocks[0].result).toHaveBeenCalled();
+      expect(defaultMocks[0]?.result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
 
@@ -294,7 +299,7 @@ describe('useDeleteOneRecord', () => {
         });
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]?.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
@@ -334,7 +339,7 @@ describe('useDeleteOneRecord', () => {
         }
       });
 
-      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(apolloMocks[0]?.result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
   });

@@ -60,11 +60,13 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
       switch (viewType) {
         case ViewType.KANBAN: {
-          if (availableFieldsForGrouping.length === 0) {
+          const [mainGroupByField] = availableFieldsForGrouping;
+
+          if (!isDefined(mainGroupByField)) {
             throw new Error('No fields for kanban - should not happen');
           }
 
-          const mainGroupByFieldMetadataId = availableFieldsForGrouping[0].id;
+          const mainGroupByFieldMetadataId = mainGroupByField.id;
           updateCurrentViewParams.mainGroupByFieldMetadataId =
             mainGroupByFieldMetadataId;
 
@@ -87,11 +89,13 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           return;
         }
         case ViewType.CALENDAR: {
-          if (availableFieldsForCalendar.length === 0) {
+          const [calendarField] = availableFieldsForCalendar;
+
+          if (!isDefined(calendarField)) {
             throw new Error('No date fields for calendar');
           }
 
-          const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
+          const calendarFieldMetadataId = calendarField.id;
 
           setRecordIndexViewType(viewType);
 

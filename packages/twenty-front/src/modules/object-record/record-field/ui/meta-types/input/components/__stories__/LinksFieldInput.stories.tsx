@@ -12,6 +12,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const updateRecord = fn();
 
@@ -395,10 +396,11 @@ export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
       expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
     });
 
-    const openDropdownButtons = await canvas.findAllByRole('button', {
-      expanded: false,
-    });
-    await userEvent.click(openDropdownButtons[0]);
+    const openDropdownButton = (
+      await canvas.findAllByRole('button', { expanded: false })
+    )[0];
+    assertIsDefinedOrThrow(openDropdownButton);
+    await userEvent.click(openDropdownButton);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
@@ -437,10 +439,11 @@ export const DeleteSecondaryLink: Story = {
     const listItemToDelete = await canvas.findByText('Documentation');
     await userEvent.hover(listItemToDelete);
 
-    const openDropdownButtons = await canvas.findAllByRole('button', {
-      expanded: false,
-    });
-    await userEvent.click(openDropdownButtons[1]);
+    const openDropdownButton = (
+      await canvas.findAllByRole('button', { expanded: false })
+    )[1];
+    assertIsDefinedOrThrow(openDropdownButton);
+    await userEvent.click(openDropdownButton);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
@@ -545,10 +548,11 @@ export const MakeSecondaryLinkPrimary: Story = {
 
     await userEvent.hover(secondaryLink);
 
-    const openDropdownButtons = await canvas.findAllByRole('button', {
-      expanded: false,
-    });
-    await userEvent.click(openDropdownButtons[1]);
+    const openDropdownButton = (
+      await canvas.findAllByRole('button', { expanded: false })
+    )[1];
+    assertIsDefinedOrThrow(openDropdownButton);
+    await userEvent.click(openDropdownButton);
 
     const setPrimaryOption = await within(
       canvasElement.ownerDocument.body,

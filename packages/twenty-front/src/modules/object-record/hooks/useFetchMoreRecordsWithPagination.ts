@@ -177,9 +177,9 @@ export const useFetchMoreRecordsWithPagination = <
                 ),
                 edges: newEdges,
                 pageInfo:
-                  fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+                  fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo,
                 totalCount:
-                  fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
+                  fetchMoreResult?.[objectMetadataItem.namePlural]?.totalCount,
               },
             } as RecordGqlOperationFindManyResult);
           },

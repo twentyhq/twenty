@@ -9,6 +9,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseLazyFindOneRecordParams = ObjectMetadataItemIdentifier & {
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -57,13 +58,12 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       const result = await findOneRecord({
         variables: { objectRecordId },
       }).retain();
-      if (result.data) {
-        const record = getRecordFromRecordNode<T>({
-          recordNode: (result.data as Record<string, RecordGqlNode>)[
-            objectNameSingular
-          ],
-        });
-        onCompleted?.(record);
+      const recordNode = (
+        result.data as Record<string, RecordGqlNode> | undefined
+      )?.[objectNameSingular];
+
+      if (isDefined(recordNode)) {
+        onCompleted?.(getRecordFromRecordNode<T>({ recordNode }));
       }
     },
     called,

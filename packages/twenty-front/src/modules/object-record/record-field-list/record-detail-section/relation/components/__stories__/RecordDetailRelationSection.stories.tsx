@@ -18,6 +18,10 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
+const [mockedCompanyRecord] = mockedCompanyRecords;
+assertIsDefinedOrThrow(mockedCompanyRecord);
 
 const mockedCompanyObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
@@ -37,7 +41,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
       <LayoutRenderingProvider
         value={{
           targetRecordIdentifier: {
-            id: mockedCompanyRecords[0].id,
+            id: mockedCompanyRecord.id,
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
@@ -48,7 +52,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
         >
           <FieldContext.Provider
             value={{
-              recordId: mockedCompanyRecords[0].id,
+              recordId: mockedCompanyRecord.id,
               isLabelIdentifier: false,
               fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
                 field: mockedCompanyObjectMetadataItem.fields.find(
@@ -94,7 +98,7 @@ export const WithRecords: Story = {
   parameters: {
     records: [
       {
-        ...mockedCompanyRecords[0],
+        ...mockedCompanyRecord,
         people: flatPersonRecords,
       },
       ...flatPersonRecords,

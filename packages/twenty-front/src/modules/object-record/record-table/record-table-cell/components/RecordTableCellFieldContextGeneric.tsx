@@ -47,7 +47,7 @@ export const RecordTableCellFieldContextGeneric = ({
 
   const updateRecord = useContext(RecordTableUpdateContext);
 
-  if (!isDefined(fieldMetadataItem)) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(fieldDefinition)) {
     return null;
   }
 
@@ -108,7 +108,7 @@ export const RecordTableCellFieldContextGeneric = ({
       value={{
         fieldMetadataItemId: recordField.fieldMetadataItemId,
         recordId,
-        fieldDefinition: fieldDefinition,
+        fieldDefinition,
         useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
         isLabelIdentifier: isLabelIdentifierField({
           fieldMetadataItem: {

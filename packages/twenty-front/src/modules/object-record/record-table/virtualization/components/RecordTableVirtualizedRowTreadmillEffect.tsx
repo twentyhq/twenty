@@ -12,6 +12,7 @@ import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useDebouncedCallback } from 'use-debounce';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS = 200;
 export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS = 50;
@@ -153,11 +154,11 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
         const scrollSpeedInPixelsPerSecondSum =
           scrollMeasurementsForAverage.reduce(
             (sum, scrollMeasurement, currentIndex, allMeasurements) => {
-              if (currentIndex === 0) {
+              const previousMeasurement = allMeasurements[currentIndex - 1];
+
+              if (!isDefined(previousMeasurement)) {
                 return sum;
               }
-
-              const previousMeasurement = allMeasurements[currentIndex - 1];
 
               const secondsDifferenceWithPreviousMeasurement =
                 (scrollMeasurement.timestamp - previousMeasurement.timestamp) /

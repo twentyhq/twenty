@@ -52,10 +52,10 @@ export const getRecordTableColumnWidthInlineStyles = ({
 }): Record<string, string> => {
   const style: Record<string, string> = {};
 
-  for (let i = 0; i < visibleRecordFields.length; i++) {
-    style[`--record-table-column-field-${i}`] =
-      `${visibleRecordFields[i].size}px`;
-  }
+  visibleRecordFields.forEach((visibleRecordField, index) => {
+    style[`--record-table-column-field-${index}`] =
+      `${visibleRecordField.size}px`;
+  });
 
   style[RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR] = isDragColumnHidden
     ? '0px'

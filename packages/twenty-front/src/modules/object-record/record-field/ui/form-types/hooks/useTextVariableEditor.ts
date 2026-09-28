@@ -76,11 +76,12 @@ export const useTextVariableEditor = ({
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
 
-          if (multiline === true) {
-            const { state } = view;
-            const { tr } = state;
-            const transaction = tr.replaceSelectionWith(
-              state.schema.nodes.hardBreak.create(),
+          const { state } = view;
+          const hardBreakNodeType = state.schema.nodes.hardBreak;
+
+          if (multiline === true && isDefined(hardBreakNodeType)) {
+            const transaction = state.tr.replaceSelectionWith(
+              hardBreakNodeType.create(),
             );
 
             view.dispatch(transaction);

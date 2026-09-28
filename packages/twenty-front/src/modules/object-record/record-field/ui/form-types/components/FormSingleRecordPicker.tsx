@@ -21,7 +21,12 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useId } from 'react';
-import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  CustomError,
+  isDefined,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -98,6 +103,11 @@ export const FormSingleRecordPicker = ({
 
   const resolvedObjectNameSingular =
     selectedObjectNameSingular ?? objectNameSingulars[0];
+
+  assertIsDefinedOrThrow(
+    resolvedObjectNameSingular,
+    new Error('FormSingleRecordPicker requires at least one object name'),
+  );
 
   const draftValue: FormSingleRecordPickerValue =
     defaultValue === null

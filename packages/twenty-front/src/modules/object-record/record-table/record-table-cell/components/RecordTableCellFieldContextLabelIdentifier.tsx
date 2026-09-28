@@ -48,7 +48,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-  if (!isDefined(fieldMetadataItem)) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(fieldDefinition)) {
     return null;
   }
 

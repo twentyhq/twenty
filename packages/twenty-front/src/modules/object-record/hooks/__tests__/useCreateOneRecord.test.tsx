@@ -63,7 +63,7 @@ describe('useCreateOneRecord', () => {
       expect(res).toHaveProperty('id', PERSON_ID);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks[0]?.result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 });

@@ -48,6 +48,6 @@ describe('useFindDuplicateRecords', () => {
       expect(result.current.results).toBeDefined();
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks[0]?.result).toHaveBeenCalled();
   });
 });

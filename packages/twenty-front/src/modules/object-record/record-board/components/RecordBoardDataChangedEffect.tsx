@@ -126,14 +126,13 @@ export const RecordBoardDataChangedEffect = () => {
               (recordId) => recordId !== objectRecordOperation.createdRecord.id,
             );
 
-            const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
+            const [firstRecordIdInGroup] = recordIdsWithoutCreatedRecord;
 
-            if (groupIsEmpty) {
+            if (!isDefined(firstRecordIdInGroup)) {
               triggerRecordBoardInitialQuery({ shouldResetScroll: false });
               return;
             }
 
-            const firstRecordIdInGroup = recordIdsWithoutCreatedRecord[0];
             const firstExistingRecordInGroup = store.get(
               recordStoreFamilyState.atomFamily(firstRecordIdInGroup),
             ) as { position?: number } | null | undefined;

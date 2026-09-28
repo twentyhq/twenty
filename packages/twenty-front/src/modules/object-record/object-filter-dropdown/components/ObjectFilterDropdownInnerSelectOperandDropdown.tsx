@@ -100,7 +100,8 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
 
   if (
     !isDefined(selectedOperandInDropdown) ||
-    !isDefined(effectiveFieldMetadataItem)
+    !isDefined(effectiveFieldMetadataItem) ||
+    !isDefined(selectedOption)
   ) {
     return null;
   }

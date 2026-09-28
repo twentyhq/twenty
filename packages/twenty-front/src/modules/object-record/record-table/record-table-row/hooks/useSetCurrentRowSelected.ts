@@ -50,8 +50,11 @@ export const useSetCurrentRowSelected = () => {
 
         const shouldSelect = !isCurrentRowSelected;
 
-        for (let i = startIndex; i <= endIndex; i++) {
-          store.set(isRowSelectedFamilyState(allRecordIds[i]), shouldSelect);
+        for (const recordIdInRange of allRecordIds.slice(
+          startIndex,
+          endIndex + 1,
+        )) {
+          store.set(isRowSelectedFamilyState(recordIdInRange), shouldSelect);
         }
 
         store.set(lastSelectedRowIndexComponentCallbackState, rowIndex);

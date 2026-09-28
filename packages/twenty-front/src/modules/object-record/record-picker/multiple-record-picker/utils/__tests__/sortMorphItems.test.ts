@@ -36,10 +36,10 @@ describe('sortMorphItems', () => {
 
     const result = sortMorphItems(morphItems, searchRecords);
 
-    expect(result[0].recordId).toBe('2');
-    expect(result[0].isSelected).toBe(true);
-    expect(result[1].isSelected).toBe(false);
-    expect(result[2].isSelected).toBe(false);
+    expect(result[0]?.recordId).toBe('2');
+    expect(result[0]?.isSelected).toBe(true);
+    expect(result[1]?.isSelected).toBe(false);
+    expect(result[2]?.isSelected).toBe(false);
   });
 
   it('should sort by search record order within non-selected items', () => {
@@ -93,10 +93,10 @@ describe('sortMorphItems', () => {
     const result = sortMorphItems(morphItems, searchRecords);
 
     expect(result.map((item) => item.recordId)).toEqual(['2', '3', '1', '4']);
-    expect(result[0].isSelected).toBe(true);
-    expect(result[1].isSelected).toBe(true);
-    expect(result[2].isSelected).toBe(false);
-    expect(result[3].isSelected).toBe(false);
+    expect(result[0]?.isSelected).toBe(true);
+    expect(result[1]?.isSelected).toBe(true);
+    expect(result[2]?.isSelected).toBe(false);
+    expect(result[3]?.isSelected).toBe(false);
   });
 
   it('should handle empty morphItems array', () => {
@@ -117,8 +117,8 @@ describe('sortMorphItems', () => {
 
     const result = sortMorphItems(morphItems, searchRecords);
 
-    expect(result[0].recordId).toBe('2');
-    expect(result[0].isSelected).toBe(true);
+    expect(result[0]?.recordId).toBe('2');
+    expect(result[0]?.isSelected).toBe(true);
   });
 
   it('should place items not present in searchRecords before indexed items', () => {
@@ -131,7 +131,7 @@ describe('sortMorphItems', () => {
     const result = sortMorphItems(morphItems, searchRecords);
 
     // Items not in searchRecords get rank -1, so they come before items with rank >= 0
-    expect(result[0].recordId).toBe('unknown');
-    expect(result[1].recordId).toBe('1');
+    expect(result[0]?.recordId).toBe('unknown');
+    expect(result[1]?.recordId).toBe('1');
   });
 });

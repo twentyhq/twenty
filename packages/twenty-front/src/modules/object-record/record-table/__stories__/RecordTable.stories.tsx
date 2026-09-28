@@ -16,6 +16,7 @@ import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-v
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { sleep } from '~/utils/sleep';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const companyView = mockedViews.find((v) => v.name === 'All Companies')!;
 
@@ -87,8 +88,13 @@ export const HeaderMenuStaysOpenAfterMoveRight: Story = {
 export const NestedCurrencyPickerPreservesCellEditMode: Story = {
   beforeEach: () => {
     const originalViewFields = companyView.viewFields;
-    const originalCurrencyValue =
-      mockedCompanyRecords[0].annualRecurringRevenue;
+    const [firstViewField] = originalViewFields;
+    const [firstCompanyRecord] = mockedCompanyRecords;
+
+    assertIsDefinedOrThrow(firstViewField);
+    assertIsDefinedOrThrow(firstCompanyRecord);
+
+    const originalCurrencyValue = firstCompanyRecord.annualRecurringRevenue;
     const currencyField = getMockFieldMetadataItemOrThrow({
       objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
       fieldName: 'annualRecurringRevenue',
@@ -100,20 +106,20 @@ export const NestedCurrencyPickerPreservesCellEditMode: Story = {
         position: viewField.position === 0 ? 0 : viewField.position + 1,
       })),
       {
-        ...originalViewFields[0],
+        ...firstViewField,
         id: 'currency-focus-story-field',
         fieldMetadataId: currencyField.id,
         position: 1,
       },
     ];
-    mockedCompanyRecords[0].annualRecurringRevenue = {
+    firstCompanyRecord.annualRecurringRevenue = {
       amountMicros: 123_000_000,
       currencyCode: 'USD',
     };
 
     return () => {
       companyView.viewFields = originalViewFields;
-      mockedCompanyRecords[0].annualRecurringRevenue = originalCurrencyValue;
+      firstCompanyRecord.annualRecurringRevenue = originalCurrencyValue;
     };
   },
   render: (args) => (
@@ -127,7 +133,7 @@ export const NestedCurrencyPickerPreservesCellEditMode: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecords[0]?.name,
       {},
       { timeout: 3000 },
     );
@@ -168,7 +174,7 @@ export const ScrolledLeft: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findAllByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecords[0]?.name,
       {},
       { timeout: 3000 },
     );
@@ -189,7 +195,7 @@ export const ScrolledLeft: Story = {
       },
     });
 
-    await canvas.findByText(mockedCompanyRecords[1].name);
+    await canvas.findByText(mockedCompanyRecords[1]?.name);
   },
 };
 
@@ -202,7 +208,7 @@ export const ScrolledBottom: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findAllByText(
-      mockedCompanyRecords[0].name,
+      mockedCompanyRecords[0]?.name,
       {},
       { timeout: 3000 },
     );
@@ -223,6 +229,6 @@ export const ScrolledBottom: Story = {
       },
     });
 
-    await canvas.findByText(mockedCompanyRecords[1].name);
+    await canvas.findByText(mockedCompanyRecords[1]?.name);
   },
 };

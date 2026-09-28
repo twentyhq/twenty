@@ -130,9 +130,11 @@ export const computeCursorArgFilter = ({
         return [];
       }
 
-      const conditions = [...equalityPrefixes, comparison];
-
-      return [conditions.length === 1 ? conditions[0] : { and: conditions }];
+      return [
+        equalityPrefixes.length === 0
+          ? comparison
+          : { and: [...equalityPrefixes, comparison] },
+      ];
     },
   );
 

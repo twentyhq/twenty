@@ -10,6 +10,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 const mockNavigateSidePanelMenu = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
@@ -62,6 +63,7 @@ it('removes the form from deeper in the history when the user moved on before cr
     });
   });
   const [formPage] = store.get(sidePanelNavigationStackState.atom);
+  assertIsDefinedOrThrow(formPage);
   let submission: Promise<void> | undefined;
   act(() => {
     submission = result.current.settleRecordCreationDraft({

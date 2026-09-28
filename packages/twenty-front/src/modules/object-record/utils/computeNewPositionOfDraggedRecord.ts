@@ -58,6 +58,10 @@ export const computeNewPositionOfDraggedRecord = ({
       const itemBeforeTargetItem =
         sortedRecordsByAscendingPosition[indexOfTargetItem - 1];
 
+      if (!isDefined(itemBeforeTargetItem)) {
+        return targetItem.position - 1;
+      }
+
       const intermediaryPosition =
         targetItem.position -
         (targetItem.position - itemBeforeTargetItem.position) / 2;

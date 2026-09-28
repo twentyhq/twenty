@@ -31,6 +31,17 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 
+  const getRecordIdsInColumn = useCallback(
+    (columnIndex: number) => {
+      const groupId = visibleRecordGroupIds[columnIndex];
+
+      return isDefined(groupId)
+        ? store.get(recordIdsByGroupState(groupId))
+        : undefined;
+    },
+    [store, visibleRecordGroupIds, recordIdsByGroupState],
+  );
+
   const focusFirstAvailableRecord = useCallback(() => {
     if (visibleRecordGroupIds.length === 0) {
       return;
@@ -83,10 +94,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
       const initialColumnIndex = newColumnIndex;
 
       while (!foundColumnWithRecords) {
-        const currentGroupId = visibleRecordGroupIds[newColumnIndex];
-        const recordIdsInGroup = store.get(
-          recordIdsByGroupState(currentGroupId),
-        );
+        const recordIdsInGroup = getRecordIdsInColumn(newColumnIndex);
 
         if (Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0) {
           foundColumnWithRecords = true;
@@ -111,8 +119,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         }
       }
 
-      const currentGroupId = visibleRecordGroupIds[newColumnIndex];
-      const recordIdsInGroup = store.get(recordIdsByGroupState(currentGroupId));
+      const recordIdsInGroup = getRecordIdsInColumn(newColumnIndex) ?? [];
 
       let newRowIndex = currentFocusedBoardCardIndexes.rowIndex;
       if (newRowIndex >= recordIdsInGroup.length) {
@@ -128,7 +135,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
       store,
       focusedBoardCardIndexes,
       visibleRecordGroupIds,
-      recordIdsByGroupState,
+      getRecordIdsInColumn,
       focusBoardCard,
       focusFirstAvailableRecord,
     ],
@@ -145,9 +152,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
       if (visibleRecordGroupIds.length === 0) return;
 
-      const currentGroupId =
-        visibleRecordGroupIds[currentFocusedBoardCardIndexes.columnIndex];
-      const recordIdsInGroup = store.get(recordIdsByGroupState(currentGroupId));
+      const recordIdsInGroup = getRecordIdsInColumn(
+        currentFocusedBoardCardIndexes.columnIndex,
+      );
 
       if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0) {
         focusFirstAvailableRecord();
@@ -178,7 +185,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
       store,
       focusedBoardCardIndexes,
       visibleRecordGroupIds,
-      recordIdsByGroupState,
+      getRecordIdsInColumn,
       focusBoardCard,
       focusFirstAvailableRecord,
     ],

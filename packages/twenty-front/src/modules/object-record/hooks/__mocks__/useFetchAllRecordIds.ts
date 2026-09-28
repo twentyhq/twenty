@@ -56,11 +56,11 @@ export const peopleMockWithIdsOnly: RecordGqlConnectionEdgesRequired = {
 };
 
 export const firstRequestLastCursor =
-  peopleMockWithIdsOnly.edges[mockPageSize].cursor;
+  peopleMockWithIdsOnly.edges[mockPageSize]?.cursor;
 export const secondRequestLastCursor =
-  peopleMockWithIdsOnly.edges[mockPageSize * 2].cursor;
+  peopleMockWithIdsOnly.edges[mockPageSize * 2]?.cursor;
 export const thirdRequestLastCursor =
-  peopleMockWithIdsOnly.edges[mockPageSize * 3].cursor;
+  peopleMockWithIdsOnly.edges[mockPageSize * 3]?.cursor;
 
 export const variablesFirstRequest = {
   filter: undefined,
@@ -94,8 +94,8 @@ const paginateRequestResponse = (
     edges: [...response.edges.slice(start, end)],
     pageInfo: {
       ...response.pageInfo,
-      startCursor: response.edges[start].cursor,
-      endCursor: response.edges[end].cursor,
+      startCursor: response.edges[start]?.cursor,
+      endCursor: response.edges[end]?.cursor,
       hasNextPage,
     } satisfies RecordGqlConnectionEdgesRequired['pageInfo'],
     totalCount,

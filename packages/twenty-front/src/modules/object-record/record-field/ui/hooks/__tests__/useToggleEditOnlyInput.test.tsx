@@ -101,7 +101,7 @@ describe('useToggleEditOnlyInput', () => {
     });
 
     await waitFor(() => {
-      expect(mocks[0].result).toHaveBeenCalled();
+      expect(mocks[0]?.result).toHaveBeenCalled();
     });
   });
 });
