@@ -282,9 +282,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         stepId,
         stepLog: isResumed
           ? mergeAiAgentStepLogs({
-              previousStepLog: await this.workflowRunStepLogService.getStepLog(
-                { workflowRunId, workspaceId, stepId },
-              ),
+              previousStepLog: await this.workflowRunStepLogService.getStepLog({
+                workflowRunId,
+                workspaceId,
+                stepId,
+              }),
               nextStepLog: stepLog,
             })
           : stepLog,

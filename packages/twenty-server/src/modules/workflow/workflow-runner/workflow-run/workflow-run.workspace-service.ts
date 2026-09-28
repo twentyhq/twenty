@@ -463,11 +463,13 @@ export class WorkflowRunWorkspaceService {
     threadId,
     workflowRunId,
     workspaceId,
+    onReleased,
   }: {
     stepId: string;
     threadId: string;
     workflowRunId: string;
     workspaceId: string;
+    onReleased?: () => Promise<void>;
   }): Promise<StepAnswerRelease> {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
@@ -506,6 +508,15 @@ export class WorkflowRunWorkspaceService {
       },
     });
 
+    // Still under the run lock, so a run ending right after the release cannot
+    // close what this records as left open. What it records only mirrors the
+    // answer, so it never undoes a release the run already accepted.
+    await this.runBestEffort({
+      workflowRunId,
+      operation: 'record a released answer',
+      callback: onReleased,
+    });
+
     return 'RELEASED';
   }
 
@@ -518,11 +529,13 @@ export class WorkflowRunWorkspaceService {
     threadId,
     workflowRunId,
     workspaceId,
+    onRestored,
   }: {
     stepId: string;
     threadId: string;
     workflowRunId: string;
     workspaceId: string;
+    onRestored?: () => Promise<void>;
   }): Promise<boolean> {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
@@ -553,7 +566,35 @@ export class WorkflowRunWorkspaceService {
       },
     });
 
+    await this.runBestEffort({
+      workflowRunId,
+      operation: 'reopen a restored answer',
+      callback: onRestored,
+    });
+
     return true;
+  }
+
+  private async runBestEffort({
+    workflowRunId,
+    operation,
+    callback,
+  }: {
+    workflowRunId: string;
+    operation: string;
+    callback?: () => Promise<void>;
+  }): Promise<void> {
+    if (!isDefined(callback)) {
+      return;
+    }
+
+    try {
+      await callback();
+    } catch (error) {
+      this.logger.error(
+        `Failed to ${operation} for workflow run ${workflowRunId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   @WithLock('workflowRunId')

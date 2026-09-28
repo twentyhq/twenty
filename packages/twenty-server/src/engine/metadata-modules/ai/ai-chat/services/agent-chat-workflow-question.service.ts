@@ -113,12 +113,23 @@ export class AgentChatWorkflowQuestionService {
 
       answerMessageId = answerMessage.id;
 
+      // The Ask is answered with the release, so it reads answered only for an
+      // answer the run accepted, and a run that ends before the resume cannot
+      // cancel it in between.
       const release =
         await this.workflowRunWorkspaceService.releaseStepAwaitingAnswer({
           stepId: workflowStepId,
           threadId: thread.id,
           workflowRunId,
           workspaceId,
+          onReleased: async () => {
+            answeredInputAskId =
+              await this.inputAskWorkspaceService.answerPendingForThread({
+                workspaceId,
+                threadId: thread.id,
+                response: { answers, answerText: resolved.answerText },
+              });
+          },
         });
 
       isReleased = release === 'RELEASED';
@@ -131,16 +142,6 @@ export class AgentChatWorkflowQuestionService {
         );
       }
 
-      // Recorded once the step is released, so an Ask reads answered only for
-      // an answer the run accepted, and before the resume so a run that then
-      // ends cannot cancel it.
-      answeredInputAskId =
-        await this.inputAskWorkspaceService.answerPendingForThread({
-          workspaceId,
-          threadId: thread.id,
-          response: { answers, answerText: resolved.answerText },
-        });
-
       // Re-executing the released step is what a retry does; the step is no
       // longer awaiting a retry, so the retry path runs it without resetting
       // it. Scheduling stays inside the rollback: a released step nobody
@@ -151,19 +152,22 @@ export class AgentChatWorkflowQuestionService {
         buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {
-      if (isDefined(answeredInputAskId)) {
-        await this.inputAskWorkspaceService.reopenAnswered({
-          workspaceId,
-          inputAskId: answeredInputAskId,
-        });
-      }
-
       if (isReleased) {
+        const inputAskIdToReopen = answeredInputAskId;
+
         await this.workflowRunWorkspaceService.restoreStepAwaitingAnswer({
           stepId: workflowStepId,
           threadId: thread.id,
           workflowRunId,
           workspaceId,
+          onRestored: async () => {
+            if (isDefined(inputAskIdToReopen)) {
+              await this.inputAskWorkspaceService.reopenAnswered({
+                workspaceId,
+                inputAskId: inputAskIdToReopen,
+              });
+            }
+          },
         });
       }
 

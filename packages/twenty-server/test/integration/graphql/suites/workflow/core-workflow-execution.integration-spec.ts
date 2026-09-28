@@ -1474,6 +1474,67 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         { status: 'ANSWERED' },
       ]);
     });
+
+    it('resumes the run when the Ask cannot record the answer', async () => {
+      mockAgent();
+      const { runId, threadId, questionMessageId } = await startAskingRun();
+
+      const answerPendingForThread = jest
+        .spyOn(
+          getAppProviderByClassName<InputAskWorkspaceService>(
+            'InputAskWorkspaceService',
+          ),
+          'answerPendingForThread',
+        )
+        .mockRejectedValueOnce(new Error('Ask write failed'));
+
+      const response = await answer({ threadId, messageId: questionMessageId });
+
+      answerPendingForThread.mockRestore();
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+    });
+
+    it('keeps the Ask answered when the run is stopped while the answer is released', async () => {
+      mockAgent();
+      const { runId, threadId, questionMessageId } = await startAskingRun();
+
+      const inputAskWorkspaceService =
+        getAppProviderByClassName<InputAskWorkspaceService>(
+          'InputAskWorkspaceService',
+        );
+      const answerPendingForThread =
+        inputAskWorkspaceService.answerPendingForThread.bind(
+          inputAskWorkspaceService,
+        );
+      let stop: Promise<void> | undefined;
+
+      const spy = jest
+        .spyOn(inputAskWorkspaceService, 'answerPendingForThread')
+        .mockImplementationOnce(async (args) => {
+          // The stop lands between the step's release and its Ask being
+          // answered, which is where a run ending used to cancel the Ask.
+          stop = workflowGraphqlRequest(
+            'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+            { id: runId },
+          ).then(() => undefined);
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          return answerPendingForThread(args);
+        });
+
+      const response = await answer({ threadId, messageId: questionMessageId });
+
+      await stop;
+      spy.mockRestore();
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForRun(runId, 'STOPPED');
+      expect(await getThreadInputAsks(threadId)).toMatchObject([
+        { status: 'ANSWERED' },
+      ]);
+    });
   });
 
   it('stops a pending delay and ignores its later resume job', async () => {
