@@ -7,7 +7,10 @@ export const getSkillTagContent = ({
   name,
   label,
   icon,
-}: SkillSuggestionItem): JSONContent[] => [
+}: Pick<
+  SkillSuggestionItem,
+  'id' | 'name' | 'label' | 'icon'
+>): JSONContent[] => [
   {
     type: 'skillTag',
     attrs: {

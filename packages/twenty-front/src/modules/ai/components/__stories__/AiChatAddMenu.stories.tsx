@@ -86,7 +86,7 @@ type Story = StoryObj<typeof AiChatAddMenuWithEditor>;
 
 const openAddMenu = async (canvasElement: HTMLElement) => {
   await userEvent.click(
-    within(canvasElement).getByRole('button', {
+    await within(canvasElement).findByRole('button', {
       name: 'Add files, records or skills',
     }),
   );

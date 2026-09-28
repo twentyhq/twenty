@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
-import { useRef } from 'react';
+import { useId, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, IconButton } from 'twenty-ui/components';
 import {
   IconAddressBook,
@@ -25,12 +26,13 @@ type AiChatAddMenuProps = {
 export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
   const { t } = useLingui();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const instanceId = useId();
 
   return (
     <>
       <AgentChatFileInput ref={fileInputRef} />
       <DropdownRoot
-        dropdownId="ai-chat-add-menu-dropdown"
+        dropdownId={`ai-chat-add-menu-${instanceId}`}
         type="menu"
         defaultPage={AI_CHAT_ADD_MENU_PAGE.ROOT}
       >
@@ -50,6 +52,11 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
           side="top"
           align="start"
           sideOffset={8}
+          finalFocus={(interaction) =>
+            interaction === 'keyboard' && isDefined(editor)
+              ? editor.view.dom
+              : false
+          }
           aria-label={t`Add files, records or skills`}
         >
           <Dropdown.Page id={AI_CHAT_ADD_MENU_PAGE.ROOT} type="menu">

@@ -23,8 +23,11 @@ export const AgentChatFileInput = ({ ref }: AgentChatFileInputProps) => {
       return;
     }
 
-    uploadFiles(Array.from(event.target.files));
-    setAgentChatSelectedFiles(Array.from(event.target.files));
+    const files = Array.from(event.target.files);
+
+    uploadFiles(files);
+    setAgentChatSelectedFiles(files);
+    event.target.value = '';
   };
 
   return (
