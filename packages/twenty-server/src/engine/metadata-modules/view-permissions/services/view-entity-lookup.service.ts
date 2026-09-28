@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.types';
+import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.type';
 
 @Injectable()
 export class ViewEntityLookupService {
@@ -26,6 +26,20 @@ export class ViewEntityLookupService {
           findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: entityId,
             flatEntityMaps: flatViewFieldMaps,
+          })?.viewId ?? null
+        );
+      }
+
+      case 'viewFieldGroup': {
+        const { flatViewFieldGroupMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewFieldGroupMaps'] },
+          );
+
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewFieldGroupMaps,
           })?.viewId ?? null
         );
       }

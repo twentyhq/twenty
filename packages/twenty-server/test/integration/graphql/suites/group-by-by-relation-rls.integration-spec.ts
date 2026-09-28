@@ -1,5 +1,5 @@
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   type CompanyNameRlsRoleSetup,
   cleanupCompanyNameRlsRole,
@@ -46,7 +46,7 @@ describe('group-by on a relation respects row-level permission predicates', () =
   });
 
   it('does not expose hidden related dimension values and folds hidden-linked records into the null group', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       groupByOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -97,7 +97,7 @@ describe('group-by on a relation respects row-level permission predicates', () =
   });
 
   it('sorts records linked to a hidden related record as null when ordering records within groups by that relation', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       groupByOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',

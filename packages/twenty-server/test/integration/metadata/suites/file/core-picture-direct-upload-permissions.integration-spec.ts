@@ -14,7 +14,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -61,7 +61,7 @@ const assignRoleToJony = async (roleId: string) => {
 };
 
 const reserveAsJony = async (fileFolder: string) =>
-  makeMetadataAPIRequest(
+  makeMetadataApiRequest(
     {
       query: createFileUploadMutation,
       variables: {
@@ -74,7 +74,7 @@ const reserveAsJony = async (fileFolder: string) =>
   );
 
 const completeAsJony = async (query: ASTNode, fileId: string) =>
-  makeMetadataAPIRequest(
+  makeMetadataApiRequest(
     { query, variables: { fileId } },
     APPLE_JONY_MEMBER_ACCESS_TOKEN,
   );

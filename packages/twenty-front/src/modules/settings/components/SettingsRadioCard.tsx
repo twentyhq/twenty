@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
-import { CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -61,7 +61,7 @@ export const SettingsRadioCard = ({
 
   return (
     <StyledRadioCardContentContainer>
-      <CardContent>
+      <Card.Content>
         {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
         <span>
           {title && <StyledTitle id={titleId}>{title}</StyledTitle>}
@@ -78,7 +78,7 @@ export const SettingsRadioCard = ({
             aria-describedby={hasDescription ? descriptionId : undefined}
           />
         </StyledRadioContainer>
-      </CardContent>
+      </Card.Content>
     </StyledRadioCardContentContainer>
   );
 };

@@ -1,4 +1,4 @@
-import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '../../types/BaseOutputSchema';
 import { collectOutputSchemaPaths } from '../collect-output-schema-paths';
 
 describe('collectOutputSchemaPaths', () => {

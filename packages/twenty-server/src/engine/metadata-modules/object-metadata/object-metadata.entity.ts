@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
@@ -19,7 +20,7 @@ import {
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-27/add-object-metadata-open-record-in-upgrade-command-name.constant';
-import { ADD_OBJECT_METADATA_VALIDATION_RULES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-43/add-object-metadata-validation-rules-upgrade-command-name.constant';
+import { ADD_OBJECT_METADATA_VALIDATION_RULES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-44/add-object-metadata-validation-rules-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_READABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-object-metadata-readability-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_READABILITY_PARENT_FIELDS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-object-metadata-readability-parent-fields-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
@@ -42,6 +43,7 @@ import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/ty
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('objectMetadata')
+@Index('IDX_OBJECT_METADATA_APPLICATION_ID', ['applicationId'])
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
   'nameSingular',
   'workspaceId',

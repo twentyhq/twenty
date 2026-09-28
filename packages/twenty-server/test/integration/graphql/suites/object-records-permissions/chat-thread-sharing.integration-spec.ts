@@ -15,7 +15,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -25,6 +25,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 // Avoid loading the migration runner's ESM file dependencies inside Jest. The
 // command below receives the real migration service from the running test app.
@@ -53,7 +54,7 @@ const readThread = async (
     flatObjectMetadataMaps.byUniversalIdentifier[
       STANDARD_OBJECTS.agentChatThread.universalIdentifier
     ]!.id;
-  return makeMetadataAPIRequest(
+  return makeMetadataApiRequest(
     { query: READ_THREAD, variables: { id, objectMetadataId } },
     token,
   );
@@ -116,7 +117,7 @@ describe('Conversation sharing through the authenticated API', () => {
       });
       const read = () => readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN);
       const listedThreadIds = async () => {
-        const response = await makeMetadataAPIRequest(
+        const response = await makeMetadataApiRequest(
           { query: parse('query ReadableThreads { chatThreads { id } }') },
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
@@ -126,7 +127,7 @@ describe('Conversation sharing through the authenticated API', () => {
         );
       };
       const changeShare = (enabled: boolean) =>
-        makeMetadataAPIRequest({
+        makeMetadataApiRequest({
           query: SET_SHARE,
           variables: { target, principal, enabled },
         });
@@ -158,7 +159,7 @@ describe('Conversation sharing through the authenticated API', () => {
             canSoftDelete: false,
           },
         });
-        const sharedMessages = await makeMetadataAPIRequest(
+        const sharedMessages = await makeMetadataApiRequest(
           {
             query: parse(
               'query SharedMessages($threadId: UUID!) { chatMessages(threadId: $threadId) { id } }',
@@ -169,7 +170,7 @@ describe('Conversation sharing through the authenticated API', () => {
         );
         expect(sharedMessages.body.errors).toBeUndefined();
         expect(sharedMessages.body.data.chatMessages).toEqual([]);
-        const audienceDetails = await makeMetadataAPIRequest(
+        const audienceDetails = await makeMetadataApiRequest(
           {
             query:
               parse(`query SharingDetails($target: RecordSharingTargetInput!) {
@@ -189,7 +190,7 @@ describe('Conversation sharing through the authenticated API', () => {
           shares: [],
           roles: [],
         });
-        const rename = await makeMetadataAPIRequest(
+        const rename = await makeMetadataApiRequest(
           {
             query: parse(
               `mutation RenameSharedThread($id: UUID!) { renameChatThread(id: $id, title: "Unauthorized rename") { id } }`,
@@ -199,7 +200,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(rename.body.errors[0].extensions.code).toBe('NOT_FOUND');
-        const stop = await makeMetadataAPIRequest(
+        const stop = await makeMetadataApiRequest(
           {
             query: parse(
               'mutation($id: UUID!) { stopAgentChatStream(threadId: $id) }',
@@ -209,7 +210,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(stop.body.errors[0].extensions.code).toBe('NOT_FOUND');
-        const grantAsViewer = await makeMetadataAPIRequest(
+        const grantAsViewer = await makeMetadataApiRequest(
           {
             query: SET_SHARE,
             variables: { target, principal: { everyone: true }, enabled: true },
@@ -287,7 +288,7 @@ describe('Conversation sharing through the authenticated API', () => {
           expectToFail: false,
         });
         const grant = (accessLevel: RecordShareAccessLevel) =>
-          makeMetadataAPIRequest({
+          makeMetadataApiRequest({
             query: SET_SHARE,
             variables: { target, principal, enabled: true, accessLevel },
           });
@@ -307,7 +308,7 @@ describe('Conversation sharing through the authenticated API', () => {
             canSoftDelete: false,
           },
         });
-        const rename = await makeMetadataAPIRequest(
+        const rename = await makeMetadataApiRequest(
           {
             query: parse(
               'mutation($id: UUID!) { renameChatThread(id: $id, title: "Edited together") { title } }',
@@ -317,7 +318,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(rename.body.errors).toBeUndefined();
-        const stop = await makeMetadataAPIRequest(
+        const stop = await makeMetadataApiRequest(
           {
             query: parse(
               'mutation($id: UUID!) { stopAgentChatStream(threadId: $id) }',
@@ -329,7 +330,7 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(stop.body.errors).toBeUndefined();
         expect(stop.body.data.stopAgentChatStream).toBe(true);
         const changeSharingAsParticipant = (enabled: boolean) =>
-          makeMetadataAPIRequest(
+          makeMetadataApiRequest(
             {
               query: SET_SHARE,
               variables: {
@@ -600,5 +601,32 @@ describe('Conversation sharing through the authenticated API', () => {
     await expect(chat.getWritableThread(owner)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
+  });
+
+  it('stores the creator as the workspace member owner', async () => {
+    const chat =
+      getAppProviderByClassName<AgentChatService>('AgentChatService');
+    const owner = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      threadId: randomUUID(),
+    };
+    await chat.createThread({ ...owner, id: owner.threadId });
+    try {
+      const rows: { workspaceMemberId: string; userWorkspaceId: string }[] =
+        await global.testDataSource.query(
+          `SELECT "workspaceMemberId", "userWorkspaceId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
+          [owner.threadId],
+        );
+
+      expect(rows).toEqual([
+        {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        },
+      ]);
+    } finally {
+      await chat.hardDeleteThread(owner);
+    }
   });
 });

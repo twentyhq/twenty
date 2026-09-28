@@ -24,7 +24,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
-import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';

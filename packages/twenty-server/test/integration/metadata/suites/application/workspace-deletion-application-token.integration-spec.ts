@@ -8,7 +8,7 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,7 +40,7 @@ describe('Workspace deletion application token', () => {
   let workspaceService: WorkspaceService;
 
   const queryApplicationStoppedState = (token: string) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: IS_APPLICATION_STOPPED,
         variables: {

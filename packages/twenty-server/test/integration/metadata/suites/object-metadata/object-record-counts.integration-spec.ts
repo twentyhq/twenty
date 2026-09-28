@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 const OBJECT_RECORD_COUNTS_QUERY = gql`
   query ObjectRecordCounts {
@@ -12,7 +12,7 @@ const OBJECT_RECORD_COUNTS_QUERY = gql`
 
 describe('objectRecordCounts', () => {
   it('should return counts for all workspace objects', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: OBJECT_RECORD_COUNTS_QUERY,
     });
 
@@ -34,7 +34,7 @@ describe('objectRecordCounts', () => {
   });
 
   it('should include well-known standard objects', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: OBJECT_RECORD_COUNTS_QUERY,
     });
 
@@ -49,7 +49,7 @@ describe('objectRecordCounts', () => {
   });
 
   it('should return non-negative totalCount values', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: OBJECT_RECORD_COUNTS_QUERY,
     });
 
@@ -62,7 +62,7 @@ describe('objectRecordCounts', () => {
   });
 
   it('should reject requests with an invalid token', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       { query: OBJECT_RECORD_COUNTS_QUERY },
       INVALID_ACCESS_TOKEN,
     );

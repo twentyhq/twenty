@@ -17,7 +17,7 @@ import {
 import { updateWorkspaceMemberSettings } from 'test/integration/graphql/suites/application-role-intersection/utils/update-workspace-member-settings.util';
 import { uploadWorkspaceMemberProfilePicture } from 'test/integration/graphql/suites/application-role-intersection/utils/upload-workspace-member-profile-picture.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
 import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
@@ -30,7 +30,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const findWorkspaceMemberIdByEmail = async (
   userEmail: string,
 ): Promise<string | undefined> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'workspaceMember',
       objectMetadataPluralName: 'workspaceMembers',

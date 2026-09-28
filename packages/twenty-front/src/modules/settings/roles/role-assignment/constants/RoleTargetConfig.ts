@@ -7,7 +7,7 @@ import {
   type PartialWorkspaceMember,
   type RoleWithPartialMembers,
 } from '@/settings/roles/types/RoleWithPartialMembers';
-import { type RoleMaps } from '@/settings/roles/role-assignment/types/role-maps';
+import { type RoleMaps } from '@/settings/roles/role-assignment/types/RoleMaps';
 
 export const ROLE_TARGET_CONFIG = {
   member: {

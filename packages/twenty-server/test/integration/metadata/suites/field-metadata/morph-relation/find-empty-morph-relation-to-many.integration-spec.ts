@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -92,7 +92,7 @@ describe('empty morph to-many relation read', () => {
   });
 
   it('returns an empty connection (not null) for each morph to-many target', async () => {
-    await makeGraphqlAPIRequestWithApiKey(
+    await makeGraphqlApiRequestWithApiKey(
       createOneOperationFactory({
         objectMetadataSingularName: 'oppForEmptyMorph',
         gqlFields: 'id',
@@ -100,7 +100,7 @@ describe('empty morph to-many relation read', () => {
       }),
     );
 
-    const { body: schemaBody } = await makeGraphqlAPIRequestWithApiKey({
+    const { body: schemaBody } = await makeGraphqlApiRequestWithApiKey({
       query: gql`
         query {
           __type(name: "${capitalize('oppForEmptyMorph')}") {
@@ -142,7 +142,7 @@ describe('empty morph to-many relation read', () => {
       ),
     ].join('\n');
 
-    const { body } = await makeGraphqlAPIRequestWithApiKey(
+    const { body } = await makeGraphqlApiRequestWithApiKey(
       findManyOperationFactory({
         objectMetadataSingularName: 'oppForEmptyMorph',
         objectMetadataPluralName: 'oppsForEmptyMorph',

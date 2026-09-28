@@ -124,7 +124,7 @@ export type {
   WorkflowClassifyCriterion,
   WorkflowClassifyQuestion,
 } from './types/WorkflowClassifyQuestion';
-export type { BodyType } from './types/workflowHttpRequestStep';
+export type { BodyType } from './types/WorkflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
@@ -163,7 +163,7 @@ export type {
   ValidatableWorkflowStep,
   ValidatableWorkflowTrigger,
   ValidatableWorkflow,
-} from './validation/types/workflow-validation.type';
+} from './validation/types/WorkflowValidation';
 export type { WorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { buildWorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { extractVariablesFromInput } from './validation/utils/extract-variables-from-input.util';
@@ -184,7 +184,7 @@ export type {
   Leaf,
   Node,
   BaseOutputSchemaV2,
-} from './workflow-schema/types/base-output-schema.type';
+} from './workflow-schema/types/BaseOutputSchema';
 export type {
   RecordFieldLeaf,
   RecordFieldNode,
@@ -202,7 +202,7 @@ export type {
   ManualTriggerOutputSchema,
   OutputSchemaV2,
   VariableSearchResult,
-} from './workflow-schema/types/output-schema.type';
+} from './workflow-schema/types/OutputSchema';
 export { buildManualTriggerMetadataNode } from './workflow-schema/utils/build-manual-trigger-metadata-node';
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
 export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
@@ -226,4 +226,4 @@ export type {
   GlobalAvailability,
   SingleRecordAvailability,
   BulkRecordsAvailability,
-} from './workflow-trigger/types/workflow-trigger.type';
+} from './workflow-trigger/types/WorkflowTrigger';

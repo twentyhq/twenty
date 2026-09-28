@@ -1,0 +1,51 @@
+---
+title: Banner
+description: Display a prominent information or error message with optional actions.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BannerReference from '/snippets/ui/generated/feedback/banner.mdx';
+
+`Banner` lays out a message and optional controls across its container. Use `color="blue"` for information and `color="danger"` for errors. The `primary` variant uses a solid background; `secondary` uses a translucent background.
+
+<StoryEmbed storyId="ui-feedback-banner--default" title="Banner example" />
+
+## Usage
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ImportFailureProps = { onRetry: () => void };
+
+export const ImportFailure = ({ onRetry }: ImportFailureProps) => (
+  <Banner color="danger" variant="secondary">
+    <Text>Some records could not be imported.</Text>
+    <Button onClick={onRetry}>Retry import</Button>
+  </Banner>
+);
+```
+
+## Visibility and announcements
+
+The application owns the message, action handlers, and whether the banner is rendered. `Banner` has no open state or built-in close button.
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+type ImportNoticeProps = { message: string | null };
+
+export const ImportNotice = ({ message }: ImportNoticeProps) => (
+  <div role="status">
+    {message !== null && <Banner variant="secondary">{message}</Banner>}
+  </div>
+);
+```
+
+Keep the live-region wrapper mounted before updating its message. Use `role="alert"` only for urgent messages that need immediate attention. The banner itself does not add a live region or forward `role` and other native attributes.
+
+## Props
+
+<BannerReference />

@@ -22,6 +22,9 @@ const ENQUEUE_BATCH_SIZE = 500;
 @Processor(MessageQueue.cronQueue)
 export class ReconcileCampaignStatsCronJob {
   constructor(
+    // Instance-wide sweep: it reads every active workspace to find which ones
+    // have a sending domain, so there is no request workspace to scope by.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
     @InjectMessageQueue(MessageQueue.campaignQueue)

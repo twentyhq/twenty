@@ -1,5 +1,5 @@
 import { getDayOfMonthDescription } from '@/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription';
-import { DEFAULT_CRON_DESCRIPTION_OPTIONS } from '@/workflow/workflow-trigger/utils/cron-to-human/types/cronDescriptionOptions';
+import { DEFAULT_CRON_DESCRIPTION_OPTIONS } from '@/workflow/workflow-trigger/utils/cron-to-human/types/CronDescriptionOptions';
 
 describe('getDayOfMonthDescription', () => {
   const options = DEFAULT_CRON_DESCRIPTION_OPTIONS;

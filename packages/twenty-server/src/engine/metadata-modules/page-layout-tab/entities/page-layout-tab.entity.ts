@@ -19,7 +19,7 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 
 export type PageLayoutTabOverrides = {
   isActive?: boolean;
@@ -29,6 +29,7 @@ export type PageLayoutTabOverrides = {
 };
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
+@Index('IDX_PAGE_LAYOUT_TAB_APPLICATION_ID', ['applicationId'])
 @ObjectType('PageLayoutTab')
 @Index(
   'IDX_PAGE_LAYOUT_TAB_WORKSPACE_ID_PAGE_LAYOUT_ID',

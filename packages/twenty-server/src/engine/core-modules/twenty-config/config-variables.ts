@@ -1748,6 +1748,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
+      'Maximum number of emails a single workspace may send per UTC day, campaign and one-off sends counted together. A workspace limit configured in the app replaces it',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_DAILY_LIMIT = 1_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
       'Time-to-live for the per-workspace outbound email send rate limiting window, in milliseconds',
     type: ConfigVariableType.NUMBER,
   })

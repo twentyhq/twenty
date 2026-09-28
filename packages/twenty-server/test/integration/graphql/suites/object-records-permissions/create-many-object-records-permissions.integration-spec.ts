@@ -2,9 +2,9 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -35,7 +35,7 @@ describe('createManyObjectRecordsPermissions', () => {
       ],
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ createPeople: null });
     expect(response.body.errors).toBeDefined();
@@ -63,7 +63,7 @@ describe('createManyObjectRecordsPermissions', () => {
       ],
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     createdPersonIds.push(personId1, personId2);
 
@@ -98,7 +98,7 @@ describe('createManyObjectRecordsPermissions', () => {
       ],
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     createdPersonIds.push(personId1, personId2);
 

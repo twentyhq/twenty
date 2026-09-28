@@ -5,8 +5,8 @@ import {
   completeWorkspaceLogoUploadMutation,
   uploadWorkspaceLogoWithDirectUpload,
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -71,7 +71,7 @@ describe('Security permissions', () => {
       }
     `;
 
-    const response = await makeMetadataAPIRequest({ query });
+    const response = await makeMetadataApiRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
   });
@@ -93,7 +93,7 @@ describe('Security permissions', () => {
         }
       `;
 
-    await makeMetadataAPIRequest({ query: restoreQuery });
+    await makeMetadataApiRequest({ query: restoreQuery });
     for (const origin of await readOrigins())
       await editOrigin('remove', origin);
     for (const origin of (originalWorkspaceState.allowedIframeOrigins ??
@@ -661,7 +661,7 @@ describe('Security permissions', () => {
           'base64',
         );
 
-        const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
+        const uploadResponse = await makeMetadataApiRequestWithFileUpload(
           {
             query: uploadWorkspaceLogoMutation,
             variables: { file: null },
@@ -690,7 +690,7 @@ describe('Security permissions', () => {
           }
         `;
 
-        const workspaceResponse = await makeMetadataAPIRequest({
+        const workspaceResponse = await makeMetadataApiRequest({
           query: getWorkspaceQuery,
         });
 
@@ -703,7 +703,7 @@ describe('Security permissions', () => {
           'base64',
         );
 
-        const response = await makeMetadataAPIRequestWithFileUpload(
+        const response = await makeMetadataApiRequestWithFileUpload(
           {
             query: uploadWorkspaceLogoMutation,
             variables: { file: null },
@@ -761,7 +761,7 @@ describe('Security permissions', () => {
           }
         `;
 
-        const workspaceResponse = await makeMetadataAPIRequest({
+        const workspaceResponse = await makeMetadataApiRequest({
           query: getWorkspaceQuery,
         });
 
@@ -769,7 +769,7 @@ describe('Security permissions', () => {
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const response = await makeMetadataAPIRequest(
+        const response = await makeMetadataApiRequest(
           {
             query: completeWorkspaceLogoUploadMutation,
             variables: { fileId: '20202020-0000-4000-8000-000000000000' },

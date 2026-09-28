@@ -3,7 +3,7 @@ import type * as ical from 'node-ical';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const extractOrganizerFromEvent = (
   event: ical.VEvent,

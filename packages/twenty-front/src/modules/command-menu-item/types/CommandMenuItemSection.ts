@@ -1,6 +1,7 @@
 export type CommandMenuItemSection =
   | 'SELECTION'
-  | 'THIS_VIEW'
+  | 'CURRENT_VIEW'
+  | 'THIS_OBJECT'
   | 'ASK_AND_FIND'
   | 'CREATE_RECORD'
   | 'WORKSPACE'

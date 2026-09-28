@@ -7,7 +7,7 @@ import {
   findApplicationRegistrationVariables,
   updateApplicationRegistrationVariable,
 } from 'test/integration/metadata/suites/application-registration-variable/utils/application-registration-variable-api.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
@@ -233,7 +233,7 @@ describe('ApplicationRegistrationVariable (integration)', () => {
     });
 
     it('should create a registration via GraphQL and manage variables on it', async () => {
-      const createResponse = await makeMetadataAPIRequest({
+      const createResponse = await makeMetadataApiRequest({
         query: gql`
           mutation CreateApplicationRegistration(
             $input: CreateApplicationRegistrationInput!

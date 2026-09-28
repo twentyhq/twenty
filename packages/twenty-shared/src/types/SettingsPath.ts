@@ -26,6 +26,8 @@ export enum SettingsPath {
   ObjectNewValidationRule = 'objects/:objectNamePlural/new-validation-rule',
   ObjectValidationRuleEdit = 'objects/:objectNamePlural/validation-rules/:validationRuleId',
   ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
+  ObjectTranslations = 'objects/:objectNamePlural/object-translations',
+  ObjectFieldTranslations = 'objects/:objectNamePlural/:fieldName/translations',
   NewObject = 'objects/new',
   Layout = 'layout',
   WorkspaceMembersPage = 'members',

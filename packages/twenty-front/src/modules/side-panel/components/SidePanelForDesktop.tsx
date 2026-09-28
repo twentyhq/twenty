@@ -21,19 +21,20 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
-import {
-  type AnimationEvent,
-  type TransitionEvent,
-  useCallback,
-  useState,
-} from 'react';
+import { type AnimationEvent, useCallback, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledSidePanelWrapper = styled.div<{ isOpen: boolean }>`
-  background: ${themeCssVariables.background.primary};
+const StyledSidePanelWrapper = styled.div<{
+  isOpen: boolean;
+  isResizing: boolean;
+}>`
   flex-shrink: 0;
   min-width: 0;
-  position: relative;
+  overflow: hidden;
+  transition: ${({ isResizing }) =>
+    isResizing
+      ? 'none'
+      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
   width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
 
   @keyframes sidePanelShrinkFromFullWidth {
@@ -48,10 +49,7 @@ const StyledSidePanelWrapper = styled.div<{ isOpen: boolean }>`
   }
 `;
 
-const StyledSidePanel = styled.aside<{
-  isOpen: boolean;
-  isShrinkingFromFullWidth: boolean;
-}>`
+const StyledSidePanel = styled.aside<{ isShrinkingFromFullWidth: boolean }>`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
@@ -59,12 +57,7 @@ const StyledSidePanel = styled.aside<{
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transform: ${({ isOpen }) => (isOpen ? 'none' : 'translateX(100%)')};
-  transition: transform
-    calc(${themeCssVariables.animation.duration.normal} * 1s);
+  position: relative;
   width: ${({ isShrinkingFromFullWidth }) =>
     isShrinkingFromFullWidth ? '100%' : `var(${SIDE_PANEL_WIDTH_VAR})`};
 `;
@@ -91,6 +84,7 @@ export const SidePanelForDesktop = () => {
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
   );
+  const [isResizing, setIsResizing] = useState(false);
   const [shouldRenderContent, setShouldRenderContent] =
     useState(isSidePanelOpened);
   const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] =
@@ -114,7 +108,7 @@ export const SidePanelForDesktop = () => {
     setShouldRenderContent(true);
   }
 
-  const handleCloseAnimationComplete = () => {
+  const handleTransitionEnd = () => {
     if (isSidePanelOpened) {
       return;
     }
@@ -126,24 +120,13 @@ export const SidePanelForDesktop = () => {
     }
   };
 
-  const handleTransitionEnd = (event: TransitionEvent<HTMLElement>) => {
-    if (
-      event.target !== event.currentTarget ||
-      event.propertyName !== 'transform'
-    ) {
-      return;
-    }
-
-    handleCloseAnimationComplete();
-  };
-
   const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
     if (event.target !== event.currentTarget) {
       return;
     }
 
     setIsShrinkingFromFullWidth(false);
-    handleCloseAnimationComplete();
+    handleTransitionEnd();
   };
 
   const handleModalContainerRef = useCallback(
@@ -156,17 +139,20 @@ export const SidePanelForDesktop = () => {
   const handleWidthChange = useCallback(
     (width: number) => {
       setSidePanelWidth(width);
+      setIsResizing(false);
       setTableWidthResizeIsActive(true);
     },
     [setSidePanelWidth, setTableWidthResizeIsActive],
   );
 
   const handleResizeStart = useCallback(() => {
+    setIsResizing(true);
     setTableWidthResizeIsActive(false);
   }, [setTableWidthResizeIsActive]);
 
   const handleCollapse = useCallback(() => {
     closeSidePanelMenu();
+    setIsResizing(false);
     setTableWidthResizeIsActive(true);
   }, [closeSidePanelMenu, setTableWidthResizeIsActive]);
 
@@ -189,16 +175,14 @@ export const SidePanelForDesktop = () => {
 
       <StyledSidePanelWrapper
         isOpen={isSidePanelOpened}
+        isResizing={isResizing}
+        onTransitionEnd={handleTransitionEnd}
         onAnimationEnd={handleAnimationEnd}
         data-shrink-from-full-width={isShrinkingFromFullWidth}
         data-side-panel=""
         data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
       >
-        <StyledSidePanel
-          onTransitionEnd={handleTransitionEnd}
-          isOpen={isSidePanelOpened}
-          isShrinkingFromFullWidth={isShrinkingFromFullWidth}
-        >
+        <StyledSidePanel isShrinkingFromFullWidth={isShrinkingFromFullWidth}>
           <StyledModalContainer ref={handleModalContainerRef} />
           <DialogContainerContext.Provider
             value={{ container: modalContainer }}

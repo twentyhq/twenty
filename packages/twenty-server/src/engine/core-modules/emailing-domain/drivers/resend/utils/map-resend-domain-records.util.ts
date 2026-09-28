@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ResendDomainRecord } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-domain-record.type';
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
+import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 
 const mapResendRecordStatus = (status: string | undefined): string => {
   switch (status) {

@@ -9,9 +9,9 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -170,7 +170,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     personRelationFieldMetadataId = personRelationFieldData.createOneField.id;
 
     for (const [name, id] of Object.entries(RECORD_IDS)) {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -182,7 +182,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     }
 
     for (const [name, id] of Object.entries(PERSON_IDS)) {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',
@@ -259,7 +259,7 @@ describe('readabilityObjectRecordsPermissions', () => {
       sourceId,
     });
     await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -290,7 +290,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
 
     it('should only return records shared with the admin principals', async () => {
-      const response = await makeGraphqlAPIRequest(findManyOperation);
+      const response = await makeGraphqlApiRequest(findManyOperation);
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
@@ -303,7 +303,7 @@ describe('readabilityObjectRecordsPermissions', () => {
 
     it('should only return records shared with the member, their role or everyone', async () => {
       const response =
-        await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+        await makeGraphqlApiRequestWithMemberRole(findManyOperation);
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
@@ -338,7 +338,7 @@ describe('readabilityObjectRecordsPermissions', () => {
 
       try {
         const response =
-          await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+          await makeGraphqlApiRequestWithMemberRole(findManyOperation);
 
         expect(response.body.errors).toBeDefined();
         expect(response.body.data?.[OBJECT_PLURAL] ?? null).toBeNull();
@@ -347,7 +347,7 @@ describe('readabilityObjectRecordsPermissions', () => {
       }
 
       const restoredResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+        await makeGraphqlApiRequestWithMemberRole(findManyOperation);
 
       expect(restoredResponse.body.errors).toBeUndefined();
       expect(
@@ -362,7 +362,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
 
     it('should only return records shared with the api key role or everyone', async () => {
-      const response = await makeGraphqlAPIRequestWithApiKey(findManyOperation);
+      const response = await makeGraphqlApiRequestWithApiKey(findManyOperation);
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
@@ -375,14 +375,14 @@ describe('readabilityObjectRecordsPermissions', () => {
 
     it('should count only the records visible to the member', async () => {
       const response =
-        await makeGraphqlAPIRequestWithMemberRole(totalCountOperation);
+        await makeGraphqlApiRequestWithMemberRole(totalCountOperation);
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data[OBJECT_PLURAL].totalCount).toBe(3);
     });
 
     it('should group only the records visible to the member', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         groupByOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -408,7 +408,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
 
     it('should only hydrate the visible records on a nested relation read', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         findManyOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
@@ -445,7 +445,7 @@ describe('readabilityObjectRecordsPermissions', () => {
 
     it('should only match relation filters through the visible records', async () => {
       const findPeopleThroughRecordName = (name: string) =>
-        makeGraphqlAPIRequestWithMemberRole(
+        makeGraphqlApiRequestWithMemberRole(
           findManyOperationFactory({
             objectMetadataSingularName: 'person',
             objectMetadataPluralName: 'people',
@@ -468,7 +468,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
 
     it('should only update the records shared with at least READ_WRITE access', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         updateManyOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -486,7 +486,7 @@ describe('readabilityObjectRecordsPermissions', () => {
         ].sort(),
       );
 
-      const readOnlyRecordResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const readOnlyRecordResponse = await makeGraphqlApiRequestWithMemberRole(
         findOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -500,7 +500,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
 
     it('should only soft delete, restore and destroy the records shared with FULL access', async () => {
-      const deleteResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const deleteResponse = await makeGraphqlApiRequestWithMemberRole(
         deleteManyOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -514,7 +514,7 @@ describe('readabilityObjectRecordsPermissions', () => {
         collectRecordIds(deleteResponse.body.data[DELETE_RESPONSE_KEY]),
       ).toEqual([RECORD_IDS.SHARED_FULL_WITH_EVERYONE]);
 
-      const restoreResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const restoreResponse = await makeGraphqlApiRequestWithMemberRole(
         restoreManyOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -528,7 +528,7 @@ describe('readabilityObjectRecordsPermissions', () => {
         collectRecordIds(restoreResponse.body.data[RESTORE_RESPONSE_KEY]),
       ).toEqual([RECORD_IDS.SHARED_FULL_WITH_EVERYONE]);
 
-      const destroyResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const destroyResponse = await makeGraphqlApiRequestWithMemberRole(
         destroyManyOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -543,7 +543,7 @@ describe('readabilityObjectRecordsPermissions', () => {
       ).toEqual([RECORD_IDS.SHARED_FULL_WITH_EVERYONE]);
 
       const remainingResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+        await makeGraphqlApiRequestWithMemberRole(findManyOperation);
 
       expect(
         collectIds(remainingResponse.body.data[OBJECT_PLURAL].edges),
@@ -563,7 +563,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
 
     it('should refuse reads even for an admin', async () => {
-      const response = await makeGraphqlAPIRequest(findManyOperation);
+      const response = await makeGraphqlApiRequest(findManyOperation);
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain('not readable');
@@ -575,7 +575,7 @@ describe('readabilityObjectRecordsPermissions', () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
       await setRecordSharingEnabled(false);
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: RECORD_GQL_FIELDS,
@@ -590,7 +590,7 @@ describe('readabilityObjectRecordsPermissions', () => {
     });
 
     it('keeps grants enforced with the sharing UI disabled', async () => {
-      const response = await makeGraphqlAPIRequest(findManyOperation);
+      const response = await makeGraphqlApiRequest(findManyOperation);
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(

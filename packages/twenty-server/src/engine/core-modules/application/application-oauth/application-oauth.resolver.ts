@@ -43,6 +43,13 @@ export class ApplicationOAuthResolver {
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ApplicationTokenPairDTO> {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-renew:${workspaceId}:${userWorkspaceId}`,
+      1,
+      APPLICATION_TOKEN_RATE_LIMIT_MAX,
+      APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS,
+    );
+
     const applicationRefreshTokenPayload =
       await this.applicationTokenService.validateApplicationRefreshTokenForSessionOrThrow(
         {
@@ -52,13 +59,6 @@ export class ApplicationOAuthResolver {
           userWorkspaceId,
         },
       );
-
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `app-renew:${workspaceId}:${userWorkspaceId}:${applicationRefreshTokenPayload.applicationId}`,
-      1,
-      APPLICATION_TOKEN_RATE_LIMIT_MAX,
-      APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS,
-    );
 
     return this.applicationTokenService.renewApplicationTokens(
       applicationRefreshTokenPayload,

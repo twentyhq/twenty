@@ -3,9 +3,9 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -23,7 +23,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(createOnePersonRecordOperation);
+      await makeGraphqlApiRequest(createOnePersonRecordOperation);
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -36,7 +36,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlApiRequest(createGraphqlOperation);
 
       const deleteGraphqlOperation = deleteOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -44,7 +44,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
         recordId: personId,
       });
 
-      const response = await makeGraphqlAPIRequestWithGuestRole(
+      const response = await makeGraphqlApiRequestWithGuestRole(
         deleteGraphqlOperation,
       );
 
@@ -66,7 +66,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlApiRequest(createGraphqlOperation);
 
       const deleteGraphqlOperation = deleteOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -74,7 +74,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
         recordId: personId,
       });
 
-      const response = await makeGraphqlAPIRequest(deleteGraphqlOperation);
+      const response = await makeGraphqlApiRequest(deleteGraphqlOperation);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.deletePerson).toBeDefined();
@@ -91,7 +91,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlApiRequest(createGraphqlOperation);
 
       const deleteGraphqlOperation = deleteOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -99,7 +99,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
         recordId: personId,
       });
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
+      const response = await makeGraphqlApiRequestWithApiKey(
         deleteGraphqlOperation,
       );
 
