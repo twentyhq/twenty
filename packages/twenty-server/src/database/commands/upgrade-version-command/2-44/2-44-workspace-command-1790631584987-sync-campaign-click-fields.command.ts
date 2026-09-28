@@ -9,6 +9,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -56,12 +57,37 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatFieldMetadataMaps, flatViewMaps, flatViewFieldMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-        'flatViewMaps',
-        'flatViewFieldMaps',
-      ]);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFieldMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatViewMaps',
+      'flatViewFieldMaps',
+    ]);
+
+    const hasCampaignObjects = [
+      CAMPAIGN.universalIdentifier,
+      DELIVERY.universalIdentifier,
+    ].every((universalIdentifier) =>
+      isDefined(
+        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier,
+        }),
+      ),
+    );
+
+    if (!hasCampaignObjects) {
+      this.logger.log(
+        `Campaign objects do not exist for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
