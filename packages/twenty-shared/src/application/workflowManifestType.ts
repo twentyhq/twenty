@@ -91,19 +91,18 @@ export const workflowManifestSchema = z
         (step.input.initialLoopStepIds ?? []).forEach((nextId) =>
           visit(nextId, [...enclosingIterators, id], id),
         );
-        step.nextStepIds.forEach((nextId) =>
-          visit(nextId, enclosingIterators, id),
-        );
-      } else {
-        const destinations = graph.childrenByStepId.get(id) ?? [];
-        if (enclosingIterators.length > 0 && destinations.length === 0) {
-          context.addIssue({
-            code: 'custom',
-            message: `Loop body step ${id} must return to iterator ${enclosingIterators.at(-1)}`,
-          });
-        }
-        destinations.forEach((nextId) => visit(nextId, enclosingIterators, id));
       }
+      const destinations =
+        step?.type === 'ITERATOR'
+          ? step.nextStepIds
+          : (graph.childrenByStepId.get(id) ?? []);
+      if (enclosingIterators.length > 0 && destinations.length === 0) {
+        context.addIssue({
+          code: 'custom',
+          message: `Loop body step ${id} must return to iterator ${enclosingIterators.at(-1)}`,
+        });
+      }
+      destinations.forEach((nextId) => visit(nextId, enclosingIterators, id));
       visiting.delete(id);
       visited.add(visitKey);
     };

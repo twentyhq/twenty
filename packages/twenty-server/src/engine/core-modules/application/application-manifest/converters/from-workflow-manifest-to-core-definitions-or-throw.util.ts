@@ -2,7 +2,7 @@ import {
   buildWorkflowGraph,
   validateWorkflowVariableReferences,
 } from 'twenty-shared/workflow';
-import { fromWorkflowStepManifestToAction } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action.util';
+import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -80,7 +80,7 @@ export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
   }
 
   const steps = definition.version.steps.map((step, index) =>
-    fromWorkflowStepManifestToAction({ step, index, references }),
+    fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
   );
 
   const trigger = {

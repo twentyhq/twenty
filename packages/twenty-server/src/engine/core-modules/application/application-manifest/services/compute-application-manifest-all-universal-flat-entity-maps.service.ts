@@ -719,7 +719,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       if (
         inferDeletionFromMissingEntities &&
         isDefined(existing) &&
-        existing.workspaceWorkflowId === null &&
+        !isDefined(existing.workspaceWorkflowId) &&
         !declaredWorkflowIds.has(existing.universalIdentifier)
       ) {
         throw new ApplicationException(

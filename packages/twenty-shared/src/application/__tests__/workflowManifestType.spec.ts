@@ -54,6 +54,25 @@ describe('workflow manifest iterator cycles', () => {
       expect(result.error.message).toContain('must return to iterator');
   });
 
+  it('requires nested iterators to return to their enclosing iterator after completion', () => {
+    const nested = structuredClone(workflow);
+    const innerId = '77777777-7777-4777-8777-777777777777';
+    const outer = nested.version.steps[0];
+    if (outer.type !== 'ITERATOR') throw new Error('Expected iterator');
+    outer.input.initialLoopStepIds = [innerId];
+    nested.version.steps[1].nextStepIds = [innerId];
+    nested.version.steps.push({
+      universalIdentifier: innerId,
+      name: 'Inner loop',
+      type: 'ITERATOR',
+      input: { items: ['inner'], initialLoopStepIds: [delayId] },
+      nextStepIds: [],
+    });
+    expect(workflowManifestSchema.safeParse(nested).success).toBe(false);
+    nested.version.steps[3].nextStepIds = [iteratorId];
+    expect(workflowManifestSchema.safeParse(nested).success).toBe(true);
+  });
+
   it('rejects references to a missing step', () => {
     const invalid = structuredClone(workflow);
     const iterator = invalid.version.steps[0];

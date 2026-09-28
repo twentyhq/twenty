@@ -13,7 +13,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const fromWorkflowStepManifestToAction = ({
+export const fromWorkflowStepManifestToActionOrThrow = ({
   step,
   index,
   references,

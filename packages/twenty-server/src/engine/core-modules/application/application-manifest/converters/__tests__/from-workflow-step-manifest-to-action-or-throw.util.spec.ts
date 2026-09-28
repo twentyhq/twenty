@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { workflowStepManifestSchema } from 'twenty-shared/application';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { fromWorkflowStepManifestToAction } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action.util';
+import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
 
 const STEP_ID = '11111111-1111-4111-8111-111111111111';
 const REFERENCE_ID = '22222222-2222-4222-8222-222222222222';
@@ -142,7 +142,7 @@ const stepFor = (type: WorkflowActionType) =>
   });
 
 const convert = (type: WorkflowActionType) =>
-  fromWorkflowStepManifestToAction({
+  fromWorkflowStepManifestToActionOrThrow({
     step: stepFor(type),
     index: 0,
     references,
@@ -155,7 +155,7 @@ describe('application workflow actions', () => {
     step.input.objectRecord = { employees: 10 };
     step.input.fieldsToUpdate = ['employees'];
     expect(() =>
-      fromWorkflowStepManifestToAction({ step, index: 0, references }),
+      fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references }),
     ).toThrow('unknown record field employees');
   });
 
@@ -166,7 +166,7 @@ describe('application workflow actions', () => {
       if (step.type !== 'UPDATE_RECORD') throw new Error('Expected update');
       step.input.fieldsToUpdate = fieldsToUpdate;
       expect(() =>
-        fromWorkflowStepManifestToAction({ step, index: 0, references }),
+        fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references }),
       ).toThrow('fieldsToUpdate');
     },
   );
@@ -174,7 +174,7 @@ describe('application workflow actions', () => {
   it('derives a nested code output schema from an expected result', () => {
     const step = stepFor(WorkflowActionType.CODE);
     step.expectedOutputSchema = { company: { name: 'Example' }, count: 2 };
-    const result = fromWorkflowStepManifestToAction({
+    const result = fromWorkflowStepManifestToActionOrThrow({
       step,
       index: 0,
       references,
@@ -194,7 +194,7 @@ describe('application workflow actions', () => {
         value: null,
       },
     };
-    const result = fromWorkflowStepManifestToAction({
+    const result = fromWorkflowStepManifestToActionOrThrow({
       step: stepFor(WorkflowActionType.LOGIC_FUNCTION),
       index: 0,
       references: {
@@ -254,14 +254,14 @@ describe('application workflow actions', () => {
 
   it('rejects unavailable metadata and fields from another object', () => {
     expect(() =>
-      fromWorkflowStepManifestToAction({
+      fromWorkflowStepManifestToActionOrThrow({
         step: stepFor(WorkflowActionType.AI_AGENT),
         index: 0,
         references: { ...references, agentIdByUniversalIdentifier: new Map() },
       }),
     ).toThrow('missing application agent');
     expect(() =>
-      fromWorkflowStepManifestToAction({
+      fromWorkflowStepManifestToActionOrThrow({
         step: stepFor(WorkflowActionType.FIND_RECORDS),
         index: 0,
         references: {
@@ -300,7 +300,7 @@ describe('application workflow actions', () => {
         continueOnFailure: { value: true },
       },
     };
-    const action = fromWorkflowStepManifestToAction({
+    const action = fromWorkflowStepManifestToActionOrThrow({
       step,
       index: 0,
       references,
