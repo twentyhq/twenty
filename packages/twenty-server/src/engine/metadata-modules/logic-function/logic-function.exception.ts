@@ -6,6 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
+  LOGIC_FUNCTION_FORBIDDEN = 'LOGIC_FUNCTION_FORBIDDEN',
   LOGIC_FUNCTION_ALREADY_EXIST = 'LOGIC_FUNCTION_ALREADY_EXIST',
   LOGIC_FUNCTION_NOT_READY = 'LOGIC_FUNCTION_NOT_READY',
   LOGIC_FUNCTION_BUILDING = 'LOGIC_FUNCTION_BUILDING',
@@ -29,6 +30,8 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
   switch (code) {
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return msg`Function not found.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN:
+      return msg`You are not allowed to access this function.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_ALREADY_EXIST:
       return msg`A function with this name already exists.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY:

@@ -262,6 +262,7 @@ type LogicFunction {
   universalIdentifier: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+  canRunOnDemand: Boolean
 }
 
 enum LogicFunctionExecutionMode {
