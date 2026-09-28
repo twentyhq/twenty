@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { syncWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-run-record-shares.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -32,6 +35,8 @@ export class WorkflowRunWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async createCoreWorkflowRun({
@@ -101,6 +106,14 @@ export class WorkflowRunWorkspaceService {
         position,
         state: this.getInitState({ trigger, steps }, triggerPayload, error),
         enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
+      });
+
+      // A run is a private record written by the system, so nobody reads it
+      // until it carries its workflow's grants.
+      await syncWorkflowRunRecordShares({
+        manager: this.coreDataSource.manager,
+        workspaceId,
+        workflowRunIds: [id],
       });
 
       return id;

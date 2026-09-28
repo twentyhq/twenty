@@ -42,10 +42,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Workflow index page`,
     description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
   },
-  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: {
-    label: msg`Record sharing`,
-    description: msg`Allow sharing individual records with workspace members.`,
-  },
   [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
     label: msg`AI chat sharing dropdown`,
     description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,

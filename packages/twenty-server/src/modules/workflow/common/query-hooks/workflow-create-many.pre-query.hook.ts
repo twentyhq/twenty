@@ -3,13 +3,12 @@ import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-re
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { withNewWorkflowShareWith } from 'src/modules/workflow/common/utils/with-new-workflow-share-with.util';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @WorkspaceQueryHook(`workflow.createMany`)
 export class WorkflowCreateManyPreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(
-    authContext: WorkspaceAuthContext,
+    _authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: CreateManyResolverArgs<WorkflowWorkspaceEntity>,
   ): Promise<CreateManyResolverArgs<WorkflowWorkspaceEntity>> {
@@ -24,12 +23,9 @@ export class WorkflowCreateManyPreQueryHook implements WorkspacePreQueryHookInst
       return workflowWithoutStatuses as WorkflowWorkspaceEntity;
     });
 
-    return withNewWorkflowShareWith({
-      authContext,
-      payload: {
-        ...payload,
-        data: sanitizedData,
-      },
-    });
+    return {
+      ...payload,
+      data: sanitizedData,
+    };
   }
 }
