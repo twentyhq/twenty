@@ -19,7 +19,7 @@ const normalizeLeafValue = (value: unknown): unknown => {
 
 const isPlainObject = (value: unknown): value is EvaluationContainer =>
   typeof value === 'object' &&
-  value !== null &&
+  isDefined(value) &&
   !Array.isArray(value) &&
   !(value instanceof Date);
 
@@ -93,7 +93,7 @@ export const buildValidationRuleEvaluationContext = ({
     const segments = path.split('.');
     const [rootSegment] = segments;
 
-    if (rootSegment === undefined) {
+    if (!isDefined(rootSegment)) {
       continue;
     }
 
@@ -114,7 +114,7 @@ export const buildValidationRuleEvaluationContext = ({
     let container: EvaluationContainer | null = context;
 
     for (const [index, segment] of segments.entries()) {
-      if (container === null) {
+      if (!isDefined(container)) {
         break;
       }
 
@@ -127,7 +127,7 @@ export const buildValidationRuleEvaluationContext = ({
 
       const nextSegment = segments[index + 1];
 
-      if (index === 0 && container !== null && nextSegment !== undefined) {
+      if (index === 0 && isDefined(container) && isDefined(nextSegment)) {
         const targetField = rootField?.relationTargetFields?.find(
           (field) => field.name === nextSegment,
         );

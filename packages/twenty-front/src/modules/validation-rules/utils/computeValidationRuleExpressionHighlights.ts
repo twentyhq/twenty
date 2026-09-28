@@ -1,6 +1,9 @@
 import { VALIDATION_RULE_FUNCTIONS } from 'twenty-shared/constants';
 import { type ValidationRuleExpressionToken } from 'twenty-shared/types';
-import { tokenizeValidationRuleExpression } from 'twenty-shared/utils';
+import {
+  isDefined,
+  tokenizeValidationRuleExpression,
+} from 'twenty-shared/utils';
 
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import {
@@ -40,5 +43,7 @@ export const computeValidationRuleExpressionHighlights = (
   tokenizeValidationRuleExpression(expression).flatMap((token) => {
     const kind = getHighlightKind(token);
 
-    return kind === null ? [] : [{ kind, start: token.start, end: token.end }];
+    return isDefined(kind)
+      ? [{ kind, start: token.start, end: token.end }]
+      : [];
   });

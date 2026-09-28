@@ -6,7 +6,7 @@ import {
 } from '@/utils/validation-rule/validationRuleValueRegistry';
 
 export const isValidationRuleValueEmpty = (value: unknown): boolean => {
-  if (value === null || value === undefined || value === '') {
+  if (!isDefined(value) || value === '') {
     return true;
   }
 

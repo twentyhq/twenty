@@ -1,4 +1,5 @@
 import { type ValidationRuleExpressionToken } from '@/types/ValidationRuleExpressionToken';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const PATH_PATTERN = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*/;
 const NUMBER_PATTERN = /^\d+(?:\.\d+)?/;
@@ -46,7 +47,7 @@ const readToken = (
   for (const [type, pattern] of patternMatches) {
     const match = rest.match(pattern);
 
-    if (match !== null) {
+    if (isDefined(match)) {
       return { type, end: start + match[0].length };
     }
   }

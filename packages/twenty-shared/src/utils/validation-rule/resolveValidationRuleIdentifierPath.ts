@@ -4,6 +4,7 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { isDefined } from '@/utils/validation/isDefined';
 
 type ResolveValidationRuleIdentifierPathResult =
   | { isResolved: true; bindings: ValidationRuleBindings }
@@ -24,7 +25,7 @@ const resolveSubfieldSegments = ({
 
   const compositeType = compositeTypeDefinitions.get(field.type);
 
-  if (compositeType === undefined || subfieldSegments.length > 1) {
+  if (!isDefined(compositeType) || subfieldSegments.length > 1) {
     return `"${path}" goes deeper than the field "${field.name}" allows`;
   }
 
@@ -46,7 +47,7 @@ export const resolveValidationRuleIdentifierPath = ({
 }): ResolveValidationRuleIdentifierPathResult => {
   const [rootSegment, ...memberSegments] = path.split('.');
 
-  if (rootSegment === undefined) {
+  if (!isDefined(rootSegment)) {
     return { isResolved: false, errorMessage: `"${path}" is not a value` };
   }
 
@@ -58,7 +59,7 @@ export const resolveValidationRuleIdentifierPath = ({
 
   const rootField = fields.find((field) => field.name === rootSegment);
 
-  if (rootField === undefined) {
+  if (!isDefined(rootField)) {
     return {
       isResolved: false,
       errorMessage: `Unknown field "${rootSegment}"`,
@@ -76,7 +77,7 @@ export const resolveValidationRuleIdentifierPath = ({
       path,
     });
 
-    return subfieldError === null
+    return !isDefined(subfieldError)
       ? {
           isResolved: true,
           bindings: { [rootSegment]: rootField.universalIdentifier },
@@ -87,7 +88,7 @@ export const resolveValidationRuleIdentifierPath = ({
   if (
     rootField.type === FieldMetadataType.MORPH_RELATION ||
     rootField.relationType !== RelationType.MANY_TO_ONE ||
-    rootField.relationTargetFields === undefined
+    !isDefined(rootField.relationTargetFields)
   ) {
     return {
       isResolved: false,
@@ -97,7 +98,7 @@ export const resolveValidationRuleIdentifierPath = ({
 
   const [targetFieldSegment, ...targetSubfieldSegments] = memberSegments;
 
-  if (targetFieldSegment === undefined) {
+  if (!isDefined(targetFieldSegment)) {
     return {
       isResolved: true,
       bindings: { [rootSegment]: rootField.universalIdentifier },
@@ -108,7 +109,7 @@ export const resolveValidationRuleIdentifierPath = ({
     (field) => field.name === targetFieldSegment,
   );
 
-  if (targetField === undefined) {
+  if (!isDefined(targetField)) {
     return {
       isResolved: false,
       errorMessage: `Unknown field "${targetFieldSegment}" on "${rootSegment}"`,
@@ -131,7 +132,7 @@ export const resolveValidationRuleIdentifierPath = ({
     path,
   });
 
-  return subfieldError === null
+  return !isDefined(subfieldError)
     ? {
         isResolved: true,
         bindings: {
