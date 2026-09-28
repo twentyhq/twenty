@@ -41,7 +41,8 @@ const StyledContainer = styled.div`
 type AiChatThreadRecordTargetsContentProps = {
   threadId: string;
   instanceId: string;
-  junctionConfig: ObjectMorphJunctionConfig & ValidJunctionConfig;
+  junctionConfig: Pick<ObjectMorphJunctionConfig, 'junctionField'> &
+    ValidJunctionConfig;
 };
 
 export const AiChatThreadRecordTargetsContent = ({
@@ -100,9 +101,7 @@ export const AiChatThreadRecordTargetsContent = ({
     return null;
   }
 
-  const junctionRecords = thread[junctionFieldName] as
-    | ObjectRecord[]
-    | undefined;
+  const junctionRecords: ObjectRecord[] | undefined = thread[junctionFieldName];
 
   const targetRecords = extractTargetRecordsFromJunction({
     junctionRecords,
@@ -122,7 +121,7 @@ export const AiChatThreadRecordTargetsContent = ({
   // A workflow run's conversation belongs to the run, and the server refuses
   // to file it under anything else.
   const canEditRecordTargets =
-    permissions?.canUpdate === true && !isDefined(thread.workflowRunId);
+    (permissions?.canUpdate ?? false) && !isDefined(thread.workflowRunId);
 
   if (targetRecords.length === 0 && !canEditRecordTargets) {
     return null;

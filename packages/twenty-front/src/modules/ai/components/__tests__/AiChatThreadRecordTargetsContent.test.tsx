@@ -15,6 +15,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -23,9 +24,10 @@ const ACME_ID = '20202020-0000-4000-8000-000000000002';
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 // Any relation to company stands in for the thread target's company leg.
-const companyTargetField = personObjectMetadataItem.fields.find(
-  ({ name }) => name === 'company',
-);
+const companyTargetField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personObjectMetadataItem,
+  fieldName: 'company',
+});
 
 const attachChatThreadToRecord = jest.fn(() => Promise.resolve());
 const detachChatThreadFromRecord = jest.fn(() => Promise.resolve());
@@ -87,15 +89,15 @@ jest.mock(
   }),
 );
 
-const JUNCTION_CONFIG = {
+const JUNCTION_CONFIG: ComponentProps<
+  typeof AiChatThreadRecordTargetsContent
+>['junctionConfig'] = {
   junctionObjectMetadata: personObjectMetadataItem,
-  junctionField: { name: 'recordTargets' },
+  junctionField: { ...companyTargetField, name: 'recordTargets' },
   targetFields: [companyTargetField],
   isMorphRelation: true,
   isValid: true,
-} as unknown as ComponentProps<
-  typeof AiChatThreadRecordTargetsContent
->['junctionConfig'];
+};
 
 const EDITABLE_PERMISSIONS = {
   canRead: true,
