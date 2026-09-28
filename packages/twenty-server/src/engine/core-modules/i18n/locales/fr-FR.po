@@ -13107,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Le champ mis à jour n'est ni une relation morph ni une relation"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Impossible d'accéder à l'historique IA. Veuillez réessayer."

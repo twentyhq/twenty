@@ -13107,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Aktualizované pole není polymorfní relací ani běžnou relací"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Nelze získat přístup k historii AI. Zkuste to prosím znovu."

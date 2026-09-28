@@ -2508,11 +2508,6 @@ msgstr "Autoriser l’accès aux médias pour {applicationName} ?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Autoriser la connexion via Microsoft pour les utilisateurs avec des permissions de contournement du SSO."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Autoriser le partage d’enregistrements individuels avec les membres de l’espace de travail."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "Étiquette d'enregistrement"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Page d'enregistrement"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Partage d’enregistrements"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

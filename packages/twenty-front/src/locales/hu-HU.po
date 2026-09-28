@@ -2508,11 +2508,6 @@ msgstr "Engedélyezi a média hozzáférését a(z) {applicationName} számára?
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Engedélyezze a Microsoft-alapú bejelentkezést az SSO megkerülési engedéllyel rendelkező felhasználók számára."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Egyes rekordok megosztásának engedélyezése a munkaterület tagjaival."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "Felvétel címkéje"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Rekordoldal"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Rekordmegosztás"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
