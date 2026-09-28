@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isObjectSyncedFromConnectedAccounts } from 'twenty-shared/workflow';
 
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 import {
@@ -71,6 +72,8 @@ export class UpdateRecordService {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           fieldNames: Object.keys(filteredObjectRecord),
+          workspaceCustomApplicationId:
+            authContext.workspace.workspaceCustomApplicationId,
         })
       ) {
         throw new RecordCrudException(
@@ -102,6 +105,18 @@ export class UpdateRecordService {
         );
 
       this.logger.log(`Record updated successfully in ${objectName}`);
+
+      if (
+        isObjectSyncedFromConnectedAccounts({
+          nameSingular: flatObjectMetadata.nameSingular,
+        })
+      ) {
+        return {
+          success: true,
+          message: `Record updated successfully in ${objectName}`,
+          result: { id: objectRecordId },
+        };
+      }
 
       return {
         success: true,

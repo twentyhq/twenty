@@ -1,4 +1,3 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { canFieldsBeUpdatedByAutomation } from 'src/engine/core-modules/record-crud/utils/can-fields-be-updated-by-automation.util';
@@ -7,15 +6,16 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER = 'workspace-custom-application';
+const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
+const STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
+const INSTALLED_APPLICATION_ID = 'installed-application-id';
 
 const companyName = getFlatFieldMetadataMock({
   universalIdentifier: 'company-name',
   objectMetadataId: 'company',
   type: FieldMetadataType.TEXT,
   name: 'name',
-  applicationUniversalIdentifier:
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationId: STANDARD_APPLICATION_ID,
 });
 
 const messageThreadSubject = getFlatFieldMetadataMock({
@@ -23,8 +23,7 @@ const messageThreadSubject = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.TEXT,
   name: 'subject',
-  applicationUniversalIdentifier:
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationId: STANDARD_APPLICATION_ID,
 });
 
 const messageThreadCategory = getFlatFieldMetadataMock({
@@ -32,7 +31,7 @@ const messageThreadCategory = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.SELECT,
   name: 'category',
-  applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
 });
 
 const messageThreadDeal = getFlatFieldMetadataMock({
@@ -40,8 +39,16 @@ const messageThreadDeal = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.RELATION,
   name: 'deal',
-  applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
   settings: { relationType: RelationType.MANY_TO_ONE },
+});
+
+const messageThreadSyncCursor = getFlatFieldMetadataMock({
+  universalIdentifier: 'message-thread-sync-cursor',
+  objectMetadataId: 'messageThread',
+  type: FieldMetadataType.TEXT,
+  name: 'syncCursor',
+  applicationId: INSTALLED_APPLICATION_ID,
 });
 
 const workspaceMemberCategory = getFlatFieldMetadataMock({
@@ -49,7 +56,7 @@ const workspaceMemberCategory = getFlatFieldMetadataMock({
   objectMetadataId: 'workspaceMember',
   type: FieldMetadataType.SELECT,
   name: 'category',
-  applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
 });
 
 const flatFieldMetadatas = [
@@ -57,6 +64,7 @@ const flatFieldMetadatas = [
   messageThreadSubject,
   messageThreadCategory,
   messageThreadDeal,
+  messageThreadSyncCursor,
   workspaceMemberCategory,
 ];
 
@@ -89,6 +97,7 @@ const FLAT_OBJECT_METADATA_BY_NAME = {
       messageThreadSubject.id,
       messageThreadCategory.id,
       messageThreadDeal.id,
+      messageThreadSyncCursor.id,
     ],
   }),
   workspaceMember: getFlatObjectMetadataMock({
@@ -104,6 +113,7 @@ describe('canFieldsBeUpdatedByAutomation', () => {
     ['messageThread', ['category'], true],
     ['messageThread', ['dealId'], true],
     ['messageThread', ['subject'], false],
+    ['messageThread', ['syncCursor'], false],
     ['messageThread', ['category', 'subject'], false],
     ['messageThread', ['unknownField'], false],
     ['messageThread', [], false],
@@ -116,6 +126,7 @@ describe('canFieldsBeUpdatedByAutomation', () => {
           flatObjectMetadata: FLAT_OBJECT_METADATA_BY_NAME[objectName],
           flatFieldMetadataMaps,
           fieldNames,
+          workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
         }),
       ).toBe(expected);
     },

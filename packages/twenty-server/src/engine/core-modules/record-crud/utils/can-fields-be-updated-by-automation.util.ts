@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
   canObjectBeManagedByAutomation,
-  OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS,
+  isObjectSyncedFromConnectedAccounts,
 } from 'twenty-shared/workflow';
 
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
@@ -9,16 +9,17 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 
 export const canFieldsBeUpdatedByAutomation = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   fieldNames,
+  workspaceCustomApplicationId,
 }: {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   fieldNames: string[];
+  workspaceCustomApplicationId: string;
 }): boolean => {
   if (
     canObjectBeManagedByAutomation({
@@ -28,12 +29,12 @@ export const canFieldsBeUpdatedByAutomation = ({
     return true;
   }
 
-  const isObjectSyncedFromConnectedAccounts =
-    OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS.some(
-      (nameSingular) => nameSingular === flatObjectMetadata.nameSingular,
-    );
-
-  if (!isObjectSyncedFromConnectedAccounts || fieldNames.length === 0) {
+  if (
+    !isObjectSyncedFromConnectedAccounts({
+      nameSingular: flatObjectMetadata.nameSingular,
+    }) ||
+    fieldNames.length === 0
+  ) {
     return false;
   }
 
@@ -52,7 +53,8 @@ export const canFieldsBeUpdatedByAutomation = ({
     });
 
     return (
-      isDefined(fieldMetadata) && !belongsToTwentyStandardApp(fieldMetadata)
+      isDefined(fieldMetadata) &&
+      fieldMetadata.applicationId === workspaceCustomApplicationId
     );
   });
 };
