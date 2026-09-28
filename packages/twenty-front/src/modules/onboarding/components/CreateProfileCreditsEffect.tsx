@@ -6,10 +6,13 @@ import { getCreateProfileCreditsReward } from '@/onboarding/utils/getCreateProfi
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CreateProfileCreditsEffect = () => {
   const store = useStore();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const isOnboardingConfigLoaded = isDefined(
+    useAtomStateValue(onboardingConfigState),
+  );
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
 
   useEffect(() => {
@@ -18,10 +21,10 @@ export const CreateProfileCreditsEffect = () => {
       getCreateProfileCreditsReward({
         currentUser: store.get(currentUserState.atom),
         currentWorkspaceMember: store.get(currentWorkspaceMemberState.atom),
-        onboardingConfig,
+        onboardingConfig: store.get(onboardingConfigState.atom),
       }),
     );
-  }, [onboardingConfig, setOnboardingStepFreeCredits, store]);
+  }, [isOnboardingConfigLoaded, setOnboardingStepFreeCredits, store]);
 
   return null;
 };

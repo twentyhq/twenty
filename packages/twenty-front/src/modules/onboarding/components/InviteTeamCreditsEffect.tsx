@@ -6,10 +6,13 @@ import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const InviteTeamCreditsEffect = () => {
   const store = useStore();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const isOnboardingConfigLoaded = isDefined(
+    useAtomStateValue(onboardingConfigState),
+  );
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
 
   useEffect(() => {
@@ -19,10 +22,10 @@ export const InviteTeamCreditsEffect = () => {
         invitedTeammatesCount: getValidInviteEmails(
           store.get(onboardingInviteTeamEmailsDraftState.atom) ?? [],
         ).length,
-        onboardingConfig,
+        onboardingConfig: store.get(onboardingConfigState.atom),
       }),
     );
-  }, [onboardingConfig, setOnboardingStepFreeCredits, store]);
+  }, [isOnboardingConfigLoaded, setOnboardingStepFreeCredits, store]);
 
   return null;
 };

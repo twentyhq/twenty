@@ -17,13 +17,15 @@ export const getOnboardingCreditsRewardAriaLabel = ({
     return undefined;
   }
 
-  return isRewardPerItem
-    ? plural(creditsReward, {
-        one: `${label}, earn ${formattedCreditsReward} free credit each`,
-        other: `${label}, earn ${formattedCreditsReward} free credits each`,
-      })
-    : plural(creditsReward, {
-        one: `${label}, earn ${formattedCreditsReward} free credit`,
-        other: `${label}, earn ${formattedCreditsReward} free credits`,
-      });
+  if (isRewardPerItem) {
+    return plural(creditsReward, {
+      one: `${label}, earn ${formattedCreditsReward} free credit each`,
+      other: `${label}, earn ${formattedCreditsReward} free credits each`,
+    });
+  }
+
+  return plural(creditsReward, {
+    one: `${label}, earn ${formattedCreditsReward} free credit`,
+    other: `${label}, earn ${formattedCreditsReward} free credits`,
+  });
 };
