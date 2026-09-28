@@ -18,7 +18,6 @@ import {
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { type JsonValue } from 'type-fest';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -314,7 +313,7 @@ export const LogConsoleDetailPanel = () => {
           />
           <StyledRawEvent>
             <JsonTree
-              value={rawEvent as JsonValue}
+              value={rawEvent}
               emptyArrayLabel={t`Empty Array`}
               emptyObjectLabel={t`Empty Object`}
               emptyStringLabel={t`[empty string]`}

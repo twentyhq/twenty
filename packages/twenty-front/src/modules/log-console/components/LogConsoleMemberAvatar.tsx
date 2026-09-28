@@ -18,7 +18,7 @@ export const LogConsoleMemberAvatar = ({
     shape={isNonEmptyString(member.workspaceMemberId) ? 'circle' : 'square'}
     name={member.name}
     Icon={
-      member.isSupportTeam === true
+      member.isSupportTeam
         ? IconLifebuoy
         : getActorSourceIcon({ source: member.source, context: member.context })
     }

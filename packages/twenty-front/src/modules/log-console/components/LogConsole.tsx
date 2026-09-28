@@ -1,12 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useReducedMotion } from 'framer-motion';
-import {
-  type TransitionEvent,
-  useEffect,
-  useSyncExternalStore,
-  useState,
-} from 'react';
+import { type TransitionEvent, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton, useToast } from 'twenty-ui/components';
 import {
@@ -263,7 +258,7 @@ export const LogConsole = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { enqueueToast } = useToast();
-  const shouldReduceMotion = useReducedMotion() === true;
+  const shouldReduceMotion = useReducedMotion();
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -321,15 +316,13 @@ export const LogConsole = () => {
   const displayedLayout = isVisible ? { isOpen, isFullScreen } : renderedLayout;
   const isExiting = !isVisible && isDefined(renderedLayout);
 
-  if (displayedLayout?.isOpen === true && !isBodyMounted) {
+  if (displayedLayout?.isOpen && !isBodyMounted) {
     setIsBodyMounted(true);
   }
 
-  useEffect(() => {
-    if (!isDefined(logConsoleSelectedLog)) {
-      setIsDetailPanelResizing(false);
-    }
-  }, [logConsoleSelectedLog]);
+  if (!isDefined(logConsoleSelectedLog) && isDetailPanelResizing) {
+    setIsDetailPanelResizing(false);
+  }
 
   const windowHeight = useSyncExternalStore(
     subscribeToWindowResize,
