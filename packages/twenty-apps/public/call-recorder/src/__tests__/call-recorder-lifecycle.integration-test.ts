@@ -557,6 +557,16 @@ class FakeRecallApi {
       return new Response(null, { status: 204 });
     }
 
+    if (method === 'PATCH' && botIdMatch !== null) {
+      const bot = this.bots.get(botIdMatch[1]);
+
+      if (bot === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      return jsonResponse(200, { id: bot.id });
+    }
+
     if (
       method === 'POST' &&
       /\/recording\/[^/]+\/create_transcript\/$/.test(requestUrl)
@@ -2698,6 +2708,53 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording).toBeDefined();
       expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
       expect(callRecording.externalBotId).toBeTruthy();
+    });
+
+    it('uses four Core API calls for a batch of meetings that already have bots', async () => {
+      const calendarEventIds = [
+        await createCalendarEvent(),
+        await createCalendarEvent(),
+        await createCalendarEvent(),
+      ];
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds,
+      });
+
+      const interceptedFetch = globalThis.fetch;
+      const twentyGraphqlRequestBodies: unknown[] = [];
+
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          if (String(input) === `${process.env.TWENTY_API_URL}/graphql`) {
+            twentyGraphqlRequestBodies.push(init?.body);
+          }
+
+          return interceptedFetch(input, init);
+        },
+      );
+
+      const result = await deliverCalendarEventUpdates(
+        ...calendarEventIds.map((calendarEventId) => ({
+          calendarEventId,
+          updatedFields: ['endsAt'],
+          before: { endsAt: inTwoHours() },
+          after: { endsAt: inTwoHours() },
+        })),
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          reconciliationResults: [
+            expect.objectContaining({ action: 'UPDATED' }),
+            expect.objectContaining({ action: 'UPDATED' }),
+            expect.objectContaining({ action: 'UPDATED' }),
+          ],
+        }),
+      );
+      expect(twentyGraphqlRequestBodies).toHaveLength(4);
     });
 
     it('schedules a bot when a user sets On on an eligible meeting that has none yet', async () => {
