@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingConstructionSite } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSite';
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { PrefetchBookCallStepEffect } from '@/onboarding/effect-components/PrefetchBookCallStepEffect';
@@ -33,6 +34,7 @@ export const OnboardingStepLayout = () => {
       }
       isBackDisabled={isGoingBackToPreviousOnboardingStep}
       freeCredits={isDefined(onboardingConfig) ? freeCreditsTotal : undefined}
+      backgroundComponent={<OnboardingConstructionSite />}
     >
       <PrefetchBookCallStepEffect />
       <PrefetchPlanRequiredStepEffect />
