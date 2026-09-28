@@ -121,7 +121,7 @@ export class AdminPanelGlobalChatThreadsService {
             FROM ${table('agentChatThread')} thread
             JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
             LEFT JOIN ${escapeIdentifier(getWorkspaceSchemaName(workspaceIds[0]))}."workspaceMember" member ON member.id = thread."workspaceMemberId"
-            LEFT JOIN core."userWorkspace" membership ON membership."userId" = member."userId" AND membership."workspaceId" = workspace.id
+            LEFT JOIN core."userWorkspace" membership ON membership."userId" = member."userId" AND membership."workspaceId" = workspace.id AND membership."deletedAt" IS NULL
             LEFT JOIN core."user" owner ON owner.id = member."userId"
             WHERE true
               AND ($4::text IS NULL OR workspace."displayName" ILIKE $4 OR owner.email ILIKE $4 OR thread.id::text ILIKE $4)

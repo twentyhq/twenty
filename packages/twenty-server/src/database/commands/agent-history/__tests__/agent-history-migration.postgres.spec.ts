@@ -240,12 +240,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             workspaceId: string;
             threadId: string;
           }) => threads.findOne(workspaceId, { where: { id: threadId } }),
-          getAuthContext: jest
-            .fn()
-            .mockResolvedValue({
-              userWorkspaceId: OWNER_ID,
-              workspaceMemberId: MEMBER_ID,
-            }),
+          getAuthContext: jest.fn().mockResolvedValue({
+            userWorkspaceId: OWNER_ID,
+            workspaceMemberId: MEMBER_ID,
+          }),
           getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
         } as never,
       );
@@ -256,12 +254,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         threads,
         createChatService(messageRepository),
         {
-          resolveWorkspaceMember: jest
-            .fn()
-            .mockResolvedValue({
-              userWorkspaceId: OWNER_ID,
-              workspaceMemberId: MEMBER_ID,
-            }),
+          resolveWorkspaceMember: jest.fn().mockResolvedValue({
+            userWorkspaceId: OWNER_ID,
+            workspaceMemberId: MEMBER_ID,
+          }),
         } as never,
         {} as never,
         {} as never,
@@ -301,7 +297,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         await senderRunner.release();
       }
       await dataSource.query(
-        'CREATE TABLE core."userWorkspace" (id uuid PRIMARY KEY, "workspaceId" uuid, "userId" uuid); CREATE TABLE core.file (id uuid PRIMARY KEY, "workspaceId" uuid)',
+        'CREATE TABLE core."userWorkspace" (id uuid PRIMARY KEY, "workspaceId" uuid, "userId" uuid, "deletedAt" timestamptz); CREATE TABLE core.file (id uuid PRIMARY KEY, "workspaceId" uuid)',
       );
       await dataSource.query(
         'INSERT INTO core."userWorkspace" (id, "workspaceId") VALUES ($1, $2)',
@@ -1533,6 +1529,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       await storage.runReadOnlyReport(workspaceIds, async ({ partitions }) =>
         expect(partitions).toHaveLength(1),
+      );
+      await dataSource.query(
+        'INSERT INTO core."userWorkspace" (id, "workspaceId", "userId", "deletedAt") VALUES ($1, $2, $3, now())',
+        ['20202020-0000-4000-8000-000000009999', WORKSPACE_ID, OWNER_ID],
       );
       expect(await support.getGlobalChatThreads(options)).toMatchObject({
         totalCount: 1,
