@@ -2,8 +2,8 @@ import { type COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from '@/constants/Composit
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 
 export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {
-  [key in keyof typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES]: Record<
-    string,
+  [Key in keyof typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES]: Record<
+    keyof (typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES)[Key],
     string
   >;
 } = {
