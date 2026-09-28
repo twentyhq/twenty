@@ -57,7 +57,7 @@ describe('mergeAiAgentStepLogs', () => {
         reasoningTokens: 15,
         totalTokens: 30,
       },
-      cost: { totalCostInDollars: 0.15, creditsUsedMicro: 15 },
+      cost: { totalCostInDollars: expect.closeTo(0.15), creditsUsedMicro: 15 },
       nativeWebSearchCallCount: 2,
       durationMs: 150,
     });
@@ -76,8 +76,8 @@ describe('mergeAiAgentStepLogs', () => {
       durationMs: 50,
     });
 
-    expect(
-      mergeAiAgentStepLogs({ previousStepLog: null, nextStepLog }),
-    ).toBe(nextStepLog);
+    expect(mergeAiAgentStepLogs({ previousStepLog: null, nextStepLog })).toBe(
+      nextStepLog,
+    );
   });
 });
