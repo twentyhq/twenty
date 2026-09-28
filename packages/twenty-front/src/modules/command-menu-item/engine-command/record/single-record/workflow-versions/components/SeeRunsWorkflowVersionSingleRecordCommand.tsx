@@ -10,14 +10,15 @@ import { isDefined } from 'twenty-shared/utils';
 const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
   workflowId,
   recordId,
-  versionLabel,
 }: {
   workflowId: string;
   recordId: string;
-  versionLabel?: string;
 }) => {
   const isCore = useIsWorkflowCoreEnabled();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(
+    isCore ? recordId : undefined,
+  );
 
   if (isCore && !isDefined(workflowWithCurrentVersion)) {
     return null;
@@ -50,7 +51,9 @@ const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
               coreWorkflowId: {
                 [ViewFilterOperand.IS]: workflowWithCurrentVersion?.name,
               },
-              coreWorkflowVersionId: { [ViewFilterOperand.IS]: versionLabel },
+              coreWorkflowVersionId: {
+                [ViewFilterOperand.IS]: coreWorkflowVersion?.label,
+              },
             }
           : undefined,
       }}
@@ -90,7 +93,6 @@ export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
     <SeeRunsWorkflowVersionSingleRecordCommandContent
       workflowId={workflowId}
       recordId={workflowVersionId}
-      versionLabel={coreWorkflowVersion?.label}
     />
   );
 };

@@ -5,7 +5,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildWorkflowCommandMenuItemAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-44/utils/build-workflow-command-menu-item-availability-updates.util';
+import { buildDeactivateWorkflowAvailabilityUpdate } from 'src/database/commands/upgrade-version-command/2-44/utils/build-deactivate-workflow-availability-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -13,11 +13,11 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 @RegisteredWorkspaceCommand('2.44.0', 1790599725000)
 @Command({
-  name: 'upgrade:2-44:sync-workflow-command-menu-item-availability',
+  name: 'upgrade:2-44:sync-deactivate-workflow-availability',
   description:
-    'Offer Deactivate on active workflows that have a draft, and hide Add a Node when the workflow core index feature flag is enabled',
+    'Offer Deactivate on workflows that have an active version, including when they also have a draft',
 })
-export class SyncWorkflowCommandMenuItemAvailabilityCommand extends ProvisionedWorkspaceCommandRunner {
+export class SyncDeactivateWorkflowAvailabilityCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -47,20 +47,19 @@ export class SyncWorkflowCommandMenuItemAvailabilityCommand extends ProvisionedW
         'flatCommandMenuItemMaps',
       ]);
 
-    const commandMenuItemsToUpdate =
-      buildWorkflowCommandMenuItemAvailabilityUpdates({
-        flatCommandMenuItemsByUniversalIdentifier:
-          flatCommandMenuItemMaps.byUniversalIdentifier,
-        now: new Date().toISOString(),
-        direction,
-      });
+    const commandMenuItemsToUpdate = buildDeactivateWorkflowAvailabilityUpdate({
+      flatCommandMenuItemsByUniversalIdentifier:
+        flatCommandMenuItemMaps.byUniversalIdentifier,
+      now: new Date().toISOString(),
+      direction,
+    });
 
     if (!isNonEmptyArray(commandMenuItemsToUpdate)) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: updating ${commandMenuItemsToUpdate.length} workflow command menu item(s)`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: updating the Deactivate workflow command menu item`,
     );
 
     if (options.dryRun) {

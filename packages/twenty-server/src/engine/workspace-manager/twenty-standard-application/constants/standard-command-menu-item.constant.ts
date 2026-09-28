@@ -588,26 +588,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW,
     hotKeys: null,
   },
-  addNodeWorkflow: {
-    universalIdentifier: '818117fa-6cad-4ebc-83c1-40f4afc28d94',
-    label: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconPlus',
-    isPinned: true,
-    position: 30,
-    shortLabel: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt") and not featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.ADD_NODE_WORKFLOW,
-    hotKeys: null,
-  },
   tidyUpWorkflow: {
     universalIdentifier: '1f3a3cab-161a-4775-af47-11be4d0bf411',
     label: i18nLabel(
