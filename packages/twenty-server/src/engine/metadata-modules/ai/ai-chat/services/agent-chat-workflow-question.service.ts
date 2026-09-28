@@ -13,6 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type WorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import {
@@ -49,17 +50,13 @@ export class AgentChatWorkflowQuestionService {
     userWorkspaceId,
     workspaceId,
   }: {
-    thread: AgentChatThreadEntity;
+    thread: AgentChatThreadEntity & WorkflowRunThreadFields;
     messageId: string;
     answers: AskQuestionAnswer[];
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const { workflowRunId, workflowStepId } =
-      thread as AgentChatThreadEntity & {
-        workflowRunId?: string | null;
-        workflowStepId?: string | null;
-      };
+    const { workflowRunId, workflowStepId } = thread;
 
     if (!isNonEmptyString(workflowRunId) || !isNonEmptyString(workflowStepId)) {
       throw new AiException(
@@ -96,6 +93,7 @@ export class AgentChatWorkflowQuestionService {
     });
 
     let answerMessageId: string | undefined;
+    let isReleased = false;
 
     try {
       const answerMessage = await this.agentChatService.addMessage({
@@ -111,7 +109,7 @@ export class AgentChatWorkflowQuestionService {
 
       answerMessageId = answerMessage.id;
 
-      const isReleased =
+      isReleased =
         await this.workflowRunWorkspaceService.releaseStepAwaitingAnswer({
           stepId: workflowStepId,
           threadId: thread.id,
@@ -125,7 +123,26 @@ export class AgentChatWorkflowQuestionService {
           AiExceptionCode.QUESTION_NOT_PENDING,
         );
       }
+
+      // Re-executing the released step is what a retry does; the step is no
+      // longer awaiting a retry, so the retry path runs it without resetting
+      // it. Scheduling stays inside the rollback: a released step nobody
+      // schedules would leave the run waiting on an answer it already has.
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        { workspaceId, workflowRunId, stepIdsToRetry: [workflowStepId] },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
     } catch (error) {
+      if (isReleased) {
+        await this.workflowRunWorkspaceService.restoreStepAwaitingAnswer({
+          stepId: workflowStepId,
+          threadId: thread.id,
+          workflowRunId,
+          workspaceId,
+        });
+      }
+
       if (isDefined(answerMessageId)) {
         await this.messageRepository
           .delete(workspaceId, { id: answerMessageId })
@@ -147,14 +164,6 @@ export class AgentChatWorkflowQuestionService {
       workspaceId,
       { id: thread.id, activeStreamId: claimId },
       { activeStreamId: null },
-    );
-
-    // Re-executing the released step is what a retry does; the step is no
-    // longer awaiting a retry, so the retry path runs it without resetting it.
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RUN_WORKFLOW_JOB_NAME,
-      { workspaceId, workflowRunId, stepIdsToRetry: [workflowStepId] },
-      buildRunWorkflowJobOptions(workflowRunId),
     );
   }
 }
