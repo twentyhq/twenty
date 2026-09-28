@@ -25,7 +25,7 @@ import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -106,6 +106,7 @@ export const CreateProfile = () => {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { isValid, isSubmitting },
   } = useForm<Form>({
     mode: 'onChange',
@@ -117,9 +118,11 @@ export const CreateProfile = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  useEffect(() => {
-    setOnboardingStepFreeCredits('createProfile', isValid ? creditsReward : 0);
-  }, [isValid, creditsReward, setOnboardingStepFreeCredits]);
+  const setCreateProfileFreeCredits = (profile: Form) =>
+    setOnboardingStepFreeCredits(
+      'createProfile',
+      validationSchema.safeParse(profile).success ? creditsReward : 0,
+    );
 
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -243,7 +246,13 @@ export const CreateProfile = () => {
                       onBlur();
                       setIsEditingMode(false);
                     }}
-                    onChange={onChange}
+                    onChange={(firstName) => {
+                      onChange(firstName);
+                      setCreateProfileFreeCredits({
+                        ...getValues(),
+                        firstName,
+                      });
+                    }}
                     placeholder={t`Tim`}
                     error={error?.message}
                     fullWidth
@@ -267,7 +276,10 @@ export const CreateProfile = () => {
                       onBlur();
                       setIsEditingMode(false);
                     }}
-                    onChange={onChange}
+                    onChange={(lastName) => {
+                      onChange(lastName);
+                      setCreateProfileFreeCredits({ ...getValues(), lastName });
+                    }}
                     placeholder={t`Apple`}
                     error={error?.message}
                     fullWidth
