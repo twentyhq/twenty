@@ -1,6 +1,3 @@
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { WorkflowInputAskResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-input-ask.resolver';
-import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { Module } from '@nestjs/common';
 
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
@@ -9,10 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
 import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
+import { WorkflowInputAskResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-input-ask.resolver';
 import { WorkflowTriggerResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-trigger.resolver';
 import { WorkflowVersionEdgeResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-edge.resolver';
 import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver';
@@ -30,6 +29,7 @@ import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';

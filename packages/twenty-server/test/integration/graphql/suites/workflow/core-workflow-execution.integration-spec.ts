@@ -4,7 +4,11 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 import request from 'supertest';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  WorkflowVisibility,
+} from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -949,8 +953,109 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect((await assign(null, randomUUID())).body.errors).toBeDefined();
       expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
 
+      // Leaving the member out is not asking to unassign.
+      expect(
+        (
+          await workflowGraphqlRequest(
+            'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
+            { input: { inputAskId } },
+          )
+        ).body.errors,
+      ).toBeDefined();
+      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
       expect((await assign(null)).body.errors).toBeUndefined();
       expect(await readAssignee()).toBeNull();
+    });
+
+    it('is handed on only by and to someone who can read it, and only while it waits', async () => {
+      const finalStep = emptyStep();
+      const form = approvalForm([finalStep.id]);
+      const fixture = await createFixture({ steps: [form, finalStep] });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+
+      const [{ id: inputAskId }] = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
+        [runId],
+      );
+
+      const assignAs = (accessToken: string, workspaceMemberId: string) =>
+        request(`http://localhost:${APP_PORT}`)
+          .post('/graphql')
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            query:
+              'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
+            variables: { input: { inputAskId, workspaceMemberId } },
+          });
+
+      const setVisibility = async (visibility: WorkflowVisibility) =>
+        expect(
+          (
+            await workflowGraphqlRequest(
+              'mutation Visibility($input: UpdateCoreWorkflowVisibilityInput!) { updateCoreWorkflowVisibility(input: $input) { id } }',
+              { input: { coreWorkflowId: fixture.coreWorkflowId, visibility } },
+            )
+          ).body.errors,
+        ).toBeUndefined();
+
+      const readAssignee = async () =>
+        (
+          await global.testDataSource.query(
+            `SELECT "assigneeId" FROM "${schema}"."inputAsk" WHERE id = $1`,
+            [inputAskId],
+          )
+        )[0].assigneeId;
+
+      // Jony may assign Asks he can read, so what follows is about reading.
+      expect(
+        (
+          await assignAs(
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          )
+        ).body.errors,
+      ).toBeUndefined();
+
+      await setVisibility(WorkflowVisibility.PRIVATE);
+
+      expect(
+        (
+          await assignAs(
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          )
+        ).body.errors,
+      ).toBeDefined();
+      expect(
+        (
+          await assignAs(
+            APPLE_JANE_ADMIN_ACCESS_TOKEN,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          )
+        ).body.errors,
+      ).toBeDefined();
+      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+
+      await setVisibility(WorkflowVisibility.WORKSPACE);
+
+      expect(
+        (await submitForm({ runId, stepId: form.id, answer: 'Approved' })).body
+          .errors,
+      ).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+
+      expect(
+        (
+          await assignAs(
+            APPLE_JANE_ADMIN_ACCESS_TOKEN,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          )
+        ).body.errors,
+      ).toBeDefined();
+      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
     });
 
     it('resumes the run when recording the answer fails and records it once the run ends', async () => {

@@ -16,5 +16,5 @@ export class AssignInputAskInput {
   })
   @IsOptional()
   @IsUUID()
-  workspaceMemberId: string | null;
+  workspaceMemberId?: string | null;
 }

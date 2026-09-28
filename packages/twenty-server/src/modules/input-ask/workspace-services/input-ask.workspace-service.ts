@@ -22,7 +22,6 @@ import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enu
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const isDuplicateEntry = (error: unknown): boolean =>
   error instanceof TwentyOrmException &&
@@ -289,22 +288,54 @@ export class InputAskWorkspaceService {
 
   // Assigning is not answering: whoever may read an Ask may hand it to
   // someone else, but the Ask stays SYSTEM-writable so its status and
-  // response only ever change with what it gates.
+  // response only ever change with what it gates. An assignee who cannot read
+  // the Ask would never see it, and a closed Ask records who it waited on.
   async assign({
     workspaceId,
     inputAskId,
-    assigneeWorkspaceMemberId,
     authContext,
+    assignee,
   }: {
     workspaceId: string;
     inputAskId: string;
-    assigneeWorkspaceMemberId: string | null;
     authContext: WorkspaceAuthContext;
+    assignee: {
+      workspaceMemberId: string;
+      authContext: WorkspaceAuthContext;
+    } | null;
   }): Promise<boolean> {
     if (!(await this.hasInputAskObject(workspaceId))) {
       return false;
     }
 
+    if (!(await this.canRead({ inputAskId, authContext }))) {
+      return false;
+    }
+
+    if (
+      isDefined(assignee) &&
+      !(await this.canRead({ inputAskId, authContext: assignee.authContext }))
+    ) {
+      return false;
+    }
+
+    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      const updateResult = await inputAskRepository.update(
+        { id: inputAskId, status: InputAskStatus.PENDING },
+        { assigneeId: assignee?.workspaceMemberId ?? null },
+      );
+
+      return (updateResult.affected ?? 0) > 0;
+    });
+  }
+
+  private async canRead({
+    inputAskId,
+    authContext,
+  }: {
+    inputAskId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<boolean> {
     const readableInputAsk =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
@@ -316,30 +347,7 @@ export class InputAskWorkspaceService {
         authContext,
       );
 
-    if (!isDefined(readableInputAsk)) {
-      return false;
-    }
-
-    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      if (isDefined(assigneeWorkspaceMemberId)) {
-        const assignee = await this.workspaceOrmManager
-          .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
-            shouldBypassPermissionChecks: true,
-          })
-          .findOne({ where: { id: assigneeWorkspaceMemberId } });
-
-        if (!isDefined(assignee)) {
-          return false;
-        }
-      }
-
-      await inputAskRepository.update(
-        { id: inputAskId },
-        { assigneeId: assigneeWorkspaceMemberId },
-      );
-
-      return true;
-    });
+    return isDefined(readableInputAsk);
   }
 
   private async insertUnlessPresent({

@@ -24,6 +24,50 @@ export class UserWorkspaceAuthContextService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
+  // Checking what someone other than the caller can do starts from their
+  // member record rather than a session.
+  async resolveForWorkspaceMember({
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+  }) {
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
+
+    if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
+      return null;
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+      select: { id: true },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return null;
+    }
+
+    // A member who can no longer sign in is not the caller's authentication
+    // failing, so it must not surface as one.
+    try {
+      return await this.resolve({
+        workspaceId,
+        userWorkspaceId: userWorkspace.id,
+      });
+    } catch (error) {
+      if (error instanceof AuthException) {
+        return null;
+      }
+
+      throw error;
+    }
+  }
+
   // Queued work and subscriptions must rebuild their subject after membership changes.
   async resolve({
     workspaceId,
