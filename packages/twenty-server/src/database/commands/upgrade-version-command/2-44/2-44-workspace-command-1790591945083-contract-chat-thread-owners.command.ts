@@ -58,12 +58,15 @@ export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommand
       flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.agentChatThread.universalIdentifier
       ];
-    if (!isDefined(thread)) return;
+    if (!isDefined(thread)) {
+      return;
+    }
     const member = flatFieldMetadataMaps.byUniversalIdentifier[MEMBER_FIELD];
-    if (!isDefined(member))
+    if (!isDefined(member)) {
       throw new Error(
         'Complete the 2.43 workspace member owner expansion before contracting chat owners',
       );
+    }
     const legacy =
       flatFieldMetadataMaps.byUniversalIdentifier[
         LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
@@ -121,11 +124,13 @@ export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommand
           STANDARD_OBJECTS.agentChatThread.universalIdentifier
         ],
       )
-    )
+    ) {
       return;
+    }
     const member = flatFieldMetadataMaps.byUniversalIdentifier[MEMBER_FIELD];
-    if (!isDefined(member))
+    if (!isDefined(member)) {
       throw new Error('Chat workspace member owner field is missing');
+    }
     if (options.dryRun) {
       this.logger.log(
         `[DRY RUN] Would restore and backfill the legacy chat owner column in workspace ${workspaceId}; deleted orphan history cannot be recovered`,
@@ -189,8 +194,9 @@ export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommand
       restoredFields.byUniversalIdentifier[
         LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
       ];
-    if (!isDefined(restoredLegacy))
+    if (!isDefined(restoredLegacy)) {
       throw new Error('Legacy owner field was not restored');
+    }
     await this.migrate(workspaceId, {
       updateFields: [
         {
@@ -225,8 +231,9 @@ export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommand
         createIndexes.length +
         deleteIndexes.length ===
       0
-    )
+    ) {
       return;
+    }
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -252,9 +259,10 @@ export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommand
           },
         },
       );
-    if (result.status === 'fail')
+    if (result.status === 'fail') {
       throw new Error(
         `Failed to migrate chat owner metadata in workspace ${workspaceId}: ${JSON.stringify(result)}`,
       );
+    }
   }
 }
