@@ -1,6 +1,7 @@
 import { type ArrayFilter } from '@/types';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
+import { stripAccents } from '@/utils/filter/utils/stripAccents';
 
 export const isMatchingArrayFilter = ({
   arrayFilter,
@@ -26,11 +27,13 @@ export const isMatchingArrayFilter = ({
       }
 
       const regexCaseInsensitive = convertLikePatternToRegexOrThrow({
-        pattern: arrayFilter.containsIlike,
+        pattern: stripAccents(arrayFilter.containsIlike),
         isCaseInsensitive: true,
       });
 
-      return value.some((item) => regexCaseInsensitive.test(item));
+      return value.some((item) =>
+        regexCaseInsensitive.test(stripAccents(item)),
+      );
     }
     default: {
       throw new Error(
