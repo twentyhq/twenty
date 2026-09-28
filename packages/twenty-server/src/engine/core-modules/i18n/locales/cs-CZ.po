@@ -12261,6 +12261,16 @@ msgstr "Tento limit nelze uložit."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Tento limit se změnil, zatímco jste jej upravovali. Znovu načtěte stránku a zkuste to znovu."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr ""
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
