@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const CUSTOMER_NEEDS_AMOUNT_EXPRESSION =
@@ -10,7 +10,7 @@ const CUSTOMER_NEEDS_AMOUNT_EXPRESSION =
 const RULE_MESSAGE = 'A customer deal needs an amount';
 
 const createValidationRule = (input: Record<string, unknown>) =>
-  makeMetadataAPIRequest({
+  makeMetadataApiRequest({
     query: gql`
       mutation CreateValidationRule($input: CreateValidationRuleInput!) {
         createValidationRule(input: $input) {
@@ -22,7 +22,7 @@ const createValidationRule = (input: Record<string, unknown>) =>
   });
 
 const findOpportunitiesByName = async (name: string) => {
-  const response = await makeGraphqlAPIRequest({
+  const response = await makeGraphqlApiRequest({
     query: gql`
       query FindOpportunities($name: String!) {
         opportunities(filter: { name: { eq: $name } }) {
@@ -91,7 +91,7 @@ describe('Validation rules should be enforced on record writes', () => {
   });
 
   afterAll(async () => {
-    await makeMetadataAPIRequest({
+    await makeMetadataApiRequest({
       query: gql`
         mutation DeleteValidationRule($id: UUID!) {
           deleteValidationRule(id: $id) {
@@ -103,7 +103,7 @@ describe('Validation rules should be enforced on record writes', () => {
     });
 
     if (createdOpportunityIds.length > 0) {
-      await makeGraphqlAPIRequest({
+      await makeGraphqlApiRequest({
         query: gql`
           mutation DestroyOpportunities($ids: [UUID!]!) {
             destroyOpportunities(filter: { id: { in: $ids } }) {
@@ -128,7 +128,7 @@ describe('Validation rules should be enforced on record writes', () => {
   });
 
   it('should reject a create that violates the rule and report the field and input index', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         mutation {
           createOpportunity(
@@ -159,7 +159,7 @@ describe('Validation rules should be enforced on record writes', () => {
   });
 
   it('should accept a create that satisfies the rule', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         mutation {
           createOpportunity(
@@ -180,7 +180,7 @@ describe('Validation rules should be enforced on record writes', () => {
   });
 
   it('should reject the whole batch when one created record violates the rule', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         mutation {
           createOpportunities(
@@ -204,7 +204,7 @@ describe('Validation rules should be enforced on record writes', () => {
   });
 
   it('should reject a partial update that makes the record invalid and keep the stored row', async () => {
-    const createResponse = await makeGraphqlAPIRequest({
+    const createResponse = await makeGraphqlApiRequest({
       query: gql`
         mutation {
           createOpportunity(
@@ -220,7 +220,7 @@ describe('Validation rules should be enforced on record writes', () => {
 
     createdOpportunityIds.push(opportunityId);
 
-    const updateResponse = await makeGraphqlAPIRequest({
+    const updateResponse = await makeGraphqlApiRequest({
       query: gql`
         mutation UpdateOpportunity($id: UUID!) {
           updateOpportunity(id: $id, data: { stage: CUSTOMER }) {

@@ -41,7 +41,7 @@ const StyledName = styled.span`
   white-space: nowrap;
 `;
 
-const StyledExpression = styled(SettingsValidationRuleExpressionText)`
+const StyledExpression = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -120,9 +120,11 @@ export const SettingsObjectValidationRulesSection = ({
                       </StyledNameCell>
                     </TableCell>
                     <TableCell minWidth="0" overflow="hidden">
-                      <StyledExpression
-                        expression={validationRule.expression}
-                      />
+                      <StyledExpression>
+                        <SettingsValidationRuleExpressionText
+                          expression={validationRule.expression}
+                        />
+                      </StyledExpression>
                     </TableCell>
                     <TableCell align="right">
                       {validationRule.isActive ? t`Active` : t`Inactive`}

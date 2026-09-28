@@ -46,6 +46,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   shortcut: null,
   description: null,
   overrides: null,
+  validationRules: [],
   isUIEditable: true,
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
