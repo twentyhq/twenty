@@ -492,7 +492,9 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconUsers',
         isUIEditable: false,
-        isNullable: false,
+        // A thread can belong to something other than a person, such as the
+        // workflow run whose agent step wrote it.
+        isNullable: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentChatThreads',
         morphId: null,

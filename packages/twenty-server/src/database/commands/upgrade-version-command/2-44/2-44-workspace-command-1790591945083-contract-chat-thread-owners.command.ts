@@ -29,7 +29,7 @@ const MEMBER_FIELD =
 @Command({
   name: 'upgrade:2-44:contract-chat-thread-owners',
   description:
-    'Require workspace member chat owners and remove the legacy owner scalar',
+    'Backfill workspace member chat owners and remove the legacy owner scalar',
 })
 export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -74,41 +74,36 @@ export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommand
       ];
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would backfill chat owners, delete ownerless threads, require workspaceMemberId and remove userWorkspaceId in workspace ${workspaceId}`,
+        `[DRY RUN] Would backfill chat owners, delete threads whose owner left and remove userWorkspaceId in workspace ${workspaceId}`,
       );
       return;
     }
     const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    await this.storage.run(workspaceId, async ({ manager }) => {
-      if (isDefined(legacy)) {
+    if (isDefined(legacy)) {
+      await this.storage.run(workspaceId, async ({ manager }) => {
         await manager.query(
           `UPDATE ${schema}."agentChatThread" thread SET "workspaceMemberId" = member.id
           FROM core."userWorkspace" membership JOIN ${schema}."workspaceMember" member ON member."userId" = membership."userId" AND member."deletedAt" IS NULL
           WHERE membership.id = thread."userWorkspaceId" AND membership."workspaceId" = $1 AND thread."workspaceMemberId" IS NULL`,
           [workspaceId],
         );
-      }
-      // Shares have polymorphic record IDs and are not removed by the thread FK cascade.
-      await manager.query(
-        `DELETE FROM ${schema}."recordShare" share USING ${schema}."agentChatThread" thread
-        WHERE share."recordId" = thread.id AND share."objectMetadataId" = $1
-          AND NOT EXISTS (SELECT 1 FROM ${schema}."workspaceMember" member WHERE member.id = thread."workspaceMemberId" AND member."deletedAt" IS NULL)`,
-        [thread.id],
-      );
-      await manager.query(`DELETE FROM ${schema}."agentChatThread" thread
-        WHERE NOT EXISTS (SELECT 1 FROM ${schema}."workspaceMember" member WHERE member.id = thread."workspaceMemberId" AND member."deletedAt" IS NULL)`);
-    });
+        // Only threads a person owned lose their owner here: a thread without
+        // a legacy owner belongs to something else, such as a workflow run.
+        const ownerLeft = `thread."userWorkspaceId" IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM ${schema}."workspaceMember" member WHERE member.id = thread."workspaceMemberId" AND member."deletedAt" IS NULL)`;
+        // Shares have polymorphic record IDs and are not removed by the thread FK cascade.
+        await manager.query(
+          `DELETE FROM ${schema}."recordShare" share USING ${schema}."agentChatThread" thread
+          WHERE share."recordId" = thread.id AND share."objectMetadataId" = $1 AND ${ownerLeft}`,
+          [thread.id],
+        );
+        await manager.query(
+          `DELETE FROM ${schema}."agentChatThread" thread WHERE ${ownerLeft}`,
+        );
+      });
+    }
     await this.migrate(workspaceId, {
       deleteFields: isDefined(legacy) ? [legacy] : [],
-      updateFields: member.isNullable
-        ? [
-            {
-              ...member,
-              isNullable: false,
-              updatedAt: new Date().toISOString(),
-            },
-          ]
-        : [],
       deleteIndexes: isDefined(legacyIndex) ? [legacyIndex] : [],
     });
   }
@@ -159,15 +154,6 @@ export class ContractChatThreadOwnersCommand extends ProvisionedWorkspaceCommand
       createFields: isDefined(existingLegacy)
         ? []
         : [{ ...legacy, isNullable: true }],
-      updateFields: member.isNullable
-        ? []
-        : [
-            {
-              ...member,
-              isNullable: true,
-              updatedAt: new Date().toISOString(),
-            },
-          ],
       createIndexes: isDefined(
         flatIndexMaps.byUniversalIdentifier[
           LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER

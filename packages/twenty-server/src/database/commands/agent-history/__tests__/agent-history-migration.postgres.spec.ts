@@ -879,6 +879,19 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         `INSERT INTO "${SCHEMA}"."recordShare" ("objectMetadataId", "recordId", "principalId") VALUES ($1, $2, $3)`,
         [threadMetadata.id, orphanId, MEMBER_ID],
       );
+      // A thread without a legacy owner belongs to a workflow run, not a person.
+      const runThreadId = '20202020-8888-4888-8888-888888888888';
+      await dataSource.query(
+        `ALTER TABLE "${SCHEMA}"."agentChatThread" ALTER COLUMN "userWorkspaceId" DROP NOT NULL`,
+      );
+      await dataSource.query(
+        `INSERT INTO "${SCHEMA}"."agentChatThread" (id) VALUES ($1)`,
+        [runThreadId],
+      );
+      await dataSource.query(
+        `INSERT INTO "${SCHEMA}"."recordShare" ("objectMetadataId", "recordId", "principalId") VALUES ($1, $2, $3)`,
+        [threadMetadata.id, runThreadId, MEMBER_ID],
+      );
       const applyMigration = jest.fn().mockImplementation(
         async ({
           allFlatEntityOperationByMetadataName,
@@ -987,14 +1000,23 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       expect(
         await dataSource.query(
-          `SELECT id, "workspaceMemberId" FROM "${SCHEMA}"."agentChatThread"`,
+          `SELECT id, "workspaceMemberId" FROM "${SCHEMA}"."agentChatThread" ORDER BY id`,
         ),
-      ).toEqual([{ id: THREAD_ID, workspaceMemberId: MEMBER_ID }]);
+      ).toEqual([
+        { id: THREAD_ID, workspaceMemberId: MEMBER_ID },
+        { id: runThreadId, workspaceMemberId: null },
+      ]);
       expect(
         await dataSource.query(
           `SELECT "recordId", "principalId" FROM "${SCHEMA}"."recordShare"`,
         ),
-      ).toEqual([]);
+      ).toEqual([{ recordId: runThreadId, principalId: MEMBER_ID }]);
+      expect(
+        commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
+            .universalIdentifier
+        ],
+      ).toMatchObject({ isNullable: true });
       expect(
         commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
           LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
@@ -1005,11 +1027,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER
         ],
       ).toBeUndefined();
-      await expect(
-        dataSource.query(
-          `INSERT INTO "${SCHEMA}"."agentChatThread" (id) VALUES (public.uuid_generate_v4())`,
-        ),
-      ).rejects.toMatchObject({ code: '23502' });
+      // The run's thread goes before the rollback, as its own command's
+      // rollback removes it.
+      await dataSource.query(
+        `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+        [runThreadId],
+      );
       await dataSource.query(
         'INSERT INTO core."userWorkspace" (id, "workspaceId", "userId", "deletedAt") VALUES ($1, $2, $3, now())',
         ['20202020-0000-4000-8000-000000009999', WORKSPACE_ID, OWNER_ID],

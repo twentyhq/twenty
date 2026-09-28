@@ -15,14 +15,14 @@ const memberIdentifier =
   STANDARD_OBJECTS.agentChatThread.fields.workspaceMember.universalIdentifier;
 
 describe('Chat owner expand and contract metadata', () => {
-  it('provisions new workspaces with a required member and no legacy owner field or index', () => {
+  it('provisions new workspaces with an optional member and no legacy owner field or index', () => {
     const { allFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps(args);
     expect(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
         memberIdentifier
       ],
-    ).toMatchObject({ isNullable: false, settings: { onDelete: 'CASCADE' } });
+    ).toMatchObject({ isNullable: true, settings: { onDelete: 'CASCADE' } });
     expect(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
         LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
