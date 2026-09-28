@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type GraphCollectionPage } from 'src/features/transcripts/logic-functions/types/graph-collection-page.type';
 import { type TeamsCalendarEvent } from 'src/features/transcripts/logic-functions/types/teams-calendar-event.type';
 import { type TeamsMeetingOccurrence } from 'src/features/transcripts/logic-functions/types/teams-meeting-occurrence.type';
-import { graphFetchJson } from 'src/features/transcripts/logic-functions/utils/graph-fetch-json.util';
-import { toTeamsMeetingOccurrence } from 'src/features/transcripts/logic-functions/utils/to-teams-meeting-occurrence.util';
+import { fetchGraphJson } from 'src/features/transcripts/logic-functions/utils/fetch-graph-json';
+import { toTeamsMeetingOccurrence } from 'src/features/transcripts/logic-functions/utils/to-teams-meeting-occurrence';
 
 export const listTeamsCalendarPage = async ({
   accessToken,
@@ -17,7 +17,7 @@ export const listTeamsCalendarPage = async ({
   occurrences: TeamsMeetingOccurrence[];
   nextPageUrl?: string;
 }> => {
-  const page = await graphFetchJson<GraphCollectionPage<TeamsCalendarEvent>>({
+  const page = await fetchGraphJson<GraphCollectionPage<TeamsCalendarEvent>>({
     accessToken,
     url,
   });
@@ -29,8 +29,8 @@ export const listTeamsCalendarPage = async ({
 
   return {
     occurrences,
-    ...(isNonEmptyString(page['@odata.nextLink'])
-      ? { nextPageUrl: page['@odata.nextLink'] }
-      : {}),
+    nextPageUrl: isNonEmptyString(page['@odata.nextLink'])
+      ? page['@odata.nextLink']
+      : undefined,
   };
 };

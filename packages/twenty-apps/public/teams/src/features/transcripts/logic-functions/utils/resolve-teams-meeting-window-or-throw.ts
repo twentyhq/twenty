@@ -1,9 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import {
-  MILLISECONDS_PER_DAY,
-  TEAMS_DEFAULT_LOOKBACK_DAYS,
-} from 'src/features/transcripts/constants/teams.constant';
+import { TEAMS_DEFAULT_LOOKBACK_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-default-lookback-milliseconds';
 import { type TeamsMeetingWindow } from 'src/features/transcripts/logic-functions/types/teams-meeting-window.type';
 
 export const resolveTeamsMeetingWindowOrThrow = ({
@@ -17,9 +14,7 @@ export const resolveTeamsMeetingWindowOrThrow = ({
   const window = {
     startDateTime: isNonEmptyString(startDateTime)
       ? startDateTime
-      : new Date(
-          now - TEAMS_DEFAULT_LOOKBACK_DAYS * MILLISECONDS_PER_DAY,
-        ).toISOString(),
+      : new Date(now - TEAMS_DEFAULT_LOOKBACK_MILLISECONDS).toISOString(),
     endDateTime: isNonEmptyString(endDateTime)
       ? endDateTime
       : new Date(now).toISOString(),

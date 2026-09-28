@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { TEAMS_OCCURRENCE_MARGIN_MILLISECONDS } from 'src/features/transcripts/constants/teams.constant';
+import { TEAMS_OCCURRENCE_MARGIN_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-occurrence-margin-milliseconds';
 import { type GraphCallTranscript } from 'src/features/transcripts/logic-functions/types/graph-call-transcript.type';
 import { type TeamsMeetingWindow } from 'src/features/transcripts/logic-functions/types/teams-meeting-window.type';
 

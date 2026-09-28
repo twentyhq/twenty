@@ -1,4 +1,4 @@
-import { MICROSOFT_GRAPH_BASE_URL } from 'src/features/transcripts/constants/teams.constant';
+import { MICROSOFT_GRAPH_BASE_URL } from 'src/features/transcripts/logic-functions/constants/microsoft-graph-base-url';
 
 export const resolveGraphUrlOrThrow = (url: string): string => {
   const resolvedUrl = new URL(url, `${MICROSOFT_GRAPH_BASE_URL}/`);

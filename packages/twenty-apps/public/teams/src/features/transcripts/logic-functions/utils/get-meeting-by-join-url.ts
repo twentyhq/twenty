@@ -1,7 +1,7 @@
 import { type GraphCollectionPage } from 'src/features/transcripts/logic-functions/types/graph-collection-page.type';
 import { type GraphOnlineMeeting } from 'src/features/transcripts/logic-functions/types/graph-online-meeting.type';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
-import { graphFetchJson } from 'src/features/transcripts/logic-functions/utils/graph-fetch-json.util';
+import { fetchGraphJson } from 'src/features/transcripts/logic-functions/utils/fetch-graph-json';
 
 export const getMeetingByJoinUrl = async ({
   accessToken,
@@ -15,7 +15,7 @@ export const getMeetingByJoinUrl = async ({
   });
 
   try {
-    const page = await graphFetchJson<GraphCollectionPage<GraphOnlineMeeting>>({
+    const page = await fetchGraphJson<GraphCollectionPage<GraphOnlineMeeting>>({
       accessToken,
       url: `me/onlineMeetings?${query}`,
     });

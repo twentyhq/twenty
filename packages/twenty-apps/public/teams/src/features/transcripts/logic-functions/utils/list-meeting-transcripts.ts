@@ -1,18 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { MAX_GRAPH_TRANSCRIPT_LIST_PAGES } from 'src/features/transcripts/constants/teams.constant';
+import { MAX_GRAPH_TRANSCRIPT_LIST_PAGES } from 'src/features/transcripts/logic-functions/constants/max-graph-transcript-list-pages';
 import { type GraphCallTranscript } from 'src/features/transcripts/logic-functions/types/graph-call-transcript.type';
 import { type GraphCollectionPage } from 'src/features/transcripts/logic-functions/types/graph-collection-page.type';
-import { graphFetchJson } from 'src/features/transcripts/logic-functions/utils/graph-fetch-json.util';
+import { fetchGraphJson } from 'src/features/transcripts/logic-functions/utils/fetch-graph-json';
 
-export const listMeetingTranscriptPages = async ({
+const listMeetingTranscriptPages = async ({
   accessToken,
-  meetingId,
   url,
   pageIndex,
 }: {
   accessToken: string;
-  meetingId: string;
   url: string;
   pageIndex: number;
 }): Promise<GraphCallTranscript[]> => {
@@ -20,14 +18,11 @@ export const listMeetingTranscriptPages = async ({
     throw new Error('Microsoft transcript pagination exceeded its limit');
   }
 
-  const page = await graphFetchJson<
-    GraphCollectionPage<Pick<GraphCallTranscript, 'id' | 'createdDateTime'>>
-  >({ accessToken, url });
-  const transcripts = (page.value ?? []).map((transcript) => ({
-    id: transcript.id,
-    meetingId,
-    createdDateTime: transcript.createdDateTime ?? null,
-  }));
+  const page = await fetchGraphJson<GraphCollectionPage<GraphCallTranscript>>({
+    accessToken,
+    url,
+  });
+  const transcripts = page.value ?? [];
   const nextPageUrl = page['@odata.nextLink'];
 
   if (!isNonEmptyString(nextPageUrl)) {
@@ -38,9 +33,21 @@ export const listMeetingTranscriptPages = async ({
     ...transcripts,
     ...(await listMeetingTranscriptPages({
       accessToken,
-      meetingId,
       url: nextPageUrl,
       pageIndex: pageIndex + 1,
     })),
   ];
 };
+
+export const listMeetingTranscripts = ({
+  accessToken,
+  meetingId,
+}: {
+  accessToken: string;
+  meetingId: string;
+}): Promise<GraphCallTranscript[]> =>
+  listMeetingTranscriptPages({
+    accessToken,
+    url: `me/onlineMeetings/${encodeURIComponent(meetingId)}/transcripts`,
+    pageIndex: 0,
+  });

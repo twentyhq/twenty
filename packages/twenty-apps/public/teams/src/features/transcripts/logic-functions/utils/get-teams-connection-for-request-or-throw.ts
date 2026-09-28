@@ -5,7 +5,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams.constant';
+import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
 
 export const getTeamsConnectionForRequestOrThrow = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
@@ -22,7 +22,7 @@ export const getTeamsConnectionForRequestOrThrow = async (
   }
 
   if (isDefined(connection.authFailedAt)) {
-    throw new Error('Reconnect Microsoft Teams in the app settings');
+    throw new Error('Reconnect Microsoft Teams in the app settings.');
   }
 
   return connection;

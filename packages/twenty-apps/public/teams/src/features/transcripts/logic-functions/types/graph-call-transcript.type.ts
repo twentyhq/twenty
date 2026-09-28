@@ -1,5 +1,4 @@
 export type GraphCallTranscript = {
   id: string;
-  meetingId: string;
-  createdDateTime: string | null;
+  createdDateTime?: string | null;
 };

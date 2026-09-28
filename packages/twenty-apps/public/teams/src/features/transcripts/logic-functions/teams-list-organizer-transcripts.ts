@@ -10,14 +10,15 @@ import {
 import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_LIST_ORGANIZER_TRANSCRIPTS_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
-import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/utils/get-meeting-by-join-url.util';
-import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw.util';
-import { isTranscriptDuringOccurrence } from 'src/features/transcripts/logic-functions/utils/is-transcript-during-occurrence.util';
-import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts.util';
-import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page.util';
-import { resolveTeamsCalendarPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-page-url-or-throw.util';
-import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw.util';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message.util';
+import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-calendar-view-url';
+import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/utils/get-meeting-by-join-url';
+import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw';
+import { isTranscriptDuringOccurrence } from 'src/features/transcripts/logic-functions/utils/is-transcript-during-occurrence';
+import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts';
+import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
+import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
+import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw';
+import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
 const teamsListOrganizerTranscriptsInputSchema: InputJsonSchema = {
@@ -56,7 +57,6 @@ type TeamsListOrganizerTranscriptsResult =
       success: true;
       connectedAccount: string;
       transcripts: ListedTranscript[];
-      isTruncated: boolean;
       nextPageUrl?: string;
     }
   | { success: false; error: string };
@@ -79,12 +79,9 @@ export const teamsListOrganizerTranscriptsHandler = async (
   }
 
   try {
-    const calendarPageUrl = resolveTeamsCalendarPageUrlOrThrow({
-      window: resolveTeamsMeetingWindowOrThrow(parameters),
-      ...(isNonEmptyString(parameters.nextPageUrl)
-        ? { nextPageUrl: parameters.nextPageUrl }
-        : {}),
-    });
+    const calendarPageUrl = isNonEmptyString(parameters.nextPageUrl)
+      ? resolveTeamsCalendarNextPageUrlOrThrow(parameters.nextPageUrl)
+      : buildTeamsCalendarViewUrl(resolveTeamsMeetingWindowOrThrow(parameters));
     const connection = await getTeamsConnectionForRequestOrThrow(context);
     const page = await listTeamsCalendarPage({
       accessToken: connection.accessToken,
@@ -122,13 +119,13 @@ export const teamsListOrganizerTranscriptsHandler = async (
           )
           .map((transcript) => ({
             transcriptId: transcript.id,
-            meetingId: transcript.meetingId,
-            ...(isNonEmptyString(meeting.subject)
-              ? { subject: meeting.subject }
-              : {}),
-            ...(isNonEmptyString(transcript.createdDateTime)
-              ? { createdDateTime: transcript.createdDateTime }
-              : {}),
+            meetingId: meeting.id,
+            subject: isNonEmptyString(meeting.subject)
+              ? meeting.subject
+              : undefined,
+            createdDateTime: isNonEmptyString(transcript.createdDateTime)
+              ? transcript.createdDateTime
+              : undefined,
           })),
       );
     }
@@ -137,10 +134,7 @@ export const teamsListOrganizerTranscriptsHandler = async (
       success: true,
       connectedAccount: connection.handle,
       transcripts,
-      isTruncated: isNonEmptyString(page.nextPageUrl),
-      ...(isNonEmptyString(page.nextPageUrl)
-        ? { nextPageUrl: page.nextPageUrl }
-        : {}),
+      nextPageUrl: page.nextPageUrl,
     };
   } catch (error) {
     return { success: false, error: toErrorMessage(error) };
@@ -170,7 +164,6 @@ export default defineLogicFunction({
           error: { type: 'string' },
           connectedAccount: { type: 'string' },
           nextPageUrl: { type: 'string' },
-          isTruncated: { type: 'boolean' },
           transcripts: {
             type: 'array',
             items: {
