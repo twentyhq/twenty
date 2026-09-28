@@ -8,7 +8,7 @@ import { findFieldLessFlatIndexes } from 'src/database/commands/upgrade-version-
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.44.0', 1790590216046)
+@RegisteredWorkspaceCommand('2.44.0', 1790595494562)
 @Command({
   name: 'upgrade:2-44:delete-field-less-index-metadata',
   description:

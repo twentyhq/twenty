@@ -4,7 +4,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
 import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
-import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
+import { backfillLegacyChatThreadOwnerGrants as backfillChatThreadOwnerGrants } from 'src/database/commands/agent-history/utils/backfill-legacy-chat-thread-owner-grants.util';
 import { Command } from 'nest-commander';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
