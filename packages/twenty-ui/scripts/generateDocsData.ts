@@ -23,6 +23,7 @@ import {
   type ComponentDocumentation,
   type TokenDocumentation,
 } from '../docs/types';
+import { isDefined } from '../src/utilities/utils/isDefined';
 
 const HIDDEN_PROP_TAGS = ['ignore', 'internal'];
 const COMPONENT_PART_NAME_PATTERN = /^[A-Z]/;
@@ -77,7 +78,7 @@ const publicComponents = getPublicComponentExports({
   entryPoints: entryPoints.map((entry) => {
     const source = program.getSourceFile(entry.path);
 
-    if (!source) {
+    if (!isDefined(source)) {
       throw new Error(`Could not read ${entry.name}`);
     }
 
