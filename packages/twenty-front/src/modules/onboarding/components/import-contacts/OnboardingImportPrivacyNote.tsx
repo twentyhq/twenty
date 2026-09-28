@@ -14,7 +14,7 @@ const StyledNote = styled.div`
 `;
 
 const StyledNoteText = styled.span`
-  line-height: 1.4;
+  line-height: ${PRIVACY_NOTE_ICON_SIZE}px;
 `;
 
 export const OnboardingImportPrivacyNote = () => {

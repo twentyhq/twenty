@@ -17,7 +17,6 @@ const meta: Meta<typeof ImportContacts> = {
   component: ImportContacts,
   parameters: { layout: 'fullscreen' },
   args: {
-    creditsReward: 2,
     onContinueWithGoogle: action('continue-with-google'),
     onContinueWithMicrosoft: action('continue-with-microsoft'),
     onSkip: action('skip'),

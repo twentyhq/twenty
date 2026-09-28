@@ -5,10 +5,13 @@ import { OnboardingFreeCreditsProgress } from '@/onboarding/components/free-cred
 import { StyledOnboardingFreeCreditsCount } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsCount';
 import { StyledOnboardingFreeCreditsLabel } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsLabel';
 import { StyledOnboardingFreeCreditsText } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsText';
+import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
 import { useOnboardingFreeCreditsTooltipContent } from '@/onboarding/hooks/useOnboardingFreeCreditsTooltipContent';
 import { useOnboardingNewlyEarnedCredits } from '@/onboarding/hooks/useOnboardingNewlyEarnedCredits';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -120,6 +123,10 @@ export const OnboardingFreeCreditsPill = ({
   const shouldReduceMotion = useReducedMotion();
   const { numberFormat } = useNumberFormat();
   const [isPopoverShown, setIsPopoverShown] = useState(false);
+  const currentFocusId = useAtomStateValue(currentFocusIdSelector);
+  const isSkipDialogOpened = Object.values(ONBOARDING_SKIP_DIALOG_IDS).some(
+    (skipDialogId) => skipDialogId === currentFocusId,
+  );
   const [hasTrackGrown, setHasTrackGrown] = useState(
     shouldReduceMotion ?? false,
   );
@@ -233,7 +240,11 @@ export const OnboardingFreeCreditsPill = ({
           </Popover.Popup>
         </Popover.Root>
       </StyledPillAnchor>
-      <Tooltip.Root open={!isPopoverShown && isDefined(tooltipContent)}>
+      <Tooltip.Root
+        open={
+          !isPopoverShown && !isSkipDialogOpened && isDefined(tooltipContent)
+        }
+      >
         <Tooltip.Popup
           anchor={pillRef}
           side="bottom"
