@@ -182,7 +182,9 @@ export class AgentHistoryRepository<
   ) {
     return this.run(workspaceId, async (repository, context) => {
       if (this.name === 'agentMessage') assertAgentMessageSenderFields();
-      return repository.insert(await this.addSenderRelation(values, workspaceId, context));
+      return repository.insert(
+        await this.addSenderRelation(values, workspaceId, context),
+      );
     });
   }
 

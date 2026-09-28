@@ -892,7 +892,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         } as never,
         { getOrRecompute: async () => metadata } as never,
         {} as never,
-        dataSource,
+        storage,
       );
       await command.up({
         workspaceId: WORKSPACE_ID,
