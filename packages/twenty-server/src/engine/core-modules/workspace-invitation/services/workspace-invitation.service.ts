@@ -319,14 +319,6 @@ export class WorkspaceInvitationService {
           workspaceId: workspace.id,
         })));
 
-    if (isOnboardingInviteReward) {
-      await this.throwIfOnboardingInvitationLimitReached({
-        workspaceId: workspace.id,
-        requestedCount: emails.length,
-        excludedAppTokenId: appTokenIdToInvalidate,
-      });
-    }
-
     await this.throttleInvitationSending(workspace.id, emails);
 
     if (isDefined(appTokenIdToInvalidate)) {
@@ -489,36 +481,6 @@ export class WorkspaceInvitationService {
     });
 
     return this.appTokenRepository.save(invitationToken);
-  }
-
-  private async throwIfOnboardingInvitationLimitReached({
-    workspaceId,
-    requestedCount,
-    excludedAppTokenId,
-  }: {
-    workspaceId: string;
-    requestedCount: number;
-    excludedAppTokenId?: string;
-  }) {
-    const maxOnboardingInvitations = this.twentyConfigService.get(
-      'ONBOARDING_INVITE_TEAM_MAX_INVITES',
-    );
-
-    const existingOnboardingInvitations =
-      await this.onboardingService.countActiveOnboardingInvitations({
-        workspaceId,
-        excludedAppTokenId,
-      });
-
-    if (
-      existingOnboardingInvitations + requestedCount >
-      maxOnboardingInvitations
-    ) {
-      throw new WorkspaceInvitationException(
-        `Onboarding invitation limit (${maxOnboardingInvitations}) reached for workspace ${workspaceId}`,
-        WorkspaceInvitationExceptionCode.TOO_MANY_ONBOARDING_INVITATIONS,
-      );
-    }
   }
 
   private async throttleInvitationSending(

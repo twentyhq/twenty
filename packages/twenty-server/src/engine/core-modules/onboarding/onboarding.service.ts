@@ -8,7 +8,6 @@ import {
   type DataSource,
   IsNull,
   MoreThan,
-  Not,
   type QueryRunner,
   Repository,
 } from 'typeorm';
@@ -995,10 +994,8 @@ export class OnboardingService {
 
   async countActiveOnboardingInvitations({
     workspaceId,
-    excludedAppTokenId,
   }: {
     workspaceId: string;
-    excludedAppTokenId?: string;
   }): Promise<number> {
     return this.appTokenRepository.count({
       where: {
@@ -1006,9 +1003,6 @@ export class OnboardingService {
         type: AppTokenType.OnboardingInvitationToken,
         deletedAt: IsNull(),
         expiresAt: MoreThan(new Date()),
-        ...(isDefined(excludedAppTokenId)
-          ? { id: Not(excludedAppTokenId) }
-          : {}),
       },
     });
   }
