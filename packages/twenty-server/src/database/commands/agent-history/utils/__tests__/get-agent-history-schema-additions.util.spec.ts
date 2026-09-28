@@ -200,6 +200,29 @@ describe('getAgentHistorySchemaAdditions', () => {
     ).toEqual([]);
   });
 
+  // Created with inputAsk by its own later command; emitted here, before that
+  // object exists, the relation has no other side.
+  it('leaves the Ask relation legs to the command that creates the Ask', () => {
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard: createStandardMetadata(),
+    });
+    const fieldUniversalIdentifiers = additions.fields.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    );
+
+    expect(fieldUniversalIdentifiers).not.toContain(
+      STANDARD_OBJECTS.agentChatThread.fields.inputAsks.universalIdentifier,
+    );
+    expect(fieldUniversalIdentifiers).not.toContain(
+      STANDARD_OBJECTS.inputAsk.fields.thread.universalIdentifier,
+    );
+  });
+
   it('repairs missing fields and indexes without recreating existing objects', () => {
     const standard = createStandardMetadata();
     const additions = getAgentHistorySchemaAdditions({
