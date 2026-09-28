@@ -67,12 +67,12 @@ export class ImapSyncService {
     }
 
     const uidRange = `${lastSyncedUid + 1}:${maxUid}`;
-    const uids = await client.search({ uid: uidRange }, { uid: true });
+    const messages = await client.fetchAll(
+      uidRange,
+      { uid: true },
+      { uid: true },
+    );
 
-    if (!Array.isArray(uids)) {
-      return [];
-    }
-
-    return uids;
+    return messages.map((message) => message.uid);
   }
 }
