@@ -164,6 +164,30 @@ export const computeStandardMessageCampaignViewFields = (
         size: 120,
       },
     }),
+    allMessageCampaignsClickedCount: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'clickedCount',
+        fieldName: 'clickedCount',
+        position: 15,
+        isVisible: true,
+        size: 120,
+      },
+    }),
+    allMessageCampaignsClickCount: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'clickCount',
+        fieldName: 'clickCount',
+        position: 16,
+        isVisible: true,
+        size: 120,
+      },
+    }),
     allMessageCampaignsRecipients: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',
@@ -308,6 +332,34 @@ export const computeStandardMessageCampaignViewFields = (
           viewFieldName: 'complainedCount',
           fieldName: 'complainedCount',
           position: 8,
+          isVisible: true,
+          size: 120,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsClickedCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'clickedCount',
+          fieldName: 'clickedCount',
+          position: 9,
+          isVisible: true,
+          size: 120,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsClickCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'clickCount',
+          fieldName: 'clickCount',
+          position: 10,
           isVisible: true,
           size: 120,
           viewFieldGroupName: 'stats',
