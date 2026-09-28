@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { useTheme } from 'twenty-ui/theme';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
@@ -11,6 +12,7 @@ type LogConsoleObjectCellProps = {
 };
 
 export const LogConsoleObjectCell = ({ entry }: LogConsoleObjectCellProps) => {
+  const theme = useTheme();
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
@@ -23,7 +25,11 @@ export const LogConsoleObjectCell = ({ entry }: LogConsoleObjectCellProps) => {
     <SettingsTableTextCell
       startElement={
         isDefined(objectMetadataItem) ? (
-          <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+          <ObjectMetadataIcon
+            objectMetadataItem={objectMetadataItem}
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
+          />
         ) : null
       }
       text={objectMetadataItem?.labelSingular}

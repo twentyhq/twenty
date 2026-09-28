@@ -18,6 +18,7 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledTimeAndDate = styled.span`
   align-items: center;
   display: flex;
+  font-family: ${themeCssVariables.code.font.family}, monospace;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;

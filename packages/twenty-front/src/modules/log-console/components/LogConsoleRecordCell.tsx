@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { useTheme } from 'twenty-ui/theme';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
@@ -19,6 +20,7 @@ type LogConsoleRecordCellProps = {
 
 export const LogConsoleRecordCell = ({ entry }: LogConsoleRecordCellProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
@@ -60,7 +62,11 @@ export const LogConsoleRecordCell = ({ entry }: LogConsoleRecordCellProps) => {
   return (
     <SettingsTableTextCell
       startElement={
-        <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+        <ObjectMetadataIcon
+          objectMetadataItem={objectMetadataItem}
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+        />
       }
       text={getLogConsoleRecordLabel({ entry, objectMetadataItem })}
     />
