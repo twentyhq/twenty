@@ -17,7 +17,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.43.0', 1790333284553)
+@RegisteredWorkspaceCommand('2.44.0', 1790606956780)
 @Command({
   name: 'upgrade:2-43:sync-short-link-object',
   description: 'Create the shortLink standard object in existing workspaces',
