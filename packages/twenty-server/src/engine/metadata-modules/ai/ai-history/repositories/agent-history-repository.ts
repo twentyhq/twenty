@@ -1,3 +1,4 @@
+import { assertAgentMessageSenderFields } from 'src/engine/metadata-modules/ai/ai-history/utils/assert-agent-message-sender-fields.util';
 import { addAgentMessageSenderWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-history/utils/add-agent-message-sender-workspace-member.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
@@ -38,19 +39,25 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
 
   private run<TResult>(
     workspaceId: string,
-    work: (repository: WorkspaceRepository<TRecord>) => Promise<TResult>,
+    work: (
+      repository: WorkspaceRepository<TRecord>,
+      context: AgentHistoryStorageContext,
+    ) => Promise<TResult>,
   ): Promise<TResult> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        work(
-          this.workspaceOrmManager.getRepository<TRecord>(
-            this.name,
-            { shouldBypassPermissionChecks: true },
-            { shouldSkipEventEmission: true },
+    return this.storageService.run(workspaceId, (context) =>
+      this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          work(
+            this.workspaceOrmManager.getRepository<TRecord>(
+              this.name,
+              { shouldBypassPermissionChecks: true },
+              { shouldSkipEventEmission: true },
+            ),
+            context,
           ),
-        ),
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      ),
     );
   }
 
@@ -58,7 +65,7 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     workspaceId: string,
     options?: WorkspaceFindOptions,
   ): Promise<TRecord[]> {
-    return this.run(workspaceId, async (repository) => {
+    return this.run(workspaceId, async (repository, context) => {
       const relations = normalizeFindOptionsRelations(options?.relations ?? {});
       const records = await repository.find({
         ...options,
@@ -66,9 +73,11 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
         relations: removeAgentHistoryFileRelations(relations),
       });
       if (JSON.stringify(relations).includes('"file"')) {
-        await this.storageService.run(workspaceId, ({ manager }) =>
-          hydrateAgentHistoryFiles({ records, manager, workspaceId }),
-        );
+        await hydrateAgentHistoryFiles({
+          records,
+          manager: context.manager,
+          workspaceId,
+        });
       }
       return records as TRecord[];
     });
@@ -132,18 +141,22 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(workspaceId, async (repository) =>
-      repository.insert(await this.addSenderRelation(values, workspaceId)),
-    );
+    return this.run(workspaceId, async (repository, context) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
+      return repository.insert(
+        await this.addSenderRelation(values, workspaceId, context),
+      );
+    });
   }
 
   insertAndReturnOne(
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
-    return this.run(workspaceId, async (repository) => {
+    return this.run(workspaceId, async (repository, context) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       const result = await repository.insert(
-        await this.addSenderRelation(values, workspaceId),
+        await this.addSenderRelation(values, workspaceId, context),
       );
       return result.raw[0] as TRecord;
     });
@@ -152,20 +165,12 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
   private async addSenderRelation(
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
     workspaceId: string,
-    context?: AgentHistoryStorageContext,
+    context: AgentHistoryStorageContext,
   ) {
     const records: ObjectLiteral[] = Array.isArray(values) ? values : [values];
     return this.name === 'agentMessage' &&
       records.some((record) => isNonEmptyString(record.senderUserWorkspaceId))
-      ? await (isDefined(context)
-          ? addAgentMessageSenderWorkspaceMember(values, workspaceId, context)
-          : this.storageService.run(workspaceId, (storageContext) =>
-              addAgentMessageSenderWorkspaceMember(
-                values,
-                workspaceId,
-                storageContext,
-              ),
-            ))
+      ? await addAgentMessageSenderWorkspaceMember(values, workspaceId, context)
       : values;
   }
 
@@ -213,30 +218,29 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     values: QueryDeepPartialEntity<TRecord>,
     conflictPaths: string[],
   ) {
-    return this.run(workspaceId, async (repository) =>
-      this.storageService.run(workspaceId, async (context) => {
-        // Workspace upsert selects before inserting. Serialize concurrent stream
-        // checkpoints for the same identity so both cannot take the insert path.
-        const valuesByField: ObjectLiteral = values;
-        const identity = [...conflictPaths]
-          .sort()
-          .map((field) => [field, valuesByField[field]]);
-        await context.manager.query(
-          'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-          [
-            `agent-history-upsert:${workspaceId}:${this.name}:${JSON.stringify(identity)}`,
-          ],
-        );
-        return repository.upsert(
-          (await this.addSenderRelation(
-            values,
-            workspaceId,
-            context,
-          )) as QueryDeepPartialEntity<TRecord>,
-          conflictPaths,
-        );
-      }),
-    );
+    return this.run(workspaceId, async (repository, context) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
+      // Workspace upsert selects before inserting. Serialize concurrent stream
+      // checkpoints for the same identity so both cannot take the insert path.
+      const valuesByField: ObjectLiteral = values;
+      const identity = [...conflictPaths]
+        .sort()
+        .map((field) => [field, valuesByField[field]]);
+      await context.manager.query(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+        [
+          `agent-history-upsert:${workspaceId}:${this.name}:${JSON.stringify(identity)}`,
+        ],
+      );
+      return repository.upsert(
+        (await this.addSenderRelation(
+          values,
+          workspaceId,
+          context,
+        )) as QueryDeepPartialEntity<TRecord>,
+        conflictPaths,
+      );
+    });
   }
 
   query<TResult>(

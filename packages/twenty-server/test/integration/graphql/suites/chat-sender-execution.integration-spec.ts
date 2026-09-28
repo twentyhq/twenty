@@ -168,7 +168,7 @@ describe('Persisted chat senders', () => {
     await command.up(args);
     await command.down(args);
     const storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+      'AgentHistoryUpgradeStorageService',
     );
     const records = await storage.run(workspaceId, ({ manager, table }) =>
       manager.query(

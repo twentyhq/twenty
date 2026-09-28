@@ -8,18 +8,16 @@ jest.mock(
 );
 
 const setup = (hasRelation = true) => {
-  jest
-    .mocked(getWorkspaceContext)
-    .mockReturnValue({
-      flatFieldMetadataMaps: {
-        byUniversalIdentifier: hasRelation
-          ? {
-              [STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
-                .universalIdentifier]: {},
-            }
-          : {},
-      },
-    } as never);
+  jest.mocked(getWorkspaceContext).mockReturnValue({
+    flatFieldMetadataMaps: {
+      byUniversalIdentifier: hasRelation
+        ? {
+            [STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
+              .universalIdentifier]: {},
+          }
+        : {},
+    },
+  } as never);
   const query = jest
     .fn()
     .mockResolvedValue([{ membershipId: 'sender', memberId: 'member' }]);

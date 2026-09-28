@@ -1,8 +1,8 @@
-import { InjectDataSource } from '@nestjs/typeorm';
+import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { backfillChatMessageSenderWorkspaceMembers } from 'src/database/commands/upgrade-version-command/2-44/utils/backfill-chat-message-sender-workspace-members.util';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -13,13 +13,12 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 const WORKSPACE_MEMBER_SENDER_FIELD_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember.universalIdentifier,
+  STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
+    .universalIdentifier,
   STANDARD_OBJECTS.workspaceMember.fields.agentMessages.universalIdentifier,
 ];
 
@@ -42,7 +41,7 @@ export class LinkChatMessageSendersToWorkspaceMembersCommand extends Provisioned
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    @InjectDataSource() private readonly dataSource: DataSource,
+    private readonly storage: AgentHistoryStorageService,
   ) {
     super(workspaceIteratorService);
   }
@@ -144,17 +143,8 @@ export class LinkChatMessageSendersToWorkspaceMembersCommand extends Provisioned
       }
     }
 
-    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    const [, linkedCount]: [unknown[], number] = await this.dataSource.query(
-      `UPDATE ${schemaName}."agentMessage" message
-       SET "senderWorkspaceMemberId" = member.id
-       FROM core."userWorkspace" membership
-       JOIN ${schemaName}."workspaceMember" member
-         ON member."userId" = membership."userId" AND member."deletedAt" IS NULL
-       WHERE membership.id = message."senderUserWorkspaceId"
-         AND membership."workspaceId" = $1
-         AND message."senderWorkspaceMemberId" IS NULL`,
-      [workspaceId],
+    const linkedCount = await this.storage.run(workspaceId, ({ manager }) =>
+      backfillChatMessageSenderWorkspaceMembers({ manager, workspaceId }),
     );
 
     this.logger.log(

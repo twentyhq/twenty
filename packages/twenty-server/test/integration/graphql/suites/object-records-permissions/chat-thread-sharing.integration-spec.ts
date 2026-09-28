@@ -438,7 +438,7 @@ describe('Conversation sharing through the authenticated API', () => {
       {} as never,
       cache,
       getAppProviderByClassName<AgentHistoryStorageService>(
-        'AgentHistoryStorageService',
+        'AgentHistoryUpgradeStorageService',
       ),
       getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
         'WorkspaceMigrationValidateBuildAndRunService',

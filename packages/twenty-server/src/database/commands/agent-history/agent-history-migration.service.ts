@@ -19,7 +19,7 @@ export class AgentHistoryMigrationService {
 
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
-    private readonly storageService: AgentHistoryMigrationStateService,
+    private readonly migrationStateService: AgentHistoryMigrationStateService,
     private readonly dataService: AgentHistoryMigrationDataService,
     private readonly validationService: AgentHistoryMigrationValidationService,
   ) {}
@@ -51,7 +51,10 @@ export class AgentHistoryMigrationService {
           'An agent history migration is already running for this workspace',
         );
       }
-      let state = await this.storageService.readState(runner, workspaceId);
+      let state = await this.migrationStateService.readState(
+        runner,
+        workspaceId,
+      );
       if (state.migration?.phase === 'aborting') {
         throw new Error(
           'Finish aborting the incomplete migration before starting another copy',
@@ -71,7 +74,7 @@ export class AgentHistoryMigrationService {
           runner,
           workspaceId,
           work: async () => {
-            const current = await this.storageService.readState(
+            const current = await this.migrationStateService.readState(
               runner,
               workspaceId,
             );
@@ -104,7 +107,11 @@ export class AgentHistoryMigrationService {
                 lastId: null,
               },
             };
-            await this.storageService.writeState(runner, workspaceId, next);
+            await this.migrationStateService.writeState(
+              runner,
+              workspaceId,
+              next,
+            );
             return next;
           },
         });
@@ -128,7 +135,11 @@ export class AgentHistoryMigrationService {
                 lastId: null,
               },
             };
-            await this.storageService.writeState(runner, workspaceId, next);
+            await this.migrationStateService.writeState(
+              runner,
+              workspaceId,
+              next,
+            );
             return next;
           },
         });
@@ -141,7 +152,7 @@ export class AgentHistoryMigrationService {
           runner,
           workspaceId,
           work: async () => {
-            const current = await this.storageService.readState(
+            const current = await this.migrationStateService.readState(
               runner,
               workspaceId,
             );
@@ -171,7 +182,11 @@ export class AgentHistoryMigrationService {
                 lastId: ids.length < batchSize ? null : ids[ids.length - 1],
               },
             };
-            await this.storageService.writeState(runner, workspaceId, next);
+            await this.migrationStateService.writeState(
+              runner,
+              workspaceId,
+              next,
+            );
             this.logger.log(
               `${workspaceId}: copied ${ids.length} ${table.name} rows`,
             );
@@ -189,7 +204,7 @@ export class AgentHistoryMigrationService {
             workspaceId,
             storage: target,
           });
-          await this.storageService.writeState(runner, workspaceId, {
+          await this.migrationStateService.writeState(runner, workspaceId, {
             storage: target,
             verifiedAt: new Date().toISOString(),
           });
@@ -230,7 +245,10 @@ export class AgentHistoryMigrationService {
       if (!acquired) {
         throw new Error('Stop the running migration before aborting');
       }
-      const state = await this.storageService.readState(runner, workspaceId);
+      const state = await this.migrationStateService.readState(
+        runner,
+        workspaceId,
+      );
       if (!isDefined(state.migration)) {
         return;
       }
@@ -244,7 +262,7 @@ export class AgentHistoryMigrationService {
         runner,
         workspaceId,
         work: () =>
-          this.storageService.writeState(runner, workspaceId, {
+          this.migrationStateService.writeState(runner, workspaceId, {
             ...state,
             migration: { ...state.migration!, phase: 'aborting' },
           }),
@@ -258,7 +276,7 @@ export class AgentHistoryMigrationService {
         runner,
         workspaceId,
         work: () =>
-          this.storageService.writeState(runner, workspaceId, {
+          this.migrationStateService.writeState(runner, workspaceId, {
             ...state,
             migration: undefined,
           }),
@@ -281,7 +299,10 @@ export class AgentHistoryMigrationService {
     const runner = this.dataSource.createQueryRunner('master');
     try {
       await runner.connect();
-      const state = await this.storageService.readState(runner, workspaceId);
+      const state = await this.migrationStateService.readState(
+        runner,
+        workspaceId,
+      );
       this.logger.log(`${workspaceId}: ${JSON.stringify(state)}`);
       await this.validationService.assertNoActiveStreams({
         runner,
@@ -333,7 +354,10 @@ export class AgentHistoryMigrationService {
         );
         return;
       }
-      const state = await this.storageService.readState(runner, workspaceId);
+      const state = await this.migrationStateService.readState(
+        runner,
+        workspaceId,
+      );
       if (
         state.storage !== 'workspace' ||
         isDefined(state.migration) ||
@@ -362,7 +386,7 @@ export class AgentHistoryMigrationService {
         workspaceId,
         storage: 'core',
       });
-      await this.storageService.writeState(runner, workspaceId, {
+      await this.migrationStateService.writeState(runner, workspaceId, {
         ...state,
         cleanedAt: new Date().toISOString(),
       });

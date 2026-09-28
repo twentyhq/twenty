@@ -29,7 +29,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
 )
-@MetadataResolver()
+@MetadataResolver(() => AgentTurnDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AgentTurnResolver {
   private readonly logger = new Logger(AgentTurnResolver.name);
