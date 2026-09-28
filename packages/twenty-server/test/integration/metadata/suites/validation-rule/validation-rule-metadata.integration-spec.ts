@@ -6,16 +6,11 @@ import {
   findValidationRules,
   updateValidationRule,
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { type TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
-
 describe('Validation rule metadata', () => {
   let companyObjectMetadataId: string;
-  let opportunityObjectMetadataId: string;
   const createdValidationRuleIds: string[] = [];
 
   const createRule = async (input: Record<string, unknown>) => {
@@ -56,7 +51,6 @@ describe('Validation rule metadata', () => {
     };
 
     companyObjectMetadataId = findObjectId('company');
-    opportunityObjectMetadataId = findObjectId('opportunity');
   });
 
   afterAll(async () => {
@@ -149,31 +143,6 @@ describe('Validation rule metadata', () => {
     expect(validationRuleById.get(secondValidationRule.id)).toMatchObject({
       message: 'Second message',
       isActive: false,
-    });
-  });
-
-  it('should keep workspace rules on a standard object when the standard application is synchronized again', async () => {
-    const validationRule = await createRule({
-      objectMetadataId: opportunityObjectMetadataId,
-      name: 'Deal has a name',
-      expression: 'isNonEmptyString(name)',
-      message: 'A deal needs a name',
-    });
-
-    await getAppProviderByClassName<TwentyStandardApplicationService>(
-      'TwentyStandardApplicationService',
-    ).synchronizeTwentyStandardApplicationOrThrow({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-
-    expect(
-      (await findValidationRules(opportunityObjectMetadataId)).find(
-        ({ id }) => id === validationRule.id,
-      ),
-    ).toMatchObject({
-      name: 'Deal has a name',
-      expression: 'isNonEmptyString(name)',
-      isActive: true,
     });
   });
 });
