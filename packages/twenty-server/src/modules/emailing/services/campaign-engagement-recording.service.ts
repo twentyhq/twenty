@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -17,6 +17,8 @@ import { getCampaignDeliveryTableName } from 'src/modules/emailing/utils/get-cam
 
 @Injectable()
 export class CampaignEngagementRecordingService {
+  private readonly logger = new Logger(CampaignEngagementRecordingService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(WorkspaceEntity)
@@ -67,15 +69,28 @@ export class CampaignEngagementRecordingService {
 
     await this.campaignEngagementEventService.insertClickOrThrow(clickEvent);
     await this.countClickOnDelivery(observation);
-    await this.messageCampaignStatisticsService.scheduleRefresh({
-      workspaceId: observation.workspaceId,
-      campaignId: delivery.campaignId,
-    });
+    await this.messageCampaignStatisticsService
+      .scheduleRefresh({
+        workspaceId: observation.workspaceId,
+        campaignId: delivery.campaignId,
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Campaign ${delivery.campaignId} could not schedule a statistics refresh: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
   }
 
-  private async countClickOnDelivery(
-    observation: CampaignEngagementObservation,
-  ): Promise<void> {
+  private async countClickOnDelivery({
+    workspaceId,
+    deliveryId,
+    occurredAt,
+  }: Pick<
+    CampaignEngagementObservation,
+    'workspaceId' | 'deliveryId' | 'occurredAt'
+  >): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
@@ -85,16 +100,13 @@ export class CampaignEngagementRecordingService {
             { shouldSkipEventEmission: true },
           )
           .executeRaw(
-            `UPDATE ${getCampaignDeliveryTableName(observation.workspaceId)}
+            `UPDATE ${getCampaignDeliveryTableName(workspaceId)}
       SET "clickCount" = "clickCount" + 1,
           "clickedAt" = COALESCE("clickedAt", :occurredAt)
       WHERE "id" = :deliveryId`,
-            {
-              occurredAt: observation.occurredAt,
-              deliveryId: observation.deliveryId,
-            },
+            { occurredAt, deliveryId },
           ),
-      buildSystemAuthContext(observation.workspaceId),
+      buildSystemAuthContext(workspaceId),
     );
   }
 }

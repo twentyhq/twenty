@@ -12,6 +12,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
@@ -139,7 +140,7 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
     }
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,
@@ -161,10 +162,8 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
       );
 
     if (result.status === 'fail') {
-      this.logger.error(
-        `Failed to add the campaign click fields:\n${JSON.stringify(result, null, 2)}`,
-      );
-      throw new Error(
+      throw new WorkspaceMigrationBuilderException(
+        result,
         `Failed to add the campaign click fields for workspace ${workspaceId}`,
       );
     }

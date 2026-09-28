@@ -1,0 +1,1 @@
+{ "extends": "./tsconfig.json", "compilerOptions": { "incremental": false, "paths": { "src/*": ["./src/*"], "test/*": ["./test/*"], "@/*": ["../twenty-shared/src/*"], "twenty-shared/*": ["../twenty-shared/src/*/index.ts"] } } }
