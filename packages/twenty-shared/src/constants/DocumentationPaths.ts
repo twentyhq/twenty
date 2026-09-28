@@ -297,6 +297,17 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_DATA_MODEL_HOW_TOS_DATA_MODEL_FAQ:
     '/user-guide/data-model/how-tos/data-model-faq',
   USER_GUIDE_DATA_MODEL_OVERVIEW: '/user-guide/data-model/overview',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_CREATE_A_CAMPAIGN_WITH_AI:
+    '/user-guide/email-campaigns/how-tos/create-a-campaign-with-ai',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_EMAIL_CAMPAIGN_BEST_PRACTICES:
+    '/user-guide/email-campaigns/how-tos/email-campaign-best-practices',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_MANAGE_UNSUBSCRIBES_AND_TOPICS:
+    '/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_SEND_YOUR_FIRST_CAMPAIGN:
+    '/user-guide/email-campaigns/how-tos/send-your-first-campaign',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_SET_UP_A_SENDING_DOMAIN:
+    '/user-guide/email-campaigns/how-tos/set-up-a-sending-domain',
+  USER_GUIDE_EMAIL_CAMPAIGNS_OVERVIEW: '/user-guide/email-campaigns/overview',
   USER_GUIDE_INTRODUCTION: '/user-guide/introduction',
   USER_GUIDE_LAYOUT_CAPABILITIES_NAVIGATION:
     '/user-guide/layout/capabilities/navigation',

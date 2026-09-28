@@ -133,6 +133,7 @@
       "configurations": { "watch": { "command": "npx vitest --project unit" } }
     },
     "typecheck": {},
+    "knip": {},
     "storybook:build": {
       "configurations": {
         "test": {},

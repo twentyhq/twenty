@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
 import * as path from 'path';
+import { AUTH_STORAGE_STATE_PATH } from './lib/constants/authStorageStatePath';
 
 const envResult = config({
   path: path.resolve(__dirname, '.env'),
@@ -50,7 +51,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         permissions: ['clipboard-read', 'clipboard-write'],
-        storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
+        storageState: AUTH_STORAGE_STATE_PATH, // takes saved cookies from directory
       },
       dependencies: ['setup'],
     },

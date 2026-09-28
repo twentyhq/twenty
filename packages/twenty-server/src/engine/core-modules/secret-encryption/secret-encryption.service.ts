@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,9 +26,6 @@ type VersionedOptions = {
 
 @Injectable()
 export class SecretEncryptionService {
-  private readonly logger = new Logger(SecretEncryptionService.name);
-  private hasLoggedLegacyCtrDecryption = false;
-
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
@@ -142,53 +139,5 @@ export class SecretEncryptionService {
       rawKey,
       workspaceId: opts.workspaceId,
     }) as PlaintextString;
-  }
-
-  /**
-   * @deprecated Legacy variant kept only for the 2.5 encryption backfill
-   * instance commands, which read pre-v2 rows (legacy AES-CTR ciphertext or
-   * plaintext) and re-encrypt them into the enc:v2 envelope. Runtime and
-   * rotation paths must use `decryptVersionedOrThrow` instead.
-   */
-  public legacyDecryptVersionedWithFallback(
-    value: EncryptedString,
-    opts: VersionedOptions = {},
-  ): PlaintextString {
-    if (!isDefined(value)) {
-      return value;
-    }
-
-    const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
-
-    if (parsed.version === 2) {
-      const keys = resolveEncryptionKeysOrThrow({
-        environmentConfigDriver: this.environmentConfigDriver,
-      });
-      const rawKey = pickEncryptionKeyByKeyIdOrThrow({
-        keyId: parsed.keyId,
-        keys,
-      });
-
-      return decryptAesGcmV2OrThrow({
-        payloadBase64: parsed.payload,
-        rawKey,
-        workspaceId: opts.workspaceId,
-      }) as PlaintextString;
-    }
-
-    this.warnLegacyCtrDecryptionOnce();
-
-    return this.decrypt(value) as PlaintextString;
-  }
-
-  private warnLegacyCtrDecryptionOnce(): void {
-    if (this.hasLoggedLegacyCtrDecryption) {
-      return;
-    }
-
-    this.hasLoggedLegacyCtrDecryption = true;
-    this.logger.warn(
-      'Decrypted a legacy unprefixed AES-CTR ciphertext. These rows should be re-encrypted into the enc:v2 envelope in a follow-up migration.',
-    );
   }
 }

@@ -833,6 +833,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "AI"
 msgstr "KI"
 
+#. js-lingui-id: NHpbHJ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat threads owned by the workspace member"
+msgstr ""
+
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -2340,6 +2346,12 @@ msgstr "Chat-Thread nicht gefunden."
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat thread title cannot be empty."
 msgstr "Chat-Thread-Titel darf nicht leer sein."
+
+#. js-lingui-id: lZ6AwB
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat threads"
+msgstr ""
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -6966,13 +6978,13 @@ msgstr "Logikfunktion mit demselben universellen Bezeichner existiert bereits"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Make Private"
-msgstr ""
+msgstr "Privat machen"
 
 #. js-lingui-id: OT90yl
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
-msgstr ""
+msgstr "Workflow privat machen"
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -10506,13 +10518,13 @@ msgstr "Der Titel des Einstellungsmenüeintrags ist erforderlich"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Share with Workspace"
-msgstr ""
+msgstr "Mit dem Arbeitsbereich teilen"
 
 #. js-lingui-id: tVHa8m
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Share Workflow with Workspace"
-msgstr ""
+msgstr "Workflow mit dem Arbeitsbereich teilen"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -12249,6 +12261,16 @@ msgstr "Dieses Limit kann nicht gespeichert werden."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Dieses Limit wurde geändert, während Sie es bearbeitet haben. Laden Sie die Seite neu und versuchen Sie es erneut."
 
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr ""
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -13085,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Das aktualisierte Feld ist weder eine Morph-Relation noch eine Relation."
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Zugriff auf den KI-Verlauf nicht möglich. Bitte versuchen Sie es erneut."
@@ -14605,6 +14628,7 @@ msgid "Workspace Member"
 msgstr "Arbeitsbereichsmitglied"
 
 #. js-lingui-id: tz4ASG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -14663,6 +14687,12 @@ msgstr "Arbeitsbereichsmitglied nicht gefunden."
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "Position des Arbeitsbereichsmitglieds"
+
+#. js-lingui-id: 8GSlT/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who owns the thread"
+msgstr ""
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

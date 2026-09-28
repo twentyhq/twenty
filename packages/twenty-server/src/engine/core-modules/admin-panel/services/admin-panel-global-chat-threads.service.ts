@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
 import { type PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
@@ -55,7 +55,11 @@ export class AdminPanelGlobalChatThreadsService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly historyStorage: AgentHistoryStorageService,
+    @Inject(AgentHistoryWorkspaceStorageService)
+    private readonly historyStorage: Pick<
+      AgentHistoryWorkspaceStorageService,
+      'runReadOnlyReport'
+    >,
   ) {}
 
   async getGlobalChatThreads(
@@ -99,17 +103,13 @@ export class AdminPanelGlobalChatThreadsService {
           const parameters: unknown[] = [];
           const queries = partitions
             .slice(offsetIndex, offsetIndex + 25)
-            .map(({ workspaceIds, storage, table }, partitionIndex) => {
-              const workspaceCondition =
-                storage === 'core'
-                  ? 'AND thread."workspaceId" = workspace.id'
-                  : '';
+            .map(({ workspaceIds, table }, partitionIndex) => {
               const search = args.searchTerm?.trim().replace(/[\\%_]/g, '\\$&');
               const query = `
           WITH candidates AS (
             SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
               thread."userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
-              ${storage === 'core' ? 'thread."deletedAt"' : 'thread."archivedAt"'} AS "deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
+              thread."archivedAt" AS "deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
               (EXISTS (SELECT 1 FROM ${table('agentMessage')} hidden WHERE hidden."threadId" = thread.id AND hidden."isHidden" = true)
                 OR thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || thread."userWorkspaceId"::text)) AS "isOnboardingThread",
               (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false) AS "messageCount",
@@ -120,7 +120,7 @@ export class AdminPanelGlobalChatThreadsService {
             JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
             LEFT JOIN core."userWorkspace" membership ON membership.id = thread."userWorkspaceId" AND membership."workspaceId" = workspace.id
             LEFT JOIN core."user" owner ON owner.id = membership."userId"
-            WHERE true ${workspaceCondition}
+            WHERE true
               AND ($4::text IS NULL OR workspace."displayName" ILIKE $4 OR owner.email ILIKE $4 OR thread.id::text ILIKE $4)
           )
           SELECT *, COUNT(*) OVER () AS "totalCount", $9::int AS "partitionIndex" FROM candidates
