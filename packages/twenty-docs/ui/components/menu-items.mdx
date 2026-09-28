@@ -64,13 +64,19 @@ The root remains a div without keyboard drag behavior. `isTooltipOpen` and `isHo
 
 ## MenuItemSuggestion
 
-`MenuItemSuggestion` renders a list item with optional icon and supporting text. Supplying `onClick` gives it button semantics, a tab stop, and Enter/Space activation. The row is then a button rather than a list item, so place clickable suggestions in a menu container instead of a `ul` or `ol`. `selected` applies visual styling and does not implement a listbox selection model.
+`MenuItemSuggestion` renders a list item with optional icon and supporting text. Supplying `onClick` gives it button semantics, a tab stop, and Enter/Space activation. The `li` root then has the button role instead of `listitem`, so keep clickable suggestions in a `ul` with `role="none"`: the markup stays valid and assistive technology does not expect list items. `selected` applies visual styling and does not implement a listbox selection model.
 
 ```tsx
 import { MenuItemSuggestion } from 'twenty-ui/components';
 
 export const SuggestedName = ({ onChoose }: { onChoose: () => void }) => (
-  <MenuItemSuggestion text="Acme" contextualText="Company" onClick={onChoose} />
+  <ul role="none">
+    <MenuItemSuggestion
+      text="Acme"
+      contextualText="Company"
+      onClick={onChoose}
+    />
+  </ul>
 );
 ```
 
