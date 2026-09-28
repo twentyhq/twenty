@@ -3,9 +3,8 @@ import {
   computeLegacyChatOwnerStandardMetadata,
   LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
   LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER,
-} from 'src/database/commands/agent-history/utils/compute-legacy-chat-owner-standard-metadata.util';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-current-twenty-standard-application-all-flat-entity-maps.util';
-import { computeTwentyStandardApplicationAllFlatEntityMaps as computeShippedUpgradeMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+} from 'src/database/commands/upgrade-version-command/2-44/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-44-chat-owner.util';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const args = {
   workspaceId: '20202020-1111-4111-8111-111111111111',
@@ -35,10 +34,7 @@ describe('Chat owner expand and contract metadata', () => {
       ],
     ).toBeUndefined();
   });
-  it.each([
-    computeLegacyChatOwnerStandardMetadata,
-    computeShippedUpgradeMetadata,
-  ])(
+  it.each([computeLegacyChatOwnerStandardMetadata])(
     'preserves the old copy and expansion shape for shipped commands',
     (compute) => {
       const { allFlatEntityMaps, idByUniversalIdentifierByMetadataName } =

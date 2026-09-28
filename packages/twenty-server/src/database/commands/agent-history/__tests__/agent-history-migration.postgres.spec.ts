@@ -2,9 +2,10 @@ import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-v
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import {
+  computeLegacyChatOwnerStandardMetadata as computeTwentyStandardApplicationAllFlatEntityMaps,
   LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
   LEGACY_CHAT_OWNER_INDEX_UNIVERSAL_IDENTIFIER,
-} from 'src/database/commands/agent-history/utils/compute-legacy-chat-owner-standard-metadata.util';
+} from 'src/database/commands/upgrade-version-command/2-44/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-44-chat-owner.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790541986177-link-chat-message-senders-to-workspace-members.command';
@@ -37,7 +38,6 @@ import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/en
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -857,7 +857,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ]);
     });
 
-    it('contracts chat owners, removes orphan history and restores surviving legacy owners on rollback', async () => {
+    it('contracts owners without exposing unshared history and restores only live memberships', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -958,6 +958,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           validateBuildAndRunLegacyWorkspaceMigration: applyMigration,
         } as never,
         dataSource,
+        storage,
       );
       await command.up({
         workspaceId: WORKSPACE_ID,
@@ -993,7 +994,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         await dataSource.query(
           `SELECT "recordId", "principalId" FROM "${SCHEMA}"."recordShare"`,
         ),
-      ).toEqual([{ recordId: THREAD_ID, principalId: MEMBER_ID }]);
+      ).toEqual([]);
       expect(
         commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
           LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
@@ -1009,6 +1010,36 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           `INSERT INTO "${SCHEMA}"."agentChatThread" (id) VALUES (public.uuid_generate_v4())`,
         ),
       ).rejects.toMatchObject({ code: '23502' });
+      await dataSource.query(
+        'INSERT INTO core."userWorkspace" (id, "workspaceId", "userId", "deletedAt") VALUES ($1, $2, $3, now())',
+        ['20202020-0000-4000-8000-000000009999', WORKSPACE_ID, OWNER_ID],
+      );
+      await dataSource.query(
+        'UPDATE core."userWorkspace" SET "deletedAt" = now() WHERE id = $1',
+        [OWNER_ID],
+      );
+      await expect(
+        command.down({
+          workspaceId: WORKSPACE_ID,
+          index: 0,
+          total: 1,
+          options: {},
+        }),
+      ).rejects.toThrow('no active membership');
+      expect(
+        commandMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
+          LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER
+        ],
+      ).toMatchObject({ isNullable: true });
+      expect(
+        await dataSource.query(
+          `SELECT "userWorkspaceId" FROM "${SCHEMA}"."agentChatThread"`,
+        ),
+      ).toEqual([{ userWorkspaceId: null }]);
+      await dataSource.query(
+        'UPDATE core."userWorkspace" SET "deletedAt" = NULL WHERE id = $1',
+        [OWNER_ID],
+      );
       await command.down({
         workspaceId: WORKSPACE_ID,
         index: 0,

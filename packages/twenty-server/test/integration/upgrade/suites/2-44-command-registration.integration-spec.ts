@@ -17,3 +17,14 @@ it('discovers sender expansion through the application upgrade runner', () => {
     ]),
   );
 });
+
+it('discovers owner contraction through the application upgrade runner', () => {
+  const registry = getAppProviderByClassName<UpgradeCommandRegistryService>(
+    'UpgradeCommandRegistryService',
+  );
+  expect(registry.getBundleForVersion('2.44.0').workspaceCommands).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ timestamp: 1790543745710 }),
+    ]),
+  );
+});

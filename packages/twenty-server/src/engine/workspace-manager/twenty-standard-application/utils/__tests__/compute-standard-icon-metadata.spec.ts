@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-current-twenty-standard-application-all-flat-entity-maps.util';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const TWENTY_STANDARD_APPLICATION_ID = '20202020-2222-4222-8222-222222222222';

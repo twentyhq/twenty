@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { VERTICAL_LIST_LAYOUT_POSITIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-current-twenty-standard-application-all-flat-entity-maps.util';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const TWENTY_STANDARD_APPLICATION_ID = '20202020-2222-4222-8222-222222222222';

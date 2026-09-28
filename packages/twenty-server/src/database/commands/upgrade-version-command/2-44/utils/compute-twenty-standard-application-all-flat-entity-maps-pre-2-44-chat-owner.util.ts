@@ -9,7 +9,7 @@ import { computeFlatIndexNameOrThrow } from 'src/engine/metadata-modules/index-m
 import {
   computeTwentyStandardApplicationAllFlatEntityMaps,
   type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-current-twenty-standard-application-all-flat-entity-maps.util';
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 export const LEGACY_CHAT_OWNER_FIELD_UNIVERSAL_IDENTIFIER =
   'bf830886-b6dc-46e9-a229-eecbb0e66032';
