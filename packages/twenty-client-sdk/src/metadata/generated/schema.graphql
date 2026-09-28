@@ -413,6 +413,7 @@ type WorkspaceMember {
   dateFormat: WorkspaceMemberDateFormatEnum
   timeFormat: WorkspaceMemberTimeFormatEnum
   roles: [Role!]
+  userId: UUID!
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
 }
@@ -2067,6 +2068,7 @@ enum FeatureFlagKey {
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_EXECUTION_QUOTA_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
+  IS_LOGS_SETTINGS_SECTION_ENABLED
 }
 
 type WorkspaceUrls {
@@ -4033,11 +4035,23 @@ input EventLogFiltersInput {
   dateRange: EventLogDateRangeInput
   recordId: String
   objectMetadataId: String
+  fieldFilters: [EventLogFieldFilterInput!]
 }
 
 input EventLogDateRangeInput {
   start: DateTime
   end: DateTime
+}
+
+input EventLogFieldFilterInput {
+  field: String!
+  operand: EventLogFilterOperand!
+  values: [String!]!
+}
+
+enum EventLogFilterOperand {
+  IS
+  IS_NOT
 }
 
 input PieChartDataInput {
@@ -5682,7 +5696,7 @@ type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
-  eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  eventLogsLive(table: EventLogTable!, fieldFilters: [EventLogFieldFilterInput!]): [EventLogRecord!]
   exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
