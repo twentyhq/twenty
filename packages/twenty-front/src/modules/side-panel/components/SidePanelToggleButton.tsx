@@ -26,7 +26,8 @@ const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   right: ${({ alignToTop }) =>
     alignToTop ? themeCssVariables.spacing[3] : 'auto'};
   top: ${({ alignToTop }) => (alignToTop ? '0' : 'auto')};
-  z-index: ${RootStackingContextZIndices.SidePanelButton};
+  z-index: ${({ alignToTop }) =>
+    alignToTop ? RootStackingContextZIndices.SidePanelButton : 'auto'};
 `;
 
 export const SidePanelToggleButton = () => {

@@ -93,11 +93,12 @@ export const DropdownRoot = ({
   };
 
   const goBack = () => {
-    if (pageHistory.length < 2) {
+    const previousPage = pageHistory[pageHistory.length - 2];
+
+    if (!isDefined(previousPage)) {
       return;
     }
 
-    const previousPage = pageHistory[pageHistory.length - 2];
     const trigger = pageHistory[pageHistory.length - 1]?.trigger;
 
     setPageFocusRequest({
