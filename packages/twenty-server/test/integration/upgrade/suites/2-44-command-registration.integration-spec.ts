@@ -24,7 +24,7 @@ it('discovers owner contraction through the application upgrade runner', () => {
   );
   expect(registry.getBundleForVersion('2.44.0').workspaceCommands).toEqual(
     expect.arrayContaining([
-      expect.objectContaining({ timestamp: 1790543745710 }),
+      expect.objectContaining({ timestamp: 1790591945083 }),
     ]),
   );
 });

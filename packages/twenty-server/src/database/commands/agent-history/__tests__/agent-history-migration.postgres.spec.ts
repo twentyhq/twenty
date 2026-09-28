@@ -1,4 +1,4 @@
-import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790543745710-contract-chat-thread-owners.command';
+import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790591945083-contract-chat-thread-owners.command';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import {

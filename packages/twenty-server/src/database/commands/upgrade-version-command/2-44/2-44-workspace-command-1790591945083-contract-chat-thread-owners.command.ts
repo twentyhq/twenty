@@ -25,7 +25,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 const MEMBER_FIELD =
   STANDARD_OBJECTS.agentChatThread.fields.workspaceMember.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.44.0', 1790543745710)
+@RegisteredWorkspaceCommand('2.44.0', 1790591945083)
 @Command({
   name: 'upgrade:2-44:contract-chat-thread-owners',
   description:

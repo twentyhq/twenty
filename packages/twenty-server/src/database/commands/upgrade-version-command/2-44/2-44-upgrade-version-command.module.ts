@@ -1,4 +1,4 @@
-import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790543745710-contract-chat-thread-owners.command';
+import { ContractChatThreadOwnersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790591945083-contract-chat-thread-owners.command';
 import { VerifyCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790590808102-verify-common-record-sharing.command';
 import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
