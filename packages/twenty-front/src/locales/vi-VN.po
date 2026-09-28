@@ -17901,7 +17901,6 @@ msgstr "Đổi tên"
 
 #. js-lingui-id: 6PsaMr
 #: src/modules/ai/components/AiChatPageThreadHeader.tsx
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Đổi tên cuộc trò chuyện"
 
@@ -22807,7 +22806,6 @@ msgid "Unsupported image format"
 msgstr "Định dạng hình ảnh không được hỗ trợ"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/ChatReferenceChip.tsx
 #: src/modules/ai/components/ChatReferenceChip.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
