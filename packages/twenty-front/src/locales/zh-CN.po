@@ -16171,6 +16171,11 @@ msgstr "作为链接打开"
 msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
 msgstr "打开 Claude，并预填 Twenty 连接器名称和 MCP URL。"
 
+#. js-lingui-id: uIKeEf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
+msgid "Open conversation"
+msgstr ""
+
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
