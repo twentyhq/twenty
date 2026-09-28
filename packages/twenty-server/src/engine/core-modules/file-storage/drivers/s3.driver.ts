@@ -334,12 +334,24 @@ export class S3Driver implements StorageDriver {
     const toKey = `${params.to.folderPath}/${params.to.filename}`;
 
     try {
-      await this.s3Client.send(
+      const head = await this.s3Client.send(
         new HeadObjectCommand({
           Bucket: this.bucketName,
           Key: fromKey,
         }),
       );
+
+      // Backends without CopySourceIfMatch support get an unconditional copy,
+      // so this is their only check that the object is still the inspected one.
+      if (
+        isDefined(params.ifMatchChecksum) &&
+        head.ETag !== params.ifMatchChecksum
+      ) {
+        throw new FileStorageException(
+          `Object at ${fromKey} changed since it was inspected`,
+          FileStorageExceptionCode.PRECONDITION_FAILED,
+        );
+      }
 
       await this.copyObjectIfMatch({
         fromKey,

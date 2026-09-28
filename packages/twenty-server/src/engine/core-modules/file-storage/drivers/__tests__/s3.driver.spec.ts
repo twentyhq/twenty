@@ -353,7 +353,7 @@ describe('S3Driver.move', () => {
   });
 
   it('should copy conditionally on the inspected checksum', async () => {
-    mockS3Send.mockResolvedValue({});
+    mockS3Send.mockResolvedValue({ ETag: '"etag"' });
 
     const driver = new S3Driver({
       bucketName: 'test-bucket',
@@ -385,7 +385,7 @@ describe('S3Driver.move', () => {
         throw notImplementedError;
       }
 
-      return {};
+      return { ETag: '"etag"' };
     });
 
     const driver = new S3Driver({
@@ -412,7 +412,7 @@ describe('S3Driver.move', () => {
         });
       }
 
-      return {};
+      return { ETag: '"etag"' };
     });
 
     const driver = new S3Driver({
@@ -424,5 +424,19 @@ describe('S3Driver.move', () => {
       code: FileStorageExceptionCode.PRECONDITION_FAILED,
     });
     expect(getCopyCommands()).toHaveLength(1);
+  });
+
+  it('should refuse to copy when the source changed since it was inspected', async () => {
+    mockS3Send.mockResolvedValue({ ETag: '"replaced"' });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await expect(driver.move(moveParams)).rejects.toMatchObject({
+      code: FileStorageExceptionCode.PRECONDITION_FAILED,
+    });
+    expect(getCopyCommands()).toHaveLength(0);
   });
 });
