@@ -27,7 +27,10 @@ import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-hi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-type RecordedExecutionResult = Pick<AgentExecutionResult, 'steps' | 'isPaused'>;
+export type RecordedExecutionResult = {
+  steps?: Pick<NonNullable<AgentExecutionResult['steps']>[number], 'content'>[];
+  isPaused?: boolean;
+};
 
 export type RecordedConversation = {
   threadId: string;
@@ -70,9 +73,7 @@ export class WorkflowAgentConversationWorkspaceService {
     agentId: string | null;
     prompt: string;
     initiatorUserWorkspaceId: string | null;
-    // Absent when the agent failed before replying; the prompt is still
-    // recorded so the run shows what the agent was asked.
-    executionResult?: RecordedExecutionResult;
+    executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation | null> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
