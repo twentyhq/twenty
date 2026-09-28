@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
@@ -82,7 +82,9 @@ validationRuleParser.functions = {
   isDefined: isValidationRuleValueDefined,
   isEmpty: isValidationRuleValueEmpty,
   isNonEmptyString: (value: unknown) => isNonEmptyString(value),
-  includes: (array: unknown, value: unknown) =>
-    Array.isArray(array) && array.includes(value),
+  includes: (container: unknown, value: unknown) =>
+    Array.isArray(container)
+      ? container.includes(value)
+      : isString(container) && isString(value) && container.includes(value),
   arrayLength: (value: unknown) => (Array.isArray(value) ? value.length : 0),
 };

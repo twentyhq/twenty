@@ -20,8 +20,8 @@ export const VALIDATION_RULE_FUNCTIONS: ValidationRuleSyntaxDefinition[] = [
   },
   {
     name: 'includes',
-    signature: 'includes(list, value)',
-    description: msg`True when the list contains the value. Use it on multi-select and array fields.`,
+    signature: 'includes(listOrText, value)',
+    description: msg`True when a multi-select or array field contains the value, or when a text contains the given text. Letter case matters.`,
   },
   {
     name: 'arrayLength',

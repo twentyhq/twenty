@@ -17,6 +17,11 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
     universalIdentifier: 'opportunity-amount',
   },
   {
+    name: 'tags',
+    type: FieldMetadataType.MULTI_SELECT,
+    universalIdentifier: 'opportunity-tags',
+  },
+  {
     name: 'closeDate',
     type: FieldMetadataType.DATE_TIME,
     universalIdentifier: 'opportunity-close-date',
@@ -134,6 +139,26 @@ describe('evaluateValidationRuleExpression', () => {
     expect(
       evaluate('closeDate < now', { closeDate: '2027-01-01T00:00:00.000Z' }),
     ).toEqual({ status: 'failed' });
+  });
+
+  it('should check that a text contains another text', () => {
+    const expression = 'includes(company.industry, "Soft")';
+
+    expect(evaluate(expression, { company: { industry: 'Software' } })).toEqual(
+      { status: 'passed' },
+    );
+    expect(evaluate(expression, { company: { industry: 'Hardware' } })).toEqual(
+      { status: 'failed' },
+    );
+    expect(evaluate(expression, { company: { industry: null } })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should check that a list contains a value', () => {
+    expect(
+      evaluate('includes(tags, "PRIORITY")', { tags: ['NEW', 'PRIORITY'] }),
+    ).toEqual({ status: 'passed' });
   });
 
   it('should not treat whitespace as empty', () => {

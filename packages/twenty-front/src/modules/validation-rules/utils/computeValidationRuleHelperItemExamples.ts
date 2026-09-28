@@ -128,17 +128,23 @@ const computeFunctionExamples = ({
       return isDefined(field) ? [`isNonEmptyString(${field.path})`] : [];
     }
     case 'includes': {
-      const field = findField(
+      const listField = findField(
         rootFields,
         (candidate) =>
           LIST_TYPES.includes(candidate.type) &&
           candidate.selectOptionValues.length > 0,
       );
-      const [firstOption] = field?.selectOptionValues ?? [];
+      const [firstOption] = listField?.selectOptionValues ?? [];
+      const textField = findFieldOfTypes(fields, TEXT_TYPES);
 
-      return isDefined(field) && isDefined(firstOption)
-        ? [`includes(${field.path}, ${quote(firstOption)})`]
-        : [];
+      return [
+        ...(isDefined(listField) && isDefined(firstOption)
+          ? [`includes(${listField.path}, ${quote(firstOption)})`]
+          : []),
+        ...(isDefined(textField)
+          ? [`not includes(${textField.path}, "test")`]
+          : []),
+      ];
     }
     case 'arrayLength': {
       const field = findFieldOfTypes(rootFields, LIST_TYPES);
