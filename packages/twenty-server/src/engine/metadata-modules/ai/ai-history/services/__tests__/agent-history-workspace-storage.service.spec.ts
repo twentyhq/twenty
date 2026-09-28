@@ -20,9 +20,12 @@ describe('AgentHistoryWorkspaceStorageService', () => {
     createQueryRunner: () => runner,
   } as unknown as DataSource);
 
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    runner.query.mockResolvedValue([{ ready: true }]);
+  });
 
-  it('uses workspace tables without reading or locking the legacy route', async () => {
+  it('uses workspace tables after checking upgrade readiness', async () => {
     const result = await service.run(WORKSPACE_ID, async ({ table }) => {
       expect(table('agentMessage')).toBe(
         `"${getWorkspaceSchemaName(WORKSPACE_ID)}"."agentMessage"`,
@@ -32,10 +35,23 @@ describe('AgentHistoryWorkspaceStorageService', () => {
     });
 
     expect(result).toBe('saved');
-    expect(runner.query).not.toHaveBeenCalled();
+    expect(runner.query).toHaveBeenCalledTimes(2);
     expect(runner.commitTransaction).toHaveBeenCalledTimes(1);
     expect(runner.release).toHaveBeenCalledTimes(1);
   });
+
+  it.each([[], undefined])(
+    'rejects incomplete upgrades before running domain writes (%s)',
+    async (ready) => {
+      runner.query.mockResolvedValueOnce([]).mockResolvedValueOnce(ready ?? []);
+      const work = jest.fn();
+      await expect(service.run(WORKSPACE_ID, work)).rejects.toThrow(
+        'finishes upgrading',
+      );
+      expect(work).not.toHaveBeenCalled();
+      expect(runner.rollbackTransaction).toHaveBeenCalled();
+    },
+  );
 
   it('rolls back domain writes on failure', async () => {
     await expect(

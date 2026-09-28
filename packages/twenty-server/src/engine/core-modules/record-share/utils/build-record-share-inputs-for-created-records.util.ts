@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -113,14 +112,12 @@ export const buildRecordShareInputsForCreatedRecords = ({
   authContext,
   apiKeyRoleMap,
   shareWith,
-  isRecordSharingEnforced = true,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
-  isRecordSharingEnforced?: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
@@ -134,19 +131,6 @@ export const buildRecordShareInputsForCreatedRecords = ({
 
   return [
     ...recordIds.flatMap((recordId) => [
-      ...(!isRecordSharingEnforced && shareWithEntries.length === 0
-        ? [
-            {
-              recordId,
-              objectMetadataId,
-              principalId: EVERYONE_PRINCIPAL_ID,
-              principalType: RecordSharePrincipalType.EVERYONE,
-              accessLevel: RecordShareAccessLevel.FULL,
-              rowCause: RecordShareRowCause.APPLICATION,
-              sourceId: objectMetadataId,
-            },
-          ]
-        : []),
       ...buildCreatorRows({
         authContext,
         apiKeyRoleMap,

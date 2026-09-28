@@ -23,13 +23,17 @@ import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-
 import { RunEvaluationInputJob } from 'src/engine/metadata-modules/ai/ai-agent-monitor/jobs/run-evaluation-input.job';
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { hasLegacyChatThreadOwnerField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-legacy-chat-thread-owner-field.util';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
 )
-@MetadataResolver()
+@MetadataResolver(() => AgentTurnDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AgentTurnResolver {
   private readonly logger = new Logger(AgentTurnResolver.name);
@@ -37,7 +41,9 @@ export class AgentTurnResolver {
   constructor(
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
-    private readonly agentChatService: AgentChatService,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly graderService: AgentTurnGraderService,
@@ -84,11 +90,13 @@ export class AgentTurnResolver {
   }
 
   @Mutation(() => AgentTurnDTO)
+  @UseGuards(UserAuthGuard)
   async runEvaluationInput(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @Args('input') input: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AgentTurnWorkspaceEntity> {
     // Defense in depth: the job also re-fetches the agent through a
     // workspace-scoped repository.
@@ -97,11 +105,19 @@ export class AgentTurnResolver {
       workspaceId: workspace.id,
     });
 
-    const savedThread = await this.agentChatService.createThread({
-      workspaceId: workspace.id,
-      workspaceMemberId,
-      title: `Eval: ${input.substring(0, 50)}...`,
-    });
+    const writesLegacyOwner = await hasLegacyChatThreadOwnerField(
+      workspace.id,
+      this.workspaceCacheService,
+    );
+    // Evaluation history stays outside the user's chat list: no share or broadcast.
+    const savedThread = await this.threadRepository.insertAndReturnOne(
+      workspace.id,
+      {
+        workspaceMemberId,
+        ...(writesLegacyOwner ? { userWorkspaceId } : {}),
+        title: `Eval: ${input.substring(0, 50)}...`,
+      },
+    );
 
     const savedTurn = await this.turnRepository.insertAndReturnOne(
       workspace.id,

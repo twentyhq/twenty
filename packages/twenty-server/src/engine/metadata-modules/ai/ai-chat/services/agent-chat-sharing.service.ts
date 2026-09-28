@@ -1,3 +1,4 @@
+import { hasLegacyChatThreadOwnerField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-legacy-chat-thread-owner-field.util';
 import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -130,7 +131,10 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    const writesLegacyOwner = await this.hasLegacyOwnerField(args.workspaceId);
+    const writesLegacyOwner = await hasLegacyChatThreadOwnerField(
+      args.workspaceId,
+      this.workspaceCacheService,
+    );
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -302,20 +306,6 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     return authContext;
-  }
-
-  // The contract command removes the legacy column after this server starts.
-  // Keep its required value populated until that workspace has contracted.
-  private async hasLegacyOwnerField(workspaceId: string): Promise<boolean> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-    return isDefined(
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        'bf830886-b6dc-46e9-a229-eecbb0e66032'
-      ],
-    );
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {
