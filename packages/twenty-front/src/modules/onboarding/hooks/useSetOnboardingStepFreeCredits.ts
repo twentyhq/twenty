@@ -1,7 +1,9 @@
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
 import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useCallback } from 'react';
 
 type SetOnboardingStepFreeCreditsOptions = {
@@ -9,7 +11,11 @@ type SetOnboardingStepFreeCreditsOptions = {
 };
 
 export const useSetOnboardingStepFreeCredits = () => {
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const setOnboardingFreeCredits = useSetAtomFamilyState(
+    onboardingFreeCreditsFamilyState,
+    currentWorkspace?.id ?? '',
+  );
 
   return useCallback(
     (

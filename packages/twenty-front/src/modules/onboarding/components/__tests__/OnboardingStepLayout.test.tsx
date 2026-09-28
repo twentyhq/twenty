@@ -12,7 +12,7 @@ import { onboardingConfigState } from '@/client-config/states/onboardingConfigSt
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -84,11 +84,14 @@ describe('OnboardingStepLayout', () => {
   it('should display the free credits won out of the steps done so far', async () => {
     jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
     setOnboardingStatus(OnboardingStatus.PROFILE_CREATION);
-    jotaiStore.set(onboardingFreeCreditsState.atom, {
-      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
-      importContacts: 1.5,
-      seenCredits: 1.5,
-    });
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      {
+        ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+        importContacts: 1.5,
+        seenCredits: 1.5,
+      },
+    );
 
     render(<OnboardingStepLayout />, { wrapper: Wrapper });
 

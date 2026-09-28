@@ -1,10 +1,14 @@
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useOnboardingNewlyEarnedCredits = () => {
-  const [onboardingFreeCredits, setOnboardingFreeCredits] = useAtomState(
-    onboardingFreeCreditsState,
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const [onboardingFreeCredits, setOnboardingFreeCredits] = useAtomFamilyState(
+    onboardingFreeCreditsFamilyState,
+    currentWorkspace?.id ?? '',
   );
 
   const { seenCredits } = onboardingFreeCredits;

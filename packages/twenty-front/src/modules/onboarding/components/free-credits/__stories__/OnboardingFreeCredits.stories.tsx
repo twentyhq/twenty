@@ -3,15 +3,19 @@ import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingFreeCredits } from '@/onboarding/components/free-credits/OnboardingFreeCredits';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { type OnboardingFreeCredits as OnboardingFreeCreditsCounter } from '@/onboarding/types/OnboardingFreeCredits';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
-import { mockedUserData } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 
 const seedOnboardingFreeCredits = ({
   onboardingStatus,
@@ -33,10 +37,14 @@ const seedOnboardingFreeCredits = ({
     isWorkspaceCreator: true,
     onboardingStatus,
   });
-  jotaiStore.set(onboardingFreeCreditsState.atom, {
-    ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
-    ...onboardingFreeCredits,
-  });
+  jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+  jotaiStore.set(
+    onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+    {
+      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+      ...onboardingFreeCredits,
+    },
+  );
 };
 
 const findVisibleTooltip = async (canvasElement: HTMLElement, text: string) => {
@@ -106,9 +114,11 @@ export const NewlyEarned: Story = {
   },
   play: async ({ canvasElement }) => {
     await waitFor(() =>
-      expect(jotaiStore.get(onboardingFreeCreditsState.atom).seenCredits).toBe(
-        1,
-      ),
+      expect(
+        jotaiStore.get(
+          onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+        ).seenCredits,
+      ).toBe(1),
     );
     await expect(
       within(canvasElement).queryByText('+1'),
