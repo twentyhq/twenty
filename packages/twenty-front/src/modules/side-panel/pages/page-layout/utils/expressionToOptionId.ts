@@ -4,13 +4,14 @@ import { EXPRESSION_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constan
 import { VISIBILITY_ANY_DEVICE } from '@/side-panel/pages/page-layout/constants/VisibilityAnyDevice';
 import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
 import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
+import { isDefined } from 'twenty-shared/utils';
 
 export const expressionToOptionId = (
   expression: string | null | undefined,
 ): string => {
   const { viewerCondition } = splitAvailabilityExpression(expression);
 
-  if (!viewerCondition) {
+  if (!isDefined(viewerCondition)) {
     return VISIBILITY_ANY_DEVICE;
   }
 

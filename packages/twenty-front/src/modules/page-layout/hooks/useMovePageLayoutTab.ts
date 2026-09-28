@@ -1,5 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -19,6 +20,11 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
+  const pageLayoutPersistedState = useAtomComponentStateCallbackState(
+    pageLayoutPersistedComponentState,
+    pageLayoutId,
+  );
+
   const store = useStore();
 
   const featureFlags = useWorkspaceFeatureFlagsMap();
@@ -28,12 +34,18 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   // positions with: any other would leave the rendered order untouched.
   const swapWithNeighborTab = useCallback(
     (tabId: string, offset: -1 | 1) => {
+      const persistedTabs = store.get(pageLayoutPersistedState)?.tabs;
+
       store.set(pageLayoutDraftState, (prev) => {
         const sortedActiveTabs = sortTabsByPosition(
           prev.tabs.filter(
             (tab) =>
               tab.isActive &&
-              !isPageLayoutTabHiddenByFeatureFlags({ tab, featureFlags }),
+              !isPageLayoutTabHiddenByFeatureFlags({
+                tabId: tab.id,
+                persistedTabs,
+                featureFlags,
+              }),
           ),
         );
         const index = sortedActiveTabs.findIndex((tab) => tab.id === tabId);
@@ -64,7 +76,7 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         };
       });
     },
-    [featureFlags, pageLayoutDraftState, store],
+    [featureFlags, pageLayoutDraftState, pageLayoutPersistedState, store],
   );
 
   const moveLeft = useCallback(

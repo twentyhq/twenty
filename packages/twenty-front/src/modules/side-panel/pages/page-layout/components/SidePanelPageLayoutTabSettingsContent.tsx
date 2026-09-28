@@ -6,6 +6,7 @@ import { useResetPageLayoutTabToDefault } from '@/page-layout/hooks/useResetPage
 import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
 import { useUnpinTab } from '@/page-layout/hooks/useUnpinTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
@@ -44,6 +45,11 @@ export const SidePanelPageLayoutTabSettingsContent = ({
 
   const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutPersisted = useAtomComponentStateValue(
+    pageLayoutPersistedComponentState,
     pageLayoutId,
   );
 
@@ -93,7 +99,11 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     pageLayoutDraft.tabs.filter(
       (draftTab) =>
         draftTab.isActive &&
-        !isPageLayoutTabHiddenByFeatureFlags({ tab: draftTab, featureFlags }),
+        !isPageLayoutTabHiddenByFeatureFlags({
+          tabId: draftTab.id,
+          persistedTabs: pageLayoutPersisted?.tabs,
+          featureFlags,
+        }),
     ),
   );
   const currentIndex = tabsSorted.findIndex(

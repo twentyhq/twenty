@@ -6,12 +6,14 @@ import { isWidgetEnabledByFeatureFlags } from '@/page-layout/utils/isWidgetEnabl
 
 type GetTabsWithVisibleWidgetsParams = {
   tabs: PageLayoutTab[];
+  persistedTabs?: PageLayoutTab[];
   isEditMode: boolean;
   context: WidgetVisibilityContext;
 };
 
 export const getTabsWithVisibleWidgets = ({
   tabs,
+  persistedTabs,
   isEditMode,
   context,
 }: GetTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
@@ -22,7 +24,8 @@ export const getTabsWithVisibleWidgets = ({
       .filter(
         (tab) =>
           !isPageLayoutTabHiddenByFeatureFlags({
-            tab,
+            tabId: tab.id,
+            persistedTabs,
             featureFlags: context.featureFlags,
           }),
       )

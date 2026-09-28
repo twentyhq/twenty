@@ -2,6 +2,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
 import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
@@ -18,6 +19,11 @@ export const MoveToTabDropdownContent = () => {
 
   const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutPersisted = useAtomComponentStateValue(
+    pageLayoutPersistedComponentState,
     pageLayoutId,
   );
 
@@ -46,7 +52,11 @@ export const MoveToTabDropdownContent = () => {
     (tab) =>
       tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
       tab.id !== currentTab?.id &&
-      !isPageLayoutTabHiddenByFeatureFlags({ tab, featureFlags }) &&
+      !isPageLayoutTabHiddenByFeatureFlags({
+        tabId: tab.id,
+        persistedTabs: pageLayoutPersisted?.tabs,
+        featureFlags,
+      }) &&
       isDefined(currentWidget) &&
       canVerticalListAcceptWidget({
         destinationWidgets: tab.widgets,

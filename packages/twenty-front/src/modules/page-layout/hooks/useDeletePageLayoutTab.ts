@@ -1,5 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -26,6 +27,11 @@ export const useDeletePageLayoutTab = ({
     pageLayoutId,
   );
 
+  const pageLayoutPersistedState = useAtomComponentStateCallbackState(
+    pageLayoutPersistedComponentState,
+    pageLayoutId,
+  );
+
   const store = useStore();
 
   const featureFlags = useWorkspaceFeatureFlagsMap();
@@ -37,12 +43,17 @@ export const useDeletePageLayoutTab = ({
   const deleteTab = useCallback(
     (tabId: string) => {
       const draft = store.get(pageLayoutDraftState);
+      const persistedTabs = store.get(pageLayoutPersistedState)?.tabs;
       // A tab feature flags hide can neither be the last one standing nor take
       // over as the active tab.
       const activeTabs = draft.tabs.filter(
         (t) =>
           t.isActive &&
-          !isPageLayoutTabHiddenByFeatureFlags({ tab: t, featureFlags }),
+          !isPageLayoutTabHiddenByFeatureFlags({
+            tabId: t.id,
+            persistedTabs,
+            featureFlags,
+          }),
       );
 
       if (activeTabs.length <= 1) {
@@ -68,7 +79,13 @@ export const useDeletePageLayoutTab = ({
         store.set(activeTabIdAtom, nextActiveId);
       }
     },
-    [pageLayoutDraftState, activeTabIdAtom, featureFlags, store],
+    [
+      pageLayoutDraftState,
+      pageLayoutPersistedState,
+      activeTabIdAtom,
+      featureFlags,
+      store,
+    ],
   );
 
   return { deleteTab };

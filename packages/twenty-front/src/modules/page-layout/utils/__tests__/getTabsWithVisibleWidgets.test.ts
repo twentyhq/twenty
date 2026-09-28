@@ -509,14 +509,17 @@ describe('getTabsWithVisibleWidgets', () => {
     });
 
     it('should apply flag conditions in edit mode but keep device conditions and empty tabs', () => {
+      const tabs = [
+        ...buildTabs(),
+        createMockTab('mobile-only', [
+          createGatedWidget('mobile-widget', 'device == "MOBILE"'),
+        ]),
+        createMockTab('empty', []),
+      ];
+
       const result = getTabsWithVisibleWidgets({
-        tabs: [
-          ...buildTabs(),
-          createMockTab('mobile-only', [
-            createGatedWidget('mobile-widget', 'device == "MOBILE"'),
-          ]),
-          createMockTab('empty', []),
-        ],
+        tabs,
+        persistedTabs: tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
           isMobile: false,
@@ -529,6 +532,25 @@ describe('getTabsWithVisibleWidgets', () => {
         ['mobile-only', ['mobile-widget']],
         ['empty', []],
       ]);
+    });
+
+    it('should keep a tab in edit mode once the edit leaves it with only flag-gated widgets', () => {
+      const notesWidget = createGatedWidget('notes-widget', FLAG_ON_EXPRESSION);
+      const persistedTabs = [
+        createMockTab('files', [notesWidget, createMockWidget('files-widget')]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs: [createMockTab('files', [notesWidget])],
+        persistedTabs,
+        isEditMode: true,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(getRenderedWidgetIds(result)).toEqual([['files', []]]);
     });
 
     it('should hide a chat threads widget without the flag, whatever its layout', () => {
