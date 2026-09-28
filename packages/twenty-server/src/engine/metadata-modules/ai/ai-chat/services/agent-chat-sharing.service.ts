@@ -1,11 +1,9 @@
 import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
-import { mapAgentHistoryFieldNameToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-field-name-to-workspace.util';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
-import { normalizeAgentHistoryRecord } from 'src/engine/metadata-modules/ai/ai-history/utils/normalize-agent-history-record.util';
 import { Injectable } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -16,7 +14,7 @@ import { RecordShareStorageService } from 'src/engine/core-modules/record-share/
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import {
@@ -40,7 +38,7 @@ type ThreadAccessArgs = {
 export class AgentChatSharingService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -129,7 +127,7 @@ export class AgentChatSharingService {
     userWorkspaceId: string;
     id?: string;
     title?: string;
-  }): Promise<AgentChatThreadEntity> {
+  }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
     const writesWorkspaceMember = await this.hasWorkspaceMemberOwnerField(
@@ -151,7 +149,7 @@ export class AgentChatSharingService {
     return this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table }) => {
-        const records = await manager.query<AgentChatThreadEntity[]>(
+        const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
           `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId"${writesWorkspaceMember ? ', "workspaceMemberId"' : ''})
          VALUES ($1, $2, $3${writesWorkspaceMember ? ', $4' : ''}) RETURNING *`,
           [
@@ -180,11 +178,7 @@ export class AgentChatSharingService {
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         }
-        return normalizeAgentHistoryRecord({
-          record,
-          workspaceId: args.workspaceId,
-          objectName: 'agentChatThread',
-        }) as AgentChatThreadEntity;
+        return record;
       },
     );
   }
@@ -197,24 +191,20 @@ export class AgentChatSharingService {
     operationType: 'update' | 'soft-delete' | 'restore';
     changes:
       | { title: string }
-      | { deletedAt: Date | null; activeStreamId?: null };
-  }): Promise<AgentChatThreadEntity> {
+      | { archivedAt: Date | null; activeStreamId?: null };
+  }): Promise<AgentChatThreadWorkspaceEntity> {
     return this.mutateThreadWithAccess({
       ...args,
       operationType,
       updatedColumns: operationType === 'update' ? Object.keys(changes) : [],
       mutate: async ({ manager, table }, thread) => {
-        if (operationType === 'soft-delete' && isDefined(thread.deletedAt)) {
+        if (operationType === 'soft-delete' && isDefined(thread.archivedAt)) {
           return thread;
         }
         const entries = Object.entries(changes).map(
-          ([fieldName, value]) =>
-            [
-              mapAgentHistoryFieldNameToWorkspace('agentChatThread', fieldName),
-              value,
-            ] as const,
+          ([fieldName, value]) => [fieldName, value] as const,
         );
-        const records = await manager.query<AgentChatThreadEntity[]>(
+        const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
           `WITH updated_thread AS (UPDATE ${table('agentChatThread')} SET ${entries.map(([key], index) => `${escapeIdentifier(key)} = $${index + 2}`).join(', ')}, "updatedAt" = NOW() WHERE id = $1 RETURNING *) SELECT * FROM updated_thread`,
           [args.threadId, ...entries.map(([, value]) => value)],
         );
@@ -222,11 +212,7 @@ export class AgentChatSharingService {
         if (!isDefined(record)) {
           return this.throwNotFound();
         }
-        return normalizeAgentHistoryRecord({
-          record,
-          workspaceId: args.workspaceId,
-          objectName: 'agentChatThread',
-        }) as AgentChatThreadEntity;
+        return record;
       },
     });
   }
@@ -263,7 +249,7 @@ export class AgentChatSharingService {
     updatedColumns: string[];
     mutate: (
       context: AgentHistoryStorageContext,
-      thread: AgentChatThreadEntity,
+      thread: AgentChatThreadWorkspaceEntity,
     ) => Promise<TResult>;
   }): Promise<TResult> {
     const authContext = await this.getAuthContext(args);

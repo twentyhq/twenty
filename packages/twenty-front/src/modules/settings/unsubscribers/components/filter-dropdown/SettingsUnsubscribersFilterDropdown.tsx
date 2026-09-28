@@ -1,15 +1,15 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { SettingsUnsubscribersFilterMenuContent } from '@/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent';
 import { SettingsUnsubscribersFilterOptionsContent } from '@/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterOptionsContent';
-import { type SettingsUnsubscribersFilterContentId } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterContentId';
 import { type SettingsUnsubscribersFilterOption } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterOption';
 import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/constants/SettingsUnsubscribersAllFilter';
 import { getMessageSuppressionReasonBadge } from '@/settings/unsubscribers/utils/getMessageSuppressionReasonBadge';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import {
   MessageSuppressionReason,
   type UnsubscribeTopicsQuery,
@@ -42,11 +42,6 @@ export const SettingsUnsubscribersFilterDropdown = ({
 }: SettingsUnsubscribersFilterDropdownProps) => {
   const { t } = useLingui();
 
-  const [contentId, setContentId] =
-    useState<SettingsUnsubscribersFilterContentId | null>(null);
-
-  const goToMenu = () => setContentId(null);
-
   const reasonOptions: SettingsUnsubscribersFilterOption[] = [
     { value: SETTINGS_UNSUBSCRIBERS_ALL_FILTER, label: t`All reasons` },
     ...Object.values(MessageSuppressionReason).map((reason) => ({
@@ -67,56 +62,47 @@ export const SettingsUnsubscribersFilterDropdown = ({
     reasonValue !== SETTINGS_UNSUBSCRIBERS_ALL_FILTER ||
     topicValue !== SETTINGS_UNSUBSCRIBERS_ALL_FILTER;
 
-  const renderContent = () => {
-    switch (contentId) {
-      case 'reason':
-        return (
+  return (
+    <DropdownRoot
+      dropdownId={SETTINGS_UNSUBSCRIBERS_FILTER_DROPDOWN_ID}
+      type="picker"
+    >
+      <Dropdown.Trigger
+        render={
+          <Button
+            startIcon={<IconFilter />}
+            size="md"
+            aria-label={t`Filter unsubscribers`}
+            variant="outline"
+          />
+        }
+      />
+      <DropdownContent align="end" sideOffset={8}>
+        <Dropdown.Page id="root">
+          <SettingsUnsubscribersFilterMenuContent
+            reasonLabel={getOptionLabel(reasonOptions, reasonValue)}
+            topicLabel={getOptionLabel(topicOptions, topicValue)}
+            hasActiveFilters={hasActiveFilters}
+            onClear={onClear}
+          />
+        </Dropdown.Page>
+        <Dropdown.Page id="reason">
           <SettingsUnsubscribersFilterOptionsContent
             title={t`Reason`}
             options={reasonOptions}
             selectedValue={reasonValue}
             onSelect={onChangeReason}
-            onBack={goToMenu}
           />
-        );
-      case 'topic':
-        return (
+        </Dropdown.Page>
+        <Dropdown.Page id="topic">
           <SettingsUnsubscribersFilterOptionsContent
             title={t`Topic`}
             options={topicOptions}
             selectedValue={topicValue}
             onSelect={onChangeTopic}
-            onBack={goToMenu}
           />
-        );
-      default:
-        return (
-          <SettingsUnsubscribersFilterMenuContent
-            reasonLabel={getOptionLabel(reasonOptions, reasonValue)}
-            topicLabel={getOptionLabel(topicOptions, topicValue)}
-            hasActiveFilters={hasActiveFilters}
-            onContentChange={setContentId}
-            onClear={onClear}
-          />
-        );
-    }
-  };
-
-  return (
-    <Dropdown
-      dropdownId={SETTINGS_UNSUBSCRIBERS_FILTER_DROPDOWN_ID}
-      dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 8 }}
-      onClose={goToMenu}
-      clickableComponent={
-        <Button
-          startIcon={<IconFilter />}
-          size="md"
-          aria-label={t`Filter unsubscribers`}
-          variant="outline"
-        />
-      }
-      dropdownComponents={renderContent()}
-    />
+        </Dropdown.Page>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };
