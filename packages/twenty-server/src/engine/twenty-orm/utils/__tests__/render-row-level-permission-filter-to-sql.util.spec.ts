@@ -125,7 +125,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
 
     expect(nameParameterKey).toMatch(/^name[0-9a-f]{10}$/);
     expect(result?.sql).toBe(
-      `("company"."name"::text ILIKE :${nameParameterKey})`,
+      `(public.unaccent_immutable("company"."name"::text) ILIKE public.unaccent_immutable(:${nameParameterKey}))`,
     );
   });
 
@@ -140,7 +140,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     const employeesParameterKey = findParameterKeyByValue(parameters, 5);
 
     expect(result?.sql).toBe(
-      `(("company"."name"::text ILIKE :${nameParameterKey}) AND ("company"."employees" >= :${employeesParameterKey}))`,
+      `((public.unaccent_immutable("company"."name"::text) ILIKE public.unaccent_immutable(:${nameParameterKey})) AND ("company"."employees" >= :${employeesParameterKey}))`,
     );
   });
 
@@ -189,7 +189,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     );
 
     expect(result?.sql).toBe(
-      `(("company"."name"::text ILIKE :${nameParameterKey}))`,
+      `((public.unaccent_immutable("company"."name"::text) ILIKE public.unaccent_immutable(:${nameParameterKey})))`,
     );
   });
 
@@ -295,7 +295,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     );
 
     expect(result?.sql).toBe(
-      `(1=1 OR ("company"."name"::text ILIKE :${nameParameterKey}))`,
+      `(1=1 OR (public.unaccent_immutable("company"."name"::text) ILIKE public.unaccent_immutable(:${nameParameterKey})))`,
     );
   });
 
@@ -331,7 +331,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     const employeesParameterKey = findParameterKeyByValue(parameters, 2);
 
     expect(result?.sql).toBe(
-      `(("company"."name"::text ILIKE :${nameParameterKey}) AND ("company"."employees" = :${employeesParameterKey}))`,
+      `((public.unaccent_immutable("company"."name"::text) ILIKE public.unaccent_immutable(:${nameParameterKey})) AND ("company"."employees" = :${employeesParameterKey}))`,
     );
     expect(Object.keys(parameters)).toHaveLength(2);
     expect(findParameterKeyByValue(parameters, 'a')).toMatch(
