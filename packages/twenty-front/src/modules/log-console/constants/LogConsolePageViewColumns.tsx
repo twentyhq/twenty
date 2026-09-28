@@ -12,13 +12,13 @@ export const LOG_CONSOLE_PAGE_VIEW_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'member',
     label: msg`Member`,
-    gridTrack: 'minmax(0, 200px)',
+    gridTrack: 'minmax(140px, 200px)',
     renderCell: (entry) => <LogConsoleMemberCell userId={entry.userId} />,
   },
   {
     id: 'page',
     label: msg`Page`,
-    gridTrack: 'minmax(0, 1fr)',
+    gridTrack: 'minmax(200px, 1fr)',
     renderCell: (entry) => (
       <SettingsTableTextCell text={entry.properties?.pathname} />
     ),

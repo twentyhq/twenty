@@ -8,7 +8,7 @@ import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOpera
 export const LOG_CONSOLE_USAGE_OPERATION_COLUMN: LogConsoleColumn = {
   id: 'operation',
   label: msg`Operation`,
-  gridTrack: 'minmax(0, 216px)',
+  gridTrack: 'minmax(140px, 216px)',
   renderCell: (entry) => {
     const operationTypeLabel = getUsageOperationTypeLabel(
       entry.properties?.operationType,

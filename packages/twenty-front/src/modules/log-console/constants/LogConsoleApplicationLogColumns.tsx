@@ -50,7 +50,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'message',
     label: msg`Message`,
-    gridTrack: 'minmax(0, 1fr)',
+    gridTrack: 'minmax(200px, 1fr)',
     renderCell: (entry) => {
       const [firstLine] = (entry.properties?.message ?? '').split('\n');
 

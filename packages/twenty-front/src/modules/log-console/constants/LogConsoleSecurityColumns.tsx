@@ -12,7 +12,7 @@ export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'actor',
     label: msg`Actor`,
-    gridTrack: 'minmax(0, 200px)',
+    gridTrack: 'minmax(140px, 200px)',
     renderCell: (entry) => (
       <LogConsoleMemberCell
         userId={entry.userId}
@@ -23,7 +23,7 @@ export const LOG_CONSOLE_SECURITY_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'details',
     label: msg`Details`,
-    gridTrack: 'minmax(0, 1fr)',
+    gridTrack: 'minmax(200px, 1fr)',
     renderCell: (entry) => (
       <SettingsTableTextCell text={entry.properties?.message} />
     ),

@@ -11,7 +11,7 @@ export const LOG_CONSOLE_WEBHOOK_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'event',
     label: msg`Event`,
-    gridTrack: 'minmax(0, 186px)',
+    gridTrack: 'minmax(140px, 186px)',
     renderCell: (entry) => (
       <SettingsTableTextCell text={entry.properties?.eventName} />
     ),
@@ -19,7 +19,7 @@ export const LOG_CONSOLE_WEBHOOK_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'endpoint',
     label: msg`Endpoint`,
-    gridTrack: 'minmax(0, 1fr)',
+    gridTrack: 'minmax(160px, 1fr)',
     renderCell: (entry) => (
       <SettingsTableLinkCell url={entry.properties?.url} />
     ),
@@ -28,7 +28,7 @@ export const LOG_CONSOLE_WEBHOOK_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'error',
     label: msg`Error`,
-    gridTrack: 'minmax(0, 1fr)',
+    gridTrack: 'minmax(160px, 1fr)',
     renderCell: (entry) => (
       <SettingsTableTextCell text={entry.properties?.error ?? '—'} />
     ),

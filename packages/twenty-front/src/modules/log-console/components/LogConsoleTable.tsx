@@ -26,7 +26,7 @@ const StyledHeaderRow = styled(TableRow)`
   box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
 `;
 
 const StyledLiveEntryRow = styled(TableRow)`
@@ -58,7 +58,23 @@ const StyledLiveEntryRow = styled(TableRow)`
 
 const StyledTable = styled(Table)`
   box-sizing: border-box;
+  min-width: min-content;
   padding-inline: ${themeCssVariables.spacing[3]};
+
+  > [data-table-row] > :first-child {
+    background-color: ${themeCssVariables.background.primary};
+    border-radius: ${themeCssVariables.border.radius.md} 0 0
+      ${themeCssVariables.border.radius.md};
+    left: 0;
+    position: sticky;
+    z-index: 1;
+  }
+
+  > [data-table-row][data-clickable='true']:hover > :first-child,
+  > [data-table-row][data-expanded] > :first-child {
+    box-shadow: inset 0 0 0 100vmax
+      ${themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledLoadMoreTrigger = styled.div`
@@ -127,6 +143,7 @@ export const LogConsoleTable = ({
         key={key}
         gridTemplateColumns={gridTemplateColumns}
         height={themeCssVariables.spacing[8]}
+        isClickable
         isExpanded={
           isDefined(selectedEntry) && isDeeplyEqual(entry, selectedEntry)
         }

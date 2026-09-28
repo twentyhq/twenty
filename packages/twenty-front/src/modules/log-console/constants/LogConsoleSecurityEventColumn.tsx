@@ -9,7 +9,7 @@ import { SettingsTableTagCell } from '@/settings/components/SettingsTableTagCell
 export const LOG_CONSOLE_SECURITY_EVENT_COLUMN: LogConsoleColumn = {
   id: 'event',
   label: msg`Event`,
-  gridTrack: 'minmax(0, 216px)',
+  gridTrack: 'minmax(160px, 216px)',
   renderCell: (entry) => {
     const securityEvent = getLogConsoleSecurityEvent(entry);
 

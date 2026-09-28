@@ -16,7 +16,7 @@ export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'action',
     label: msg`Action`,
-    gridTrack: 'minmax(0, 176px)',
+    gridTrack: 'minmax(152px, 176px)',
     renderCell: (entry) => {
       const action = LOG_CONSOLE_RECORD_ACTIONS[entry.event];
 
@@ -32,19 +32,19 @@ export const LOG_CONSOLE_RECORD_CHANGE_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'object',
     label: msg`Object`,
-    gridTrack: 'minmax(0, 160px)',
+    gridTrack: 'minmax(120px, 160px)',
     renderCell: (entry) => <LogConsoleObjectCell entry={entry} />,
   },
   {
     id: 'record',
     label: msg`Record`,
-    gridTrack: 'minmax(0, 216px)',
+    gridTrack: 'minmax(140px, 216px)',
     renderCell: (entry) => <LogConsoleRecordCell entry={entry} />,
   },
   {
     id: 'changes',
     label: msg`Changes`,
-    gridTrack: 'minmax(200px, 1fr)',
+    gridTrack: 'minmax(240px, 1fr)',
     renderCell: (entry) => <LogConsoleChangesCell entry={entry} />,
   },
   LOG_CONSOLE_RECORD_CHANGE_ACTOR_COLUMN,

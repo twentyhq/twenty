@@ -7,7 +7,7 @@ import { getLogConsoleRecordChangeActor } from '@/log-console/utils/getLogConsol
 export const LOG_CONSOLE_RECORD_CHANGE_ACTOR_COLUMN: LogConsoleColumn = {
   id: 'actor',
   label: msg`Actor`,
-  gridTrack: 'minmax(0, 166px)',
+  gridTrack: 'minmax(140px, 166px)',
   renderCell: (entry) => (
     <LogConsoleMemberCell
       actor={getLogConsoleRecordChangeActor(entry)}
