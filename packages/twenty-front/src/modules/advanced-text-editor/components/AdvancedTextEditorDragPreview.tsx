@@ -40,14 +40,14 @@ const StyledInsertionBadge = styled.span`
 type AdvancedTextEditorDragPreviewProps = {
   Icon: IconComponent;
   label: string;
-  isInsertion: boolean;
+  isInsertion?: boolean;
   ref: Ref<HTMLDivElement>;
 };
 
 export const AdvancedTextEditorDragPreview = ({
   Icon,
   label,
-  isInsertion,
+  isInsertion = false,
   ref,
 }: AdvancedTextEditorDragPreviewProps) => {
   const theme = useTheme();

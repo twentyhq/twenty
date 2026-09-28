@@ -3,6 +3,7 @@ import {
   createParagraphBlockContent,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockContent';
 import { getAdvancedTextEditorContainerAppearanceSettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings';
+import { getAdvancedTextEditorTextBlockSettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorTextBlockSettings';
 import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings';
 import { ButtonNode } from '@/advanced-text-editor/extensions/blocks/ButtonNode';
 import { ColumnNode } from '@/advanced-text-editor/extensions/blocks/ColumnNode';
@@ -34,32 +35,14 @@ export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
     icon: IconPilcrow,
     extension: TextBlockStyle,
     insertionRecipes: [],
-    settingsFields: [
-      ...getAdvancedTextEditorTypographySettings(),
-      {
-        label: msg`Padding`,
-        kind: 'style',
-        property: 'padding',
-        input: 'box',
-        placeholder: '0',
-      },
-    ],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
   },
   [TIPTAP_NODE_TYPES.HEADING]: {
     label: msg`Heading`,
     icon: IconH1,
     extension: null,
     insertionRecipes: [],
-    settingsFields: [
-      ...getAdvancedTextEditorTypographySettings(),
-      {
-        label: msg`Padding`,
-        kind: 'style',
-        property: 'padding',
-        input: 'box',
-        placeholder: '0',
-      },
-    ],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
   },
   [TIPTAP_NODE_TYPES.SECTION]: {
     label: msg`Section`,

@@ -101,7 +101,7 @@ export const AdvancedTextEditorBlockHandleMenu = ({
               startIcon={<IconAdjustments />}
               onClick={handleOpenBlockSettings}
             >
-              {t`Design`}
+              {t`Style`}
             </Dropdown.ActionItem>
           )}
           <Dropdown.ActionItem

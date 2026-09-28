@@ -1,6 +1,5 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { AdvancedTextEditorBlockHandle } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandle';
-import { useOpenEmailBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel';
 import { useOpenEmailBlockStyleInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockStyleInSidePanel';
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
@@ -47,17 +46,10 @@ export const EmailEditorCanvas = ({
     resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
   );
   const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
-  const { openEmailBlockSettingsInSidePanel } =
-    useOpenEmailBlockSettingsInSidePanel();
   const {
     openEmailBlockStyleInSidePanel,
     followEmailBlockSelectionInSidePanel,
   } = useOpenEmailBlockStyleInSidePanel();
-
-  const openBlockStyle = () => {
-    openEmailBlockSettingsInSidePanel();
-    openEmailBlockStyleInSidePanel();
-  };
 
   const handleCanvasClick = (event: MouseEvent<HTMLDivElement>) => {
     if (
@@ -97,7 +89,7 @@ export const EmailEditorCanvas = ({
         />
         <AdvancedTextEditorBlockHandle
           editor={editor}
-          onOpenBlockSettings={openBlockStyle}
+          onOpenBlockSettings={openEmailBlockStyleInSidePanel}
         />
       </StyledCanvasPage>
     </StyledCanvasBackdrop>

@@ -9,12 +9,10 @@ import {
   DragHandle,
   type DragHandleProps,
 } from '@tiptap/extension-drag-handle-react';
-import { useRef, useState } from 'react';
+import { type CSSProperties, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const OUTLINE_OFFSET_PX = 4;
 
 const DRAG_HANDLE_OPTIONS: Pick<
   DragHandleProps,
@@ -30,11 +28,7 @@ const DRAG_HANDLE_OPTIONS: Pick<
       },
     ],
   },
-  computePositionConfig: {
-    placement: 'left-start',
-    strategy: 'absolute',
-    middleware: [offset(8)],
-  },
+  computePositionConfig: { middleware: [offset(8)] },
 };
 
 const StyledHandleSlot = styled.div`
@@ -46,19 +40,17 @@ const StyledHandleSlot = styled.div`
 `;
 
 const StyledBlockOutline = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.blue};
   border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
+  outline: 1px solid ${themeCssVariables.border.color.blue};
+  outline-offset: ${themeCssVariables.spacing[1]};
   pointer-events: none;
   position: absolute;
 `;
 
 type HoveredBlock = {
   pos: number;
-  top: number;
-  left: number;
-  width: number;
-  height: number;
+  display: ReturnType<typeof getAdvancedTextEditorBlockDisplay>;
+  outline: CSSProperties;
 };
 
 type AdvancedTextEditorBlockHandleProps = {
@@ -91,10 +83,13 @@ export const AdvancedTextEditorBlockHandle = ({
 
     setHoveredBlock({
       pos,
-      top: blockRect.top - containerRect.top - OUTLINE_OFFSET_PX,
-      left: blockRect.left - containerRect.left - OUTLINE_OFFSET_PX,
-      width: blockRect.width + OUTLINE_OFFSET_PX * 2,
-      height: blockRect.height + OUTLINE_OFFSET_PX * 2,
+      display: getAdvancedTextEditorBlockDisplay(editor.state.doc, pos),
+      outline: {
+        top: blockRect.top - containerRect.top,
+        left: blockRect.left - containerRect.left,
+        width: blockRect.width,
+        height: blockRect.height,
+      },
     });
   };
 
@@ -118,10 +113,6 @@ export const AdvancedTextEditorBlockHandle = ({
       { once: true },
     );
 
-  const hoveredBlockDisplay = isDefined(hoveredBlock)
-    ? getAdvancedTextEditorBlockDisplay(editor.state.doc, hoveredBlock.pos)
-    : null;
-
   return (
     <>
       <DragHandle
@@ -136,7 +127,7 @@ export const AdvancedTextEditorBlockHandle = ({
         }}
       >
         <StyledHandleSlot>
-          {isDefined(hoveredBlock) && isDefined(hoveredBlockDisplay) && (
+          {isDefined(hoveredBlock) && (
             <>
               <AdvancedTextEditorBlockHandleMenu
                 editor={editor}
@@ -146,9 +137,8 @@ export const AdvancedTextEditorBlockHandle = ({
               />
               <AdvancedTextEditorDragPreview
                 ref={dragPreviewRef}
-                isInsertion={false}
-                Icon={hoveredBlockDisplay.icon}
-                label={i18n._(hoveredBlockDisplay.title)}
+                Icon={hoveredBlock.display.icon}
+                label={i18n._(hoveredBlock.display.title)}
               />
             </>
           )}
@@ -157,14 +147,7 @@ export const AdvancedTextEditorBlockHandle = ({
       {isDefined(hoveredBlock) &&
         isDefined(outlineContainer) &&
         createPortal(
-          <StyledBlockOutline
-            style={{
-              top: hoveredBlock.top,
-              left: hoveredBlock.left,
-              width: hoveredBlock.width,
-              height: hoveredBlock.height,
-            }}
-          />,
+          <StyledBlockOutline style={hoveredBlock.outline} />,
           outlineContainer,
         )}
     </>

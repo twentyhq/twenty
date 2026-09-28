@@ -8,6 +8,7 @@ import { IconAdjustments } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
+import { useOpenEmailBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -16,30 +17,24 @@ export const useOpenEmailBlockStyleInSidePanel = () => {
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const { goBackFromSidePanel } = useSidePanelHistory();
-
-  const getCurrentSidePanelPage = useCallback(
-    () => store.get(sidePanelNavigationStackState.atom).at(-1)?.page,
-    [store],
-  );
+  const { openEmailBlockSettingsInSidePanel } =
+    useOpenEmailBlockSettingsInSidePanel();
 
   const openEmailBlockStyleInSidePanel = useCallback(() => {
-    if (getCurrentSidePanelPage() === SidePanelPages.EmailBlockStyle) {
-      return;
-    }
-
+    openEmailBlockSettingsInSidePanel();
     navigateSidePanelMenu({
       page: SidePanelPages.EmailBlockStyle,
       pageTitle: t`Style`,
       pageIcon: IconAdjustments,
       pageId: v4(),
     });
-  }, [getCurrentSidePanelPage, navigateSidePanelMenu]);
+  }, [navigateSidePanelMenu, openEmailBlockSettingsInSidePanel]);
 
   const followEmailBlockSelectionInSidePanel = useCallback(
     (editor: Editor) => {
       const hasBlockTarget = isDefined(getBlockSelectionTarget(editor));
 
-      switch (getCurrentSidePanelPage()) {
+      switch (store.get(sidePanelNavigationStackState.atom).at(-1)?.page) {
         case SidePanelPages.EmailBlockSettings:
           if (hasBlockTarget) {
             openEmailBlockStyleInSidePanel();
@@ -54,11 +49,7 @@ export const useOpenEmailBlockStyleInSidePanel = () => {
           return;
       }
     },
-    [
-      getCurrentSidePanelPage,
-      goBackFromSidePanel,
-      openEmailBlockStyleInSidePanel,
-    ],
+    [goBackFromSidePanel, openEmailBlockStyleInSidePanel, store],
   );
 
   return {

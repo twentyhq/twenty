@@ -14,7 +14,6 @@ export const getAdvancedTextEditorBlockDisplay = (
       ? $pos.parent
       : $pos.nodeAfter;
   const nodeTypeName = node?.type.name ?? TIPTAP_NODE_TYPES.PARAGRAPH;
-  const [paragraphItem] = ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS;
   const textItem = ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS.find((item) => {
     const content = item.createContent(() => '');
 
@@ -24,11 +23,16 @@ export const getAdvancedTextEditorBlockDisplay = (
     );
   });
 
-  if (isDefined(textItem) || !isAdvancedTextEditorBlockNodeType(nodeTypeName)) {
-    return textItem ?? paragraphItem;
+  if (isDefined(textItem)) {
+    return textItem;
   }
 
-  const { label, icon } = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[nodeTypeName];
+  const { label, icon } =
+    ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[
+      isAdvancedTextEditorBlockNodeType(nodeTypeName)
+        ? nodeTypeName
+        : TIPTAP_NODE_TYPES.PARAGRAPH
+    ];
 
   return { title: label, icon };
 };

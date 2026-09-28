@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type Editor, type JSONContent } from '@tiptap/core';
 import { useRef, useState } from 'react';
 import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
@@ -20,7 +21,6 @@ import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-ed
 import { ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS } from '@/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems';
 import { type AdvancedTextEditorBlockInsertionItem } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { AdvancedTextEditorDraggableContent } from '@/advanced-text-editor/components/AdvancedTextEditorDraggableContent';
-import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
 import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
@@ -42,9 +42,6 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
   const { variables } = useCampaignEmailEditorVariables();
   const { uploadEmailImage } = useUploadEmailImage();
   const { navigateSidePanelMenu } = useSidePanelMenu();
-
-  const hasVariables =
-    variables.length > 0 && hasEditorExtension(editor, 'variableTag');
 
   const insertContent = (content: JSONContent) =>
     editor.chain().focus().insertContent(content).scrollIntoView().run();
@@ -163,7 +160,7 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
         themeCssVariables.color.orange9,
       )}
 
-      {hasVariables && (
+      {isNonEmptyArray(variables) && (
         <>
           <SidePanelWorkflowSelectStepTitle>
             {t`Variables`}

@@ -1,6 +1,6 @@
 import { ADVANCED_TEXT_EDITOR_EXTERNAL_DRAG_MIME_TYPE } from '@/advanced-text-editor/constants/AdvancedTextEditorExternalDragMimeType';
-import { Extension } from '@tiptap/core';
-import { NodeSelection, Plugin, PluginKey, Selection } from '@tiptap/pm/state';
+import { Extension, isNodeSelection } from '@tiptap/core';
+import { Plugin, PluginKey, Selection } from '@tiptap/pm/state';
 
 export const BlockDragAndDrop = Extension.create({
   name: 'blockDragAndDrop',
@@ -14,7 +14,7 @@ export const BlockDragAndDrop = Extension.create({
             (transaction) => transaction.getMeta('uiEvent') === 'drop',
           );
 
-          if (!isDrop || !(newState.selection instanceof NodeSelection)) {
+          if (!isDrop || !isNodeSelection(newState.selection)) {
             return null;
           }
 
