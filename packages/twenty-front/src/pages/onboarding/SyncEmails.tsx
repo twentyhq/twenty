@@ -7,12 +7,11 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEmailsAutoSkipEffect';
+import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -25,7 +24,7 @@ import {
 export const SyncEmails = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const hasConnectedAccountsPermission = useHasPermissionFlag(
@@ -64,10 +63,7 @@ export const SyncEmails = () => {
     : undefined;
 
   const connectWithProvider = async (provider: ConnectedAccountProvider) => {
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      importContacts: creditsReward ?? 0,
-    }));
+    setOnboardingStepFreeCredits('importContacts', creditsReward ?? 0);
 
     try {
       await triggerApisOAuth(provider, {
@@ -77,10 +73,7 @@ export const SyncEmails = () => {
         skipMessageChannelConfiguration: true,
       });
     } catch (error) {
-      setOnboardingFreeCredits((current) => ({
-        ...current,
-        importContacts: 0,
-      }));
+      setOnboardingStepFreeCredits('importContacts', 0);
 
       throw error;
     }
@@ -89,10 +82,7 @@ export const SyncEmails = () => {
   const handleSkip = async () => {
     await skipSyncEmailOnboardingStep({ isAutoSkipped: false });
 
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      importContacts: 0,
-    }));
+    setOnboardingStepFreeCredits('importContacts', 0);
   };
 
   const handleAutoSkipError = useCallback(() => {

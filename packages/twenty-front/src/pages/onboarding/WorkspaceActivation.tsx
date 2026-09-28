@@ -5,6 +5,7 @@ import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
+import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
@@ -107,11 +108,7 @@ export const WorkspaceActivation = () => {
     }
 
     hasTriggeredRef.current = true;
-    setOnboardingFreeCredits({
-      importContacts: 0,
-      inviteTeam: 0,
-      installApps: 0,
-    });
+    setOnboardingFreeCredits(ONBOARDING_FREE_CREDITS_DEFAULT_VALUE);
     void activate();
   }, [activate, currentWorkspace, setOnboardingFreeCredits]);
 

@@ -1,6 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -11,6 +12,7 @@ import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboard
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -80,12 +82,15 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
 
   usePrefetchInviteSuggestions();
 
   const { enqueueToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const currentUser = useAtomStateValue(currentUserState);
   const setCurrentUser = useSetAtomState(currentUserState);
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
@@ -156,6 +161,12 @@ export const CreateProfile = () => {
           return current;
         });
 
+        setOnboardingStepFreeCredits(
+          'createProfile',
+          currentUser?.isWorkspaceCreator === true
+            ? (onboardingConfig?.createProfileCreditsReward ?? 0)
+            : 0,
+        );
         setNextOnboardingStatus({ stepHistoryEffect: 'recordAsReversible' });
         setIsNavigating(true);
       } catch (error: any) {
@@ -165,7 +176,10 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
+      currentUser?.isWorkspaceCreator,
+      onboardingConfig?.createProfileCreditsReward,
       setNextOnboardingStatus,
+      setOnboardingStepFreeCredits,
       enqueueToast,
       setCurrentWorkspaceMembers,
       setCurrentUser,

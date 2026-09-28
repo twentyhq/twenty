@@ -1,5 +1,8 @@
 export type OnboardingFreeCredits = {
   importContacts: number;
-  inviteTeam: number;
   installApps: number;
+  createProfile: number;
+  inviteTeam: number;
+  upgradeTrial: number;
+  seenCredits: number;
 };
