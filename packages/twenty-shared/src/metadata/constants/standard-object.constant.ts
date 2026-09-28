@@ -344,6 +344,28 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.inputAsk,
         viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
       }),
+      waitingOnMe: {
+        universalIdentifier: '6596299e-f656-42d1-8927-efdd3d2285be',
+        viewFields: {
+          name: {
+            universalIdentifier: 'f1ae6a65-159f-4e87-a99d-04d39598c74a',
+          },
+          workflowRun: {
+            universalIdentifier: '52e80140-79f9-43b6-b051-ea2c47587392',
+          },
+          createdAt: {
+            universalIdentifier: 'a5b4b662-28bf-46a3-a89a-6f555280c6bb',
+          },
+        },
+        viewFilters: {
+          assigneeIsMe: {
+            universalIdentifier: '07bdd1b3-f583-4b08-89a6-2a0c2f031efb',
+          },
+          statusIsPending: {
+            universalIdentifier: '9e2aa248-8d6f-4ba1-b518-2284610be939',
+          },
+        },
+      },
       inputAskRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,

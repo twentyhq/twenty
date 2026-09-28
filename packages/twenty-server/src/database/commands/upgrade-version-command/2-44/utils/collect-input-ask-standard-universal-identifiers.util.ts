@@ -83,6 +83,15 @@ export const collectInputAskStandardUniversalIdentifiers = ({
     )
     .map((flatViewField) => flatViewField.universalIdentifier);
 
+  const viewFilter = Object.values(
+    standardAllFlatEntityMaps.flatViewFilterMaps.byUniversalIdentifier,
+  )
+    .filter(isDefined)
+    .filter((flatViewFilter) =>
+      viewUniversalIdentifiers.has(flatViewFilter.viewUniversalIdentifier),
+    )
+    .map((flatViewFilter) => flatViewFilter.universalIdentifier);
+
   return {
     objectMetadata: [INPUT_ASK_OBJECT_UNIVERSAL_IDENTIFIER],
     fieldMetadata,
@@ -91,5 +100,6 @@ export const collectInputAskStandardUniversalIdentifiers = ({
     view: flatViews.map((flatView) => flatView.universalIdentifier),
     viewFieldGroup,
     viewField,
+    viewFilter,
   };
 };

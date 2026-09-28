@@ -15,15 +15,12 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// An Ask records something parked on a person: a form step or an agent's
-// question. Its relations land on workflowRun, workspaceMember and
-// agentChatThread, and its readability names the run and thread relations,
-// so everything is created in one migration.
 @RegisteredWorkspaceCommand('2.44.0', 1790550923552)
 @Command({
   name: 'upgrade:2-44:add-input-ask-object',
@@ -53,7 +50,9 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
       flatViewMaps,
       flatViewFieldGroupMaps,
       flatViewFieldMaps,
+      flatViewFilterMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatViewFilterMaps',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
@@ -171,6 +170,17 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
       },
+      viewFilter: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatViewFilter>({
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatViewFilterMaps,
+            existingFlatEntityMaps: flatViewFilterMaps,
+            universalIdentifiers: universalIdentifiers.viewFilter,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
     };
     const totalOperationCount = Object.values(
       allFlatEntityOperationByMetadataName,
@@ -224,7 +234,9 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
       flatViewMaps,
       flatViewFieldGroupMaps,
       flatViewFieldMaps,
+      flatViewFilterMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatViewFilterMaps',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatViewMaps',
@@ -272,6 +284,9 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
     const viewFields = Object.values(flatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(({ viewId }) => viewIds.has(viewId));
+    const viewFilters = Object.values(flatViewFilterMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(({ viewId }) => viewIds.has(viewId));
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -295,6 +310,11 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: viewFields,
+              flatEntityToUpdate: [],
+            },
+            viewFilter: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: viewFilters,
               flatEntityToUpdate: [],
             },
             fieldMetadata: {
