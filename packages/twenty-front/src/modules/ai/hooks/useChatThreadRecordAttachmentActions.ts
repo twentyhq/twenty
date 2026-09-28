@@ -41,8 +41,12 @@ export const useChatThreadRecordAttachmentActions = () => {
     try {
       await attachMutation({ variables });
       await refetchThreadRecordTargets(variables.threadId);
+
+      return true;
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
+
+      return false;
     }
   };
 

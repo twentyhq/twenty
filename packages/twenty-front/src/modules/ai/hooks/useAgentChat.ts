@@ -58,7 +58,7 @@ export const useAgentChat = (
   const aiModels = useAtomStateValue(aiModelsState);
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
-  const { attachPendingRecordTargetOnSend } =
+  const { movePendingRecordTargetToThread, attachPendingRecordTargetOnSend } =
     useAttachPendingRecordTargetOnSend();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
@@ -115,6 +115,7 @@ export const useAgentChat = (
     if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       setCurrentAiChatThread(threadId);
       projectAiChatThreadToUrl(threadId);
+      movePendingRecordTargetToThread({ draftKey, threadId });
     }
 
     setAgentChatInput('');
@@ -217,7 +218,7 @@ export const useAgentChat = (
         store.set(lastSentBrowsingContextAtom, browsingContext);
       }
 
-      void attachPendingRecordTargetOnSend({ draftKey, threadId });
+      void attachPendingRecordTargetOnSend({ threadId });
 
       if (data?.sendChatMessage?.queued) {
         const latestMessages = store.get(messagesAtom);
@@ -286,6 +287,7 @@ export const useAgentChat = (
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
+    movePendingRecordTargetToThread,
     attachPendingRecordTargetOnSend,
   ]);
 

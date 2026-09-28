@@ -29,7 +29,7 @@ const companyTargetField = getMockFieldMetadataItemOrThrow({
   fieldName: 'company',
 });
 
-const attachChatThreadToRecord = jest.fn(() => Promise.resolve());
+const attachChatThreadToRecord = jest.fn(() => Promise.resolve(true));
 const detachChatThreadFromRecord = jest.fn(() => Promise.resolve());
 const mockThread: { current: ObjectRecord | undefined } = {
   current: undefined,
