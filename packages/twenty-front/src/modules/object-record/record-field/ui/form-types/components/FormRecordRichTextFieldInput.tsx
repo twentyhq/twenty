@@ -164,12 +164,13 @@ export const FormRecordRichTextFieldInput = ({
   });
 
   const isReadonly = readonly || hasUnreadableStoredValue;
+  const isFullScreenShown = isFullScreen && !isMobile;
 
   return (
     <>
       <FormFieldInputContainer>
         {label ? <Field.Label>{label}</Field.Label> : null}
-        {!isFullScreen && (
+        {!isFullScreenShown && (
           <StyledEditorContainer>
             <BlockEditor
               editor={editor}
@@ -204,7 +205,7 @@ export const FormRecordRichTextFieldInput = ({
             readonly={isReadonly}
           />
         </StyledFullScreenEditorContainer>,
-        isFullScreen,
+        isFullScreenShown,
       )}
     </>
   );
