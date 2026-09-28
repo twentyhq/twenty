@@ -1,6 +1,7 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { isUndefined } from '@sniptt/guards';
 import ts from 'typescript';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -33,7 +34,7 @@ describe('public component documentation coverage', () => {
     const getEntryPoint = (name: string, fileName: string) => {
       const source = program.getSourceFile(join(directory, fileName));
 
-      if (!source) {
+      if (isUndefined(source)) {
         throw new Error(`Missing fixture entry point ${fileName}`);
       }
 

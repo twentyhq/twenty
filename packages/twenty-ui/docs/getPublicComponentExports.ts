@@ -1,5 +1,7 @@
 import ts from 'typescript';
 
+import { isDefined } from '../src/utilities/utils/isDefined';
+
 const COMPONENT_NAME_PATTERN = /^[A-Z][a-z]/;
 const COMPONENT_SOURCE_PATTERN = /\.(tsx|d\.ts)$/;
 
@@ -18,7 +20,7 @@ export const getPublicComponentExports = ({
   for (const { name: entryPoint, source } of entryPoints) {
     const moduleSymbol = checker.getSymbolAtLocation(source);
 
-    if (!moduleSymbol) {
+    if (!isDefined(moduleSymbol)) {
       throw new Error(`Could not read exports from ${entryPoint}`);
     }
 
@@ -30,7 +32,7 @@ export const getPublicComponentExports = ({
       const declaration = symbol.valueDeclaration;
 
       if (
-        !declaration ||
+        !isDefined(declaration) ||
         !COMPONENT_NAME_PATTERN.test(exported.name) ||
         !COMPONENT_SOURCE_PATTERN.test(declaration.getSourceFile().fileName)
       ) {

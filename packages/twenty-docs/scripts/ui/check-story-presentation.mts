@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import ts from 'typescript';
 
 export const checkStoryPresentation = ({
@@ -23,7 +24,10 @@ export const checkStoryPresentation = ({
   for (const statement of source.statements) {
     if (ts.isVariableStatement(statement)) {
       for (const declaration of statement.declarationList.declarations) {
-        if (ts.isIdentifier(declaration.name) && declaration.initializer) {
+        if (
+          ts.isIdentifier(declaration.name) &&
+          !isUndefined(declaration.initializer)
+        ) {
           declarations.set(declaration.name.text, declaration.initializer);
         }
       }
@@ -53,7 +57,7 @@ export const checkStoryPresentation = ({
     if (ts.isIdentifier(expression)) {
       const initializer = declarations.get(expression.text);
 
-      if (!initializer) {
+      if (isUndefined(initializer)) {
         errors.add(
           `Cannot verify the imported or unresolved story definition "${expression.text}".`,
         );
@@ -116,13 +120,13 @@ export const checkStoryPresentation = ({
     }
   };
 
-  if (meta) {
+  if (!isUndefined(meta)) {
     inspect(meta);
   }
 
   const story = declarations.get(exportName);
 
-  if (!story) {
+  if (isUndefined(story)) {
     errors.add(`Cannot resolve the documentation story "${exportName}".`);
     return [...errors];
   }
