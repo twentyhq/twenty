@@ -493,6 +493,34 @@ describe('Admin panel global chat threads (integration)', () => {
       });
     });
 
+    // A workflow run's conversation belongs to no member, and a null owner
+    // must not null out a non-null field and fail the whole list.
+    it('lists a thread without an owner', async () => {
+      const ownerlessThreadId = randomUUID();
+
+      await insertHistory(
+        'agentChatThread',
+        ['id', 'userWorkspaceId', 'title'],
+        [ownerlessThreadId, null, 'Workflow run conversation'],
+        'ON CONFLICT (id) DO NOTHING',
+      );
+      seededThreadIds.push(ownerlessThreadId);
+
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: ownerlessThreadId,
+      });
+
+      expect(result.threads).toEqual([
+        expect.objectContaining({
+          id: ownerlessThreadId,
+          userWorkspaceId: null,
+          userEmail: null,
+          isOnboardingThread: false,
+        }),
+      ]);
+    });
+
     it('counts only visible messages and user replies', async () => {
       const result = await fetchThreads({
         scope: 'ALL',

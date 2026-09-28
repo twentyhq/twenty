@@ -262,6 +262,7 @@ type LogicFunction {
   universalIdentifier: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+  canRunOnDemand: Boolean
 }
 
 enum LogicFunctionExecutionMode {
@@ -4202,9 +4203,7 @@ type Mutation {
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
   deleteApplicationRegistration(id: String!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  deleteApplicationRegistrationVariable(id: String!): Boolean!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
@@ -5116,14 +5115,6 @@ input UpdateApplicationRegistrationPayload {
   name: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-}
-
-input CreateApplicationRegistrationVariableInput {
-  applicationRegistrationId: String!
-  key: String!
-  value: String!
-  description: String
-  isSecret: Boolean
 }
 
 input UpdateApplicationRegistrationVariableInput {

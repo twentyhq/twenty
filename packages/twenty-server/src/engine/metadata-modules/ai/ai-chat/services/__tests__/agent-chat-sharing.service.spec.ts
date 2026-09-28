@@ -18,7 +18,10 @@ const args = {
 
 const buildService = (legacyOwnerFieldPresent = true) => {
   const query = jest.fn().mockResolvedValue([{ id: THREAD_ID }]);
-  const thread = { id: THREAD_ID, workspaceMemberId: 'owner' };
+  const thread: Record<string, unknown> = {
+    id: THREAD_ID,
+    workspaceMemberId: 'owner',
+  };
   const threadRepository = {
     query: jest
       .fn()
@@ -58,19 +61,20 @@ const buildService = (legacyOwnerFieldPresent = true) => {
     id: 'object',
     readability: MetadataReadability.PRIVATE,
   };
+  const flatFieldMetadataMaps = {
+    byUniversalIdentifier: (legacyOwnerFieldPresent
+      ? { 'bf830886-b6dc-46e9-a229-eecbb0e66032': { id: 'legacy' } }
+      : {}) as Record<string, unknown>,
+  };
   const cache = {
     getOrRecompute: jest.fn().mockResolvedValue({
-      flatFieldMetadataMaps: {
-        byUniversalIdentifier: legacyOwnerFieldPresent
-          ? { 'bf830886-b6dc-46e9-a229-eecbb0e66032': { id: 'legacy' } }
-          : {},
-      },
       flatObjectMetadataMaps: {
         byUniversalIdentifier: {
           [STANDARD_OBJECTS.agentChatThread.universalIdentifier]:
             objectMetadata,
         },
       },
+      flatFieldMetadataMaps,
     }),
   };
   const aiPermissions = {
@@ -100,6 +104,8 @@ const buildService = (legacyOwnerFieldPresent = true) => {
   return {
     query,
     service,
+    thread,
+    flatFieldMetadataMaps,
     threadRepository,
     userAuthContextService,
     repository,
@@ -275,5 +281,34 @@ describe('Conversation common record access', () => {
     ]);
     await service.getPermissionsForThreads({ ...args, threadIds: [THREAD_ID] });
     expect(sharing.getPermissionsForRecords).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['update', 'delete', 'soft-delete', 'restore'] as const)(
+    'refuses %s on a workflow run conversation while still letting its readers read it',
+    async (operation) => {
+      const { service, thread } = buildService();
+      thread.workflowRunId = 'workflow-run';
+      await expect(service.getReadableThread(args)).resolves.toBeDefined();
+      await expect(
+        service.getThreadWithAccess({ ...args, operationType: operation }),
+      ).rejects.toMatchObject({ code: 'WORKFLOW_RUN_THREAD_READ_ONLY' });
+    },
+  );
+
+  it('leaves workflow run conversations out of the chat list once threads can name a run', async () => {
+    const { service, repository, flatFieldMetadataMaps } = buildService();
+    await service.getReadableThreadIds(args);
+    expect(repository.find).toHaveBeenLastCalledWith(
+      expect.objectContaining({ where: undefined }),
+    );
+    flatFieldMetadataMaps.byUniversalIdentifier[
+      STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier
+    ] = {};
+    await service.getReadableThreadIds(args);
+    expect(repository.find).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        where: { workflowRunId: expect.objectContaining({ _type: 'isNull' }) },
+      }),
+    );
   });
 });

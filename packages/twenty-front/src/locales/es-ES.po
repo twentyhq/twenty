@@ -1535,7 +1535,7 @@ msgstr "Agregar archivo"
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
-msgstr ""
+msgstr "Agregar archivos, registros o habilidades"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
@@ -2219,12 +2219,12 @@ msgstr "Uso de IA por espacio de trabajo"
 #. js-lingui-id: 6ktJa0
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
-msgstr ""
+msgstr "Se alcanzó el límite de uso de IA para este período."
 
 #. js-lingui-id: JQW6M/
 #: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
-msgstr ""
+msgstr "Se alcanzó el límite de uso de IA. Pide a un administrador que aumente el límite."
 
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -3153,7 +3153,7 @@ msgstr "Preguntar a IA"
 #. js-lingui-id: IRCQfx
 #: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
-msgstr ""
+msgstr "Pide a un administrador que aumente el límite."
 
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -13258,7 +13258,7 @@ msgstr "Cargando más..."
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
-msgstr ""
+msgstr "Cargando registros"
 
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -13268,7 +13268,7 @@ msgstr "Cargando configuración de retención..."
 #. js-lingui-id: VeVIIk
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
-msgstr ""
+msgstr "Cargando habilidades"
 
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
@@ -13532,7 +13532,7 @@ msgstr "Gestionar los indicadores de características de este espacio de trabajo
 #. js-lingui-id: BaAAPb
 #: src/modules/settings/billing/hooks/useManageUsageLimitsButton.ts
 msgid "Manage limits"
-msgstr ""
+msgstr "Gestionar límites"
 
 #. js-lingui-id: PxMD2N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -14615,7 +14615,7 @@ msgstr "Nuevo límite de acumulación"
 #. js-lingui-id: MdpSC1
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
-msgstr ""
+msgstr "Nueva habilidad"
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15395,7 +15395,7 @@ msgstr "No se encontraron administradores del servidor."
 #. js-lingui-id: b5hW1u
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
-msgstr ""
+msgstr "No se encontraron habilidades"
 
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -16193,6 +16193,11 @@ msgstr "Abrir como enlace"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
 msgstr "Abre Claude con el nombre del conector de Twenty y la URL MCP rellenados previamente."
+
+#. js-lingui-id: uIKeEf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
+msgid "Open conversation"
+msgstr ""
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -19278,7 +19283,7 @@ msgstr "Buscar personas o roles"
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Search records"
-msgstr ""
+msgstr "Buscar registros"
 
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -19294,7 +19299,7 @@ msgstr "Buscar registros..."
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
-msgstr ""
+msgstr "Buscar habilidades"
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx

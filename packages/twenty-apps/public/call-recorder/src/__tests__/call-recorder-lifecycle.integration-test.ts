@@ -1,9 +1,10 @@
 import { randomUUID } from 'crypto';
 
-import { isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { getJobs } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 import {
   afterEach,
   beforeAll,
@@ -66,12 +67,13 @@ const RESTRICTED_TITLE_PLACEHOLDER =
 
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
-// hits the workspace GraphQL API directly with the test API key.
-const workspaceGraphql = async (
+// hits the GraphQL APIs directly with the test API key.
+const twentyGraphql = async <TData>(
+  endpointPath: '/graphql' | '/metadata',
   query: string,
   variables: Record<string, unknown> = {},
-): Promise<any> => {
-  const response = await fetch(`${process.env.TWENTY_API_URL}/graphql`, {
+): Promise<TData> => {
+  const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
@@ -79,15 +81,79 @@ const workspaceGraphql = async (
     },
     body: JSON.stringify({ query, variables }),
   });
-  const payload = await response.json();
+  const payload = (await response.json()) as {
+    data: TData;
+    errors?: unknown[];
+  };
 
-  if (payload.errors !== undefined) {
+  if (isDefined(payload.errors)) {
     throw new Error(
-      `Workspace GraphQL request failed: ${JSON.stringify(payload.errors)}`,
+      `GraphQL request to ${endpointPath} failed: ${JSON.stringify(payload.errors)}`,
     );
   }
 
   return payload.data;
+};
+
+const fetchApplicationAccessToken = async (): Promise<string> => {
+  const {
+    findApplicationRegistrationByUniversalIdentifier: applicationRegistration,
+  } = await twentyGraphql<{
+    findApplicationRegistrationByUniversalIdentifier: {
+      id: string;
+      oAuthClientId: string;
+    } | null;
+  }>(
+    '/metadata',
+    `query FindApplicationRegistration($universalIdentifier: String!) {
+      findApplicationRegistrationByUniversalIdentifier(
+        universalIdentifier: $universalIdentifier
+      ) {
+        id
+        oAuthClientId
+      }
+    }`,
+    { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+  );
+
+  if (isNull(applicationRegistration)) {
+    throw new Error('Call recorder is not registered');
+  }
+
+  const {
+    rotateApplicationRegistrationClientSecret: { clientSecret },
+  } = await twentyGraphql<{
+    rotateApplicationRegistrationClientSecret: { clientSecret: string };
+  }>(
+    '/metadata',
+    `mutation RotateApplicationRegistrationClientSecret($id: String!) {
+      rotateApplicationRegistrationClientSecret(id: $id) {
+        clientSecret
+      }
+    }`,
+    { id: applicationRegistration.id },
+  );
+  const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      grant_type: 'client_credentials',
+      client_id: applicationRegistration.oAuthClientId,
+      client_secret: clientSecret,
+    }),
+  });
+  const tokenResponse = (await response.json()) as {
+    access_token?: string;
+    error_description?: string;
+  };
+
+  if (!response.ok || isUndefined(tokenResponse.access_token)) {
+    throw new Error(
+      `Client credentials exchange failed: ${tokenResponse.error_description ?? response.statusText}`,
+    );
+  }
+
+  return tokenResponse.access_token;
 };
 
 type CalendarEventFixture = {
@@ -106,6 +172,13 @@ type CalendarEventFixture = {
   };
 };
 
+type CalendarEventFixturesPage = {
+  calendarEvents: {
+    edges: Array<{ node: CalendarEventFixture }>;
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  };
+};
+
 const discoverVisibleCalendarEventFixtures = async (): Promise<
   CalendarEventFixture[]
 > => {
@@ -113,7 +186,8 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
   let after: string | null = null;
 
   do {
-    const eventsData = await workspaceGraphql(
+    const eventsData: CalendarEventFixturesPage = await twentyGraphql(
+      '/graphql',
       `query ($after: String) {
         calendarEvents(first: 200, after: $after) {
           edges {
@@ -142,7 +216,7 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
 
     fixtures.push(
       ...connection.edges
-        .map((edge: any) => edge.node)
+        .map((edge) => edge.node)
         .filter(
           (node: CalendarEventFixture) =>
             node.title !== RESTRICTED_TITLE_PLACEHOLDER &&
@@ -717,28 +791,7 @@ describe('call recorder app lifecycle (integration)', () => {
     workspaceId = readWorkspaceIdFromApiKey();
     availableCalendarEventFixtures =
       await discoverVisibleCalendarEventFixtures();
-
-    const metadataClient = new MetadataApiClient();
-    const { findManyApplications } = await metadataClient.query({
-      findManyApplications: { id: true, universalIdentifier: true },
-    });
-    const application = findManyApplications.find(
-      ({ universalIdentifier }) =>
-        universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
-    );
-
-    if (isUndefined(application)) {
-      throw new Error('Call recorder is not installed');
-    }
-
-    const { generateApplicationToken } = await metadataClient.mutation({
-      generateApplicationToken: {
-        __args: { applicationId: application.id },
-        applicationAccessToken: { token: true },
-      },
-    });
-    applicationAccessToken =
-      generateApplicationToken.applicationAccessToken.token;
+    applicationAccessToken = await fetchApplicationAccessToken();
   });
 
   beforeEach(() => {

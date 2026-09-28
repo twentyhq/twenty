@@ -13,7 +13,8 @@ type WorkflowActionStepType =
   | 'SEND_EMAIL'
   | 'DRAFT_EMAIL'
   | 'CREATE_CALENDAR_EVENT'
-  | 'UPDATE_RECORD';
+  | 'UPDATE_RECORD'
+  | 'CODE';
 
 type WorkflowVersionStep = {
   id: string;
