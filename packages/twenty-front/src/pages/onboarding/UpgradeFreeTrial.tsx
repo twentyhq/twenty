@@ -18,6 +18,7 @@ import { CAL_LINK } from '@/onboarding/constants/CalLink';
 import { OnboardingPlanTag } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanTag';
 import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
+import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
@@ -82,12 +83,14 @@ type UpgradeFreeTrialSubmitButtonProps = {
   plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
   endIcon: ReactNode;
+  ariaLabel?: string;
 };
 
 const UpgradeFreeTrialSubmitButton = ({
   plan,
   recurringInterval,
   endIcon,
+  ariaLabel,
 }: UpgradeFreeTrialSubmitButtonProps) => {
   const { t } = useLingui();
 
@@ -115,6 +118,7 @@ const UpgradeFreeTrialSubmitButton = ({
       startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
       endIcon={endIcon}
+      aria-label={ariaLabel}
     >
       {t`Continue`}
     </MainButton>
@@ -206,6 +210,11 @@ const UpgradeFreeTrialContent = ({
         formattedCreditsReward={formattedUpgradeCreditsReward}
       />
     ) : undefined;
+  const upgradeCreditsAriaLabel = getOnboardingCreditsRewardAriaLabel({
+    label: t`Continue`,
+    creditsReward: upgradeCreditsReward,
+    formattedCreditsReward: formattedUpgradeCreditsReward,
+  });
 
   return (
     <>
@@ -281,9 +290,15 @@ const UpgradeFreeTrialContent = ({
                 plan={billingCheckoutSession.plan}
                 recurringInterval={billingCheckoutSession.interval}
                 endIcon={upgradeCreditsChip}
+                ariaLabel={upgradeCreditsAriaLabel}
               />
             ) : (
-              <MainButton fullWidth disabled endIcon={upgradeCreditsChip}>
+              <MainButton
+                fullWidth
+                disabled
+                endIcon={upgradeCreditsChip}
+                aria-label={upgradeCreditsAriaLabel}
+              >
                 {t`Continue`}
               </MainButton>
             )
