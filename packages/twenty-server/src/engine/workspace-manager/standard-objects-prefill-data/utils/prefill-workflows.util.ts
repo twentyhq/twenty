@@ -6,7 +6,6 @@ import { v5 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { syncWorkflowRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-record-shares.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -941,10 +940,4 @@ export const prefillWorkflows = async (
       },
     ])
     .execute();
-
-  await syncWorkflowRecordShares({
-    manager: entityManager,
-    workspaceId,
-    workspaceWorkflowIds: [quickLeadWorkflowId, createCompanyWorkflowId],
-  });
 };

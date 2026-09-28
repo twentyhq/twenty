@@ -1,10 +1,10 @@
+import { assertAgentMessageSenderFields } from 'src/engine/metadata-modules/ai/ai-history/utils/assert-agent-message-sender-fields.util';
 import {
   mapAgentHistorySelectToWorkspace,
   mapAgentHistoryValuesToWorkspace,
   mapAgentHistoryWhereToWorkspace,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/agent-history-workspace-mapping.util';
 import { normalizeAgentHistoryRecord } from 'src/engine/metadata-modules/ai/ai-history/utils/normalize-agent-history-record.util';
-import { prepareAgentMessageSenderValues } from 'src/engine/metadata-modules/ai/ai-history/utils/prepare-agent-message-sender-values.util';
 import { mapAgentHistoryOrderToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-order-to-workspace.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
@@ -24,9 +24,9 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type AgentHistoryStorageService,
+  type AgentHistoryWorkspaceStorageService,
   type AgentHistoryStorageContext,
-} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
@@ -40,7 +40,10 @@ export class AgentHistoryRepository<
 > {
   constructor(
     private readonly name: AgentHistoryObjectName,
-    private readonly storageService: AgentHistoryStorageService,
+    private readonly storageService: Pick<
+      AgentHistoryWorkspaceStorageService,
+      'run'
+    >,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
       'executeInWorkspaceContext' | 'getRepository'
@@ -175,33 +178,26 @@ export class AgentHistoryRepository<
     );
   }
 
-  private async prepareWorkspaceInsert(
-    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
-    context: AgentHistoryStorageContext,
-  ): Promise<ObjectLiteral | ObjectLiteral[]> {
-    const mapped = mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values);
-
-    return this.name === 'agentMessage'
-      ? prepareAgentMessageSenderValues(mapped, context)
-      : mapped;
-  }
-
   insert(
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(workspaceId, async (repository, context) =>
-      repository.insert(await this.prepareWorkspaceInsert(values, context)),
-    );
+    return this.run(workspaceId, (repository) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
+      return repository.insert(
+        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
+      );
+    });
   }
 
   insertAndReturnOne(
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
-    return this.run(workspaceId, async (repository, context) => {
+    return this.run(workspaceId, async (repository) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       const result = await repository.insert(
-        await this.prepareWorkspaceInsert(values, context),
+        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
       );
       return normalizeAgentHistoryRecord({
         record: result.raw[0],
@@ -268,6 +264,7 @@ export class AgentHistoryRepository<
           `agent-history-upsert:${workspaceId}:${this.name}:${JSON.stringify(identity)}`,
         ],
       );
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       return repository.upsert(
         mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
         conflictPaths,

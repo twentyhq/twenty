@@ -252,7 +252,7 @@ describe('Admin panel global chat threads (integration)', () => {
   beforeAll(async () => {
     dataSource = global.testDataSource;
     storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+      'AgentHistoryUpgradeStorageService',
     );
 
     const [firstUserWorkspace] = await dataSource.query(
