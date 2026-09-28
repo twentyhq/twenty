@@ -1,3 +1,6 @@
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { WorkflowInputAskResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-input-ask.resolver';
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { Module } from '@nestjs/common';
 
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
@@ -62,6 +65,8 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionCoreModule,
     WorkflowVersionValidationModule,
     CoreWorkflowServicesModule,
+    InputAskModule,
+    UserWorkspaceModule,
   ],
   controllers: [WorkflowTriggerController],
   providers: [
@@ -72,6 +77,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionResolver,
     CoreWorkflowResolver,
     CoreWorkflowVersionMutationResolver,
+    WorkflowInputAskResolver,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),
   ],

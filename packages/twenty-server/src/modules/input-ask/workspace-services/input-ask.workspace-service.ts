@@ -1,22 +1,27 @@
 import { Injectable } from '@nestjs/common';
 
+import { type AskQuestionItem } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { InputAskSource } from 'src/modules/input-ask/enums/input-ask-source.enum';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
+import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const isDuplicateEntry = (error: unknown): boolean =>
   error instanceof TwentyOrmException &&
@@ -83,29 +88,18 @@ export class InputAskWorkspaceService {
         return;
       }
 
-      const position = await this.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
+      // Two workers can clear the read above at the same time, and the loser
+      // of that race wants the winner's row rather than a failed step.
+      await this.insertUnlessPresent({
         workspaceId,
-      });
-
-      try {
-        await inputAskRepository.insert({
+        inputAskRepository,
+        inputAsk: {
           name: stepName,
-          status: InputAskStatus.PENDING,
-          source: InputAskSource.WORKFLOW_RUN_STEP,
           form: { fields },
           workflowRunId,
           stepId,
-          position,
-        });
-      } catch (error) {
-        // Two workers can clear the read above at the same time, and the loser
-        // of that race wants the winner's row rather than a failed step.
-        if (!isDuplicateEntry(error)) {
-          throw error;
-        }
-      }
+        },
+      });
     });
   }
 
@@ -164,37 +158,26 @@ export class InputAskWorkspaceService {
     threadId: string;
     toolCallId: string;
     name: string;
-    questions: unknown[];
+    questions: AskQuestionItem[];
   }): Promise<void> {
     if (!(await this.hasInputAskObject(workspaceId))) {
       return;
     }
 
     await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const position = await this.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
+      // A retried recording of the same question wants the existing row.
+      await this.insertUnlessPresent({
         workspaceId,
-      });
-
-      try {
-        await inputAskRepository.insert({
+        inputAskRepository,
+        inputAsk: {
           name,
-          status: InputAskStatus.PENDING,
-          source: InputAskSource.WORKFLOW_RUN_STEP,
           form: { questions },
           workflowRunId,
           stepId,
           threadId,
           toolCallId,
-          position,
-        });
-      } catch (error) {
-        // A retried recording of the same question wants the existing row.
-        if (!isDuplicateEntry(error)) {
-          throw error;
-        }
-      }
+        },
+      });
     });
   }
 
@@ -244,6 +227,112 @@ export class InputAskWorkspaceService {
         { status: InputAskStatus.CANCELED },
       );
     });
+  }
+
+  // Assigning is not answering: whoever may read an Ask may hand it to
+  // someone else, but the Ask stays SYSTEM-writable so its status and
+  // response only ever change with what it gates.
+  async assign({
+    workspaceId,
+    inputAskId,
+    assigneeWorkspaceMemberId,
+    authContext,
+  }: {
+    workspaceId: string;
+    inputAskId: string;
+    assigneeWorkspaceMemberId: string | null;
+    authContext: WorkspaceAuthContext;
+  }): Promise<boolean> {
+    if (!(await this.hasInputAskObject(workspaceId))) {
+      return false;
+    }
+
+    const readableInputAsk =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepositoryWithContextPermissions<InputAskWorkspaceEntity>(
+              'inputAsk',
+            )
+            .findOne({ where: { id: inputAskId }, select: { id: true } }),
+        authContext,
+      );
+
+    if (!isDefined(readableInputAsk)) {
+      return false;
+    }
+
+    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      if (isDefined(assigneeWorkspaceMemberId)) {
+        const assignee = await this.workspaceOrmManager
+          .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
+            shouldBypassPermissionChecks: true,
+          })
+          .findOne({ where: { id: assigneeWorkspaceMemberId } });
+
+        if (!isDefined(assignee)) {
+          return false;
+        }
+      }
+
+      await inputAskRepository.update(
+        { id: inputAskId },
+        { assigneeId: assigneeWorkspaceMemberId },
+      );
+
+      return true;
+    });
+  }
+
+  private async insertUnlessPresent({
+    workspaceId,
+    inputAskRepository,
+    inputAsk,
+  }: {
+    workspaceId: string;
+    inputAskRepository: WorkspaceRepository<InputAskWorkspaceEntity>;
+    inputAsk: Pick<InputAskWorkspaceEntity, 'name' | 'form' | 'stepId'> &
+      Partial<Pick<InputAskWorkspaceEntity, 'threadId' | 'toolCallId'>> & {
+        workflowRunId: string;
+      };
+  }): Promise<void> {
+    const position = await this.recordPositionService.buildRecordPosition({
+      value: 'first',
+      objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
+      workspaceId,
+    });
+
+    try {
+      await inputAskRepository.insert({
+        ...inputAsk,
+        status: InputAskStatus.PENDING,
+        source: InputAskSource.WORKFLOW_RUN_STEP,
+        assigneeId: await this.findRunInitiatorWorkspaceMemberId(
+          inputAsk.workflowRunId,
+        ),
+        position,
+      });
+    } catch (error) {
+      if (!isDuplicateEntry(error)) {
+        throw error;
+      }
+    }
+  }
+
+  // Whoever started a run is who it is waiting on unless someone reassigns
+  // it; a run started by a trigger has nobody to default to.
+  private async findRunInitiatorWorkspaceMemberId(
+    workflowRunId: string,
+  ): Promise<string | null> {
+    const workflowRun = await this.workspaceOrmManager
+      .getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
+        shouldBypassPermissionChecks: true,
+      })
+      .findOne({ where: { id: workflowRunId } });
+
+    return workflowRun?.createdBy?.source === FieldActorSource.MANUAL
+      ? (workflowRun.createdBy.workspaceMemberId ?? null)
+      : null;
   }
 
   // The object reaches existing workspaces through a workspace upgrade command,

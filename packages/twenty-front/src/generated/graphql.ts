@@ -18,6 +18,13 @@ export type Scalars = {
   UUID: { input: any; output: any; }
 };
 
+export type AssignInputAskInput = {
+  /** Ask to assign */
+  inputAskId: Scalars['UUID']['input'];
+  /** Workspace member who owes the answer, or null to unassign */
+  workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING'
@@ -420,6 +427,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateCoreWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkflowVersion: Scalars['Boolean']['output'];
+  assignInputAsk: Scalars['Boolean']['output'];
   computeStepOutputSchema: Scalars['JSON']['output'];
   createCoreWorkflow: CoreWorkflowDto;
   createCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -469,6 +477,11 @@ export type MutationActivateCoreWorkflowVersionArgs = {
 
 export type MutationActivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAssignInputAskArgs = {
+  input: AssignInputAskInput;
 };
 
 

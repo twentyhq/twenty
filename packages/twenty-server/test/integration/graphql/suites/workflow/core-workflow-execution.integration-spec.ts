@@ -1,6 +1,7 @@
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { randomUUID } from 'node:crypto';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 import request from 'supertest';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
@@ -898,6 +899,53 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         response: { answer: 'Approved' },
       });
       expect(answeredInputAsks[0].answeredAt).not.toBeNull();
+    });
+
+    // Whoever started the run is who it waits on, until someone hands it on.
+    it('is assigned to the member who started the run and can be handed to another', async () => {
+      const finalStep = emptyStep();
+      const form = approvalForm([finalStep.id]);
+      // Assigning needs to read the Ask, which reads through its run's
+      // workspace workflow, so not a mirrorless fixture.
+      const fixture = await createFixture({ steps: [form, finalStep] });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+
+      const [{ id: inputAskId, assigneeId }] =
+        await global.testDataSource.query(
+          `SELECT id, "assigneeId" FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
+          [runId],
+        );
+
+      expect(assigneeId).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+
+      const assign = (workspaceMemberId: string | null, id = inputAskId) =>
+        workflowGraphqlRequest(
+          'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
+          { input: { inputAskId: id, workspaceMemberId } },
+        );
+
+      expect(
+        (await assign(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).body.errors,
+      ).toBeUndefined();
+
+      const readAssignee = async () =>
+        (
+          await global.testDataSource.query(
+            `SELECT "assigneeId" FROM "${schema}"."inputAsk" WHERE id = $1`,
+            [inputAskId],
+          )
+        )[0].assigneeId;
+
+      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+      expect((await assign(randomUUID())).body.errors).toBeDefined();
+      expect((await assign(null, randomUUID())).body.errors).toBeDefined();
+      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+      expect((await assign(null)).body.errors).toBeUndefined();
+      expect(await readAssignee()).toBeNull();
     });
 
     it('keeps the first answer when a second submission is refused', async () => {
