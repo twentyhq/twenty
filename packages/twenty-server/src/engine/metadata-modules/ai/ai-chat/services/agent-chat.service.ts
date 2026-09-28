@@ -813,8 +813,9 @@ export class AgentChatService {
     }
 
     const previousOutput =
-      (pendingPart.toolOutput as PendingQuestionRollback['previousOutput'] | null) ??
-      {};
+      (pendingPart.toolOutput as
+        | PendingQuestionRollback['previousOutput']
+        | null) ?? {};
     const questions = previousOutput.result?.questions ?? [];
 
     this.validateQuestionAnswers(answers, questions);
