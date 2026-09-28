@@ -6,12 +6,14 @@ const buildGrant = ({
   idempotencyKey,
   type = BillingCreditGrantType.ONBOARDING_REWARD,
   revokedAt = null,
+  sourceGrantId = null,
 }: {
   amountMicro: number;
   idempotencyKey: string | null;
   type?: BillingCreditGrantType;
   revokedAt?: Date | null;
-}) => ({ amountMicro, idempotencyKey, type, revokedAt });
+  sourceGrantId?: string | null;
+}) => ({ amountMicro, idempotencyKey, type, revokedAt, sourceGrantId });
 
 describe('getOnboardingCreditRewardsMicro', () => {
   it('should return zero rewards when there are no grants', () => {
@@ -88,5 +90,22 @@ describe('getOnboardingCreditRewardsMicro', () => {
 
     expect(rewards.totalAmountMicro).toBe(2_000_000);
     expect(Object.values(rewards.amountMicroByKind)).toEqual([0, 0, 0, 0]);
+  });
+
+  it('should not count the carried-forward rest of a reward again', () => {
+    const rewards = getOnboardingCreditRewardsMicro([
+      buildGrant({
+        amountMicro: 1_000_000,
+        idempotencyKey: 'onboarding-import-contacts:workspace-id',
+      }),
+      buildGrant({
+        amountMicro: 400_000,
+        idempotencyKey: 'carry-forward:grant-id',
+        sourceGrantId: 'grant-id',
+      }),
+    ]);
+
+    expect(rewards.totalAmountMicro).toBe(1_000_000);
+    expect(rewards.amountMicroByKind.importContacts).toBe(1_000_000);
   });
 });

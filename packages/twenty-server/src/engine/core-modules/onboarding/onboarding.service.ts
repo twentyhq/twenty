@@ -21,6 +21,7 @@ import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/bi
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -77,6 +78,7 @@ export class OnboardingService {
     private readonly billingService: BillingService,
     private readonly billingCreditService: BillingCreditService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
+    private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
@@ -842,26 +844,28 @@ export class OnboardingService {
     userId: string;
   }) {
     try {
-      const { joinedTeammatesCount } = getOnboardingCreditRewardsMicro(
-        await this.billingCreditGrantService.listGrants(workspaceId),
-      );
+      await this.cacheLockService.withLock(async () => {
+        const { joinedTeammatesCount } = getOnboardingCreditRewardsMicro(
+          await this.billingCreditGrantService.listGrants(workspaceId),
+        );
 
-      if (
-        joinedTeammatesCount >=
-        this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
-      ) {
-        return;
-      }
+        if (
+          joinedTeammatesCount >=
+          this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
+        ) {
+          return;
+        }
 
-      await this.billingCreditService.grantCredits({
-        workspaceId,
-        amountMicro: this.twentyConfigService.get(
-          'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-        ),
-        type: BillingCreditGrantType.ONBOARDING_REWARD,
-        reason: 'Onboarding reward: invited teammate signed up',
-        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:${userId}`,
-      });
+        await this.billingCreditService.grantCredits({
+          workspaceId,
+          amountMicro: this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+          ),
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          reason: 'Onboarding reward: invited teammate signed up',
+          idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:${userId}`,
+        });
+      }, `onboarding-invite-team-reward:${workspaceId}`);
     } catch (error) {
       this.logger.error(
         `Failed to credit onboarding invite reward for workspace ${workspaceId}`,

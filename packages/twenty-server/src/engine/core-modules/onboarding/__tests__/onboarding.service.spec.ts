@@ -6,6 +6,7 @@ import { type DataSource } from 'typeorm';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -44,9 +45,13 @@ describe('OnboardingService', () => {
   const captureExceptions = jest.fn();
   const setIfNotExists = jest.fn();
   const getConfig = jest.fn();
+  const withLock = jest.fn();
 
   beforeEach(async () => {
     grantCredits.mockResolvedValue(null);
+    withLock.mockImplementation((runWithLock: () => Promise<unknown>) =>
+      runWithLock(),
+    );
     setIfNotExists.mockResolvedValue(true);
     getConfig.mockImplementation((key: string) => configValues[key]);
 
@@ -62,6 +67,7 @@ describe('OnboardingService', () => {
         { provide: BillingService, useValue: { isBillingEnabled: jest.fn() } },
         { provide: BillingCreditService, useValue: { grantCredits } },
         { provide: BillingCreditGrantService, useValue: { listGrants } },
+        { provide: CacheLockService, useValue: { withLock } },
         {
           provide: ExceptionHandlerService,
           useValue: { captureExceptions },
@@ -284,6 +290,7 @@ describe('OnboardingService', () => {
       amountMicro: 500_000,
       idempotencyKey: `onboarding-invite-team:${workspaceId}:${joinedUserId}`,
       revokedAt: null,
+      sourceGrantId: null,
     });
 
     it('grants the reward while under the invite cap', async () => {
@@ -291,6 +298,10 @@ describe('OnboardingService', () => {
 
       await service.creditInviteTeamReward({ workspaceId, userId });
 
+      expect(withLock).toHaveBeenCalledWith(
+        expect.any(Function),
+        `onboarding-invite-team-reward:${workspaceId}`,
+      );
       expect(grantCredits).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId,

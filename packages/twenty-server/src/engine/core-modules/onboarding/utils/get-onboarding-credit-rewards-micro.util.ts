@@ -9,7 +9,7 @@ type OnboardingRewardKind =
 
 type OnboardingRewardGrant = Pick<
   BillingCreditGrantEntity,
-  'type' | 'amountMicro' | 'idempotencyKey' | 'revokedAt'
+  'type' | 'amountMicro' | 'idempotencyKey' | 'revokedAt' | 'sourceGrantId'
 >;
 
 export type OnboardingCreditRewardsMicro = {
@@ -27,9 +27,10 @@ const findOnboardingRewardKind = (
 ): OnboardingRewardKind | undefined =>
   ONBOARDING_REWARD_KINDS.find(
     (kind) =>
-      idempotencyKey?.startsWith(
+      isDefined(idempotencyKey) &&
+      idempotencyKey.startsWith(
         `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES[kind]}:`,
-      ) === true,
+      ),
   );
 
 export const getOnboardingCreditRewardsMicro = (
@@ -47,7 +48,8 @@ export const getOnboardingCreditRewardsMicro = (
   for (const grant of grants) {
     if (
       grant.type !== BillingCreditGrantType.ONBOARDING_REWARD ||
-      isDefined(grant.revokedAt)
+      isDefined(grant.revokedAt) ||
+      isDefined(grant.sourceGrantId)
     ) {
       continue;
     }
