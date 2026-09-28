@@ -14,19 +14,21 @@ export const SettingsUnsubscribersFilterOptionsContent = ({
   options,
   selectedValue,
   onSelect,
-}: SettingsUnsubscribersFilterOptionsContentProps) => (
-  <>
-    <Dropdown.Back>{title}</Dropdown.Back>
-    <Dropdown.Section>
-      {options.map((option) => (
-        <Dropdown.OptionItem
-          key={option.value}
-          selected={selectedValue === option.value}
-          onSelect={() => onSelect(option.value)}
-        >
-          {option.label}
-        </Dropdown.OptionItem>
-      ))}
-    </Dropdown.Section>
-  </>
-);
+}: SettingsUnsubscribersFilterOptionsContentProps) => {
+  return (
+    <>
+      <Dropdown.Back>{title}</Dropdown.Back>
+      <Dropdown.Section>
+        {options.map((option) => (
+          <Dropdown.OptionItem
+            key={option.value}
+            selected={selectedValue === option.value}
+            onSelect={() => onSelect(option.value)}
+          >
+            {option.label}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.Section>
+    </>
+  );
+};

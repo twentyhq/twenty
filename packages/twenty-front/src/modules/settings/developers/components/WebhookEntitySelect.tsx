@@ -4,7 +4,6 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,11 +17,6 @@ import {
   IconWebhook,
 } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-
-const StyledScrollableSections = styled.div`
-  max-height: 176px;
-  overflow-y: auto;
-`;
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -118,7 +112,7 @@ export const WebhookEntitySelect = ({
           onValueChange={setSearchInput}
         />
         <Dropdown.Separator />
-        <StyledScrollableSections>
+        <Dropdown.Section scrollable>
           {shouldShowObjects && (
             <Dropdown.Section label={t`Core Objects`}>
               {filteredObjectOptions.map((option) => (
@@ -153,7 +147,7 @@ export const WebhookEntitySelect = ({
               ))}
             </Dropdown.Section>
           )}
-        </StyledScrollableSections>
+        </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>
   );

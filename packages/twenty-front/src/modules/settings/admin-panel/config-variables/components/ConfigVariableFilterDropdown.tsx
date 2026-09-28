@@ -26,27 +26,29 @@ export const ConfigVariableFilterDropdown = ({
   onSourceFilterChange,
   onGroupFilterChange,
   onShowHiddenChange,
-}: ConfigVariableFilterDropdownProps) => (
-  <DropdownRoot dropdownId="env-var-options-dropdown" type="picker">
-    <Dropdown.Trigger
-      render={
-        <Button
-          size="md"
-          startIcon={<IconSettings />}
-          variant="outline"
-        >{t`Options`}</Button>
-      }
-    />
-    <DropdownContent align="end" sideOffset={10}>
-      <ConfigVariableOptionsDropdownContent
-        sourceFilter={sourceFilter}
-        groupFilter={groupFilter}
-        groupOptions={groupOptions}
-        showHiddenGroupVariables={showHiddenGroupVariables}
-        onSourceFilterChange={onSourceFilterChange}
-        onGroupFilterChange={onGroupFilterChange}
-        onShowHiddenChange={onShowHiddenChange}
+}: ConfigVariableFilterDropdownProps) => {
+  return (
+    <DropdownRoot dropdownId="env-var-options-dropdown" type="picker">
+      <Dropdown.Trigger
+        render={
+          <Button
+            size="md"
+            startIcon={<IconSettings />}
+            variant="outline"
+          >{t`Options`}</Button>
+        }
       />
-    </DropdownContent>
-  </DropdownRoot>
-);
+      <DropdownContent align="end" sideOffset={10}>
+        <ConfigVariableOptionsDropdownContent
+          sourceFilter={sourceFilter}
+          groupFilter={groupFilter}
+          groupOptions={groupOptions}
+          showHiddenGroupVariables={showHiddenGroupVariables}
+          onSourceFilterChange={onSourceFilterChange}
+          onGroupFilterChange={onGroupFilterChange}
+          onShowHiddenChange={onShowHiddenChange}
+        />
+      </DropdownContent>
+    </DropdownRoot>
+  );
+};

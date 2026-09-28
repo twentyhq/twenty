@@ -65,11 +65,6 @@ const StyledError = styled.span`
   margin-top: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledScrollableSections = styled.div`
-  max-height: 176px;
-  overflow-y: auto;
-`;
-
 export const SettingsMorphRelationMultiSelect = ({
   className,
   disabled: disabledFromProps,
@@ -241,7 +236,7 @@ export const SettingsMorphRelationMultiSelect = ({
               <Dropdown.Separator />
             )}
             {isNonEmptyArray(matchingOptions) && (
-              <StyledScrollableSections>
+              <Dropdown.Section scrollable>
                 {isNonEmptyArray(regularOptions) && (
                   <Dropdown.Section>
                     {regularOptions.map(renderOption)}
@@ -254,7 +249,7 @@ export const SettingsMorphRelationMultiSelect = ({
                     {advancedOptions.map(renderOption)}
                   </Dropdown.Section>
                 )}
-              </StyledScrollableSections>
+              </Dropdown.Section>
             )}
             {isDefined(callToActionButton) &&
               isNonEmptyArray(matchingOptions) && <Dropdown.Separator />}
