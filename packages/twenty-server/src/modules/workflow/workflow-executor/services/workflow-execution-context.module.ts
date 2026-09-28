@@ -11,6 +11,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowRunApplicationsService } from 'src/modules/workflow/workflow-executor/services/workflow-run-applications.service';
+import { WorkflowRunChangeAuthorizationWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-change-authorization.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
@@ -26,8 +28,13 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
   ],
   providers: [
     WorkflowExecutionContextService,
+    WorkflowRunApplicationsService,
+    WorkflowRunChangeAuthorizationWorkspaceService,
     provideWorkspaceScopedRepository(WorkflowEntity),
   ],
-  exports: [WorkflowExecutionContextService],
+  exports: [
+    WorkflowExecutionContextService,
+    WorkflowRunChangeAuthorizationWorkspaceService,
+  ],
 })
 export class WorkflowExecutionContextModule {}

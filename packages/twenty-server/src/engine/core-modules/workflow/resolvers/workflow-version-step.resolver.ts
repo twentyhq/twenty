@@ -34,7 +34,7 @@ import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
-import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowRunChangeAuthorizationWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-change-authorization.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -61,7 +61,7 @@ export class WorkflowVersionStepResolver {
     private readonly httpTool: HttpTool,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
-    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
+    private readonly workflowRunChangeAuthorizationWorkspaceService: WorkflowRunChangeAuthorizationWorkspaceService,
   ) {}
 
   // Related to https://github.com/twentyhq/private-issues/issues/478
@@ -187,10 +187,12 @@ export class WorkflowVersionStepResolver {
     @Args('input')
     { stepId, workflowRunId, response }: SubmitFormStepInput,
   ) {
-    await this.workflowExecutionContextService.assertMemberCanChangeRunOrThrow({
-      runInfo: { workflowRunId, workspaceId },
-      workspaceMemberId,
-    });
+    await this.workflowRunChangeAuthorizationWorkspaceService.assertMemberCanChangeRunOrThrow(
+      {
+        runInfo: { workflowRunId, workspaceId },
+        workspaceMemberId,
+      },
+    );
 
     await this.workflowRunnerWorkspaceService.submitFormStep({
       workspaceId,
@@ -209,11 +211,13 @@ export class WorkflowVersionStepResolver {
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
-    await this.workflowExecutionContextService.assertMemberCanChangeRunOrThrow({
-      runInfo: { workflowRunId, workspaceId },
-      workspaceMemberId,
-      replacementStep: step,
-    });
+    await this.workflowRunChangeAuthorizationWorkspaceService.assertMemberCanChangeRunOrThrow(
+      {
+        runInfo: { workflowRunId, workspaceId },
+        workspaceMemberId,
+        replacementStep: step,
+      },
+    );
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStep({
       workspaceId,

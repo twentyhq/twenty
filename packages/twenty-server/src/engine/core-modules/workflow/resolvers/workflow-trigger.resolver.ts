@@ -29,7 +29,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
-import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowRunChangeAuthorizationWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-change-authorization.workspace-service';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -51,7 +51,7 @@ export class WorkflowTriggerResolver {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
-    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
+    private readonly workflowRunChangeAuthorizationWorkspaceService: WorkflowRunChangeAuthorizationWorkspaceService,
   ) {}
 
   @Mutation(() => Boolean)
@@ -170,10 +170,12 @@ export class WorkflowTriggerResolver {
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
-    await this.workflowExecutionContextService.assertMemberCanChangeRunOrThrow({
-      runInfo: { workflowRunId, workspaceId: workspace.id },
-      workspaceMemberId,
-    });
+    await this.workflowRunChangeAuthorizationWorkspaceService.assertMemberCanChangeRunOrThrow(
+      {
+        runInfo: { workflowRunId, workspaceId: workspace.id },
+        workspaceMemberId,
+      },
+    );
 
     return this.workflowTriggerWorkspaceService.retryWorkflowRun(
       workflowRunId,
