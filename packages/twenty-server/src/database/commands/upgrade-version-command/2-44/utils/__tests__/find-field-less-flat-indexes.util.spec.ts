@@ -24,13 +24,13 @@ describe('findFieldLessFlatIndexes', () => {
     ]);
   });
 
-  it('should skip a field-less index whose name is still used by an index with fields', () => {
+  it('should return the field-less index even when a live index shares its name', () => {
     const orphan = buildFlatIndex({ name: 'IDX_shared', fieldCount: 0 });
     const live = buildFlatIndex({ name: 'IDX_shared', fieldCount: 1 });
 
-    expect(findFieldLessFlatIndexes({ flatIndexes: [orphan, live] })).toEqual(
-      [],
-    );
+    expect(findFieldLessFlatIndexes({ flatIndexes: [orphan, live] })).toEqual([
+      orphan,
+    ]);
   });
 
   it('should return nothing when every index has fields', () => {
