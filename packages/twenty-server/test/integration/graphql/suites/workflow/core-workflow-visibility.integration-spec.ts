@@ -16,9 +16,13 @@ import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/wo
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -29,6 +33,16 @@ const graphqlRequestAs = (
 ) =>
   client
     .post('/graphql')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .send({ query, variables });
+
+const metadataRequestAs = (
+  accessToken: string,
+  query: string,
+  variables?: object,
+) =>
+  client
+    .post('/metadata')
     .set('Authorization', `Bearer ${accessToken}`)
     .send({ query, variables });
 
@@ -769,6 +783,212 @@ describe('core workflow visibility (e2e)', () => {
       expect(
         await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
       ).toEqual([workflowRunId]);
+    });
+  });
+
+  // An agent step's conversation carries no grants of its own: it is read
+  // through its run, so it follows the workflow's visibility like the run does.
+  describe('the conversation an agent step records on a run', () => {
+    let conversationCoreWorkflowId: string;
+    let conversationWorkspaceWorkflowId: string;
+    let workflowRunId: string;
+    let threadId: string;
+
+    const readConversation = (accessToken: string) =>
+      metadataRequestAs(
+        accessToken,
+        `
+          query ReadRunConversation($threadId: UUID!) {
+            chatThread(id: $threadId) {
+              id
+              title
+            }
+            chatMessages(threadId: $threadId) {
+              role
+            }
+          }
+        `,
+        { threadId },
+      );
+
+    beforeAll(async () => {
+      let workspaceWorkflowVersionId: string;
+
+      ({
+        coreWorkflowId: conversationCoreWorkflowId,
+        workspaceWorkflowId: conversationWorkspaceWorkflowId,
+        workspaceWorkflowVersionId,
+      } = await createActiveManualWorkflow('Workflow With A Conversation'));
+
+      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
+        input: { workflowVersionId: workspaceWorkflowVersionId },
+      });
+
+      expect(runResponse.body.errors).toBeUndefined();
+      workflowRunId = runResponse.body.data.runWorkflowVersion.workflowRunId;
+
+      const conversationService =
+        getAppProviderByClassName<WorkflowAgentConversationWorkspaceService>(
+          'WorkflowAgentConversationWorkspaceService',
+        );
+
+      const recordedThreadId = await conversationService.recordExecution({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workflowRunId,
+        stepId: 'trigger',
+        title: 'Summarize the lead',
+        agentId: null,
+        prompt: 'Summarize the lead',
+        initiatorUserWorkspaceId: null,
+        executionResult: {
+          steps: [
+            { content: [{ type: 'text', text: 'A warm lead.' }] },
+          ] as AgentExecutionResult['steps'],
+        },
+      });
+
+      expect(recordedThreadId).not.toBeNull();
+      threadId = recordedThreadId!;
+    });
+
+    afterAll(async () => {
+      if (isDefined(conversationWorkspaceWorkflowId)) {
+        await setVisibility(
+          conversationCoreWorkflowId,
+          WorkflowVisibility.WORKSPACE,
+        );
+        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
+          id: conversationWorkspaceWorkflowId,
+        });
+      }
+    });
+
+    it('points the step at the conversation, which holds the prompt and the reply', async () => {
+      const runResponse = await workflowGraphqlRequest(
+        `
+          query FindRun($id: UUID!) {
+            workflowRun(filter: { id: { eq: $id } }) {
+              state
+            }
+          }
+        `,
+        { id: workflowRunId },
+      );
+
+      expect(runResponse.body.errors).toBeUndefined();
+      expect(
+        runResponse.body.data.workflowRun.state.stepInfos.trigger.threadId,
+      ).toBe(threadId);
+
+      const response = await readConversation(APPLE_JANE_ADMIN_ACCESS_TOKEN);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.chatThread.title).toBe('Summarize the lead');
+      expect(
+        response.body.data.chatMessages.map(
+          ({ role }: { role: string }) => role,
+        ),
+      ).toEqual(['user', 'assistant']);
+    });
+
+    it('keeps it out of the chat list of someone who can read it', async () => {
+      const response = await metadataRequestAs(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        'query ReadableThreads { chatThreads { id } }',
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.chatThreads.map(({ id }: { id: string }) => id),
+      ).not.toContain(threadId);
+    });
+
+    it('refuses to rename it or add to it, even for the workflow creator', async () => {
+      const renameResponse = await metadataRequestAs(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        `
+          mutation RenameRunConversation($threadId: UUID!) {
+            renameChatThread(id: $threadId, title: "Renamed") {
+              id
+            }
+          }
+        `,
+        { threadId },
+      );
+
+      expect(renameResponse.body.errors?.[0]?.extensions?.code).toBe(
+        'FORBIDDEN',
+      );
+
+      const archiveResponse = await metadataRequestAs(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        `
+          mutation ArchiveRunConversation($threadId: UUID!) {
+            archiveChatThread(id: $threadId) {
+              id
+            }
+          }
+        `,
+        { threadId },
+      );
+
+      expect(archiveResponse.body.errors?.[0]?.extensions?.code).toBe(
+        'FORBIDDEN',
+      );
+    });
+
+    it('follows the workflow visibility for another member', async () => {
+      const whileVisible = await readConversation(
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(whileVisible.body.errors).toBeUndefined();
+      expect(whileVisible.body.data.chatThread.id).toBe(threadId);
+
+      const response = await setVisibility(
+        conversationCoreWorkflowId,
+        WorkflowVisibility.PRIVATE,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const whilePrivate = await readConversation(
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(whilePrivate.body.data?.chatThread ?? null).toBeNull();
+      expect(whilePrivate.body.errors).toBeDefined();
+
+      const asCreator = await readConversation(APPLE_JANE_ADMIN_ACCESS_TOKEN);
+
+      expect(asCreator.body.errors).toBeUndefined();
+      expect(asCreator.body.data.chatThread.id).toBe(threadId);
+    });
+
+    it('keeps the conversation of an attempt that is retried in the step history', async () => {
+      await getAppProviderByClassName<WorkflowRunWorkspaceService>(
+        'WorkflowRunWorkspaceService',
+      ).moveStepToRetry({
+        stepId: 'trigger',
+        error: 'The agent failed',
+        workflowRunId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+
+      const [{ state }] = await global.testDataSource.query(
+        `SELECT state FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workflowRun" WHERE id = $1`,
+        [workflowRunId],
+      );
+
+      expect(state.stepInfos.trigger.status).toBe('PENDING');
+      expect(state.stepInfos.trigger.threadId).toBeUndefined();
+      const { history } = state.stepInfos.trigger;
+
+      expect(history[history.length - 1]).toMatchObject({
+        status: 'FAILED',
+        error: 'The agent failed',
+        threadId,
+      });
     });
   });
 
