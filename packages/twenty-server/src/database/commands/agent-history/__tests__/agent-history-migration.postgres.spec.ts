@@ -1,4 +1,5 @@
-import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790591899563-link-chat-message-senders-to-workspace-members.command';
+import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -25,7 +26,6 @@ import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admi
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
-import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -40,6 +40,7 @@ import { Pool } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { AGENT_HISTORY_TEST_SCHEMA } from 'src/database/commands/agent-history/__tests__/agent-history-test-schema.constant';
@@ -66,13 +67,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       synchronize: false,
     });
     const storage = new AgentHistoryStorageService(dataSource);
+    const workspaceStorage = new AgentHistoryWorkspaceStorageService(
+      dataSource,
+    );
+    const migrationState = new AgentHistoryMigrationStateService();
     const migration = new AgentHistoryMigrationService(
       dataSource,
-      storage,
+      migrationState,
       new AgentHistoryMigrationDataService(),
       new AgentHistoryMigrationValidationService(),
     );
-    const lifecycle = new AgentHistoryLifecycleService(dataSource, storage);
     const pool = new Pool({ connectionString: DATABASE_URL });
     const { allFlatEntityMaps: metadata } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
@@ -527,9 +531,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         'UPDATE core."agentChatThread" SET "updatedAt" = $1',
         [originalTimestamp],
       );
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const injectedCrash = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (
             state.migration?.phase === 'copying' &&
@@ -550,6 +554,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(storage.run(WORKSPACE_ID, operation)).rejects.toThrow(
         'being migrated',
       );
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, operation),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
       expect(operation).not.toHaveBeenCalled();
       expect(
         (
@@ -607,7 +614,45 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(await readRoute()).toBe('core');
     });
 
-    it('refuses runtime access to history still stored in core', async () => {
+    it('fails closed when the durable route is lost', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      await dataSource.query('DELETE FROM core."keyValuePair"');
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, ({ manager, table }) =>
+          manager.query(`SELECT id FROM ${table('agentChatThread')}`),
+        ),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
+      await expect(
+        workspaceStorage.runReadOnlyReport(
+          [WORKSPACE_ID],
+          async ({ partitions }) =>
+            partitions.map(({ workspaceIds }) => workspaceIds),
+        ),
+      ).resolves.toEqual([]);
+    });
+
+    it('initializes empty new workspaces with a durable route for cleanup', async () => {
+      await dataSource.query('TRUNCATE core."agentChatThread" CASCADE');
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      expect(await readRoute()).toBe('workspace');
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, async () => 'ready'),
+      ).resolves.toBe('ready');
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      expect(await readRoute()).toBe('workspace');
+    });
+
+    it('does not mark legacy history as migrated during initialization', async () => {
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, jest.fn()),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    });
+
+    it('preserves the legacy upgrade fence for history still stored in core', async () => {
       await expect(
         threads.find(WORKSPACE_ID, { where: { id: THREAD_ID } }),
       ).rejects.toBeInstanceOf(ServiceUnavailableException);
@@ -1105,7 +1150,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     });
 
     it('does not create constraints referencing core tables', async () => {
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -1133,9 +1177,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     });
 
     it('keeps the fence when a copied value fails verification, then allows abort', async () => {
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const corruptCopy = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           await writeState(runner, workspaceId, state);
           if (
@@ -1286,14 +1330,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(
         storage.run(WORKSPACE_ID, async () => undefined),
       ).rejects.toThrow('Invalid agent history storage state');
-      await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
+      await expect(migration.inspect(WORKSPACE_ID)).rejects.toThrow(
         'Invalid agent history storage state',
       );
       await dataSource.query('DELETE FROM core."keyValuePair"');
       await expect(
         storage.run(WORKSPACE_ID, async () => undefined),
       ).rejects.toThrow('route is missing');
-      await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
+      await expect(migration.inspect(WORKSPACE_ID)).rejects.toThrow(
         'route is missing',
       );
     });
@@ -1344,9 +1388,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const collision = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           await writeState(runner, workspaceId, state);
           if (
@@ -1620,84 +1664,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(await readRoute()).toBe('workspace');
     });
 
-    it('waits for an active runner before initialization and preserves its migration state', async () => {
-      const initializationDataSource = new DataSource({
-        type: 'postgres',
-        url: DATABASE_URL,
-        extra: { options: '-c lock_timeout=100ms' },
-      });
-      await initializationDataSource.initialize();
-      const initializer = new AgentHistoryLifecycleService(
-        initializationDataSource,
-        storage,
-      );
-      const runner = dataSource.createQueryRunner();
-      const key = `${AGENT_HISTORY_STORAGE_KEY}:runner:${WORKSPACE_ID}`;
-      await runner.connect();
-      try {
-        await runner.query('SELECT pg_advisory_lock(hashtextextended($1, 0))', [
-          key,
-        ]);
-        await expect(
-          initializer.initializeWorkspace(WORKSPACE_ID),
-        ).rejects.toThrow('lock timeout');
-        expect(
-          await runner.query(
-            'SELECT value FROM core."keyValuePair" WHERE "workspaceId" = $1',
-            [WORKSPACE_ID],
-          ),
-        ).toEqual([]);
-        const state = {
-          storage: 'core' as const,
-          migration: {
-            phase: 'aborting' as const,
-            target: 'workspace' as const,
-            tableIndex: 0,
-            lastId: null,
-          },
-        };
-        await storage.writeState(runner, WORKSPACE_ID, state);
-        await runner.query(
-          'SELECT pg_advisory_unlock(hashtextextended($1, 0))',
-          [key],
-        );
-        await initializer.initializeWorkspace(WORKSPACE_ID);
-        expect(await storage.readState(runner, WORKSPACE_ID)).toEqual(state);
-      } finally {
-        await runner.query('SELECT pg_advisory_unlock_all()');
-        await runner.release();
-        await initializationDataSource.destroy();
-      }
-    });
-
-    it('defaults new empty workspaces to workspace storage without moving legacy history', async () => {
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      expect(await readRoute()).toBe('core');
-      await dataSource.query(
-        'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1',
-        [WORKSPACE_ID],
-      );
-      for (const table of [...AGENT_HISTORY_TABLES].reverse())
-        await dataSource.query(`DELETE FROM core."${table.name}"`);
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      expect(await readRoute()).toBe('workspace');
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      expect(await readRoute()).toBe('workspace');
-    });
-
-    it('ignores a legacy core default when provisioning a new empty workspace', async () => {
-      for (const table of [...AGENT_HISTORY_TABLES].reverse())
-        await dataSource.query(`DELETE FROM core."${table.name}"`);
-      await dataSource.query(
-        `INSERT INTO core."keyValuePair" ("key", "type", "value") VALUES ('agent-history-new-workspace-storage-v1', 'CONFIG_VARIABLE', '{"storage":"core"}'::jsonb)`,
-      );
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      expect(await readRoute()).toBe('workspace');
-    });
     it('does not allow copy to resume after an interrupted abort', async () => {
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const failCopy = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (
             state.migration?.phase === 'copying' &&
@@ -1711,7 +1681,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).rejects.toThrow('crash');
       failCopy.mockRestore();
       const failAbort = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (!state.migration) throw new Error('abort interrupted');
           await writeState(runner, workspaceId, state);

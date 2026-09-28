@@ -10,10 +10,10 @@ import { ServiceUnavailableException } from '@nestjs/common';
 
 import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
-import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
+import { backfillLegacyChatThreadOwnerGrants as backfillChatThreadOwnerGrants } from 'src/database/commands/agent-history/utils/backfill-legacy-chat-thread-owner-grants.util';
 
 jest.mock(
-  'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util',
+  'src/database/commands/agent-history/utils/backfill-legacy-chat-thread-owner-grants.util',
 );
 
 jest.mock(
