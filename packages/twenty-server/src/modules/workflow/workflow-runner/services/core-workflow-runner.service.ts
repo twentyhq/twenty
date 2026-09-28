@@ -4,6 +4,7 @@ import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -40,6 +41,7 @@ export class CoreWorkflowRunnerService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly applicationService: ApplicationService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -101,8 +103,14 @@ export class CoreWorkflowRunnerService {
       );
     }
 
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     if (
-      !isDefined(workflow.workspaceWorkflowId) &&
+      workflow.applicationId !== workspaceCustomFlatApplication.id &&
+      workflow.applicationId !== twentyStandardFlatApplication.id &&
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
         workspaceId,

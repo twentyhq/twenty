@@ -4,6 +4,7 @@ jest.mock('src/modules/workflow/workflow-runner/jobs/run-workflow.job', () => ({
 import { Test } from '@nestjs/testing';
 import { FieldActorSource } from 'twenty-shared/types';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
@@ -35,6 +36,17 @@ describe('application workflow execution gate', () => {
     const module = await Test.createTestingModule({
       providers: [
         CoreWorkflowRunnerService,
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                workspaceCustomFlatApplication: { id: 'workspace-custom' },
+                twentyStandardFlatApplication: { id: 'twenty-standard' },
+              }),
+          },
+        },
         { provide: FeatureFlagService, useValue: { isFeatureEnabled } },
         {
           provide: WorkflowCoreSyncService,
@@ -63,6 +75,7 @@ describe('application workflow execution gate', () => {
     service = module.get(CoreWorkflowRunnerService);
     findCoreWorkflowById.mockResolvedValue({
       id: 'workflow',
+      applicationId: 'installed-app',
       workspaceWorkflowId: null,
     });
     findCoreVersionById.mockResolvedValue({
@@ -90,9 +103,24 @@ describe('application workflow execution gate', () => {
     expect(createCoreWorkflowRun).toHaveBeenCalled();
   });
 
+  it.each(['workspace-custom', 'twenty-standard'])(
+    'does not gate mirrorless workflows owned by %s',
+    async (applicationId) => {
+      findCoreWorkflowById.mockResolvedValue({
+        id: 'workflow',
+        applicationId,
+        workspaceWorkflowId: null,
+      });
+      await expect(service.run(INPUT)).rejects.toThrow('Reached run creation');
+      expect(isFeatureEnabled).not.toHaveBeenCalled();
+      expect(createCoreWorkflowRun).toHaveBeenCalled();
+    },
+  );
+
   it('does not gate existing workspace-backed workflows', async () => {
     findCoreWorkflowById.mockResolvedValue({
       id: 'workflow',
+      applicationId: 'workspace-custom',
       workspaceWorkflowId: 'workspace-workflow',
     });
     findCoreVersionById.mockResolvedValue({
