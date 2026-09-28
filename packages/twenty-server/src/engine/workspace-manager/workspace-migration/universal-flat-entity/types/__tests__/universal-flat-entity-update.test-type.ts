@@ -48,7 +48,6 @@ type Assertions = [
       | 'writability'
       | 'readability'
       | 'readabilityParentFieldUniversalIdentifiers'
-      | 'validationRules'
     >
   >,
 ];

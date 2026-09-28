@@ -176,7 +176,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "objectMetadata": {
     "propertiesToCompare": [
-      "validationRules",
       "openRecordIn",
       "color",
       "description",
@@ -198,7 +197,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "imageIdentifierFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [
-      "validationRules",
       "overrides",
       "readabilityParentFieldUniversalIdentifiers",
     ],
@@ -373,6 +371,21 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "overrides",
+    ],
+  },
+  "validationRule": {
+    "propertiesToCompare": [
+      "errorFieldMetadataUniversalIdentifier",
+      "name",
+      "description",
+      "icon",
+      "expression",
+      "bindings",
+      "message",
+      "isActive",
+    ],
+    "propertiesToStringify": [
+      "bindings",
     ],
   },
   "view": {

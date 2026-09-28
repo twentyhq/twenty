@@ -237,6 +237,7 @@ export enum AllMetadataName {
   settingsMenuItem = 'settingsMenuItem',
   skill = 'skill',
   timelineActivityType = 'timelineActivityType',
+  validationRule = 'validationRule',
   view = 'view',
   viewField = 'viewField',
   viewFieldGroup = 'viewFieldGroup',

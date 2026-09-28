@@ -137,7 +137,6 @@ export const createStandardObjectFlatMetadata = <
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,
-    validationRules: [],
     duplicateCriteria,
     shortcut,
     labelIdentifierFieldMetadataId:

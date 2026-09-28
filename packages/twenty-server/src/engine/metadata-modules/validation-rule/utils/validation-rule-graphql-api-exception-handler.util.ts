@@ -1,7 +1,6 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  ConflictError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -18,8 +17,6 @@ export const validationRuleGraphqlApiExceptionHandler = (error: Error) => {
       case ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT:
       case ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_EXPRESSION:
         throw new UserInputError(error);
-      case ValidationRuleExceptionCode.VALIDATION_RULE_CHANGE_IN_PROGRESS:
-        throw new ConflictError(error);
       default: {
         return assertUnreachable(error.code);
       }

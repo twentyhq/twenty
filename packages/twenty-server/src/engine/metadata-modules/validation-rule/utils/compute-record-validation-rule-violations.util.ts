@@ -1,10 +1,10 @@
 import {
   type ObjectRecord,
-  type ObjectValidationRule,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import { createValidationRuleEvaluator } from 'twenty-shared/utils';
 
+import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
 
 type ComputeRecordValidationRuleViolationsResult = {
@@ -22,7 +22,7 @@ export const computeRecordValidationRuleViolations = ({
 }: {
   records: ObjectRecord[];
   validationRules: Pick<
-    ObjectValidationRule,
+    FlatValidationRule,
     'id' | 'expression' | 'message' | 'errorFieldMetadataId'
   >[];
   fields: ValidationRuleFieldDescriptor[];

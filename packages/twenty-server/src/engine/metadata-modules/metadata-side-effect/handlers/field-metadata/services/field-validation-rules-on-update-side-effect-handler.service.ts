@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildValidationRulesAfterFieldChangeSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rules-after-field-change-side-effect.util';
+import { buildValidationRuleUpdatesAfterFieldChangeSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rule-updates-after-field-change-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -42,10 +42,9 @@ export class FieldValidationRulesOnUpdateSideEffectHandlerService extends Metada
       return { status: 'noop' };
     }
 
-    return buildValidationRulesAfterFieldChangeSideEffect({
+    return buildValidationRuleUpdatesAfterFieldChangeSideEffect({
       fieldChange: {
         fieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-        fieldMetadataId: existingFlatFieldMetadata.id,
         newFieldName: isRenamed ? flatFieldMetadata.name : null,
         shouldDisableRulesReadingField: isRetyped || isDeactivated,
         shouldDetachErrorField: isDeactivated,

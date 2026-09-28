@@ -6,7 +6,6 @@ import {
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
-  type ObjectValidationRule,
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
@@ -64,6 +63,7 @@ import {
   RecordValidationRuleExceptionCode,
 } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
+import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { VALIDATION_RULE_MAX_REPORTED_VIOLATIONS } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-max-reported-violations.constant';
 import { VALIDATION_RULE_RECORD_CHUNK_SIZE } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-record-chunk-size.constant';
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
@@ -1431,7 +1431,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private getActiveValidationRules(): ObjectValidationRule[] {
+  private getActiveValidationRules(): FlatValidationRule[] {
     if (
       this.options.internalContext.featureFlagsMap[
         FeatureFlagKey.IS_VALIDATION_RULES_ENABLED
@@ -1440,8 +1440,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return [];
     }
 
-    return (this.options.flatObjectMetadata.validationRules ?? []).filter(
-      (validationRule) => validationRule.isActive,
+    return Object.values(
+      this.options.internalContext.flatValidationRuleMaps.byUniversalIdentifier,
+    ).filter(
+      (flatValidationRule): flatValidationRule is FlatValidationRule =>
+        isDefined(flatValidationRule) &&
+        flatValidationRule.isActive &&
+        flatValidationRule.objectMetadataId ===
+          this.options.flatObjectMetadata.id,
     );
   }
 
@@ -1468,7 +1474,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }: {
     writtenRecords: ObjectRecord[];
     rawWrittenRecords: ObjectRecord[];
-    validationRules: ObjectValidationRule[];
+    validationRules: FlatValidationRule[];
   }): Promise<ObjectRecord[]> {
     const referencedRelationShapes = [
       ...new Set(

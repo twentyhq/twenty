@@ -3759,6 +3759,7 @@ enum AllMetadataName {
   searchFieldMetadata
   timelineActivityType
   settingsMenuItem
+  validationRule
   workflow
   workflowVersion
 }

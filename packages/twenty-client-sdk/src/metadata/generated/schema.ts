@@ -3302,7 +3302,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'settingsMenuItem' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'settingsMenuItem' | 'validationRule' | 'workflow' | 'workflowVersion'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -11561,6 +11561,7 @@ export const enumAllMetadataName = {
    searchFieldMetadata: 'searchFieldMetadata' as const,
    timelineActivityType: 'timelineActivityType' as const,
    settingsMenuItem: 'settingsMenuItem' as const,
+   validationRule: 'validationRule' as const,
    workflow: 'workflow' as const,
    workflowVersion: 'workflowVersion' as const
 }

@@ -197,7 +197,6 @@ export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
-export type { ObjectValidationRule } from './ObjectValidationRule';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {

@@ -1,7 +1,4 @@
-import {
-  type ObjectValidationRule,
-  type ValidationRuleBindings,
-} from 'twenty-shared/types';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   isDefined,
   tokenizeValidationRuleExpression,
@@ -9,10 +6,16 @@ import {
 
 export type ValidationRuleFieldChange = {
   fieldUniversalIdentifier: string;
-  fieldMetadataId: string | null;
   newFieldName: string | null;
   shouldDisableRulesReadingField: boolean;
   shouldDetachErrorField: boolean;
+};
+
+type ValidationRuleFieldChangeTarget = {
+  expression: string;
+  bindings: ValidationRuleBindings;
+  isActive: boolean;
+  errorFieldMetadataUniversalIdentifier: string | null;
 };
 
 const renamePath = ({
@@ -48,15 +51,17 @@ const renamePath = ({
   return path;
 };
 
-const renameFieldInValidationRule = ({
+const renameFieldInValidationRule = <
+  TValidationRule extends ValidationRuleFieldChangeTarget,
+>({
   validationRule,
   fieldUniversalIdentifier,
   newFieldName,
 }: {
-  validationRule: ObjectValidationRule;
+  validationRule: TValidationRule;
   fieldUniversalIdentifier: string;
   newFieldName: string;
-}): ObjectValidationRule => {
+}): TValidationRule => {
   const { bindings } = validationRule;
 
   return {
@@ -82,61 +87,54 @@ const renameFieldInValidationRule = ({
   };
 };
 
-export const computeValidationRulesAfterFieldChange = ({
-  validationRules,
+export const computeValidationRuleAfterFieldChange = <
+  TValidationRule extends ValidationRuleFieldChangeTarget,
+>({
+  validationRule,
   fieldChange,
 }: {
-  validationRules: ObjectValidationRule[];
+  validationRule: TValidationRule;
   fieldChange: ValidationRuleFieldChange;
-}): { validationRules: ObjectValidationRule[]; hasChanged: boolean } => {
+}): TValidationRule => {
   const {
     fieldUniversalIdentifier,
-    fieldMetadataId,
     newFieldName,
     shouldDisableRulesReadingField,
     shouldDetachErrorField,
   } = fieldChange;
 
-  let hasChanged = false;
+  let updatedValidationRule = validationRule;
 
-  const updatedValidationRules = validationRules.map((validationRule) => {
-    let updatedValidationRule = validationRule;
+  const readsField = Object.values(validationRule.bindings).includes(
+    fieldUniversalIdentifier,
+  );
 
-    const readsField = Object.values(validationRule.bindings).includes(
+  if (readsField && isDefined(newFieldName)) {
+    updatedValidationRule = renameFieldInValidationRule({
+      validationRule: updatedValidationRule,
       fieldUniversalIdentifier,
-    );
+      newFieldName,
+    });
+  }
 
-    if (readsField && isDefined(newFieldName)) {
-      updatedValidationRule = renameFieldInValidationRule({
-        validationRule: updatedValidationRule,
-        fieldUniversalIdentifier,
-        newFieldName,
-      });
-    }
+  if (
+    readsField &&
+    shouldDisableRulesReadingField &&
+    updatedValidationRule.isActive
+  ) {
+    updatedValidationRule = { ...updatedValidationRule, isActive: false };
+  }
 
-    if (
-      readsField &&
-      shouldDisableRulesReadingField &&
-      updatedValidationRule.isActive
-    ) {
-      updatedValidationRule = { ...updatedValidationRule, isActive: false };
-    }
+  if (
+    shouldDetachErrorField &&
+    updatedValidationRule.errorFieldMetadataUniversalIdentifier ===
+      fieldUniversalIdentifier
+  ) {
+    updatedValidationRule = {
+      ...updatedValidationRule,
+      errorFieldMetadataUniversalIdentifier: null,
+    };
+  }
 
-    if (
-      shouldDetachErrorField &&
-      isDefined(fieldMetadataId) &&
-      updatedValidationRule.errorFieldMetadataId === fieldMetadataId
-    ) {
-      updatedValidationRule = {
-        ...updatedValidationRule,
-        errorFieldMetadataId: null,
-      };
-    }
-
-    hasChanged ||= updatedValidationRule !== validationRule;
-
-    return updatedValidationRule;
-  });
-
-  return { validationRules: updatedValidationRules, hasChanged };
+  return updatedValidationRule;
 };
