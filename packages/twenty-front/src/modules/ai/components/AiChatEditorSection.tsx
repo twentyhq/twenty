@@ -16,7 +16,7 @@ import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
+import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
@@ -190,7 +190,7 @@ const EditableAiChatEditorSection = () => {
             <AiChatDictationHint interimText={dictationInterimText} />
             <StyledButtonsContainer>
               <StyledLeftButtonsContainer>
-                <AgentChatFileUploadButton />
+                <AiChatAddMenu editor={editor} />
                 <AiChatDictationButton />
                 <AiChatContextUsageButton />
               </StyledLeftButtonsContainer>
