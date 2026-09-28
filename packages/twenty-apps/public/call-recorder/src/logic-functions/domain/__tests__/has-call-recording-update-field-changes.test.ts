@@ -56,6 +56,15 @@ describe('hasCallRecordingUpdateFieldChanges', () => {
     ).toBe(true);
   });
 
+  it('treats an update to a field the record does not carry as a change', () => {
+    expect(
+      hasCallRecordingUpdateFieldChanges({
+        callRecording: CALL_RECORDING,
+        updateFields: { transcript: { segments: [] } },
+      }),
+    ).toBe(true);
+  });
+
   it('returns false for an empty update', () => {
     expect(
       hasCallRecordingUpdateFieldChanges({
