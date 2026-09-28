@@ -11,7 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.44.0', 1790601763000)
+@RegisteredWorkspaceCommand('2.44.0', 1790607921000)
 @Command({
   name: 'upgrade:2-44:remove-add-node-workflow-command-menu-item',
   description:

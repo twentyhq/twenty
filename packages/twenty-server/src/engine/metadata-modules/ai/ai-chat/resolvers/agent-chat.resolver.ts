@@ -15,7 +15,7 @@ import {
 
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -39,7 +39,7 @@ import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -84,7 +84,7 @@ export class AgentChatResolver {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
   ) {}
 
   @Query(() => [AgentChatThreadDTO])
@@ -290,7 +290,7 @@ export class AgentChatResolver {
       spenders: { userWorkspaceId },
     });
 
-    if (isDefined(thread.deletedAt)) {
+    if (isDefined(thread.archivedAt)) {
       await this.agentChatService.unarchiveThread({
         threadId,
         userWorkspaceId,
@@ -298,7 +298,7 @@ export class AgentChatResolver {
       });
     }
 
-    if (isDefined(thread.activeStreamId)) {
+    if (isNonEmptyString(thread.activeStreamId)) {
       const interruptedError =
         await this.agentChatStreamingService.reapDeadStream({
           thread,
@@ -312,7 +312,7 @@ export class AgentChatResolver {
     }
 
     if (
-      isDefined(thread.activeStreamId) ||
+      isNonEmptyString(thread.activeStreamId) ||
       isDefined(thread.pendingQuestionMessageId)
     ) {
       const queuedMessage = await this.agentChatService.queueMessage({
@@ -496,7 +496,7 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceId,
     });
-    if (!isDefined(thread.activeStreamId)) {
+    if (!isNonEmptyString(thread.activeStreamId)) {
       return true;
     }
 
@@ -522,7 +522,7 @@ export class AgentChatResolver {
     @Args('title') title: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadEntity> {
+  ): Promise<AgentChatThreadWorkspaceEntity> {
     return this.agentChatService.updateThreadTitle({
       threadId: id,
       userWorkspaceId,
@@ -536,7 +536,7 @@ export class AgentChatResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadEntity> {
+  ): Promise<AgentChatThreadWorkspaceEntity> {
     await this.sharingService.getThreadWithAccess({
       threadId: id,
       userWorkspaceId,
@@ -557,7 +557,7 @@ export class AgentChatResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadEntity> {
+  ): Promise<AgentChatThreadWorkspaceEntity> {
     return this.agentChatService.unarchiveThread({
       threadId: id,
       userWorkspaceId,
@@ -596,7 +596,7 @@ export class AgentChatResolver {
       where: { id: threadId },
     });
 
-    if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
+    if (!isDefined(thread) || !isNonEmptyString(thread.activeStreamId)) {
       return;
     }
 
@@ -659,20 +659,36 @@ export class AgentChatResolver {
     );
   }
 
-  @ResolveField(() => Float)
-  totalInputCredits(@Parent() thread: AgentChatThreadEntity): number {
-    return toDisplayCredits(thread.totalInputCredits);
+  @ResolveField(() => Date)
+  createdAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date {
+    return new Date(thread.createdAt);
+  }
+
+  @ResolveField(() => Date)
+  updatedAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date {
+    return new Date(thread.updatedAt);
+  }
+
+  @ResolveField(() => Date, { nullable: true })
+  deletedAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date | null {
+    return isDefined(thread.archivedAt) ? new Date(thread.archivedAt) : null;
   }
 
   @ResolveField(() => Float)
-  totalOutputCredits(@Parent() thread: AgentChatThreadEntity): number {
-    return toDisplayCredits(thread.totalOutputCredits);
+  totalInputCredits(@Parent() thread: AgentChatThreadWorkspaceEntity): number {
+    return toDisplayCredits(Number(thread.totalInputCredits));
+  }
+
+  @ResolveField(() => Float)
+  totalOutputCredits(@Parent() thread: AgentChatThreadWorkspaceEntity): number {
+    return toDisplayCredits(Number(thread.totalOutputCredits));
   }
 
   @ResolveField('lastMessageAt', () => Date, { nullable: true })
   async lastMessageAt(
     @Parent()
-    thread: AgentChatThreadEntity & { lastMessageAt?: Date | null },
+    thread: AgentChatThreadWorkspaceEntity & { lastMessageAt?: Date | null },
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<Date | null> {
     if (thread.lastMessageAt !== undefined) {
       return thread.lastMessageAt;
@@ -680,7 +696,7 @@ export class AgentChatResolver {
 
     return this.agentChatService.getLastMessageAtForThread({
       threadId: thread.id,
-      workspaceId: thread.workspaceId,
+      workspaceId,
     });
   }
 }

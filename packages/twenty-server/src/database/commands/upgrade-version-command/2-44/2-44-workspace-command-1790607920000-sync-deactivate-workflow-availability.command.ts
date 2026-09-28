@@ -11,7 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.44.0', 1790599725000)
+@RegisteredWorkspaceCommand('2.44.0', 1790607920000)
 @Command({
   name: 'upgrade:2-44:sync-deactivate-workflow-availability',
   description:

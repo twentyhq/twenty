@@ -32,7 +32,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
@@ -64,7 +64,7 @@ export class AgentChatStreamingService {
 
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
@@ -82,7 +82,7 @@ export class AgentChatStreamingService {
     thread,
     workspaceId,
   }: {
-    thread: Pick<AgentChatThreadEntity, 'id' | 'activeStreamId'>;
+    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'activeStreamId'>;
     workspaceId: string;
   }): Promise<AgentChatThreadLastStreamError | null> {
     return this.streamRecoveryService.reapDeadStream({
@@ -100,7 +100,7 @@ export class AgentChatStreamingService {
     threadId: string;
     workspaceId: string;
     streamId: string;
-    where: FindOptionsWhere<AgentChatThreadEntity>;
+    where: FindOptionsWhere<AgentChatThreadWorkspaceEntity>;
   }): Promise<boolean> {
     await this.streamHeartbeatService.markClaimed(streamId);
 
@@ -268,7 +268,7 @@ export class AgentChatStreamingService {
     text,
     modelId,
   }: {
-    thread: AgentChatThreadEntity;
+    thread: AgentChatThreadWorkspaceEntity;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     text: string;
@@ -384,7 +384,7 @@ export class AgentChatStreamingService {
 
     if (
       !isDefined(thread.lastStreamError) ||
-      isDefined(thread.activeStreamId)
+      isNonEmptyString(thread.activeStreamId)
     ) {
       throw new AiException(
         'There is no failed turn to retry on this thread',
@@ -703,10 +703,10 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
+      select: ['id', 'archivedAt', 'pendingQuestionMessageId'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
+    if (!threadStatus || threadStatus.archivedAt) {
       return;
     }
 
@@ -936,7 +936,7 @@ export class AgentChatStreamingService {
           ? {}
           : {
               metadata: {
-                createdAt: message.createdAt.toISOString(),
+                createdAt: new Date(message.createdAt).toISOString(),
                 senderUserWorkspaceId: message.senderUserWorkspaceId,
               },
             }),
