@@ -26,6 +26,7 @@ export const buildFullSystemPrompt = ({
   workspaceInstructions,
   userContext,
   isWorkspaceSetupThread,
+  canAttachConversationToRecords,
 }: {
   toolCatalog: ToolIndexEntry[];
   skillCatalog: FlatSkill[];
@@ -38,12 +39,16 @@ export const buildFullSystemPrompt = ({
   workspaceInstructions?: string;
   userContext?: UserContext;
   isWorkspaceSetupThread?: boolean;
+  canAttachConversationToRecords?: boolean;
 }): string => {
   const parts: string[] = isWorkspaceSetupThread
     ? [WORKSPACE_SETUP_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT]
     : [
         CHAT_SYSTEM_PROMPTS.BASE,
         CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
+        ...(canAttachConversationToRecords
+          ? [CHAT_SYSTEM_PROMPTS.CONVERSATION_ATTACHMENT]
+          : []),
         CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
       ];
 
