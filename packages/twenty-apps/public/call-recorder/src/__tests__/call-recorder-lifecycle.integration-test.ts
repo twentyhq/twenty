@@ -1323,6 +1323,37 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.size).toBe(0);
       expect(recall.creditCheckRequests).toEqual([]);
     });
+
+    it('reconciles a user On change on a meeting whose bot the credit gate blocked', async () => {
+      recall.creditAvailability = {
+        hasAvailableCredits: false,
+        reason: 'no-subscription',
+      };
+      const calendarEventId = await createCalendarEvent({
+        startsAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      recall.creditAvailability = { hasAvailableCredits: true };
+
+      const result = await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference', 'updatedBy'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+      const [callRecording] = await findCallRecordings({
+        calendarEventId: { in: [calendarEventId] },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+    });
   });
 
   describe('Recall webhook lifecycle', () => {
@@ -2639,13 +2670,13 @@ describe('call recorder app lifecycle (integration)', () => {
       const result = await deliverCalendarEventUpdates(
         {
           calendarEventId: echoedCalendarEventId,
-          updatedFields: ['callRecorderPreference'],
+          updatedFields: ['callRecorderPreference', 'updatedBy'],
           before: { callRecorderPreference: null },
           after: { callRecorderPreference: 'ON' },
         },
         {
           calendarEventId: newlyOnCalendarEventId,
-          updatedFields: ['callRecorderPreference'],
+          updatedFields: ['callRecorderPreference', 'updatedBy'],
           before: { callRecorderPreference: null },
           after: { callRecorderPreference: 'ON' },
         },

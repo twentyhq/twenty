@@ -14,6 +14,7 @@ import { type RemovedCallRecorderOccurrence } from 'src/logic-functions/types/re
 import { buildCalendarEventReconciliationPayload } from 'src/logic-functions/domain/build-calendar-event-reconciliation-payload.util';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
+import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -148,7 +149,8 @@ const findCalendarEventIdsWithRecordingOnAlreadyHonored = async (
       .filter(
         (callRecording) =>
           callRecording.recordingRequestStatus ===
-          CallRecordingRequestStatus.REQUESTED,
+            CallRecordingRequestStatus.REQUESTED &&
+          !isUnavailableCallRecordingStatus(callRecording.status),
       )
       .map((callRecording) => callRecording.id),
   );

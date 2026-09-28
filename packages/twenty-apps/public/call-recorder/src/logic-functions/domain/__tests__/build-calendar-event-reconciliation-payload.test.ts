@@ -131,6 +131,24 @@ describe('buildCalendarEventReconciliationPayload', () => {
     },
   );
 
+  it('treats a blank to On preference change that also stamps updatedBy as an echo candidate', () => {
+    expect(
+      buildCalendarEventReconciliationPayload({
+        action: 'updated',
+        events: [
+          buildEvent({
+            updatedFields: ['callRecorderPreference', 'updatedBy'],
+            after: buildCalendarEvent({ callRecorderPreference: 'ON' }),
+          }),
+        ],
+      }),
+    ).toEqual({
+      calendarEventIds: [],
+      echoCandidateCalendarEventIds: ['calendar-event-1'],
+      removedOccurrences: [],
+    });
+  });
+
   it.each([
     ['blank', 'Off', null, 'OFF'],
     ['Off', 'blank', 'OFF', null],

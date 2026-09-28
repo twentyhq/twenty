@@ -114,7 +114,9 @@ const buildEventReconciliationPayload = ({
 const isPreferenceChangeBetweenBlankAndOn = (
   event: ObjectRecordBaseEvent<CalendarEventForDatabaseEvent>,
 ): boolean => {
-  const updatedFields = event.properties.updatedFields ?? [];
+  const updatedFields = (event.properties.updatedFields ?? []).filter(
+    (updatedField) => updatedField !== 'updatedBy',
+  );
 
   return (
     updatedFields.length === 1 &&
