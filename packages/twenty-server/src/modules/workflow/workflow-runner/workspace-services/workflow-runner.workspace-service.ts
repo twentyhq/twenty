@@ -158,8 +158,6 @@ export class WorkflowRunnerWorkspaceService {
         workflowRunId,
       });
 
-    // Without this, a second submission would resume the run a second time,
-    // and a submission to a stopped run would mark its step done and resume it.
     if (!hasCompletedStep) {
       throw new WorkflowVersionStepException(
         'Form is no longer awaiting a submission',
