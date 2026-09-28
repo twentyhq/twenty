@@ -1,3 +1,4 @@
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -90,11 +91,11 @@ export class AgentChatResolver {
   @Query(() => [AgentChatThreadDTO])
   @AllowSuspendedWorkspace()
   async chatThreads(
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.agentChatService.getThreadsForUser({
-      userWorkspaceId,
+    return this.agentChatService.getThreadsForMember({
+      workspaceMemberId,
       workspaceId,
     });
   }
@@ -102,12 +103,13 @@ export class AgentChatResolver {
   @Query(() => AgentChatThreadDTO)
   async chatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return this.sharingService.getReadableThread({
       threadId: id,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
   }
@@ -115,12 +117,13 @@ export class AgentChatResolver {
   @Query(() => [AgentMessageDTO])
   async chatMessages(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return this.agentChatService.getMessagesForThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
   }
@@ -128,12 +131,13 @@ export class AgentChatResolver {
   @Query(() => ChatStreamCatchupChunksDTO)
   async chatStreamCatchupChunks(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     const thread = await this.sharingService.getReadableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
 
@@ -174,7 +178,8 @@ export class AgentChatResolver {
     })
     limit: number,
     @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     assertValidChatThreadsForRecordPagination({ limit, offset });
@@ -189,7 +194,7 @@ export class AgentChatResolver {
     return this.agentChatService.getThreadsAttachedToRecord({
       joinColumnName,
       recordId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
       limit,
       offset,
@@ -202,14 +207,15 @@ export class AgentChatResolver {
     @Args('objectNameSingular', { type: () => String })
     objectNameSingular: string,
     @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     await this.agentChatThreadTargetService.attachThreadToRecord({
       threadId,
       objectNameSingular,
       recordId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
 
@@ -222,14 +228,15 @@ export class AgentChatResolver {
     @Args('objectNameSingular', { type: () => String })
     objectNameSingular: string,
     @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     await this.agentChatThreadTargetService.detachThreadFromRecord({
       threadId,
       objectNameSingular,
       recordId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
 
@@ -238,11 +245,11 @@ export class AgentChatResolver {
 
   @Mutation(() => AgentChatThreadDTO)
   async createChatThread(
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.agentChatService.createThread({
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
   }
@@ -262,6 +269,7 @@ export class AgentChatResolver {
     })
     fileAttachments: FileAttachmentInput[] | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
@@ -280,7 +288,7 @@ export class AgentChatResolver {
 
     const thread = await this.agentChatService.getWritableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
 
@@ -293,7 +301,7 @@ export class AgentChatResolver {
     if (isDefined(thread.archivedAt)) {
       await this.agentChatService.unarchiveThread({
         threadId,
-        userWorkspaceId,
+        workspaceMemberId,
         workspaceId: workspace.id,
       });
     }
@@ -322,6 +330,7 @@ export class AgentChatResolver {
         fileAttachments: fileAttachments ?? undefined,
         workspaceId: workspace.id,
         userWorkspaceId,
+        workspaceMemberId,
       });
 
       await this.eventPublisherService.publish({
@@ -338,6 +347,7 @@ export class AgentChatResolver {
       browsingContext: browsingContext ?? null,
       modelId,
       userWorkspaceId,
+      workspaceMemberId,
       workspace,
       text,
       messageId,
@@ -374,6 +384,7 @@ export class AgentChatResolver {
     @Args('modelId', { type: () => String, nullable: true })
     modelId: string | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
@@ -389,7 +400,7 @@ export class AgentChatResolver {
 
     await this.agentChatService.getWritableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
 
@@ -402,6 +413,7 @@ export class AgentChatResolver {
     const result = await this.agentChatStreamingService.retryLastFailedTurn({
       threadId,
       userWorkspaceId,
+      workspaceMemberId,
       workspace,
       modelId,
     });
@@ -434,6 +446,7 @@ export class AgentChatResolver {
     })
     fileAttachments: FileAttachmentInput[] | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
@@ -452,7 +465,7 @@ export class AgentChatResolver {
 
     await this.agentChatService.getWritableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
 
@@ -469,6 +482,7 @@ export class AgentChatResolver {
           messageId,
           answers,
           userWorkspaceId,
+          workspaceMemberId,
           workspace,
           modelId,
           fileAttachments: fileAttachments ?? undefined,
@@ -488,12 +502,13 @@ export class AgentChatResolver {
   @Mutation(() => Boolean)
   async stopAgentChatStream(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     const thread = await this.agentChatService.getWritableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
     if (!isNonEmptyString(thread.activeStreamId)) {
@@ -520,12 +535,13 @@ export class AgentChatResolver {
   async renameChatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @Args('title') title: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadWorkspaceEntity> {
     return this.agentChatService.updateThreadTitle({
       threadId: id,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
       title,
     });
@@ -534,12 +550,13 @@ export class AgentChatResolver {
   @Mutation(() => AgentChatThreadDTO)
   async archiveChatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadWorkspaceEntity> {
     await this.sharingService.getThreadWithAccess({
       threadId: id,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
       operationType: 'soft-delete',
     });
@@ -547,7 +564,7 @@ export class AgentChatResolver {
 
     return this.agentChatService.archiveThread({
       threadId: id,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
   }
@@ -555,12 +572,13 @@ export class AgentChatResolver {
   @Mutation(() => AgentChatThreadDTO)
   async unarchiveChatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadWorkspaceEntity> {
     return this.agentChatService.unarchiveThread({
       threadId: id,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
   }
@@ -568,12 +586,13 @@ export class AgentChatResolver {
   @Mutation(() => Boolean)
   async deleteChatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     await this.sharingService.getThreadWithAccess({
       threadId: id,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
       operationType: 'delete',
     });
@@ -581,7 +600,7 @@ export class AgentChatResolver {
 
     await this.agentChatService.hardDeleteThread({
       threadId: id,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
 
@@ -611,7 +630,8 @@ export class AgentChatResolver {
   @Mutation(() => Boolean)
   async deleteQueuedChatMessage(
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const message = await this.agentChatService.findQueuedMessage({
@@ -628,7 +648,7 @@ export class AgentChatResolver {
 
     await this.agentChatService.getWritableThread({
       threadId: message.threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
     const deleted = await this.agentChatService.deleteQueuedMessage({

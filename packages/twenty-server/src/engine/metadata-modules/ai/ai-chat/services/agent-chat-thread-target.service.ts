@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
@@ -31,8 +32,11 @@ type RecordReference = {
 
 type ThreadRecordArgs = RecordReference & {
   workspaceId: string;
-  userWorkspaceId: string;
+  workspaceMemberId: string;
   threadId: string;
+  // The ambient request context when omitted. A chat turn runs in a queue
+  // worker, outside the request that sent it, so it passes its sender's.
+  authContext?: WorkspaceAuthContext;
 };
 
 @Injectable()
@@ -106,16 +110,16 @@ export class AgentChatThreadTargetService {
   // not found, so no one can probe for conversations they do not share.
   private async assertThreadIsEditableOrThrow({
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
     threadId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     threadId: string;
   }): Promise<void> {
     await this.agentChatSharingService.getThreadWithAccess({
       workspaceId,
-      userWorkspaceId,
+      workspaceMemberId,
       threadId,
       operationType: 'update',
     });
@@ -129,7 +133,11 @@ export class AgentChatThreadTargetService {
     objectNameSingular,
     recordId,
     withDeleted,
-  }: RecordReference & { withDeleted: boolean }): Promise<void> {
+    authContext: callerAuthContext,
+  }: RecordReference & {
+    withDeleted: boolean;
+    authContext?: WorkspaceAuthContext;
+  }): Promise<void> {
     const record = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const { authContext, userWorkspaceRoleMap, apiKeyRoleMap } =
@@ -167,6 +175,7 @@ export class AgentChatThreadTargetService {
           throw error;
         }
       },
+      callerAuthContext,
     );
 
     // Not-found rather than forbidden, so a member cannot probe for records

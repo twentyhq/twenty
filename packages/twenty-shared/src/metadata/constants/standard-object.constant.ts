@@ -1014,6 +1014,16 @@ export const STANDARD_OBJECTS = {
     },
     views: {},
   },
+  shortLink: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.shortLink,
+    fields: STANDARD_OBJECT_FIELDS.shortLink,
+    indexes: {
+      templateAndResolvedUrlHashUniqueIndex: {
+        universalIdentifier: 'b1330e3c-bd74-4bd1-a9dc-1ecefe41f199',
+      },
+    },
+    views: {},
+  },
   task: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
     fields: STANDARD_OBJECT_FIELDS.task,
@@ -1417,6 +1427,9 @@ export const STANDARD_OBJECTS = {
       },
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
+      },
+      workflowRunIndex: {
+        universalIdentifier: 'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b',
       },
     },
   },

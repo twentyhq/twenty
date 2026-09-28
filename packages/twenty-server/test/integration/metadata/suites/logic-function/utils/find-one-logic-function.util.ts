@@ -16,7 +16,7 @@ export const findOneLogicFunction = async ({
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<FindOneLogicFunctionFactoryInput>): CommonResponseBody<{
-  findOneLogicFunction: LogicFunctionDTO;
+  findOneLogicFunction: LogicFunctionDTO & { canRunOnDemand?: boolean };
 }> => {
   const graphqlOperation = findOneLogicFunctionQueryFactory({
     input,

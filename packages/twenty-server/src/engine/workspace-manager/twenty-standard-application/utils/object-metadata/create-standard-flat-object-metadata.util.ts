@@ -53,7 +53,11 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.PRIVATE,
+        // A conversation outside a workflow run has no parent and is read only
+        // through its own grants, as a PRIVATE record is. One held by a run's
+        // agent step is read by whoever reads the run.
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'id',
       },
@@ -1345,6 +1349,53 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         writability: MetadataWritability.SYSTEM,
         readability: MetadataReadability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  shortLink: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'shortLink'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'shortLink',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.shortLink.universalIdentifier,
+        nameSingular: 'shortLink',
+        namePlural: 'shortLinks',
+        labelSingular: i18nLabel(
+          msg({
+            message: `Short link`,
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: `Short links`,
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `A link tracked in a campaign`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLink',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
+        readability: MetadataReadability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'resolvedDestinationUrl',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

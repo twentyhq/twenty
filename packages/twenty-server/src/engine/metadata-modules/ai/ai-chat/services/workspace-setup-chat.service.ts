@@ -62,6 +62,7 @@ export class WorkspaceSetupChatService {
     userEmail,
     userLocale,
     userWorkspaceId,
+    workspaceMemberId,
     workspace,
     companyContext,
     personContext,
@@ -70,6 +71,7 @@ export class WorkspaceSetupChatService {
     userEmail: string;
     userLocale: string | null;
     userWorkspaceId: string;
+    workspaceMemberId: string;
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
     personContext: WorkspacePersonEnrichment | null;
@@ -105,7 +107,7 @@ export class WorkspaceSetupChatService {
 
     let thread = await this.agentChatService.findWritableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
 
@@ -113,7 +115,7 @@ export class WorkspaceSetupChatService {
       if (isDefined(thread.archivedAt)) {
         thread = await this.agentChatService.unarchiveThread({
           threadId,
-          userWorkspaceId,
+          workspaceMemberId,
           workspaceId: workspace.id,
         });
       }
@@ -155,7 +157,7 @@ export class WorkspaceSetupChatService {
 
     thread ??= await this.createThreadWithDeterministicId({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
       locale,
     });
@@ -164,6 +166,7 @@ export class WorkspaceSetupChatService {
       await this.agentChatStreamingService.startHiddenKickoffStream({
         thread,
         userWorkspaceId,
+        workspaceMemberId,
         workspace,
         text: buildWorkspaceSetupKickoffMessageText({
           companyEnrichment: companyContext,
@@ -194,12 +197,12 @@ export class WorkspaceSetupChatService {
 
   private async createThreadWithDeterministicId({
     threadId,
-    userWorkspaceId,
+    workspaceMemberId,
     workspaceId,
     locale,
   }: {
     threadId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     workspaceId: string;
     locale: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
@@ -210,7 +213,7 @@ export class WorkspaceSetupChatService {
 
     try {
       return await this.agentChatService.createThread({
-        userWorkspaceId,
+        workspaceMemberId,
         workspaceId,
         id: threadId,
         title,
@@ -220,7 +223,7 @@ export class WorkspaceSetupChatService {
         const concurrentlyCreatedThread =
           await this.agentChatService.findWritableThread({
             threadId,
-            userWorkspaceId,
+            workspaceMemberId,
             workspaceId,
           });
 
