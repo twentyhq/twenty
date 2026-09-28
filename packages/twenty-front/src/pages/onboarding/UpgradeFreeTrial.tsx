@@ -17,23 +17,19 @@ import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-fre
 import { CAL_LINK } from '@/onboarding/constants/CalLink';
 import { OnboardingPlanTag } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanTag';
 import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
-import { useSubmitUpgradeFreeTrialPayment } from '@/onboarding/hooks/useSubmitUpgradeFreeTrialPayment';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
+import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import {
-  Elements,
-  ExpressCheckoutElement,
-  PaymentElement,
-} from '@stripe/react-stripe-js';
-import { type ReactNode, useState } from 'react';
+import { Elements, PaymentElement } from '@stripe/react-stripe-js';
+import { type ReactNode } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, MainButton } from 'twenty-ui/components';
@@ -82,52 +78,6 @@ type UpgradeFreeTrialProps = {
   billing: Billing;
 };
 
-const EXPRESS_CHECKOUT_BUTTON_HEIGHT_PX = 40;
-
-const StyledExpressCheckout = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-`;
-
-type UpgradeFreeTrialExpressCheckoutProps = {
-  plan: BillingPlanKey;
-  recurringInterval: SubscriptionInterval;
-};
-
-const UpgradeFreeTrialExpressCheckout = ({
-  plan,
-  recurringInterval,
-}: UpgradeFreeTrialExpressCheckoutProps) => {
-  const { t } = useLingui();
-  const [hasExpressCheckout, setHasExpressCheckout] = useState(false);
-
-  const { handleSubmit } = useSubmitUpgradeFreeTrialPayment({
-    plan,
-    recurringInterval,
-  });
-
-  return (
-    <div hidden={!hasExpressCheckout}>
-      <StyledExpressCheckout>
-        <ExpressCheckoutElement
-          options={{
-            buttonHeight: EXPRESS_CHECKOUT_BUTTON_HEIGHT_PX,
-            paymentMethods: { link: 'never' },
-          }}
-          onReady={({ availablePaymentMethods }) => {
-            setHasExpressCheckout(isDefined(availablePaymentMethods));
-          }}
-          onConfirm={() => {
-            void handleSubmit();
-          }}
-        />
-        <HorizontalSeparator text={t`Or`} noMargin />
-      </StyledExpressCheckout>
-    </div>
-  );
-};
-
 type UpgradeFreeTrialSubmitButtonProps = {
   plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
@@ -141,14 +91,26 @@ const UpgradeFreeTrialSubmitButton = ({
 }: UpgradeFreeTrialSubmitButtonProps) => {
   const { t } = useLingui();
 
-  const { handleSubmit, isSubmitting, isStripeReady } =
-    useSubmitUpgradeFreeTrialPayment({ plan, recurringInterval });
+  const { submit, isSubmitting, isStripeReady } = useSubmitSubscriptionPayment({
+    plan,
+    recurringInterval,
+  });
+
+  const setIsOnboardingCheckoutPending = useSetAtomState(
+    isOnboardingCheckoutPendingState,
+  );
+  const setOnboardingUpgradeTrialFreeCredits =
+    useSetOnboardingUpgradeTrialFreeCredits();
+
+  const handleSubmit = () => {
+    setOnboardingUpgradeTrialFreeCredits(true);
+    setIsOnboardingCheckoutPending(true);
+    void submit();
+  };
 
   return (
     <MainButton
-      onClick={() => {
-        void handleSubmit();
-      }}
+      onClick={handleSubmit}
       fullWidth
       startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
@@ -279,25 +241,19 @@ const UpgradeFreeTrialContent = ({
           >
             {requirePaymentMethod &&
               (isPaymentAvailable ? (
-                <>
-                  <UpgradeFreeTrialExpressCheckout
-                    plan={billingCheckoutSession.plan}
-                    recurringInterval={billingCheckoutSession.interval}
-                  />
-                  <PaymentElement
-                    options={{
-                      layout: 'tabs',
-                      defaultValues: isDefined(customerEmail)
-                        ? { billingDetails: { email: customerEmail } }
-                        : undefined,
-                      terms: { card: 'never' },
-                      wallets: {
-                        applePay: 'never',
-                        googlePay: 'never',
-                      },
-                    }}
-                  />
-                </>
+                <PaymentElement
+                  options={{
+                    layout: 'tabs',
+                    defaultValues: isDefined(customerEmail)
+                      ? { billingDetails: { email: customerEmail } }
+                      : undefined,
+                    terms: { card: 'never' },
+                    wallets: {
+                      applePay: 'never',
+                      googlePay: 'never',
+                    },
+                  }}
+                />
               ) : (
                 <Info
                   accent="danger"

@@ -39,12 +39,21 @@ const StyledTitleRow = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledTitleContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
 const StyledTitleText = styled.div`
   align-items: baseline;
   display: flex;
-  flex: 1 1 0;
+  flex: 1 0 auto;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
 `;
 
 const StyledTitle = styled.span`
@@ -134,16 +143,18 @@ export const OnboardingPlanCard = ({
     <StyledCard>
       <StyledHeader hasBody={hasBody} hasNote={hasNote}>
         <StyledTitleRow>
-          <StyledTitleText>
-            <StyledTitle id={titleId}>{title}</StyledTitle>
-            {isDefined(titleSuffix) && (
-              <StyledTitleSuffix isEmphasized={hasNote}>
-                {titleSuffix}
-              </StyledTitleSuffix>
-            )}
-          </StyledTitleText>
-          {tags}
-          {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
+          <StyledTitleContent>
+            <StyledTitleText>
+              <StyledTitle id={titleId}>{title}</StyledTitle>
+              {isDefined(titleSuffix) && (
+                <StyledTitleSuffix isEmphasized={hasNote}>
+                  {titleSuffix}
+                </StyledTitleSuffix>
+              )}
+            </StyledTitleText>
+            {tags}
+            {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
+          </StyledTitleContent>
           <StyledRadioContainer>
             <Radio
               value={value}
