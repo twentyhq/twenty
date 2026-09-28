@@ -17,6 +17,7 @@ import {
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type GroupByRecordsParams } from 'src/engine/core-modules/record-crud/types/group-by-records-params.type';
 import { type GroupByRecordsResult } from 'src/engine/core-modules/record-crud/types/group-by-records-result.type';
+import { getGroupByDimensionLabel } from 'src/engine/core-modules/record-crud/utils/get-group-by-dimension-label.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 @Injectable()
@@ -115,9 +116,7 @@ export class GroupByRecordsService {
         queryRunnerContext,
       );
 
-      const dimensionLabels = groupBy.map((entry) =>
-        this.getDimensionLabelFromGroupByEntry(entry),
-      );
+      const dimensionLabels = groupBy.map(getGroupByDimensionLabel);
 
       this.logger.log(
         `Grouped ${objectName} by ${dimensionLabels.join(', ')}: ${results.length} groups`,
@@ -154,47 +153,5 @@ export class GroupByRecordsService {
           error instanceof Error ? error.message : 'Failed to group records',
       };
     }
-  }
-
-  private getDimensionLabelFromGroupByEntry(
-    entry: GroupByRecordsParams['groupBy'][number],
-  ): string {
-    const fieldEntries = Object.entries(entry);
-
-    if (fieldEntries.length === 0) {
-      return '';
-    }
-
-    const [fieldName, fieldDefinition] = fieldEntries[0];
-
-    if (fieldDefinition === true) {
-      return fieldName;
-    }
-
-    if (typeof fieldDefinition !== 'object' || fieldDefinition === null) {
-      return fieldName;
-    }
-
-    const nestedEntries = Object.entries(fieldDefinition);
-
-    if (nestedEntries.length !== 1) {
-      return fieldName;
-    }
-
-    const [nestedFieldName, nestedFieldDefinition] = nestedEntries[0];
-
-    if (nestedFieldDefinition !== true) {
-      return fieldName;
-    }
-
-    if (nestedFieldName === 'unnest') {
-      return fieldName;
-    }
-
-    if (nestedFieldName === 'id' && fieldName.endsWith('Id')) {
-      return fieldName;
-    }
-
-    return `${fieldName}.${nestedFieldName}`;
   }
 }

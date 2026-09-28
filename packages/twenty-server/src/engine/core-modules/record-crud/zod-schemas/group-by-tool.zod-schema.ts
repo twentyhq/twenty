@@ -7,6 +7,7 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
+  isFieldMetadataArrayKind,
   isFieldMetadataDateKind,
   isFieldMetadataSupportedInGroupBy,
 } from 'twenty-shared/utils';
@@ -114,7 +115,7 @@ const buildGroupByEntriesAndDescriptions = (
       continue;
     }
 
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.MULTI_SELECT)) {
+    if (isFieldMetadataArrayKind(field.type)) {
       groupByEntries.push(
         z
           .object({
@@ -126,7 +127,7 @@ const buildGroupByEntriesAndDescriptions = (
           .strict(),
       );
       fieldNameDescriptions.push(
-        `${field.name} (multi-select, {"${field.name}": {"unnest": true}} counts each option)`,
+        `${field.name} (multi-value, {"${field.name}": {"unnest": true}} counts each value)`,
       );
       continue;
     }
@@ -198,7 +199,7 @@ export const generateGroupByToolInputSchema = (
         .min(1)
         .max(2)
         .describe(
-          `Fields to group by (max 2). Each entry must be an object with exactly one field key. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: ${fieldNameDescriptions.join(', ')}.`,
+          `Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: ${fieldNameDescriptions.join(', ')}.`,
         ),
       aggregateOperation: z
         .enum(Object.keys(AggregateOperations) as [string, ...string[]])

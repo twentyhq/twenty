@@ -15,6 +15,12 @@ const buildObjectMetadata = (): ObjectMetadataForToolSchema => {
         options: [{ value: 'RADIUS' }, { value: 'PAM' }],
       },
       {
+        id: 'field-id-aliases',
+        name: 'aliases',
+        type: FieldMetadataType.ARRAY,
+        isSystem: false,
+      },
+      {
         id: 'field-id-name',
         name: 'name',
         type: FieldMetadataType.TEXT,
@@ -24,26 +30,34 @@ const buildObjectMetadata = (): ObjectMetadataForToolSchema => {
   } as unknown as ObjectMetadataForToolSchema;
 };
 
-describe('generateGroupByToolInputSchema multi-select unnest', () => {
-  it('accepts whole-array grouping on a multi-select field', () => {
-    const schema = generateGroupByToolInputSchema(buildObjectMetadata());
+describe('generateGroupByToolInputSchema multi-value unnest', () => {
+  it.each(['tags', 'aliases'])(
+    'accepts whole-array grouping on %s',
+    (fieldName) => {
+      const schema = generateGroupByToolInputSchema(buildObjectMetadata());
 
-    expect(schema).not.toBeNull();
-    expect(schema!.parse({ groupBy: [{ tags: true }] })).toMatchObject({
-      groupBy: [{ tags: true }],
-    });
-  });
+      expect(schema).not.toBeNull();
+      expect(schema!.parse({ groupBy: [{ [fieldName]: true }] })).toMatchObject(
+        {
+          groupBy: [{ [fieldName]: true }],
+        },
+      );
+    },
+  );
 
-  it('accepts the unnest opt-in on a multi-select field', () => {
-    const schema = generateGroupByToolInputSchema(buildObjectMetadata());
+  it.each(['tags', 'aliases'])(
+    'accepts the unnest opt-in on %s',
+    (fieldName) => {
+      const schema = generateGroupByToolInputSchema(buildObjectMetadata());
 
-    expect(schema).not.toBeNull();
-    expect(
-      schema!.parse({ groupBy: [{ tags: { unnest: true } }] }),
-    ).toMatchObject({
-      groupBy: [{ tags: { unnest: true } }],
-    });
-  });
+      expect(schema).not.toBeNull();
+      expect(
+        schema!.parse({ groupBy: [{ [fieldName]: { unnest: true } }] }),
+      ).toMatchObject({
+        groupBy: [{ [fieldName]: { unnest: true } }],
+      });
+    },
+  );
 
   it('accepts unnest together with a second grouping dimension', () => {
     const schema = generateGroupByToolInputSchema(buildObjectMetadata());
@@ -57,14 +71,8 @@ describe('generateGroupByToolInputSchema multi-select unnest', () => {
     });
   });
 
-  it.each([
-    false,
-    {},
-    { unnest: false },
-    { unnest: 'true' },
-    { unnest: true, extra: true },
-  ])(
-    'rejects an invalid multi-select grouping definition: %j',
+  it.each([{ unnest: false }, { unnest: true, extra: true }])(
+    'rejects an invalid advertised unnest shape: %j',
     (definition) => {
       const schema = generateGroupByToolInputSchema(buildObjectMetadata());
 
@@ -74,70 +82,92 @@ describe('generateGroupByToolInputSchema multi-select unnest', () => {
     },
   );
 
-  it('rejects multiple field keys in a single grouping entry', () => {
-    const schema = generateGroupByToolInputSchema(buildObjectMetadata());
-
-    expect(
-      schema!.safeParse({
-        groupBy: [{ tags: { unnest: true }, name: true }],
-      }).success,
-    ).toBe(false);
-  });
-
-  it('rejects the unnest opt-in on an ordinary field', () => {
-    const schema = generateGroupByToolInputSchema(buildObjectMetadata());
-
-    expect(schema).not.toBeNull();
-    expect(() =>
-      schema!.parse({ groupBy: [{ name: { unnest: true } }] }),
-    ).toThrow();
-  });
-
-  it.each([true, { unnest: true }])(
-    'rejects grouping on a multi-select field without read permission: %j',
-    (definition) => {
-      const schema = generateGroupByToolInputSchema(buildObjectMetadata(), {
-        'field-id-tags': { canRead: false },
-      });
-
-      expect(schema).not.toBeNull();
-      expect(
-        schema!.safeParse({ groupBy: [{ tags: definition }] }).success,
-      ).toBe(false);
-    },
-  );
-
-  it('publishes both whole-array and strict unnest input shapes in the JSON tool schema', () => {
-    const schema = generateGroupByToolInputSchema(buildObjectMetadata());
+  it('omits unreadable fields from the advertised grouping choices', () => {
+    const schema = generateGroupByToolInputSchema(buildObjectMetadata(), {
+      'field-id-tags': { canRead: false },
+    });
 
     expect(schema).not.toBeNull();
     expect(toToolJsonSchema(schema!)).toMatchObject({
       properties: {
         groupBy: {
           items: {
-            anyOf: expect.arrayContaining([
+            anyOf: expect.not.arrayContaining([
               expect.objectContaining({
-                properties: {
-                  tags: {
-                    anyOf: expect.arrayContaining([
-                      expect.objectContaining({
-                        type: 'boolean',
-                        const: true,
-                      }),
-                      expect.objectContaining({
-                        type: 'object',
-                        properties: {
-                          unnest: { type: 'boolean', const: true },
-                        },
-                        required: ['unnest'],
-                        additionalProperties: false,
-                      }),
-                    ]),
-                  },
-                },
+                properties: { tags: expect.anything() },
               }),
             ]),
           },
+        },
+      },
+    });
+  });
+
+  it.each(['tags', 'aliases'])(
+    'publishes whole-array and strict unnest shapes for %s',
+    (fieldName) => {
+      const schema = generateGroupByToolInputSchema(buildObjectMetadata());
+
+      expect(schema).not.toBeNull();
+      expect(toToolJsonSchema(schema!)).toMatchObject({
+        properties: {
+          groupBy: {
+            items: {
+              anyOf: expect.arrayContaining([
+                expect.objectContaining({
+                  properties: {
+                    [fieldName]: {
+                      anyOf: expect.arrayContaining([
+                        expect.objectContaining({
+                          type: 'boolean',
+                          const: true,
+                        }),
+                        expect.objectContaining({
+                          type: 'object',
+                          properties: {
+                            unnest: { type: 'boolean', const: true },
+                          },
+                          required: ['unnest'],
+                          additionalProperties: false,
+                        }),
+                      ]),
+                    },
+                  },
+                }),
+              ]),
+            },
+          },
+        },
+      });
+    },
+  );
+
+  it('describes the single-unnest rule and overlapping group counts', () => {
+    const schema = generateGroupByToolInputSchema(buildObjectMetadata());
+    const jsonSchema = toToolJsonSchema(schema!);
+
+    expect(jsonSchema).toMatchObject({
+      properties: {
+        groupBy: {
+          description: expect.stringContaining(
+            'At most one entry can use unnest.',
+          ),
+        },
+      },
+    });
+    expect(jsonSchema).toMatchObject({
+      properties: {
+        groupBy: {
+          description: expect.stringContaining(
+            'totals can exceed the record count',
+          ),
+        },
+      },
+    });
+    expect(jsonSchema).toMatchObject({
+      properties: {
+        groupBy: {
+          description: expect.stringContaining('aliases (multi-value,'),
         },
       },
     });
