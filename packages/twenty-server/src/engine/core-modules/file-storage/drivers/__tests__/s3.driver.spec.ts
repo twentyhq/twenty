@@ -1,4 +1,6 @@
 import {
+  CopyObjectCommand,
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
@@ -7,6 +9,8 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { Readable } from 'stream';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS } from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
@@ -324,5 +328,101 @@ describe('S3Driver.getPresignedUploadUrl', () => {
       ContentType: 'application/pdf',
       ContentLength: 1024,
     });
+  });
+});
+
+describe('S3Driver.move', () => {
+  const notImplementedError = Object.assign(
+    new Error('Copy object not implemented with X-Amz-Copy-Source-If-Match'),
+    { name: 'NotImplemented', $metadata: { httpStatusCode: 501 } },
+  );
+
+  const moveParams = {
+    from: { folderPath: 'pending', filename: 'file.png' },
+    to: { folderPath: 'final', filename: 'file.png' },
+    ifMatchChecksum: '"etag"',
+  };
+
+  const getCopyCommands = () =>
+    mockS3Send.mock.calls
+      .map(([command]) => command)
+      .filter((command) => command instanceof CopyObjectCommand);
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should copy conditionally on the inspected checksum', async () => {
+    mockS3Send.mockResolvedValue({});
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await driver.move(moveParams);
+
+    const copyCommands = getCopyCommands();
+
+    expect(copyCommands).toHaveLength(1);
+    expect(copyCommands[0].input).toMatchObject({
+      CopySource: 'test-bucket/pending/file.png',
+      CopySourceIfMatch: '"etag"',
+      Key: 'final/file.png',
+    });
+    const lastCommand =
+      mockS3Send.mock.calls[mockS3Send.mock.calls.length - 1][0];
+
+    expect(lastCommand).toBeInstanceOf(DeleteObjectCommand);
+  });
+
+  it('should fall back to an unconditional copy when the backend does not implement CopySourceIfMatch', async () => {
+    mockS3Send.mockImplementation(async (command) => {
+      if (
+        command instanceof CopyObjectCommand &&
+        isDefined(command.input.CopySourceIfMatch)
+      ) {
+        throw notImplementedError;
+      }
+
+      return {};
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await driver.move(moveParams);
+    await driver.move(moveParams);
+
+    const copyCommands = getCopyCommands();
+
+    expect(copyCommands).toHaveLength(3);
+    expect(copyCommands[0].input.CopySourceIfMatch).toBe('"etag"');
+    expect(copyCommands[1].input.CopySourceIfMatch).toBeUndefined();
+    expect(copyCommands[2].input.CopySourceIfMatch).toBeUndefined();
+  });
+
+  it('should still report a failed precondition', async () => {
+    mockS3Send.mockImplementation(async (command) => {
+      if (command instanceof CopyObjectCommand) {
+        throw Object.assign(new Error('Precondition failed'), {
+          name: 'PreconditionFailed',
+        });
+      }
+
+      return {};
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await expect(driver.move(moveParams)).rejects.toMatchObject({
+      code: FileStorageExceptionCode.PRECONDITION_FAILED,
+    });
+    expect(getCopyCommands()).toHaveLength(1);
   });
 });

@@ -57,6 +57,7 @@ export class S3Driver implements StorageDriver {
   private presignClient: S3 | undefined;
   private bucketName: string;
   private readonly logger = new Logger(S3Driver.name);
+  private supportsConditionalCopy = true;
 
   constructor(options: S3DriverOptions) {
     const {
@@ -340,14 +341,11 @@ export class S3Driver implements StorageDriver {
         }),
       );
 
-      await this.s3Client.send(
-        new CopyObjectCommand({
-          CopySource: `${this.bucketName}/${fromKey}`,
-          CopySourceIfMatch: params.ifMatchChecksum,
-          Bucket: this.bucketName,
-          Key: toKey,
-        }),
-      );
+      await this.copyObjectIfMatch({
+        fromKey,
+        toKey,
+        ifMatchChecksum: params.ifMatchChecksum,
+      });
 
       await this.s3Client.send(
         new DeleteObjectCommand({
@@ -372,6 +370,57 @@ export class S3Driver implements StorageDriver {
 
       throw error;
     }
+  }
+
+  // Some S3-compatible backends (e.g. OVHcloud) reject CopySourceIfMatch
+  // with 501, so fall back to an unconditional copy rather than failing
+  // every upload completion on them.
+  private async copyObjectIfMatch({
+    fromKey,
+    toKey,
+    ifMatchChecksum,
+  }: {
+    fromKey: string;
+    toKey: string;
+    ifMatchChecksum?: string;
+  }): Promise<void> {
+    const copySource = `${this.bucketName}/${fromKey}`;
+
+    if (isDefined(ifMatchChecksum) && this.supportsConditionalCopy) {
+      try {
+        await this.s3Client.send(
+          new CopyObjectCommand({
+            CopySource: copySource,
+            CopySourceIfMatch: ifMatchChecksum,
+            Bucket: this.bucketName,
+            Key: toKey,
+          }),
+        );
+
+        return;
+      } catch (error) {
+        const isNotImplemented =
+          error.name === 'NotImplemented' ||
+          error.$metadata?.httpStatusCode === 501;
+
+        if (!isNotImplemented) {
+          throw error;
+        }
+
+        this.supportsConditionalCopy = false;
+        this.logger.warn(
+          'S3 backend does not support CopySourceIfMatch, falling back to unconditional copies',
+        );
+      }
+    }
+
+    await this.s3Client.send(
+      new CopyObjectCommand({
+        CopySource: copySource,
+        Bucket: this.bucketName,
+        Key: toKey,
+      }),
+    );
   }
 
   async copy(params: {
