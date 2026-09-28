@@ -22,3 +22,7 @@ Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when up
 ### Added
 
 - `twenty-ui/utilities` exports `useMediaQuery`, `MOBILE_MEDIA_QUERY`, and `TOUCH_DEVICE_MEDIA_QUERY`. `twenty-ui/testing` exports `overrideMediaQueryMatches`.
+
+### Fixed
+
+- `getUserDevice()` returns `unknown` without a user agent, so device and shortcut helpers work without browser globals. It detects iPhone, iPad and Android user agents as `ios` and `android` instead of `mac` and `linux`; shortcut helpers keep `⌘` on iOS.

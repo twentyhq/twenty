@@ -1338,14 +1338,6 @@ export type CreateApplicationRegistrationInput = {
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type CreateApplicationRegistrationVariableInput = {
-  applicationRegistrationId: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  isSecret?: InputMaybe<Scalars['Boolean']['input']>;
-  key: Scalars['String']['input'];
-  value: Scalars['String']['input'];
-};
-
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String']['input'];
   email: Scalars['String']['input'];
@@ -2655,6 +2647,7 @@ export type Location = {
 export type LogicFunction = {
   __typename?: 'LogicFunction';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  canRunOnDemand?: Maybe<Scalars['Boolean']['output']>;
   createdAt: Scalars['DateTime']['output'];
   cronTriggerSettings?: Maybe<Scalars['JSON']['output']>;
   databaseEventTriggerSettings?: Maybe<Scalars['JSON']['output']>;
@@ -3071,7 +3064,6 @@ export type Mutation = {
   createAppMessageChannel: MessageChannel;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
-  createApplicationRegistrationVariable: ApplicationRegistrationVariable;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent;
   createCalendarEvent: CreateCalendarEventOutput;
@@ -3118,7 +3110,6 @@ export type Mutation = {
   deleteAppKeyValue: Scalars['Boolean']['output'];
   deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
-  deleteApplicationRegistrationVariable: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteChatThread: Scalars['Boolean']['output'];
   deleteCommandMenuItem: CommandMenuItem;
@@ -3462,11 +3453,6 @@ export type MutationCreateApplicationRegistrationArgs = {
 };
 
 
-export type MutationCreateApplicationRegistrationVariableArgs = {
-  input: CreateApplicationRegistrationVariableInput;
-};
-
-
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
 };
@@ -3699,11 +3685,6 @@ export type MutationDeleteAppMessageChannelArgs = {
 
 
 export type MutationDeleteApplicationRegistrationArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteApplicationRegistrationVariableArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -8787,7 +8768,7 @@ export type FindOneLogicFunctionQueryVariables = Exact<{
 }>;
 
 
-export type FindOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, executionMode: LogicFunctionExecutionMode, sourceHandlerPath: string, handlerName: string, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, toolTriggerSettings?: any | null, workflowActionTriggerSettings?: any | null, applicationId?: string | null, universalIdentifier?: string | null, createdAt: string, updatedAt: string } };
+export type FindOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', canRunOnDemand?: boolean | null, id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, executionMode: LogicFunctionExecutionMode, sourceHandlerPath: string, handlerName: string, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, toolTriggerSettings?: any | null, workflowActionTriggerSettings?: any | null, applicationId?: string | null, universalIdentifier?: string | null, createdAt: string, updatedAt: string } };
 
 export type GetLogicFunctionSourceCodeQueryVariables = Exact<{
   input: LogicFunctionIdInput;
@@ -10649,7 +10630,7 @@ export const ExecuteOneLogicFunctionDocument = {"kind":"Document","definitions":
 export const UpdateOneLogicFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneLogicFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateLogicFunctionFromSourceInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneLogicFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UpdateOneLogicFunctionMutation, UpdateOneLogicFunctionMutationVariables>;
 export const FindManyAvailablePackagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyAvailablePackages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LogicFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAvailablePackages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>;
 export const FindManyLogicFunctionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyLogicFunctions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyLogicFunctions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"LogicFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LogicFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LogicFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"executionMode"}},{"kind":"Field","name":{"kind":"Name","value":"sourceHandlerPath"}},{"kind":"Field","name":{"kind":"Name","value":"handlerName"}},{"kind":"Field","name":{"kind":"Name","value":"cronTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"databaseEventTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"httpRouteTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"toolTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"workflowActionTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindManyLogicFunctionsQuery, FindManyLogicFunctionsQueryVariables>;
-export const FindOneLogicFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneLogicFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LogicFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findOneLogicFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"LogicFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LogicFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LogicFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"executionMode"}},{"kind":"Field","name":{"kind":"Name","value":"sourceHandlerPath"}},{"kind":"Field","name":{"kind":"Name","value":"handlerName"}},{"kind":"Field","name":{"kind":"Name","value":"cronTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"databaseEventTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"httpRouteTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"toolTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"workflowActionTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindOneLogicFunctionQuery, FindOneLogicFunctionQueryVariables>;
+export const FindOneLogicFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneLogicFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LogicFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findOneLogicFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"LogicFunctionFields"}},{"kind":"Field","name":{"kind":"Name","value":"canRunOnDemand"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LogicFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LogicFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"executionMode"}},{"kind":"Field","name":{"kind":"Name","value":"sourceHandlerPath"}},{"kind":"Field","name":{"kind":"Name","value":"handlerName"}},{"kind":"Field","name":{"kind":"Name","value":"cronTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"databaseEventTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"httpRouteTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"toolTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"workflowActionTriggerSettings"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindOneLogicFunctionQuery, FindOneLogicFunctionQueryVariables>;
 export const GetLogicFunctionSourceCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLogicFunctionSourceCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LogicFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLogicFunctionSourceCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>;
 export const InstallApplicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InstallApplication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"universalIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"installApplication"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"universalIdentifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"universalIdentifier"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}}]}}]}}]} as unknown as DocumentNode<InstallApplicationMutation, InstallApplicationMutationVariables>;
 export const SyncMarketplaceCatalogDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SyncMarketplaceCatalog"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"syncMarketplaceCatalog"}}]}}]} as unknown as DocumentNode<SyncMarketplaceCatalogMutation, SyncMarketplaceCatalogMutationVariables>;

@@ -498,7 +498,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -586,26 +586,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW,
-    hotKeys: null,
-  },
-  addNodeWorkflow: {
-    universalIdentifier: '818117fa-6cad-4ebc-83c1-40f4afc28d94',
-    label: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconPlus',
-    isPinned: true,
-    position: 30,
-    shortLabel: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.ADD_NODE_WORKFLOW,
     hotKeys: null,
   },
   tidyUpWorkflow: {
