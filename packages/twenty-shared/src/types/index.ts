@@ -204,10 +204,13 @@ export type {
   ChartRecordFilterGroup,
   ChartFilter,
   UniversalChartFilter,
-} from './page-layout/chart-filter.type';
-export type { GraphWidgetConfigurationType } from './page-layout/graph-widget-configuration-type';
-export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/graph-widget-configuration-type';
-export type { GridPosition } from './page-layout/grid-position.type';
+} from './page-layout/ChartFilter';
+export type { GraphWidgetConfigurationType } from './page-layout/GraphWidgetConfigurationType';
+export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfigurationType';
+export type { GridPosition } from './page-layout/GridPosition';
+export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
+export { PageLayoutType } from './page-layout/PageLayoutType';
+export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type {
   AggregateChartConfiguration,
   PieChartConfiguration,
@@ -238,19 +241,16 @@ export type {
   WorkflowRunConfiguration,
   ChatThreadsConfiguration,
   PageLayoutWidgetConfiguration,
-} from './page-layout/page-layout-widget-configuration.type';
+} from './page-layout/PageLayoutWidgetConfiguration';
 export type {
   PageLayoutWidgetGridPosition,
   PageLayoutWidgetVerticalListPosition,
   PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetPosition,
-} from './page-layout/page-layout-widget-position.type';
-export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
-export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
-export { PageLayoutType } from './page-layout/PageLayoutType';
-export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
+} from './page-layout/PageLayoutWidgetPosition';
+export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/PageLayoutWidgetUniversalConfiguration';
 export { PageLayoutWidgetVerticalListHeightBehavior } from './page-layout/PageLayoutWidgetVerticalListHeightBehavior';
-export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
+export type { RatioAggregateConfig } from './page-layout/RatioAggregateConfig';
 export { WidgetType } from './page-layout/WidgetType';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';

@@ -66,6 +66,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Record creation form`,
     description: msg`Use a dedicated form when creating records.`,
   },
+  [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
+    label: msg`Logs console`,
+    description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
+  },
   [FeatureFlagKey.IS_MESSAGES_TAB_ENABLED]: {
     label: msg`Messages tab`,
     description: msg`Show emails and AI conversations together in a Messages tab, and notes in the Files tab, on record pages of new workspaces.`,
