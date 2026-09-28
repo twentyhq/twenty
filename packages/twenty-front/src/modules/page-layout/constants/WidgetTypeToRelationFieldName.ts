@@ -7,6 +7,7 @@ export const WIDGET_TYPE_TO_RELATION_FIELD_NAME: Partial<
   [WidgetType.NOTES]: 'noteTargets',
   [WidgetType.FILES]: 'attachments',
   [WidgetType.TIMELINE]: 'timelineActivities',
+  [WidgetType.CHAT_THREADS]: 'agentChatThreadTargets',
   [WidgetType.EMAILS]: 'messageParticipants',
   [WidgetType.CALENDAR]: 'calendarEventParticipants',
   [WidgetType.CALL_RECORDING_SUMMARY]: 'callRecordings',

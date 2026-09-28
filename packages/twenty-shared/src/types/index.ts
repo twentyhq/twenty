@@ -239,6 +239,7 @@ export type {
   WorkflowConfiguration,
   WorkflowVersionConfiguration,
   WorkflowRunConfiguration,
+  ChatThreadsConfiguration,
   PageLayoutWidgetConfiguration,
 } from './page-layout/PageLayoutWidgetConfiguration';
 export type {
