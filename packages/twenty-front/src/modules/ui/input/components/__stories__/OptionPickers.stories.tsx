@@ -49,6 +49,7 @@ const InnerSelectExample = () => {
   return (
     <DropdownMenuInnerSelect
       dropdownId="inner-select-story"
+      aria-label="Position"
       selectedOption={option}
       options={options}
       onChange={setOption}
@@ -70,6 +71,7 @@ export const CurrencySearchAndKeyboard: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button');
     await userEvent.click(trigger);
+    expect(await body.findByRole('dialog', { name: 'Currency' })).toBeVisible();
     const search = await body.findByRole('searchbox', { name: 'Search' });
     await userEvent.type(search, 'zzzzzz');
     expect(await body.findByText('No results')).toBeVisible();
@@ -100,6 +102,7 @@ export const PhoneSearchAndSelection: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = within(canvasElement).getByRole('button');
     await userEvent.click(trigger);
+    expect(await body.findByRole('dialog', { name: 'Country' })).toBeVisible();
     await userEvent.type(
       await body.findByRole('searchbox', { name: 'Search' }),
       'france',
@@ -165,6 +168,7 @@ export const InnerSelectSkipsDisabled: Story = {
     const trigger = within(canvasElement).getByRole('button');
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(trigger);
+    expect(await body.findByRole('dialog', { name: 'Position' })).toBeVisible();
     expect(
       await body.findByRole('button', { name: 'Disabled' }),
     ).toHaveAttribute('aria-disabled', 'true');
