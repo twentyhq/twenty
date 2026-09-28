@@ -23,6 +23,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
 import { type AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
@@ -898,6 +899,42 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         response: { answer: 'Approved' },
       });
       expect(answeredInputAsks[0].answeredAt).not.toBeNull();
+    });
+
+    it('resumes the run when recording the answer fails and records it once the run ends', async () => {
+      const finalStep = emptyStep();
+      const form = approvalForm([finalStep.id]);
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [form, finalStep],
+      });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+
+      const answerForFormStep = jest
+        .spyOn(
+          getAppProviderByClassName<InputAskWorkspaceService>(
+            'InputAskWorkspaceService',
+          ),
+          'answerForFormStep',
+        )
+        .mockRejectedValueOnce(new Error('Ask write failed'));
+
+      const response = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'Approved',
+      });
+
+      answerForFormStep.mockRestore();
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+
+      expect(await getInputAsks(runId)).toMatchObject([
+        { status: 'ANSWERED', response: { answer: 'Approved' } },
+      ]);
     });
 
     it('keeps the first answer when a second submission is refused', async () => {
