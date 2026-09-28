@@ -81,7 +81,6 @@ export const AiChatAddMenuRecordsPage = ({
               />
             }
             description={record.objectLabelSingular}
-            descriptionPlacement="end"
             onSelect={() => handleRecordSelect(record)}
           >
             {record.label}
