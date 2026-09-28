@@ -23,5 +23,5 @@ export const useCurrentPageLayout = () => {
       : pageLayoutPersisted
     : pageLayoutPersisted;
 
-  return { currentPageLayout };
+  return { currentPageLayout, pageLayoutPersisted };
 };

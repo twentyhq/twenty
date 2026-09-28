@@ -8,6 +8,7 @@ const EXPECTED_IS_VIEWPORT_FILLING_BY_WIDGET_TYPE = {
   [WidgetType.CALENDAR]: true,
   [WidgetType.CALL_RECORDING_SUMMARY]: true,
   [WidgetType.CALL_RECORDING_TRANSCRIPT]: true,
+  [WidgetType.CHAT_THREADS]: true,
   [WidgetType.EMAILS]: true,
   [WidgetType.EMAIL_THREAD]: true,
   [WidgetType.FIELD]: false,
