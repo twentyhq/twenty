@@ -1,17 +1,22 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { SkillSuggestionPreviewCard } from '@/skill-suggestion/components/SkillSuggestionPreviewCard';
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
+import { SKILL_SUGGESTION_PREVIEW_WIDTH } from '@/skill-suggestion/constants/SkillSuggestionPreviewWidth';
 import { type SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';
 import { getSkillSuggestionItems } from '@/skill-suggestion/utils/getSkillSuggestionItems';
 import { getSkillTagContent } from '@/skill-suggestion/utils/getSkillTagContent';
+import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
 import {
   FindManySkillsForSuggestionDocument,
   PermissionFlagType,
@@ -27,11 +32,16 @@ export const AiChatAddMenuSkillsPage = ({
 }: AiChatAddMenuSkillsPageProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const isMobile = useIsMobile();
   const navigateSettings = useNavigateSettings();
   const hasAiSettingsPermission = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
   const [search, setSearch] = useState('');
+  const [hoveredSkillId, setHoveredSkillId] = useState<string | null>(null);
+  const [focusedSkillId, setFocusedSkillId] = useState<string | null>(null);
+  const skillRowIdPrefix = useId();
+  const getSkillRowId = (skillId: string) => `${skillRowIdPrefix}-${skillId}`;
 
   const { data, loading } = useQuery(FindManySkillsForSuggestionDocument, {
     fetchPolicy: 'cache-and-network',
@@ -41,6 +51,13 @@ export const AiChatAddMenuSkillsPage = ({
     skills: data?.skills ?? [],
     query: search,
   });
+
+  const searchTargetSkillId =
+    isNonEmptyString(search.trim()) && !loading ? skills[0]?.id : undefined;
+
+  const previewedSkill = [hoveredSkillId, focusedSkillId, searchTargetSkillId]
+    .map((skillId) => skills.find((skill) => skill.id === skillId))
+    .find(isDefined);
 
   const handleSkillSelect = (skill: SkillSuggestionItem) => {
     if (!isDefined(editor)) {
@@ -61,17 +78,24 @@ export const AiChatAddMenuSkillsPage = ({
         onValueChange={setSearch}
       />
       <Dropdown.Separator />
-      <Dropdown.Section scrollable>
+      <Dropdown.Section
+        scrollable
+        onPointerLeave={() => setHoveredSkillId(null)}
+      >
         {skills.map((skill) => {
           const SkillIcon = getIcon(skill.icon ?? DEFAULT_SKILL_ICON);
 
           return (
             <Dropdown.OptionItem
               key={skill.id}
+              id={getSkillRowId(skill.id)}
               selected={false}
               indicator="none"
               disabled={loading}
               startIcon={<SkillIcon />}
+              onPointerEnter={() => setHoveredSkillId(skill.id)}
+              onFocus={() => setFocusedSkillId(skill.id)}
+              onBlur={() => setFocusedSkillId(null)}
               onSelect={() => handleSkillSelect(skill)}
             >
               {skill.label}
@@ -97,6 +121,17 @@ export const AiChatAddMenuSkillsPage = ({
             </Dropdown.ActionItem>
           </Dropdown.Section>
         </>
+      )}
+      {!isMobile && isDefined(previewedSkill) && (
+        <SuggestionItemPreviewTooltip
+          key={previewedSkill.id}
+          anchor={() =>
+            document.getElementById(getSkillRowId(previewedSkill.id))
+          }
+          width={SKILL_SUGGESTION_PREVIEW_WIDTH}
+        >
+          <SkillSuggestionPreviewCard skill={previewedSkill} />
+        </SuggestionItemPreviewTooltip>
       )}
     </>
   );

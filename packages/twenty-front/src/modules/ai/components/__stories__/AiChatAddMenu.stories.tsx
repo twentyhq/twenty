@@ -66,7 +66,7 @@ const meta: Meta<typeof AiChatAddMenuWithEditor> = {
                   id: '20202020-5e21-4b07-9c3a-1d4f6e8a0b52',
                   name: 'meeting-prep',
                   label: 'Meeting Prep',
-                  description: null,
+                  description: 'Builds a brief before your next meeting.',
                   icon: 'IconCalendarEvent',
                   isActive: true,
                   isSystem: false,
@@ -153,5 +153,38 @@ export const InsertSkill: Story = {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText('Meeting Prep')).toBeVisible();
     await waitFor(() => expect(canvas.getByRole('textbox')).toHaveFocus());
+  },
+};
+
+export const PreviewSkill: Story = {
+  play: async ({ canvasElement }) => {
+    const menu = await openAddMenu(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(menu.getByRole('menuitem', { name: /Skills/ }));
+    const meetingPrep = await menu.findByRole('button', {
+      name: 'Meeting Prep',
+    });
+    await waitFor(() =>
+      expect(meetingPrep).not.toHaveAttribute('aria-disabled'),
+    );
+
+    await userEvent.hover(meetingPrep);
+    await expect(await body.findByRole('tooltip')).toHaveTextContent(
+      'Builds a brief before your next meeting.',
+    );
+
+    await userEvent.unhover(meetingPrep);
+    await waitFor(() =>
+      expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.type(
+      menu.getByRole('searchbox', { name: 'Search skills' }),
+      'meet',
+    );
+    await expect(await body.findByRole('tooltip')).toHaveTextContent(
+      '/meeting-prep',
+    );
   },
 };
