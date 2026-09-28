@@ -108,26 +108,33 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       this.recordConversation({
         workflowRunId: runInfo.workflowRunId,
         stepId: currentStepId,
-        record: () =>
-          isDefined(resumedThreadId)
-            ? this.workflowAgentConversationService.recordContinuation({
-                workspaceId,
-                workflowRunId: runInfo.workflowRunId,
-                stepId: currentStepId,
-                threadId: resumedThreadId,
-                agentId: agent?.id ?? null,
-                executionResult,
-              })
-            : this.workflowAgentConversationService.recordExecution({
-                workspaceId,
-                workflowRunId: runInfo.workflowRunId,
-                stepId: currentStepId,
-                title: step.name,
-                agentId: agent?.id ?? null,
-                prompt: resolvedPrompt,
-                initiatorUserWorkspaceId: userWorkspaceId,
-                executionResult,
-              }),
+        record: async () => {
+          if (isDefined(resumedThreadId)) {
+            return this.workflowAgentConversationService.recordContinuation({
+              workspaceId,
+              workflowRunId: runInfo.workflowRunId,
+              stepId: currentStepId,
+              threadId: resumedThreadId,
+              agentId: agent?.id ?? null,
+              executionResult,
+            });
+          }
+
+          if (!isDefined(executionResult)) {
+            return null;
+          }
+
+          return this.workflowAgentConversationService.recordExecution({
+            workspaceId,
+            workflowRunId: runInfo.workflowRunId,
+            stepId: currentStepId,
+            title: step.name,
+            agentId: agent?.id ?? null,
+            prompt: resolvedPrompt,
+            initiatorUserWorkspaceId: userWorkspaceId,
+            executionResult,
+          });
+        },
       });
 
     const startedAtMs = Date.now();
@@ -166,7 +173,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       })
       .catch(async (error: unknown) => {
-        await recordConversation();
+        if (isDefined(resumedThreadId)) {
+          await recordConversation();
+        }
         throw error;
       });
 
@@ -174,11 +183,17 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     // A step that runs out of credits fails even if its agent asked something,
     // so its question must not be left open as though the run waited for it.
-    const recordedConversation = await recordConversation(
-      executionResult.hasNoMoreAvailableCredits
-        ? { ...executionResult, isPaused: false }
-        : executionResult,
-    );
+    const conversationResult = executionResult.hasNoMoreAvailableCredits
+      ? { ...executionResult, isPaused: false }
+      : executionResult;
+
+    // A conversation only exists to be answered in: an execution that never
+    // asks keeps its step log as its record, which saves a thread per
+    // execution for agents running in loops or on busy triggers.
+    const recordedConversation =
+      isDefined(resumedThreadId) || conversationResult.isPaused === true
+        ? await recordConversation(conversationResult)
+        : null;
 
     await this.persistStepLog({
       workflowRunId: runInfo.workflowRunId,

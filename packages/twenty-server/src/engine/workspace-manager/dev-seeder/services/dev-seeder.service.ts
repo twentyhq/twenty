@@ -49,6 +49,7 @@ import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
+import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { PrefillFrontComponentService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-front-component.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
@@ -59,6 +60,7 @@ import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/t
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
+// oxlint-disable-next-line twenty/inject-workspace-repository
 export class DevSeederService {
   constructor(
     private readonly agentHistoryStorageService: AgentHistoryWorkspaceStorageService,
@@ -69,6 +71,7 @@ export class DevSeederService {
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
+    private readonly devSeederWorkflowAgentQuestionService: DevSeederWorkflowAgentQuestionWorkspaceService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -232,6 +235,12 @@ export class DevSeederService {
         roleId: adminRole.id,
         viewId: allCompaniesView.id,
       },
+    });
+
+    await this.devSeederWorkflowAgentQuestionService.seed({
+      workspaceId,
+      schemaName,
+      applicationId: workspaceCustomFlatApplication.id,
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId);

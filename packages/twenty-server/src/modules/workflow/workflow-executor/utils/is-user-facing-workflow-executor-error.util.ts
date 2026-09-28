@@ -4,6 +4,10 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
@@ -37,6 +41,10 @@ export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
 
   if (error instanceof AiException) {
     return USER_FACING_AI_EXCEPTION_CODES.includes(error.code);
+  }
+
+  if (error instanceof LogicFunctionException) {
+    return error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN;
   }
 
   return false;

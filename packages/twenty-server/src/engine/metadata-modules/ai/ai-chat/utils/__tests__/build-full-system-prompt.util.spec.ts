@@ -98,4 +98,24 @@ describe('buildFullSystemPrompt', () => {
     expect(prompt).not.toContain('## Workspace Instructions');
     expect(prompt).not.toContain('Always answer in bullet points.');
   });
+
+  it('should explain attaching the conversation to records only where the tool is offered', () => {
+    const buildPromptWithAttachment = (
+      canAttachConversationToRecords: boolean,
+    ) =>
+      buildFullSystemPrompt({
+        toolCatalog: [],
+        skillCatalog: [],
+        preloadedTools: [],
+        canAttachConversationToRecords,
+      });
+
+    expect(buildPromptWithAttachment(true)).toContain(
+      '## Attaching this conversation to records',
+    );
+    expect(buildPromptWithAttachment(false)).not.toContain(
+      'attach_conversation_to_record',
+    );
+    expect(buildPrompt(false)).not.toContain('attach_conversation_to_record');
+  });
 });
