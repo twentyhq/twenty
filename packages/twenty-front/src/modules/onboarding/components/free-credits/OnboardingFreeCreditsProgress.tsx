@@ -45,6 +45,7 @@ export const OnboardingFreeCreditsProgress = ({
         withBorderRadius
         withGrowIn={!hasTrackGrown}
         withGlint={hasTrackGrown && hasNewlyEarnedCredits}
+        withSpringFill
         onGrowInComplete={onTrackGrown}
       />
       <StyledOnboardingFreeCreditsText>

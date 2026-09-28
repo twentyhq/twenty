@@ -33,6 +33,15 @@ export const GrowInWithGlint: Story = {
   },
 };
 
+export const SpringFill: Story = {
+  args: {
+    value: 40,
+    ariaLabel: 'Progress',
+    withBorderRadius: true,
+    withSpringFill: true,
+  },
+};
+
 export const Countdown: Story = {
   tags: ['!test'],
   argTypes: {

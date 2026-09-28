@@ -35,6 +35,33 @@
     corner-shape: round;
   }
 
+  &[data-spring-fill] {
+    transition: width calc(#{duration(normal)} * 2)
+      linear(
+        0,
+        0.092,
+        0.285,
+        0.496,
+        0.681,
+        0.823,
+        0.922,
+        0.982,
+        1.015,
+        1.028,
+        1.03,
+        1.026,
+        1.02,
+        1.014,
+        1.008,
+        1.004,
+        1.002,
+        1,
+        0.999,
+        0.999,
+        1
+      );
+  }
+
   &[data-nonzero] {
     min-width: 12px;
   }
@@ -87,6 +114,10 @@
 @media (prefers-reduced-motion: reduce) {
   .bar[data-grow-in] {
     animation-duration: 0s;
+  }
+
+  .indicator[data-spring-fill] {
+    transition: none;
   }
 
   .glint {
