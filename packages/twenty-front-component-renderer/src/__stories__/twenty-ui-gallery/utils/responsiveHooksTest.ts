@@ -14,7 +14,8 @@ export const responsiveHooksTest: TwentyUiGalleryPlayFunction = async ({
   await expect(canvas.getByText('Touch input: false')).toBeVisible();
   const hostDevice = getUserDevice();
   await expect(hostDevice).not.toBe('unknown');
-  const expectedShortcut = hostDevice === 'mac' ? '⌘S' : 'Ctrl S';
+  const expectedShortcut =
+    hostDevice === 'mac' || hostDevice === 'ios' ? '⌘S' : 'Ctrl S';
   await expect(canvas.getByText(`Device: ${hostDevice}`)).toBeVisible();
   await expect(canvas.getByText(`Shortcut: ${expectedShortcut}`)).toBeVisible();
   const save = canvas.getByRole('button', { name: 'Save record' });
