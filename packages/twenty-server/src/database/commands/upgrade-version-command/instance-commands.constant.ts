@@ -209,6 +209,8 @@ import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/comman
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790232481570-add-workspace-allowed-iframe-origins';
 import { AddUsageLimitInstanceOverrideFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790245573467-add-usage-limit-instance-override';
+import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790323148754-enforce-workflow-version-core-parent';
+import { AddCoreForeignKeyIndexesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790343790126-add-core-foreign-key-indexes';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -420,4 +422,6 @@ export const INSTANCE_COMMANDS = [
   AddChatMessageSenderFastInstanceCommand,
   AddWorkspaceAllowedIframeOriginsFastInstanceCommand,
   AddUsageLimitInstanceOverrideFastInstanceCommand,
+  EnforceWorkflowVersionCoreParentSlowInstanceCommand,
+  AddCoreForeignKeyIndexesSlowInstanceCommand,
 ];

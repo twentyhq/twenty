@@ -1,7 +1,7 @@
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -17,7 +17,11 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 @Injectable()
 export class AdminPanelChatService {
   constructor(
-    private readonly historyStorage: AgentHistoryStorageService,
+    @Inject(AgentHistoryWorkspaceStorageService)
+    private readonly historyStorage: Pick<
+      AgentHistoryWorkspaceStorageService,
+      'runReadOnlyReport'
+    >,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectAgentHistoryRepository('agentChatThread')
@@ -83,12 +87,12 @@ export class AdminPanelChatService {
 
     const rows = await this.agentMessageRepository.query(
       workspaceId,
-      ({ manager, table, storage }) =>
+      ({ manager, table }) =>
         manager.query<{ threadId: string; messageCount: number }[]>(
           `SELECT "threadId", COUNT(*)::int AS "messageCount" FROM ${table('agentMessage')}
-       WHERE "threadId" = ANY($1::uuid[]) AND "isHidden" = false ${storage === 'core' ? 'AND "workspaceId" = $2' : ''}
+       WHERE "threadId" = ANY($1::uuid[]) AND "isHidden" = false
        GROUP BY "threadId"`,
-          storage === 'core' ? [threadIds, workspaceId] : [threadIds],
+          [threadIds],
         ),
     );
 
@@ -110,13 +114,12 @@ export class AdminPanelChatService {
           const parameters: unknown[] = [threadId];
           const queries = partitions
             .slice(offset, offset + 25)
-            .map(({ workspaceIds, storage, table }) => {
+            .map(({ workspaceIds, table }) => {
               parameters.push(workspaceIds);
               return `(SELECT workspace.id AS "workspaceId"
                 FROM ${table('agentChatThread')} thread
                 JOIN core.workspace workspace ON workspace.id = ANY($${parameters.length}::uuid[])
                   AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
-                  ${storage === 'core' ? 'AND thread."workspaceId" = workspace.id' : ''}
                 WHERE thread.id = $1 LIMIT 1)`;
             });
           const matches = await manager.query<{ workspaceId: string }[]>(

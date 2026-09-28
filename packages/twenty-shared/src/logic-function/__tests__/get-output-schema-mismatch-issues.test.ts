@@ -4,7 +4,7 @@ import {
   type Leaf,
   type LeafType,
   type Node,
-} from '@/workflow/workflow-schema/types/base-output-schema.type';
+} from '@/workflow/workflow-schema/types/BaseOutputSchema';
 
 const leaf = (type: LeafType, label = 'label'): Leaf => ({
   isLeaf: true,

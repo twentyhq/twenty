@@ -1,4 +1,4 @@
-import { type TriggerEventType } from '@/ui/navigation/utils/types/trigger-event.type';
+import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
 import { type ComponentPropsWithRef, type MouseEvent } from 'react';
 import { type Link } from 'react-router-dom';
 import { type ChipProps } from 'twenty-ui/primitives/data-display';

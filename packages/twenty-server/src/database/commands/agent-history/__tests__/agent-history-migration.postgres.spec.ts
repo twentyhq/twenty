@@ -1,3 +1,4 @@
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -18,13 +19,12 @@ import { type WorkspaceIteratorService } from 'src/database/commands/command-run
 import { computeFlatIndexFieldColumnNames } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
-import { Logger } from '@nestjs/common';
+import { Logger, ServiceUnavailableException } from '@nestjs/common';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
-import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -39,6 +39,7 @@ import { Pool } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { AGENT_HISTORY_TEST_SCHEMA } from 'src/database/commands/agent-history/__tests__/agent-history-test-schema.constant';
@@ -64,13 +65,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       synchronize: false,
     });
     const storage = new AgentHistoryStorageService(dataSource);
+    const workspaceStorage = new AgentHistoryWorkspaceStorageService(
+      dataSource,
+    );
+    const migrationState = new AgentHistoryMigrationStateService();
     const migration = new AgentHistoryMigrationService(
       dataSource,
-      storage,
+      migrationState,
       new AgentHistoryMigrationDataService(),
       new AgentHistoryMigrationValidationService(),
     );
-    const lifecycle = new AgentHistoryLifecycleService(dataSource, storage);
     const pool = new Pool({ connectionString: DATABASE_URL });
     const { allFlatEntityMaps: metadata } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
@@ -144,15 +148,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       };
     };
     const orm = createOrm();
-    const threads = new AgentHistoryRepository(
+    const threads = new AgentHistoryRepository<AgentChatThreadEntity>(
       'agentChatThread',
-      AgentChatThreadEntity,
       storage,
       orm,
     );
-    const messages = new AgentHistoryRepository(
+    const messages = new AgentHistoryRepository<AgentMessageEntity>(
       'agentMessage',
-      AgentMessageEntity,
       storage,
       orm,
     );
@@ -192,22 +194,30 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           `ALTER TABLE "${SCHEMA}"."agentMessage" DROP COLUMN "${name}"`,
         );
       }
-      return new AgentHistoryRepository(
+      return new AgentHistoryRepository<AgentMessageEntity>(
         'agentMessage',
-        AgentMessageEntity,
         storage,
         createOrm(legacyMetadata),
       );
     };
 
+    const readRoute = async () => {
+      const runner = dataSource.createQueryRunner();
+      try {
+        await runner.connect();
+        return (await storage.readState(runner, WORKSPACE_ID)).storage;
+      } finally {
+        await runner.release();
+      }
+    };
+
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
-        new AgentHistoryRepository('agentTurn', AgentTurnEntity, storage, orm),
+        new AgentHistoryRepository<AgentTurnEntity>('agentTurn', storage, orm),
         messageRepository,
-        new AgentHistoryRepository(
+        new AgentHistoryRepository<AgentMessagePartEntity>(
           'agentMessagePart',
-          AgentMessagePartEntity,
           storage,
           orm,
         ),
@@ -443,6 +453,42 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).toEqual([{ senderUserWorkspaceId: OWNER_ID }]);
     });
 
+    it('refuses rollback only while a record is still linked to a chat thread', async () => {
+      const validation = new AgentHistoryMigrationValidationService();
+      const runner = dataSource.createQueryRunner();
+      const table = `"${SCHEMA}"."agentChatThreadTarget"`;
+
+      await runner.connect();
+      try {
+        await runner.query(
+          `CREATE TABLE ${table} (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), "threadId" uuid, "targetPersonId" uuid, "targetPetId" uuid, "deletedAt" timestamptz)`,
+        );
+        // What destroying a custom record leaves behind: its leg set to null.
+        await runner.query(`INSERT INTO ${table} ("threadId") VALUES ($1)`, [
+          THREAD_ID,
+        ]);
+        await expect(
+          validation.assertNoThreadTargets({
+            runner,
+            workspaceId: WORKSPACE_ID,
+          }),
+        ).resolves.toBeUndefined();
+
+        await runner.query(
+          `INSERT INTO ${table} ("threadId", "targetPetId") VALUES ($1, $2)`,
+          [THREAD_ID, MESSAGE_ID],
+        );
+        await expect(
+          validation.assertNoThreadTargets({
+            runner,
+            workspaceId: WORKSPACE_ID,
+          }),
+        ).rejects.toThrow(/Detach them before rolling agent history back/);
+      } finally {
+        await runner.release();
+      }
+    });
+
     it('copies all five tables, exact credits and archive state before changing the route', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
@@ -454,9 +500,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
       expect(rows[0].totalInputCredits).toBe('9007199254740993');
       expect(rows[0].archivedAt).toEqual(new Date('2026-01-01T00:00:00.000Z'));
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-        expect(selected).toBe('workspace');
-      });
+      expect(await readRoute()).toBe('workspace');
       for (const table of AGENT_HISTORY_TABLES) {
         expect(
           (
@@ -474,9 +518,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         'UPDATE core."agentChatThread" SET "updatedAt" = $1',
         [originalTimestamp],
       );
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const injectedCrash = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (
             state.migration?.phase === 'copying' &&
@@ -497,6 +541,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(storage.run(WORKSPACE_ID, operation)).rejects.toThrow(
         'being migrated',
       );
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, operation),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
       expect(operation).not.toHaveBeenCalled();
       expect(
         (
@@ -522,9 +569,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           )
         )[0].updatedAt,
       ).toEqual(originalTimestamp);
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-        expect(selected).toBe('workspace');
-      });
+      expect(await readRoute()).toBe('workspace');
     });
 
     it('rolls back new writes and deletions rather than selecting the stale core snapshot', async () => {
@@ -553,9 +598,67 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           )
         )[0].count,
       ).toBe('0');
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-        expect(selected).toBe('core');
+      expect(await readRoute()).toBe('core');
+    });
+
+    it('fails closed when the durable route is lost', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
       });
+      await dataSource.query('DELETE FROM core."keyValuePair"');
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, ({ manager, table }) =>
+          manager.query(`SELECT id FROM ${table('agentChatThread')}`),
+        ),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
+      await expect(
+        workspaceStorage.runReadOnlyReport(
+          [WORKSPACE_ID],
+          async ({ partitions }) =>
+            partitions.map(({ workspaceIds }) => workspaceIds),
+        ),
+      ).resolves.toEqual([]);
+    });
+
+    it('initializes empty new workspaces with a durable route for cleanup', async () => {
+      await dataSource.query('TRUNCATE core."agentChatThread" CASCADE');
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      expect(await readRoute()).toBe('workspace');
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, async () => 'ready'),
+      ).resolves.toBe('ready');
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      expect(await readRoute()).toBe('workspace');
+    });
+
+    it('does not mark legacy history as migrated during initialization', async () => {
+      await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
+      await expect(
+        workspaceStorage.run(WORKSPACE_ID, jest.fn()),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
+    });
+
+    it('preserves the legacy upgrade fence for history still stored in core', async () => {
+      await expect(
+        threads.find(WORKSPACE_ID, { where: { id: THREAD_ID } }),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException);
+      expect(
+        (
+          await dataSource.query(
+            `SELECT count(*) FROM "${SCHEMA}"."agentChatThread"`,
+          )
+        )[0].count,
+      ).toBe('0');
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      expect(
+        (await threads.find(WORKSPACE_ID, { where: { id: THREAD_ID } })).map(
+          ({ id }) => id,
+        ),
+      ).toEqual([THREAD_ID]);
     });
 
     it('refuses cutover while a stream is active', async () => {
@@ -565,9 +668,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(
         migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' }),
       ).rejects.toThrow('streams are still active');
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-        expect(selected).toBe('core');
-      });
+      expect(await readRoute()).toBe('core');
     });
 
     it('serializes competing migration runners', async () => {
@@ -674,10 +775,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
-    it('writes and resolves owner messages while workspace sender fields are still absent', async () => {
-      const legacyMessages = await prepareLegacyMessages();
-      const chat = createChatService(legacyMessages);
-      const actors = createActorService(legacyMessages);
+    it('persists senders for normal, queued and hidden kickoff messages after schema expansion', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const chat = createChatService(messages);
+      const actors = createActorService(messages);
       const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
         userWorkspaceId: OWNER_ID,
       });
@@ -685,7 +789,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,
-        text: 'Setup during deploy',
+        text: 'Setup after upgrade',
       });
       const message = await chat.addMessage({
         workspaceId: WORKSPACE_ID,
@@ -693,14 +797,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         threadId: thread.id,
         uiMessage: {
           role: AgentMessageRole.USER,
-          parts: [{ type: 'text', text: 'Live message during deploy' }],
+          parts: [{ type: 'text', text: 'Live message after upgrade' }],
         },
       });
       const queued = await chat.queueMessage({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,
-        text: 'Queued during deploy',
+        text: 'Queued after upgrade',
       });
       await chat.promoteQueuedMessage({
         workspaceId: WORKSPACE_ID,
@@ -718,23 +822,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           sender: { userWorkspaceId: OWNER_ID, applicationId: null },
         });
       }
-      const saved = await legacyMessages.findOneOrFail(WORKSPACE_ID, {
+      const saved = await messages.findOneOrFail(WORKSPACE_ID, {
         where: { id: message.id },
         relations: { parts: true },
       });
-      expect(saved.parts[0].textContent).toBe('Live message during deploy');
+      expect(saved.senderUserWorkspaceId).toBe(OWNER_ID);
+      expect(saved.parts[0].textContent).toBe('Live message after upgrade');
       expect(
-        await legacyMessages.findOneOrFail(WORKSPACE_ID, {
+        await messages.findOneOrFail(WORKSPACE_ID, {
           where: { id: queued.id },
         }),
       ).toMatchObject({ status: AgentMessageStatus.SENT });
     });
 
     it.each([
+      { senderUserWorkspaceId: OWNER_ID, senderApplicationId: null },
       { senderUserWorkspaceId: THREAD_ID, senderApplicationId: null },
       { senderUserWorkspaceId: OWNER_ID, senderApplicationId: TURN_ID },
     ])(
-      'refuses to discard unrecoverable attribution on an old workspace: %o',
+      'requires expanded metadata before accepting sender writes: %o',
       async (sender) => {
         const legacyMessages = await prepareLegacyMessages();
         const count = await legacyMessages.count(WORKSPACE_ID);
@@ -748,22 +854,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             },
             { threadId: THREAD_ID, role: AgentMessageRole.USER, ...sender },
           ]),
-        ).rejects.toThrow('Chat sender attribution is being upgraded');
+        ).rejects.toThrow(
+          'Complete upgrade:2-43:attribute-chat-message-senders',
+        );
         expect(await legacyMessages.count(WORKSPACE_ID)).toBe(count);
       },
     );
 
-    it('preserves available sender fields during partial expansion and resumes full attribution after upgrade', async () => {
+    it('rejects incomplete sender expansion and persists full attribution after upgrade', async () => {
       const legacyMessages = await prepareLegacyMessages([
         'senderApplicationId',
       ]);
-      const legacy = await legacyMessages.insertAndReturnOne(WORKSPACE_ID, {
-        threadId: THREAD_ID,
-        role: AgentMessageRole.USER,
-        senderUserWorkspaceId: TURN_ID,
-        senderApplicationId: null,
-      });
-      expect(legacy.senderUserWorkspaceId).toBe(TURN_ID);
+      await expect(
+        legacyMessages.insertAndReturnOne(WORKSPACE_ID, {
+          threadId: THREAD_ID,
+          role: AgentMessageRole.USER,
+          senderUserWorkspaceId: TURN_ID,
+          senderApplicationId: null,
+        }),
+      ).rejects.toThrow('Complete upgrade:2-43:attribute-chat-message-senders');
       await dataSource.query(
         `ALTER TABLE "${SCHEMA}"."agentMessage" ADD COLUMN "senderApplicationId" uuid`,
       );
@@ -784,10 +893,29 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
     });
 
-    it('still rejects unrelated unknown fields on an old workspace', async () => {
-      const legacyMessages = await prepareLegacyMessages();
+    it('preserves the owner fallback for historical null-sender messages', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
       await expect(
-        legacyMessages.insert(WORKSPACE_ID, {
+        createActorService(messages).resolveMessage({
+          workspaceId: WORKSPACE_ID,
+          threadId: THREAD_ID,
+          messageId: MESSAGE_ID,
+        }),
+      ).resolves.toMatchObject({
+        sender: { userWorkspaceId: OWNER_ID, applicationId: null },
+      });
+    });
+
+    it('still rejects unrelated unknown fields after sender expansion', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      await expect(
+        messages.insert(WORKSPACE_ID, {
           threadId: THREAD_ID,
           role: AgentMessageRole.USER,
           unexpectedField: null,
@@ -857,17 +985,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).toEqual([MESSAGE_ID, laterId, earlierId]);
     });
 
-    it('increments exact totals only for the owning stream in both stores', async () => {
-      for (const target of ['core', 'workspace'] as const) {
-        if (target === 'workspace')
-          await migration.migrate({
-            workspaceId: WORKSPACE_ID,
-            target: 'workspace',
-          });
-        const table =
-          target === 'core'
-            ? 'core."agentChatThread"'
-            : `"${SCHEMA}"."agentChatThread"`;
+    it('increments exact totals only for the owning stream', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      {
+        const table = `"${SCHEMA}"."agentChatThread"`;
         await dataSource.query(
           `UPDATE ${table} SET "activeStreamId" = 'stream', "totalInputCredits" = 9007199254740993`,
         );
@@ -924,7 +1048,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     });
 
     it('does not create constraints referencing core tables', async () => {
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -948,15 +1071,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(
         migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' }),
       ).rejects.toThrow('cross-workspace');
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('core'),
-      );
+      expect(await readRoute()).toBe('core');
     });
 
     it('keeps the fence when a copied value fails verification, then allows abort', async () => {
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const corruptCopy = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           await writeState(runner, workspaceId, state);
           if (
@@ -975,9 +1096,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         storage.run(WORKSPACE_ID, async () => undefined),
       ).rejects.toThrow('being migrated');
       await migration.abort({ workspaceId: WORKSPACE_ID, dryRun: false });
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('core'),
-      );
+      expect(await readRoute()).toBe('core');
       expect(
         (
           await dataSource.query(
@@ -1109,32 +1228,38 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(
         storage.run(WORKSPACE_ID, async () => undefined),
       ).rejects.toThrow('Invalid agent history storage state');
-      await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
+      await expect(migration.inspect(WORKSPACE_ID)).rejects.toThrow(
         'Invalid agent history storage state',
       );
       await dataSource.query('DELETE FROM core."keyValuePair"');
       await expect(
         storage.run(WORKSPACE_ID, async () => undefined),
       ).rejects.toThrow('route is missing');
-      await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
+      await expect(migration.inspect(WORKSPACE_ID)).rejects.toThrow(
         'route is missing',
       );
     });
 
-    it('keeps a report snapshot stable across cutover and core cleanup', async () => {
+    it('leaves core-stored history out of reports and keeps a report stable across core cleanup', async () => {
+      await storage.runReadOnlyReport(
+        [WORKSPACE_ID],
+        async ({ partitions }) => {
+          expect(partitions).toEqual([]);
+        },
+      );
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      await dataSource.query(
+        `UPDATE core."keyValuePair" SET value = jsonb_set(value, '{verifiedAt}', '"2020-01-01T00:00:00.000Z"')`,
+      );
       await storage.runReadOnlyReport(
         [WORKSPACE_ID],
         async ({ manager, partitions }) => {
-          expect(partitions.map((partition) => partition.storage)).toEqual([
-            'core',
+          expect(partitions.map(({ workspaceIds }) => workspaceIds)).toEqual([
+            [WORKSPACE_ID],
           ]);
-          await migration.migrate({
-            workspaceId: WORKSPACE_ID,
-            target: 'workspace',
-          });
-          await dataSource.query(
-            `UPDATE core."keyValuePair" SET value = jsonb_set(value, '{verifiedAt}', '"2020-01-01T00:00:00.000Z"')`,
-          );
           await migration.cleanup({
             workspaceId: WORKSPACE_ID,
             dryRun: false,
@@ -1161,9 +1286,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const collision = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           await writeState(runner, workspaceId, state);
           if (
@@ -1200,7 +1325,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
     });
 
-    it('groups core support workspaces and paginates globally across mixed routes', async () => {
+    it('lists support threads only from workspaces on workspace storage', async () => {
       const otherWorkspaceId = '20202020-9999-4999-8999-999999999999';
       const otherThreadId = '20202020-7777-4777-8777-777777777777';
       await dataSource.query(
@@ -1213,7 +1338,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
       const workspaceIds = [WORKSPACE_ID, otherWorkspaceId];
       await storage.runReadOnlyReport(workspaceIds, async ({ partitions }) =>
-        expect(partitions).toHaveLength(1),
+        expect(partitions).toHaveLength(0),
       );
       const support = new AdminPanelGlobalChatThreadsService(
         {
@@ -1228,20 +1353,21 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         sortBy: AdminChatThreadSortField.CREATED_AT,
         sortDirection: AdminChatThreadSortDirection.ASC,
         limit: 1,
-        offset: 1,
+        offset: 0,
       };
-      const before = await support.getGlobalChatThreads(options);
-      expect(before.totalCount).toBe(2);
-      expect(before.threads.map((thread) => thread.id)).toEqual([THREAD_ID]);
+      expect(await support.getGlobalChatThreads(options)).toMatchObject({
+        totalCount: 0,
+        threads: [],
+      });
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
       await storage.runReadOnlyReport(workspaceIds, async ({ partitions }) =>
-        expect(partitions).toHaveLength(2),
+        expect(partitions).toHaveLength(1),
       );
       expect(await support.getGlobalChatThreads(options)).toMatchObject({
-        totalCount: 2,
+        totalCount: 1,
         hasMore: false,
         threads: [{ id: THREAD_ID }],
       });
@@ -1433,103 +1559,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(
         await dataSource.query('SELECT id FROM core."agentChatThread"'),
       ).toHaveLength(1);
-      await storage.run(WORKSPACE_ID, async ({ storage: route }) =>
-        expect(route).toBe('workspace'),
-      );
+      expect(await readRoute()).toBe('workspace');
     });
 
-    it('waits for an active runner before initialization and preserves its migration state', async () => {
-      const initializationDataSource = new DataSource({
-        type: 'postgres',
-        url: DATABASE_URL,
-        extra: { options: '-c lock_timeout=100ms' },
-      });
-      await initializationDataSource.initialize();
-      const initializer = new AgentHistoryLifecycleService(
-        initializationDataSource,
-        storage,
-      );
-      const runner = dataSource.createQueryRunner();
-      const key = `${AGENT_HISTORY_STORAGE_KEY}:runner:${WORKSPACE_ID}`;
-      await runner.connect();
-      try {
-        await runner.query('SELECT pg_advisory_lock(hashtextextended($1, 0))', [
-          key,
-        ]);
-        await expect(
-          initializer.initializeWorkspace(WORKSPACE_ID),
-        ).rejects.toThrow('lock timeout');
-        expect(
-          await runner.query(
-            'SELECT value FROM core."keyValuePair" WHERE "workspaceId" = $1',
-            [WORKSPACE_ID],
-          ),
-        ).toEqual([]);
-        const state = {
-          storage: 'core' as const,
-          migration: {
-            phase: 'aborting' as const,
-            target: 'workspace' as const,
-            tableIndex: 0,
-            lastId: null,
-          },
-        };
-        await storage.writeState(runner, WORKSPACE_ID, state);
-        await runner.query(
-          'SELECT pg_advisory_unlock(hashtextextended($1, 0))',
-          [key],
-        );
-        await initializer.initializeWorkspace(WORKSPACE_ID);
-        expect(await storage.readState(runner, WORKSPACE_ID)).toEqual(state);
-      } finally {
-        await runner.query('SELECT pg_advisory_unlock_all()');
-        await runner.release();
-        await initializationDataSource.destroy();
-      }
-    });
-
-    it('defaults new empty workspaces to workspace storage without moving legacy history', async () => {
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('core'),
-      );
-      await dataSource.query(
-        'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1',
-        [WORKSPACE_ID],
-      );
-      for (const table of [...AGENT_HISTORY_TABLES].reverse())
-        await dataSource.query(`DELETE FROM core."${table.name}"`);
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('workspace'),
-      );
-      await expect(lifecycle.setNewWorkspaceDefault('core')).rejects.toThrow(
-        'New workspaces require workspace agent history storage',
-      );
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('workspace'),
-      );
-    });
-
-    it('ignores a legacy core default when provisioning a new empty workspace', async () => {
-      for (const table of [...AGENT_HISTORY_TABLES].reverse())
-        await dataSource.query(`DELETE FROM core."${table.name}"`);
-      await expect(lifecycle.setNewWorkspaceDefault('core')).rejects.toThrow(
-        'New workspaces require workspace agent history storage',
-      );
-      await dataSource.query(
-        `INSERT INTO core."keyValuePair" ("key", "type", "value") VALUES ('agent-history-new-workspace-storage-v1', 'CONFIG_VARIABLE', '{"storage":"core"}'::jsonb)`,
-      );
-      await lifecycle.initializeWorkspace(WORKSPACE_ID);
-      await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('workspace'),
-      );
-    });
     it('does not allow copy to resume after an interrupted abort', async () => {
-      const writeState = storage.writeState.bind(storage);
+      const writeState = migrationState.writeState.bind(migrationState);
       const failCopy = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (
             state.migration?.phase === 'copying' &&
@@ -1543,7 +1579,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).rejects.toThrow('crash');
       failCopy.mockRestore();
       const failAbort = jest
-        .spyOn(storage, 'writeState')
+        .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
           if (!state.migration) throw new Error('abort interrupted');
           await writeState(runner, workspaceId, state);
@@ -1562,7 +1598,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
     });
 
-    it('keeps support search counts and revocation checks across both stores', async () => {
+    it('keeps support search counts and revocation checks after the move', async () => {
       const support = new AdminPanelGlobalChatThreadsService(
         {
           find: jest.fn().mockResolvedValue([{ id: WORKSPACE_ID }]),
@@ -1582,14 +1618,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         `INSERT INTO core."agentMessage" ("workspaceId", "threadId", "turnId", role) VALUES ($1, $2, $3, 'user')`,
         [WORKSPACE_ID, THREAD_ID, TURN_ID],
       );
-      const before = await support.getGlobalChatThreads(options);
-      expect(before.totalCount).toBe(1);
-      expect(before.threads[0].messageCount).toBe(1);
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
-      expect(await support.getGlobalChatThreads(options)).toEqual(before);
+      const after = await support.getGlobalChatThreads(options);
+      expect(after.totalCount).toBe(1);
+      expect(after.threads[0].messageCount).toBe(1);
       await dataSource.query(
         'UPDATE core.workspace SET "allowImpersonation" = false',
       );

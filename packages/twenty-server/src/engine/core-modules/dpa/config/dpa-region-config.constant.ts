@@ -1,5 +1,5 @@
 import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
-import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.type';
 
 export const DEFAULT_DPA_REGION: DpaRegion = DpaRegion.EU;
 

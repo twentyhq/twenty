@@ -1,4 +1,4 @@
-import { type FieldMetadataTypesToTestForCreateInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+import { type FieldMetadataTypesToTestForCreateInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test.type';
 import {
   joinColumnNameForManyToOneMorphRelationField1,
   TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE,

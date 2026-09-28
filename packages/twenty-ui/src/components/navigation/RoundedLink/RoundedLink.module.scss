@@ -22,6 +22,10 @@
   user-select: none;
   white-space: nowrap;
 
+  &[data-color='secondary'] {
+    color: var(--t-font-color-secondary);
+  }
+
   &:hover {
     background-color: var(--t-background-transparent-light);
   }

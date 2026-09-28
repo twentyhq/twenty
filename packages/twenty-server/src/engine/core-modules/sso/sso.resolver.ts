@@ -20,6 +20,7 @@ import {
   SetupSamlSsoInput,
 } from 'src/engine/core-modules/sso/dtos/setup-sso.input';
 import { SetupSsoDTO } from 'src/engine/core-modules/sso/dtos/setup-sso.dto';
+import { SsoGraphqlApiExceptionFilter } from 'src/engine/core-modules/sso/filters/sso-graphql-api-exception.filter';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SsoException } from 'src/engine/core-modules/sso/sso.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -33,6 +34,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
+  SsoGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @UseGuards(SettingsPermissionGuard(PermissionFlagType.SECURITY))

@@ -1,0 +1,51 @@
+import { DataSource, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+@RegisteredInstanceCommand('2.43.0', 1790323148754, { type: 'slow' })
+export class EnforceWorkflowVersionCoreParentSlowInstanceCommand implements SlowInstanceCommand {
+  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+
+  public async runDataMigration(dataSource: DataSource): Promise<void> {
+    await dataSource.query(
+      `DELETE FROM "core"."workflowVersion" WHERE "coreWorkflowId" IS NULL`,
+    );
+
+    const workspaces = await dataSource.query<{ id: string }[]>(
+      `SELECT "id" FROM "core"."workspace"`,
+    );
+
+    for (const workspace of workspaces) {
+      await this.workspaceCacheService.flush(workspace.id, [
+        'flatWorkflowVersionMaps',
+        'workflowAutomatedTriggerMaps',
+      ]);
+    }
+  }
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."workflowVersion" ALTER COLUMN "coreWorkflowId" SET NOT NULL`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "core"."IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW"`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW" ON "core"."workflowVersion" ("workspaceId", "coreWorkflowId") WHERE "status" = 'ACTIVE'`,
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "core"."IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW"`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW" ON "core"."workflowVersion" ("workspaceId", "workflowId") WHERE "status" = 'ACTIVE'`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."workflowVersion" ALTER COLUMN "coreWorkflowId" DROP NOT NULL`,
+    );
+  }
+}

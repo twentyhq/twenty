@@ -41,10 +41,12 @@ export const extractDocumentationExamples = (
       const opening = FENCE_OPENING_PATTERN.exec(line);
 
       if (opening) {
+        const [, indentation = '', marker = '', language = ''] = opening;
+
         openFence = {
-          indentation: opening[1].length,
-          marker: opening[2],
-          language: opening[3].toLowerCase(),
+          indentation: indentation.length,
+          marker,
+          language: language.toLowerCase(),
           codeLines: [],
         };
       }

@@ -10,6 +10,7 @@ import { Dropdown } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -60,7 +61,6 @@ export const Select = <TValue extends SelectValue>({
   renderAsTag = false,
 }: SelectProps<TValue>) => {
   const dropdownContentRef = useRef<HTMLDivElement>(null);
-  const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -88,20 +88,15 @@ export const Select = <TValue extends SelectValue>({
     return null;
   }, [emptyOption, options, pinnedOption, value]);
 
-  const filteredOptions = useMemo(() => {
-    if (!isNonEmptyString(searchInputValue)) {
-      return options;
-    }
+  const normalizedSearchInputValue = normalizeSearchText(searchInputValue);
 
-    const normalizedSearch = normalizeSearchText(searchInputValue);
-
-    return options.filter(
-      ({ label, searchKeywords }) =>
-        normalizeSearchText(label).includes(normalizedSearch) ||
-        (isDefined(searchKeywords) &&
-          normalizeSearchText(searchKeywords).includes(normalizedSearch)),
-    );
-  }, [options, searchInputValue]);
+  const filteredOptions = useMemo(
+    () =>
+      options.filter((option) =>
+        isSelectOptionMatchingSearch({ option, normalizedSearchInputValue }),
+      ),
+    [options, normalizedSearchInputValue],
+  );
 
   const isDisabled =
     disabledFromProps ||
@@ -110,10 +105,12 @@ export const Select = <TValue extends SelectValue>({
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
-  const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
-      ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
+  const shouldShowPinnedOption =
+    isDefined(pinnedOption) &&
+    isSelectOptionMatchingSearch({
+      option: pinnedOption,
+      normalizedSearchInputValue,
+    });
 
   const controlSelectedOption = useMemo(() => {
     if (!isDefined(selectedOption)) {
@@ -137,7 +134,6 @@ export const Select = <TValue extends SelectValue>({
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
-      tabIndex={0}
       onBlur={(event) => {
         const nextFocus = event.relatedTarget;
         const isFocusWithinSelect =
@@ -151,7 +147,6 @@ export const Select = <TValue extends SelectValue>({
 
         onBlur?.();
       }}
-      ref={selectContainerRef}
     >
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
@@ -189,10 +184,11 @@ export const Select = <TValue extends SelectValue>({
                     ) ??
                     true
             }
-            width={dropDownMenuWidth}
+            width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
             align="start"
             sideOffset={dropdownOffset?.y ?? 0}
             alignOffset={dropdownOffset?.x ?? 0}
+            aria-label={isNonEmptyString(label) ? label : undefined}
           >
             {withSearchInput === true && (
               <Dropdown.Search
@@ -205,7 +201,7 @@ export const Select = <TValue extends SelectValue>({
             {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
               <Dropdown.Separator />
             )}
-            {isDefined(pinnedOption) && (
+            {shouldShowPinnedOption && (
               <Dropdown.Section>
                 <Dropdown.OptionItem
                   onSelect={() => {
@@ -230,7 +226,7 @@ export const Select = <TValue extends SelectValue>({
                 </Dropdown.OptionItem>
               </Dropdown.Section>
             )}
-            {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
+            {shouldShowPinnedOption && isNonEmptyArray(filteredOptions) && (
               <Dropdown.Separator />
             )}
             {isNonEmptyArray(filteredOptions) && (

@@ -10,7 +10,7 @@ import { getMonthsDescription } from './descriptors/getMonthsDescription';
 import {
   type CronDescriptionOptions,
   DEFAULT_CRON_DESCRIPTION_OPTIONS,
-} from './types/cronDescriptionOptions';
+} from './types/CronDescriptionOptions';
 import { parseCronExpression } from './utils/parseCronExpression';
 
 export const describeCronExpression = (

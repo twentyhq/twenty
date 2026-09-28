@@ -1,7 +1,7 @@
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { parseOrderBy } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/utils/parse-order-by-rest-request-common.util';
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 
 export const parseOrderByRestRequest = (
   request: AuthenticatedRequest,

@@ -4,7 +4,12 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -25,20 +30,34 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   SkillGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver(() => SkillDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class SkillResolver {
   constructor(private readonly skillService: SkillService) {}
 
   @Query(() => [SkillDTO])
   async skills(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<SkillDTO[]> {
-    return this.skillService.findAll(workspace.id);
+    const skills = await this.skillService.findAll(workspace.id);
+
+    return skills.filter((skill) =>
+      canCallerReachApplication({
+        callingApplication,
+        applicationId: skill.applicationId,
+      }),
+    );
   }
 
   @Query(() => SkillDTO, { nullable: true })
   async skill(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @ApplicationTargetArg(
+      'id',
+      { kind: 'applicationOwnedEntity', metadataName: 'skill' },
+      { type: () => UUIDScalarType },
+    )
+    id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO | null> {
     return this.skillService.findById(id, workspace.id);

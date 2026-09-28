@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
   type ObjectRecordDestroyEvent,
   type ObjectRecordRestoreEvent,
@@ -22,18 +21,6 @@ export class WorkflowCoreDualWriteListener {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
-
-  @OnDatabaseBatchEvent('workflow', DatabaseEventAction.CREATED)
-  async handleCreated(
-    batchEvent: CustomWorkspaceEventBatch<
-      ObjectRecordCreateEvent<WorkflowWorkspaceEntity>
-    >,
-  ): Promise<void> {
-    await this.upsertToCore(
-      batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.after.id),
-    );
-  }
 
   @OnDatabaseBatchEvent('workflow', DatabaseEventAction.UPDATED)
   async handleUpdated(

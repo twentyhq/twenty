@@ -15,7 +15,7 @@ import { type PendingFileCleanupCronJob } from 'src/engine/core-modules/file/fil
 import {
   FILE_STATUS,
   type FileStatus,
-} from 'src/engine/core-modules/file/types/file-status.types';
+} from 'src/engine/core-modules/file/types/file-status.type';
 import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';

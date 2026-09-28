@@ -60,7 +60,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
           title={t`Contact auto-creation`}
           description={t`Automatically create contacts for people you've participated in an event with.`}
         />
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconUserPlus}
             title={t`Auto-creation`}
@@ -72,7 +72,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
               );
             }}
           />
-        </Card>
+        </Card.Root>
       </Section.Root>
     </StyledDetailsContainer>
   );

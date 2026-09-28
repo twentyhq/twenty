@@ -65,6 +65,10 @@ import {
   RULE_NAME as noNavigatePreferLinkName,
 } from './rules/no-navigate-prefer-link';
 import {
+  rule as noRuntimeImportFromUpgradeCommand,
+  RULE_NAME as noRuntimeImportFromUpgradeCommandName,
+} from './rules/no-runtime-import-from-upgrade-command';
+import {
   rule as noStateUseref,
   RULE_NAME as noStateUserefName,
 } from './rules/no-state-useref';
@@ -88,6 +92,10 @@ import {
   rule as styledComponentsPrefixedWithStyled,
   RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
+import {
+  rule as typesFolderFilename,
+  RULE_NAME as typesFolderFilenameName,
+} from './rules/types-folder-filename';
 import {
   rule as upgradeCommandFilename,
   RULE_NAME as upgradeCommandFilenameName,
@@ -113,6 +121,7 @@ export default definePlugin({
     [noMiscasedAcronymInIdentifierName]: noMiscasedAcronymInIdentifier,
     [noMiscasedAcronymInMessageName]: noMiscasedAcronymInMessage,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
+    [noRuntimeImportFromUpgradeCommandName]: noRuntimeImportFromUpgradeCommand,
     [noStateUserefName]: noStateUseref,
     [noStorybookA11yDisableName]: noStorybookA11yDisable,
     [preferWorkspaceScopedRepositoryName]: preferWorkspaceScopedRepository,
@@ -120,6 +129,7 @@ export default definePlugin({
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
+    [typesFolderFilenameName]: typesFolderFilename,
     [upgradeCommandFilenameName]: upgradeCommandFilename,
   },
 });

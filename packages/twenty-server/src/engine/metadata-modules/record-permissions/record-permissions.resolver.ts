@@ -1,7 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -17,7 +15,6 @@ import { RecordSharingService } from 'src/engine/core-modules/record-share/servi
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import {
   RecordPermissionsResult,
   RecordPermissionsTargetInput,
@@ -31,7 +28,6 @@ const MAX_PERMISSION_TARGETS = 100;
 export class RecordPermissionsResolver {
   constructor(
     private readonly recordSharingService: RecordSharingService,
-    private readonly agentChatSharingService: AgentChatSharingService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -74,25 +70,13 @@ export class RecordPermissionsResolver {
         canDelete: false,
         canSoftDelete: false,
       };
-      // Older workspaces keep chat history owner-only until the sharing upgrade
-      // installs grants. Reuse that compatibility policy during rolling deploys.
-      const isLegacyChat =
-        objectMetadata?.universalIdentifier ===
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
-        objectMetadata.readability === MetadataReadability.SYSTEM;
       const permissions = !isDefined(objectMetadata)
         ? new Map<string, RecordPermissionsDTO>()
-        : isLegacyChat
-          ? await this.agentChatSharingService.getPermissionsForThreads({
-              workspaceId: authContext.workspace.id,
-              userWorkspaceId: authContext.userWorkspaceId,
-              threadIds: [...recordIds],
-            })
-          : await this.recordSharingService.getPermissionsForRecords({
-              authContext,
-              objectMetadataId,
-              recordIds: [...recordIds],
-            });
+        : await this.recordSharingService.getPermissionsForRecords({
+            authContext,
+            objectMetadataId,
+            recordIds: [...recordIds],
+          });
       for (const recordId of recordIds) {
         results.push({
           objectMetadataId,

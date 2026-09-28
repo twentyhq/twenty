@@ -16,7 +16,7 @@ import {
   type LicensedBillingSubscriptionItem,
   type MeteredBillingSubscriptionItem,
 } from 'src/engine/core-modules/billing/types/billing-subscription-item.type';
-import { type BillingSubscriptionWithSubscriptionItems } from 'src/engine/core-modules/billing/types/billing-subscription-with-subscription-items';
+import { type BillingSubscriptionWithSubscriptionItems } from 'src/engine/core-modules/billing/types/billing-subscription-with-subscription-items.type';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 
 const assertIsMeteredTiersSchemaOrThrow = (

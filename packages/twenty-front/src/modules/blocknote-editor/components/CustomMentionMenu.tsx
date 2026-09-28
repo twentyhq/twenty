@@ -9,7 +9,7 @@ import { MentionMenuListItem } from '@/mention/components/MentionMenuListItem';
 import {
   type CustomMentionMenuProps,
   type MentionItem,
-} from '@/blocknote-editor/types/types';
+} from '@/blocknote-editor/types/SuggestionMenuItems';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';

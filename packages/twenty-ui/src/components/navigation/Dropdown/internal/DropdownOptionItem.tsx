@@ -29,7 +29,7 @@ export const DropdownOptionItem = ({
   id,
   ...props
 }: DropdownOptionItemProps) => {
-  const { type, multiple, closeTree } = useDropdownContext();
+  const { type, multiple, closeTree, searchTargetId } = useDropdownContext();
   const isMenu = type === 'menu';
   const menuOptionRole = multiple ? 'menuitemcheckbox' : 'menuitemradio';
   const generatedId = useId();
@@ -51,6 +51,7 @@ export const DropdownOptionItem = ({
         onFocus?.(event);
       }}
       data-dropdown-item=""
+      data-dropdown-option-item=""
       onClick={(event) => {
         onClick?.(event);
 
@@ -70,6 +71,7 @@ export const DropdownOptionItem = ({
           render={render ?? <button type="button" />}
           disabled={disabled}
           selected={selected}
+          focused={searchTargetId === itemId}
           indicator={indicator ?? (multiple ? 'checkbox' : 'check')}
           color={color}
           startIcon={startIcon}
