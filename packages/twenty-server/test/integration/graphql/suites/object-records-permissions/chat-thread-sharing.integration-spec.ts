@@ -1,3 +1,5 @@
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
@@ -109,6 +111,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const owner = {
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
       await chatService.createThread({
         ...owner,
@@ -252,10 +255,12 @@ describe('Conversation sharing through the authenticated API', () => {
       const owner = {
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
       const sender = {
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       };
       const principal =
         audience === 'member'
@@ -449,9 +454,11 @@ describe('Conversation sharing through the authenticated API', () => {
     const owner = {
       workspaceId,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     const options = { workspaceId, options: { dryRun: false } } as never;
+
     const originalFlag =
       (await cache.getOrRecompute(workspaceId, ['featureFlagsMap']))
         .featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
@@ -494,7 +501,7 @@ describe('Conversation sharing through the authenticated API', () => {
         archived.archivedAt,
       );
       expect(
-        (await chatService.getThreadsForUser(owner)).some(
+        (await chatService.getThreadsForMember(owner)).some(
           ({ id }) => id === owner.threadId,
         ),
       ).toBe(true);
@@ -503,6 +510,7 @@ describe('Conversation sharing through the authenticated API', () => {
     } finally {
       await command.up(options);
       await chatService.hardDeleteThread(owner);
+
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
         value: originalFlag,
@@ -523,11 +531,13 @@ describe('Conversation sharing through the authenticated API', () => {
     const owner = {
       workspaceId,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     const writer = {
       ...owner,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     };
     await chat.createThread({
       ...owner,
@@ -554,7 +564,7 @@ describe('Conversation sharing through the authenticated API', () => {
         }),
       ).toMatchObject({
         title: 'Collaborative rename',
-        userWorkspaceId: owner.userWorkspaceId,
+        workspaceMemberId: owner.workspaceMemberId,
       });
       const writerView = await readThread(
         owner.threadId,
@@ -588,6 +598,7 @@ describe('Conversation sharing through the authenticated API', () => {
     const owner = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     const cleanup = jest
@@ -605,16 +616,30 @@ describe('Conversation sharing through the authenticated API', () => {
     });
   });
 
-  it('stores the creator as the workspace member owner', async () => {
+  it('stores the member owner and preserves the legacy API identity', async () => {
     const chat =
       getAppProviderByClassName<AgentChatService>('AgentChatService');
     const owner = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
     await chat.createThread({ ...owner, id: owner.threadId });
     try {
+      const response = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id userWorkspaceId',
+          filter: { id: { eq: owner.threadId } },
+        }),
+      );
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.agentChatThread).toEqual({
+        id: owner.threadId,
+        userWorkspaceId: owner.userWorkspaceId,
+      });
+
       const rows: { workspaceMemberId: string; userWorkspaceId: string }[] =
         await global.testDataSource.query(
           `SELECT "workspaceMemberId", "userWorkspaceId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,

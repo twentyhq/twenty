@@ -257,6 +257,7 @@ describe('StreamAgentChatJob', () => {
     };
     const actorService = {
       authorizeJob: jest.fn().mockResolvedValue({
+        authorization: { authContext: { workspaceMemberId: 'member' } },
         message: { id: 'user-message-id', turnId: 'turn-id' },
       }),
     };

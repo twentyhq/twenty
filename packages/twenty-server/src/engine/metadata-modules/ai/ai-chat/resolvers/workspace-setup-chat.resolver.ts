@@ -1,3 +1,4 @@
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
@@ -46,6 +47,7 @@ export class WorkspaceSetupChatResolver {
     personContext: WorkspacePersonEnrichment | null,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.workspaceSetupChatService.startWorkspaceSetupChat({
@@ -53,6 +55,7 @@ export class WorkspaceSetupChatResolver {
       userEmail: user.email,
       userLocale: user.locale,
       userWorkspaceId,
+      workspaceMemberId,
       workspace,
       companyContext: sanitizeWorkspaceCompanyEnrichment(companyContext),
       personContext: matchWorkspacePersonEnrichmentToUserEmail({
