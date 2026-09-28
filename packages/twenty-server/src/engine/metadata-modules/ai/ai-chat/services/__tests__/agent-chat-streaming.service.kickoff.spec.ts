@@ -38,7 +38,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     const threadRepository = {
       findOneOrFail: jest
         .fn()
-        .mockResolvedValue({ userWorkspaceId: 'user-workspace-id' }),
+        .mockResolvedValue({ workspaceMemberId: 'member' }),
       findOne: jest.fn().mockResolvedValue(kickoffThread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
     };
@@ -89,7 +89,9 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       {
         authorizeJob: jest.fn().mockResolvedValue(undefined),
         authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest.fn().mockResolvedValue({}),
+        authorize: jest
+          .fn()
+          .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
         resolveMessage: jest.fn().mockResolvedValue({
           sender: {
             userWorkspaceId: 'user-workspace-id',
@@ -110,6 +112,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
   };
 
   const kickoffArguments = {
+    workspaceMemberId: 'member',
     thread: kickoffThread,
     userWorkspaceId: 'user-workspace-id',
     workspace,

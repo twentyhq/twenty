@@ -2,7 +2,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
-const USER_WORKSPACE_ID = 'user-workspace-id';
+const WORKSPACE_MEMBER_ID = 'user-workspace-id';
 
 const buildService = () => {
   const threadRepository = {
@@ -38,7 +38,7 @@ describe('AgentChatService getMessagesForThread', () => {
 
     await service.getMessagesForThread({
       threadId: THREAD_ID,
-      userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
       workspaceId: WORKSPACE_ID,
     });
 
@@ -55,7 +55,7 @@ describe('AgentChatService getMessagesForThread', () => {
 
     await service.getMessagesForThread({
       threadId: THREAD_ID,
-      userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
       workspaceId: WORKSPACE_ID,
       includeHidden: true,
     });

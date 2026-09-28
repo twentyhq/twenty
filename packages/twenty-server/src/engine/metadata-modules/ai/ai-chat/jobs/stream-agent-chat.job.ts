@@ -162,7 +162,7 @@ export class StreamAgentChatJob {
         );
       }
 
-      const { message } = await this.actorService.authorizeJob({
+      const { message, authorization } = await this.actorService.authorizeJob({
         workspaceId: data.workspaceId,
         threadId: data.threadId,
         messageId: data.messageId,
@@ -176,7 +176,12 @@ export class StreamAgentChatJob {
         );
       }
       await this.executeStream(
-        { ...data, messageId: message.id, existingTurnId: message.turnId },
+        {
+          ...data,
+          messageId: message.id,
+          existingTurnId: message.turnId,
+          workspaceMemberId: authorization.authContext.workspaceMemberId,
+        },
         workspace,
         abortController.signal,
         turnModelId,
@@ -334,7 +339,10 @@ export class StreamAgentChatJob {
   }
 
   private async executeStream(
-    data: StreamAgentChatJobData & { existingTurnId: string },
+    data: StreamAgentChatJobData & {
+      existingTurnId: string;
+      workspaceMemberId: string;
+    },
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
     turnModelId: string,
@@ -343,7 +351,7 @@ export class StreamAgentChatJob {
       ? Promise.resolve(null)
       : this.agentChatService
           .generateTitleIfNeeded({
-            userWorkspaceId: data.userWorkspaceId,
+            workspaceMemberId: data.workspaceMemberId,
             threadId: data.threadId,
             messageContent: data.lastUserMessageText,
             workspaceId: data.workspaceId,
@@ -369,7 +377,7 @@ export class StreamAgentChatJob {
     turnModelId,
   }: {
     workspace: WorkspaceEntity;
-    data: StreamAgentChatJobData;
+    data: StreamAgentChatJobData & { workspaceMemberId: string };
     turnId: string;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
@@ -524,7 +532,7 @@ export class StreamAgentChatJob {
                     outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
-                    userWorkspaceId: data.userWorkspaceId,
+                    workspaceMemberId: data.workspaceMemberId,
                     streamUsage,
                     lastStepConversationSize,
                     totalCacheCreationTokens,
@@ -739,7 +747,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -771,7 +779,7 @@ export class StreamAgentChatJob {
     outOfCredits,
     threadId,
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
     streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
@@ -787,7 +795,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -879,7 +887,7 @@ export class StreamAgentChatJob {
 
     await this.agentChatService.notifyThreadUsageUpdated({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
 
