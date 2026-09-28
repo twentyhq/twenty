@@ -35,6 +35,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import {
+  ApplicationVariableScope,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
@@ -177,7 +178,11 @@ export const SettingsApplicationDetails = () => {
   );
 
   const missingRequiredApplicationVariables =
-    getMissingRequiredApplicationVariables(displayedApplicationVariables);
+    getMissingRequiredApplicationVariables(
+      displayedApplicationVariables.filter(
+        ({ scope }) => scope === ApplicationVariableScope.WORKSPACE,
+      ),
+    );
 
   const hasVariablesTab =
     !isNonEmptyArray(workspaceSettingsMenuItems) &&

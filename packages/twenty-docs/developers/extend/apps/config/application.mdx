@@ -133,7 +133,7 @@ The same applies to front components reading values via `getApplicationVariable(
 Each application variable has a `scope`:
 
 - **`WORKSPACE`** (default): one value for the whole workspace, set by a member who can manage apps.
-- **`USER`**: each member keeps their own value. A member who has not set one gets the workspace value, which starts as the manifest `value` and is what the app's settings page edits.
+- **`USER`**: each member keeps their own value.
 
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
@@ -152,7 +152,9 @@ export default defineApplication({
 });
 ```
 
-A user variable cannot be `isSecret` or `isRequired`. The build and the sync both refuse it.
+User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`.
+
+For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
 
 User variables are never injected into `process.env` or returned by `getApplicationVariable`, because the person who triggered a run is not always the person the run is about.
 
