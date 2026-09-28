@@ -12345,7 +12345,7 @@ msgstr "Jezici"
 #. js-lingui-id: oWZaVM
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages without a translation show the source text."
-msgstr ""
+msgstr "Jezici bez prevoda prikazuju izvorni tekst."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14841,7 +14841,7 @@ msgstr "Nijedan posao nije ponovljen{errorDetails}"
 #. js-lingui-id: CYafz+
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 msgid "No languages found"
-msgstr ""
+msgstr "Nijedan jezik nije pronađen"
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -18555,7 +18555,7 @@ msgstr "Sačuvajte zapis pre prilaganja datoteke"
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
-msgstr ""
+msgstr "Prvo sačuvajte izmene"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -18685,7 +18685,7 @@ msgstr "Pretražite polje..."
 #. js-lingui-id: grvmBE
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Search a language..."
-msgstr ""
+msgstr "Pretražite jezik..."
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -21029,7 +21029,7 @@ msgstr "Tekst"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 msgid "Text and background colors"
-msgstr ""
+msgstr "Boje teksta i pozadine"
 
 #. js-lingui-id: MapzEo
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -22331,7 +22331,7 @@ msgstr "Potez je uspešno evaluiran"
 #. js-lingui-id: M4zYAl
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
-msgstr ""
+msgstr "Pretvori u"
 
 #. js-lingui-id: 8680YN
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx

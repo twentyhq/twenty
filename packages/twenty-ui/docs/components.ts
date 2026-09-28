@@ -1,4 +1,6 @@
+import { ANIMATED_EXPANDABLE_CONTAINER_PROP_DESCRIPTIONS } from './animatedExpandableContainerPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
+import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
@@ -6,23 +8,136 @@ import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
 import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS } from './circularProgressBarPropDescriptions';
+import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
+import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
 import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
+import { HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS } from './horizontalSeparatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
+import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
+import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
+import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
+import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
+import { RESIZE_HANDLE_PROP_DESCRIPTIONS } from './resizeHandlePropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
+import { SEGMENTED_CONTROL_PROP_DESCRIPTIONS } from './segmentedControlPropDescriptions';
 import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
+import { TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './textDirectionProviderPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
+import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'VisibilityHidden',
+    source: 'primitives/accessibility/components/VisibilityHidden.tsx',
+    entryPoint: 'twenty-ui/primitives/accessibility',
+    slug: 'accessibility/visibility-hidden',
+    propDescriptions: VISIBILITY_HIDDEN_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ColorSample',
+    source: 'primitives/data-display/ColorSample/ColorSample.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/color-sample',
+    propDescriptions: COLOR_SAMPLE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Pill',
+    source: 'primitives/data-display/Pill/Pill.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/pill',
+    propDescriptions: PILL_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Banner',
+    source: 'primitives/feedback/Banner/Banner.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/banner',
+    propDescriptions: BANNER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'CircularProgressBar',
+    source: 'primitives/feedback/CircularProgressBar/CircularProgressBar.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/circular-progress-bar',
+    propDescriptions: CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Loader',
+    source: 'primitives/feedback/Loader/Loader.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/loader',
+    propDescriptions: LOADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ProgressBar',
+    source: 'primitives/feedback/ProgressBar/ProgressBar.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/progress-bar',
+    propDescriptions: PROGRESS_BAR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'SegmentedControl',
+    source: 'primitives/input/SegmentedControl/SegmentedControl.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/segmented-control',
+    propDescriptions: SEGMENTED_CONTROL_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'AnimatedExpandableContainer',
+    source:
+      'primitives/layout/AnimatedExpandableContainer/AnimatedExpandableContainer.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/animated-expandable-container',
+    propDescriptions: ANIMATED_EXPANDABLE_CONTAINER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'HorizontalSeparator',
+    source: 'primitives/layout/HorizontalSeparator/HorizontalSeparator.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/horizontal-separator',
+    propDescriptions: HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ResizeHandle',
+    source: 'primitives/layout/ResizeHandle/ResizeHandle.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/resize-handle',
+    propDescriptions: RESIZE_HANDLE_PROP_DESCRIPTIONS,
+    propDefaults: { defaultValue: '150', min: '50', max: '500', step: '10' },
+  },
+  {
+    name: 'TextDirectionProvider',
+    source: 'primitives/layout/TextDirectionProvider/TextDirectionProvider.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/text-direction-provider',
+    propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ClickToActionLink',
+    source: 'primitives/navigation/ClickToActionLink/ClickToActionLink.tsx',
+    entryPoint: 'twenty-ui/primitives/navigation',
+    slug: 'navigation/click-to-action-link',
+    propDescriptions: CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'OverflowingTextWithTooltip',
+    source:
+      'primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/overflowing-text-with-tooltip',
+    propDescriptions: OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS,
+  },
   {
     name: 'LightIconButton',
     source: 'components/input/LightIconButton/LightIconButton.tsx',

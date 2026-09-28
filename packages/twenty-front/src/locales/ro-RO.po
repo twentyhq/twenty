@@ -12345,7 +12345,7 @@ msgstr "Limbi"
 #. js-lingui-id: oWZaVM
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages without a translation show the source text."
-msgstr ""
+msgstr "Limbile fără traducere afișează textul sursă."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14841,7 +14841,7 @@ msgstr "Nu au fost reîncercate locuri de muncă{errorDetails}"
 #. js-lingui-id: CYafz+
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 msgid "No languages found"
-msgstr ""
+msgstr "Nu s-au găsit limbi"
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -18555,7 +18555,7 @@ msgstr "Salvați înregistrarea înainte de a atașa un fișier"
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
-msgstr ""
+msgstr "Salvați mai întâi modificările"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -18685,7 +18685,7 @@ msgstr "Caută un câmp..."
 #. js-lingui-id: grvmBE
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Search a language..."
-msgstr ""
+msgstr "Căutați o limbă..."
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -21029,7 +21029,7 @@ msgstr "Text"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 msgid "Text and background colors"
-msgstr ""
+msgstr "Culori pentru text și fundal"
 
 #. js-lingui-id: MapzEo
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -22331,7 +22331,7 @@ msgstr ""
 #. js-lingui-id: M4zYAl
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
-msgstr ""
+msgstr "Transformă în"
 
 #. js-lingui-id: 8680YN
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx

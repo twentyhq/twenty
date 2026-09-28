@@ -12345,7 +12345,7 @@ msgstr "Sprog"
 #. js-lingui-id: oWZaVM
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages without a translation show the source text."
-msgstr ""
+msgstr "Sprog uden en oversættelse viser kildeteksten."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14841,7 +14841,7 @@ msgstr "Ingen jobs blev forsøgt igen{errorDetails}"
 #. js-lingui-id: CYafz+
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 msgid "No languages found"
-msgstr ""
+msgstr "Ingen sprog fundet"
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -18555,7 +18555,7 @@ msgstr "Gem posten, før du vedhæfter en fil"
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
-msgstr ""
+msgstr "Gem først dine ændringer"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -18685,7 +18685,7 @@ msgstr "Søg i et felt..."
 #. js-lingui-id: grvmBE
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Search a language..."
-msgstr ""
+msgstr "Søg efter et sprog..."
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -21029,7 +21029,7 @@ msgstr "Tekst"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 msgid "Text and background colors"
-msgstr ""
+msgstr "Tekst- og baggrundsfarver"
 
 #. js-lingui-id: MapzEo
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -22333,7 +22333,7 @@ msgstr ""
 #. js-lingui-id: M4zYAl
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
-msgstr ""
+msgstr "Skift til"
 
 #. js-lingui-id: 8680YN
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx

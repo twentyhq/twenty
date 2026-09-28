@@ -12345,7 +12345,7 @@ msgstr "Tillar"
 #. js-lingui-id: oWZaVM
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages without a translation show the source text."
-msgstr ""
+msgstr "Tarjimasi yo‘q tillarda manba matni ko‘rsatiladi."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -14841,7 +14841,7 @@ msgstr "Hech qanday ish qayta ishga tushirilmadi{errorDetails}"
 #. js-lingui-id: CYafz+
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 msgid "No languages found"
-msgstr ""
+msgstr "Hech qanday til topilmadi"
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -18555,7 +18555,7 @@ msgstr "Fayl biriktirishdan oldin yozuvni saqlang"
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
-msgstr ""
+msgstr "Avval o‘zgarishlaringizni saqlang"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -18685,7 +18685,7 @@ msgstr "Maydonni qidiring..."
 #. js-lingui-id: grvmBE
 #: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Search a language..."
-msgstr ""
+msgstr "Tilni qidirish..."
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -21029,7 +21029,7 @@ msgstr "Matn"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
 msgid "Text and background colors"
-msgstr ""
+msgstr "Matn va fon ranglari"
 
 #. js-lingui-id: MapzEo
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -22331,7 +22331,7 @@ msgstr "Navbat muvaffaqiyatli baholandi"
 #. js-lingui-id: M4zYAl
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
-msgstr ""
+msgstr "O'zgartirish"
 
 #. js-lingui-id: 8680YN
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx

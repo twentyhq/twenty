@@ -1,3 +1,5 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -24,7 +26,10 @@ const createFlatLogicFunction = (
     ...overrides,
   }) as FlatLogicFunction;
 
-const generateDescriptors = async (logicFunctions: FlatLogicFunction[]) => {
+const generateDescriptors = async (
+  logicFunctions: FlatLogicFunction[],
+  application?: FlatApplication,
+) => {
   const flatLogicFunctionMaps =
     createEmptyFlatEntityMaps() as FlatEntityMaps<FlatLogicFunction>;
 
@@ -59,7 +64,12 @@ const generateDescriptors = async (logicFunctions: FlatLogicFunction[]) => {
   const provider = new LogicFunctionToolProvider(flatEntityMapsCacheService);
 
   return (await provider.generateDescriptors(
-    { workspaceId, roleId, rolePermissionConfig: { unionOf: [roleId] } },
+    {
+      workspaceId,
+      roleId,
+      rolePermissionConfig: { unionOf: [roleId] },
+      application,
+    },
     { includeSchemas: false },
   )) as ToolIndexEntry[];
 };
@@ -110,5 +120,55 @@ describe('LogicFunctionToolProvider', () => {
     ]);
 
     expect(descriptors).toEqual([]);
+  });
+
+  it('should only expose the calling application tools to an application token', async () => {
+    const logicFunctions = [
+      createFlatLogicFunction({
+        name: 'own-tool',
+        applicationId: 'calling-application-id',
+      }),
+      createFlatLogicFunction({
+        name: 'other-tool',
+        applicationId: 'other-application-id',
+      }),
+    ];
+
+    const sessionDescriptors = await generateDescriptors(logicFunctions);
+    const applicationDescriptors = await generateDescriptors(logicFunctions, {
+      id: 'calling-application-id',
+    } as FlatApplication);
+
+    expect(sessionDescriptors.map(({ name }) => name)).toEqual([
+      'app_own_tool',
+      'app_other_tool',
+    ]);
+    expect(applicationDescriptors.map(({ name }) => name)).toEqual([
+      'app_own_tool',
+    ]);
+  });
+
+  it('should expose every application tool to an OAuth-only client', async () => {
+    const descriptors = await generateDescriptors(
+      [
+        createFlatLogicFunction({
+          name: 'first-tool',
+          applicationId: 'first-application-id',
+        }),
+        createFlatLogicFunction({
+          name: 'second-tool',
+          applicationId: 'second-application-id',
+        }),
+      ],
+      {
+        id: 'mcp-client-application-id',
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      } as FlatApplication,
+    );
+
+    expect(descriptors.map(({ name }) => name)).toEqual([
+      'app_first_tool',
+      'app_second_tool',
+    ]);
   });
 });

@@ -7,6 +7,8 @@ import { type EnterprisePlanService } from 'src/engine/core-modules/enterprise/s
 import { EventLogsService } from 'src/engine/core-modules/event-logs/event-logs.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
+const CALLING_APPLICATION_ID = 'calling-application-id';
+
 const makeDeletedRecordRow = (recordId: string, timestamp: string) => ({
   event: 'Object Record Deleted',
   timestamp,
@@ -108,5 +110,61 @@ describe('EventLogsService', () => {
       'company-2',
     ]);
     expect(select).toHaveBeenCalledTimes(2);
+  });
+
+  it('should scope application logs to the calling application', async () => {
+    select.mockResolvedValue([]);
+
+    await service.queryEventLogs(
+      'workspace-id',
+      { table: EventLogTable.APPLICATION_LOG },
+      { callingApplicationId: CALLING_APPLICATION_ID },
+    );
+
+    expect(select).toHaveBeenCalledTimes(2);
+
+    for (const [query, params] of select.mock.calls) {
+      expect(query).toContain(
+        '"applicationId" = {callingApplicationId:String}',
+      );
+      expect(params).toMatchObject({
+        workspaceId: 'workspace-id',
+        callingApplicationId: CALLING_APPLICATION_ID,
+      });
+    }
+  });
+
+  it('should keep the application scope when fetching the rows sharing the last timestamp', async () => {
+    select
+      .mockResolvedValueOnce(pageRowsEndingOnSharedTimestamp)
+      .mockResolvedValueOnce([{ totalCount: 5 }])
+      .mockResolvedValueOnce([]);
+
+    await service.queryEventLogs(
+      'workspace-id',
+      { table: EventLogTable.APPLICATION_LOG, first: 2 },
+      { callingApplicationId: CALLING_APPLICATION_ID },
+    );
+
+    expect(select).toHaveBeenCalledTimes(3);
+    expect(select).toHaveBeenLastCalledWith(
+      expect.stringContaining(
+        '"applicationId" = {callingApplicationId:String}',
+      ),
+      expect.objectContaining({ callingApplicationId: CALLING_APPLICATION_ID }),
+    );
+  });
+
+  it('should return every application log to a caller that is not an application', async () => {
+    select.mockResolvedValue([]);
+
+    await service.queryEventLogs('workspace-id', {
+      table: EventLogTable.APPLICATION_LOG,
+    });
+
+    for (const [query, params] of select.mock.calls) {
+      expect(query).not.toContain('"applicationId"');
+      expect(params).not.toHaveProperty('callingApplicationId');
+    }
   });
 });

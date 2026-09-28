@@ -9,9 +9,7 @@ const NEWER_THREAD_ID = '20202020-0000-4000-8000-000000000005';
 const READABLE_THREAD_IDS = [OLDER_THREAD_ID, NEWER_THREAD_ID];
 const NEWER_THREAD_LAST_MESSAGE_AT = new Date('2026-09-24T12:00:00.000Z');
 
-const buildService = ({
-  storage = 'workspace',
-}: { storage?: 'workspace' | 'core' } = {}) => {
+const buildService = () => {
   // The query ranks the newer thread first; the rows are read back the other
   // way round, so only the ranking can put them in order.
   const rankedThreadsQuery = jest.fn().mockResolvedValue([
@@ -28,13 +26,11 @@ const buildService = ({
           work: (context: {
             manager: { query: jest.Mock };
             table: (name: string) => string;
-            storage: 'workspace' | 'core';
           }) => Promise<unknown>,
         ) =>
           work({
             manager: { query: rankedThreadsQuery },
             table: (name) => `"history"."${name}"`,
-            storage,
           }),
       ),
     find: jest.fn().mockResolvedValue([
@@ -99,19 +95,6 @@ describe('Listing the conversations attached to a record', () => {
       }),
       expect.objectContaining({ id: OLDER_THREAD_ID, lastMessageAt: null }),
     ]);
-  });
-
-  // Links live in the workspace schema, so a workspace whose history still
-  // routes to core has none to match.
-  it('returns an empty page while history routes to core', async () => {
-    const { service, rankedThreadsQuery, threadRepository } = buildService({
-      storage: 'core',
-    });
-
-    await expect(listThreadsAttachedToCompany(service)).resolves.toEqual([]);
-
-    expect(rankedThreadsQuery).not.toHaveBeenCalled();
-    expect(threadRepository.find).not.toHaveBeenCalled();
   });
 
   it('leaves the chat list unscoped and unpaged', async () => {
