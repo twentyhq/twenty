@@ -13,7 +13,7 @@ import { buildLogDriverUnsubscribeBaseUrl } from 'src/engine/core-modules/emaili
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
+import { encodeCampaignTrackingToken } from 'src/engine/core-modules/emailing-domain/utils/encode-campaign-tracking-token.util';
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
@@ -58,7 +58,6 @@ export class CampaignTrackingContentService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly shortLinkService: ShortLinkService,
-    private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -248,14 +247,11 @@ export class CampaignTrackingContentService {
         hashShortLink({ authoredTemplateUrl, resolvedDestinationUrl: url }),
       );
       const linkUrl = isDefined(shortLinkId)
-        ? `${baseUrl}/${ApiPath.Emailing}/c/${this.campaignTrackingTokenService.sign(
-            {
-              purpose: 'CLICK',
-              workspaceId,
-              deliveryId: recipient.deliveryId,
-              shortLinkId,
-            },
-          )}`
+        ? `${baseUrl}/${ApiPath.Emailing}/c/${encodeCampaignTrackingToken({
+            workspaceId,
+            deliveryId: recipient.deliveryId,
+            shortLinkId,
+          })}`
         : url;
 
       replacements[this.buildLinkTag({ messagePart: 'HTML', index })] =
