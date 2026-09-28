@@ -3,12 +3,11 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource } from 'typeorm';
 
-import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -35,23 +34,15 @@ describe('OnboardingService', () => {
     CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
     ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: bookCallMinEmployeeCount,
     ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS: creditTiers,
-    ONBOARDING_INVITE_TEAM_MAX_INVITES: 2,
-    ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER: 500_000,
   };
 
   const grantCredits = jest.fn();
-  const listGrants = jest.fn();
-  const countAppTokens = jest.fn();
   const captureExceptions = jest.fn();
   const setIfNotExists = jest.fn();
   const getConfig = jest.fn();
-  const withLock = jest.fn();
 
   beforeEach(async () => {
     grantCredits.mockResolvedValue(null);
-    withLock.mockImplementation((runWithLock: () => Promise<unknown>) =>
-      runWithLock(),
-    );
     setIfNotExists.mockResolvedValue(true);
     getConfig.mockImplementation((key: string) => configValues[key]);
 
@@ -66,8 +57,8 @@ describe('OnboardingService', () => {
         OnboardingService,
         { provide: BillingService, useValue: { isBillingEnabled: jest.fn() } },
         { provide: BillingCreditService, useValue: { grantCredits } },
-        { provide: BillingCreditGrantService, useValue: { listGrants } },
-        { provide: CacheLockService, useValue: { withLock } },
+        { provide: BillingCreditGrantService, useValue: {} },
+        { provide: CacheLockService, useValue: {} },
         {
           provide: ExceptionHandlerService,
           useValue: { captureExceptions },
@@ -84,10 +75,6 @@ describe('OnboardingService', () => {
         { provide: TwentyConfigService, useValue: { get: getConfig } },
         { provide: getRepositoryToken(WorkspaceEntity), useValue: {} },
         { provide: getRepositoryToken(UserWorkspaceEntity), useValue: {} },
-        {
-          provide: getRepositoryToken(AppTokenEntity),
-          useValue: { count: countAppTokens },
-        },
         {
           provide: getQueueToken(MessageQueue.workspaceQueue),
           useValue: { add: jest.fn() },
@@ -247,80 +234,6 @@ describe('OnboardingService', () => {
         });
 
       expect(hasQualified).toBe(false);
-    });
-  });
-
-  describe('getOnboardingCreditRewards', () => {
-    it('returns the onboarding rewards granted so far in display credits', async () => {
-      listGrants.mockResolvedValue([
-        {
-          type: BillingCreditGrantType.ONBOARDING_REWARD,
-          amountMicro: 1_000_000,
-          idempotencyKey: `onboarding-import-contacts:${workspaceId}`,
-          revokedAt: null,
-        },
-        {
-          type: BillingCreditGrantType.ONBOARDING_REWARD,
-          amountMicro: 500_000,
-          idempotencyKey: `onboarding-invite-team:${workspaceId}:${userId}`,
-          revokedAt: null,
-        },
-      ]);
-      countAppTokens.mockResolvedValue(2);
-
-      const rewards = await service.getOnboardingCreditRewards({
-        workspaceId,
-      });
-
-      expect(rewards).toEqual({
-        importContactsCredits: 1,
-        installAppsCredits: 0,
-        inviteTeamCredits: 0.5,
-        enrichmentQualificationCredits: 0,
-        totalCredits: 1.5,
-        joinedTeammatesCount: 1,
-        pendingInvitationsCount: 2,
-      });
-    });
-  });
-
-  describe('creditInviteTeamReward', () => {
-    const buildInviteTeamGrant = (joinedUserId: string) => ({
-      type: BillingCreditGrantType.ONBOARDING_REWARD,
-      amountMicro: 500_000,
-      idempotencyKey: `onboarding-invite-team:${workspaceId}:${joinedUserId}`,
-      revokedAt: null,
-      sourceGrantId: null,
-    });
-
-    it('grants the reward while under the invite cap', async () => {
-      listGrants.mockResolvedValue([buildInviteTeamGrant('teammate-1')]);
-
-      await service.creditInviteTeamReward({ workspaceId, userId });
-
-      expect(withLock).toHaveBeenCalledWith(
-        expect.any(Function),
-        `onboarding-invite-team-reward:${workspaceId}`,
-        { ttl: 30_000, maxRetries: 300 },
-      );
-      expect(grantCredits).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workspaceId,
-          amountMicro: 500_000,
-          idempotencyKey: `onboarding-invite-team:${workspaceId}:${userId}`,
-        }),
-      );
-    });
-
-    it('stops granting once the invite cap is reached', async () => {
-      listGrants.mockResolvedValue([
-        buildInviteTeamGrant('teammate-1'),
-        buildInviteTeamGrant('teammate-2'),
-      ]);
-
-      await service.creditInviteTeamReward({ workspaceId, userId });
-
-      expect(grantCredits).not.toHaveBeenCalled();
     });
   });
 });

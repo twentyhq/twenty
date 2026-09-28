@@ -4,18 +4,8 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { isNumber } from '@sniptt/guards';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import {
-  type DataSource,
-  IsNull,
-  MoreThan,
-  type QueryRunner,
-  Repository,
-} from 'typeorm';
+import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
-import {
-  AppTokenEntity,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
@@ -26,9 +16,10 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
+import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options.constant';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
-import { type OnboardingCreditRewardsDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-credit-rewards.dto';
+import { buildOnboardingInviteTeamRewardLockKey } from 'src/engine/core-modules/onboarding/utils/build-onboarding-invite-team-reward-lock-key.util';
 import { buildOnboardingStepTransitionLockName } from 'src/engine/core-modules/onboarding/utils/build-onboarding-step-transition-lock-name.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
@@ -40,11 +31,9 @@ import {
   OnboardingExceptionCode,
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
-import { getOnboardingCreditRewardsMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-credit-rewards-micro.util';
 import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
 import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -85,8 +74,6 @@ export class OnboardingService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(AppTokenEntity)
-    private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectDataSource()
@@ -852,15 +839,22 @@ export class OnboardingService {
     workspaceId: string;
     userId: string;
   }) {
+    const idempotencyKeyPrefix = `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`;
+
     try {
       await this.cacheLockService.withLock(
         async () => {
-          const { joinedTeammatesCount } = getOnboardingCreditRewardsMicro(
-            await this.billingCreditGrantService.listGrants(workspaceId),
-          );
+          const rewardedTeammatesCount =
+            await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix(
+              {
+                workspaceId,
+                type: BillingCreditGrantType.ONBOARDING_REWARD,
+                idempotencyKeyPrefix,
+              },
+            );
 
           if (
-            joinedTeammatesCount >=
+            rewardedTeammatesCount >=
             this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
           ) {
             return;
@@ -873,17 +867,21 @@ export class OnboardingService {
             ),
             type: BillingCreditGrantType.ONBOARDING_REWARD,
             reason: 'Onboarding reward: invited teammate signed up',
-            idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:${userId}`,
+            idempotencyKey: `${idempotencyKeyPrefix}${userId}`,
           });
         },
-        `onboarding-invite-team-reward:${workspaceId}`,
-        { ttl: 30_000, maxRetries: 300 },
+        buildOnboardingInviteTeamRewardLockKey(workspaceId),
+        ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS,
       );
     } catch (error) {
       this.logger.error(
         `Failed to credit onboarding invite reward for workspace ${workspaceId}`,
         error,
       );
+
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
     }
   }
 
@@ -978,47 +976,6 @@ export class OnboardingService {
         workspace: { id: workspaceId },
       });
     }
-  }
-
-  async getOnboardingCreditRewards({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<OnboardingCreditRewardsDTO> {
-    const [grants, pendingInvitationsCount] = await Promise.all([
-      this.billingCreditGrantService.listGrants(workspaceId),
-      this.countActiveOnboardingInvitations({ workspaceId }),
-    ]);
-
-    const { amountMicroByKind, totalAmountMicro, joinedTeammatesCount } =
-      getOnboardingCreditRewardsMicro(grants);
-
-    return {
-      importContactsCredits: toDisplayCredits(amountMicroByKind.importContacts),
-      installAppsCredits: toDisplayCredits(amountMicroByKind.installApps),
-      inviteTeamCredits: toDisplayCredits(amountMicroByKind.inviteTeam),
-      enrichmentQualificationCredits: toDisplayCredits(
-        amountMicroByKind.enrichmentQualification,
-      ),
-      totalCredits: toDisplayCredits(totalAmountMicro),
-      joinedTeammatesCount,
-      pendingInvitationsCount,
-    };
-  }
-
-  async countActiveOnboardingInvitations({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<number> {
-    return this.appTokenRepository.count({
-      where: {
-        workspaceId,
-        type: AppTokenType.OnboardingInvitationToken,
-        deletedAt: IsNull(),
-        expiresAt: MoreThan(new Date()),
-      },
-    });
   }
 
   async isOnboardingBookCallPending({

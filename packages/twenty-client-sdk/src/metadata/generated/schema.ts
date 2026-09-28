@@ -1571,17 +1571,6 @@ export interface InviteSuggestion {
     __typename: 'InviteSuggestion'
 }
 
-export interface OnboardingCreditRewards {
-    importContactsCredits: Scalars['Float']
-    installAppsCredits: Scalars['Float']
-    inviteTeamCredits: Scalars['Float']
-    enrichmentQualificationCredits: Scalars['Float']
-    totalCredits: Scalars['Float']
-    joinedTeammatesCount: Scalars['Int']
-    pendingInvitationsCount: Scalars['Int']
-    __typename: 'OnboardingCreditRewards'
-}
-
 export interface OnboardingStepNavigation {
     /** Onboarding status the user landed on */
     onboardingStatus?: OnboardingStatus
@@ -3367,7 +3356,6 @@ export interface Query {
     applicationConnectedAccounts: ApplicationConnectedAccountDTO[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
     getInviteSuggestions: InviteSuggestion[]
-    getOnboardingCreditRewards: OnboardingCreditRewards
     findWorkspaceInvitations: WorkspaceInvitation[]
     getApprovedAccessDomains: ApprovedAccessDomain[]
     getPageLayoutTabs: PageLayoutTab[]
@@ -5380,18 +5368,6 @@ export interface InviteSuggestionGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface OnboardingCreditRewardsGenqlSelection{
-    importContactsCredits?: boolean | number
-    installAppsCredits?: boolean | number
-    inviteTeamCredits?: boolean | number
-    enrichmentQualificationCredits?: boolean | number
-    totalCredits?: boolean | number
-    joinedTeammatesCount?: boolean | number
-    pendingInvitationsCount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface OnboardingStepNavigationGenqlSelection{
     /** Onboarding status the user landed on */
     onboardingStatus?: boolean | number
@@ -7275,7 +7251,6 @@ export interface QueryGenqlSelection{
     applicationConnectedAccounts?: (ApplicationConnectedAccountDTOGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     getInviteSuggestions?: InviteSuggestionGenqlSelection
-    getOnboardingCreditRewards?: OnboardingCreditRewardsGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
     getPageLayoutTabs?: (PageLayoutTabGenqlSelection & { __args: {pageLayoutId: Scalars['String']} })
@@ -9167,14 +9142,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isInviteSuggestion = (obj?: { __typename?: any } | null): obj is InviteSuggestion => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
       return InviteSuggestion_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const OnboardingCreditRewards_possibleTypes: string[] = ['OnboardingCreditRewards']
-    export const isOnboardingCreditRewards = (obj?: { __typename?: any } | null): obj is OnboardingCreditRewards => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingCreditRewards"')
-      return OnboardingCreditRewards_possibleTypes.includes(obj.__typename)
     }
     
 
