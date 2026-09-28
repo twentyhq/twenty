@@ -752,7 +752,7 @@ msgstr "Ausführung des Agentenschritts fehlgeschlagen."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent step of the workflow run that held this conversation"
-msgstr ""
+msgstr "Agentenschritt des Workflow-Durchlaufs, der diese Unterhaltung geführt hat"
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1137,13 +1137,13 @@ msgstr "Aktualisierung der Anwendung fehlgeschlagen."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {key} is reserved"
-msgstr ""
+msgstr "Der Schlüssel der Anwendungsvariable {key} ist reserviert"
 
 #. js-lingui-id: wJwhrT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {keyUpdate} is reserved"
-msgstr ""
+msgstr "Der Schlüssel der Anwendungsvariable {keyUpdate} ist reserviert"
 
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -2910,13 +2910,13 @@ msgstr "Größe der Unterhaltung"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Conversations"
-msgstr ""
+msgstr "Unterhaltungen"
 
 #. js-lingui-id: z+qran
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conversations held by the run's agent steps"
-msgstr ""
+msgstr "Unterhaltungen, die von den Agentenschritten des Durchlaufs geführt werden"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -12133,7 +12133,7 @@ msgstr "Diese Verbindung ist nicht zulässig."
 #. js-lingui-id: 4GicxZ
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This conversation belongs to a workflow run and can only be read."
-msgstr ""
+msgstr "Diese Unterhaltung gehört zu einem Workflow-Durchlauf und kann nur gelesen werden."
 
 #. js-lingui-id: y3SNqs
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14326,7 +14326,7 @@ msgstr "Workflow-Root-Schritt nicht gefunden."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workflow Run"
-msgstr ""
+msgstr "Workflow-Lauf"
 
 #. js-lingui-id: hqdwCt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14402,7 +14402,7 @@ msgstr "Status des Workflow-Laufs"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workflow run whose agent step held this conversation"
-msgstr ""
+msgstr "Workflow-Durchlauf, dessen Agentenschritt diese Unterhaltung geführt hat"
 
 #. js-lingui-id: Tinlvs
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14426,7 +14426,7 @@ msgstr "Mit dem Workflow verknüpfte Workflow-Läufe."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workflow Step ID"
-msgstr ""
+msgstr "Workflow-Schritt-ID"
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -14899,7 +14899,7 @@ msgstr "Ja"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "Sie sind nicht berechtigt, auf diese Funktion zuzugreifen."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts

@@ -752,7 +752,7 @@ msgstr "Provedení kroku agenta selhalo."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent step of the workflow run that held this conversation"
-msgstr ""
+msgstr "Krok agenta spuštění pracovního postupu, který vedl tuto konverzaci."
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1137,13 +1137,13 @@ msgstr "Aktualizace aplikace se nezdařila."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {key} is reserved"
-msgstr ""
+msgstr "Klíč proměnné aplikace {key} je rezervován"
 
 #. js-lingui-id: wJwhrT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {keyUpdate} is reserved"
-msgstr ""
+msgstr "Klíč proměnné aplikace {keyUpdate} je rezervován"
 
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -2910,13 +2910,13 @@ msgstr "Velikost konverzace"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Conversations"
-msgstr ""
+msgstr "Konverzace"
 
 #. js-lingui-id: z+qran
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conversations held by the run's agent steps"
-msgstr ""
+msgstr "Konverzace vedené kroky agenta daného spuštění."
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -12133,7 +12133,7 @@ msgstr "Toto připojení není povoleno."
 #. js-lingui-id: 4GicxZ
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This conversation belongs to a workflow run and can only be read."
-msgstr ""
+msgstr "Tato konverzace patří ke spuštění pracovního postupu a je pouze pro čtení."
 
 #. js-lingui-id: y3SNqs
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14326,7 +14326,7 @@ msgstr "Kořenový krok pracovního postupu nenalezen."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workflow Run"
-msgstr ""
+msgstr "Běh pracovního postupu"
 
 #. js-lingui-id: hqdwCt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14402,7 +14402,7 @@ msgstr "Stav běhu pracovního postupu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workflow run whose agent step held this conversation"
-msgstr ""
+msgstr "Spuštění pracovního postupu, jehož krok agenta vedl tuto konverzaci."
 
 #. js-lingui-id: Tinlvs
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14426,7 +14426,7 @@ msgstr "Běhy pracovního postupu spojené s pracovním postupem."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workflow Step ID"
-msgstr ""
+msgstr "ID kroku pracovního postupu"
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -14899,7 +14899,7 @@ msgstr "Ano"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "Nemáte oprávnění k přístupu k této funkci."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts

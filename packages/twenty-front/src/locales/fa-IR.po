@@ -9381,6 +9381,7 @@ msgstr "باز کردن نوار کناری"
 
 #. js-lingui-id: 4bQAS8
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Expand to full screen"
 msgstr "گسترش به تمام‌صفحه"
 
@@ -16176,6 +16177,11 @@ msgstr "باز کردن به‌عنوان پیوند"
 msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
 msgstr "Claude را با نام اتصال‌دهنده Twenty و نشانی اینترنتی MCP از پیش پرشده باز کنید."
 
+#. js-lingui-id: uIKeEf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
+msgid "Open conversation"
+msgstr "باز کردن گفتگو"
+
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
@@ -21488,6 +21494,7 @@ msgstr "متن در کلیپ‌بورد کپی شد"
 
 #. js-lingui-id: YXRaNg
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "ویرایشگر متن"
 
