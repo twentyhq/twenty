@@ -18,6 +18,7 @@ export const DropdownSubmenuTrigger = ({
   description,
   descriptionPlacement,
   hotkeys,
+  hotkeysJoinLabel,
   hasSubmenu = true,
   children,
   render,
@@ -97,6 +98,7 @@ export const DropdownSubmenuTrigger = ({
           description={description}
           descriptionPlacement={descriptionPlacement}
           hotkeys={hotkeys}
+          hotkeysJoinLabel={hotkeysJoinLabel}
           hasSubmenu={hasSubmenu}
         >
           {children}

@@ -21,6 +21,8 @@ Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when up
 
 ### Added
 
+- `Callout.closeLabel` customizes the dismiss button name. `ListItem`, `Menu` items, and `Dropdown` items accept `hotkeysJoinLabel` (default `then`); the legacy `MenuItem` uses `hotKeysJoinLabel`. `ColorSchemePicker` uses its supplied visible labels as accessible names.
+
 - `twenty-ui/utilities` exports `useMediaQuery`, `MOBILE_MEDIA_QUERY`, and `TOUCH_DEVICE_MEDIA_QUERY`. `twenty-ui/testing` exports `overrideMediaQueryMatches`.
 
 ### Fixed
