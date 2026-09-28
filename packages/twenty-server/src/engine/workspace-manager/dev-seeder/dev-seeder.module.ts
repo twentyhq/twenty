@@ -30,6 +30,7 @@ import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-se
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
@@ -68,6 +69,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     SecretEncryptionModule,
     UpgradeModule,
     WorkflowRunModule,
+    InputAskModule,
   ],
   exports: [DevSeederService],
   providers: [
