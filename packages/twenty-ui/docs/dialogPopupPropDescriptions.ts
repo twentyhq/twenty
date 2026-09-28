@@ -1,6 +1,6 @@
 import { type DialogPopupProps } from '../src/primitives/surfaces/Dialog/types/DialogPopupProps';
 
-export const DIALOG_PROP_DESCRIPTIONS = {
+export const DIALOG_POPUP_PROP_DESCRIPTIONS = {
   size: 'Width of the dialog, or `fullscreen` to fill the viewport.',
   container:
     'Portal destination. Defaults to the theme container; `null` defers mounting.',

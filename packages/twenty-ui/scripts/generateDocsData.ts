@@ -124,10 +124,14 @@ const isReactNativeAttribute = (prop: PropItem): boolean =>
 const isHiddenProp = (prop: PropItem): boolean =>
   HIDDEN_PROP_TAGS.some((tag) => tag in (prop.tags ?? {}));
 
-const isDeclaredInTwentyUi = (prop: PropItem): boolean =>
-  prop.declarations?.some((declaration) =>
-    declaration.fileName.startsWith(sourceRoot),
-  ) ?? false;
+const isDeclaredInTwentyUi = (propsType: ts.Type, propName: string): boolean =>
+  (propsType.isUnion() ? propsType.types : [propsType])
+    .flatMap(
+      (memberType) => memberType.getProperty(propName)?.getDeclarations() ?? [],
+    )
+    .some((declaration) =>
+      declaration.getSourceFile().fileName.startsWith(sourceRoot),
+    );
 
 const parserOptions: ParserOptions = {
   shouldExtractLiteralValuesFromEnum: true,
@@ -163,10 +167,19 @@ const extractProps = ({
     declaration.getSourceFile(),
     () => name,
   );
+  const propsSymbol = componentParser.extractPropsFromTypeIfStatelessComponent(
+    checker.getTypeOfSymbolAtLocation(symbol, declaration),
+  );
 
-  if (!parsed || Object.keys(parsed.props).length === 0) {
+  if (
+    !parsed ||
+    !isDefined(propsSymbol) ||
+    Object.keys(parsed.props).length === 0
+  ) {
     throw new Error(`Could not extract props for ${name}`);
   }
+
+  const propsType = checker.getTypeOfSymbol(propsSymbol);
 
   return Object.values(parsed.props)
     .sort((left, right) => left.name.localeCompare(right.name, 'en'))
@@ -175,7 +188,10 @@ const extractProps = ({
         propDescriptions[prop.name] ?? prop.description
       ).trim();
 
-      if (description.length === 0 && isDeclaredInTwentyUi(prop)) {
+      if (
+        description.length === 0 &&
+        isDeclaredInTwentyUi(propsType, prop.name)
+      ) {
         throw new Error(
           `Missing description for ${name}.${prop.name}. Document the prop in its props type or documentation metadata.`,
         );

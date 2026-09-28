@@ -40,8 +40,9 @@ import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropD
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
-import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
+import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
+import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS } from './horizontalSeparatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
@@ -212,6 +213,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Field/Field.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/field',
+    partPropDescriptions: {
+      Control: {
+        defaultValue: 'The default value of the input. Use when uncontrolled.',
+      },
+    },
   },
   {
     name: 'Input',
@@ -307,8 +313,10 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Dialog/Dialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/dialog',
-    propDescriptions: DIALOG_PROP_DESCRIPTIONS,
-    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
+    partPropDescriptions: {
+      Popup: DIALOG_POPUP_PROP_DESCRIPTIONS,
+      Title: DIALOG_TITLE_PROP_DESCRIPTIONS,
+    },
   },
   {
     name: 'AlertDialog',
@@ -321,6 +329,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Menu/Menu.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/menu',
+    partPropDescriptions: {
+      SubmenuTrigger: {
+        onClick: 'The click handler for the submenu trigger.',
+      },
+    },
   },
   {
     name: 'Popover',
@@ -416,22 +429,7 @@ export const DOCUMENTED_COMPONENTS = [
       'Loading',
       'Empty',
     ],
-    partPropDescriptions: {
-      Separator: {
-        className:
-          'Class applied to the separator. Native div attributes and refs are also accepted.',
-      },
-      Loading: {
-        children: 'Loading message announced as a polite, busy status.',
-        className:
-          'Class applied to the status. Native div attributes and refs are also accepted.',
-      },
-      Empty: {
-        children: 'Empty-state message announced as a polite status.',
-        className:
-          'Class applied to the status. Native div attributes and refs are also accepted.',
-      },
-    },
+    partPropDescriptions: DROPDOWN_PART_PROP_DESCRIPTIONS,
     partPropDefaults: {
       ActionItem: {
         nativeButton: 'true when render is omitted; false otherwise',
