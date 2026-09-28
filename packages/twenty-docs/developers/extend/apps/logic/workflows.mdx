@@ -110,7 +110,7 @@ Each step then runs with the application's default role, never with more than th
 
 Email and calendar steps, including agent tools, only use a connected account owned by the member who started the run or shared with the workspace. Another member's private account is refused, whether it is given as an account ID, a workspace member or picked by default.
 
-Permissions are checked again at every step, including after a delay, a retry or an iterator pass. Nothing about the identity is stored in queued jobs: removing a permission from the app or the member, removing the member, uninstalling the app or deleting the workflow makes the next step fail with an error on that step. Only the member who started a run can fill its form, submit it or retry the run.
+Permissions are checked again at every step, including after a delay, a retry or an iterator pass. Nothing about the identity is stored in queued jobs: removing a permission from the app or the member, removing the member, uninstalling the app or deleting the workflow makes the next step fail with an error on that step. Only the member who started a run can fill its form, submit it or retry the run. This also applies to a workspace workflow run started through an application token.
 
 Workspace workflows keep their current behavior.
 

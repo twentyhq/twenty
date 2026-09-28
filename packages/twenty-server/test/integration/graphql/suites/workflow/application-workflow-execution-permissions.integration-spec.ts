@@ -581,7 +581,7 @@ describe('application workflow execution permissions', () => {
     );
 
     expect(retryWithApiKey.body.errors?.[0]?.message).toContain(
-      'Only the member who started this application workflow run',
+      'Only the member who started this application-bound workflow run',
     );
 
     const retryByInitiator = await workflowGraphqlRequest(RETRY_WORKFLOW_RUN, {

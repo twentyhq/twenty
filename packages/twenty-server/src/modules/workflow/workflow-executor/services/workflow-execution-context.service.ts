@@ -168,7 +168,7 @@ export class WorkflowExecutionContextService {
       workspaceId: runInfo.workspaceId,
     });
 
-    const { owningApplication } = await this.findWorkflowRunApplications(
+    const { boundingApplications } = await this.findWorkflowRunApplications(
       workflowRun,
       runInfo.workspaceId,
     ).catch((error: unknown) => {
@@ -185,13 +185,13 @@ export class WorkflowExecutionContextService {
     if (
       !canMemberChangeWorkflowRun({
         workflowRun,
-        owningApplication,
+        boundingApplication: boundingApplications[0] ?? null,
         workspaceMemberId,
         replacementStep,
       })
     ) {
       throw new PermissionsException(
-        'Only the member who started this application workflow run can change it',
+        'Only the member who started this application-bound workflow run can change it',
         PermissionsExceptionCode.PERMISSION_DENIED,
         {
           userFriendlyMessage: msg`Only the member who started this run can change it.`,

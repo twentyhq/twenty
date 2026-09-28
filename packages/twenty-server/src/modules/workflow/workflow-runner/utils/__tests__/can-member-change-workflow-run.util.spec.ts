@@ -11,7 +11,7 @@ import { canMemberChangeWorkflowRun } from 'src/modules/workflow/workflow-runner
 
 const INITIATOR_MEMBER_ID = 'initiator-member-id';
 const OTHER_MEMBER_ID = 'other-member-id';
-const OWNING_APPLICATION = { id: 'installed-app-id' };
+const BOUNDING_APPLICATION = { id: 'installed-app-id' };
 
 const ERROR_HANDLING_OPTIONS = {
   retryOnFailure: { value: 0 },
@@ -57,7 +57,7 @@ const workflowRun = {
 };
 
 describe('canMemberChangeWorkflowRun', () => {
-  it('keeps workspace workflow runs open to any member allowed on workflows', () => {
+  it('keeps runs no application bounds open to any member allowed on workflows', () => {
     const deleteStep: WorkflowDeleteRecordAction = {
       ...RECORD_STEP,
       type: WorkflowActionType.DELETE_RECORD,
@@ -70,35 +70,35 @@ describe('canMemberChangeWorkflowRun', () => {
     expect(
       canMemberChangeWorkflowRun({
         workflowRun,
-        owningApplication: null,
+        boundingApplication: null,
         workspaceMemberId: OTHER_MEMBER_ID,
         replacementStep: deleteStep,
       }),
     ).toBe(true);
   });
 
-  it('lets the member who started an application workflow run continue it', () => {
+  it('lets the member who started an application-bound run continue it', () => {
     expect(
       canMemberChangeWorkflowRun({
         workflowRun,
-        owningApplication: OWNING_APPLICATION,
+        boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: INITIATOR_MEMBER_ID,
       }),
     ).toBe(true);
   });
 
-  it('refuses another member or a request without a member on an application workflow run', () => {
+  it('refuses another member or a request without a member on an application-bound run', () => {
     expect(
       canMemberChangeWorkflowRun({
         workflowRun,
-        owningApplication: OWNING_APPLICATION,
+        boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: OTHER_MEMBER_ID,
       }),
     ).toBe(false);
     expect(
       canMemberChangeWorkflowRun({
         workflowRun,
-        owningApplication: OWNING_APPLICATION,
+        boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: undefined,
       }),
     ).toBe(false);
@@ -108,7 +108,7 @@ describe('canMemberChangeWorkflowRun', () => {
     expect(
       canMemberChangeWorkflowRun({
         workflowRun,
-        owningApplication: OWNING_APPLICATION,
+        boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: INITIATOR_MEMBER_ID,
         replacementStep: {
           ...FORM_STEP,
@@ -121,7 +121,7 @@ describe('canMemberChangeWorkflowRun', () => {
     ).toBe(true);
   });
 
-  it('refuses any other change to the graph of an application workflow run', () => {
+  it('refuses any other change to the graph of an application-bound run', () => {
     const codeStepReplacingForm: WorkflowCodeAction = {
       ...FORM_STEP,
       type: WorkflowActionType.CODE,
@@ -147,7 +147,7 @@ describe('canMemberChangeWorkflowRun', () => {
       expect(
         canMemberChangeWorkflowRun({
           workflowRun,
-          owningApplication: OWNING_APPLICATION,
+          boundingApplication: BOUNDING_APPLICATION,
           workspaceMemberId: INITIATOR_MEMBER_ID,
           replacementStep,
         }),

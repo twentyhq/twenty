@@ -8,7 +8,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 
 export const canMemberChangeWorkflowRun = ({
   workflowRun,
-  owningApplication,
+  boundingApplication,
   workspaceMemberId,
   replacementStep,
 }: {
@@ -16,11 +16,11 @@ export const canMemberChangeWorkflowRun = ({
     createdBy: Pick<ActorMetadata, 'workspaceMemberId'>;
     state: { flow?: { steps?: WorkflowAction[] } } | null;
   };
-  owningApplication: Pick<FlatApplication, 'id'> | null;
+  boundingApplication: Pick<FlatApplication, 'id'> | null;
   workspaceMemberId: string | undefined;
   replacementStep?: WorkflowAction;
 }): boolean => {
-  if (!isDefined(owningApplication)) {
+  if (!isDefined(boundingApplication)) {
     return true;
   }
 
