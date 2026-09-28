@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { OnboardingConstructionSiteCanvasEffect } from '@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSiteCanvasEffect';
 import { getOnboardingConstructionSiteStage } from '@/onboarding/components/OnboardingConstructionSite/getOnboardingConstructionSiteStage';
@@ -43,6 +44,9 @@ export const OnboardingConstructionSite = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
+  const isClientConfigLoaded = useAtomStateValue(
+    clientConfigApiStatusState,
+  ).isLoadedOnce;
   const isBookCallOnboardingStepEnabled = useAtomStateValue(
     isBookCallOnboardingStepEnabledState,
   );
@@ -50,6 +54,10 @@ export const OnboardingConstructionSite = () => {
   const prefersReducedMotion = useMediaQuery(
     '(prefers-reduced-motion: reduce)',
   );
+
+  if (!isClientConfigLoaded) {
+    return null;
+  }
 
   const { stageIndex, isFinale } = getOnboardingConstructionSiteStage({
     onboardingStatus: currentUser?.onboardingStatus,
