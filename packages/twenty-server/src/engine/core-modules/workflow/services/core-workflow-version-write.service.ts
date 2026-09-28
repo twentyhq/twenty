@@ -238,13 +238,6 @@ export class CoreWorkflowVersionWriteService {
           },
         });
 
-        if (isDefined(flatWorkflowVersion.coreWorkflowId)) {
-          await this.coreDataSource.query(
-            `UPDATE core."workflow" SET "updatedAt" = now() WHERE "workspaceId" = $1 AND "id" = $2`,
-            [workspaceId, flatWorkflowVersion.coreWorkflowId],
-          );
-        }
-
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
           await this.workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
@@ -264,6 +257,13 @@ export class CoreWorkflowVersionWriteService {
             },
           );
         }, buildSystemAuthContext(workspaceId));
+
+        if (isDefined(flatWorkflowVersion.coreWorkflowId)) {
+          await this.coreDataSource.query(
+            `UPDATE core."workflow" SET "updatedAt" = now() WHERE "workspaceId" = $1 AND "id" = $2`,
+            [workspaceId, flatWorkflowVersion.coreWorkflowId],
+          );
+        }
       },
     );
 

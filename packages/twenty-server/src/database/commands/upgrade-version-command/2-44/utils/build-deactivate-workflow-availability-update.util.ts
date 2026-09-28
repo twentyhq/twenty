@@ -5,11 +5,11 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 const DEACTIVATE_WORKFLOW_UNIVERSAL_IDENTIFIER =
   '57f21a06-a17a-47b1-a123-90d90dbdf0b7';
 
-const DEACTIVATE_WHEN_CURRENT_VERSION_IS_ACTIVE_EXPRESSION =
+const PREVIOUS_DEACTIVATE_WORKFLOW_EXPRESSION =
   'everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") and noneDefined(selectedRecords, "deletedAt")';
 
-const DEACTIVATE_WHEN_ANY_VERSION_IS_ACTIVE_EXPRESSION =
-  '(everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")';
+const NEXT_DEACTIVATE_WORKFLOW_EXPRESSION =
+  'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")';
 
 export const buildDeactivateWorkflowAvailabilityUpdate = ({
   flatCommandMenuItemsByUniversalIdentifier,
@@ -31,12 +31,12 @@ export const buildDeactivateWorkflowAvailabilityUpdate = ({
   const [fromExpression, toExpression] =
     direction === 'up'
       ? [
-          DEACTIVATE_WHEN_CURRENT_VERSION_IS_ACTIVE_EXPRESSION,
-          DEACTIVATE_WHEN_ANY_VERSION_IS_ACTIVE_EXPRESSION,
+          PREVIOUS_DEACTIVATE_WORKFLOW_EXPRESSION,
+          NEXT_DEACTIVATE_WORKFLOW_EXPRESSION,
         ]
       : [
-          DEACTIVATE_WHEN_ANY_VERSION_IS_ACTIVE_EXPRESSION,
-          DEACTIVATE_WHEN_CURRENT_VERSION_IS_ACTIVE_EXPRESSION,
+          NEXT_DEACTIVATE_WORKFLOW_EXPRESSION,
+          PREVIOUS_DEACTIVATE_WORKFLOW_EXPRESSION,
         ];
 
   if (

@@ -7,10 +7,10 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 const NOW = '2026-09-28T12:00:00.000Z';
 const DEACTIVATE_WORKFLOW_UNIVERSAL_IDENTIFIER =
   '57f21a06-a17a-47b1-a123-90d90dbdf0b7';
-const WHEN_CURRENT_VERSION_IS_ACTIVE =
+const PREVIOUS_EXPRESSION =
   'everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") and noneDefined(selectedRecords, "deletedAt")';
-const WHEN_ANY_VERSION_IS_ACTIVE =
-  '(everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")';
+const NEXT_EXPRESSION =
+  'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")';
 
 const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
   {
@@ -48,38 +48,34 @@ const buildUpdate = (
   });
 
 describe('buildDeactivateWorkflowAvailabilityUpdate', () => {
-  it('offers Deactivate whenever a version is active on up', () => {
-    const deactivateWorkflow = buildDeactivateWorkflow(
-      WHEN_CURRENT_VERSION_IS_ACTIVE,
-    );
+  it('offers Deactivate for one workflow with an active version on up', () => {
+    const deactivateWorkflow = buildDeactivateWorkflow(PREVIOUS_EXPRESSION);
 
     expect(buildUpdate(deactivateWorkflow, 'up')).toEqual([
       {
         ...deactivateWorkflow,
-        conditionalAvailabilityExpression: WHEN_ANY_VERSION_IS_ACTIVE,
+        conditionalAvailabilityExpression: NEXT_EXPRESSION,
         updatedAt: NOW,
       },
     ]);
   });
 
-  it('restores the current-version check on down', () => {
-    const deactivateWorkflow = buildDeactivateWorkflow(
-      WHEN_ANY_VERSION_IS_ACTIVE,
-    );
+  it('restores the previous expression on down', () => {
+    const deactivateWorkflow = buildDeactivateWorkflow(NEXT_EXPRESSION);
 
     expect(buildUpdate(deactivateWorkflow, 'down')).toEqual([
       {
         ...deactivateWorkflow,
-        conditionalAvailabilityExpression: WHEN_CURRENT_VERSION_IS_ACTIVE,
+        conditionalAvailabilityExpression: PREVIOUS_EXPRESSION,
         updatedAt: NOW,
       },
     ]);
   });
 
   it('skips items already migrated or carrying another expression', () => {
-    expect(
-      buildUpdate(buildDeactivateWorkflow(WHEN_ANY_VERSION_IS_ACTIVE), 'up'),
-    ).toEqual([]);
+    expect(buildUpdate(buildDeactivateWorkflow(NEXT_EXPRESSION), 'up')).toEqual(
+      [],
+    );
     expect(buildUpdate(buildDeactivateWorkflow('isInSidePanel'), 'up')).toEqual(
       [],
     );
