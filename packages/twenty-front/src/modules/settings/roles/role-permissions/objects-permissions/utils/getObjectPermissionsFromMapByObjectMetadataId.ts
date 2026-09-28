@@ -11,14 +11,17 @@ type GetObjectPermissionsFromMapByObjectIdArgs = {
 export const getObjectPermissionsFromMapByObjectMetadataId = ({
   objectPermissionsByObjectMetadataId,
   objectMetadataId,
-}: GetObjectPermissionsFromMapByObjectIdArgs) => {
+}: GetObjectPermissionsFromMapByObjectIdArgs): ObjectPermissions & {
+  objectMetadataId: string;
+} => {
   return (
     objectPermissionsByObjectMetadataId[objectMetadataId] ?? {
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
-      canCreateObjectRecords: true,
-      canDeleteObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: true,
       restrictedFields: {},
+      objectMetadataId,
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [],
     }
