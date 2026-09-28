@@ -46,30 +46,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  userWorkspaceId: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'userWorkspaceId',
-        type: FieldMetadataType.UUID,
-        label: i18nLabel(
-          msg({ message: 'User Workspace ID', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'User Workspace ID',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconId',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: false,
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
   title: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -516,8 +492,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconUsers',
         isUIEditable: false,
-        // Becomes required with the owner contract step
-        // (twentyhq/core-team-issues#2925).
+        // A thread can belong to something other than a person, such as the
+        // workflow run whose agent step wrote it.
         isNullable: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentChatThreads',
