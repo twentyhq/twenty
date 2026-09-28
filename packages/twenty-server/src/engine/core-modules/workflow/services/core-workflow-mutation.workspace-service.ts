@@ -135,14 +135,18 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     );
 
-    const { coreWorkflow: sourceCoreWorkflow } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
-        {
-          workspaceId,
-          userWorkspaceId,
-          coreWorkflowId: coreWorkflowIdToDuplicate,
-        },
+    const sourceCoreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      { where: { id: coreWorkflowIdToDuplicate } },
+    );
+
+    if (!isDefined(sourceCoreWorkflow)) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow '${coreWorkflowIdToDuplicate}' not found`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        { userFriendlyMessage: msg`Workflow not found` },
       );
+    }
 
     const sourceVersion = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,

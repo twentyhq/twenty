@@ -842,6 +842,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             modelId: existingAgent.modelId,
             responseFormat: existingAgent.responseFormat ?? undefined,
             modelConfiguration: existingAgent.modelConfiguration ?? undefined,
+            roleId: existingAgent.roleId ?? undefined,
             isCustom: true,
           },
           workspaceId,

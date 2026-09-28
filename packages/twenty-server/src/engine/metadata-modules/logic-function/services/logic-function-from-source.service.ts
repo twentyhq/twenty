@@ -144,16 +144,14 @@ export class LogicFunctionFromSourceService {
 
     const { sourceHandlerPath, builtHandlerPath } = existingLogicFunction;
 
-    const toSourceHandlerPath = sourceHandlerPath.replace(
-      existingLogicFunction.id,
-      newId,
-    );
-    const toBuiltHandlerPath = builtHandlerPath.replace(
-      existingLogicFunction.id,
-      newId,
-    );
+    const {
+      sourceHandlerPath: toSourceHandlerPath,
+      builtHandlerPath: toBuiltHandlerPath,
+    } = this.helperService.buildHandlerPaths(newId);
 
     await this.logicFunctionResourceService.copyResources({
+      fromApplicationUniversalIdentifier:
+        existingLogicFunction.applicationUniversalIdentifier,
       fromSourceHandlerPath: sourceHandlerPath,
       toSourceHandlerPath,
       fromBuiltHandlerPath: builtHandlerPath,
