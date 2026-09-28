@@ -27,7 +27,9 @@ export const validateWorkflowExecutionPaths = ({
   ): void => {
     const enclosingIterator = enclosingIterators[enclosingIterators.length - 1];
     if (visiting.has(id)) {
-      if (id !== sourceId && enclosingIterator === id) return;
+      if (id !== sourceId && enclosingIterator === id) {
+        return;
+      }
       issues.push({
         severity: 'error',
         code: 'WORKFLOW_CYCLE',
@@ -38,7 +40,9 @@ export const validateWorkflowExecutionPaths = ({
     }
     const step = stepsById.get(id);
     const visitKey = `${id}:${enclosingIterators.join(',')}`;
-    if (!isDefined(step) || visited.has(visitKey)) return;
+    if (!isDefined(step) || visited.has(visitKey)) {
+      return;
+    }
     visiting.add(id);
     if (isIteratorStepInput(step)) {
       (step.settings.input.initialLoopStepIds ?? []).forEach((nextId) =>
