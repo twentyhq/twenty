@@ -74,7 +74,9 @@ describe('OnboardingSkipDialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Open' }));
 
     expect(
-      await screen.findByRole('button', { name: /Continue with Google/ }),
+      await screen.findByRole('button', {
+        name: 'Continue with Google, earn 2.5 free credits',
+      }),
     ).toHaveTextContent('+2.5');
   });
 
@@ -84,7 +86,9 @@ describe('OnboardingSkipDialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Open' }));
 
     expect(
-      await screen.findByRole('button', { name: /Continue with Google/ }),
+      await screen.findByRole('button', {
+        name: 'Continue with Google, earn 0.5 free credits each',
+      }),
     ).toHaveTextContent('+0.5 each');
   });
 

@@ -1,6 +1,7 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { OnboardingRewardCreditsChip } from '@/onboarding/components/OnboardingRewardCreditsChip';
+import { getOnboardingRewardCreditsAriaLabel } from '@/onboarding/utils/getOnboardingRewardCreditsAriaLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useRef } from 'react';
@@ -135,6 +136,11 @@ export const OnboardingSkipDialog = ({
                   ) : undefined
                 }
                 endIcon={rewardCredits > 0 ? rewardCreditsChip : undefined}
+                aria-label={getOnboardingRewardCreditsAriaLabel({
+                  label: action.label,
+                  rewardCredits,
+                  isRewardPerItem,
+                })}
               >
                 {action.label}
               </MainButton>

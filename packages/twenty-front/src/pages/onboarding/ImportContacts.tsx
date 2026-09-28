@@ -1,4 +1,5 @@
 import { OnboardingRewardCreditsChip } from '@/onboarding/components/OnboardingRewardCreditsChip';
+import { getOnboardingRewardCreditsAriaLabel } from '@/onboarding/utils/getOnboardingRewardCreditsAriaLabel';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -62,6 +63,8 @@ export const ImportContacts = ({
 }: ImportContactsProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const continueWithMicrosoftLabel = t`Continue with Microsoft`;
+  const continueWithGoogleLabel = t`Continue with Google`;
   const rewardCreditsChip =
     rewardCredits > 0 ? (
       <OnboardingRewardCreditsChip rewardCredits={rewardCredits} />
@@ -96,8 +99,12 @@ export const ImportContacts = ({
                 onClick={onContinueWithMicrosoft}
                 startIcon={<IconMicrosoft size={theme.icon.size.md} />}
                 endIcon={rewardCreditsChip}
+                aria-label={getOnboardingRewardCreditsAriaLabel({
+                  label: continueWithMicrosoftLabel,
+                  rewardCredits,
+                })}
               >
-                {t`Continue with Microsoft`}
+                {continueWithMicrosoftLabel}
               </MainButton>
             )}
             {isDefined(onContinueWithGoogle) && (
@@ -106,8 +113,12 @@ export const ImportContacts = ({
                 onClick={onContinueWithGoogle}
                 startIcon={<IconGoogle size={theme.icon.size.md} />}
                 endIcon={rewardCreditsChip}
+                aria-label={getOnboardingRewardCreditsAriaLabel({
+                  label: continueWithGoogleLabel,
+                  rewardCredits,
+                })}
               >
-                {t`Continue with Google`}
+                {continueWithGoogleLabel}
               </MainButton>
             )}
           </StyledButtons>
