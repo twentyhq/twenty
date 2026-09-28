@@ -6,6 +6,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { syncWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-run-record-shares.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import {
@@ -295,6 +296,13 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
         JSON.stringify(state),
       ],
     );
+    // Runs are private, and a direct insert skips the grants that creating a
+    // run writes, so the run would be unreadable through the record API.
+    await syncWorkflowRunRecordShares({
+      manager: global.testDataSource.manager,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workflowRunIds: [createdWorkflowRunId],
+    });
 
     await (
       await global.workflowTestServices.runJob()

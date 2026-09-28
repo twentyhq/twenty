@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { WorkflowVisibility } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { DataSource, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { syncWorkflowRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-record-shares.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   CoreWorkflowMetadataException,
@@ -45,8 +44,6 @@ export class WorkflowCoreSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -259,12 +256,6 @@ export class WorkflowCoreSyncService {
       workspaceId,
       coreWorkflowIdByWorkspaceRecordId,
     );
-
-    await syncWorkflowRecordShares({
-      manager: this.coreDataSource.manager,
-      workspaceId,
-      workspaceWorkflowIds: liveWorkflows.map((workflow) => workflow.id),
-    });
   }
 
   async reconcileWorkspaceWorkflows(

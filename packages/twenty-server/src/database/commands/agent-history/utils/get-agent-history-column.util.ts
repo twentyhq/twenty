@@ -1,4 +1,4 @@
-import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
+import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
 
 export const getAgentHistoryColumn = ({
   tableName,
@@ -6,7 +6,7 @@ export const getAgentHistoryColumn = ({
   columnName,
 }: {
   tableName: string;
-  storage: AgentHistoryStorageState['storage'];
+  storage: AgentHistoryMigrationState['storage'];
   columnName: string;
 }): string => {
   // Chat archive state must not enter the generic workspace trash lifecycle.
