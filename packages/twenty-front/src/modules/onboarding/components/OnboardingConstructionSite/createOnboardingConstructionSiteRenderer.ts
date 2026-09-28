@@ -89,6 +89,7 @@ const compileProgram = (
 
 type MeshResources = {
   vertexArray: WebGLVertexArrayObject;
+  vertexBuffer: WebGLBuffer;
   instanceBuffer: WebGLBuffer;
   vertexCount: number;
 };
@@ -105,6 +106,25 @@ type GlResources = {
   sceneDepthBuffer: WebGLRenderbuffer;
   sceneFramebuffer: WebGLFramebuffer;
   emptyVertexArray: WebGLVertexArrayObject;
+};
+
+const deleteResources = (
+  gl: WebGL2RenderingContext,
+  resources: GlResources,
+) => {
+  gl.deleteProgram(resources.sceneProgram);
+  gl.deleteProgram(resources.halftoneProgram);
+  Object.values(resources.meshes).forEach(
+    ({ vertexArray, vertexBuffer, instanceBuffer }) => {
+      gl.deleteVertexArray(vertexArray);
+      gl.deleteBuffer(vertexBuffer);
+      gl.deleteBuffer(instanceBuffer);
+    },
+  );
+  gl.deleteTexture(resources.sceneTexture);
+  gl.deleteRenderbuffer(resources.sceneDepthBuffer);
+  gl.deleteFramebuffer(resources.sceneFramebuffer);
+  gl.deleteVertexArray(resources.emptyVertexArray);
 };
 
 type OnboardingConstructionSiteColor = readonly [number, number, number];
@@ -271,7 +291,12 @@ export const createOnboardingConstructionSiteRenderer = ({
 
       return [
         meshName,
-        { vertexArray, instanceBuffer, vertexCount: vertexData.length / 6 },
+        {
+          vertexArray,
+          vertexBuffer,
+          instanceBuffer,
+          vertexCount: vertexData.length / 6,
+        },
       ] as const;
     });
     gl.bindVertexArray(null);
@@ -628,6 +653,10 @@ export const createOnboardingConstructionSiteRenderer = ({
       }
       canvas.removeEventListener('webglcontextlost', handleContextLost);
       canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+      if (isDefined(resources)) {
+        deleteResources(gl, resources);
+        resources = null;
+      }
     },
   };
 };
