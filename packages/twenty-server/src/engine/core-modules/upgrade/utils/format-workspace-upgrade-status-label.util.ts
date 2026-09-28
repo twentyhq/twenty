@@ -12,7 +12,6 @@ type FormatWorkspaceUpgradeStatusLabelParams = {
 const anonymizeWorkspaceId = (workspaceId: string): string =>
   `${workspaceId.split('-')[0]}-${ANONYMIZED_SUFFIX}`;
 
-// Array.from splits on code points so emojis or accented names are not cut mid-character
 const anonymizeDisplayName = (displayName: string): string =>
   `${Array.from(displayName).slice(0, ANONYMIZED_DISPLAY_NAME_VISIBLE_LENGTH).join('')}${ANONYMIZED_SUFFIX}`;
 
