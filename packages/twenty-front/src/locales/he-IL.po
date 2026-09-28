@@ -2508,11 +2508,6 @@ msgstr "לאפשר גישה למדיה עבור {applicationName}?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "אפשר כניסה מבוססת מיקרוסופט למשתמשים עם הרשאות עקיפת SSO."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "אפשר שיתוף רשומות בודדות עם חברי סביבת העבודה."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "תווית של רישום"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "דף רשומה"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "שיתוף רשומות"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

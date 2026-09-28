@@ -2508,11 +2508,6 @@ msgstr "Tillad medieadgang for {applicationName}?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Tillad Microsoft-baseret login for brugere med SSO-omgåelsesrettigheder."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Tillad deling af individuelle poster med arbejdsområdets medlemmer."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "Optag label"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Registreringsside"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Deling af poster"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

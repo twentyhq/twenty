@@ -2508,11 +2508,6 @@ msgstr "Laat mediatoegang vir {applicationName} toe?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Laat Microsoft-gebaseerde aanmelding toe vir gebruikers met SSO omseil toestemmings."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Laat die deel van individuele rekords met werkruimte-lede toe."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "Rekord etiket"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Rekordbladsy"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Deel van rekords"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

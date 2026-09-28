@@ -2508,11 +2508,6 @@ msgstr "{applicationName} にメディアへのアクセスを許可しますか
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "SSOバイパス許可を持つユーザーのためにMicrosoftを使ったログインを許可します。"
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "個々のレコードをワークスペースメンバーと共有できるようにします。"
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "レコードラベル"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "レコードページ"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "レコード共有"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

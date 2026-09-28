@@ -2508,11 +2508,6 @@ msgstr "Tillåt medieåtkomst för {applicationName}?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Tillåt Microsoft-baserad inloggning för användare med SSO-överhoppningsbehörigheter."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Tillåt delning av enskilda poster med medlemmar i arbetsytan."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17792,11 +17787,6 @@ msgstr "Spela in etikett"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Postvy"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Delning av poster"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

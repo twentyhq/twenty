@@ -2508,11 +2508,6 @@ msgstr "Dozvoli pristup medijima za {applicationName}?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Dozvoli prijavu preko Majkrosofta za korisnike sa dozvolama za obilaženje SSO-a."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Dozvoli deljenje pojedinačnih zapisa sa članovima radnog prostora."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "Snimi etiketu"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Stranica zapisa"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Deljenje zapisa"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

@@ -2508,11 +2508,6 @@ msgstr "{applicationName}의 미디어 액세스를 허용하시겠습니까?"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "SSO 우회 권한을 가진 사용자를 위한 Microsoft 기반 로그인 허용."
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "개별 레코드를 워크스페이스 멤버와 공유할 수 있도록 허용합니다."
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "레코드 레이블"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "레코드 페이지"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "레코드 공유"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

@@ -2503,11 +2503,6 @@ msgstr ""
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr ""
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr ""
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17761,11 +17756,6 @@ msgstr ""
 #. js-lingui-id: XueM/X
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
-msgstr ""
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
 msgstr ""
 
 #. js-lingui-id: NxW0+c

@@ -13107,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Trường được cập nhật không phải là quan hệ morph hoặc quan hệ"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Không thể truy cập lịch sử AI. Vui lòng thử lại."

@@ -13107,6 +13107,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Il campo aggiornato non è né una relazione polimorfica né una relazione"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Impossibile accedere alla cronologia AI. Riprova."

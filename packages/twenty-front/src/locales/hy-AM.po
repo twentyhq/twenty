@@ -2508,11 +2508,6 @@ msgstr "Թույլատրե՞լ մեդիայի հասանելիությունը {
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Թույլատրել Microsoft-ով մուտքը SSO շրջանցման թույլտվություն ունեցող օգտատերերի համար։"
 
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Թույլատրել առանձին գրառումների համօգտագործումը աշխատատարածքի անդամների հետ։"
-
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -17790,11 +17785,6 @@ msgstr "Գրառման պիտակ"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Գրառման էջ"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Գրառումների համօգտագործում"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
