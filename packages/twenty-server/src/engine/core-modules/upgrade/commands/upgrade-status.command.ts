@@ -11,10 +11,12 @@ import {
   UpgradeStatusService,
   type WorkspaceUpgradeStatus,
 } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { formatWorkspaceUpgradeStatusLabel } from 'src/engine/core-modules/upgrade/utils/format-workspace-upgrade-status-label.util';
 
 type UpgradeStatusOptions = {
   workspaceId?: Set<string>;
   failedOnly?: boolean;
+  showFullIdentifiers?: boolean;
 };
 
 type GroupedWorkspaceUpgradeStatuses = {
@@ -58,6 +60,15 @@ export class UpgradeStatusCommand extends CommandRunner {
     return true;
   }
 
+  @Option({
+    flags: '--show-full-identifiers',
+    description:
+      'Display full workspace names and IDs instead of the anonymized default',
+  })
+  parseShowFullIdentifiers(): boolean {
+    return true;
+  }
+
   private readonly logger = new Logger(UpgradeStatusCommand.name);
 
   constructor(
@@ -94,7 +105,10 @@ export class UpgradeStatusCommand extends CommandRunner {
       lines.push(
         ...this.formatWorkspaceUpgradeStatuses(
           groupedWorkspaceUpgradeStatuses,
-          options.failedOnly,
+          {
+            failedOnly: options.failedOnly ?? false,
+            anonymize: !options.showFullIdentifiers,
+          },
         ),
       );
 
@@ -127,7 +141,7 @@ export class UpgradeStatusCommand extends CommandRunner {
 
   private formatWorkspaceUpgradeStatuses(
     { upToDate, behind, failed }: GroupedWorkspaceUpgradeStatuses,
-    failedOnly?: boolean,
+    { failedOnly, anonymize }: { failedOnly: boolean; anonymize: boolean },
   ): string[] {
     const lines: string[] = [chalk.bold.underline('Workspace')];
 
@@ -139,12 +153,16 @@ export class UpgradeStatusCommand extends CommandRunner {
 
     if (!failedOnly) {
       for (const workspaceStatus of upToDate) {
-        lines.push(...this.formatWorkspaceUpgradeStatus(workspaceStatus));
+        lines.push(
+          ...this.formatWorkspaceUpgradeStatus(workspaceStatus, { anonymize }),
+        );
       }
     }
 
     for (const workspaceStatus of behind) {
-      lines.push(...this.formatWorkspaceUpgradeStatus(workspaceStatus));
+      lines.push(
+        ...this.formatWorkspaceUpgradeStatus(workspaceStatus, { anonymize }),
+      );
     }
 
     if (failed.length > 0) {
@@ -172,7 +190,10 @@ export class UpgradeStatusCommand extends CommandRunner {
 
         for (const workspaceStatus of statuses) {
           lines.push(
-            ...this.formatWorkspaceUpgradeStatus(workspaceStatus, true),
+            ...this.formatWorkspaceUpgradeStatus(workspaceStatus, {
+              anonymize,
+              nested: true,
+            }),
           );
         }
       }
@@ -183,13 +204,15 @@ export class UpgradeStatusCommand extends CommandRunner {
 
   private formatWorkspaceUpgradeStatus(
     status: WorkspaceUpgradeStatus,
-    nested = false,
+    { anonymize, nested = false }: { anonymize: boolean; nested?: boolean },
   ): string[] {
     const baseIndent = nested ? '    ' : '  ';
     const detailIndent = nested ? '      ' : '    ';
-    const label = status.displayName
-      ? `${status.displayName} (${status.workspaceId})`
-      : status.workspaceId;
+    const label = formatWorkspaceUpgradeStatusLabel({
+      workspaceId: status.workspaceId,
+      displayName: status.displayName,
+      anonymize,
+    });
 
     return [
       chalk.bold(`${baseIndent}${label}`),

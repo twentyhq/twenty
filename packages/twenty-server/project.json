@@ -66,6 +66,7 @@
     "typecheck": {
       "dependsOn": ["^build"]
     },
+    "knip": {},
     "start": {
       "executor": "nx:run-commands",
       "cache": false,

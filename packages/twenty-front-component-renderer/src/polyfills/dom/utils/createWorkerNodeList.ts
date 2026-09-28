@@ -1,13 +1,15 @@
 import { type WorkerNodeList } from '@/polyfills/dom/types/WorkerNodeList';
 
-class NodeListImplementation extends Array<Node> {
-  item(index: number): Node | null {
+class NodeListImplementation<TNode> extends Array<TNode> {
+  item(index: number): TNode | null {
     return this[index] ?? null;
   }
 }
 
-export const createWorkerNodeList = (nodes: Node[]): WorkerNodeList => {
-  const nodeList = new NodeListImplementation();
+export const createWorkerNodeList = <TNode = Node>(
+  nodes: TNode[],
+): WorkerNodeList<TNode> => {
+  const nodeList = new NodeListImplementation<TNode>();
 
   for (const node of nodes) {
     nodeList.push(node);
