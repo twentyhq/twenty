@@ -20,7 +20,7 @@ export const useOnboardingCreditsProgress = () => {
     onboardingFreeCredits,
     onboardingConfig,
     onboardingStatus: currentUser?.onboardingStatus,
-    isWorkspaceCreator: currentUser?.isWorkspaceCreator === true,
+    isWorkspaceCreator: currentUser?.isWorkspaceCreator ?? false,
     isPlanRequired,
   });
 };

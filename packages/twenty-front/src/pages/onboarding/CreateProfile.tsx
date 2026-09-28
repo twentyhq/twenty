@@ -163,7 +163,7 @@ export const CreateProfile = () => {
 
         setOnboardingStepFreeCredits(
           'createProfile',
-          currentUser?.isWorkspaceCreator === true
+          currentUser?.isWorkspaceCreator
             ? (onboardingConfig?.createProfileCreditsReward ?? 0)
             : 0,
         );
