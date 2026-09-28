@@ -1956,6 +1956,16 @@ type InviteSuggestion {
   displayName: String
 }
 
+type OnboardingCreditRewards {
+  importContactsCredits: Float!
+  installAppsCredits: Float!
+  inviteTeamCredits: Float!
+  enrichmentQualificationCredits: Float!
+  totalCredits: Float!
+  joinedTeammatesCount: Int!
+  pendingInvitationsCount: Int!
+}
+
 type OnboardingStepNavigation {
   """Onboarding status the user landed on"""
   onboardingStatus: OnboardingStatus
@@ -3810,6 +3820,7 @@ type Query {
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getInviteSuggestions: [InviteSuggestion!]!
+  getOnboardingCreditRewards: OnboardingCreditRewards!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
