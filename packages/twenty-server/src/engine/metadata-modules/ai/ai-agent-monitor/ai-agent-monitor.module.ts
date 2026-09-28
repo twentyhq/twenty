@@ -1,3 +1,4 @@
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,6 +20,7 @@ import { AgentTurnGraderService } from './services/agent-turn-grader.service';
 
 @Module({
   imports: [
+    WorkspaceCacheModule,
     AgentHistoryModule,
     TypeOrmModule.forFeature([
       AgentTurnEvaluationEntity,
