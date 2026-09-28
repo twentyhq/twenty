@@ -13,6 +13,20 @@ describe('documentation story presentation', () => {
         export const Documentation = { args: Interaction.args, render: Interaction.render };
       `,
         exportName: 'Documentation',
+        fileName: 'Preview.stories.tsx',
+      }),
+    ).toEqual([]);
+  });
+
+  it('parses TypeScript story files that use generic arrow functions', () => {
+    expect(
+      checkStoryPresentation({
+        content: `
+        const withDefaults = <TArgs>(args: TArgs) => args;
+        export const Documentation = { args: withDefaults({ label: 'Save' }) };
+      `,
+        exportName: 'Documentation',
+        fileName: 'Preview.stories.ts',
       }),
     ).toEqual([]);
   });
@@ -24,7 +38,11 @@ describe('documentation story presentation', () => {
     'export const Documentation = {}; Documentation.play = async () => {};',
   ])('rejects direct, inherited, or assigned play in %s', (content) => {
     expect(
-      checkStoryPresentation({ content, exportName: 'Documentation' }),
+      checkStoryPresentation({
+        content,
+        exportName: 'Documentation',
+        fileName: 'Preview.stories.tsx',
+      }),
     ).toContain(
       'Documentation stories must not define or inherit a play function.',
     );
@@ -36,6 +54,7 @@ describe('documentation story presentation', () => {
         content:
           "import { base } from './base'; export const Documentation = { ...base };",
         exportName: 'Documentation',
+        fileName: 'Preview.stories.tsx',
       }),
     ).toEqual([
       'Cannot verify the imported or unresolved story definition "base".',

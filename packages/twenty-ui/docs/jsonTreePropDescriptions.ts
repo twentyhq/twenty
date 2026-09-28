@@ -17,5 +17,6 @@ export const JSON_TREE_PROP_DESCRIPTIONS = {
     'Accessible label for the expand control on a collapsed node.',
   arrowButtonExpandedLabel:
     'Accessible label for the collapse control on an expanded node.',
-  onNodeValueClick: 'Called with the clicked leaf value as a string.',
+  onNodeValueClick:
+    'Called with the clicked value as displayed: leaf values as strings, and the empty label for empty strings, arrays, and objects.',
 } satisfies Partial<Record<keyof ComponentProps<typeof JsonTree>, string>>;

@@ -24,7 +24,7 @@ export const RecordDetails = () => (
 
 Each entry has an `id`, `label`, and JSON `value`. Use entries when display labels differ from stored keys. The default expands depths 0 and 1. Override `shouldExpandNodeInitially={({ depth }) => depth === 0}` to expand only the root; later expansion is owned by each node.
 
-`getNodeHighlighting(keyPath)` returns `blue`, `red`, `partial-blue`, or `undefined`. `onNodeValueClick` receives the leaf value as a string. The tree displays data and does not edit it.
+`getNodeHighlighting(keyPath)` returns `blue`, `red`, `partial-blue`, or `undefined`. `onNodeValueClick` receives the displayed text: leaf values as strings, and the matching empty label for empty strings, arrays, and objects. The tree displays data and does not edit it.
 
 ## Props
 

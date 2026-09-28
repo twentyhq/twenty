@@ -25,7 +25,7 @@ export const TeamAvatars = () => (
 );
 ```
 
-Keep the member names available in surrounding content. `overlap` chooses the stacking direction and `overlapOffset` accepts a CSS length. An empty group without an overflow element renders nothing.
+Keep the member names available in surrounding content. Later avatars always render above earlier ones. `overlap` only picks the physical margin, `left` or `right`, that carries the negative offset, and `overlapOffset` sets that offset as a CSS length. An empty group without an overflow element renders nothing.
 
 <StoryEmbed
   storyId="ui-data-display-avatargroup--default"

@@ -14,7 +14,9 @@ import { DOCUMENTED_COMPONENTS } from '../docs/components';
 import { DocumentationParser } from '../docs/DocumentationParser';
 import { formatDocumentationTokenValue } from '../docs/formatDocumentationTokenValue';
 import { getIconDocumentationGroups } from '../docs/getIconDocumentationGroups';
+import { getIconProps } from '../docs/getIconProps';
 import { getPublicComponentExports } from '../docs/getPublicComponentExports';
+import { isIconComponent } from '../docs/isIconComponent';
 import { normalizeDocumentationDefaultValue } from '../docs/normalizeDocumentationDefaultValue';
 import { normalizeDocumentationPropType } from '../docs/normalizeDocumentationPropType';
 import {
@@ -91,8 +93,9 @@ const documentedDecorators = new Set([
 ]);
 const catalogIcons = publicComponents.filter(
   (component) =>
-    component.entryPoint === 'twenty-ui/icon' &&
-    !documentedNames.has(component.name),
+    component.entryPoints.includes('twenty-ui/icon') &&
+    !documentedNames.has(component.name) &&
+    isIconComponent(getIconProps({ checker, ...component })),
 );
 const iconNames = new Set(catalogIcons.map((icon) => icon.name));
 
@@ -103,7 +106,7 @@ for (const component of publicComponents) {
     !documentedDecorators.has(component.name)
   ) {
     throw new Error(
-      `Missing documentation for ${component.name} from ${component.entryPoint}. Add a public component reference.`,
+      `Missing documentation for ${component.name} from ${component.entryPoints.join(', ')}. Add a public component reference.`,
     );
   }
 }

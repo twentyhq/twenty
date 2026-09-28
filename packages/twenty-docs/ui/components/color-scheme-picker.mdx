@@ -27,7 +27,7 @@ export const AppearanceChoice = () => {
 };
 ```
 
-When the value is `System`, resolve the system preference to `light` or `dark` before passing it to [ThemeProvider](/ui/theming). The three previews are separate button controls with Enter and Space activation. Their accessible names are `Light`, `Dark`, and `System`; the label props change only the visible captions. The selected checkmark is visual.
+`ColorScheme` values are capitalized, while [ThemeProvider](/ui/theming) expects `light` or `dark`. Map `Light` and `Dark` to their lowercase names and resolve `System` from the system preference before passing the result to the provider. The three previews are separate button controls with Enter and Space activation. Their accessible names are `Light`, `Dark`, and `System`; the label props change only the visible captions. The selected checkmark is visual.
 
 ## Props
 

@@ -3,16 +3,17 @@ import ts from 'typescript';
 export const checkStoryPresentation = ({
   content,
   exportName,
+  fileName,
 }: {
   content: string;
   exportName: string;
+  fileName: string;
 }): string[] => {
   const source = ts.createSourceFile(
-    'preview.stories.tsx',
+    fileName,
     content,
     ts.ScriptTarget.Latest,
     true,
-    ts.ScriptKind.TSX,
   );
   const declarations = new Map<string, ts.Expression>();
   const errors = new Set<string>();

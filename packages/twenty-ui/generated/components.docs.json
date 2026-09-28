@@ -8020,7 +8020,7 @@
         "type": "\"left\" | \"right\"",
         "required": false,
         "defaultValue": "right",
-        "description": "Which side of adjacent avatars overlaps."
+        "description": "Physical margin, left or right, that carries the negative overlap offset. Later avatars always render above earlier ones."
       },
       {
         "name": "overlapOffset",
@@ -8111,7 +8111,7 @@
         "type": "((valueAsString: string) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the clicked leaf value as a string."
+        "description": "Called with the clicked value as displayed: leaf values as strings, and the empty label for empty strings, arrays, and objects."
       },
       {
         "name": "shouldExpandNodeInitially",
@@ -8370,7 +8370,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "3",
-        "description": "Maximum number of visible toasts. Adding a toast above the limit dismisses the oldest visible notifications."
+        "description": "Maximum number of visible toasts, read once when the provider mounts. Must be a positive integer. Adding a toast above the limit dismisses the oldest visible notifications."
       }
     ]
   },
@@ -8965,7 +8965,7 @@
         "type": "\"always\" | \"never\" | \"onHover\"",
         "required": false,
         "defaultValue": "never",
-        "description": "Grip visibility: never, always, or onHover. Does not implement dragging."
+        "description": "Grip visibility: never, always, or onHover. onHover swaps LeftIcon for the grip on hover and shows no grip without LeftIcon. Does not implement dragging."
       },
       {
         "name": "iconButtons",
@@ -9298,7 +9298,7 @@
       },
       {
         "name": "theme",
-        "type": "ThemeType | { icon: { size: { sm: number; md: number; lg: number; xl: number; }; stroke: { sm: number; md: number; lg: number; }; }; modal: { size: { sm: { width: string; }; md: { width: string; }; lg: { width: string; }; xl: { ...; }; fullscreen: { ...; }; }; }; ... 23 more ...; color: { ...; }; }",
+        "type": "ThemeType | typeof THEME_LIGHT",
         "required": false,
         "defaultValue": null,
         "description": "Explicit resolved theme values, bypassing computed-style token resolution."

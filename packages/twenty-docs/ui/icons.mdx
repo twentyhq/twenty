@@ -16,9 +16,11 @@ import { IconCheck } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const CompleteButton = () => (
-  <Button startIcon={<IconCheck aria-hidden size={16} />}>Complete task</Button>
+  <Button startIcon={<IconCheck />}>Complete task</Button>
 );
 ```
+
+Button icon slots already size their icon and hide it from assistive technology, so the icon needs no extra props there.
 
 ## Supported props
 
@@ -28,7 +30,7 @@ Custom icons that do not accept accessible attributes need a wrapper with the ap
 
 ## Dynamic icon names
 
-Use `IconsProvider` and `Icon` when names are chosen at runtime. The provider loads the complete icon map asynchronously. Before loading completes, and for unknown names, `Icon` renders `Icon123`. The dynamic map differs from the named export catalog; do not assume every brand or illustration export can be resolved by name.
+Use `IconsProvider` and `Icon` when names are chosen at runtime. The provider loads the complete icon map asynchronously; bundles built without code splitting, such as front components, include the whole map. Before loading completes, and for unknown names, `Icon` renders `Icon123`. The dynamic map differs from the named export catalog; do not assume every brand or illustration export can be resolved by name.
 
 ```tsx
 import { Icon, IconsProvider } from 'twenty-ui/icon';
@@ -36,9 +38,7 @@ import { Button } from 'twenty-ui/primitives/input';
 
 export const DynamicAction = ({ iconName }: { iconName: string }) => (
   <IconsProvider>
-    <Button startIcon={<Icon name={iconName} aria-hidden />}>
-      Open record
-    </Button>
+    <Button startIcon={<Icon name={iconName} />}>Open record</Button>
   </IconsProvider>
 );
 ```
@@ -55,17 +55,14 @@ export const DynamicAction = ({ iconName }: { iconName: string }) => (
 
 ## Illustration wrapper
 
-`IllustrationIconWrapper` supplies the illustration container styling and forwards native div attributes, children, styles, and refs.
+`IllustrationIconWrapper` supplies the illustration container styling and forwards native div attributes, children, styles, and refs. Every `IllustrationIcon*` export already renders inside it, so use the wrapper only to frame your own illustration content.
 
 ```tsx
-import {
-  IllustrationIconCalendarEvent,
-  IllustrationIconWrapper,
-} from 'twenty-ui/icon';
+import { IconCalendarEvent, IllustrationIconWrapper } from 'twenty-ui/icon';
 
 export const CalendarIllustration = () => (
   <IllustrationIconWrapper role="img" aria-label="Calendar event">
-    <IllustrationIconCalendarEvent size={32} />
+    <IconCalendarEvent size={32} />
   </IllustrationIconWrapper>
 );
 ```

@@ -53,6 +53,7 @@ const getPresentationErrors = (storyId: string): string[] => {
   const errors = checkStoryPresentation({
     content: readFileSync(sourcePath, 'utf8'),
     exportName: entry.exportName,
+    fileName: sourcePath,
   });
 
   storyErrors.set(storyId, errors);

@@ -35,6 +35,6 @@
   Root interface scale stored in --t-scale-user. Ignored for scoped providers; application CSS must consume the variable.
 </ParamField>
 
-<ParamField body="theme" type="ThemeType | { icon: { size: { sm: number; md: number; lg: number; xl: number; }; stroke: { sm: number; md: number; lg: number; }; }; modal: { size: { sm: { width: string; }; md: { width: string; }; lg: { width: string; }; xl: { ...; }; fullscreen: { ...; }; }; }; ... 23 more ...; color: { ...; }; }">
+<ParamField body="theme" type="ThemeType | typeof THEME_LIGHT">
   Explicit resolved theme values, bypassing computed-style token resolution.
 </ParamField>

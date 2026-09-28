@@ -48,7 +48,7 @@ It shares MenuItem's pointer and keyboard limitations. For a selectable person, 
 
 ## MenuItemDraggable
 
-`MenuItemDraggable` adds a grip and drag appearance. The application supplies drag behavior. `gripMode` accepts `never`, `always`, or `onHover`; `isDragDisabled` affects the appearance, not external drag handlers.
+`MenuItemDraggable` renders a menu row that can show a drag grip. The application supplies drag behavior. `gripMode` defaults to `never`, which shows no grip; `always` shows the grip, and `onHover` swaps `LeftIcon` for the grip while the row is hovered, so it shows nothing without a `LeftIcon`. `isDragDisabled` affects the appearance, not external drag handlers.
 
 ```tsx
 import { MenuItemDraggable } from 'twenty-ui/components';
@@ -64,19 +64,13 @@ The root remains a div without keyboard drag behavior. `isTooltipOpen` and `isHo
 
 ## MenuItemSuggestion
 
-`MenuItemSuggestion` renders a list item with optional icon and supporting text. Supplying `onClick` gives it button semantics, a tab stop, and Enter/Space activation. `selected` applies visual styling and does not implement a listbox selection model.
+`MenuItemSuggestion` renders a list item with optional icon and supporting text. Supplying `onClick` gives it button semantics, a tab stop, and Enter/Space activation. The row is then a button rather than a list item, so place clickable suggestions in a menu container instead of a `ul` or `ol`. `selected` applies visual styling and does not implement a listbox selection model.
 
 ```tsx
 import { MenuItemSuggestion } from 'twenty-ui/components';
 
 export const SuggestedName = ({ onChoose }: { onChoose: () => void }) => (
-  <ul>
-    <MenuItemSuggestion
-      text="Acme"
-      contextualText="Company"
-      onClick={onChoose}
-    />
-  </ul>
+  <MenuItemSuggestion text="Acme" contextualText="Company" onClick={onChoose} />
 );
 ```
 

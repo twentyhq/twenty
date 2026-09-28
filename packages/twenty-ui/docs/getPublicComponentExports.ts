@@ -12,7 +12,7 @@ export const getPublicComponentExports = ({
 }) => {
   const components = new Map<
     string,
-    { name: string; entryPoint: string; symbol: ts.Symbol }
+    { name: string; entryPoints: string[]; symbol: ts.Symbol }
   >();
 
   for (const { name: entryPoint, source } of entryPoints) {
@@ -50,11 +50,14 @@ export const getPublicComponentExports = ({
         );
 
       if (isCallable || hasComponentParts) {
-        components.set(exported.name, {
+        const component = components.get(exported.name) ?? {
           name: exported.name,
-          entryPoint,
+          entryPoints: [],
           symbol,
-        });
+        };
+
+        component.entryPoints.push(entryPoint);
+        components.set(exported.name, component);
       }
     }
   }
