@@ -1,138 +1,131 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { renderHook } from '@testing-library/react';
-import { useFormContext } from 'react-hook-form';
+import { act, renderHook } from '@testing-library/react';
+import { type ReactNode } from 'react';
+import {
+  FormProvider,
+  useController,
+  useForm,
+  useFormContext,
+} from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 
-jest.mock('react-hook-form', () => ({
-  useFormContext: jest.fn(),
-}));
+const ADDRESS_FIELD_ID = 'new-field';
 
-const mockResetField = jest.fn();
-const mockUseFormContext = useFormContext as jest.MockedFunction<
-  typeof useFormContext
->;
+const ALL_ADDRESS_SUB_FIELDS = [
+  'addressStreet1',
+  'addressStreet2',
+  'addressCity',
+  'addressState',
+  'addressPostcode',
+  'addressCountry',
+];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
-  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
-});
+type AddressFieldSettings = { subFields?: string[] | null } | null;
 
-describe('useAddressSettingsFormInitialValues', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockUseFormContext.mockReturnValue({
-      resetField: mockResetField,
-    } as any);
+const renderAddressSettingsFormHook = ({
+  objectMetadataItems = getTestEnrichedObjectMetadataItemsMock(),
+  savedSettings,
+}: {
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
+  savedSettings?: AddressFieldSettings;
+} = {}) => {
+  const MetadataWrapper = getJestMetadataAndApolloMocksWrapper({
+    apolloMocks: [],
+    objectMetadataItems,
   });
 
-  it('should return all address subfields when no fieldMetadataItem is provided', () => {
-    const { result } = renderHook(
-      () =>
-        useAddressSettingsFormInitialValues({
-          existingFieldMetadataId: 'new-field',
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+  const Wrapper = ({ children }: { children: ReactNode }) => {
+    const form = useForm({ defaultValues: { settings: savedSettings } });
 
-    expect(result.current.initialDisplaySubFields).toEqual([
-      'addressStreet1',
-      'addressStreet2',
-      'addressCity',
-      'addressState',
-      'addressPostcode',
-      'addressCountry',
-    ]);
+    return (
+      <MetadataWrapper>
+        {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+        <FormProvider {...form}>{children}</FormProvider>
+      </MetadataWrapper>
+    );
+  };
+
+  return renderHook(
+    () => {
+      const { getValues, formState } = useFormContext();
+      // The address form registers sub-fields through a Controller, and
+      // react-hook-form ignores resets of unregistered fields.
+      useController({ name: 'settings.subFields' });
+
+      return {
+        ...useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: ADDRESS_FIELD_ID,
+        }),
+        getValues,
+        dirtyFields: formState.dirtyFields,
+      };
+    },
+    { wrapper: Wrapper },
+  );
+};
+
+describe('useAddressSettingsFormInitialValues', () => {
+  it('should return all address subfields when no fieldMetadataItem is provided', () => {
+    const { result } = renderAddressSettingsFormHook();
+
+    expect(result.current.initialDisplaySubFields).toEqual(
+      ALL_ADDRESS_SUB_FIELDS,
+    );
   });
 
   it('should return all address subfields when fieldMetadataItem has no settings', () => {
-    const { result } = renderHook(
-      () =>
-        useAddressSettingsFormInitialValues({
-          existingFieldMetadataId: 'new-field',
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderAddressSettingsFormHook({
+      objectMetadataItems: addNewAddressToMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+        ADDRESS_FIELD_ID,
+        null,
+      ),
+    });
 
-    expect(result.current.initialDisplaySubFields).toEqual([
-      'addressStreet1',
-      'addressStreet2',
-      'addressCity',
-      'addressState',
-      'addressPostcode',
-      'addressCountry',
-    ]);
+    expect(result.current.initialDisplaySubFields).toEqual(
+      ALL_ADDRESS_SUB_FIELDS,
+    );
   });
 
   it('should return all address subfields when settings.subFields is null', () => {
-    const { result } = renderHook(
-      () =>
-        useAddressSettingsFormInitialValues({
-          existingFieldMetadataId: 'new-field',
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderAddressSettingsFormHook({
+      objectMetadataItems: addNewAddressToMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+        ADDRESS_FIELD_ID,
+        { subFields: null },
+      ),
+    });
 
-    expect(result.current.initialDisplaySubFields).toEqual([
-      'addressStreet1',
-      'addressStreet2',
-      'addressCity',
-      'addressState',
-      'addressPostcode',
-      'addressCountry',
-    ]);
+    expect(result.current.initialDisplaySubFields).toEqual(
+      ALL_ADDRESS_SUB_FIELDS,
+    );
   });
 
   it('should return all address subfields when settings.subFields is empty array', () => {
-    const { result } = renderHook(
-      () =>
-        useAddressSettingsFormInitialValues({
-          existingFieldMetadataId: 'new-field',
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderAddressSettingsFormHook({
+      objectMetadataItems: addNewAddressToMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+        ADDRESS_FIELD_ID,
+        { subFields: [] },
+      ),
+    });
 
-    expect(result.current.initialDisplaySubFields).toEqual([
-      'addressStreet1',
-      'addressStreet2',
-      'addressCity',
-      'addressState',
-      'addressPostcode',
-      'addressCountry',
-    ]);
+    expect(result.current.initialDisplaySubFields).toEqual(
+      ALL_ADDRESS_SUB_FIELDS,
+    );
   });
 
   it('should return configured subFields when they exist', () => {
-    const newGeneratedMockObjectMetadataItems = addNewAddressToMetadataItems(
-      getTestEnrichedObjectMetadataItemsMock(),
-      'new-field',
-      ['addressStreet1', 'addressCity', 'addressCountry'],
-    );
-
-    const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
-      apolloMocks: [],
-      objectMetadataItems: newGeneratedMockObjectMetadataItems,
+    const { result } = renderAddressSettingsFormHook({
+      objectMetadataItems: addNewAddressToMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+        ADDRESS_FIELD_ID,
+        { subFields: ['addressStreet1', 'addressCity', 'addressCountry'] },
+      ),
     });
-
-    const { result } = renderHook(
-      () =>
-        useAddressSettingsFormInitialValues({
-          existingFieldMetadataId: 'new-field',
-        }),
-      {
-        wrapper: WrapperSpecific,
-      },
-    );
 
     expect(result.current.initialDisplaySubFields).toEqual([
       'addressStreet1',
@@ -141,49 +134,35 @@ describe('useAddressSettingsFormInitialValues', () => {
     ]);
   });
 
-  it('should call resetField with all address subFields when resetDefaultValueField is called', () => {
-    const { result } = renderHook(
-      () =>
-        useAddressSettingsFormInitialValues({
-          existingFieldMetadataId: 'new-field',
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
-
-    result.current.resetDefaultValueField();
-
-    expect(mockResetField).toHaveBeenCalledWith('settings.subFields', {
-      defaultValue: [
-        'addressStreet1',
-        'addressStreet2',
-        'addressCity',
-        'addressState',
-        'addressPostcode',
-        'addressCountry',
-      ],
+  it('should select every subfield and mark it as changed when resetting to default', () => {
+    const savedSettings = { subFields: ['addressPostcode'] };
+    const { result } = renderAddressSettingsFormHook({
+      objectMetadataItems: addNewAddressToMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+        ADDRESS_FIELD_ID,
+        savedSettings,
+      ),
+      savedSettings,
     });
+
+    act(() => {
+      result.current.resetSubFieldsToDefault();
+    });
+
+    expect(result.current.getValues('settings.subFields')).toEqual(
+      ALL_ADDRESS_SUB_FIELDS,
+    );
+    expect(Object.keys(result.current.dirtyFields)).toContain('settings');
   });
 
   it('should handle partial subFields configuration', () => {
-    const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
-      apolloMocks: [],
+    const { result } = renderAddressSettingsFormHook({
       objectMetadataItems: addNewAddressToMetadataItems(
         getTestEnrichedObjectMetadataItemsMock(),
-        'new-field',
-        ['addressStreet1', 'addressCity'],
+        ADDRESS_FIELD_ID,
+        { subFields: ['addressStreet1', 'addressCity'] },
       ),
     });
-    const { result } = renderHook(
-      () =>
-        useAddressSettingsFormInitialValues({
-          existingFieldMetadataId: 'new-field',
-        }),
-      {
-        wrapper: WrapperSpecific,
-      },
-    );
 
     expect(result.current.initialDisplaySubFields).toEqual([
       'addressStreet1',
@@ -195,7 +174,7 @@ describe('useAddressSettingsFormInitialValues', () => {
 const addNewAddressToMetadataItems = (
   objectMetadataItems: EnrichedObjectMetadataItem[],
   fieldNameId: string,
-  subFields: string[],
+  settings: AddressFieldSettings,
 ) => {
   return objectMetadataItems
     .filter((item) => item.nameSingular === 'company')
@@ -211,7 +190,7 @@ const addNewAddressToMetadataItems = (
         ...addressField,
         id: fieldNameId,
         type: FieldMetadataType.ADDRESS,
-        settings: { subFields },
+        settings,
       };
       return { ...item, fields: [...fields, newField] };
     });

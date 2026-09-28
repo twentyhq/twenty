@@ -61,7 +61,7 @@ export const SettingsDataModelFieldAddressForm = ({
   const {
     initialDisplaySubFields,
     initialDefaultValue,
-    resetDefaultValueField,
+    resetSubFieldsToDefault,
   } = useAddressSettingsFormInitialValues({ existingFieldMetadataId });
 
   return (
@@ -122,7 +122,7 @@ export const SettingsDataModelFieldAddressForm = ({
                 onChange={onChange}
                 callToActionButton={{
                   text: t`Reset to default`,
-                  onClick: resetDefaultValueField,
+                  onClick: resetSubFieldsToDefault,
                   Icon: IconRefresh,
                 }}
                 selectSizeVariant="small"

@@ -36,17 +36,20 @@ export const useAddressSettingsFormInitialValues = ({
   const initialDefaultValue =
     fieldMetadataItem?.defaultValue ?? defaultDefaultValue;
 
-  const { resetField } = useFormContext<SettingsDataModelFieldTextFormValues>();
+  const { setValue } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
-  const resetDefaultValueField = () => {
-    resetField('settings.subFields', {
-      defaultValue: allAddressSubFields,
+  // setValue, not resetField: resetField also moves the dirty baseline, and the
+  // field edit page only saves dirty fields, so the reset would never persist.
+  const resetSubFieldsToDefault = () => {
+    setValue('settings.subFields', allAddressSubFields, {
+      shouldDirty: true,
+      shouldValidate: true,
     });
   };
 
   return {
     initialDefaultValue,
     initialDisplaySubFields,
-    resetDefaultValueField,
+    resetSubFieldsToDefault,
   };
 };
