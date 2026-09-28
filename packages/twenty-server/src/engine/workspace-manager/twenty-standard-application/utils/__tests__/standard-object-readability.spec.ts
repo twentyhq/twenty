@@ -73,6 +73,7 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.messageSuppression.universalIdentifier,
 
     STANDARD_OBJECTS.recordShare.universalIdentifier,
+    STANDARD_OBJECTS.workflowRun.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
     ),
@@ -84,6 +85,20 @@ describe('Standard object readability', () => {
         flatObjectMetadata.universalIdentifier,
       ),
   );
+
+  // Its grants follow the core workflow's visibility, since the workspace
+  // workflow record is not where that visibility lives.
+  it('declares workflowRun PRIVATE and leaves workflow and workflowVersion OPEN', () => {
+    expect(findStandardFlatObjectMetadata('workflowRun')).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+    });
+    expect(findStandardFlatObjectMetadata('workflow')).toMatchObject({
+      readability: MetadataReadability.OPEN,
+    });
+    expect(findStandardFlatObjectMetadata('workflowVersion')).toMatchObject({
+      readability: MetadataReadability.OPEN,
+    });
+  });
 
   it('declares recordShare SYSTEM for readability and writability', () => {
     expect(findStandardFlatObjectMetadata('recordShare')).toMatchObject({

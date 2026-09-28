@@ -4,7 +4,7 @@ This frontend uses the core-ID API merged through #26068, and this branch is reb
 
 ## Definition ownership and rollback
 
-With the flag enabled, workflow routes use `/workflow-core/:coreWorkflowId`. Version selectors, diagrams, draft editing, output-schema keys, command-menu actions and definition mutations use core IDs. The existing workspace route resolves its mirror's core ID and redirects. A failed core query shows an error; it never loads a workspace definition as a fallback.
+With the flag enabled, the workflow show page uses `/workflow/:coreWorkflowId` and the index stays at `/objects/workflows`. Version selectors, diagrams, draft editing, output-schema keys, command-menu actions and definition mutations use core IDs. The existing workspace route resolves its mirror's core ID and redirects. A failed core query shows an error; it never loads a workspace definition as a fallback.
 
 With the flag disabled, the workspace index, show page and mutation paths remain available. A core direct link resolves its workspace mirror and redirects. The backend's core-authoritative writes and rollback mirrors must remain deployed, including the legacy-write-to-core synchronization provided by #26068. Disabling the UI flag does not roll back database migrations.
 
