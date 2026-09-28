@@ -1,5 +1,6 @@
 import { type StepResult, type ToolSet } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 // An agent run outside chat keeps no stream to persist, only the SDK's step
 // results. Rebuilding the parts a chat stream would have produced lets that
@@ -42,7 +43,7 @@ export const mapAiStepsToUiMessageParts = (
         case 'tool-result': {
           const index = toolPartIndexByCallId.get(part.toolCallId);
 
-          if (index !== undefined) {
+          if (isDefined(index)) {
             parts[index] = {
               ...parts[index],
               state: 'output-available',
@@ -54,7 +55,7 @@ export const mapAiStepsToUiMessageParts = (
         case 'tool-error': {
           const index = toolPartIndexByCallId.get(part.toolCallId);
 
-          if (index !== undefined) {
+          if (isDefined(index)) {
             parts[index] = {
               ...parts[index],
               state: 'output-error',
