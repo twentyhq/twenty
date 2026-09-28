@@ -12,6 +12,7 @@ export type ProgressBarProps = {
   withGrowIn?: boolean;
   withGlint?: boolean;
   withSpringFill?: boolean;
+  withMinimumFillWidth?: boolean;
   ariaLabel?: string;
   countdownDurationInMs?: number;
   isCountdownPaused?: boolean;
@@ -28,6 +29,7 @@ export const ProgressBar = ({
   withGrowIn = false,
   withGlint = false,
   withSpringFill = false,
+  withMinimumFillWidth = true,
   ariaLabel,
   countdownDurationInMs,
   isCountdownPaused = false,
@@ -65,7 +67,9 @@ export const ProgressBar = ({
           className={clsx(styles.indicator, isCountdown && styles.countdown)}
           data-with-border-radius={withBorderRadius || undefined}
           data-spring-fill={withSpringFill || undefined}
-          data-nonzero={(value > 0 && !isCountdown) || undefined}
+          data-nonzero={
+            (withMinimumFillWidth && value > 0 && !isCountdown) || undefined
+          }
           data-paused={(isCountdown && isCountdownPaused) || undefined}
           onAnimationEnd={isCountdown ? onCountdownComplete : undefined}
         >
