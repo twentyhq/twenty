@@ -149,6 +149,7 @@ describe('remapDuplicatedStepDestinations', () => {
     } as unknown as Partial<WorkflowAction> & { id: string });
     const sourceLoop = buildStep({
       id: 'source-loop',
+      name: 'Log {{source-iterator.currentItem.id}}',
       nextStepIds: ['source-iterator'],
       settings: {
         input: {
@@ -184,6 +185,7 @@ describe('remapDuplicatedStepDestinations', () => {
     });
 
     const [find, iterator, loop] = steps as unknown as {
+      name: string;
       nextStepIds: string[];
       settings: { input: Record<string, unknown> };
     }[];
@@ -193,6 +195,7 @@ describe('remapDuplicatedStepDestinations', () => {
       items: '{{cloned-find.all}}',
       initialLoopStepIds: ['cloned-loop'],
     });
+    expect(loop.name).toBe('Log {{source-iterator.currentItem.id}}');
     expect(loop.nextStepIds).toEqual(['cloned-iterator']);
     expect(loop.settings.input).toEqual({
       logicFunctionInput: {
