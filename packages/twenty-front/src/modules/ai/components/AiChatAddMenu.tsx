@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
 import { useRef } from 'react';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { Dropdown, IconButton } from 'twenty-ui/components';
 import {
   IconAddressBook,
   IconBook,
@@ -36,12 +36,13 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
       >
         <Dropdown.Trigger
           render={
-            <LightIconButton
-              aria-label={t`Add files, records or skills`}
+            <IconButton
+              variant="ghost"
               size="sm"
+              aria-label={t`Add files, records or skills`}
             >
               <IconPlus />
-            </LightIconButton>
+            </IconButton>
           }
         />
         <DropdownContent
