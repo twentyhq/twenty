@@ -1,6 +1,6 @@
 import { type AggregateOperations } from '../AggregateOperations';
 import { type ObjectRecordGroupByDateGranularity } from '../ObjectRecordGroupByDateGranularity';
-import { type SerializedRelation } from '../SerializedRelation.type';
+import { type SerializedRelation } from '../SerializedRelation';
 
 import { type ChartFilter } from './chart-filter.type';
 import { type RatioAggregateConfig } from './ratio-aggregate-config.type';

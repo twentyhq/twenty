@@ -9,11 +9,28 @@ export const microsoftMailboxHandlers = (
   folderStore: MockEntityStore<MailFolder>,
   messages: Array<Record<string, unknown>> = [],
   removedMessageIdsByFolderId: Record<string, string[]> = {},
-  { unfetchableMessageIds = [] }: { unfetchableMessageIds?: string[] } = {},
+  {
+    unfetchableMessageIds = [],
+    mailFolderPageSize = Infinity,
+  }: { unfetchableMessageIds?: string[]; mailFolderPageSize?: number } = {},
 ): MswHandler[] => [
-  http.get('*/me/mailFolders', () =>
-    HttpResponse.json<{ value: MailFolder[] }>({ value: folderStore.list() }),
-  ),
+  http.get('*/me/mailFolders', ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const top = Number(searchParams.get('$top') ?? 10);
+    const skip = Number(searchParams.get('$skip') ?? 0);
+    const nextSkip = skip + Math.min(top, mailFolderPageSize);
+    const folders = folderStore.list();
+
+    return HttpResponse.json<{
+      value: MailFolder[];
+      '@odata.nextLink'?: string;
+    }>({
+      value: folders.slice(skip, nextSkip),
+      ...(nextSkip < folders.length && {
+        '@odata.nextLink': `https://graph.microsoft.com/beta/me/mailFolders?$top=${top}&$skip=${nextSkip}`,
+      }),
+    });
+  }),
   http.get('*/messages/delta', () =>
     HttpResponse.json({
       value: [],

@@ -2,6 +2,13 @@
 
 All notable changes to this application are documented in this file.
 
+## 1.1.0
+
+- Title new impromptu Fathom recordings with their date and time in UTC, then
+  replace the timestamp with a short topic generated from the summary.
+  Meaningful Fathom and calendar titles, and user renames, are preserved.
+- Point the marketplace website link to fathom.ai.
+
 ## 1.0.1
 
 - No change, fix npm deployment

@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
-import { type QueryRunner } from 'typeorm';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type QueryRunner } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
@@ -212,7 +212,7 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
   }: CopySourceParams): Promise<void> {
-    await this.fileStorageService.copy({
+    await this.fileStorageService.copyFileByPath({
       from: {
         workspaceId,
         applicationUniversalIdentifier,
@@ -238,7 +238,7 @@ export class LogicFunctionResourceService {
       return;
     }
 
-    await this.fileStorageService.copy({
+    await this.fileStorageService.copyFileByPath({
       from: {
         workspaceId,
         applicationUniversalIdentifier,

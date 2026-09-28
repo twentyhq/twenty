@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import {
   IconBolt,
@@ -11,7 +10,7 @@ import {
   IconWindow,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
@@ -73,7 +72,7 @@ type HoverCardItem = {
 export const SettingsAiModelHoverCard = ({
   model,
 }: SettingsAiModelHoverCardProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const ModelIcon = getModelIcon(model.modelFamily, model.providerName);
   const providerLabel = model.providerLabel ?? model.providerName ?? '—';

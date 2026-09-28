@@ -1,7 +1,7 @@
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { type ReactNode } from 'react';
+import { useTheme } from 'twenty-ui/theme';
 
 export const StyledCell = styled.div<{
   backgroundColor: string;
@@ -44,7 +44,7 @@ export const RecordTableCellStyleWrapper = ({
   hasBottomBorder?: boolean;
   widthClassName: string;
 } & React.ComponentProps<'div'>) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const tdBackgroundColor = isSelected
     ? theme.accent.quaternary

@@ -11,7 +11,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
-import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 @Controller(ApiPath.WellKnown)
 export class OAuthDiscoveryController {
@@ -39,9 +38,7 @@ export class OAuthDiscoveryController {
         : `${authorizeBase}/authorize?iss=${encodeURIComponent(issuer)}`;
 
     const cliRegistration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-      );
+      await this.applicationRegistrationService.findOrCreateCliRegistration();
 
     return {
       issuer,
@@ -65,9 +62,7 @@ export class OAuthDiscoveryController {
       // RFC 9207: advertise `iss` in authorization responses to defend against
       // OAuth mix-up attacks. Required by OAuth 2.1 security BCP.
       authorization_response_iss_parameter_supported: true,
-      ...(cliRegistration
-        ? { cli_client_id: cliRegistration.oAuthClientId }
-        : {}),
+      cli_client_id: cliRegistration.oAuthClientId,
     };
   }
 

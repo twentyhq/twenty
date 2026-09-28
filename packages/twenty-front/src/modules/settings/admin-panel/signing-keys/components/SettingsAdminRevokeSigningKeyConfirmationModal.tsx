@@ -1,4 +1,4 @@
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { t } from '@lingui/core/macro';
 
 type SettingsAdminRevokeSigningKeyConfirmationModalProps = {
@@ -19,8 +19,8 @@ export const SettingsAdminRevokeSigningKeyConfirmationModal = ({
     : t`Revoking this key will invalidate every JWT signed with it. Users with active tokens signed by this key will be logged out.`;
 
   return (
-    <ConfirmationModal
-      modalInstanceId={modalInstanceId}
+    <ConfirmationDialog
+      dialogId={modalInstanceId}
       title={t`Revoke signing key`}
       subtitle={subtitle}
       onConfirmClick={onConfirm}

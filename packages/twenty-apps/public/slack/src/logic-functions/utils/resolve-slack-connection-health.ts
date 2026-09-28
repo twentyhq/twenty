@@ -1,6 +1,5 @@
 import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
-import { reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_AUTH_ERROR_CODES } from 'src/logic-functions/constants/slack-auth-error-codes';
@@ -12,6 +11,7 @@ import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-error-code';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+import { reportSlackConnectionAuthFailure } from 'src/logic-functions/utils/report-slack-connection-auth-failure';
 
 export type SlackConnectionHealthReport = {
   connectionHealth: SlackConnectionHealth | undefined;
@@ -53,32 +53,17 @@ const probeSlackAuth = async (
   }
 };
 
-const REPORT_SLACK_TOKEN_REJECTED_TIMEOUT_MS = 5_000;
-
 const reportSlackTokenRejected = async ({
   connectionId,
   slackErrorCode,
 }: {
   connectionId: string;
   slackErrorCode: string | undefined;
-}): Promise<void> => {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
-  const reportPromise = reportConnectionAuthFailure({
+}): Promise<void> =>
+  await reportSlackConnectionAuthFailure({
     connectionId,
     reason: `Slack rejected the stored bot token (${slackErrorCode ?? 'auth error'}). Reconnect to restore the integration.`,
-  }).catch(() => undefined);
-
-  const timeoutPromise = new Promise<void>((resolve) => {
-    timeoutId = setTimeout(resolve, REPORT_SLACK_TOKEN_REJECTED_TIMEOUT_MS);
   });
-
-  try {
-    await Promise.race([reportPromise, timeoutPromise]);
-  } finally {
-    clearTimeout(timeoutId);
-  }
-};
 
 const readSlackTeamClaim = (
   installedTeamId: string,

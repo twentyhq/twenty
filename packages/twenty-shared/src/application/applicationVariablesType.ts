@@ -35,6 +35,7 @@ type TypedApplicationVariable = {
   label?: string;
   type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];
+  isRequired?: boolean;
   isDeprecated?: boolean;
 };
 

@@ -10,15 +10,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconEye } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const { t } = useLingui();
@@ -120,8 +117,8 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Name`}
             description={t`The name recipients see for this topic.`}
           />
@@ -134,9 +131,9 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
             disabled={loading}
             fullWidth
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Description`}
             description={t`Optional context shown to recipients on the preferences page.`}
           />
@@ -148,13 +145,13 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
             disabled={loading}
             fullWidth
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}
@@ -162,8 +159,8 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
               checked={isPublic}
               onChange={setIsPublic}
             />
-          </Card>
-        </Section>
+          </Card.Root>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

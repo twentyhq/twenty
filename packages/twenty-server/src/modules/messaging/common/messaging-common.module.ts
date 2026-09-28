@@ -9,6 +9,7 @@ import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -22,7 +23,10 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
     ConnectedAccountModule,
     MetricsModule,
   ],
-  providers: [MessageChannelSyncStatusService],
+  providers: [
+    MessageChannelSyncStatusService,
+    provideWorkspaceScopedRepository(MessageFolderEntity),
+  ],
   exports: [MessageChannelSyncStatusService],
 })
 export class MessagingCommonModule {}

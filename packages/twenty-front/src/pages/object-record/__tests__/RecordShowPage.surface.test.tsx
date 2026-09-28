@@ -3,6 +3,11 @@ import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { render, screen } from '@testing-library/react';
 
 let mockObjectMetadataItems = [{ nameSingular: 'person' }];
+let mockParameters = {
+  objectNameSingular: 'person',
+  objectRecordId: 'record-1',
+};
+let mockIsWorkflowCoreIndexPageEnabled = false;
 let mockRecordResource: {
   record: { id: string } | undefined;
   loading: boolean;
@@ -14,10 +19,20 @@ let mockRecordResource: {
 };
 
 jest.mock('react-router-dom', () => ({
-  useParams: () => ({
-    objectNameSingular: 'person',
-    objectRecordId: 'record-1',
-  }),
+  useParams: () => mockParameters,
+}));
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsWorkflowCoreIndexPageEnabled,
+}));
+
+jest.mock('@/object-core/utils/findCoreObjectShowPage', () => ({
+  findCoreObjectShowPage: (objectNameSingular: string) =>
+    objectNameSingular === 'workflow'
+      ? ({ objectRecordId }: { objectRecordId: string }) => (
+          <div data-testid="core-object-show-page">{objectRecordId}</div>
+        )
+      : undefined,
 }));
 
 jest.mock('@/object-record/record-show/hooks/useRecordShowPage', () => ({
@@ -118,11 +133,45 @@ jest.mock('@/side-panel/components/SidePanelToggleButton', () => ({
 describe('RecordShowPage workspace surface composition', () => {
   beforeEach(() => {
     mockObjectMetadataItems = [{ nameSingular: 'person' }];
+    mockParameters = {
+      objectNameSingular: 'person',
+      objectRecordId: 'record-1',
+    };
+    mockIsWorkflowCoreIndexPageEnabled = false;
     mockRecordResource = {
       record: { id: 'record-1' },
       loading: false,
       error: undefined,
     };
+  });
+
+  it('delegates core-owned records through the generic core show page', () => {
+    mockParameters = {
+      objectNameSingular: 'workflow',
+      objectRecordId: 'workspace-workflow-1',
+    };
+    mockIsWorkflowCoreIndexPageEnabled = true;
+
+    render(<RecordShowPage />);
+
+    expect(screen.getByTestId('core-object-show-page')).toHaveTextContent(
+      'workspace-workflow-1',
+    );
+    expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
+  });
+
+  it('keeps the workspace show page for core-owned records when the flag is disabled', () => {
+    mockParameters = {
+      objectNameSingular: 'workflow',
+      objectRecordId: 'workspace-workflow-1',
+    };
+
+    render(<RecordShowPage />);
+
+    expect(screen.getByTestId('record-renderer')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('core-object-show-page'),
+    ).not.toBeInTheDocument();
   });
 
   it('keeps the existing main-page chrome and canonical renderer', () => {

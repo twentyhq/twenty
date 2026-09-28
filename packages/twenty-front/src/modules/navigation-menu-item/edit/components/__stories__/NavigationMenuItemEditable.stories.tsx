@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconLink } from 'twenty-ui/icon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -215,30 +215,33 @@ export const EditFolderInPlace: Story = {
 
 export const TooltipsStayOutOfActionMenus: Story = {
   play: async ({ canvasElement }) => {
+    const user = userEvent.setup();
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const docs = await canvas.findByText('Docs');
     const status = await canvas.findByText('Status');
 
-    await userEvent.hover(docs);
+    await user.hover(docs);
     await expect(await body.findByRole('tooltip')).toHaveTextContent('Link');
-    await userEvent.hover(status);
+    await user.hover(status);
     await expect(await body.findByRole('tooltip')).toHaveTextContent('Link');
     await expect(body.getAllByRole('tooltip')).toHaveLength(1);
 
     for (const name of ['Docs', 'Status']) {
-      await userEvent.tab();
-      await userEvent.tab();
+      await user.tab();
+      await user.tab();
       await expect(canvas.getByText(name)).toHaveFocus();
       const actions = (
         await canvas.findAllByRole('button', { name: 'Menu item actions' })
       )[name === 'Docs' ? 0 : 1];
-      await userEvent.hover(actions);
-      await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
-      await userEvent.click(actions);
+      await user.hover(actions);
+      await waitFor(() =>
+        expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
+      );
+      await user.click(actions);
       await expect(await body.findByText('Remove from sidebar')).toBeVisible();
       await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
-      await userEvent.keyboard('{Escape}');
+      await user.keyboard('{Escape}');
       await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
     }
   },

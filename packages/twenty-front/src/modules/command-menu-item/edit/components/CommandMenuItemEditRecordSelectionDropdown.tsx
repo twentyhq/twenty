@@ -1,20 +1,20 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { useSelectFirstRecordForEditMode } from '@/command-menu-item/edit/hooks/useSelectFirstRecordForEditMode';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks/useResetRecordIndexSelection';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { IconChevronDown, IconSquareCheck, IconSquareX } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 
@@ -52,7 +52,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   isRecordPage = false,
 }: CommandMenuItemEditRecordSelectionDropdownProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { closeDropdown } = useCloseDropdown();
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
@@ -106,26 +106,32 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
       dropdownPlacement="bottom-start"
       dropdownOffset={{ y: 4 }}
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Medium}
+        >
           <StyledDropdownMenuContainer
             data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
             <DropdownMenuItemsContainer>
-              <MenuItemSelect
-                LeftIcon={IconSquareX}
-                text={t`No record selected`}
-                selected={isNoneSelected}
+              <ListItem
                 onClick={() => handleSelectMode('none')}
-              />
-              <MenuItemSelect
-                LeftIcon={IconSquareCheck}
-                text={t`Records selected`}
-                selected={!isNoneSelected}
+                role="option"
+                aria-selected={isNoneSelected}
+                selected={isNoneSelected}
+                indicator="check"
+                startIcon={<SelectOptionIcon Icon={IconSquareX} />}
+              >{t`No record selected`}</ListItem>
+              <ListItem
                 onClick={() => handleSelectMode('selection')}
-              />
+                role="option"
+                aria-selected={!isNoneSelected}
+                selected={!isNoneSelected}
+                indicator="check"
+                startIcon={<SelectOptionIcon Icon={IconSquareCheck} />}
+              >{t`Records selected`}</ListItem>
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

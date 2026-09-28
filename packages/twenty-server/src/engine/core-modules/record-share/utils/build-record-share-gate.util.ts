@@ -1,9 +1,7 @@
 /* @license Enterprise */
 
-import {
-  MetadataReadability,
-  type RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
@@ -34,38 +32,30 @@ export const buildRecordShareGate = ({
   target,
   buildParentPolicy,
 }: RecordShareGateArgs): RowAccessPolicy => {
-  const { isRecordSharingEnabled } = context.environment;
   const isOwningApplication = context.subject.isOwningApplication(
     target.flatObjectMetadata,
   );
 
-  switch (target.flatObjectMetadata.readability) {
-    case MetadataReadability.OPEN:
+  const gateKind = resolveRecordShareGateKind({
+    readability: target.flatObjectMetadata.readability,
+    isOwningApplication,
+    isLegacyRecordAccessOpen: context.environment.isLegacyRecordAccessOpen,
+  });
+  switch (gateKind) {
+    case 'open':
       return { kind: 'open' };
-    case MetadataReadability.INHERITED:
-      if (!isRecordSharingEnabled || isOwningApplication) {
-        return { kind: 'open' };
-      }
-
+    case 'deny':
+      return { kind: 'denied' };
+    case 'inherited':
       return buildInheritedReadabilityGate({
         context,
         target,
         buildParentPolicy,
       });
-    case MetadataReadability.SYSTEM:
-      return { kind: 'denied' };
-    case MetadataReadability.APPLICATION:
-      return isRecordSharingEnabled && !isOwningApplication
-        ? { kind: 'denied' }
-        : { kind: 'open' };
-    case MetadataReadability.PRIVATE:
-      if (!isRecordSharingEnabled || isOwningApplication) {
-        return { kind: 'open' };
-      }
-
+    case 'private':
       return buildOwnRecordShareGate(context, target);
     default:
-      return assertUnreachable(target.flatObjectMetadata.readability);
+      return assertUnreachable(gateKind);
   }
 };
 

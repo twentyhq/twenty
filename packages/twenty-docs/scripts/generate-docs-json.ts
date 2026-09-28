@@ -48,7 +48,7 @@ const baseStructurePath = path.resolve(
   '../navigation/base-structure.json',
 );
 const docsPath = path.resolve(__dirname, '../docs.json');
-const localesRoot = path.resolve(__dirname, '../l');
+const docsRoot = path.resolve(__dirname, '..');
 
 const baseStructure: BaseStructure = JSON.parse(
   fs.readFileSync(baseStructurePath, 'utf8'),
@@ -80,7 +80,7 @@ const collectTranslations = (file: TranslationFile | null): TranslationMaps => {
 };
 
 const loadTranslationFile = (language: string): TranslationFile | null => {
-  const translationPath = path.join(localesRoot, language, 'navigation.json');
+  const translationPath = path.join(docsRoot, language, 'navigation.json');
 
   if (!fs.existsSync(translationPath)) {
     return null;
@@ -138,14 +138,17 @@ const buildGroup = (
   };
 };
 
+// Mintlify resolves a page's counterpart in another language from the
+// language-code path prefix, so the switcher only works when translations
+// live at `<language>/<slug>`.
 const formatPageSlug = (slug: string, language: string): string | null => {
   if (language === DEFAULT_LANGUAGE) {
     return slug;
   }
 
-  const localizedPagePath = path.join(localesRoot, language, `${slug}.mdx`);
+  const localizedPagePath = path.join(docsRoot, language, `${slug}.mdx`);
 
-  return fs.existsSync(localizedPagePath) ? `l/${language}/${slug}` : null;
+  return fs.existsSync(localizedPagePath) ? `${language}/${slug}` : null;
 };
 
 const hasLocaleContent = (language: string): boolean => {
@@ -153,7 +156,7 @@ const hasLocaleContent = (language: string): boolean => {
     return true;
   }
 
-  const localeDir = path.join(localesRoot, language);
+  const localeDir = path.join(docsRoot, language);
   return fs.existsSync(localeDir);
 };
 

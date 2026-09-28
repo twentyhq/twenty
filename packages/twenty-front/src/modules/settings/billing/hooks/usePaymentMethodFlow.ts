@@ -1,14 +1,14 @@
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const usePaymentMethodFlow = (modalInstanceId: string) => {
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
@@ -27,7 +27,7 @@ export const usePaymentMethodFlow = (modalInstanceId: string) => {
 
   const openPaymentMethodFlow = () => {
     if (shouldAddPaymentMethodInProduct) {
-      openModal(modalInstanceId);
+      openDialog(modalInstanceId);
       return;
     }
 

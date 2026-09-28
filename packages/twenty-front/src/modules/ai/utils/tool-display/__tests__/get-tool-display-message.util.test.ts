@@ -4,7 +4,7 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 
 const emptyDisplayContext: ToolDisplayContext = {
   labelByName: new Map(),

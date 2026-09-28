@@ -8,7 +8,6 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconButton } from '@ui/components/IconButton/IconButton';
 import {
   Banner,
   type BannerColor,
@@ -28,23 +27,21 @@ const BannerCloseButton = ({
   variant?: BannerVariant;
 }) =>
   variant === 'primary' ? (
-    <IconButton
+    <Button
       className={styles.invertedIconButton}
       size="sm"
       variant="ghost"
       aria-label="Close"
-    >
-      <IconX />
-    </IconButton>
+      startIcon={<IconX />}
+    />
   ) : (
-    <IconButton
+    <Button
       size="sm"
       variant="ghost"
       color={getButtonColor(color)}
       aria-label="Close"
-    >
-      <IconX />
-    </IconButton>
+      startIcon={<IconX />}
+    />
   );
 
 const meta: Meta<typeof Banner> = {
@@ -78,13 +75,14 @@ export const Default: Story = {
           <Button
             size="sm"
             variant="outline"
-            color={args.color === 'danger' ? 'danger' : 'accent'}
-            style={{
-              color:
-                args.variant === 'primary'
-                  ? 'var(--t-font-color-inverted)'
-                  : undefined,
-            }}
+            color={
+              args.variant === 'primary'
+                ? 'neutral'
+                : getButtonColor(args.color)
+            }
+            className={
+              args.variant === 'primary' ? styles.invertedButton : undefined
+            }
           >
             {'Reconnect'}
           </Button>
@@ -109,13 +107,12 @@ export const Catalog: CatalogStory<Story, typeof Banner> = {
         <Button
           size="sm"
           variant="outline"
-          color={args.color === 'danger' ? 'danger' : 'accent'}
-          style={{
-            color:
-              args.variant === 'primary'
-                ? 'var(--t-font-color-inverted)'
-                : undefined,
-          }}
+          color={
+            args.variant === 'primary' ? 'neutral' : getButtonColor(args.color)
+          }
+          className={
+            args.variant === 'primary' ? styles.invertedButton : undefined
+          }
         >
           {'Reconnect'}
         </Button>

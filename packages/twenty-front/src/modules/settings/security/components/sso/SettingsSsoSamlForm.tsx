@@ -2,19 +2,17 @@ import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSam
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useContext, useRef } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 /* @license Enterprise */
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;
@@ -50,7 +48,7 @@ const StyledButtonCopy = styled.div`
 `;
 
 export const SettingsSsoSamlForm = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { enqueueToast } = useToast();
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
@@ -118,8 +116,8 @@ export const SettingsSsoSamlForm = () => {
   };
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Identity Provider Metadata XML`}
           description={t`Upload the XML file with your connection infos`}
         />
@@ -143,9 +141,9 @@ export const SettingsSsoSamlForm = () => {
             />
           )}
         </StyledUploadFileContainer>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Service Provider Details`}
           description={t`Enter the infos to set the connection`}
         />
@@ -199,7 +197,7 @@ export const SettingsSsoSamlForm = () => {
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>
-      </Section>
+      </Section.Root>
     </>
   );
 };

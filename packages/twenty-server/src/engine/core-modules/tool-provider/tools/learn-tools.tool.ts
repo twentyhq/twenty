@@ -15,7 +15,7 @@ export const learnToolsInputSchema = z.object({
   toolNames: z
     .array(z.string())
     .describe(
-      'Exact tool names. Do not guess tool names. Pass every tool you need to learn in this single array — do not make separate learn_tools calls per tool.',
+      'Tool names to learn. A name you built from the CRUD grammar is fine: unknown names come back under notFound with the closest matching names. Pass every tool you need to learn in this single array — do not make separate learn_tools calls per tool.',
     ),
   aspects: z
     .array(learnToolsAspectSchema)
@@ -54,7 +54,7 @@ export const createLearnToolsTool = (
   options?: LearnToolsOptions,
 ) => ({
   description:
-    'Get input schemas for tools. Pass all the tool names you need in a single call (toolNames accepts an array) rather than calling learn_tools once per tool. Call this with exact tool names to learn the required arguments before calling execute_tool.',
+    'Get input schemas for tools, and confirm a tool name exists. Pass all the tool names you need in a single call (toolNames accepts an array) rather than calling learn_tools once per tool. A name you built from the CRUD grammar is safe to pass: unknown names come back under notFound with the closest matching names, so you never need a catalog call just to check a name.',
   inputSchema: learnToolsInputSchema,
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;

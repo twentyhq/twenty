@@ -3,7 +3,7 @@ import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/us
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type CreateCalendarEventInput,
   type CreateCalendarEventOutput,

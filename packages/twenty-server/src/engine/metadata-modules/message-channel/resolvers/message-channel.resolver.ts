@@ -1,11 +1,10 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { Not, Repository } from 'typeorm';
+import { Not } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -15,6 +14,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -36,6 +36,9 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
@@ -46,13 +49,14 @@ import {
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => MessageChannelDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class MessageChannelResolver {
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly applicationMessageChannelsService: ApplicationMessageChannelsService,
-    @InjectRepository(MessageFolderEntity)
-    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
 
@@ -113,6 +117,7 @@ export class MessageChannelResolver {
 
   @Query(() => [MessageChannelDTO])
   @UseGuards(NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async myMessageChannels(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -170,13 +175,15 @@ export class MessageChannelResolver {
       messageChannel.syncStage ===
       MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING;
 
-    const foldersWithPendingAction = await this.messageFolderRepository.find({
-      where: {
-        messageChannelId: messageChannel.id,
-        pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
-        workspaceId: workspace.id,
+    const foldersWithPendingAction = await this.messageFolderRepository.find(
+      workspace.id,
+      {
+        where: {
+          messageChannelId: messageChannel.id,
+          pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
+        },
       },
-    });
+    );
 
     const hasPendingGroupEmailsAction =
       messageChannel.pendingGroupEmailsAction !==

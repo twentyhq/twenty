@@ -1,4 +1,4 @@
-import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 

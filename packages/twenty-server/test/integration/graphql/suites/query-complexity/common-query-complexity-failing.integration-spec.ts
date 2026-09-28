@@ -2,7 +2,7 @@ import { TOO_MANY_RELATION_QUERY_GQL_FIELDS } from 'test/integration/graphql/sui
 import { TWO_NESTED_ONE_TO_MANY_QUERY_GQL_FIELDS } from 'test/integration/graphql/suites/query-complexity/constants/twoNestedOneToManyQueryGqlFields.constant';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
 import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 
@@ -30,7 +30,7 @@ describe('Query Complexity - Failing Scenarios', () => {
       first: 200,
     });
 
-    const response = await makeGraphqlAPIRequest(findManyPeopleOperation);
+    const response = await makeGraphqlApiRequest(findManyPeopleOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toMatchSnapshot();
@@ -43,7 +43,7 @@ describe('Query Complexity - Failing Scenarios', () => {
       gqlFields: TOO_MANY_RELATION_QUERY_GQL_FIELDS,
     });
 
-    const response = await makeGraphqlAPIRequest(findManyPeopleOperation);
+    const response = await makeGraphqlApiRequest(findManyPeopleOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toMatchSnapshot();
@@ -58,7 +58,7 @@ describe('Query Complexity - Failing Scenarios', () => {
       limit: 11,
     });
 
-    const response = await makeGraphqlAPIRequest(groupByOperation);
+    const response = await makeGraphqlApiRequest(groupByOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toMatchSnapshot();

@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   CalendarChannelSyncStage,
+  CalendarChannelSyncStatus,
   MessageChannelSyncStage,
+  MessageChannelSyncStatus,
   WebhookSubscriptionChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
@@ -189,7 +191,13 @@ export class WebhookSubscriptionRenewalCronJob {
   private findMessageChannelsMissingSubscription(
     activeWorkspaceIds: string[],
   ): Promise<StaleChannel[]> {
-    const scope = this.buildStaleChannelScope(activeWorkspaceIds);
+    const scope = {
+      ...this.buildStaleChannelScope(activeWorkspaceIds),
+      syncStatus: In([
+        MessageChannelSyncStatus.ACTIVE,
+        MessageChannelSyncStatus.ONGOING,
+      ]),
+    };
 
     return this.messageChannelRepository.find({
       where: [
@@ -219,7 +227,13 @@ export class WebhookSubscriptionRenewalCronJob {
   private findCalendarChannelsMissingSubscription(
     activeWorkspaceIds: string[],
   ): Promise<StaleChannel[]> {
-    const scope = this.buildStaleChannelScope(activeWorkspaceIds);
+    const scope = {
+      ...this.buildStaleChannelScope(activeWorkspaceIds),
+      syncStatus: In([
+        CalendarChannelSyncStatus.ACTIVE,
+        CalendarChannelSyncStatus.ONGOING,
+      ]),
+    };
 
     return this.calendarChannelRepository.find({
       where: [

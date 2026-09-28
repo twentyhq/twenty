@@ -1,5 +1,5 @@
 import { upsertFieldPermissionsQueryFactory } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions-query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 
@@ -8,7 +8,7 @@ export const upsertFieldPermissions = async (
 ) => {
   const graphqlOperation = upsertFieldPermissionsQueryFactory({ input });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation);
 
   return {
     data: response.body.data,

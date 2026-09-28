@@ -3,6 +3,7 @@ import { CaptchaDriverType, SupportDriver } from '~/generated-metadata/graphql';
 
 export const mockedClientConfig: ClientConfig = {
   aiModels: [],
+  aiEvaluationModels: [],
   aiModelTiers: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,

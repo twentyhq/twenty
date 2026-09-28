@@ -1,5 +1,5 @@
 import IconMicrosoftOutlookRaw from '@assets/icons/microsoft-outlook.svg?react';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 interface IconMicrosoftOutlookProps {
   size?: number | string;

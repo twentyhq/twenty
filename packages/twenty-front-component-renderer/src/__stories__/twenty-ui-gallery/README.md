@@ -14,8 +14,8 @@ error and can allow additional known errors without requiring them to occur.
 
 | Fixture | Components |
 | --- | --- |
-| `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea, InputLabel, InputHint |
-| `twenty-ui-display-helpers` | Text, EllipsisDisplay, NumberDisplay, JsonDisplay, TextDisplay, SelectDisplay |
+| `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
+| `twenty-ui-display-helpers` | Text |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
 | `twenty-ui-popover` | Popover |
@@ -24,6 +24,8 @@ error and can allow additional known errors without requiring them to occur.
 | `twenty-ui-toast` | Toast |
 | `twenty-ui-alert-dialog` | AlertDialog |
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
+| `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
+| `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -34,8 +36,8 @@ shared card also exercises the SDK's CSS injection and the renderer's style brid
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
-work fully in the sandbox. The failing scenarios require specific errors and
-reject unrelated errors, following the existing gallery convention. Known
+work fully in the sandbox. Scenarios that raise errors require specific errors and
+reject unrelated ones, following the existing gallery convention. Known
 precursor errors are optional because the host can coalesce worker errors into
 a single state update. A fix must change the corresponding story to assert
 successful behavior; do not keep or broaden an obsolete error expectation.
@@ -45,9 +47,24 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | --- | --- |
 | Field controls | Forwarded events lack the native event used for `composedPath`. React serializes boolean `aria-invalid` as an empty string; Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
 | Tabs | React cannot mount without `compareDocumentPosition`; Preact activation fails on the missing native event for `composedPath`. |
+| Radio, RadioGroup | Unselected radios need `Element.matches(':disabled')`; React also orders radio groups with `compareDocumentPosition`. |
+| SegmentedControl | Ordering its radios needs `compareDocumentPosition`, so React cannot mount it. In the Preact input gallery the `Radio` failure skips that ordering at mount, so the control fails on first focus instead. Selecting would also need `PointerEvent` and native radio activation. |
 | Popover, AlertDialog | Opening fails while reading unavailable viewport width data. |
 | Menu, Select | Opening fails on viewport data and/or missing `nativeEvent.pointerType`. |
 | Switch | Activation attempts to construct an unavailable `PointerEvent`. |
+| Tooltip | `TooltipReact` opens on hover but remains open after Escape because the SDK does not forward handlers added by `React.cloneElement`. `TooltipPreact` throws on hover because the sandbox lacks `Element.closest`. |
+| Responsive hooks | The sandbox has no `window.matchMedia`, so `useIsMobile` and `useIsTouchDevice` return `false` whatever the host viewport or input. The fixture asserts that fallback and must assert host-derived values once a media-query bridge lands. |
+
+The tooltip stories assert these known failures and must be updated to assert
+successful interactions when compatibility is fixed. The surfaces gallery checks
+that the migrated tooltip mounts in both runtimes. Full tooltip interaction
+coverage remains in twenty-ui's own stories.
+
+SDK event handling and sandbox DOM fixes are deferred from the tooltip migration.
+Further gaps found while investigating include forwarded events without
+`nativeEvent` and a `Node.contains` ancestor traversal bug that can hang pointer
+leave handling. After fixing those gaps, cover Escape dismissal, pointer leave,
+and the compound tooltip's title and description in both renderer runtimes.
 
 Once those gaps are fixed, extend the stories to verify selection, disabled
 items, keyboard navigation, and overlay content, dismissal, and focus restoration.

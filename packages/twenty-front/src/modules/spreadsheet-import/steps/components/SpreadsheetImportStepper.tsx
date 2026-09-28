@@ -2,10 +2,11 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { useCallback, useContext, useState } from 'react';
-import { CircularProgressBar, useToast } from 'twenty-ui/primitives/feedback';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useCallback, useState } from 'react';
+import { useToast } from 'twenty-ui/components';
+import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { useTheme } from 'twenty-ui/theme';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
@@ -21,7 +22,7 @@ export const SpreadsheetImportStepper = ({
   nextStep,
   prevStep,
 }: SpreadsheetImportStepperProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const [currentStepState, setCurrentStepState] =
@@ -124,13 +125,22 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.loading:
     default:
       return (
-        <ModalContent isVerticallyCentered isHorizontallyCentered>
+        <Dialog.Body
+          style={{
+            display: 'flex',
+            flex: '1 1 0%',
+            flexDirection: 'column',
+            padding: 'var(--t-spacing-10)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <CircularProgressBar
             size={80}
             barWidth={8}
             barColor={theme.font.color.primary}
           />
-        </ModalContent>
+        </Dialog.Body>
       );
   }
 };

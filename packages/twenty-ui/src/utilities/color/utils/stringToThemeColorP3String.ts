@@ -1,5 +1,9 @@
-import { type ThemeType, type themeCssVariables } from '@ui/theme-constants';
-import { type ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
+import {
+  type ThemeType,
+  type themeCssVariables,
+  type ThemeColor,
+  MAIN_COLOR_NAMES,
+} from '@ui/theme';
 
 export const stringToThemeColor = (string: string): ThemeColor => {
   let hash = 0;

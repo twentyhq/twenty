@@ -1,6 +1,6 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 
-import { type SuggestionItem } from '@/blocknote-editor/types/types';
+import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import {
   IconBlockquote,

@@ -1,3 +1,4 @@
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -7,9 +8,8 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { AvatarOrIcon } from 'twenty-ui/primitives/data-display';
 import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
@@ -21,10 +21,10 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
 import { useSkillIcon } from '@/skill-suggestion/hooks/useSkillIcon';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
 
 const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';

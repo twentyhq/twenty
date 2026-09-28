@@ -2,16 +2,15 @@ import { SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID } from '@/side-panel/constant
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { IconButton, MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNavigationIcon = styled.div`
   align-items: center;
@@ -61,7 +60,7 @@ export const SidePanelBackButton = () => {
         </StyledNavigationIcon>
       }
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             {contextChips.slice(0, -1).map((chip, index) => (
               <MenuItem
@@ -75,7 +74,7 @@ export const SidePanelBackButton = () => {
               />
             ))}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownId={SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID}
       dropdownPlacement="bottom-start"

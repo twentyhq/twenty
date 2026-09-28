@@ -14,7 +14,7 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAccountsEmails = () => {
   const { t } = useLingui();
@@ -50,11 +50,11 @@ export const SettingsAccountsEmails = () => {
     }
 
     return (
-      <Section>
+      <Section.Root>
         <SettingsAccountsMessageChannelsContainer
           messageChannels={messageChannels}
         />
-      </Section>
+      </Section.Root>
     );
   };
 
@@ -75,6 +75,7 @@ export const SettingsAccountsEmails = () => {
       secondaryBar={
         tabs.length > 1 ? (
           <SettingsTabBar
+            aria-label={t`Email accounts`}
             tabs={tabs}
             componentInstanceId={
               SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID

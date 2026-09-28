@@ -1,13 +1,23 @@
 import fs from 'fs';
 import path from 'path';
 
+import {
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+} from '../navigation/supported-languages';
+
 // Crowdin parses `<foo>` in prose as a tag rather than literal text, so an angle
 // bracket placeholder is either dropped or mangled in every translated page.
 // Curly braces `{foo}` survive the round trip.
 
 const DOCS_ROOT = path.resolve(__dirname, '..');
 
-const IGNORED_DIRECTORIES = ['node_modules', 'l', 'images', 'scripts'];
+const IGNORED_DIRECTORIES = ['node_modules', 'images', 'scripts'];
+
+// Translated pages are Crowdin output; their placeholders are fixed at the source.
+const TRANSLATED_DIRECTORIES = SUPPORTED_LANGUAGES.filter(
+  (language) => language !== DEFAULT_LANGUAGE,
+).map((language) => path.join(DOCS_ROOT, language));
 
 const HTML_ELEMENTS = [
   'abbr',
@@ -215,11 +225,14 @@ export const findAngleBracketPlaceholders = (text: string): MdxViolation[] => {
 
 const collectMdxFiles = (directory: string, collected: string[] = []) => {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    if (IGNORED_DIRECTORIES.includes(entry.name)) {
+    const entryPath = path.join(directory, entry.name);
+
+    if (
+      IGNORED_DIRECTORIES.includes(entry.name) ||
+      TRANSLATED_DIRECTORIES.includes(entryPath)
+    ) {
       continue;
     }
-
-    const entryPath = path.join(directory, entry.name);
 
     if (entry.isDirectory()) {
       collectMdxFiles(entryPath, collected);

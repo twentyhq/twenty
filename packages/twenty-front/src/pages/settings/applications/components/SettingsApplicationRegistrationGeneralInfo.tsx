@@ -1,3 +1,16 @@
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
+import {
+  SettingsTableCard,
+  type TableItem,
+} from '@/settings/components/SettingsTableCard';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconBox,
   IconDownload,
@@ -5,13 +18,8 @@ import {
   IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
-import {
-  SettingsTableCard,
-  type TableItem,
-} from '@/settings/components/SettingsTableCard';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistration,
   ApplicationRegistrationSourceType,
@@ -19,14 +27,6 @@ import {
   FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
-import { isNonEmptyString } from '@sniptt/guards';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useQuery } from '@apollo/client/react';
-import { AvatarOrIcon, Chip, Tag } from 'twenty-ui/primitives/data-display';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -191,8 +191,8 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
   };
 
   return (
-    <Section>
-      <H2Title title={t`General`} description={t`About your app`} />
+    <Section.Root>
+      <Section.Header title={t`General`} description={t`About your app`} />
       <StyledGeneralContainer>
         <SettingsTableCard
           rounded
@@ -208,6 +208,6 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           }
         />
       </StyledGeneralContainer>
-    </Section>
+    </Section.Root>
   );
 };

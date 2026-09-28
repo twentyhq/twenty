@@ -1,14 +1,8 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronLeft,
-  IconCoins,
-  IconList,
-  IconTrash,
-  IconUsers,
-} from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { IconCoins, IconList, IconTrash, IconUsers } from 'twenty-ui/icon';
 
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';
@@ -16,20 +10,15 @@ import { USAGE_LIMIT_SPENDER_TYPE_ICONS } from '@/settings/billing/constants/Usa
 import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypeLabels';
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { Dropdown } from 'twenty-ui/components';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 
 const FILTER_DROPDOWN_ID = 'settings-billing-limits-filter';
 
-type FilterContentId = 'usage' | 'spender';
-
 type SettingsBillingLimitsFilterDropdownProps = {
-  filterButton: ReactNode;
+  filterButton: ReactElement;
   resourceTypes: UsageResourceType[];
   spenderTypes: string[];
   selectedResourceType: UsageResourceType | null;
@@ -49,10 +38,6 @@ export const SettingsBillingLimitsFilterDropdown = ({
 }: SettingsBillingLimitsFilterDropdownProps) => {
   const { t } = useLingui();
 
-  const [contentId, setContentId] = useState<FilterContentId | null>(null);
-
-  const goToMenu = () => setContentId(null);
-
   const getSpenderTypeLabel = (spenderType: string): string => {
     const spenderLabel = getUsageLimitLabel(
       USAGE_LIMIT_SPENDER_TYPE_LABELS,
@@ -65,134 +50,119 @@ export const SettingsBillingLimitsFilterDropdown = ({
   const hasActiveFilters =
     isDefined(selectedResourceType) || isDefined(selectedSpenderType);
 
-  const renderBackHeader = (title: string) => (
-    <DropdownMenuHeader
-      StartComponent={
-        <DropdownMenuHeaderLeftComponent
-          onClick={goToMenu}
-          Icon={IconChevronLeft}
-        />
-      }
-    >
-      {title}
-    </DropdownMenuHeader>
-  );
-
   const renderUsageContent = () => (
-    <DropdownContent>
-      {renderBackHeader(t`Usage`)}
-      <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          LeftIcon={IconList}
-          text={t`All`}
+    <>
+      <Dropdown.Back>{t`Usage`}</Dropdown.Back>
+      <Dropdown.Section>
+        <Dropdown.OptionItem
+          closeOnSelect={false}
+          onSelect={() => onSelectResourceType(null)}
           selected={!isDefined(selectedResourceType)}
-          onClick={() => onSelectResourceType(null)}
-        />
+          startIcon={<IconList />}
+        >{t`All`}</Dropdown.OptionItem>
         {resourceTypes.map((resourceType) => (
-          <MenuItemSelect
+          <Dropdown.OptionItem
             key={resourceType}
-            LeftIcon={USAGE_LIMIT_RESOURCE_TYPE_ICONS[resourceType]}
-            text={t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])}
+            closeOnSelect={false}
+            onSelect={() => onSelectResourceType(resourceType)}
             selected={selectedResourceType === resourceType}
-            onClick={() => onSelectResourceType(resourceType)}
-          />
+            startIcon={
+              <SelectOptionIcon
+                Icon={USAGE_LIMIT_RESOURCE_TYPE_ICONS[resourceType]}
+              />
+            }
+          >
+            {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])}
+          </Dropdown.OptionItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 
   const renderSpenderContent = () => (
-    <DropdownContent>
-      {renderBackHeader(t`Spender`)}
-      <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          LeftIcon={IconList}
-          text={t`All`}
+    <>
+      <Dropdown.Back>{t`Spender`}</Dropdown.Back>
+      <Dropdown.Section>
+        <Dropdown.OptionItem
+          closeOnSelect={false}
+          onSelect={() => onSelectSpenderType(null)}
           selected={!isDefined(selectedSpenderType)}
-          onClick={() => onSelectSpenderType(null)}
-        />
+          startIcon={<IconList />}
+        >{t`All`}</Dropdown.OptionItem>
         {spenderTypes.map((spenderType) => (
-          <MenuItemSelect
+          <Dropdown.OptionItem
             key={spenderType}
-            LeftIcon={
-              isKeyOfRecord(USAGE_LIMIT_SPENDER_TYPE_ICONS, spenderType)
-                ? USAGE_LIMIT_SPENDER_TYPE_ICONS[spenderType]
-                : undefined
-            }
-            text={getSpenderTypeLabel(spenderType)}
+            closeOnSelect={false}
+            onSelect={() => onSelectSpenderType(spenderType)}
             selected={selectedSpenderType === spenderType}
-            onClick={() => onSelectSpenderType(spenderType)}
-          />
+            startIcon={
+              <SelectOptionIcon
+                Icon={
+                  isKeyOfRecord(USAGE_LIMIT_SPENDER_TYPE_ICONS, spenderType)
+                    ? USAGE_LIMIT_SPENDER_TYPE_ICONS[spenderType]
+                    : undefined
+                }
+              />
+            }
+          >
+            {getSpenderTypeLabel(spenderType)}
+          </Dropdown.OptionItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 
   const renderMenuContent = () => (
-    <DropdownContent>
-      <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={IconCoins}
-          text={t`Usage`}
-          contextualText={
+    <>
+      <Dropdown.Section>
+        <Dropdown.ActionItem
+          startIcon={<IconCoins />}
+          description={
             isDefined(selectedResourceType)
               ? t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[selectedResourceType])
               : t`All`
           }
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() => setContentId('usage')}
-        />
-        <MenuItem
-          LeftIcon={IconUsers}
-          text={t`Spender`}
-          contextualText={
+          descriptionPlacement="end"
+          hasSubmenu
+          page="usage"
+        >{t`Usage`}</Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          startIcon={<IconUsers />}
+          description={
             isDefined(selectedSpenderType)
               ? getSpenderTypeLabel(selectedSpenderType)
               : t`All`
           }
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() => setContentId('spender')}
-        />
+          descriptionPlacement="end"
+          hasSubmenu
+          page="spender"
+        >{t`Spender`}</Dropdown.ActionItem>
         {hasActiveFilters && (
           <>
-            <DropdownMenuSeparator />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Clear filters`}
+            <Dropdown.Separator />
+            <Dropdown.ActionItem
+              closeOnClick={false}
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={() => {
                 onSelectResourceType(null);
                 onSelectSpenderType(null);
               }}
-            />
+            >{t`Clear filters`}</Dropdown.ActionItem>
           </>
         )}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 
-  const renderContent = () => {
-    if (contentId === 'usage') {
-      return renderUsageContent();
-    }
-
-    if (contentId === 'spender') {
-      return renderSpenderContent();
-    }
-
-    return renderMenuContent();
-  };
-
   return (
-    <Dropdown
-      dropdownId={FILTER_DROPDOWN_ID}
-      dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 8 }}
-      onClose={goToMenu}
-      clickableComponent={filterButton}
-      dropdownComponents={renderContent()}
-    />
+    <DropdownRoot dropdownId={FILTER_DROPDOWN_ID} type="picker">
+      <Dropdown.Trigger render={filterButton} />
+      <DropdownContent align="end" sideOffset={8}>
+        <Dropdown.Page id="root">{renderMenuContent()}</Dropdown.Page>
+        <Dropdown.Page id="usage">{renderUsageContent()}</Dropdown.Page>
+        <Dropdown.Page id="spender">{renderSpenderContent()}</Dropdown.Page>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

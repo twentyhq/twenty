@@ -16,6 +16,10 @@ const FLAT_PAGE_LAYOUT_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['pageLayoutId'],
   },
+  navigationMenuItem: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['pageLayoutId'],
+  },
   application: ['id', 'universalIdentifier'],
   objectMetadata: ['id', 'universalIdentifier'],
 } as const;
@@ -33,6 +37,7 @@ export class WorkspaceFlatPageLayoutMapCacheService extends MetadataFlatEntityMa
     const {
       pageLayout: pageLayouts,
       pageLayoutTab: pageLayoutTabs,
+      navigationMenuItem: navigationMenuItems,
       application: applications,
       objectMetadata: objectMetadatas,
     } = rows;
@@ -51,6 +56,8 @@ export class WorkspaceFlatPageLayoutMapCacheService extends MetadataFlatEntityMa
         entity: {
           ...pageLayoutEntity,
           tabs: pageLayoutTabs.byPageLayoutId.get(pageLayoutEntity.id) || [],
+          navigationMenuItems:
+            navigationMenuItems.byPageLayoutId.get(pageLayoutEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

@@ -2,9 +2,8 @@
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { IconArrowUp, IconLock } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { billingState } from '@/client-config/states/billingState';
@@ -14,7 +13,7 @@ import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
@@ -44,14 +43,14 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
 
   if (!hasOrganizationPlan) {
     return (
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
           adornment={<OrganizationAdornment />}
         />
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentButton
               Icon={IconLock}
               title={t`Upgrade to access`}
@@ -72,15 +71,15 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
                 >{t`Upgrade`}</Button>
               }
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
-      </Section>
+      </Section.Root>
     );
   }
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Record-level`}
         description={t`Ability to filter the records a user can interact with.`}
       />
@@ -90,6 +89,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           objectMetadataItem={objectMetadataItem}
         />
       </StyledContent>
-    </Section>
+    </Section.Root>
   );
 };

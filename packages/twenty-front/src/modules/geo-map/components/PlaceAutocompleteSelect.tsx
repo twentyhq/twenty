@@ -1,13 +1,14 @@
-import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { type PlaceAutocompleteResult } from '@/geo-map/types/PlaceApi';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useMemo, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItemSelectTag } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   margin-bottom: 0px !important;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
@@ -41,7 +42,7 @@ export const PlaceAutocompleteSelect = ({
         selectableItemIdArray={selectableItemIdArray}
         focusId={dropdownId}
       >
-        <DropdownContent
+        <LegacyDropdownContent
           ref={selectContainerRef}
           selectDisabled
           widthInPixels={345}
@@ -54,17 +55,27 @@ export const PlaceAutocompleteSelect = ({
                   itemId={option.value}
                   onEnter={() => onChange(option.value)}
                 >
-                  <MenuItemSelectTag
+                  <ListItem
                     key={option.value}
-                    text={option.label}
-                    color="transparent"
                     onClick={() => onChange(option.value)}
-                  />
+                    role="option"
+                    aria-selected={false}
+                    selected={false}
+                    indicator="check"
+                  >
+                    <Tag
+                      color={'transparent'}
+                      borderStyle="dashed"
+                      variant={'soft'}
+                    >
+                      {option.label}
+                    </Tag>
+                  </ListItem>
                 </SelectableListItem>
               );
             })}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       </SelectableList>
     </StyledContainer>
   );

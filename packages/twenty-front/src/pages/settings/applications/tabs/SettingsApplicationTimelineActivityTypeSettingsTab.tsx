@@ -7,13 +7,12 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
+import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconRestore, IconTimelineEvent } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/SettingsApplicationTimelineActivityType';
 
 type SettingsApplicationTimelineActivityTypeSettingsTabProps = {
   timelineActivityType: SettingsApplicationTimelineActivityType;
@@ -88,8 +87,8 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Details`}
           description={t`Configuration of this timeline activity type`}
         />
@@ -111,13 +110,13 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             ))}
           </TableSection>
         </Table>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Activity visibility`}
           description={t`Choose whether this activity type appears in record timelines`}
         />
-        <Card rounded fullWidth>
+        <Card.Root rounded fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconTimelineEvent}
             title={t`Active`}
@@ -126,11 +125,11 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             disabled={disabled}
             onChange={onIsActiveChange}
           />
-        </Card>
-      </Section>
+        </Card.Root>
+      </Section.Root>
       {canReset && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Reset`}
             description={t`Restore the activity type settings defined by the application`}
           />
@@ -141,7 +140,7 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             onClick={onReset}
             variant="outline"
           >{t`Reset to default`}</Button>
-        </Section>
+        </Section.Root>
       )}
     </>
   );

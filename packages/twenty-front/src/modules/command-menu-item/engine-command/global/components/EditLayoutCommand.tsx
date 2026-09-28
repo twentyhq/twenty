@@ -1,4 +1,4 @@
-import { useResetLocationHash } from 'twenty-ui/utilities';
+import { useResetLocationHash } from '@/ui/navigation/utils/hooks/useResetLocationHash';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';

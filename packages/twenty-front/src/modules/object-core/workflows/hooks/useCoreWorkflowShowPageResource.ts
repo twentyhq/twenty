@@ -6,16 +6,16 @@ import { buildWorkflowShowPageRecordFromCoreWorkflow } from '@/object-core/workf
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowShowPageResource = ({
-  workspaceWorkflowId,
+  coreWorkflowId,
 }: {
-  workspaceWorkflowId: string;
+  coreWorkflowId: string;
 }) => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { data, loading, error, refetch } = useQuery(GetCoreWorkflowDocument, {
     client: apolloCoreClient,
     fetchPolicy: 'cache-and-network',
-    variables: { workspaceWorkflowId },
+    variables: { coreWorkflowId },
   });
 
   const record = useMemo(
@@ -23,5 +23,5 @@ export const useCoreWorkflowShowPageResource = ({
     [data?.coreWorkflow],
   );
 
-  return { record, loading, error, refetch };
+  return { record, coreWorkflow: data?.coreWorkflow, loading, error, refetch };
 };

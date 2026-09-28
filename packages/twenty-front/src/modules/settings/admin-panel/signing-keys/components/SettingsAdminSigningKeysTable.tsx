@@ -2,7 +2,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal';
 import { useRevokeSigningKey } from '@/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -12,11 +12,11 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCopy } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetSigningKeysDocument,
   type SigningKeyDto,
@@ -54,7 +54,7 @@ const getStatusTag = (
 
 export const SettingsAdminSigningKeysTable = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { copyToClipboard } = useCopyToClipboard();
   const [selectedSigningKey, setSelectedSigningKey] =
     useState<SelectedSigningKey | null>(null);
@@ -70,7 +70,7 @@ export const SettingsAdminSigningKeysTable = () => {
 
   const handleRevokeClick = (signingKey: SelectedSigningKey) => {
     setSelectedSigningKey(signingKey);
-    openModal(REVOKE_MODAL_ID);
+    openDialog(REVOKE_MODAL_ID);
   };
 
   const handleConfirmRevoke = async () => {

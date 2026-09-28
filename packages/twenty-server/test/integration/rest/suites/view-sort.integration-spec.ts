@@ -2,7 +2,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertMetadataRestListResponse,
   assertRestApiErrorNotFoundResponse,
@@ -103,7 +103,7 @@ describe('View Sort REST API', () => {
 
   describe('GET /metadata/viewSorts', () => {
     it('should return empty array when no view sorts exist', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewSorts?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -114,7 +114,7 @@ describe('View Sort REST API', () => {
     });
 
     it('should return all view sorts for workspace when no viewId provided', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/viewSorts',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -132,7 +132,7 @@ describe('View Sort REST API', () => {
 
       testViewSortId = viewSort.id;
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewSorts?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -198,7 +198,7 @@ describe('View Sort REST API', () => {
 
       testViewSortId = viewSort.id;
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewSorts/${viewSort.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -214,7 +214,7 @@ describe('View Sort REST API', () => {
     });
 
     it('should return empty object for non-existent view sort', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewSorts/20202020-a1b2-4c3d-8e9f-123456789abc`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -238,7 +238,7 @@ describe('View Sort REST API', () => {
         direction: ViewSortDirection.DESC,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewSorts/${viewSort.id}`,
         body: updateData,
@@ -259,7 +259,7 @@ describe('View Sort REST API', () => {
         direction: ViewSortDirection.DESC,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/viewSorts/20202020-a1b2-4c3d-8e9f-123456789abc`,
         body: updateData,
@@ -280,7 +280,7 @@ describe('View Sort REST API', () => {
 
       testViewSortId = viewSort.id;
 
-      const deleteResponse = await makeRestAPIRequest({
+      const deleteResponse = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewSorts/${viewSort.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -289,7 +289,7 @@ describe('View Sort REST API', () => {
       assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
 
-      const getResponse = await makeRestAPIRequest({
+      const getResponse = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/viewSorts/${viewSort.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -299,7 +299,7 @@ describe('View Sort REST API', () => {
     });
 
     it('should return 404 error when deleting non-existent view sort', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/viewSorts/20202020-a1b2-4c3d-8e9f-123456789abc`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

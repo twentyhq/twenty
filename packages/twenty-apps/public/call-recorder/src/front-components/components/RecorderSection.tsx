@@ -26,11 +26,7 @@ import { getThemeColorFromHex } from 'src/front-components/utils/get-theme-color
 import { normalizeHexColor } from 'src/front-components/utils/normalize-hex-color.util';
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 
-type RecorderSectionProps = {
-  frontComponentId: string;
-};
-
-export const RecorderSection = ({ frontComponentId }: RecorderSectionProps) => {
+export const RecorderSection = () => {
   const nameInputId = useId();
   const hexInputId = useId();
   const [nameValue, setNameValue] = useState(() =>
@@ -50,19 +46,16 @@ export const RecorderSection = ({ frontComponentId }: RecorderSectionProps) => {
   >(undefined);
 
   const { saveDebounced: saveNameDebounced } = useAutosaveApplicationVariable({
-    frontComponentId,
     variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
   });
   const { saveImmediately: saveWorkspaceLogoImmediately } =
     useAutosaveApplicationVariable({
-      frontComponentId,
       variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
     });
   const {
     saveDebounced: saveTileBackgroundDebounced,
     saveImmediately: saveTileBackgroundImmediately,
   } = useAutosaveApplicationVariable({
-    frontComponentId,
     variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
   });
 

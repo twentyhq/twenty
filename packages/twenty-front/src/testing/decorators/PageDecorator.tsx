@@ -1,22 +1,22 @@
-import { ApolloProvider } from '@apollo/client/react';
-import { loadDevMessages } from '@apollo/client/dev';
-import { type Decorator } from '@storybook/react-vite';
-import { Provider as JotaiProvider } from 'jotai';
-import { HelmetProvider } from '@dr.pogodin/react-helmet';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
+import { loadDevMessages } from '@apollo/client/dev';
+import { ApolloProvider } from '@apollo/client/react';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
+import { type Decorator } from '@storybook/react-vite';
+import { Provider as JotaiProvider } from 'jotai';
+import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { UserContextProvider } from '@/users/components/UserContextProvider';
-import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
+import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
+import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
@@ -24,11 +24,12 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { ToastProvider } from 'twenty-ui/primitives/feedback';
+import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { ToastProvider } from 'twenty-ui/components';
 import { IconsProvider } from 'twenty-ui/icon';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -102,7 +103,9 @@ const Providers = () => {
                         <HelmetProvider>
                           <IconsProvider>
                             <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                              <MinimalMetadataGate />
+                              <RecordCreationFormProvider>
+                                <MinimalMetadataGate />
+                              </RecordCreationFormProvider>
                             </RecordComponentInstanceContextsWrapper>
                           </IconsProvider>
                         </HelmetProvider>
@@ -169,6 +172,7 @@ export const PageDecorator: Decorator<{
 }> = (Story, { args }) => {
   return (
     <RouterProvider
+      useTransitions={false}
       router={createRouter({
         Story,
         args,

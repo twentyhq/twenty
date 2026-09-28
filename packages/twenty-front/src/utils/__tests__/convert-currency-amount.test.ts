@@ -8,6 +8,10 @@ describe('convertCurrencyAmountToCurrencyMicros', () => {
     expect(convertCurrencyAmountToCurrencyMicros(1)).toBe(1000000);
     expect(convertCurrencyAmountToCurrencyMicros(1.5)).toBe(1500000);
   });
+
+  it('should return whole micros when floating point multiplication drifts', () => {
+    expect(convertCurrencyAmountToCurrencyMicros(8.2)).toBe(8200000);
+  });
 });
 
 describe('convertCurrencyMicrosToCurrencyAmount', () => {

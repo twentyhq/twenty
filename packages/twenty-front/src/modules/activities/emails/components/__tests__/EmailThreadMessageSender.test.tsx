@@ -39,4 +39,16 @@ describe('EmailThreadMessageSender', () => {
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
     expect(screen.getByText('about 2 hours ago')).toBeInTheDocument();
   });
+
+  it('renders an unknown sender placeholder when the sender is not readable', () => {
+    render(
+      <EmailThreadMessageSender
+        sender={undefined}
+        sentAt={TWO_HOURS_BEFORE_NOW}
+      />,
+    );
+
+    expect(screen.getByText('Unknown sender')).toBeInTheDocument();
+    expect(screen.getByText('about 2 hours ago')).toBeInTheDocument();
+  });
 });

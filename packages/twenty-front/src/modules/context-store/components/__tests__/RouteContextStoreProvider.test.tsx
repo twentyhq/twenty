@@ -40,6 +40,11 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
             namePlural: 'new',
             nameSingular: 'new',
           },
+          {
+            id: 'workflow-object',
+            namePlural: 'workflows',
+            nameSingular: 'workflow',
+          },
         ]
       : [
           {
@@ -69,14 +74,17 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
   RouteContextStoreProviderEffect: ({
     viewId,
     objectMetadataItem,
+    isRecordIndexPage,
   }: {
     viewId?: string;
     objectMetadataItem?: { id: string };
+    isRecordIndexPage: boolean;
   }) => (
     <div
       data-testid="route-context-store"
       data-view-id={viewId}
       data-object-metadata-id={objectMetadataItem?.id}
+      data-is-record-index-page={isRecordIndexPage}
     />
   ),
 }));
@@ -91,6 +99,11 @@ const routeObjects: WorkspaceRouteObject[] = [
   },
   {
     path: AppPath.RecordShowPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: AppPath.WorkflowCoreIndexPage,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
@@ -161,6 +174,19 @@ describe('RouteContextStoreProvider', () => {
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-view-id',
       'company-index-view',
+    );
+  });
+
+  it('provides workflow index context on the standalone core route', () => {
+    renderAt('/workflow-core', <MainSurfaceRoutes />);
+
+    expect(screen.getByTestId('route-context-store')).toHaveAttribute(
+      'data-object-metadata-id',
+      'workflow-object',
+    );
+    expect(screen.getByTestId('route-context-store')).toHaveAttribute(
+      'data-is-record-index-page',
+      'true',
     );
   });
 

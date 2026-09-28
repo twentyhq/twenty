@@ -167,6 +167,7 @@ export class ApplicationManifestExportService {
       pageLayoutTabs,
       commandMenuItems: [],
       timelineActivityTypes: [],
+      settingsMenuItems: [],
       ...(isDefined(translations) ? { translations } : {}),
     };
 

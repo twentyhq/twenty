@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
@@ -140,7 +140,7 @@ export const SortOrFilterChip = ({
   onClick,
   type,
 }: SortOrFilterChipProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();

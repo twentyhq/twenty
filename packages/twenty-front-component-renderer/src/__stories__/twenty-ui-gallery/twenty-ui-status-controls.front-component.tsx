@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 import 'twenty-ui/style.css';
 
 import { ComponentGallery } from '../shared/front-components/component-gallery';

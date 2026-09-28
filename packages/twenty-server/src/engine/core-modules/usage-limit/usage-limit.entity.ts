@@ -11,10 +11,10 @@ import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
-import { nullableBigintColumnTransformer } from 'src/engine/core-modules/usage-limit/utils/nullable-bigint-column-transformer.util';
+import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 @Unique('UQ_USAGE_LIMIT_SCOPE', [
   'workspaceId',
@@ -65,6 +65,9 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
     transformer: nullableBigintColumnTransformer,
   })
   burstValue: number | null;
+
+  @Column({ type: 'boolean', default: false })
+  isInstanceOverride: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

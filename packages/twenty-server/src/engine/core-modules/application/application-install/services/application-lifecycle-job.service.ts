@@ -75,7 +75,7 @@ export class ApplicationLifecycleJobService {
     universalIdentifier,
     workspaceId,
   }: LifecycleJobTarget): Promise<{ jobId: string }> {
-    await this.applicationService.findOneApplicationOrThrow({
+    await this.applicationService.findOneApplicationWithRelationsOrThrow({
       universalIdentifier,
       workspaceId,
     });

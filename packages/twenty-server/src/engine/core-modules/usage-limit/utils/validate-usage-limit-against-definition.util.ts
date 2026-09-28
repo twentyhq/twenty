@@ -6,6 +6,7 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
@@ -48,60 +49,12 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
-  if (input.limitKind === 'speed') {
-    if (input.periodUnit !== 'second') {
-      throw new UsageLimitException(
-        'A speed limit needs a rolling window expressed in seconds',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
+  if ('allowedMeters' in definition) {
+    const allowedMeters: readonly UsageMeter[] = definition.allowedMeters;
 
-    if (input.meter !== 'quantity') {
+    if (!allowedMeters.includes(input.meter)) {
       throw new UsageLimitException(
-        'A speed limit counts requests, so it is metered on quantity',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-  }
-
-  if (input.limitKind === 'quota') {
-    if (input.periodUnit === 'second') {
-      throw new UsageLimitException(
-        'A quota anchors to a calendar period, not a rolling window',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-
-    if (input.periodCount !== 1) {
-      throw new UsageLimitException(
-        'A quota covers exactly one period',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-
-    if (isDefined(input.burstValue)) {
-      throw new UsageLimitException(
-        'A quota cannot hold a burst value',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-
-    if (
-      'allowedMeters' in definition &&
-      !definition.allowedMeters.includes(input.meter)
-    ) {
-      throw new UsageLimitException(
-        `${input.resourceType} quotas cannot be metered on ${input.meter}`,
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-
-    if (
-      input.meter === 'quantity' &&
-      input.operationType === UsageOperationType.ALL
-    ) {
-      throw new UsageLimitException(
-        'A quantity quota needs an operation: only credits aggregate across operations',
+        `${input.resourceType} ${input.limitKind} limits cannot be metered on ${input.meter}`,
         UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }

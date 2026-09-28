@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconListCheck,
   IconLock,
@@ -10,8 +11,7 @@ import {
   IconTerminal,
   useIcons,
 } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -56,7 +56,7 @@ type SettingsAgentFormContentProps = {
 export const SettingsAgentFormContent = ({
   agent,
 }: SettingsAgentFormContentProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const navigate = useNavigateSettings();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -188,13 +188,14 @@ export const SettingsAgentFormContent = ({
         links={getSettingsAiBreadcrumbLinks(title)}
         secondaryBar={
           <SettingsTabBar
+            aria-label={t`Agent settings`}
             tabs={tabs}
             componentInstanceId={tabListComponentId}
           />
         }
       >
         <SettingsPageContainer>
-          <Section>
+          <Section.Root>
             <StyledContentContainer>
               {isRoleTab && (
                 <SettingsAgentRoleTab
@@ -225,7 +226,7 @@ export const SettingsAgentFormContent = ({
               )}
               {isLogsTab && <SettingsAgentLogsTab agentId={agentId} />}
             </StyledContentContainer>
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </>

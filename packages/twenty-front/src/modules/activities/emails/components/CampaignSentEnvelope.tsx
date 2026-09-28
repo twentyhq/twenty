@@ -6,7 +6,7 @@ import {
   MessageCampaignStatus,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   CampaignEnvelopeBox,

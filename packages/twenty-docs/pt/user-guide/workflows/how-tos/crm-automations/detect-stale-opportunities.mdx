@@ -1,0 +1,136 @@
+---
+title: Detectar oportunidades estagnadas
+description: Notifique automaticamente os gestores quando as oportunidades não tiverem sido atualizadas.
+---
+
+Mantenha o seu pipeline saudável alertando os gestores quando as oportunidades ficarem estagnadas. Este fluxo de trabalho verifica oportunidades que não foram atualizadas há um número específico de dias.
+
+## O Problema
+
+Oportunidades sem atualizações levam a:
+
+* Negócios a arrefecer
+* Previsões pouco fiáveis
+* Perda de receita
+
+## A Solução
+
+Crie um fluxo de trabalho agendado que encontre oportunidades estagnadas e envie e-mails aos respetivos gestores.
+
+## Configuração passo a passo
+
+### Etapa 1: Criar o fluxo de trabalho
+
+1. Vá para **Configurações → Fluxos de trabalho**
+2. Clique em **+ Novo fluxo de trabalho**
+3. Dê o nome "Alerta de Oportunidade Estagnada"
+
+### Etapa 2: Configurar o gatilho
+
+1. Selecione **Agendado**
+2. Defina para executar diariamente (por exemplo, todos os dias às 08:00)
+
+### Etapa 3: Pesquisar oportunidades estagnadas
+
+1. Adicione a ação **Pesquisar Registos**
+2. Configurar:
+
+| Campo      | Valor                                         |
+| ---------- | --------------------------------------------- |
+| **Objeto** | Oportunidades                                 |
+| **Filtro** | Atualizado em é anterior a (hoje - 7 dias)    |
+| **Filtro** | Fase não é "Closed Won" E não é "Closed Lost" |
+| **Limite** | 100                                           |
+
+### Etapa 4: Verificar se algum foi encontrado
+
+1. Adicione a ação **Filtro**
+2. Condição: `{{searchRecords.length}}` é maior do que 0
+3. Se não houver oportunidades estagnadas, o fluxo de trabalho termina aqui
+
+### Etapa 5: Formatar o alerta (Ação de Código)
+
+Adicione uma ação de **Código** para formatar o e-mail:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Etapa 6: Enviar e-mail de alerta
+
+Adicione a ação **Enviar e-mail**:
+
+| Campo       | Valor                                                                 |
+| ----------- | --------------------------------------------------------------------- |
+| **Para**    | sales-manager@yourcompany.com                                         |
+| **Assunto** | `🚨 {{code.totalCount}} oportunidades estagnadas precisam de atenção` |
+| **Corpo**   | `{{code.summary}}`                                                    |
+
+### Etapa 7: Testar e ativar
+
+1. Clique em **Testar** para executar o fluxo de trabalho
+2. Verifique se o e-mail contém os dados corretos
+3. Ative quando estiver pronto
+
+## Opções de personalização
+
+### Alterar o limite de estagnação
+
+Modifique o filtro de Pesquisar Registos para alterar de 7 dias para o período da sua preferência:
+
+* 3 dias para vendas de alto ritmo
+* 14 dias para negócios empresariais
+* 30 dias para ciclos de vendas longos
+
+### Alertar representantes individualmente
+
+Em vez de um e-mail único para o gestor, use **Iterator** para enviar e-mails personalizados a cada representante sobre os seus próprios negócios estagnados.
+
+### Adicionar escalonamento
+
+Crie vários fluxos de trabalho com gravidade crescente:
+
+1. Dia 7: E-mail para o representante
+2. Dia 14: E-mail para o representante + gestor
+3. Dia 21: Criar tarefa para o gestor intervir
+
+### Incluir no Slack
+
+Use **HTTP Request** para enviar para um webhook do Slack em vez de ou além do e-mail.
+
+## Relacionados
+
+* [Ações de Fluxo de Trabalho](/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Enviar e-mails a partir de Fluxos de Trabalho](/pt/user-guide/workflows/capabilities/send-emails-from-workflows)

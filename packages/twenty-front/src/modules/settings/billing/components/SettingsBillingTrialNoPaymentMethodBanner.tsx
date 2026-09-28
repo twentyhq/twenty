@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
+import { InlineBanner } from 'twenty-ui/components';
 import {
   BillingPlanKey,
   BillingPortalSessionDocument,

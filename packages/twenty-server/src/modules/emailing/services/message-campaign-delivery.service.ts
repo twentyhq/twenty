@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
-import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { SEND_CAMPAIGN_EMAIL_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
@@ -17,8 +17,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
 import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-skip-reason.constant';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { v4 } from 'uuid';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
@@ -26,11 +24,10 @@ import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { SKIP_EVENT_EMISSION } from 'src/modules/emailing/constants/skip-event-emission.constant';
 import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
-import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
@@ -56,8 +53,6 @@ export class MessageCampaignDeliveryService {
   private readonly logger = new Logger(MessageCampaignDeliveryService.name);
 
   constructor(
-    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
-    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
@@ -73,22 +68,27 @@ export class MessageCampaignDeliveryService {
     const { workspaceId, campaignId } = data;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const isStillClaimable = await this.campaignDeliveryRepository.existsBy(
-        workspaceId,
-        {
+      const isStillClaimable = await this.workspaceOrmManager
+        .getRepository(
+          CampaignDeliveryWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+          { shouldSkipEventEmission: true },
+        )
+        .existsBy({
           id: data.messageId,
           state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-        },
-      );
+        });
 
       if (!isStillClaimable) {
         return;
       }
 
-      const creditContext =
-        await this.emailBillingService.getEmailCreditContext(workspaceId);
+      const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
+        workspaceId,
+        spenders: { userWorkspaceId: data.userWorkspaceId },
+      });
 
-      if (creditContext.hasCredits) {
+      if (!isDefined(sendRefusal)) {
         const refusal = await this.campaignSendSlotService.findSendSlotRefusal({
           workspaceId,
         });
@@ -112,7 +112,7 @@ export class MessageCampaignDeliveryService {
       const messageRepository = this.workspaceOrmManager.getRepository(
         MessageWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
-        SKIP_EVENT_EMISSION,
+        { shouldSkipEventEmission: true },
       );
 
       const sendContext = await this.loadSendContext({ data, campaign });
@@ -125,7 +125,7 @@ export class MessageCampaignDeliveryService {
         data,
         messageRepository,
         sendContext,
-        creditContext,
+        sendRefusal,
       });
 
       await this.messageCampaignStatisticsService
@@ -188,19 +188,26 @@ export class MessageCampaignDeliveryService {
     campaignId: string;
     messageId: string;
   }): Promise<void> {
-    const { affected } = await this.campaignDeliveryRepository.update(
-      workspaceId,
-      {
+    const { generatedMaps: failedDeliveries } = await this.workspaceOrmManager
+      .getRepository(
+        CampaignDeliveryWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      )
+      .createQueryBuilder()
+      .where({
         id: messageId,
         state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      },
-      {
+      })
+      .update()
+      .set({
         state: CAMPAIGN_DELIVERY_STATE.FAILED,
         failureReason: CAMPAIGN_FAILURE_REASON.RATE_LIMITED,
-      },
-    );
+      })
+      .returning(['id'])
+      .execute();
 
-    if (affected === 1) {
+    if (failedDeliveries.length === 1) {
       this.logger.warn(
         `Campaign ${campaignId} of workspace ${workspaceId} gave up on message ${messageId} after ${SEND_SLOT_RETRY.attemptLimit} refused send slots`,
       );
@@ -219,7 +226,7 @@ export class MessageCampaignDeliveryService {
     data: SendCampaignEmailJobData;
     campaign: MessageCampaignWorkspaceEntity;
   }): Promise<SendContext | null> {
-    const { workspaceId, campaignId, messageId, personId } = data;
+    const { campaignId, messageId, personId } = data;
 
     const campaignRepository = this.workspaceOrmManager.getRepository(
       MessageCampaignWorkspaceEntity,
@@ -227,7 +234,6 @@ export class MessageCampaignDeliveryService {
     );
 
     const claimToken = await this.claimDeliveryForSending({
-      workspaceId,
       messageId,
     });
 
@@ -242,7 +248,6 @@ export class MessageCampaignDeliveryService {
 
     if (campaignAfterClaim?.status === MessageCampaignStatus.CANCELED) {
       await this.settleClaimedDelivery({
-        workspaceId,
         messageId,
         claimToken,
         update: {
@@ -270,12 +275,12 @@ export class MessageCampaignDeliveryService {
     data,
     messageRepository,
     sendContext: { campaign, person, claimToken },
-    creditContext: { hasCredits },
+    sendRefusal,
   }: {
     data: SendCampaignEmailJobData;
     messageRepository: WorkspaceRepository<MessageWorkspaceEntity>;
     sendContext: SendContext;
-    creditContext: EmailCreditContext;
+    sendRefusal: UsageRefusal | null;
   }): Promise<void> {
     const {
       workspaceId,
@@ -286,9 +291,8 @@ export class MessageCampaignDeliveryService {
       userWorkspaceId,
     } = data;
 
-    if (!hasCredits) {
+    if (isDefined(sendRefusal)) {
       await this.settleClaimedDelivery({
-        workspaceId,
         messageId,
         claimToken,
         update: {
@@ -340,7 +344,6 @@ export class MessageCampaignDeliveryService {
     }
 
     const affected = await this.settleClaimedDelivery({
-      workspaceId,
       messageId,
       claimToken,
       update: {
@@ -370,7 +373,7 @@ export class MessageCampaignDeliveryService {
       .billSentEmails({
         workspaceId,
         sentEmailCount: 1,
-        userWorkspaceId,
+        spenders: { userWorkspaceId },
       })
       .catch((error) => {
         this.logger.error(
@@ -396,7 +399,7 @@ export class MessageCampaignDeliveryService {
     const associationRepository = this.workspaceOrmManager.getRepository(
       MessageChannelMessageAssociationWorkspaceEntity,
       { shouldBypassPermissionChecks: true },
-      SKIP_EVENT_EMISSION,
+      { shouldSkipEventEmission: true },
     );
 
     await associationRepository.update(
@@ -428,7 +431,6 @@ export class MessageCampaignDeliveryService {
       );
     } catch (error) {
       await this.recordSendFailure({
-        workspaceId,
         messageId,
         claimToken,
         campaignId,
@@ -440,13 +442,11 @@ export class MessageCampaignDeliveryService {
   }
 
   private async recordSendFailure({
-    workspaceId,
     messageId,
     claimToken,
     campaignId,
     error,
   }: {
-    workspaceId: string;
     messageId: string;
     claimToken: string;
     campaignId: string;
@@ -456,7 +456,6 @@ export class MessageCampaignDeliveryService {
       resolveCampaignSendFailure(error);
 
     await this.settleClaimedDelivery({
-      workspaceId,
       messageId,
       claimToken,
       update: shouldRetry
@@ -478,42 +477,45 @@ export class MessageCampaignDeliveryService {
   }
 
   private async claimDeliveryForSending({
-    workspaceId,
     messageId,
   }: {
-    workspaceId: string;
     messageId: string;
   }): Promise<string | null> {
     const claimToken = v4();
 
-    const { affected } = await this.campaignDeliveryRepository.update(
-      workspaceId,
-      {
+    const { generatedMaps: claimedDeliveries } = await this.workspaceOrmManager
+      .getRepository(
+        CampaignDeliveryWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      )
+      .createQueryBuilder()
+      .where({
         id: messageId,
         state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      },
-      {
+      })
+      .update()
+      .set({
         state: CAMPAIGN_DELIVERY_STATE.SENDING,
         claimToken,
         claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
-      },
-    );
+      })
+      .returning(['id'])
+      .execute();
 
-    return affected === 1 ? claimToken : null;
+    return claimedDeliveries.length === 1 ? claimToken : null;
   }
 
   private async settleClaimedDelivery({
-    workspaceId,
     messageId,
     claimToken,
     update,
   }: {
-    workspaceId: string;
     messageId: string;
     claimToken: string;
     update: Partial<
       Pick<
-        CampaignDeliveryEntity,
+        CampaignDeliveryWorkspaceEntity,
         | 'state'
         | 'skipReason'
         | 'failureReason'
@@ -522,12 +524,19 @@ export class MessageCampaignDeliveryService {
       >
     >;
   }): Promise<number> {
-    const { affected } = await this.campaignDeliveryRepository.update(
-      workspaceId,
-      { id: messageId, claimToken },
-      { ...update, claimToken: null, claimExpiresAt: null },
-    );
+    const { generatedMaps: settledDeliveries } = await this.workspaceOrmManager
+      .getRepository(
+        CampaignDeliveryWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      )
+      .createQueryBuilder()
+      .where({ id: messageId, claimToken })
+      .update()
+      .set({ ...update, claimToken: null, claimExpiresAt: null })
+      .returning(['id'])
+      .execute();
 
-    return affected ?? 0;
+    return settledDeliveries.length;
   }
 }

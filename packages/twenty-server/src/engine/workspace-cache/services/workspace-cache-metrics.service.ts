@@ -250,6 +250,7 @@ export class WorkspaceCacheMetricsService {
         description: 'Entries in the per-pod local workspace metadata cache',
       },
       callback: async () => this.getStats().entries,
+      perPod: true,
     });
     this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_local_workspaces',
@@ -258,6 +259,7 @@ export class WorkspaceCacheMetricsService {
           'Distinct workspaces held in the per-pod local workspace metadata cache',
       },
       callback: async () => this.getStats().workspaces,
+      perPod: true,
     });
     this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_local_versions_total',
@@ -266,6 +268,7 @@ export class WorkspaceCacheMetricsService {
           'Total versions across local workspace metadata cache entries',
       },
       callback: async () => this.getStats().versionsTotal,
+      perPod: true,
     });
     this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_local_bytes_estimate',
@@ -275,6 +278,7 @@ export class WorkspaceCacheMetricsService {
         unit: 'By',
       },
       callback: async () => this.cacheSizeTotalBytes,
+      perPod: true,
     });
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_workspace_cache_local_entries_by_version_count',
@@ -286,6 +290,7 @@ export class WorkspaceCacheMetricsService {
         Object.entries(this.getStats().versionsByCount).map(
           ([versions, value]) => ({ value, attributes: { versions } }),
         ),
+      perPod: true,
     });
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_workspace_cache_local_bytes_by_provider',
@@ -299,6 +304,7 @@ export class WorkspaceCacheMetricsService {
           value,
           attributes: { provider: keyName },
         })),
+      perPod: true,
     });
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_workspace_cache_local_entries_by_provider',
@@ -313,6 +319,7 @@ export class WorkspaceCacheMetricsService {
             attributes: { provider: keyName },
           }),
         ),
+      perPod: true,
     });
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_workspace_cache_local_versions_by_state',
@@ -338,6 +345,7 @@ export class WorkspaceCacheMetricsService {
           ),
         ];
       },
+      perPod: true,
     });
     this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_local_live_versions',
@@ -346,6 +354,7 @@ export class WorkspaceCacheMetricsService {
           'Total live (object graph) versions in the local workspace metadata cache',
       },
       callback: async () => this.getStats().liveVersionsTotal,
+      perPod: true,
     });
     this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_local_packed_versions',
@@ -354,6 +363,7 @@ export class WorkspaceCacheMetricsService {
           'Total packed (serialized buffer) versions in the local workspace metadata cache',
       },
       callback: async () => this.getStats().packedVersionsTotal,
+      perPod: true,
     });
     this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_local_packed_bytes',
@@ -363,6 +373,7 @@ export class WorkspaceCacheMetricsService {
         unit: 'By',
       },
       callback: async () => this.getStats().packedBytesTotal,
+      perPod: true,
     });
     this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_packing_backlog',
@@ -371,6 +382,7 @@ export class WorkspaceCacheMetricsService {
           'Versions currently eligible for packing, whether or not the last run reached them',
       },
       callback: async () => this.packingBacklog,
+      perPod: true,
     });
   }
 }

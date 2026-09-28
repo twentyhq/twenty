@@ -1,18 +1,19 @@
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useMutation } from '@apollo/client/react';
+import { useSearchParams } from 'react-router-dom';
 
 import { DISCARD_CORE_WORKFLOW_DRAFT } from '@/object-core/workflows/graphql/mutations/discardCoreWorkflowDraft';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useEvictDiscardedDraftFromWorkflowCache } from '@/workflow/hooks/useEvictDiscardedDraftFromWorkflowCache';
 import {
   type DiscardCoreWorkflowDraftMutation,
   type DiscardCoreWorkflowDraftMutationVariables,
 } from '~/generated/graphql';
 
 export const useDiscardCoreWorkflowDraft = () => {
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const apolloCoreClient = useApolloCoreClient();
-  const { evictDiscardedDraftFromWorkflowCache } =
-    useEvictDiscardedDraftFromWorkflowCache();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [discardCoreWorkflowDraftMutation] = useMutation<
     DiscardCoreWorkflowDraftMutation,
@@ -20,15 +21,22 @@ export const useDiscardCoreWorkflowDraft = () => {
   >(DISCARD_CORE_WORKFLOW_DRAFT, { client: apolloCoreClient });
 
   const discardCoreWorkflowDraft = async ({
-    workspaceWorkflowVersionId,
+    coreWorkflowVersionId,
   }: {
-    workspaceWorkflowVersionId: string;
+    coreWorkflowVersionId: string;
   }) => {
     await discardCoreWorkflowDraftMutation({
-      variables: { input: { workspaceWorkflowVersionId } },
+      variables: { input: { coreWorkflowVersionId } },
     });
 
-    evictDiscardedDraftFromWorkflowCache(workspaceWorkflowVersionId);
+    closeSidePanelMenu();
+
+    if (searchParams.get('version') === coreWorkflowVersionId) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+
+      nextSearchParams.delete('version');
+      setSearchParams(nextSearchParams, { replace: true });
+    }
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);
   };

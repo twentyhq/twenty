@@ -4,8 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -21,9 +22,9 @@ import {
   type CollapsedCreditGrant,
 } from '@/settings/admin-panel/utils/collapseCreditGrantChains';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+
 import { type WorkspaceBillingAdminPanelQuery } from '~/generated-admin/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
@@ -70,7 +71,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
   const { formatNumber } = useNumberFormat();
   const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const [grantPendingRevocation, setGrantPendingRevocation] =
     useState<CreditGrant | null>(null);
@@ -91,7 +92,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 
   const handleRevokeClick = (creditGrant: CreditGrant) => {
     setGrantPendingRevocation(creditGrant);
-    openModal(REVOKE_CREDIT_GRANT_MODAL_ID);
+    openDialog(REVOKE_CREDIT_GRANT_MODAL_ID);
   };
 
   const handleRevoke = async (creditGrantId: string) => {
@@ -181,8 +182,8 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         onFooterButtonClick={onGrantCreditsClick}
       />
 
-      <ConfirmationModal
-        modalInstanceId={REVOKE_CREDIT_GRANT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={REVOKE_CREDIT_GRANT_MODAL_ID}
         title={t`Revoke credit grant`}
         subtitle={
           isDefined(grantPendingRevocation)

@@ -1,15 +1,17 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction, useState } from 'react';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H3Title } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledSectionHeader = styled(Section.Header)`
+  margin-block-end: 0;
+`;
 
 const RESET_VARIABLE_MODAL_ID =
   'reset-application-registration-config-variable-modal';
@@ -57,7 +59,7 @@ export const ConfigVariableEdit = ({
 }: ConfigVariableEditProps) => {
   const { t } = useLingui();
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { enqueueToast } = useToast();
 
@@ -97,7 +99,7 @@ export const ConfigVariableEdit = ({
 
   const handleCancel = () => {
     if (canOpenCancelModal) {
-      openModal(RESET_VARIABLE_MODAL_ID);
+      openDialog(RESET_VARIABLE_MODAL_ID);
       return;
     }
 
@@ -113,11 +115,17 @@ export const ConfigVariableEdit = ({
 
   return (
     <SettingsPageContainer>
-      <Section>
-        <H3Title title={title} description={description} />
-      </Section>
+      <Section.Root>
+        <StyledSectionHeader
+          title={title}
+          description={description}
+          level={3}
+          size="lg"
+          descriptionLineClamp={2}
+        />
+      </Section.Root>
 
-      <Section>
+      <Section.Root>
         <StyledRow>
           {input}
           {!isEditing ? (
@@ -149,8 +157,8 @@ export const ConfigVariableEdit = ({
               />
             </StyledButtonContainer>
           )}
-          <ConfirmationModal
-            modalInstanceId={RESET_VARIABLE_MODAL_ID}
+          <ConfirmationDialog
+            dialogId={RESET_VARIABLE_MODAL_ID}
             title={t`Reset variable`}
             subtitle={t`Are you sure you want to reset this variable?`}
             onConfirmClick={handleConfirmReset}
@@ -159,7 +167,7 @@ export const ConfigVariableEdit = ({
           />
         </StyledRow>
         {helpContent}
-      </Section>
+      </Section.Root>
     </SettingsPageContainer>
   );
 };

@@ -3,23 +3,31 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isUsageOperationTypeValue } from 'twenty-shared/application';
+import {
+  isUsageOperationTypeValue,
+  type UsageOperationTypeValue,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Each operation type has one canonical counting unit — matches how
-// `ai-billing.service.ts` emits native usage events.
+type AppChargeableOperationType =
+  (typeof UsageOperationType)[UsageOperationTypeValue];
+
+// An app sends a quantity and never a unit, so the platform names what the
+// number counts. Keyed on the app-facing vocabulary, so adding a value to
+// twenty-shared's USAGE_OPERATION_TYPES fails to compile until it has a unit.
 const USAGE_UNIT_BY_OPERATION_TYPE: Record<
-  Exclude<UsageOperationType, UsageOperationType.ALL>,
+  AppChargeableOperationType,
   UsageUnit
 > = {
   [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
@@ -29,10 +37,6 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.WEB_SEARCH]: UsageUnit.INVOCATION,
   [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
-  [UsageOperationType.API_REQUEST]: UsageUnit.REQUEST,
-  [UsageOperationType.WEBHOOK_CALL]: UsageUnit.REQUEST,
-  // Platform-raised only; ApplicationRecurringChargeService sets its own unit.
-  [UsageOperationType.SUBSCRIPTION]: UsageUnit.CREDIT,
 };
 
 // `workspaceId` + `applicationId` come from the application-access token,
@@ -44,6 +48,7 @@ export class AppBillingService {
 
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -73,6 +78,22 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${operationType})`,
     );
 
+    const spenders = {
+      userWorkspaceId: attributedUserWorkspaceId,
+      applicationId,
+    };
+
+    await this.usageLimitQuotaService.consumeQuota({
+      workspaceId,
+      resourceType: UsageResourceType.APP,
+      operationType,
+      spenders,
+      cost: {
+        creditsUsedMicro: charge.creditsUsedMicro,
+        quantity: charge.quantity,
+      },
+    });
+
     await this.usageRecorderService.record(workspaceId, [
       {
         resourceType: UsageResourceType.APP,
@@ -82,7 +103,7 @@ export class AppBillingService {
         unit,
         resourceId: applicationId,
         resourceContext: charge.operation ?? charge.resourceContext ?? null,
-        spenders: { userWorkspaceId: attributedUserWorkspaceId, applicationId },
+        spenders,
       },
     ]);
   }
@@ -95,7 +116,7 @@ export class AppBillingService {
     workspaceId: string;
     applicationId: string;
     charge: ChargeDto;
-  }): Promise<Exclude<UsageOperationType, UsageOperationType.ALL>> {
+  }): Promise<AppChargeableOperationType> {
     if (!isDefined(charge.operation)) {
       if (!isDefined(charge.operationType)) {
         throw new BadRequestException(

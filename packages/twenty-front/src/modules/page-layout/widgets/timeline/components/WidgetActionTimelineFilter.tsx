@@ -1,9 +1,11 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useTimelineActivityTypeFilter } from '@/activities/timeline-activities/hooks/useTimelineActivityTypeFilter';
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -13,7 +15,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const WidgetActionTimelineFilter = () => {
@@ -77,53 +78,67 @@ export const WidgetActionTimelineFilter = () => {
       dropdownPlacement="bottom-end"
       onClose={() => setSearchInputValue('')}
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+        >
           <DropdownMenuSearchInput
             value={searchInputValue}
             onChange={(event) => setSearchInputValue(event.target.value)}
           />
           <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer hasMaxHeight>
+          <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
             {isNonEmptyArray(filteredTimelineActivityTypes) ? (
               filteredTimelineActivityTypes.map((timelineActivityType) => (
-                <MenuItemMultiSelect
+                <ListItem
+                  render={<button type="button" />}
                   key={timelineActivityType.universalIdentifier}
-                  LeftIcon={
-                    isDefined(timelineActivityType.icon)
-                      ? getIcon(timelineActivityType.icon)
-                      : undefined
-                  }
-                  text={timelineActivityType.label}
+                  role="option"
+                  aria-selected={effectiveTimelineActivityTypeUniversalIdentifiersFilter.includes(
+                    timelineActivityType.universalIdentifier,
+                  )}
                   selected={effectiveTimelineActivityTypeUniversalIdentifiersFilter.includes(
                     timelineActivityType.universalIdentifier,
                   )}
-                  onSelectChange={(selected) =>
+                  indicator="checkbox"
+                  onClick={() =>
                     handleSelectChange(
                       timelineActivityType.universalIdentifier,
-                      selected,
+                      !effectiveTimelineActivityTypeUniversalIdentifiersFilter.includes(
+                        timelineActivityType.universalIdentifier,
+                      ),
                     )
                   }
-                />
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={
+                        isDefined(timelineActivityType.icon)
+                          ? getIcon(timelineActivityType.icon)
+                          : undefined
+                      }
+                    />
+                  }
+                >
+                  {timelineActivityType.label}
+                </ListItem>
               ))
             ) : (
-              <MenuItem disabled text={t`No results`} accent="placeholder" />
+              <ListItem disabled>{t`No results`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
           {isNonEmptyArray(timelineActivityTypeUniversalIdentifiersFilter) && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
-                <MenuItem
-                  LeftIcon={IconFilterOff}
-                  text={t`Clear filter`}
+                <ListItem
+                  startIcon={<IconFilterOff />}
                   onClick={() =>
                     setTimelineActivityTypeUniversalIdentifiersFilter([])
                   }
-                />
+                >{t`Clear filter`}</ListItem>
               </DropdownMenuItemsContainer>
             </>
           )}
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

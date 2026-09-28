@@ -1,7 +1,7 @@
 import { css } from '@linaria/core';
+import { getIconTileColorShades } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const iconClassName = css`
   flex-shrink: 0;

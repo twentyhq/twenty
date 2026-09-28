@@ -5,7 +5,7 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { DuplicateMessageListDocument } from '~/generated-metadata/graphql';
 
 export const useDuplicateMessageList = () => {

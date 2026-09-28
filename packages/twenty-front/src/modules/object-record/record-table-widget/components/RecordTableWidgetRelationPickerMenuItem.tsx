@@ -5,7 +5,7 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type RecordTableWidgetRelationPickerMenuItemProps = {
@@ -32,12 +32,14 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
       itemId={relationRecord.id}
       onEnter={() => onSelect(relationRecord.id)}
     >
-      <MenuItemSelectAvatar
+      <ListItem
         onClick={() => onSelect(relationRecord.id)}
-        text={relationRecord.name}
-        selected={false}
         focused={isSelectedItemId}
-        avatar={
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="check"
+        startIcon={
           <Avatar
             src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
             colorSeed={relationRecord.id}
@@ -46,7 +48,9 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
             shape={relationRecord.avatarShape ?? 'circle'}
           />
         }
-      />
+      >
+        {relationRecord.name}
+      </ListItem>
     </SelectableListItem>
   );
 };

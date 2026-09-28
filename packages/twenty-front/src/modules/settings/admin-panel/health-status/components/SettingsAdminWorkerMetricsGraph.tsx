@@ -6,9 +6,8 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   GetQueueMetricsDocument,
   QueueMetricsTimeRange,
@@ -50,7 +49,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
   timeRange,
 }: SettingsAdminWorkerMetricsGraphProps) => {
   const apolloAdminClient = useApolloAdminClient();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { loading, data, error } = useQuery(GetQueueMetricsDocument, {
     client: apolloAdminClient,

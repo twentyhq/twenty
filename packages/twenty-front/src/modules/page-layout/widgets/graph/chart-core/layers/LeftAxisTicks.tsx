@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 type LeftAxisTicksProps = {
   leftTickValues: (string | number)[];
   getLeftTickPosition: (value: string | number, index: number) => number;
@@ -15,7 +14,7 @@ export const LeftAxisTicks = ({
   tickPadding,
   tickFontSize,
 }: LeftAxisTicksProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <>

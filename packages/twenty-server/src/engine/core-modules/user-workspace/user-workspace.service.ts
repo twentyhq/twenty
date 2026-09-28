@@ -687,7 +687,7 @@ export class UserWorkspaceService {
                         await this.loginTokenService.generateLoginToken(
                           user.email,
                           workspace.id,
-                          AuthProviderEnum.Password,
+                          authProvider,
                         )
                       ).token
                     : undefined,

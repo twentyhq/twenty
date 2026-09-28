@@ -7,6 +7,7 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { AiAgentWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action';
+import { ClassifyWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/classify.workflow-action';
 import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code.workflow-action';
 import { DelayWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/delay.workflow-action';
 import { EmptyWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/empty.workflow-action';
@@ -47,6 +48,7 @@ export class WorkflowActionFactory {
     private readonly draftEmailWorkflowAction: DraftEmailWorkflowAction,
     private readonly createCalendarEventWorkflowAction: CreateCalendarEventWorkflowAction,
     private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
+    private readonly classifyWorkflowAction: ClassifyWorkflowAction,
     private readonly emptyWorkflowAction: EmptyWorkflowAction,
     private readonly delayWorkflowAction: DelayWorkflowAction,
   ) {}
@@ -87,6 +89,8 @@ export class WorkflowActionFactory {
         return this.httpRequestWorkflowAction;
       case WorkflowActionType.AI_AGENT:
         return this.aiAgentWorkflowAction;
+      case WorkflowActionType.CLASSIFY:
+        return this.classifyWorkflowAction;
       case WorkflowActionType.EMPTY:
         return this.emptyWorkflowAction;
       case WorkflowActionType.DELAY:

@@ -13,7 +13,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   IconGoogle,
   IconLink,
@@ -22,15 +22,15 @@ import {
   IconPassword,
 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
-import { TwoFactorAuthenticationSwitch } from './TwoFactorAuthenticationSwitch';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { TwoFactorAuthenticationSwitch } from './TwoFactorAuthenticationSwitch';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -197,7 +197,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
         <>
-          <Card rounded>
+          <Card.Root rounded>
             {authProviders.google === true && (
               <SettingsOptionCardContentSwitch
                 Icon={IconGoogle}
@@ -234,8 +234,8 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 onChange={() => toggleAuthMethod('password')}
               />
             )}
-          </Card>
-          <Card rounded>
+          </Card.Root>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconLink}
               title={t`Invite by Link`}
@@ -268,7 +268,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               </SettingsOptionCardContentSelect>
             )}
             <TwoFactorAuthenticationSwitch />
-          </Card>
+          </Card.Root>
         </>
       )}
     </StyledSettingsSecurityOptionsList>

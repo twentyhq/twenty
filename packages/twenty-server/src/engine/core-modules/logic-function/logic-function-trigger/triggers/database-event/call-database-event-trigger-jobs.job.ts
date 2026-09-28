@@ -13,6 +13,7 @@ import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/m
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
   LogicFunctionTriggerJob,
@@ -64,25 +65,10 @@ export class CallDatabaseEventTriggerJobsJob {
       ],
     );
 
-    const logicFunctionsWithDatabaseEventTrigger = Object.values(
-      flatLogicFunctionMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (logicFunction) =>
-          !isDefined(logicFunction.deletedAt) &&
-          isDefined(logicFunction.databaseEventTriggerSettings),
-      );
-
-    const logicFunctionsToTrigger =
-      logicFunctionsWithDatabaseEventTrigger.filter((logicFunction) =>
-        this.shouldTriggerJob({
-          workspaceEventBatch,
-          eventName: isDefined(logicFunction.databaseEventTriggerSettings)
-            ? logicFunction.databaseEventTriggerSettings.eventName
-            : '',
-        }),
-      );
+    const logicFunctionsToTrigger = findLogicFunctionsTriggeredByEventName({
+      flatLogicFunctionMaps,
+      eventName: workspaceEventBatch.name,
+    });
 
     const logicFunctionsByApplicationId = new Map<
       string,
@@ -202,24 +188,5 @@ export class CallDatabaseEventTriggerJobsJob {
         },
       );
     }
-  }
-
-  private shouldTriggerJob({
-    workspaceEventBatch,
-    eventName,
-  }: {
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-    eventName: string;
-  }) {
-    const [nameSingular, operation] = workspaceEventBatch.name.split('.');
-
-    const validEventNames = [
-      `${nameSingular}.${operation}`,
-      `*.${operation}`,
-      `${nameSingular}.*`,
-      '*.*',
-    ];
-
-    return validEventNames.includes(eventName);
   }
 }

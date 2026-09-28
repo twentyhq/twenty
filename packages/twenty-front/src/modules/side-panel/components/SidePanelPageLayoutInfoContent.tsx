@@ -15,11 +15,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 
 const StyledClickableIconWrapper = styled.div`
@@ -38,7 +38,7 @@ export const SidePanelPageLayoutInfoContent = ({
 }: {
   pageLayoutId: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoSelector);
   const sidePanelPage = sidePanelPageInfo.page;

@@ -5,26 +5,29 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { EngineComponentKey } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 
 export const useGlobalRecordCreationCommandMenuItems = (
   commandMenuItems: CommandMenuItemDefinition[],
 ) => {
   const { t } = useLingui();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const isRecordCreationFormEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const createRecordCommand = commandMenuItems.find(
     (item) =>
       item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
       !isDefined(item.availabilityObjectMetadataId),
   );
 
-  const hasGlobalRecordCreationCommandTemplate = isDefined(createRecordCommand);
+  const hasGlobalRecordCreationCommandTemplate =
+    isRecordCreationFormEnabled && isDefined(createRecordCommand);
   const globalRecordCreationCommandMenuItems = useMemo(() => {
     if (!isRecordCreationFormEnabled || !isDefined(createRecordCommand)) {
       return [];
@@ -45,7 +48,6 @@ export const useGlobalRecordCreationCommandMenuItems = (
   ]);
 
   return {
-    isRecordCreationFormEnabled,
     hasGlobalRecordCreationCommandTemplate,
     globalRecordCreationCommandMenuItems,
   };

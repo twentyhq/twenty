@@ -86,7 +86,7 @@ export class BillingCreditRolloverService {
   private async carryGrantsForward(
     params: ProcessRolloverParams & { usageMicro: number },
   ): Promise<void> {
-    const { workspaceId, nextPeriodStart, nextAllowanceMicro } = params;
+    const { workspaceId, nextAllowanceMicro } = params;
 
     const rolloverCapMultiplier = this.twentyConfigService.get(
       'BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER',
@@ -95,21 +95,15 @@ export class BillingCreditRolloverService {
     // Closing the old grants and writing their successors is one settlement:
     // committing the first half alone would leave the workspace with every
     // grant closed and nothing carrying the unspent part forward.
-    const { carriedForwardMicro, hasReplayedGrant } =
-      await this.dataSource.transaction(async (entityManager) =>
-        this.settleGrants({
-          ...params,
-          entityManager,
-          rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
-        }),
-      );
+    await this.dataSource.transaction(async (entityManager) =>
+      this.settleGrants({
+        ...params,
+        entityManager,
+        rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
+      }),
+    );
 
-    await this.billingCreditService.refreshWorkspaceCreditState({
-      workspaceId,
-      availableDeltaMicro: carriedForwardMicro,
-      isReplay: hasReplayedGrant,
-      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
-    });
+    await this.billingCreditService.refreshWorkspaceCreditState(workspaceId);
   }
 
   private async settleGrants({
@@ -125,7 +119,7 @@ export class BillingCreditRolloverService {
     usageMicro: number;
     rolloverCapMicro: number;
     entityManager: EntityManager;
-  }): Promise<{ carriedForwardMicro: number; hasReplayedGrant: boolean }> {
+  }): Promise<void> {
     const closingGrants =
       await this.billingCreditGrantService.findGrantsLiveDuringPeriod(
         {
@@ -155,11 +149,8 @@ export class BillingCreditRolloverService {
       entityManager,
     );
 
-    let carriedForwardMicro = 0;
-    let hasReplayedGrant = false;
-
     for (const carryForwardGrant of carryForwardGrants) {
-      const grant = await this.billingCreditGrantService.createGrant(
+      await this.billingCreditGrantService.createGrant(
         {
           workspaceId,
           amountMicro: carryForwardGrant.amountMicro,
@@ -187,20 +178,9 @@ export class BillingCreditRolloverService {
         },
         entityManager,
       );
-
-      if (isDefined(grant)) {
-        carriedForwardMicro += grant.amountMicro;
-      } else {
-        hasReplayedGrant = true;
-      }
     }
-
-    return { carriedForwardMicro, hasReplayedGrant };
   }
 }
-
-const buildRolloverAdjustmentKey = (nextPeriodStart: Date): string =>
-  `rollover:${nextPeriodStart.toISOString()}`;
 
 // Stripe redelivers webhooks, so the whole transition has to be replayable.
 const buildCarryForwardIdempotencyKey = ({

@@ -5,9 +5,9 @@ import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/component
 import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { styled } from '@linaria/react';
-import { Suspense, useContext } from 'react';
+import { Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@ const StyledLoadingSkeletonContainer = styled.div`
 `;
 
 const LoadingSkeleton = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <StyledLoadingSkeletonContainer>
       <SkeletonTheme

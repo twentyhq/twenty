@@ -18,15 +18,13 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { slugify } from 'transliteration';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Info, Section, useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { Info, useToast } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
@@ -277,12 +275,17 @@ export const SettingsAdminNewAiProvider = () => {
               accent="danger"
               text={customAiProviderGateDescription}
               buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+              href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+              render={
+                <Link
+                  to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                />
+              }
             />
           )}
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
               adornment={
@@ -304,7 +307,7 @@ export const SettingsAdminNewAiProvider = () => {
                 Icon: IconPlus,
               }}
             />
-          </Section>
+          </Section.Root>
 
           {isModelsDevWithoutNativeSdk && (
             <Info
@@ -315,8 +318,8 @@ export const SettingsAdminNewAiProvider = () => {
 
           {hasSelected && (
             <>
-              <Section>
-                <H2Title
+              <Section.Root>
+                <Section.Header
                   title={t`Label`}
                   description={t`A display name for this provider`}
                 />
@@ -340,11 +343,11 @@ export const SettingsAdminNewAiProvider = () => {
                     />
                   )}
                 />
-              </Section>
+              </Section.Root>
 
               {needsApiKey && (
-                <Section>
-                  <H2Title
+                <Section.Root>
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Your provider API key for authentication`}
                   />
@@ -365,12 +368,12 @@ export const SettingsAdminNewAiProvider = () => {
                       />
                     )}
                   />
-                </Section>
+                </Section.Root>
               )}
 
               {isOpenAiCompatible && (
-                <Section>
-                  <H2Title
+                <Section.Root>
+                  <Section.Header
                     title={t`Base URL`}
                     description={t`The API endpoint for your OpenAI-compatible provider`}
                   />
@@ -390,11 +393,11 @@ export const SettingsAdminNewAiProvider = () => {
                       />
                     )}
                   />
-                </Section>
+                </Section.Root>
               )}
 
-              <Section>
-                <H2Title
+              <Section.Root>
+                <Section.Header
                   title={t`Data Residency`}
                   description={t`Region where inference data is processed (optional)`}
                 />
@@ -414,12 +417,12 @@ export const SettingsAdminNewAiProvider = () => {
                     />
                   )}
                 />
-              </Section>
+              </Section.Root>
 
               {isBedrock && (
                 <>
-                  <Section>
-                    <H2Title
+                  <Section.Root>
+                    <Section.Header
                       title={t`Region`}
                       description={t`The AWS region for Bedrock`}
                     />
@@ -439,10 +442,10 @@ export const SettingsAdminNewAiProvider = () => {
                         />
                       )}
                     />
-                  </Section>
+                  </Section.Root>
 
-                  <Section>
-                    <H2Title
+                  <Section.Root>
+                    <Section.Header
                       title={t`Access Key ID`}
                       description={t`Optional — uses IAM role if empty`}
                     />
@@ -462,10 +465,10 @@ export const SettingsAdminNewAiProvider = () => {
                         />
                       )}
                     />
-                  </Section>
+                  </Section.Root>
 
-                  <Section>
-                    <H2Title
+                  <Section.Root>
+                    <Section.Header
                       title={t`Secret Access Key`}
                       description={t`Optional — uses IAM role if empty`}
                     />
@@ -485,7 +488,7 @@ export const SettingsAdminNewAiProvider = () => {
                         />
                       )}
                     />
-                  </Section>
+                  </Section.Root>
                 </>
               )}
             </>

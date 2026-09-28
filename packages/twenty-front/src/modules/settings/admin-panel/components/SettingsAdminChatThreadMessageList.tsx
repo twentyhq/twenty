@@ -5,7 +5,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { AgentMessageRole } from '~/generated-admin/graphql';
 
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
@@ -34,7 +34,7 @@ export const SettingsAdminChatThreadMessageList = ({
 
   if (!isNonEmptyArray(visibleMessages)) {
     return (
-      <Card rounded>
+      <Card.Root rounded>
         <TableRow gridTemplateColumns="1fr">
           <TableCell
             color={themeCssVariables.font.color.tertiary}
@@ -43,7 +43,7 @@ export const SettingsAdminChatThreadMessageList = ({
             {t`No messages found.`}
           </TableCell>
         </TableRow>
-      </Card>
+      </Card.Root>
     );
   }
 

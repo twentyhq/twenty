@@ -1,15 +1,16 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
+import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
+import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';
+import { formatBytes } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -119,14 +120,6 @@ const TimingRow = ({ label, value }: TimingRowProps) => {
       <StyledTimingValue>{value}</StyledTimingValue>
     </StyledTimingRow>
   );
-};
-
-const formatBytes = (bytes: number) => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
 };
 
 const formatNumber = (num: number) => num.toLocaleString();
@@ -319,7 +312,7 @@ type RoutingDebugDisplayProps = {
 };
 
 export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);

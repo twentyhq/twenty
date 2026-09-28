@@ -13,7 +13,12 @@
   {
     "name": "components",
     "path": "dist/components.mjs",
-    "limit": "95 kB"
+    "limit": "140 kB"
+  },
+  {
+    "name": "components/code-editor",
+    "path": "dist/components/code-editor.mjs",
+    "limit": "15 kB"
   },
   {
     "name": "primitives",
@@ -41,9 +46,10 @@
     "limit": "230 kB"
   },
   {
-    "name": "primitives/json-visualizer",
-    "path": "dist/primitives/json-visualizer.mjs",
-    "limit": "30 kB"
+    "name": "components (JsonTree)",
+    "path": "dist/components.mjs",
+    "limit": "30 kB",
+    "import": "{ JsonTree }"
   },
   {
     "name": "primitives/layout",
@@ -78,12 +84,7 @@
   {
     "name": "theme",
     "path": "dist/theme.mjs",
-    "limit": "25 kB"
-  },
-  {
-    "name": "theme-constants",
-    "path": "dist/theme-constants.mjs",
-    "limit": "12 kB"
+    "limit": "37 kB"
   },
   {
     "name": "utilities",

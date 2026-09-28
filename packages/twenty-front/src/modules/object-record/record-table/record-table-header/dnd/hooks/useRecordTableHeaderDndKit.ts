@@ -6,7 +6,9 @@ import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RECORD_TABLE_HEADER_DROPPABLE_ID } from '@/object-record/record-table/record-table-header/dnd/constants/RecordTableHeaderDroppableId';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
@@ -85,14 +87,18 @@ export const useRecordTableHeaderDndKit = (): {
       return;
     }
 
-    const destinationIndex =
-      dropTargetIndex <= sourceIndex ? dropTargetIndex + 1 : dropTargetIndex;
+    const sortableRecordFields = visibleRecordFields.slice(1);
 
-    // Sortable indices exclude the pinned label-identifier column at visibleRecordFields[0],
-    // so shift by one to address the full visible field list.
+    const destinationIndex = getDestinationIndex({
+      dropTargetIndex,
+      sourceIndex,
+      sourceDroppableId: RECORD_TABLE_HEADER_DROPPABLE_ID,
+      destinationDroppableId: RECORD_TABLE_HEADER_DROPPABLE_ID,
+    });
+
     const updatedRecordField = reorderVisibleRecordFields({
-      fromIndex: sourceIndex + 1,
-      toIndex: destinationIndex,
+      recordFieldToMove: sortableRecordFields[sourceIndex],
+      targetRecordField: sortableRecordFields[destinationIndex],
     });
 
     saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);

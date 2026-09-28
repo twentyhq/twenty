@@ -1,9 +1,8 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { styled } from '@linaria/react';
 
 type StyledDropdownButtonProps = {
   isUnfolded?: boolean;
-  isActive?: boolean;
 };
 
 export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProps>`
@@ -14,10 +13,7 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
       : themeCssVariables.background.primary};
   border: none;
   border-radius: ${themeCssVariables.border.radius.md};
-  color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.color.blue
-      : themeCssVariables.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
 

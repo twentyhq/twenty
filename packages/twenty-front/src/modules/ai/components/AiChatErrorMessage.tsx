@@ -3,11 +3,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatError } from '@/ai/types/AiChatError';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledErrorContainer = styled.div`
@@ -56,7 +55,7 @@ export const AiChatErrorMessage = ({
   hint,
   onRetry,
 }: AiChatErrorMessageProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const errorMessage = CombinedGraphQLErrors.is(error)
     ? getErrorMessageFromApolloError(error)
     : error.message;

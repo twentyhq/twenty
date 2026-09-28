@@ -1,8 +1,9 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -22,7 +23,6 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import {
   PermissionFlagType,
   ViewVisibility,
@@ -131,35 +131,34 @@ export const ViewPickerOptionDropdown = ({
         dropdownId={`view-picker-options-${view.id}`}
         selected={isCurrentView}
         dropdownContent={
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={isFavorite ? IconHeartOff : IconHeart}
-                text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+              <ListItem
+                startIcon={isFavorite ? <IconHeartOff /> : <IconHeart />}
                 onClick={handleToggleFavorite}
-              />
+              >
+                {isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+              </ListItem>
               {!isIndexView && canEditView && (
                 <>
-                  <MenuItem
-                    LeftIcon={IconPencil}
-                    text={t`Edit`}
+                  <ListItem
+                    startIcon={<IconPencil />}
                     onClick={(event) => {
                       onEdit(event, view.id);
                       closeDropdown(dropdownId);
                     }}
-                  />
+                  >{t`Edit`}</ListItem>
                   {!isLastView && (
-                    <MenuItem
-                      LeftIcon={IconTrash}
-                      text={t`Delete`}
+                    <ListItem
+                      startIcon={<IconTrash />}
                       onClick={handleDelete}
-                      accent="danger"
-                    />
+                      color="danger"
+                    >{t`Delete`}</ListItem>
                   )}
                 </>
               )}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         }
       />
     </>

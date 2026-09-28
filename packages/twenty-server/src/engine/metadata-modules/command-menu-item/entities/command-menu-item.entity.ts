@@ -25,7 +25,7 @@ import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-ite
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 
 export type CommandMenuItemOverrides = {
   isActive?: boolean;
@@ -42,6 +42,7 @@ export type CommandMenuItemOverrides = {
 };
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
+@Index('IDX_COMMAND_MENU_ITEM_APPLICATION_ID', ['applicationId'])
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
   'workflowVersionId',
   'workspaceId',
@@ -62,7 +63,7 @@ export type CommandMenuItemOverrides = {
 ])
 @Check(
   'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
-  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND (("payload" IS NOT NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("payload" IS NULL AND "navigationTargetObjectMetadataId" IS NOT NULL)) AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL)`,
+  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND ("workflowVersionId" IS NOT NULL OR "coreWorkflowVersionId" IS NOT NULL) AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "coreWorkflowVersionId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND (("payload" IS NOT NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("payload" IS NULL AND "navigationTargetObjectMetadataId" IS NOT NULL)) AND "workflowVersionId" IS NULL AND "coreWorkflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "coreWorkflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL)`,
 )
 export class CommandMenuItemEntity
   extends OverridableEntity<CommandMenuItemOverrides>

@@ -35,7 +35,9 @@ const PAGE_LAYOUT: FlatPageLayout = {
   objectMetadataUniversalIdentifier: null,
   defaultTabToFocusOnMobileAndSidePanelId: null,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: null,
+  navigationMenuItemIds: [],
   tabIds: [],
+  navigationMenuItemUniversalIdentifiers: [],
   tabUniversalIdentifiers: [],
   isSystemSideEffect: false,
   isFirstTabPinned: true,
@@ -229,6 +231,19 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
         ...COMMAND_MENU_ITEM,
         engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         workflowVersionId: 'a-workflow-version-id',
+      }),
+    );
+
+    expect(result.commandMenuItem?.flatEntityToDelete).toBeUndefined();
+  });
+
+  it('does not delete a workflow trigger command that only carries its core pointer', () => {
+    const result = inferDeletionOf(
+      withCommandMenuItem({
+        ...COMMAND_MENU_ITEM,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+        workflowVersionId: null,
+        coreWorkflowVersionId: 'a-core-workflow-version-id',
       }),
     );
 

@@ -1,15 +1,14 @@
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { AnimatedCircleLoading } from '@/workflow/components/internal/AnimatedCircleLoading/AnimatedCircleLoading';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   IconLoader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
 } from 'twenty-ui/icon';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/primitives/input';
-import { AnimatedCircleLoading } from 'twenty-ui/primitives/layout';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 const StyledContainer = styled.div`
   display: flex;
   flex: 1;
@@ -75,7 +74,7 @@ export const WorkflowStepExecutionResult = ({
   loadingMessage = t`Processing...`,
   idleMessage = t`Output`,
 }: WorkflowStepExecutionResultProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const SuccessLeftNode = (
     <StyledOutput accent="success">
@@ -127,13 +126,14 @@ export const WorkflowStepExecutionResult = ({
 
   return (
     <StyledContainer>
-      <CoreEditorHeader
+      <CodeEditorHeader
         leftNodes={[computeLeftNode()]}
         rightNodes={[<LightCopyIconButton copyText={result} />]}
       />
       <StyledCodeEditorWrapper>
         <CodeEditor
           resizable={true}
+          resizeLabel={t`Resize output`}
           value={result}
           language={language}
           height={height}

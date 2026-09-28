@@ -1,8 +1,8 @@
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 
 import {
   currentWorkspaceState,

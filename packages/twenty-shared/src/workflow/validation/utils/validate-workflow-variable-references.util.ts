@@ -7,7 +7,7 @@ import {
   type ValidatableWorkflow,
   type ValidatableWorkflowStep,
   type WorkflowValidationIssue,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { type WorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { extractVariablesFromInput } from '@/workflow/validation/utils/extract-variables-from-input.util';
 import { getVariablePathSuggestions } from '@/workflow/validation/utils/get-variable-path-suggestions.util';

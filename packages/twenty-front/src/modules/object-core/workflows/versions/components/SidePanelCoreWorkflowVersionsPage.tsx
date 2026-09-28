@@ -8,7 +8,7 @@ import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledError = styled.div`
   color: ${themeCssVariables.font.color.secondary};
@@ -24,11 +24,9 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
   const { openCoreWorkflowVersionSidePanel } =
     useOpenCoreWorkflowVersionSidePanel();
 
-  const selectableCoreWorkflowVersionIds = coreWorkflowVersions
-    .filter(({ workspaceWorkflowVersionId }) =>
-      isDefined(workspaceWorkflowVersionId),
-    )
-    .map(({ id }) => id);
+  const selectableCoreWorkflowVersionIds = coreWorkflowVersions.map(
+    ({ id }) => id,
+  );
 
   return (
     <SidePanelList
@@ -49,17 +47,10 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
             label={coreWorkflowVersion.label}
             createdAt={coreWorkflowVersion.createdAt}
             status={coreWorkflowVersion.status}
-            isSelectable={isDefined(
-              coreWorkflowVersion.workspaceWorkflowVersionId,
-            )}
+            isSelectable
             onSelect={() => {
-              if (!isDefined(coreWorkflowVersion.workspaceWorkflowVersionId)) {
-                return;
-              }
-
               openCoreWorkflowVersionSidePanel({
-                workspaceWorkflowVersionId:
-                  coreWorkflowVersion.workspaceWorkflowVersionId,
+                coreWorkflowVersionId: coreWorkflowVersion.id,
                 pageTitle: coreWorkflowVersion.label,
               });
             }}

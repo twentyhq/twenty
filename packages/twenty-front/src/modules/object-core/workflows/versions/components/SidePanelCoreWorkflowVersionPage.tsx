@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
 import { CoreWorkflowVersionRestoreButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton';
@@ -30,10 +30,8 @@ const StyledSpacer = styled.div`
 
 export const SidePanelCoreWorkflowVersionPage = () => {
   const { t } = useLingui();
-  const workspaceWorkflowVersionId = useSidePanelWorkflowVersionIdOrThrow();
-  const { coreWorkflowVersion } = useCoreWorkflowVersion(
-    workspaceWorkflowVersionId,
-  );
+  const coreWorkflowVersionId = useSidePanelWorkflowVersionIdOrThrow();
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(coreWorkflowVersionId);
 
   if (!isDefined(coreWorkflowVersion)) {
     return null;
@@ -47,14 +45,14 @@ export const SidePanelCoreWorkflowVersionPage = () => {
       <StyledActions>
         <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
         <StyledSpacer />
-        <CoreWorkflowVersionRestoreButton
-          workflowId={coreWorkflowVersion.workspaceWorkflowId}
-          workspaceWorkflowVersionId={workspaceWorkflowVersionId}
-        />
+        {isDefined(coreWorkflowVersion.coreWorkflowId) && (
+          <CoreWorkflowVersionRestoreButton
+            workflowId={coreWorkflowVersion.coreWorkflowId}
+            coreWorkflowVersionId={coreWorkflowVersionId}
+          />
+        )}
       </StyledActions>
-      <CoreWorkflowVersionCard
-        workspaceWorkflowVersionId={workspaceWorkflowVersionId}
-      />
+      <CoreWorkflowVersionCard coreWorkflowVersionId={coreWorkflowVersionId} />
     </StyledContainer>
   );
 };

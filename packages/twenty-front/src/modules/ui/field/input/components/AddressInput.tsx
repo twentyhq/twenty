@@ -15,7 +15,7 @@ import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDr
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';

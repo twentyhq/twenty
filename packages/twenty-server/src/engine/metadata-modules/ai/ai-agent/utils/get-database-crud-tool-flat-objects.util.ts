@@ -1,3 +1,4 @@
+import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
@@ -8,22 +9,25 @@ import {
 
 type FlatObjectWithActivityAndIdentifier = OverridableFlatEntity & {
   isActive: boolean;
+  readability: MetadataReadability;
   universalIdentifier: string;
 };
 
 export const getDatabaseCrudToolFlatObjects = <
-  T extends FlatObjectWithActivityAndIdentifier,
+  TFlatObject extends FlatObjectWithActivityAndIdentifier,
 >(
-  byUniversalIdentifier: Partial<Record<string, T>>,
-): T[] => {
+  byUniversalIdentifier: Partial<Record<string, TFlatObject>>,
+): TFlatObject[] => {
   return Object.values(byUniversalIdentifier)
     .filter(isDefined)
     .filter(
-      (obj) =>
+      (objectMetadata) =>
+        objectMetadata.readability !== MetadataReadability.SYSTEM &&
         resolveEffectiveFlatEntityProperty({
           metadataName: 'objectMetadata',
-          flatEntity: obj,
+          flatEntity: objectMetadata,
           property: 'isActive',
-        }) && !isWorkflowRelatedObject(obj),
+        }) &&
+        !isWorkflowRelatedObject(objectMetadata),
     );
 };

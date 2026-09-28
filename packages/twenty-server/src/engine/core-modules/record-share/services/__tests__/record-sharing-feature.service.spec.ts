@@ -1,89 +1,120 @@
 /* @license Enterprise */
 
-import { Test, type TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { DiscoveryService } from '@nestjs/core';
-
-import { FeatureFlagKey } from 'twenty-shared/types';
-
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataReadability } from 'twenty-shared/types';
 import { RecordSharingEntitlementProvider } from 'src/engine/core-modules/record-share/interfaces/record-sharing-entitlement-provider.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const WORKSPACE_ID = 'workspace-id';
-
-class TestRecordSharingEntitlementProvider extends RecordSharingEntitlementProvider {
-  hasRecordSharingEntitlement = jest.fn();
+class TestEntitlementProvider extends RecordSharingEntitlementProvider {
+  hasRecordSharingEntitlement = jest.fn<Promise<boolean>, [string]>();
 }
 
-describe('RecordSharingFeatureService', () => {
-  let service: RecordSharingFeatureService;
+const setup = async ({
+  readability = MetadataReadability.SYSTEM,
+  flag = true,
+  entitled = false,
+  chatDropdownFlag,
+}: {
+  readability?: MetadataReadability;
+  flag?: boolean;
+  entitled?: boolean;
+  chatDropdownFlag?: boolean;
+} = {}) => {
+  const provider = new TestEntitlementProvider();
+  provider.hasRecordSharingEntitlement.mockResolvedValue(entitled);
+  const module = await Test.createTestingModule({
+    providers: [
+      RecordSharingFeatureService,
+      {
+        provide: DiscoveryService,
+        useValue: { getProviders: () => [{ instance: provider }] },
+      },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatObjectMetadataMaps: {
+              byUniversalIdentifier: {
+                [STANDARD_OBJECTS.agentChatThread.universalIdentifier]: {
+                  readability,
+                },
+              },
+            },
+            featureFlagsMap: {
+              IS_RECORD_SHARING_ENABLED: flag,
+              IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: chatDropdownFlag,
+            },
+            billingEntitlements: {},
+          }),
+        },
+      },
+    ],
+  }).compile();
+  await module.init();
+  return { module, provider, service: module.get(RecordSharingFeatureService) };
+};
 
-  const entitlementProvider = new TestRecordSharingEntitlementProvider();
-  const workspaceCacheService = { getOrRecompute: jest.fn() };
-  const discoveryService = { getProviders: jest.fn() };
+describe('record-sharing rollout entitlement compatibility', () => {
+  it.each([undefined, false, true])(
+    'keeps backend sharing and activated permissions independent of the chat dropdown flag (%s)',
+    async (chatDropdownFlag) => {
+      const { module, service } = await setup({
+        readability: MetadataReadability.PRIVATE,
+        chatDropdownFlag,
+      });
 
-  const givenFeatureFlag = (value: boolean) =>
-    workspaceCacheService.getOrRecompute.mockResolvedValue({
-      featureFlagsMap: { [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: value },
-    });
+      expect(await service.isRecordSharingEnabled('workspace')).toBe(true);
+      expect(await service.isLegacyRecordAccessOpen('workspace')).toBe(false);
 
-  const givenRegisteredProviders = (
-    instances: (RecordSharingEntitlementProvider | undefined)[],
-  ) =>
-    discoveryService.getProviders.mockReturnValue(
-      instances.map((instance) => ({ instance })),
+      await module.close();
+    },
+  );
+
+  it('honors an effective self-hosted entitlement even with an empty billing cache', async () => {
+    const { module, provider, service } = await setup({ entitled: true });
+    expect(await service.isLegacyRecordAccessOpen('workspace')).toBe(false);
+    expect(provider.hasRecordSharingEntitlement).toHaveBeenCalledWith(
+      'workspace',
     );
-
-  const buildService = async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        RecordSharingFeatureService,
-        { provide: DiscoveryService, useValue: discoveryService },
-        { provide: WorkspaceCacheService, useValue: workspaceCacheService },
-      ],
-    }).compile();
-
-    const builtService = module.get(RecordSharingFeatureService);
-
-    builtService.onModuleInit();
-
-    return builtService;
-  };
-
-  beforeEach(async () => {
-    jest.clearAllMocks();
-    givenRegisteredProviders([entitlementProvider]);
-    entitlementProvider.hasRecordSharingEntitlement.mockResolvedValue(true);
-    givenFeatureFlag(true);
-    service = await buildService();
+    await module.close();
   });
 
-  it('enables record sharing when the flag is on and the workspace is entitled', async () => {
-    expect(await service.isRecordSharingEnabled(WORKSPACE_ID)).toBe(true);
-    expect(
-      entitlementProvider.hasRecordSharingEntitlement,
-    ).toHaveBeenCalledWith(WORKSPACE_ID);
+  it('preserves legacy access when sharing was not entitled', async () => {
+    const { module, service } = await setup();
+    expect(await service.isLegacyRecordAccessOpen('workspace')).toBe(true);
+    await module.close();
   });
 
-  it('disables record sharing when the workspace is not entitled', async () => {
-    entitlementProvider.hasRecordSharingEntitlement.mockResolvedValue(false);
-
-    expect(await service.isRecordSharingEnabled(WORKSPACE_ID)).toBe(false);
+  it('does not consult entitlement once metadata has been activated', async () => {
+    const { module, provider, service } = await setup({
+      readability: MetadataReadability.PRIVATE,
+      flag: false,
+    });
+    expect(await service.isLegacyRecordAccessOpen('workspace')).toBe(false);
+    expect(provider.hasRecordSharingEntitlement).not.toHaveBeenCalled();
+    await module.close();
   });
 
-  it('disables record sharing when the flag is off, without asking for the entitlement', async () => {
-    givenFeatureFlag(false);
-
-    expect(await service.isRecordSharingEnabled(WORKSPACE_ID)).toBe(false);
-    expect(
-      entitlementProvider.hasRecordSharingEntitlement,
-    ).not.toHaveBeenCalled();
+  it('keeps the legacy-open policy when the feature flag is off', async () => {
+    const { module, provider, service } = await setup({
+      flag: false,
+      entitled: true,
+    });
+    expect(await service.isLegacyRecordAccessOpen('workspace')).toBe(true);
+    expect(provider.hasRecordSharingEntitlement).not.toHaveBeenCalled();
+    await module.close();
   });
 
-  it('stays off when no entitlement provider is registered', async () => {
-    givenRegisteredProviders([undefined]);
-    service = await buildService();
-
-    expect(await service.isRecordSharingEnabled(WORKSPACE_ID)).toBe(false);
-  });
+  it.each([true, false])(
+    'allows basic sharing with flag=%s without an entitlement',
+    async (flag) => {
+      const { module, provider, service } = await setup({ flag });
+      expect(await service.isRecordSharingEnabled('workspace')).toBe(flag);
+      expect(provider.hasRecordSharingEntitlement).not.toHaveBeenCalled();
+      await module.close();
+    },
+  );
 });

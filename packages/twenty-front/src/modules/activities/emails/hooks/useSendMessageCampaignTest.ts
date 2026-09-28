@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 import { SEND_MESSAGE_CAMPAIGN_TEST } from '@/activities/emails/graphql/mutations/sendMessageCampaignTest';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { t } from '@lingui/core/macro';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type SendMessageCampaignTestMutation,
   type SendMessageCampaignTestMutationVariables,

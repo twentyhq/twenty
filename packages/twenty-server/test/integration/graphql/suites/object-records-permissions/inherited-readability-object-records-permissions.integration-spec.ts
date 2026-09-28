@@ -6,8 +6,8 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -23,7 +23,7 @@ import {
 } from 'twenty-shared/types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -108,7 +108,7 @@ const destroyRecords = ({
   objectMetadataPluralName: string;
   ids: string[];
 }) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     destroyManyOperationFactory({
       objectMetadataSingularName,
       objectMetadataPluralName,
@@ -118,7 +118,7 @@ const destroyRecords = ({
   );
 
 describe('inheritedReadabilityObjectRecordsPermissions', () => {
-  let recordShareService: RecordShareService;
+  let recordShareStorageService: RecordShareStorageService;
   let noteObjectMetadataId: string;
   let personObjectMetadataId: string;
   let attachmentObjectMetadataId: string;
@@ -126,8 +126,11 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
   const sourceId = randomUUID();
 
   beforeAll(async () => {
-    recordShareService =
-      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    await setRecordSharingEnabled(true);
+    recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
 
     const noteObjectMetadata = await getCoreRepository<ObjectMetadataEntity>(
       ObjectMetadataEntity,
@@ -197,7 +200,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     ];
 
     for (const { objectMetadataSingularName, data } of createRecords) {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName,
           gqlFields: 'id',
@@ -212,16 +215,15 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       noteObjectMetadataId,
       MetadataReadability.PRIVATE,
     );
-    await setRecordSharingEnabled(true);
   });
 
   afterAll(async () => {
     await setRecordSharingEnabled(false);
-    await recordShareService.deleteBySourceId({
+    await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
     });
-    await recordShareService.deleteByRecordIds({
+    await recordShareStorageService.deleteByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: attachmentObjectMetadataId,
       recordIds: ATTACHMENT_IDS,
@@ -261,20 +263,18 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       await setRecordSharingEnabled(true);
     });
 
-    it('should show every attachment and note target as if the note were OPEN', async () => {
-      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+    it('keeps inherited record visibility enforced when the sharing UI is disabled', async () => {
+      const attachmentsResponse = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
-      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
         findNoteTargetsOperation,
       );
 
       expect(attachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
-      ).toEqual(
-        [NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID, ORPHAN_ATTACHMENT_ID].sort(),
-      );
+      ).toEqual([PERSON_ATTACHMENT_ID]);
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(noteTargetsResponse.body.data.noteTargets.edges),
@@ -284,10 +284,10 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
   describe('without a share row on the note', () => {
     it('should hide the attachment hanging off the note and keep the note target that points at the open person', async () => {
-      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const attachmentsResponse = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
-      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
         findNoteTargetsOperation,
       );
 
@@ -302,7 +302,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should keep the attachment hidden when ordering through its note', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOrderedByNoteOperation,
       );
 
@@ -313,7 +313,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should hide the note itself and with it its nested children', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         findNoteWithChildrenOperation,
       );
 
@@ -324,7 +324,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
   describe('with a READ share row on the note', () => {
     beforeAll(async () => {
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -341,14 +341,14 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should show the attachment and the note target hanging off the note and keep the orphan hidden', async () => {
-      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const attachmentsResponse = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
       const orderedAttachmentsResponse =
-        await makeGraphqlAPIRequestWithMemberRole(
+        await makeGraphqlApiRequestWithMemberRole(
           findAttachmentsOrderedByNoteOperation,
         );
-      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
         findNoteTargetsOperation,
       );
 
@@ -367,7 +367,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should show the note with its nested attachment and note target', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         findNoteWithChildrenOperation,
       );
 
@@ -382,7 +382,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should show the orphan attachment once it is shared with the member itself', async () => {
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -397,7 +397,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
         ],
       });
 
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
 
@@ -408,7 +408,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should refuse to update or delete the attachment with READ access on the note', async () => {
-      const updateResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const updateResponse = await makeGraphqlApiRequestWithMemberRole(
         updateOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id name',
@@ -416,7 +416,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
           data: { name: 'renamed-by-member.pdf' },
         }),
       );
-      const deleteResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const deleteResponse = await makeGraphqlApiRequestWithMemberRole(
         deleteOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id',
@@ -431,7 +431,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should refuse to attach a new or an existing attachment to the note with READ access on it', async () => {
-      const createResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const createResponse = await makeGraphqlApiRequestWithMemberRole(
         createOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id',
@@ -442,7 +442,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
           },
         }),
       );
-      const moveResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const moveResponse = await makeGraphqlApiRequestWithMemberRole(
         updateOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id',
@@ -462,7 +462,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     beforeAll(async () => {
       const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -479,7 +479,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should update the attachment hanging off the note', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         updateOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id name',
@@ -496,7 +496,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should attach a new and an existing attachment to the note', async () => {
-      const createResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const createResponse = await makeGraphqlApiRequestWithMemberRole(
         createOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id',
@@ -507,7 +507,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
           },
         }),
       );
-      const moveResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const moveResponse = await makeGraphqlApiRequestWithMemberRole(
         updateOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id',
@@ -527,7 +527,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should let the member read back an attachment created without any parent', async () => {
-      const createResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const createResponse = await makeGraphqlApiRequestWithMemberRole(
         createOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id',
@@ -537,7 +537,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
           },
         }),
       );
-      const findResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const findResponse = await makeGraphqlApiRequestWithMemberRole(
         findManyOperationFactory({
           objectMetadataSingularName: 'attachment',
           objectMetadataPluralName: 'attachments',
@@ -556,14 +556,14 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
   describe('once every share row on the note is gone', () => {
     beforeAll(async () => {
-      await recordShareService.deleteBySourceId({
+      await recordShareStorageService.deleteBySourceId({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         sourceId,
       });
     });
 
     it('should keep showing the member the attachments they created and hide the others', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
 
@@ -574,7 +574,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should let the member update the attachment they created under the note', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         updateOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id name',
@@ -615,9 +615,9 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       });
 
       const unsharedResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findPersonOperation);
+        await makeGraphqlApiRequestWithMemberRole(findPersonOperation);
 
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -633,7 +633,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       });
 
       const sharedResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findPersonOperation);
+        await makeGraphqlApiRequestWithMemberRole(findPersonOperation);
 
       expect(unsharedResponse.body.errors).toBeUndefined();
       expect(unsharedResponse.body.data.people.edges).toHaveLength(0);

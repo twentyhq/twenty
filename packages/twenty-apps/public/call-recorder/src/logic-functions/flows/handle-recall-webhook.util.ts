@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CALL_RECORDING_ARTIFACT_IMPORT_SCOPES } from 'src/logic-functions/constants/call-recording-artifact-import-scopes';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
@@ -139,8 +140,12 @@ const handleRecallStatusEvent = async ({
     })
   ) {
     await enqueueCallRecordingArtifactsImport({
-      callRecordingId: callRecording.id,
-      scopes: ['transcript', 'media'],
+      callRecordingIds: [callRecording.id],
+      scopes: CALL_RECORDING_ARTIFACT_IMPORT_SCOPES,
+      trigger:
+        event === 'recording.deleted' || statusCode === 'media_expired'
+          ? 'expired'
+          : 'recording',
     });
   }
 
@@ -177,8 +182,9 @@ const queueCallRecordingArtifactsImport = async ({
   }
 
   await enqueueCallRecordingArtifactsImport({
-    callRecordingId: callRecording.id,
+    callRecordingIds: [callRecording.id],
     scopes: ['transcript'],
+    trigger: 'transcript-ready',
   });
 
   return {
@@ -248,7 +254,7 @@ const mapRecallEventToCallRecordingStatus = ({
   statusCode: string | undefined;
   statusSubCode: string | undefined;
 }): CallRecordingStatus | undefined => {
-  if (event === 'recording.done') {
+  if (event === 'recording.done' || event === 'recording.deleted') {
     return CallRecordingStatus.PROCESSING;
   }
 

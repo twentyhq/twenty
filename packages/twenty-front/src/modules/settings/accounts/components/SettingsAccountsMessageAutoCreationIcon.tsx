@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
 
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 type SettingsAccountsMessageAutoCreationIconProps = {
   className?: string;

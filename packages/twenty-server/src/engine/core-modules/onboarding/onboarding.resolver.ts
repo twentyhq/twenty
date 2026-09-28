@@ -14,14 +14,17 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard, RequireUserSessionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @MetadataResolver()
+@AllowSuspendedWorkspace()
 export class OnboardingResolver {
   constructor(
     private readonly onboardingService: OnboardingService,

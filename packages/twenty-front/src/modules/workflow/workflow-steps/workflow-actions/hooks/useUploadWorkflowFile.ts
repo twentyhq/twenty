@@ -4,7 +4,7 @@ import { formatFileSize } from '@/file/utils/formatFileSize';
 import { t } from '@lingui/core/macro';
 import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 

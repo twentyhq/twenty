@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-sdk/utils';
 import { SLACK_ASSISTANT_CONTEXT_REQUEST_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-request-timeout-ms';
 import { SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-timeout-ms';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
+import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
-import { collectSlackSharedFileNames } from 'src/logic-functions/utils/collect-slack-shared-file-names';
 import { fetchSlackThreadMessages } from 'src/logic-functions/utils/fetch-slack-thread-messages';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
@@ -18,36 +18,40 @@ import { selectSlackConversationMessages } from 'src/logic-functions/utils/selec
 
 type SlackAssistantContext = {
   conversationMessages: SlackAssistantAgentMessage[];
-  sharedFileNames: string[];
+  sharedFiles: SlackMessageFile[];
   requesterName: string | undefined;
   requesterIdentity: SlackUserIdentity | undefined;
   requestMessage: SlackThreadMessage | undefined;
   threadMessages: SlackThreadMessage[];
   slackClient: WebClient | undefined;
+  slackConnectionId: string | undefined;
   assistantBotUserId: string | undefined;
   isDirectMessage: boolean;
 };
 
 const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   conversationMessages: [],
-  sharedFileNames: [],
+  sharedFiles: [],
   requesterName: undefined,
   requesterIdentity: undefined,
   requestMessage: undefined,
   threadMessages: [],
   slackClient: undefined,
+  slackConnectionId: undefined,
   assistantBotUserId: undefined,
   isDirectMessage: false,
 };
 
 const readSlackThreadContext = async ({
   client,
+  connectionId,
   slackChannelId,
   parentMessageTimestamp,
   slackMessageTimestamp,
   slackUserId,
 }: {
   client: WebClient;
+  connectionId: string;
   slackChannelId: string;
   parentMessageTimestamp: string;
   slackMessageTimestamp: string;
@@ -85,14 +89,15 @@ const readSlackThreadContext = async ({
       messages: conversationThreadMessages,
       assistantBotUserId,
     }),
-    sharedFileNames: collectSlackSharedFileNames(
-      [requestMessage, ...conversationThreadMessages].filter(isDefined),
-    ),
+    sharedFiles: [requestMessage, ...conversationThreadMessages]
+      .filter(isDefined)
+      .flatMap((message) => message.files ?? []),
     requesterName: requesterIdentity?.displayName,
     requesterIdentity,
     requestMessage,
     threadMessages: tailMessages,
     slackClient: client,
+    slackConnectionId: connectionId,
     assistantBotUserId,
     isDirectMessage,
   };
@@ -133,11 +138,12 @@ export const fetchSlackAssistantContext = async ({
     return UNREACHABLE_SLACK_CONTEXT;
   }
 
-  const { client } = slackClientResult;
+  const { client, connectionId } = slackClientResult;
 
   return await runWithTimeout({
     operation: readSlackThreadContext({
       client,
+      connectionId,
       slackChannelId,
       parentMessageTimestamp,
       slackMessageTimestamp,
@@ -149,7 +155,11 @@ export const fetchSlackAssistantContext = async ({
         `[slack] assistant context read exceeded ${SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS}ms, answering without thread history`,
       );
 
-      return { ...UNREACHABLE_SLACK_CONTEXT, slackClient: client };
+      return {
+        ...UNREACHABLE_SLACK_CONTEXT,
+        slackClient: client,
+        slackConnectionId: connectionId,
+      };
     },
   });
 };

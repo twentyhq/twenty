@@ -63,5 +63,11 @@ export const fromViewEntityToFlatView = (
       viewEntity.viewSorts?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
+    navigationMenuItemIds:
+      viewEntity.navigationMenuItems?.map(({ id }) => id) ?? [],
+    navigationMenuItemUniversalIdentifiers:
+      viewEntity.navigationMenuItems?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
   };
 };

@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
@@ -7,7 +8,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -15,7 +16,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
   recordFilterId: string;
@@ -73,16 +73,15 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
         </IconButton>
       }
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              text={t`Remove rule`}
+            <ListItem
               onClick={handleRemove}
-              LeftIcon={IconTrash}
-              accent="danger"
-            />
+              startIcon={<IconTrash />}
+              color="danger"
+            >{t`Remove rule`}</ListItem>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
       dropdownPlacement="bottom-start"

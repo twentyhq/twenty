@@ -3,8 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -22,7 +22,7 @@ describe('destroyManyObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ destroyPeople: null });
     expect(response.body.errors).toBeDefined();
@@ -50,7 +50,7 @@ describe('destroyManyObjectRecordsPermissions', () => {
       ],
     });
 
-    await makeGraphqlAPIRequest(createGraphqlOperation);
+    await makeGraphqlApiRequest(createGraphqlOperation);
 
     const graphqlOperation = destroyManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -63,7 +63,7 @@ describe('destroyManyObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.destroyPeople).toBeDefined();

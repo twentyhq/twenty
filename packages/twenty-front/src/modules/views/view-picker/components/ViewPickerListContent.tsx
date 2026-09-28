@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { type MouseEvent, useCallback } from 'react';
@@ -5,7 +6,7 @@ import { type MouseEvent, useCallback } from 'react';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -20,11 +21,12 @@ import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/select
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/computeViewPickerVisibleViews';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ViewVisibility } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey, ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
@@ -41,20 +43,30 @@ export const ViewPickerListContent = () => {
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
-  const workspaceViews = viewsOnCurrentObject.filter(
+  const { currentView } = useGetCurrentViewOnly();
+
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
+
+  const visibleViews = computeViewPickerVisibleViews({
+    views: viewsOnCurrentObject,
+    currentViewId: currentView?.id,
+    isInitialObjectViewEnabled,
+  });
+
+  const workspaceViews = visibleViews.filter(
     (view) => view.visibility === ViewVisibility.WORKSPACE,
   );
 
-  const unlistedViews = viewsOnCurrentObject.filter(
+  const unlistedViews = visibleViews.filter(
     (view) => view.visibility === ViewVisibility.UNLISTED,
   );
 
-  const isLastView = viewsOnCurrentObject.length <= 1;
+  const isLastView = visibleViews.length <= 1;
 
   const shouldShowSectionLabels =
     workspaceViews.length > 0 && unlistedViews.length > 0;
-
-  const { currentView } = useGetCurrentViewOnly();
 
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
@@ -134,7 +146,7 @@ export const ViewPickerListContent = () => {
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {workspaceViews.length > 0 && (
         <>
           {shouldShowSectionLabels && (
@@ -207,13 +219,12 @@ export const ViewPickerListContent = () => {
       <DropdownMenuSeparator />
       <StyledBoldDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem
+          <ListItem
             onClick={handleAddViewButtonClick}
-            LeftIcon={IconPlus}
-            text={t`Add view`}
-          />
+            startIcon={<IconPlus />}
+          >{t`Add view`}</ListItem>
         </DropdownMenuItemsContainer>
       </StyledBoldDropdownMenuItemsContainerWrapper>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

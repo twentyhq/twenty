@@ -49,12 +49,19 @@ const setupQueryMock = (messageParticipants: Record<string, unknown>[]) => {
       });
     }
 
-    if (query.person) {
-      return Promise.resolve({ person: null });
+    if (query.people) {
+      const requestedIds: string[] = query.people.__args.filter.id.in;
+      return Promise.resolve({
+        people: buildPage(
+          query.people.edges.node.companyId
+            ? requestedIds.map((id) => ({ id, companyId: null }))
+            : requestedIds.map((id) => ({ id })),
+        ),
+      });
     }
 
-    if (query.people) {
-      return Promise.resolve({ people: buildPage([]) });
+    if (query.companies) {
+      return Promise.resolve({ companies: buildPage([]) });
     }
 
     return Promise.resolve({ opportunities: buildPage([]) });
@@ -64,7 +71,7 @@ const setupQueryMock = (messageParticipants: Record<string, unknown>[]) => {
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
+  mutationMock.mockResolvedValue({});
 });
 
 describe('on-email-interaction definition', () => {
@@ -99,13 +106,19 @@ describe('on-email-interaction handler', () => {
       buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
     );
 
-    expect(mutationMock.mock.calls[0][0].updatePeople.__args.data).toEqual({
-      lastContactAt: RECEIVED_AT,
-      lastContactById: MEMBER_ID,
-      lastContactItemMessageId: MESSAGE_ID,
-      lastContactItemCalendarEventId: null,
-      lastOutboundAt: RECEIVED_AT,
-      lastEmailId: MESSAGE_ID,
+    expect(mutationMock.mock.calls[0][0].createPeople.__args).toEqual({
+      upsert: true,
+      data: [
+        {
+          id: PERSON_ID,
+          lastContactAt: RECEIVED_AT,
+          lastContactById: MEMBER_ID,
+          lastContactItemMessageId: MESSAGE_ID,
+          lastContactItemCalendarEventId: null,
+          lastOutboundAt: RECEIVED_AT,
+          lastEmailId: MESSAGE_ID,
+        },
+      ],
     });
   });
 
@@ -140,19 +153,22 @@ describe('on-email-interaction handler', () => {
       participantQueries[0][0].messageParticipants.__args.filter,
     ).toEqual({ messageId: { in: [OLDER_MESSAGE_ID, MESSAGE_ID] } });
 
-    const personUpdates = mutationMock.mock.calls.filter(
-      ([mutation]) => mutation.updatePeople,
+    const personUpserts = mutationMock.mock.calls.filter(
+      ([mutation]) => mutation.createPeople,
     );
-    expect(personUpdates).toHaveLength(1);
-    expect(personUpdates[0][0].updatePeople.__args.data).toEqual({
-      lastContactAt: RECEIVED_AT,
-      lastContactById: MEMBER_ID,
-      lastContactItemMessageId: MESSAGE_ID,
-      lastContactItemCalendarEventId: null,
-      lastOutboundAt: RECEIVED_AT,
-      lastInboundAt: OLDER_RECEIVED_AT,
-      lastEmailId: MESSAGE_ID,
-    });
+    expect(personUpserts).toHaveLength(1);
+    expect(personUpserts[0][0].createPeople.__args.data).toEqual([
+      {
+        id: PERSON_ID,
+        lastContactAt: RECEIVED_AT,
+        lastContactById: MEMBER_ID,
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+        lastOutboundAt: RECEIVED_AT,
+        lastInboundAt: OLDER_RECEIVED_AT,
+        lastEmailId: MESSAGE_ID,
+      },
+    ]);
   });
 
   it('should do nothing when no participant has both a person and a message', async () => {

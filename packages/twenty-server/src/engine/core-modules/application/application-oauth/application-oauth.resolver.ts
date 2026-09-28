@@ -1,17 +1,12 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -20,11 +15,11 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-const APP_TOKEN_RATE_LIMIT_MAX = 30;
-const APP_TOKEN_RATE_LIMIT_WINDOW_MS = 30_000;
+const APPLICATION_TOKEN_RATE_LIMIT_MAX = 30;
+const APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS = 30_000;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -41,45 +36,29 @@ export class ApplicationOAuthResolver {
   ) {}
 
   @Mutation(() => ApplicationTokenPairDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  async generateApplicationToken(
-    @Args() { applicationId }: GenerateApplicationTokenInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUser({ allowUndefined: true }) user?: { id: string },
-    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
-  ): Promise<ApplicationTokenPairDTO> {
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `app-dev:${workspaceId}:${applicationId}`,
-      1,
-      APP_TOKEN_RATE_LIMIT_MAX,
-      APP_TOKEN_RATE_LIMIT_WINDOW_MS,
-    );
-
-    return this.applicationTokenService.generateApplicationTokenPair({
-      workspaceId,
-      applicationId,
-      userId: user?.id,
-      userWorkspaceId,
-    });
-  }
-
-  @Mutation(() => ApplicationTokenPairDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(RequireAccessTokenGuard, NoPermissionGuard)
   async renewApplicationToken(
     @Args('applicationRefreshToken') applicationRefreshToken: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ApplicationTokenPairDTO> {
-    const applicationRefreshTokenPayload =
-      await this.applicationTokenService.validateApplicationRefreshToken(
-        applicationRefreshToken,
-      );
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-renew:${workspaceId}:${userWorkspaceId}`,
+      1,
+      APPLICATION_TOKEN_RATE_LIMIT_MAX,
+      APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS,
+    );
 
-    if (applicationRefreshTokenPayload.workspaceId !== workspaceId) {
-      throw new ApplicationException(
-        'Refresh token workspace does not match authenticated workspace',
-        ApplicationExceptionCode.FORBIDDEN,
+    const applicationRefreshTokenPayload =
+      await this.applicationTokenService.validateApplicationRefreshTokenForSessionOrThrow(
+        {
+          applicationRefreshToken,
+          workspaceId,
+          userId: user.id,
+          userWorkspaceId,
+        },
       );
-    }
 
     return this.applicationTokenService.renewApplicationTokens(
       applicationRefreshTokenPayload,

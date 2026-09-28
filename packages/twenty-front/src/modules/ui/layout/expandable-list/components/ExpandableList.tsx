@@ -7,13 +7,13 @@ import {
   useState,
 } from 'react';
 
+import { AnimatedContainer } from '@/ui/layout/animation/components/internal/AnimatedContainer/AnimatedContainer';
 import { ExpandableListResizeEffect } from '@/ui/layout/expandable-list/components/ExpandableListResizeEffect';
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedContainer } from 'twenty-ui/primitives/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;

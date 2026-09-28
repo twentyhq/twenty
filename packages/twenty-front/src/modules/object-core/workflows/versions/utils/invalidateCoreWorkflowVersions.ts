@@ -1,27 +1,11 @@
 import { type ApolloClient } from '@apollo/client';
 
-import {
-  GetCoreWorkflowDocument,
-  GetCoreWorkflowVersionDocument,
-  GetCoreWorkflowVersionsDocument,
-} from '~/generated/graphql';
+import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 
 export const invalidateCoreWorkflowVersions = async (
   apolloCoreClient: ApolloClient,
 ) => {
-  for (const fieldName of [
-    'coreWorkflow',
-    'coreWorkflowVersion',
-    'coreWorkflowVersions',
-  ]) {
-    apolloCoreClient.cache.evict({ id: 'ROOT_QUERY', fieldName });
-  }
-
-  await apolloCoreClient.refetchQueries({
-    include: [
-      GetCoreWorkflowVersionsDocument,
-      GetCoreWorkflowVersionDocument,
-      GetCoreWorkflowDocument,
-    ],
+  await invalidateCoreWorkflowQueries(apolloCoreClient, {
+    shouldInvalidateWorkflowList: false,
   });
 };

@@ -103,19 +103,13 @@ export class ConnectionProviderOAuthController {
         await this.oauthProviderService.findOneByApplicationAndName({
           applicationId,
           name: providerName,
+          workspaceId,
         });
 
       if (!provider) {
         throw new ConnectionProviderException(
           `OAuth provider "${providerName}" not found for application ${applicationId}`,
           ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
-        );
-      }
-
-      if (provider.workspaceId !== workspaceId) {
-        throw new ConnectionProviderException(
-          'OAuth provider does not belong to the requesting workspace',
-          ConnectionProviderExceptionCode.FORBIDDEN,
         );
       }
 

@@ -211,13 +211,20 @@ describe('CalendarEvent standard metadata build', () => {
     });
   });
 
-  it('configures the native call recording tab on the calendar event record page', () => {
+  it('configures the native transcript tab on the calendar event record page', () => {
     const callRecordingTabUniversalIdentifier =
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
         .callRecording.universalIdentifier;
     const transcriptWidgetUniversalIdentifier =
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
         .callRecording.widgets.transcript.universalIdentifier;
+
+    expect(callRecordingTabUniversalIdentifier).toBe(
+      '51243414-7c83-506d-a595-e5c50f85af17',
+    );
+    expect(transcriptWidgetUniversalIdentifier).toBe(
+      'e812ce13-5531-530a-a881-84a67315c9fe',
+    );
 
     const callRecordingTab =
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
@@ -229,8 +236,8 @@ describe('CalendarEvent standard metadata build', () => {
       ];
 
     expect(callRecordingTab).toMatchObject({
-      title: 'Call Recording',
-      icon: 'IconVideo',
+      title: 'Transcript',
+      icon: 'IconBlockquote',
       position: 40,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });

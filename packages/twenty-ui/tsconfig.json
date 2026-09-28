@@ -33,6 +33,9 @@
     "vite.config.ts",
     "scripts/generateDocsData.ts",
     "docs/**/*.ts",
-    "scripts/checkDocsExamples.ts"
+    "scripts/checkDocsExamples.ts",
+    "scripts/checkOptionalDependencies.ts",
+    "scripts/checkThemeExports.ts",
+    "scripts/checkModuleOwnership.ts"
   ]
 }

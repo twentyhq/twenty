@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application variable update across workspaces should fail should refuse to update a variable of an application installed in another workspace 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_VARIABLE_NOT_FOUND",
+    "userFriendlyMessage": "Application variable not found.",
+  },
+  "message": "Application variable with key OTHER_WORKSPACE_VARIABLE not found",
+  "name": "NotFoundError",
+}
+`;

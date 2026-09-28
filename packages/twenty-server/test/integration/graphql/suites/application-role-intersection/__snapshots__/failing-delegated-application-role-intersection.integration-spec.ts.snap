@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`A delegated application without the flag is refused should refuse a delegated application deleting its own declared role 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "CANNOT_DELETE_OWN_ROLE",
+    "userFriendlyMessage": "You cannot delete a role you are assigned to. Ask another administrator to delete it.",
+  },
+  "message": "Cannot delete a role assigned to the acting user",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`A delegated application without the flag is refused should refuse a view mutation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You don't have permission to modify this view.",
+  },
+  "message": "You do not have permission to modify this view",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`A delegated application without the flag is refused should refuse a workspace-scoped blocklist entry 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`A delegated application without the flag is refused should refuse deleteUserFromWorkspace for another member 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`A delegated application without the flag is refused should refuse the billing checkout permission path 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`A delegated application without the flag is refused should refuse the profile picture upload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`A delegated application without the flag is refused should refuse updateWorkspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`A delegated application without the flag is refused should refuse updateWorkspaceMemberSettings on another member 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;

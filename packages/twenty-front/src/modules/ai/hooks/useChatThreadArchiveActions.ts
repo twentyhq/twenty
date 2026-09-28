@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client/react';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   ArchiveChatThreadDocument,
   UnarchiveChatThreadDocument,

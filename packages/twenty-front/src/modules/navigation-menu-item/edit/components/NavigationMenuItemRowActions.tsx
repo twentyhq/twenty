@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledActions = styled.div`
   align-items: center;
@@ -33,15 +33,16 @@ export const NavigationMenuItemRowActions = ({
     >
       {rightOptions}
       <LightIconButton
-        Icon={IconDotsVertical}
-        size="small"
-        accent="tertiary"
+        size="sm"
+        emphasis="subtle"
         aria-label={t`Menu item actions`}
         onClick={(event) => {
           event.stopPropagation();
           onOpenActions();
         }}
-      />
+      >
+        <IconDotsVertical />
+      </LightIconButton>
     </StyledActions>
   );
 };

@@ -17,6 +17,12 @@ const WorkflowCoreIndexPage = lazy(() =>
   })),
 );
 
+const WorkflowCoreShowPage = lazy(() =>
+  import('~/pages/object-core/WorkflowCoreShowPage').then((module) => ({
+    default: module.WorkflowCoreShowPage,
+  })),
+);
+
 const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
     default: module.RecordIndexPage,
@@ -70,6 +76,18 @@ export const createWorkspaceRouteObjects = ({
   });
 
   return [
+    {
+      path: AppPath.WorkflowCoreShowPage,
+      element: (
+        <LazyRoute>
+          <WorkflowCoreShowPage />
+        </LazyRoute>
+      ),
+      handle: {
+        workspaceSurfaces: MAIN_AND_SIDE_PANEL,
+        isLocationExpandableFromSidePanel: true,
+      },
+    },
     ...(isWorkflowCoreIndexPageEnabled
       ? [
           {

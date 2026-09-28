@@ -4,7 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { Field, Switch } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type FormBooleanFieldSwitchInputProps = {
   label?: string;

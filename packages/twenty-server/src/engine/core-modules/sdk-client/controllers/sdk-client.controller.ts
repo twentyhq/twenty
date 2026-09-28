@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Param,
   Res,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -11,6 +12,7 @@ import { Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import {
   ALLOWED_SDK_MODULES,
   type SdkModuleName,
@@ -22,13 +24,17 @@ import {
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Controller(`${ApiPath.Rest}/sdk-client`)
+@AllowSuspendedWorkspace()
 @UseGuards(WorkspaceAuthGuard)
+@UseFilters(ApplicationRestApiExceptionFilter)
 export class SdkClientController {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -56,7 +62,8 @@ export class SdkClientController {
   @UseGuards(NoPermissionGuard)
   async getSdkModule(
     @Res() res: Response,
-    @Param('applicationId') applicationId: string,
+    @ApplicationTargetParam('applicationId', { kind: 'applicationId' })
+    applicationId: string,
     @Param('moduleName') moduleName: SdkModuleName,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Param('checksum') checksum?: string,

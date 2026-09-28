@@ -19,6 +19,7 @@ export class TriggerInstallApplicationJob {
     await this.applicationInstallService.installApplication({
       appRegistrationId: data.applicationRegistrationId,
       workspaceId: data.workspaceId,
+      hasUserApprovedCapabilities: true,
     });
   }
 }

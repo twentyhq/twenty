@@ -2,22 +2,18 @@ import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigat
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useContext, useId } from 'react';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 // Expanded, the row is sized off the page card header beside it so the rules
 // read as one line across both columns.
@@ -116,8 +112,7 @@ const StyledModeLabel = motion.create(StyledModeLabelBase);
 
 export const MainNavigationDrawerModeSwitcher = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-  const tooltipId = useId();
+  const theme = useTheme();
 
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -136,23 +131,34 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const shouldShowTooltips = !isExpanded && !isMobile;
 
   return (
-    <>
-      <StyledSwitcher
-        isExpanded={isExpanded}
-        role="group"
-        aria-label={t`Navigation modes`}
-      >
-        {modes.map(({ Icon, label, mode }) => {
-          const isActive = mode === activeNavigationDrawerMode;
-          const isDisabled =
-            mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
-            isLayoutCustomizationModeEnabled;
+    <StyledSwitcher
+      isExpanded={isExpanded}
+      role="group"
+      aria-label={t`Navigation modes`}
+    >
+      {modes.map(({ Icon, label, mode }) => {
+        const isActive = mode === activeNavigationDrawerMode;
+        const isDisabled =
+          mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+          isLayoutCustomizationModeEnabled;
 
-          return (
+        return (
+          <Tooltip
+            key={mode}
+            content={
+              isDisabled
+                ? mode === NAVIGATION_DRAWER_TABS.SETTINGS
+                  ? t`Finish editing the layout to open Settings`
+                  : t`Finish editing the layout to open AI`
+                : label
+            }
+            disabled={!shouldShowTooltips && !isDisabled}
+            delay={TooltipDelay.noDelay}
+            side={isExpanded ? 'bottom' : 'right'}
+            positionMethod="fixed"
+          >
             <StyledMode
-              key={mode}
               type="button"
-              data-tooltip-id={`${tooltipId}-${mode}`}
               isActive={isActive}
               isExpanded={isExpanded}
               aria-label={label}
@@ -182,36 +188,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
                 {label}
               </StyledModeLabel>
             </StyledMode>
-          );
-        })}
-      </StyledSwitcher>
-      {modes.map(({ label, mode }) => {
-        const isDisabled =
-          mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
-          isLayoutCustomizationModeEnabled;
-
-        if (!shouldShowTooltips && !isDisabled) {
-          return null;
-        }
-
-        return (
-          <AppTooltip
-            key={mode}
-            anchorSelect={`[data-tooltip-id='${tooltipId}-${mode}']`}
-            title={
-              isDisabled
-                ? mode === NAVIGATION_DRAWER_TABS.SETTINGS
-                  ? t`Finish editing the layout to open Settings`
-                  : t`Finish editing the layout to open AI`
-                : label
-            }
-            delay={TooltipDelay.noDelay}
-            place={isExpanded ? TooltipPosition.Bottom : TooltipPosition.Right}
-            positionStrategy="fixed"
-            noArrow
-          />
+          </Tooltip>
         );
       })}
-    </>
+    </StyledSwitcher>
   );
 };

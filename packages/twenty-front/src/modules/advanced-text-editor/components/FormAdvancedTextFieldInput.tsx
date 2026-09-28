@@ -16,9 +16,10 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconMaximize } from 'twenty-ui/icon';
-import { Field, LightIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Field } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledAdvancedTextFieldContainerWrapper = styled.div<{
@@ -188,7 +189,14 @@ export const FormAdvancedTextFieldInput = ({
       );
     }
 
-    editor.commands.insertVariableTag(variableName);
+    const focusedHtmlEditor = editor.storage.html?.focusedHtmlEditor;
+
+    const variableTargetEditor =
+      isDefined(focusedHtmlEditor) && !focusedHtmlEditor.isDestroyed
+        ? focusedHtmlEditor
+        : editor;
+
+    variableTargetEditor.commands.insertVariableTag(variableName);
   };
 
   const defaultBreadcrumbs: BreadcrumbProps['links'] = [
@@ -250,11 +258,13 @@ export const FormAdvancedTextFieldInput = ({
                 >
                   {!readonly && !isFullScreen && (
                     <LightIconButton
-                      Icon={IconMaximize}
-                      size="small"
+                      size="sm"
                       onClick={handleEnterFullScreen}
-                      accent="tertiary"
-                    />
+                      emphasis="subtle"
+                      aria-label={t`Expand to full screen`}
+                    >
+                      <IconMaximize />
+                    </LightIconButton>
                   )}
                 </StyledEditorActionButtonContainer>
               )}

@@ -4,7 +4,7 @@ import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNav
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { useLingui } from '@lingui/react/macro';

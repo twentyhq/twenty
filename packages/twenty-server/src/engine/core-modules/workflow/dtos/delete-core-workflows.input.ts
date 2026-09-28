@@ -10,6 +10,6 @@ export class DeleteCoreWorkflowsInput {
   @IsArray()
   @ArrayNotEmpty()
   @ArrayMaxSize(500)
-  @IsUUID('4', { each: true })
+  @IsUUID(undefined, { each: true })
   coreWorkflowIds: string[];
 }

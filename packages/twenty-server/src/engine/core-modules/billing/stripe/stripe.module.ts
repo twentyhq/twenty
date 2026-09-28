@@ -3,7 +3,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
@@ -38,7 +37,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeEntitlementService,
     StripePriceService,
     StripeProductService,
-    StripeBillingMeterEventService,
     StripeInvoiceService,
     provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
@@ -53,7 +51,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeSubscriptionItemService,
     StripeSubscriptionService,
     StripeProductService,
-    StripeBillingMeterEventService,
     StripeSubscriptionScheduleService,
     StripeInvoiceService,
   ],

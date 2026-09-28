@@ -7,6 +7,9 @@ import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { isSyncCursorNewer } from 'src/modules/messaging/message-import-manager/utils/is-sync-cursor-newer.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class MessagingCursorService {
@@ -14,8 +17,8 @@ export class MessagingCursorService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(MessageFolderEntity)
-    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
   ) {}
 
   public async updateCursor(
@@ -35,16 +38,18 @@ export class MessagingCursorService {
               throttleFailureCount: 0,
               throttleRetryAfter: null,
               syncStageStartedAt: null,
-              syncCursor:
-                !messageChannel.syncCursor ||
-                nextSyncCursor > messageChannel.syncCursor
-                  ? nextSyncCursor
-                  : messageChannel.syncCursor,
+              syncCursor: isSyncCursorNewer(
+                nextSyncCursor,
+                messageChannel.syncCursor,
+              )
+                ? nextSyncCursor
+                : messageChannel.syncCursor,
             },
           );
         } else {
           await this.messageFolderRepository.update(
-            { id: folderId, workspaceId },
+            workspaceId,
+            { id: folderId },
             {
               syncCursor: nextSyncCursor,
             },

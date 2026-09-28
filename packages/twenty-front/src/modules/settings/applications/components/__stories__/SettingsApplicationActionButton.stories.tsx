@@ -1,19 +1,20 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, within } from 'storybook/test';
 
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
+
+const INSTALLED_APPLICATION_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const meta: Meta<typeof SettingsApplicationActionButton> = {
   title: 'Modules/Settings/Applications/SettingsApplicationActionButton',
   component: SettingsApplicationActionButton,
-  decorators: [RootDecorator, ComponentDecorator],
+  decorators: [RootDecorator, ComponentDecorator, MemoryRouterDecorator],
   args: {
     canInstallMarketplaceApps: true,
     onInstall: fn(),
-    onUpgrade: fn(),
-    onUninstall: fn(),
   },
 };
 
@@ -21,21 +22,36 @@ export default meta;
 type Story = StoryObj<typeof SettingsApplicationActionButton>;
 
 export const Install: Story = {
-  args: { isInstalled: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('button', { name: /^Install\b/ }),
+    ).toBeEnabled();
+  },
 };
 
 export const Installing: Story = {
-  args: { isInstalled: false, isInstalling: true },
-};
+  args: { isInstalling: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-export const Upgrade: Story = {
-  args: { isInstalled: true, hasUpdate: true, latestAvailableVersion: '2.1.0' },
-};
-
-export const Uninstall: Story = {
-  args: { isInstalled: true, canBeUninstalled: true },
+    expect(
+      await canvas.findByRole('button', { name: /^Installing\b/ }),
+    ).toBeDisabled();
+  },
 };
 
 export const Installed: Story = {
-  args: { isInstalled: true },
+  args: { installedApplicationId: INSTALLED_APPLICATION_ID },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('link', { name: /^Open settings\b/ }),
+    ).toHaveAttribute(
+      'href',
+      `/settings/applications/${INSTALLED_APPLICATION_ID}`,
+    );
+  },
 };

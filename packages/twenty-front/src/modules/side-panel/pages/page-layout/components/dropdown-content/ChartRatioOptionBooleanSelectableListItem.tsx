@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -9,7 +10,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { IconCheck, IconX } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const ChartRatioOptionBooleanSelectableListItem = ({
@@ -62,13 +63,19 @@ export const ChartRatioOptionBooleanSelectableListItem = ({
 
   return (
     <SelectableListItem itemId={optionValue} onEnter={handleClick}>
-      <MenuItemSelect
-        text={label}
-        LeftIcon={optionValue === 'true' ? IconCheck : IconX}
-        selected={isSelected}
+      <ListItem
         focused={isFocused}
         onClick={handleClick}
-      />
+        role="option"
+        aria-selected={isSelected}
+        selected={isSelected}
+        indicator="check"
+        startIcon={
+          <SelectOptionIcon Icon={optionValue === 'true' ? IconCheck : IconX} />
+        }
+      >
+        {label}
+      </ListItem>
     </SelectableListItem>
   );
 };

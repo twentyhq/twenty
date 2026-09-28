@@ -8,7 +8,7 @@ import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupS
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -42,7 +42,7 @@ export const useRecordBoardColumnDndKit = (): {
     onDragEnd: (event: DragEndPayload) => void;
   };
 } => {
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
   const { reorderRecordGroups } = useReorderRecordGroups({
     recordIndexId,
@@ -127,7 +127,7 @@ export const useRecordBoardColumnDndKit = (): {
         fromIndex: sourceIndex,
         toIndex: destinationIndex,
       });
-      openModal(getRecordGroupReorderConfirmationModalId(recordIndexId));
+      openDialog(getRecordGroupReorderConfirmationModalId(recordIndexId));
       return;
     }
 

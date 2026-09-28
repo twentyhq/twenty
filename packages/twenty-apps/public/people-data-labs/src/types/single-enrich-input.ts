@@ -4,4 +4,5 @@ export type SingleEnrichInput = {
   recordId?: string;
   updateFields?: UpdateFieldsOption;
   minLikelihood?: number;
+  weakIdentifierMinLikelihood?: number;
 };

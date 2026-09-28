@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bulk object metadata update should fail when a label identifier update shares a batch with another object 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "Cannot update labelIdentifierFieldMetadataId in a batch of several objects, send it one at a time",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Bulk object metadata update should fail when a rename shares a batch with another object 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "Cannot update nameSingular in a batch of several objects, send it one at a time",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Bulk object metadata update should fail when an input fails the payload validators 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "nameSingular has failed the name validation check",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Bulk object metadata update should fail when the same object appears twice in one batch 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "Cannot update the same object twice in one batch",
+  "name": "UserInputError",
+}
+`;

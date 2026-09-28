@@ -1,3 +1,4 @@
+import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -51,6 +52,7 @@ import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-see
 import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-cleaner/workspace-cleaner.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
@@ -62,6 +64,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 
 @Module({
   imports: [
+    AgentHistoryMigrationModule,
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,
@@ -84,6 +87,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     FeatureFlagModule,
     WorkspaceCleanerModule,
     WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
     TrashCleanupModule,
     BillingReminderModule,
     ApplicationRecurringChargeModule,

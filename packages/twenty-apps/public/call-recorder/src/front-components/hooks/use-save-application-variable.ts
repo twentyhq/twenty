@@ -7,9 +7,8 @@ type SaveApplicationVariableParams = {
   value: string;
 };
 
-export const useSaveApplicationVariable = (frontComponentId: string) => {
-  const { updateApplicationVariable } =
-    useUpdateApplicationVariable(frontComponentId);
+export const useSaveApplicationVariable = () => {
+  const { updateApplicationVariable } = useUpdateApplicationVariable();
 
   const saveApplicationVariable = async ({
     variableKey,

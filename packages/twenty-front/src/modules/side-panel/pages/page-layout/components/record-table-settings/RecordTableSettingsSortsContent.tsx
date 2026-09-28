@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconArrowsSort, IconTrash } from 'twenty-ui/icon';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { Select } from '@/ui/input/components/Select';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 

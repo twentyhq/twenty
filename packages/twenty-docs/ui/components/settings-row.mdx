@@ -1,0 +1,90 @@
+---
+title: SettingsRow
+description: A labeled switch row for settings and filters.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SettingsRowReference from '/snippets/ui/generated/components/settings-row.mdx';
+
+`SettingsRow` combines [ListItem](/ui/primitives/navigation/list-item) and [Switch](/ui/primitives/input/switch). It associates the visible label with the switch, makes the whole row clickable, and keeps disabled behavior consistent.
+
+<StoryEmbed
+  storyId="ui-components-settingsrow--default"
+  title="Settings row example"
+  height={160}
+/>
+
+## Controlled setting
+
+Pass `checked` and `onCheckedChange` when your application owns the value. The handler receives the next checked state and Base UI event details. Clicking either the label or switch invokes it once; keyboard users can focus the switch and press Space.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <SettingsRow
+      startIcon={<IconBell aria-hidden />}
+      checked={enabled}
+      onCheckedChange={setEnabled}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+## Description and initial value
+
+Use `defaultChecked` for an uncontrolled setting. `description` supplies supporting text and the switch's accessible description, while the children provide its accessible name.
+
+<StoryEmbed
+  storyId="ui-components-settingsrow--with-description"
+  title="Settings row with a description"
+  height={160}
+/>
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components';
+
+export const WeeklyDigestSetting = () => (
+  <SettingsRow defaultChecked description="Sent every Monday" name="digest">
+    Weekly digest
+  </SettingsRow>
+);
+```
+
+`name`, `value`, and `required` configure the switch's underlying checkbox for form submission. An unchecked switch does not submit a value.
+
+## Disabled and read-only settings
+
+Pass `disabled` once to disable both the row and switch. Use `readOnly` to prevent changes while keeping the switch focusable.
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components';
+
+export const WorkspaceSettings = () => (
+  <>
+    <SettingsRow disabled>Notifications</SettingsRow>
+    <SettingsRow readOnly defaultChecked>
+      Activity history
+    </SettingsRow>
+  </>
+);
+```
+
+## Appearance and composition
+
+The switch defaults to `size="sm"`; use `size="md"` for a larger switch. The row height stays the same. `focused` applies the row's highlighted style without moving keyboard focus.
+
+Native label attributes, `className`, `style`, and `ref` target the outer label. The label and switch association is managed internally. Keep the children, description, and icon non-interactive. Use `onCheckedChange` for value updates.
+
+For navigation or action rows, use [ListItem](/ui/primitives/navigation/list-item) with a button or link.
+
+## Props
+
+<SettingsRowReference />

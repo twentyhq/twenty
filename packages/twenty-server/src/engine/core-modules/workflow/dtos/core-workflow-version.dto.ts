@@ -16,6 +16,9 @@ export class CoreWorkflowVersionDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  coreWorkflowId?: string | null;
+
   @Field(() => String)
   label: string;
 
@@ -25,8 +28,8 @@ export class CoreWorkflowVersionDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   workspaceWorkflowVersionId: string | null;
 
-  @Field(() => UUIDScalarType)
-  workspaceWorkflowId: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceWorkflowId: string | null;
 
   @Field(() => GraphQLJSON, { nullable: true })
   trigger: WorkflowTrigger | null;

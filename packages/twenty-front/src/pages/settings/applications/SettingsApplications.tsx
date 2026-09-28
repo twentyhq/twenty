@@ -7,13 +7,13 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconApps,
   IconCode,
   IconShoppingBag,
   IconSparkle2,
 } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
@@ -34,7 +34,12 @@ export const SettingsApplications = () => {
   );
 
   const tabs = [
-    { id: 'marketplace', title: t`Marketplace`, Icon: IconShoppingBag },
+    {
+      id: 'marketplace',
+      title: t`Marketplace`,
+      Icon: IconShoppingBag,
+      pill: t`Beta`,
+    },
     { id: 'installed', title: t`Installed`, Icon: IconApps },
     ...(hasDeveloperAccess
       ? [{ id: DEVELOPER_TAB_ID, title: t`Developer`, Icon: IconCode }]
@@ -64,6 +69,7 @@ export const SettingsApplications = () => {
       title={t`Applications`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Applications`}
           tabs={tabs}
           componentInstanceId={APPLICATIONS_TAB_LIST_ID}
         />
@@ -82,7 +88,7 @@ export const SettingsApplications = () => {
         hasDeveloperAccess={hasDeveloperAccess}
       />
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={coverLight}
             darkSrc={coverDark}
@@ -98,7 +104,7 @@ export const SettingsApplications = () => {
             ]}
             playButtonAriaLabel={t`Watch apps demo`}
           />
-        </Section>
+        </Section.Root>
         {renderActiveTabContent()}
       </SettingsPageContainer>
     </SettingsPageLayout>

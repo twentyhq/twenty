@@ -28,6 +28,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { buildCampaignSendRefusalException } from 'src/modules/emailing/utils/build-campaign-send-refusal-exception.util';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -131,14 +132,17 @@ export class MessageCampaignService {
         unsubscribeTopicId: unsubscribeTopicId ?? undefined,
       });
 
-    const { hasCredits } =
-      await this.emailBillingService.getEmailCreditContext(workspaceId);
+    const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
+      workspaceId,
+      spenders: { userWorkspaceId },
+    });
 
-    if (sendableRecipients.length > 0 && !hasCredits) {
-      throw new EmailingDomainException(
-        `Campaign ${campaignId} cannot be sent to ${sendableRecipients.length} recipient(s) because the workspace has no email credits left`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
-      );
+    if (sendableRecipients.length > 0 && isDefined(sendRefusal)) {
+      throw buildCampaignSendRefusalException({
+        campaignId,
+        recipientCount: sendableRecipients.length,
+        sendRefusal,
+      });
     }
 
     const messageChannel =

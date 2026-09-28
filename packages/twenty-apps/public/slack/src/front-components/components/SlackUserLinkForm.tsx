@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -20,6 +19,7 @@ import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-us
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
 import { buildSlackUserLinkSaveNote } from 'src/front-components/utils/build-slack-user-link-save-note.util';
+import { enqueueSlackToolResultSnackbar } from 'src/front-components/utils/enqueue-slack-tool-result-snackbar.util';
 
 const StyledForm = styled.form`
   display: flex;
@@ -109,10 +109,7 @@ export const SlackUserLinkForm = ({
         : resolvedUser.displayName,
     });
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       resetForm();

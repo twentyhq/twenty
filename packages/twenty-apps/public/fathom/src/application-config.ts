@@ -13,7 +13,7 @@ export default defineApplication({
   logo: 'public/logo.svg',
   author: 'Twenty',
   category: 'Productivity',
-  websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
+  websiteUrl: 'https://www.fathom.ai',
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
   issueReportUrl: 'https://github.com/twentyhq/twenty/issues',

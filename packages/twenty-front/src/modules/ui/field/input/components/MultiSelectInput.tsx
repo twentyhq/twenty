@@ -1,5 +1,7 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { useRef, useState, createElement } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -9,7 +11,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
 import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -19,10 +21,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import {
-  MenuItem,
-  MenuItemMultiSelectTag,
-} from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -121,7 +119,7 @@ export const MultiSelectInput = ({
       focusId={focusId}
       shouldPreselectFirstItem={isNonEmptyString(searchFilter)}
     >
-      <DropdownContent
+      <LegacyDropdownContent
         ref={containerRef}
         selectDisabled
         widthInPixels={dropdownWidth}
@@ -136,9 +134,9 @@ export const MultiSelectInput = ({
           autoFocus
         />
         <DropdownMenuSeparator />
-        <DropdownMenuItemsContainer hasMaxHeight>
+        <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <MenuItem text={t`No option found`} />
+            <ListItem disabled>{t`No option found`}</ListItem>
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (
@@ -149,17 +147,28 @@ export const MultiSelectInput = ({
                     onOptionSelected(formatNewSelectedOptions(option.value));
                   }}
                 >
-                  <MenuItemMultiSelectTag
+                  <ListItem
                     key={option.value}
-                    selected={values?.includes(option.value) || false}
-                    text={option.label}
-                    color={option.color ?? 'transparent'}
-                    Icon={option.Icon ?? undefined}
                     onClick={() =>
                       onOptionSelected(formatNewSelectedOptions(option.value))
                     }
-                    isKeySelected={selectedItemId === option.value}
-                  />
+                    focused={selectedItemId === option.value}
+                    role="option"
+                    aria-selected={values?.includes(option.value) || false}
+                    selected={values?.includes(option.value) || false}
+                    indicator="checkbox"
+                  >
+                    <Tag
+                      color={option.color ?? 'transparent'}
+                      startIcon={
+                        isDefined(option.Icon)
+                          ? createElement(option.Icon)
+                          : undefined
+                      }
+                    >
+                      {option.label}
+                    </Tag>
+                  </ListItem>
                 </SelectableListItem>
               );
             })
@@ -178,7 +187,7 @@ export const MultiSelectInput = ({
               </DropdownMenuItemsContainer>
             </>
           )}
-      </DropdownContent>
+      </LegacyDropdownContent>
     </SelectableList>
   );
 };

@@ -6,9 +6,9 @@ import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { ToastProvider, useToast } from 'twenty-ui/primitives/feedback';
+import { ToastProvider, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';

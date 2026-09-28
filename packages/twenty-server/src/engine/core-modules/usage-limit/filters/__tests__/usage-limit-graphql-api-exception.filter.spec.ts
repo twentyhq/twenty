@@ -46,6 +46,35 @@ describe('UsageLimitGraphqlApiExceptionFilter', () => {
     expect(graphqlError.extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
+  it('surfaces an operator-only default as a forbidden error carrying its own message', () => {
+    const graphqlError = catchAsGraphQLError(
+      new UsageLimitException(
+        'The STORAGE stock default is set for this instance and only an operator can replace it',
+        UsageLimitExceptionCode.LIMIT_FORBIDDEN,
+      ),
+    );
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expect(graphqlError.extensions.subCode).toBe(
+      UsageLimitExceptionCode.LIMIT_FORBIDDEN,
+    );
+    expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
+  });
+
+  it('surfaces a row that changed under the request as a conflict, not a refusal', () => {
+    const graphqlError = catchAsGraphQLError(
+      new UsageLimitException(
+        'Usage limit 20202020-0000-4000-8000-000000000000 changed while this request was being authorized',
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
+      ),
+    );
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.CONFLICT);
+    expect(graphqlError.extensions.subCode).toBe(
+      UsageLimitExceptionCode.LIMIT_CONFLICT,
+    );
+  });
+
   it('surfaces an exhausted quota through the shared enforcement mapping', () => {
     const graphqlError = catchAsGraphQLError(
       new UsageLimitException(

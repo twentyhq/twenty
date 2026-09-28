@@ -2,19 +2,17 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
+import { useRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useRolePermissionFlagConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { IconSettings } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import {
-  AnimatedExpandableContainer,
-  Section,
-} from 'twenty-ui/primitives/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -47,12 +45,19 @@ export const SettingsRolePermissionsSettingsSection = ({
     roleId,
   );
 
-  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
-    assignmentCapabilities: {
-      canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
-      canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
-      canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+  const standardSettingsPermissionsConfig = useSettingsRolePermissionFlagConfig(
+    {
+      assignmentCapabilities: {
+        canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+        canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+        canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+      },
     },
+  );
+
+  const settingsPermissionsConfig = useRolePermissionFlagConfig({
+    permissionType: 'settings',
+    standardPermissionsConfig: standardSettingsPermissionsConfig,
   });
 
   const shouldShowAllAccessToggle =
@@ -60,15 +65,15 @@ export const SettingsRolePermissionsSettingsSection = ({
     settingsDraftRole.canBeAssignedToUsers;
 
   return (
-    <Section>
-      <H2Title title={t`Settings`} description={t`Settings permissions`} />
+    <Section.Root>
+      <Section.Header title={t`Layout`} description={t`Layout permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconSettings}
-              title={t`Settings All Access`}
-              description={t`Ability to edit all settings`}
+              title={t`Layout All Access`}
+              description={t`Full access to layout permissions`}
               checked={settingsDraftRole.canUpdateAllSettings}
               disabled={!isEditable}
               onChange={() => {
@@ -78,7 +83,7 @@ export const SettingsRolePermissionsSettingsSection = ({
                 });
               }}
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
       )}
       <AnimatedExpandableContainer
@@ -111,6 +116,6 @@ export const SettingsRolePermissionsSettingsSection = ({
           </StyledTableRows>
         </StyledTable>
       </AnimatedExpandableContainer>
-    </Section>
+    </Section.Root>
   );
 };

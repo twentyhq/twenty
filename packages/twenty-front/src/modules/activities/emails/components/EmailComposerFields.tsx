@@ -1,6 +1,5 @@
 import { EmailOperation } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
-import { useContext } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -10,7 +9,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
@@ -115,7 +114,7 @@ export const EmailComposerFields = ({
   contextRecord,
   onAttachFiles,
 }: EmailComposerFieldsProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<

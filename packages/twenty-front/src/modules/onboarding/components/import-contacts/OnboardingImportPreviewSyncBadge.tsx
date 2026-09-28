@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconArrowRight, IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const SYNC_BADGE_LOGO_SIZE = 16;
 

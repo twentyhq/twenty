@@ -1,6 +1,6 @@
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
@@ -8,17 +8,17 @@ import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-mod
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
-import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
+import { InlineBanner } from 'twenty-ui/components';
 import { IconInfoCircle, IconLink, IconRefresh } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
@@ -76,7 +76,7 @@ export const SettingsDataModelObjectAboutForm = ({
   objectMetadataItem,
   conflictingObjectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
@@ -336,21 +336,20 @@ export const SettingsDataModelObjectAboutForm = ({
                             RightIcon={() =>
                               tooltip && (
                                 <>
-                                  <IconInfoCircle
-                                    id={infoCircleElementId + fieldName}
-                                    size={theme.icon.size.md}
-                                    color={theme.font.color.tertiary}
-                                    style={{ outline: 'none' }}
-                                  />
-                                  <AppTooltip
-                                    anchorSelect={`#${infoCircleElementId}${fieldName}`}
-                                    title={tooltip}
-                                    offset={5}
-                                    noArrow
-                                    place="bottom"
-                                    positionStrategy="fixed"
+                                  <Tooltip
+                                    content={tooltip}
+                                    sideOffset={5}
+                                    side="bottom"
+                                    positionMethod="fixed"
                                     delay={TooltipDelay.shortDelay}
-                                  />
+                                  >
+                                    <IconInfoCircle
+                                      id={infoCircleElementId + fieldName}
+                                      size={theme.icon.size.md}
+                                      color={theme.font.color.tertiary}
+                                      style={{ outline: 'none' }}
+                                    />
+                                  </Tooltip>
                                 </>
                               )
                             }
@@ -369,7 +368,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   control={control}
                   defaultValue={objectMetadataItem?.isLabelSyncedWithName}
                   render={({ field: { onChange, value } }) => (
-                    <Card rounded>
+                    <Card.Root rounded>
                       <SettingsOptionCardContentSwitch
                         Icon={IconRefresh}
                         title={t`Synchronize Objects Labels and API Names`}
@@ -393,7 +392,7 @@ export const SettingsDataModelObjectAboutForm = ({
                           onNewDirtyField?.();
                         }}
                       />
-                    </Card>
+                    </Card.Root>
                   )}
                 />
               </AdvancedSettingsWrapper>
@@ -405,7 +404,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   control={control}
                   defaultValue={false}
                   render={({ field: { onChange, value } }) => (
-                    <Card rounded>
+                    <Card.Root rounded>
                       <SettingsOptionCardContentSwitch
                         Icon={IconLink}
                         title={t`Skip creating a Name field `}
@@ -418,7 +417,7 @@ export const SettingsDataModelObjectAboutForm = ({
                           onNewDirtyField?.();
                         }}
                       />
-                    </Card>
+                    </Card.Root>
                   )}
                 />
               </AdvancedSettingsWrapper>

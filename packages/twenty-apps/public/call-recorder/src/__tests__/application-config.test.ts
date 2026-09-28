@@ -6,6 +6,10 @@ import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functi
 import { RECALL_ASYNC_TRANSCRIPT_PROVIDERS } from 'src/logic-functions/constants/recall-async-transcript-providers';
 
 describe('application config', () => {
+  it('passes the SDK manifest validation', () => {
+    expect(applicationConfig.errors).toEqual([]);
+  });
+
   it('lays out every application variable in the settings component', () => {
     expect([...CALL_RECORDER_MAPPED_VARIABLE_KEYS].sort()).toEqual(
       Object.keys(applicationConfig.config.applicationVariables ?? {}).sort(),

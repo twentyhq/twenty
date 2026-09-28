@@ -4,6 +4,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import { FIELD_INPUT_ANCHOR_WIDTH_CSS_VARIABLE } from '@/ui/field/input/constants/FieldInputAnchorWidthCssVariable';
 import { StyledDropdownContentContainer } from '@/ui/layout/dropdown/components/internal/DropdownInternalContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -15,6 +16,7 @@ import {
   flip,
   offset,
   shift,
+  size,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
@@ -84,6 +86,14 @@ export const RecordInlineCellEditMode = ({
         };
       }),
       shift({ padding: 8 }),
+      size({
+        apply: ({ rects, elements }) => {
+          elements.floating.style.setProperty(
+            FIELD_INPUT_ANCHOR_WIDTH_CSS_VARIABLE,
+            `${rects.reference.width}px`,
+          );
+        },
+      }),
       setFieldInputLayoutDirectionMiddleware,
     ],
     whileElementsMounted: autoUpdate,

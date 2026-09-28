@@ -1,6 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
+import {
+  CORE_PICTURE_MIME_TYPES,
+  EMAIL_IMAGE_MIME_TYPES,
+} from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
 registerEnumType(FileFolder, {
@@ -25,10 +28,15 @@ export const PUBLIC_ASSET_CACHE_CONTROL = 'public, max-age=3600';
 export const PRESIGNED_URL_NO_STORE_CACHE_CONTROL = 'private, no-store';
 
 export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
+  [FileFolder.RecordExport]: {
+    ignoreExpirationToken: false,
+    cacheControl: 'private, no-store',
+    allowedMimeTypes: ['text/csv'],
+  },
   [FileFolder.CorePicture]: {
     ignoreExpirationToken: true,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
-    allowedMimeTypes: ANY_MIME_TYPE,
+    allowedMimeTypes: CORE_PICTURE_MIME_TYPES,
   },
   [FileFolder.AgentChat]: {
     ignoreExpirationToken: false,
@@ -83,7 +91,7 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.AppTarball]: {
     ignoreExpirationToken: false,
     cacheControl: null,
-    allowedMimeTypes: ANY_MIME_TYPE,
+    allowedMimeTypes: ['application/gzip'],
   },
   [FileFolder.GeneratedSdkClient]: {
     ignoreExpirationToken: false,

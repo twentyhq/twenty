@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { createElement, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
@@ -6,6 +6,7 @@ import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twent
 
 const ListItemExample = () => {
   const [selected, setSelected] = useState(false);
+  const [opened, setOpened] = useState(false);
 
   return (
     <TwentyUiGalleryCard title="ListItem">
@@ -20,6 +21,16 @@ const ListItemExample = () => {
       <ListItem disabled role="button" onClick={() => setSelected(true)}>
         Disabled preference
       </ListItem>
+      <ListItem
+        render={(renderProps) =>
+          createElement('button', { ...renderProps, type: 'button' })
+        }
+        hasSubmenu
+        onClick={() => setOpened(true)}
+      >
+        Hidden fields
+      </ListItem>
+      <p>Fields: {opened ? 'open' : 'closed'}</p>
       <p role="status">Digest: {selected ? 'enabled' : 'disabled'}</p>
     </TwentyUiGalleryCard>
   );

@@ -1,5 +1,7 @@
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 
+const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
+
 const mockStep = {
   id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   name: 'Send email',
@@ -9,20 +11,23 @@ const mockStep = {
 };
 
 const buildTool = () => {
-  const workflowVersionStepService = {
-    updateWorkflowVersionStep: jest.fn().mockResolvedValue(mockStep),
+  const coreWorkflowVersionMutationService = {
+    updateStep: jest.fn().mockResolvedValue(mockStep),
   };
 
   const tool = createUpdateWorkflowVersionStepTool(
-    { workflowVersionStepService } as never,
-    { workspaceId: 'workspace-id' },
+    { coreWorkflowVersionMutationService } as never,
+    {
+      workspaceId: 'workspace-id',
+      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+    },
   );
 
-  return { tool, workflowVersionStepService };
+  return { tool, coreWorkflowVersionMutationService };
 };
 
 const baseInput = {
-  workflowVersionId: 'b3b8a4f0-0000-4000-8000-000000000000',
+  coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
   step: mockStep,
 } as unknown as Parameters<
   ReturnType<typeof createUpdateWorkflowVersionStepTool>['execute']
@@ -33,25 +38,23 @@ describe('createUpdateWorkflowVersionStepTool', () => {
     jest.clearAllMocks();
   });
 
-  it('updates the step and returns the result', async () => {
-    const { tool, workflowVersionStepService } = buildTool();
+  it('updates the step on the core version and returns the result', async () => {
+    const { tool, coreWorkflowVersionMutationService } = buildTool();
 
     const result = await tool.execute(baseInput);
 
-    expect(
-      workflowVersionStepService.updateWorkflowVersionStep,
-    ).toHaveBeenCalledWith({
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
-      workflowVersionId: baseInput.workflowVersionId,
+      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
       step: mockStep,
     });
     expect(result).toEqual(mockStep);
   });
 
   it('returns a failure when the update throws', async () => {
-    const { tool, workflowVersionStepService } = buildTool();
+    const { tool, coreWorkflowVersionMutationService } = buildTool();
 
-    workflowVersionStepService.updateWorkflowVersionStep.mockRejectedValue(
+    coreWorkflowVersionMutationService.updateStep.mockRejectedValue(
       new Error('boom'),
     );
 

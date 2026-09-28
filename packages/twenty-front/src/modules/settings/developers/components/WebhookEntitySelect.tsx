@@ -1,8 +1,9 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
@@ -25,7 +26,7 @@ import {
   IconWebhook,
 } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -122,7 +123,9 @@ export const WebhookEntitySelect = ({
         />
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Medium}
+        >
           <DropdownMenuSearchInput
             autoFocus
             value={searchInput}
@@ -145,14 +148,22 @@ export const WebhookEntitySelect = ({
                       itemId={option.value}
                       onEnter={() => handleSelect(option.value)}
                     >
-                      <MenuItemSelect
-                        LeftIcon={option.Icon}
-                        leftIconColor={option.iconThemeColor}
-                        text={option.label}
-                        selected={value === option.value}
+                      <ListItem
                         focused={selectedItemId === option.value}
                         onClick={() => handleSelect(option.value)}
-                      />
+                        role="option"
+                        aria-selected={value === option.value}
+                        selected={value === option.value}
+                        indicator="check"
+                        startIcon={
+                          <SelectOptionIcon
+                            Icon={option.Icon}
+                            color={option.iconThemeColor}
+                          />
+                        }
+                      >
+                        {option.label}
+                      </ListItem>
                     </SelectableListItem>
                   ))}
                 </>
@@ -167,20 +178,24 @@ export const WebhookEntitySelect = ({
                       itemId={option.value}
                       onEnter={() => handleSelect(option.value)}
                     >
-                      <MenuItemSelect
-                        LeftIcon={option.Icon}
-                        text={option.label}
-                        selected={value === option.value}
+                      <ListItem
                         focused={selectedItemId === option.value}
                         onClick={() => handleSelect(option.value)}
-                      />
+                        role="option"
+                        aria-selected={value === option.value}
+                        selected={value === option.value}
+                        indicator="check"
+                        startIcon={<SelectOptionIcon Icon={option.Icon} />}
+                      >
+                        {option.label}
+                      </ListItem>
                     </SelectableListItem>
                   ))}
                 </>
               )}
             </DropdownMenuItemsContainer>
           </SelectableList>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

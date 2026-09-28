@@ -23,6 +23,7 @@ export const messageQueueModuleFactory = async (
         type: MessageQueueDriverType.BullMQ,
         options: {
           connection: redisClientService.getQueueClient(),
+          prefix: redisClientService.getQueuePrefix(),
         },
         metricsService,
         twentyConfigService,

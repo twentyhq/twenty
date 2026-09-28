@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type TablerIconsProps } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledBillingFieldRow = styled.div`
   align-items: center;

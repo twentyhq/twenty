@@ -1,3 +1,11 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
@@ -8,7 +16,7 @@ import {
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull, Not } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
@@ -32,49 +40,30 @@ import {
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { serializeAgentChatThreadForBroadcast } from 'src/engine/metadata-modules/ai/ai-chat/utils/serialize-agent-chat-thread-for-broadcast.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
-
-const serializeThreadForBroadcast = (
-  thread: AgentChatThreadEntity,
-  lastMessageAt: Date | null,
-) => ({
-  id: thread.id,
-  title: thread.title,
-  totalInputTokens: thread.totalInputTokens,
-  totalOutputTokens: thread.totalOutputTokens,
-  totalCacheReadTokens: thread.totalCacheReadTokens,
-  totalCacheCreationTokens: thread.totalCacheCreationTokens,
-  contextWindowTokens: thread.contextWindowTokens,
-  conversationSize: thread.conversationSize,
-  totalInputCredits: toDisplayCredits(thread.totalInputCredits),
-  totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
-  deletedAt: thread.deletedAt,
-  lastMessageAt,
-  createdAt: thread.createdAt,
-  updatedAt: thread.updatedAt,
-});
 
 @Injectable()
 export class AgentChatService {
   private readonly logger = new Logger(AgentChatService.name);
 
   constructor(
-    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
-    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
-    @InjectWorkspaceScopedRepository(AgentTurnEntity)
-    private readonly turnRepository: WorkspaceScopedRepository<AgentTurnEntity>,
-    @InjectWorkspaceScopedRepository(AgentMessageEntity)
-    private readonly messageRepository: WorkspaceScopedRepository<AgentMessageEntity>,
-    @InjectWorkspaceScopedRepository(AgentMessagePartEntity)
-    private readonly messagePartRepository: WorkspaceScopedRepository<AgentMessagePartEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageEntity>,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly codeInterpreterService: CodeInterpreterService,
+    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   async createThread({
@@ -88,14 +77,12 @@ export class AgentChatService {
     id?: string;
     title?: string;
   }) {
-    const savedThread = await this.threadRepository.insertAndReturnOne(
+    const savedThread = await this.sharingService.createThread({
       workspaceId,
-      {
-        ...(isDefined(id) ? { id } : {}),
-        ...(isDefined(title) ? { title } : {}),
-        userWorkspaceId,
-      },
-    );
+      userWorkspaceId,
+      id,
+      title,
+    });
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId,
@@ -106,7 +93,10 @@ export class AgentChatService {
           recordId: savedThread.id,
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
-            after: serializeThreadForBroadcast(savedThread, null),
+            after: serializeAgentChatThreadForBroadcast({
+              thread: savedThread,
+              lastMessageAt: null,
+            }),
           },
         },
       ],
@@ -115,7 +105,7 @@ export class AgentChatService {
     return savedThread;
   }
 
-  async findThreadById({
+  async findWritableThread({
     threadId,
     userWorkspaceId,
     workspaceId,
@@ -124,37 +114,33 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }) {
-    return this.threadRepository.findOne(workspaceId, {
-      where: {
-        id: threadId,
+    try {
+      return await this.sharingService.getThreadWithAccess({
+        threadId,
         userWorkspaceId,
-      },
-    });
+        workspaceId,
+        operationType: 'update',
+      });
+    } catch (error) {
+      if (
+        error instanceof AiException &&
+        error.code === AiExceptionCode.THREAD_NOT_FOUND
+      ) {
+        return null;
+      }
+      throw error;
+    }
   }
 
-  async getThreadById({
-    threadId,
-    userWorkspaceId,
-    workspaceId,
-  }: {
+  async getWritableThread(args: {
     threadId: string;
     userWorkspaceId: string;
     workspaceId: string;
   }) {
-    const thread = await this.findThreadById({
-      threadId,
-      userWorkspaceId,
-      workspaceId,
+    return this.sharingService.getThreadWithAccess({
+      ...args,
+      operationType: 'update',
     });
-
-    if (!thread) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-
-    return thread;
   }
 
   async getThreadsForUser({
@@ -164,19 +150,96 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
-    const rankedThreads = await this.threadRepository
-      .createQueryBuilder('thread')
-      .select('thread.id', 'id')
-      .addSelect('MAX(message.createdAt)', 'last_message_at')
-      .leftJoin('thread.messages', 'message', 'message.isHidden = false')
-      .where(
-        'thread.userWorkspaceId = :userWorkspaceId AND thread.workspaceId = :workspaceId',
-        { userWorkspaceId, workspaceId },
-      )
-      .groupBy('thread.id')
-      .orderBy('last_message_at', 'DESC', 'NULLS LAST')
-      .addOrderBy('thread.updatedAt', 'DESC')
-      .getRawMany<{ id: string; last_message_at: Date | null }>();
+    return this.getRankedThreads({ userWorkspaceId, workspaceId });
+  }
+
+  // Attachment, visibility, ranking and paging resolve in one query. Reading the
+  // links first and filtering afterwards would page an arbitrary prefix of the
+  // links rather than the ranked conversations, and would let one member's
+  // attachments crowd everyone else's out of that prefix.
+  async getThreadsAttachedToRecord({
+    joinColumnName,
+    recordId,
+    userWorkspaceId,
+    workspaceId,
+    limit,
+    offset,
+  }: {
+    joinColumnName: string;
+    recordId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
+    return this.getRankedThreads({
+      attachedToRecord: { joinColumnName, recordId },
+      userWorkspaceId,
+      workspaceId,
+      limit,
+      offset,
+    });
+  }
+
+  private async getRankedThreads({
+    attachedToRecord,
+    userWorkspaceId,
+    workspaceId,
+    limit,
+    offset,
+  }: {
+    attachedToRecord?: { joinColumnName: string; recordId: string };
+    userWorkspaceId: string;
+    workspaceId: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
+    const readableThreadIds = await this.sharingService.getReadableThreadIds({
+      workspaceId,
+      userWorkspaceId,
+    });
+    const rankedThreads = await this.threadRepository.query(
+      workspaceId,
+      async ({ manager, table }) => {
+        const parameters: unknown[] = [readableThreadIds];
+        const conditions = ['thread.id = ANY($1::uuid[])'];
+
+        if (isDefined(attachedToRecord)) {
+          parameters.push(attachedToRecord.recordId);
+
+          conditions.push(
+            `EXISTS (SELECT 1 FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadTarget" target
+             WHERE target."threadId" = thread.id
+               AND target.${escapeIdentifier(attachedToRecord.joinColumnName)} = $${parameters.length}
+               AND target."deletedAt" IS NULL)`,
+          );
+        }
+
+        // The id breaks ties on both timestamps, without which two equally
+        // ranked threads have no defined order and successive pages of that
+        // order can repeat or skip one.
+        let pagination = '';
+
+        if (isDefined(limit)) {
+          parameters.push(limit);
+          pagination += ` LIMIT $${parameters.length}`;
+        }
+
+        if (isDefined(offset)) {
+          parameters.push(offset);
+          pagination += ` OFFSET $${parameters.length}`;
+        }
+
+        return manager.query<{ id: string; last_message_at: Date | null }[]>(
+          `SELECT thread.id, MAX(message."createdAt") AS last_message_at
+       FROM ${table('agentChatThread')} thread
+       LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
+       WHERE ${conditions.join(' AND ')}
+       GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC, thread.id DESC${pagination}`,
+          parameters,
+        );
+      },
+    );
 
     if (rankedThreads.length === 0) {
       return [];
@@ -187,7 +250,7 @@ export class AgentChatService {
     );
 
     const threads = await this.threadRepository.find(workspaceId, {
-      where: { id: In(rankedThreadIds), userWorkspaceId },
+      where: { id: In(rankedThreadIds) },
     });
 
     const threadById = new Map(threads.map((thread) => [thread.id, thread]));
@@ -195,8 +258,13 @@ export class AgentChatService {
     return rankedThreads.flatMap((rankedThread) => {
       const thread = threadById.get(rankedThread.id);
 
-      return thread
-        ? [{ ...thread, lastMessageAt: rankedThread.last_message_at ?? null }]
+      return isDefined(thread)
+        ? [
+            {
+              ...thread,
+              lastMessageAt: rankedThread.last_message_at ?? null,
+            },
+          ]
         : [];
     });
   }
@@ -208,16 +276,38 @@ export class AgentChatService {
     threadId: string;
     workspaceId: string;
   }): Promise<Date | null> {
-    const result = await this.messageRepository
-      .createQueryBuilder('message')
-      .select('MAX(message.createdAt)', 'last_message_at')
-      .where(
-        'message.threadId = :threadId AND message.workspaceId = :workspaceId AND message.isHidden = false',
-        { threadId, workspaceId },
-      )
-      .getRawOne<{ last_message_at: Date | null }>();
+    const [result] = await this.messageRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ last_message_at: Date | null }[]>(
+          `SELECT MAX("createdAt") AS last_message_at FROM ${table('agentMessage')}
+       WHERE "threadId" = $1 AND "isHidden" = false`,
+          [threadId],
+        ),
+    );
 
     return result?.last_message_at ?? null;
+  }
+
+  private getMessageSenderValues({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }) {
+    const context = workspaceAuthContextStorage.getStore();
+    const applicationId =
+      isDefined(context) &&
+      isUserAuthContext(context) &&
+      context.workspace.id === workspaceId &&
+      context.userWorkspaceId === userWorkspaceId
+        ? context.application?.id
+        : undefined;
+    return {
+      senderUserWorkspaceId: userWorkspaceId ?? null,
+      senderApplicationId: applicationId ?? null,
+    };
   }
 
   async addMessage({
@@ -229,6 +319,7 @@ export class AgentChatService {
     workspaceId,
     isHidden,
     processedAt,
+    userWorkspaceId,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -239,6 +330,7 @@ export class AgentChatService {
     workspaceId: string;
     isHidden?: boolean;
     processedAt?: Date;
+    userWorkspaceId?: string;
   }) {
     let actualTurnId = turnId;
 
@@ -258,6 +350,7 @@ export class AgentChatService {
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       processedAt: processedAt ?? new Date(),
+      ...this.getMessageSenderValues({ workspaceId, userWorkspaceId }),
       ...(isDefined(isHidden) ? { isHidden } : {}),
     };
 
@@ -290,6 +383,8 @@ export class AgentChatService {
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       processedAt: messageValues.processedAt,
+      senderUserWorkspaceId: messageValues.senderUserWorkspaceId,
+      senderApplicationId: messageValues.senderApplicationId,
       workspaceId,
     } as AgentMessageEntity;
   }
@@ -411,9 +506,15 @@ export class AgentChatService {
     workspaceId: string;
     includeHidden?: boolean;
   }) {
-    // getThreadById enforces ownership; messages then scoped by both
-    // threadId and workspaceId.
-    await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
+    if (includeHidden) {
+      await this.getWritableThread({ threadId, userWorkspaceId, workspaceId });
+    } else {
+      await this.sharingService.getReadableThread({
+        threadId,
+        userWorkspaceId,
+        workspaceId,
+      });
+    }
 
     return this.messageRepository.find(workspaceId, {
       where: { threadId, ...(includeHidden ? {} : { isHidden: false }) },
@@ -426,10 +527,12 @@ export class AgentChatService {
     threadId,
     workspaceId,
     text,
+    userWorkspaceId,
   }: {
     threadId: string;
     workspaceId: string;
     text: string;
+    userWorkspaceId: string;
   }): Promise<{ id: string; turnId: string }> {
     const existingKickoffMessage = await this.messageRepository.findOne(
       workspaceId,
@@ -464,6 +567,7 @@ export class AgentChatService {
     const savedMessage = await this.addMessage({
       threadId,
       workspaceId,
+      userWorkspaceId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text' as const, text }],
@@ -503,6 +607,7 @@ export class AgentChatService {
       role: AgentMessageRole.USER,
       agentId: null,
       status: AgentMessageStatus.QUEUED,
+      ...this.getMessageSenderValues({ workspaceId, userWorkspaceId }),
     };
 
     const insertResult = await this.messageRepository.insert(
@@ -672,6 +777,7 @@ export class AgentChatService {
     streamId: string;
     workspaceId: string;
   }): Promise<{
+    answerText: string;
     turnId: string | null;
     rollback: { partId: string; previousOutput: Record<string, unknown> };
   }> {
@@ -712,7 +818,11 @@ export class AgentChatService {
 
     const claim = await this.threadRepository.update(
       workspaceId,
-      { id: threadId, pendingQuestionMessageId: messageId },
+      {
+        id: threadId,
+        pendingQuestionMessageId: messageId,
+        activeStreamId: IsNull(),
+      },
       {
         pendingQuestionMessageId: null,
         activeStreamId: streamId,
@@ -764,7 +874,20 @@ export class AgentChatService {
       throw error;
     }
 
+    const answerText = answers
+      .map((answer) => {
+        const question = questions[answer.questionIndex];
+        const value = isNonEmptyString(answer.freeText)
+          ? answer.freeText
+          : answer.selectedOptionIndices
+              .map((optionIndex) => question.options[optionIndex].label)
+              .join(', ');
+        return `${question.question}\n${value}`;
+      })
+      .join('\n\n');
+
     return {
+      answerText,
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
@@ -899,23 +1022,12 @@ export class AgentChatService {
       );
     }
 
-    const result = await this.threadRepository.update(
-      workspaceId,
-      { id: threadId, userWorkspaceId },
-      { title: trimmed },
-    );
-
-    if (result.affected === 0) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-
-    const updated = await this.getThreadById({
+    const updated = await this.sharingService.updateThreadWithAccess({
       threadId,
       userWorkspaceId,
       workspaceId,
+      operationType: 'update',
+      changes: { title: trimmed },
     });
 
     await this.broadcastThreadUpdated(updated, ['title'], userWorkspaceId);
@@ -932,30 +1044,13 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadEntity> {
-    const thread = await this.getThreadById({
+    const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       userWorkspaceId,
       workspaceId,
+      operationType: 'soft-delete',
+      changes: { deletedAt: new Date(), activeStreamId: null },
     });
-
-    if (thread.deletedAt) {
-      return thread;
-    }
-
-    const deletedAt = new Date();
-
-    const result = await this.threadRepository.update(
-      workspaceId,
-      { id: threadId, userWorkspaceId, deletedAt: IsNull() },
-      { deletedAt, activeStreamId: null },
-    );
-
-    if ((result.affected ?? 0) === 0) {
-      return thread;
-    }
-
-    thread.deletedAt = deletedAt;
-    thread.activeStreamId = null;
 
     await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
 
@@ -973,27 +1068,13 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadEntity> {
-    const thread = await this.getThreadById({
+    const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       userWorkspaceId,
       workspaceId,
+      operationType: 'restore',
+      changes: { deletedAt: null },
     });
-
-    if (!thread.deletedAt) {
-      return thread;
-    }
-
-    const result = await this.threadRepository.update(
-      workspaceId,
-      { id: threadId, userWorkspaceId, deletedAt: Not(IsNull()) },
-      { deletedAt: null },
-    );
-
-    if ((result.affected ?? 0) === 0) {
-      return thread;
-    }
-
-    thread.deletedAt = null;
 
     await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
 
@@ -1009,27 +1090,23 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, userWorkspaceId },
+    const thread = await this.sharingService.getThreadWithAccess({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+      operationType: 'delete',
     });
 
-    if (!thread) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-
-    const result = await this.threadRepository.delete(workspaceId, {
-      id: threadId,
+    const deleted = await this.sharingService.deleteThreadWithShares({
+      workspaceId,
+      threadId,
       userWorkspaceId,
     });
 
-    if ((result.affected ?? 0) === 0) {
+    if (!deleted) {
       this.logger.warn(
         `hardDeleteThread: thread ${threadId} vanished between fetch and delete`,
       );
-
       return;
     }
 
@@ -1042,7 +1119,10 @@ export class AgentChatService {
           recordId: threadId,
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
-            before: serializeThreadForBroadcast(thread, null),
+            before: serializeAgentChatThreadForBroadcast({
+              thread,
+              lastMessageAt: null,
+            }),
           },
         },
       ],
@@ -1075,7 +1155,7 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const thread = await this.getThreadById({
+    const thread = await this.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId,
@@ -1097,7 +1177,7 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const thread = await this.getThreadById({
+    const thread = await this.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId,
@@ -1122,6 +1202,14 @@ export class AgentChatService {
     updatedFields: (keyof AgentChatThreadDTO)[],
     userWorkspaceId: string,
   ): Promise<void> {
+    const permissions = await this.sharingService.getPermissions({
+      workspaceId: thread.workspaceId,
+      userWorkspaceId,
+      threadId: thread.id,
+    });
+    if (!permissions.canRead) {
+      return;
+    }
     const lastMessageAt = await this.getLastMessageAtForThread({
       threadId: thread.id,
       workspaceId: thread.workspaceId,
@@ -1137,7 +1225,10 @@ export class AgentChatService {
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
             updatedFields,
-            after: serializeThreadForBroadcast(thread, lastMessageAt),
+            after: serializeAgentChatThreadForBroadcast({
+              thread,
+              lastMessageAt,
+            }),
           },
         },
       ],
@@ -1148,10 +1239,12 @@ export class AgentChatService {
     threadId,
     messageContent,
     workspaceId,
+    userWorkspaceId,
   }: {
     threadId: string;
     messageContent: string;
     workspaceId: string;
+    userWorkspaceId: string;
   }): Promise<string | null> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
@@ -1164,7 +1257,7 @@ export class AgentChatService {
     const title = await this.titleGenerationService.generateThreadTitle(
       messageContent,
       workspaceId,
-      thread.userWorkspaceId,
+      userWorkspaceId,
     );
 
     await this.threadRepository.update(

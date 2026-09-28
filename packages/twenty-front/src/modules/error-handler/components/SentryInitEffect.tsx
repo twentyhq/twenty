@@ -42,6 +42,10 @@ export const SentryInitEffect = () => {
             environment: sentryConfig?.environment ?? undefined,
             release: sentryConfig?.release ?? undefined,
             dsn: sentryConfig?.dsn,
+            // Firefox for iOS can throw from its injected YouTube quality script.
+            ignoreErrors: [
+              /^(?:TypeError: )?undefined is not an object \(evaluating 'window\.__firefox__\.refresh_youtube_quality_[A-Fa-f0-9]{32}'\)$/,
+            ],
             integrations: [
               browserTracingIntegration({}),
               replayIntegration({

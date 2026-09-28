@@ -18,8 +18,10 @@ type RetrieveRecallTranscriptResult =
 
 export const retrieveRecallTranscript = async ({
   transcriptId,
+  signal,
 }: {
   transcriptId: string;
+  signal?: AbortSignal;
 }): Promise<RetrieveRecallTranscriptResult> => {
   const configResult = getRecallApiConfig();
 
@@ -29,6 +31,7 @@ export const retrieveRecallTranscript = async ({
 
   const result = await recallBotApiRequest<Record<string, unknown>>({
     config: configResult.config,
+    signal,
     path: `/transcript/${transcriptId}/`,
     method: 'GET',
   });

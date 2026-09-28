@@ -16,7 +16,7 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
-import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
@@ -49,7 +49,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     if (!isWorkflowAiAgentAction(step)) {
       throw new WorkflowStepExecutorException(
-        'Step is not an AI Agent action',
+        'Step is not an Agent action',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
@@ -109,7 +109,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     if (executionResult.hasNoMoreAvailableCredits) {
       return {
-        error: 'AI agent stopped: no more available credits.',
+        error: 'Agent stopped: no more available credits.',
       };
     }
 

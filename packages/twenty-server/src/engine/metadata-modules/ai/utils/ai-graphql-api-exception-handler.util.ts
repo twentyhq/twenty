@@ -17,16 +17,20 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case AiExceptionCode.AGENT_NOT_FOUND:
       case AiExceptionCode.THREAD_NOT_FOUND:
+      case AiExceptionCode.RECORD_NOT_FOUND:
       case AiExceptionCode.WORKSPACE_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND:
+      case AiExceptionCode.EVALUATION_MODEL_NOT_FOUND:
         throw new NotFoundError(error);
       case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
       case AiExceptionCode.INVALID_AGENT_INPUT:
       case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
       case AiExceptionCode.QUESTION_NOT_PENDING:
       case AiExceptionCode.INVALID_QUESTION_ANSWER:
+      case AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED:
+      case AiExceptionCode.INVALID_EVALUATION_REQUEST:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:

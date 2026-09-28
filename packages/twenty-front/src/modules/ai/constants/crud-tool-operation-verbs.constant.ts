@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { type DatabaseCrudOperation } from 'twenty-shared/ai';
 
-import { type ToolStatusLabels } from '@/ai/types/tool-status-labels.type';
+import { type ToolStatusLabels } from '@/ai/types/ToolStatusLabels';
 
 export type CrudToolOperation = DatabaseCrudOperation;
 

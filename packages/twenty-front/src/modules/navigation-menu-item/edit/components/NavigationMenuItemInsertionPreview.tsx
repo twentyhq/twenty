@@ -10,7 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type NavigationMenuItemInsertionPreviewProps = {
   folderId: string | null;
@@ -76,7 +76,7 @@ export const NavigationMenuItemInsertionPreview = ({
         label={t`Select a menu item`}
         Icon={getIcon('IconFold')}
         variant="placeholder"
-        indentationLevel={folderId ? 2 : 1}
+        indentationLevel={isDefined(folderId) ? 2 : 1}
         subItemState={subItemState}
       />
     </StyledPreview>

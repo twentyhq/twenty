@@ -65,6 +65,7 @@ export const SettingsWorkspaceUnsubscribe = () => {
       ]}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Unsubscribe settings`}
           tabs={tabs}
           componentInstanceId={UNSUBSCRIBE_TABS_INSTANCE_ID}
         />

@@ -44,3 +44,10 @@
     width: 100%;
   }
 }
+
+@each $duration in (instant, fast, normal, slow) {
+  .panel[data-duration='#{$duration}'] {
+    --animated-expandable-opacity-duration: #{duration($duration)};
+    --animated-expandable-size-duration: #{duration($duration)};
+  }
+}

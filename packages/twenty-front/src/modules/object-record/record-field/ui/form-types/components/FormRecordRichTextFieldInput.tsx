@@ -2,7 +2,7 @@ import { useCreateBlockNote } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { Field } from 'twenty-ui/primitives/input';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';

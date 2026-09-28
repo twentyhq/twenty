@@ -4,7 +4,7 @@ import { isDefined } from '@/utils';
 import {
   type ValidatableWorkflow,
   type WorkflowValidationIssue,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { type z } from 'zod';
 
 const formatZodPath = (path: PropertyKey[]): string =>

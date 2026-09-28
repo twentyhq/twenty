@@ -27,13 +27,13 @@ export class UsageLimitEntitlementService implements OnModuleInit {
     );
   }
 
-  async findEnforceableLimits({
+  async findEnforceableLimits<TLimit extends FlatUsageLimit>({
     workspaceId,
     limits,
   }: {
     workspaceId: string;
-    limits: FlatUsageLimit[];
-  }): Promise<FlatUsageLimit[]> {
+    limits: TLimit[];
+  }): Promise<TLimit[]> {
     if (!limits.some((limit) => isIntraWorkspaceScoped(limit.spenderType))) {
       return limits;
     }

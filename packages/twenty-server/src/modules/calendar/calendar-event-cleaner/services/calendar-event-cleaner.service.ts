@@ -32,6 +32,7 @@ export class CalendarEventCleanerService {
             const calendarChannelEventAssociationRepository =
               transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
+                { shouldBypassPermissionChecks: true },
               );
 
             for (;;) {
@@ -82,10 +83,12 @@ export class CalendarEventCleanerService {
             const calendarEventRepository =
               transactionScope.getRepository<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
+                { shouldBypassPermissionChecks: true },
               );
             const calendarChannelEventAssociationRepository =
               transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
+                { shouldBypassPermissionChecks: true },
               );
 
             for (
@@ -134,10 +137,12 @@ export class CalendarEventCleanerService {
             const calendarEventRepository =
               transactionScope.getRepository<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
+                { shouldBypassPermissionChecks: true },
               );
             const calendarChannelEventAssociationRepository =
               transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
+                { shouldBypassPermissionChecks: true },
               );
 
             let cursor: string | undefined;

@@ -5,11 +5,16 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { VERIFICATION_RECORD_GROUP_DISPLAY_ORDER } from '@/settings/emailing-domains/constants/VerificationRecordGroupDisplayOrder';
+import { SettingsEmailingDomainAiSetup } from '@/settings/emailing-domains/components/SettingsEmailingDomainAiSetup';
 import { getVerificationRecordGroupContent } from '@/settings/emailing-domains/utils/getVerificationRecordGroupContent';
 import { getVerificationRecordGroupKey } from '@/settings/emailing-domains/utils/getVerificationRecordGroupKey';
 import { getVerificationRecordGroupStatusDisplay } from '@/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { type EmailingDomain } from '~/generated-metadata/graphql';
+import {
+  type EmailingDomain,
+  EmailingDomainStatus,
+  UnsubscribeHostnameStatus,
+} from '~/generated-metadata/graphql';
 
 type SettingsEmailingDomainDnsRecordsProps = {
   emailingDomain: Pick<
@@ -58,6 +63,14 @@ export const SettingsEmailingDomainDnsRecords = ({
         : record.value,
     })),
   );
+  const isUnsubscribeVerificationRequired = groups.some(
+    ({ id }) => id === 'UNSUBSCRIBE',
+  );
+  const areVerifiableRecordsVerified =
+    emailingDomain.status === EmailingDomainStatus.VERIFIED &&
+    (!isUnsubscribeVerificationRequired ||
+      emailingDomain.unsubscribeHostnameStatus ===
+        UnsubscribeHostnameStatus.ACTIVE);
 
   return (
     <>
@@ -71,6 +84,12 @@ export const SettingsEmailingDomainDnsRecords = ({
         )}
       />
       <SettingsDnsRecordsTable records={tableRecords} />
+      {!areVerifiableRecordsVerified && (
+        <SettingsEmailingDomainAiSetup
+          domain={emailingDomain.domain}
+          records={groups.flatMap(({ records }) => records)}
+        />
+      )}
     </>
   );
 };

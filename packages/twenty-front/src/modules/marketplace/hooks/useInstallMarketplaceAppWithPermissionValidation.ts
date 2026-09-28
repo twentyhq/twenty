@@ -1,4 +1,4 @@
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { useCallback } from 'react';
 
@@ -12,12 +12,12 @@ type UseInstallMarketplaceAppWithPermissionValidationArgs = Parameters<
 export const useInstallMarketplaceAppWithPermissionValidation = (
   args?: UseInstallMarketplaceAppWithPermissionValidationArgs,
 ) => {
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { install, isInstalling } = useInstallMarketplaceApp(args);
 
   const requestInstall = useCallback(() => {
-    openModal(INSTALL_PERMISSION_VALIDATION_MODAL_ID);
-  }, [openModal]);
+    openDialog(INSTALL_PERMISSION_VALIDATION_MODAL_ID);
+  }, [openDialog]);
 
   return {
     requestInstall,

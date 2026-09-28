@@ -8,7 +8,7 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -17,7 +17,10 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 jest.mock('@/ai/hooks/useReturnFromExpandedAiChat');
 jest.mock('@/ai/hooks/useSwitchToNewAiChat');
 jest.mock('@/navigation/hooks/useDefaultHomePagePath');
-jest.mock('@/ui/utilities/responsive/hooks/useIsMobile');
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: jest.fn(),
+}));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),

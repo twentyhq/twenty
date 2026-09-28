@@ -8,7 +8,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
@@ -398,7 +398,7 @@ describe('Calendar event save operations (integration)', () => {
 
     const [event] = await findEventsByTitle(title);
 
-    const duplicateResponse = await makeGraphqlAPIRequest(
+    const duplicateResponse = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'calendarEventParticipant',
         gqlFields: 'id',

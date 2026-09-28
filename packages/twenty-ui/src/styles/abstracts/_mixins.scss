@@ -8,10 +8,11 @@
 @mixin square-button {
   --tw-button-padding-inline: 0;
 
-  inline-size: var(--t-spacing-8);
+  inline-size: var(--tw-button-size, var(--t-spacing-8));
+  max-inline-size: none;
 
   &[data-size='sm'] {
-    inline-size: var(--t-spacing-6);
+    inline-size: var(--tw-button-size, var(--t-spacing-6));
   }
 }
 

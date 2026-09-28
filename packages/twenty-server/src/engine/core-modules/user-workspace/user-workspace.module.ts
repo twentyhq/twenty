@@ -1,3 +1,5 @@
+import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -24,6 +26,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 
 @Module({
   imports: [
+    WorkspaceCacheModule,
     TypeOrmModule.forFeature([
       UserWorkspaceEntity,
       UserEntity,
@@ -44,8 +47,9 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     FeatureFlagModule,
     CoreEntityCacheModule,
   ],
-  exports: [UserWorkspaceService],
+  exports: [UserWorkspaceService, UserWorkspaceAuthContextService],
   providers: [
+    UserWorkspaceAuthContextService,
     UserWorkspaceService,
     UserWorkspaceEntityCacheProviderService,
     provideWorkspaceScopedRepository(RoleTargetEntity),

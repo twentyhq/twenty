@@ -91,6 +91,10 @@ export class ViewDTO {
   @Field(() => Int, { nullable: true })
   kanbanColumnWidth?: number | null;
 
+  // Nullable since cached views can predate the column and Int! fails the query
+  @Field(() => Int, { nullable: true })
+  groupLoadLimit?: number | null;
+
   @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string | null;
 

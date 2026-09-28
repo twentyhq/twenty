@@ -11,19 +11,17 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconBrandWhatsapp,
   IconMail,
   IconMailX,
   IconPhone,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
@@ -35,7 +33,7 @@ const StyledCardsColumn = styled.div`
 `;
 
 export const SettingsWorkspaceCommunications = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { t } = useLingui();
 
@@ -68,6 +66,7 @@ export const SettingsWorkspaceCommunications = () => {
       title={t`Communication`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Workspace communications`}
           tabs={tabs}
           componentInstanceId={COMMUNICATIONS_TABS_INSTANCE_ID}
         />
@@ -81,18 +80,18 @@ export const SettingsWorkspaceCommunications = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={coverLight}
             darkSrc={coverDark}
             instanceIdPrefix="settings-communications-hero"
             tabs={[]}
           />
-        </Section>
+        </Section.Root>
         <SettingsWorkspaceEmailGroupSection />
         {isMessageCampaignFeatureEnabled && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Unsubscribe`}
               description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
             />
@@ -108,7 +107,7 @@ export const SettingsWorkspaceCommunications = () => {
                 onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
               />
             </StyledCardsColumn>
-          </Section>
+          </Section.Root>
         )}
         <SettingsWorkspaceEmailSyncSection />
         <SettingsWorkspaceBlocklistSection />

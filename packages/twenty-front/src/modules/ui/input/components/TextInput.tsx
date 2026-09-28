@@ -1,23 +1,22 @@
-import { Field } from 'twenty-ui/primitives/input';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { AutogrowWrapper } from '@/ui/input/components/internal/AutogrowWrapper/AutogrowWrapper';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import React, {
-  forwardRef,
   type ChangeEvent,
   type FocusEventHandler,
   type InputHTMLAttributes,
-  useContext,
+  forwardRef,
   useId,
   useRef,
   useState,
 } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { AutogrowWrapper } from 'twenty-ui/primitives/layout';
+import { Field } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;
@@ -178,6 +177,16 @@ const StyledInput = styled.input<
         ? themeCssVariables.border.color.danger
         : themeCssVariables.color.blue};
   }
+
+  &[type='number']::-webkit-outer-spin-button,
+  &[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type='number'] {
+    -moz-appearance: textfield;
+  }
 `;
 
 const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputSize }>`
@@ -260,6 +269,7 @@ const TextInputComponent = forwardRef<
 >(
   (
     {
+      'aria-label': ariaLabel,
       className,
       label,
       value,
@@ -293,7 +303,7 @@ const TextInputComponent = forwardRef<
     },
     ref,
   ) => {
-    const { theme } = useContext(ThemeContext);
+    const theme = useTheme();
     const inputRef = useRef<HTMLInputElement>(null);
     const combinedRef = useCombinedRefs(ref, inputRef);
 
@@ -347,6 +357,7 @@ const TextInputComponent = forwardRef<
             )}
 
             <StyledInput
+              aria-label={ariaLabel}
               id={instanceId}
               width={width}
               data-testid={dataTestId}

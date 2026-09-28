@@ -3,7 +3,7 @@ import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-import styles from '../Tabs.module.scss';
+import styles from '../../internal/tab/Tab.module.scss';
 import { type TabsListProps } from '../types/TabsListProps';
 import { focusNextEnabledTab } from './focusNextEnabledTab';
 

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
@@ -27,6 +28,7 @@ import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
@@ -39,6 +41,7 @@ import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/ty
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('objectMetadata')
+@Index('IDX_OBJECT_METADATA_APPLICATION_ID', ['applicationId'])
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
   'nameSingular',
   'workspaceId',
@@ -260,4 +263,10 @@ export class ObjectMetadataEntity
     (commandMenuItem) => commandMenuItem.navigationTargetObjectMetadata,
   )
   commandMenuItems: Relation<CommandMenuItemEntity[]>;
+
+  @OneToMany(
+    () => NavigationMenuItemEntity,
+    (navigationMenuItem) => navigationMenuItem.targetObjectMetadata,
+  )
+  navigationMenuItems: Relation<NavigationMenuItemEntity[]>;
 }

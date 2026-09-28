@@ -48,8 +48,8 @@ describe('get_workflow_run tool', () => {
       startedAt: '2025-01-01T00:00:00Z',
       endedAt: '2025-01-01T00:01:00Z',
       enqueuedAt: null,
-      workflowId: 'wf-1',
-      workflowVersionId: 'wfv-1',
+      coreWorkflowId: 'core-wf-1',
+      coreWorkflowVersionId: 'core-wfv-1',
       state: {
         workflowRunError: 'Something went wrong',
         flow: {

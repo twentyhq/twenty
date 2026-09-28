@@ -299,6 +299,26 @@ describe('DatabaseToolProvider', () => {
     }
   });
 
+  it('names the records widget on every record descriptor but group_by', async () => {
+    const descriptors = await generateDescriptors([
+      createFlatObject({
+        nameSingular: 'task',
+        namePlural: 'tasks',
+        labelSingular: 'Task',
+        labelPlural: 'Tasks',
+      }),
+    ]);
+
+    for (const descriptor of descriptors) {
+      if (descriptor.operation === 'group_by') {
+        expect(descriptor.widgetName).toBeUndefined();
+        continue;
+      }
+
+      expect(descriptor.widgetName).toBe('records');
+    }
+  });
+
   describe('requireExplicitObjectGrants', () => {
     const personObject = createFlatObject({
       nameSingular: 'person',

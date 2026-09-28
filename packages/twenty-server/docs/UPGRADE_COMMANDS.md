@@ -110,19 +110,31 @@ The base class `ActiveOrSuspendedWorkspaceCommandRunner` handles workspace itera
 
 Commands that build a metadata migration go through `WorkspaceMigrationValidateBuildAndRunService`. Two entry points exist:
 
-- `validateBuildAndRunWorkspaceMigration` (default): runs the operation matrix through the metadata side-effect engine (`expandWithSideEffects`) before building. The engine injects and cascades engine-owned companions (system fields and relations, the `searchVector` field and its GIN index, `searchFieldMetadata` rows, unique backing indexes). This is what the live API and application manifests rely on, so new commands should use it.
+- `validateBuildAndRunWorkspaceMigration` (default): runs the operation matrix through the metadata side-effect engine (`expandWithSideEffects`) before building. The engine injects and cascades engine-owned companions (system fields and relations, the `searchVector` field and its GIN index, `searchFieldMetadata` rows, unique backing indexes). This is what the live API and application manifests rely on, so commands that create or mutate custom or application-owned metadata should use it.
 - `validateBuildAndRunLegacyWorkspaceMigration`: skips side-effect expansion and applies the matrix literally, exactly as it was authored.
 
 The side-effect engine landed in v2.19. Commands authored before then declared their companions explicitly and were never designed to flow through the engine. Running them through it retroactively changes their behavior: it can hard-fail on reserved-identifier collisions (`RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER`) and silently create rows the command never intended (for example, the deterministic `searchFieldMetadata` rows that the standalone `upgrade:2-16:backfill-search-field-metadata` backfill then re-inserts, hitting `IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE`).
 
+twenty standard metadata never flows through the engine either: `twenty-standard` declares its companions itself and syncs through the FromTo path. An upgrade command that mutates twenty standard entities (`isSystemBuild: true` with the twenty standard application universal identifier, for example updating a standard `commandMenuItem`) must apply its matrix literally with the legacy method whatever its target version, as `upgrade:2-41:move-message-campaign-commands-to-campaign-flag` and `upgrade:2-42:unpin-creation-commands-on-record-selection` do.
+
 Rule of thumb:
 
+- Operations on **twenty standard** metadata, any version → use the **legacy** method.
 - Target version **< 2.19** → use the **legacy** method.
-- Target version **>= 2.19** → use the default side-effect method.
+- Target version **>= 2.19** on custom or application-owned metadata → use the default side-effect method.
 
 All pre-2.19 commands follow this rule, including `upgrade:2-10:sync-call-recording-standard-objects`: it builds its create-set from the static twenty-standard definition (which declares all of `callRecording`'s fields, including the `searchVector` system field) and runs it through the legacy path so nothing is injected on top. Its matrix contains no `searchFieldMetadata` operations; the deterministic rows are created later in the same upgrade pipeline by `upgrade:2-16:backfill-search-field-metadata`, which derives them from the standard definition.
 
 Known gap: the static definition does not yet declare `callRecording`'s `searchVector` GIN index (every other searchable standard object declares its GIN index statically), so workspaces upgrading through 2-10 on the legacy path create the `searchVector` column unindexed. The static declaration plus a backfill for already-upgraded workspaces land in a follow-up (twentyhq/core-team-issues#2672), which must ship in the same release as this legacy path.
+
+## Keeping command code in the command
+
+An upgrade command is frozen once released: self-hosters can jump several versions in one upgrade, so the code that runs for them is whatever the current release ships for that old command. Two rules follow.
+
+- **Command logic lives in its version folder.** Helpers, SQL builders, constants and legacy formats that only a command needs go under `upgrade-version-command/<version>/` (or its `utils/`), never in `src/engine` or `src/modules`. Generic primitives (flat-entity utils, schema managers, repositories) are fine to call. The `twenty/no-runtime-import-from-upgrade-command` lint rule rejects runtime imports from `upgrade-version-command/`, except the `*-upgrade-command-name.constant` files that upgrade-aware entities use.
+- **Runtime code never branches on migration state.** Do not teach the runtime to serve both the old and the new shape. When a runtime must not run against a workspace mid-migration, fence it with one explicit check and remove that check once the command leaves the cross-upgrade window.
+
+A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
 
 ## Execution Order
 

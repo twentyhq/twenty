@@ -1,118 +1,55 @@
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
+import { Link } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { IconDownload, IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationActionButtonProps = {
-  isInstalled: boolean;
+  installedApplicationId?: string;
   canInstallMarketplaceApps?: boolean;
   onInstall?: () => void;
   isInstalling?: boolean;
-  hasUpdate?: boolean;
-  latestAvailableVersion?: string;
-  onUpgrade?: () => void;
-  isUpgrading?: boolean;
-  canBeUninstalled?: boolean;
-  onUninstall?: () => void;
-  isUninstalling?: boolean;
 };
 
 export const SettingsApplicationActionButton = ({
-  isInstalled,
+  installedApplicationId,
   canInstallMarketplaceApps,
   onInstall,
   isInstalling,
-  hasUpdate,
-  latestAvailableVersion,
-  onUpgrade,
-  isUpgrading,
-  canBeUninstalled,
-  onUninstall,
-  isUninstalling,
 }: SettingsApplicationActionButtonProps) => {
-  const { openModal } = useModal();
-  const uninstallModalId = useId();
-
-  const confirmationValue = t`yes`;
+  if (isDefined(installedApplicationId) && !isInstalling) {
+    return (
+      <Button
+        startIcon={<IconSettings />}
+        variant="solid"
+        color="accent"
+        size="sm"
+        render={
+          <Link
+            to={getSettingsPath(SettingsPath.ApplicationDetail, {
+              applicationId: installedApplicationId,
+            })}
+          />
+        }
+      >{t`Open settings`}</Button>
+    );
+  }
 
   if (!canInstallMarketplaceApps) {
     return null;
   }
 
-  if (!isInstalled || isInstalling) {
-    return (
-      <Button
-        startIcon={<IconDownload />}
-        variant="solid"
-        color="accent"
-        size="sm"
-        onClick={onInstall}
-        disabled={isInstalling}
-      >
-        {isInstalling ? t`Installing...` : t`Install`}
-      </Button>
-    );
-  }
-
-  if (hasUpdate) {
-    return (
-      <Button
-        startIcon={<IconUpload />}
-        variant="outline"
-        color="accent"
-        size="sm"
-        onClick={onUpgrade}
-        disabled={isUpgrading}
-      >
-        {isUpgrading
-          ? t`Upgrading...`
-          : t`Upgrade to ${latestAvailableVersion ?? ''}`}
-      </Button>
-    );
-  }
-
-  if (canBeUninstalled && isDefined(onUninstall)) {
-    return (
-      <>
-        <Button
-          startIcon={<IconTrash />}
-          variant="outline"
-          color="danger"
-          size="sm"
-          onClick={() => openModal(uninstallModalId)}
-          disabled={isUninstalling}
-        >
-          {isUninstalling ? t`Uninstalling...` : t`Uninstall`}
-        </Button>
-        <ConfirmationModal
-          confirmationPlaceholder={confirmationValue}
-          confirmationValue={confirmationValue}
-          modalInstanceId={uninstallModalId}
-          title={t`Uninstall Application?`}
-          subtitle={
-            <Trans>
-              Please type {`"${confirmationValue}"`} to confirm you want to
-              uninstall this application.
-            </Trans>
-          }
-          onConfirmClick={onUninstall}
-          confirmButtonText={t`Uninstall`}
-          loading={isUninstalling}
-        />
-      </>
-    );
-  }
-
   return (
     <Button
-      startIcon={<IconCheck />}
-      variant="outline"
+      startIcon={<IconDownload />}
+      variant="solid"
+      color="accent"
       size="sm"
-      disabled
-    >{t`Installed`}</Button>
+      onClick={onInstall}
+      disabled={isInstalling}
+    >
+      {isInstalling ? t`Installing...` : t`Install`}
+    </Button>
   );
 };

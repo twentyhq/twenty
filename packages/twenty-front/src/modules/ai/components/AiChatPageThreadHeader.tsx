@@ -1,19 +1,22 @@
+import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { AiChatSharingDropdown } from '@/ai/components/AiChatSharingDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
@@ -25,8 +28,26 @@ const StyledTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   max-width: 100%;
   min-width: 0;
-  padding: 0 ${themeCssVariables.spacing[1]};
   width: fit-content;
+`;
+
+const StyledTitleDisplay = styled.div`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
+  &[role='button'] {
+    cursor: pointer;
+  }
+  display: flex;
+  height: 24px;
+  overflow: hidden;
+  padding: 0 5px;
+
+  &[role='button']:hover,
+  &[role='button']:focus-visible {
+    background: ${themeCssVariables.background.transparent.light};
+    outline: none;
+  }
 `;
 
 const StyledActions = styled.div`
@@ -45,6 +66,10 @@ export const AiChatPageThreadHeader = ({
   thread,
 }: AiChatPageThreadHeaderProps) => {
   const { t } = useLingui();
+  const permissions = useAtomFamilySelectorValue(
+    agentChatThreadPermissionsFamilySelector,
+    thread.id,
+  );
   const { switchToNewChat } = useSwitchToNewAiChat();
   const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
     currentAiChatThreadTitleComponentFamilyState,
@@ -97,10 +122,27 @@ export const AiChatPageThreadHeader = ({
             autoFocus
           />
         ) : (
-          <OverflowingTextWithTooltip text={displayTitle} />
+          <StyledTitleDisplay
+            role={permissions?.canUpdate ? 'button' : undefined}
+            tabIndex={permissions?.canUpdate ? 0 : undefined}
+            aria-label={permissions?.canUpdate ? t`Rename chat` : undefined}
+            onClick={permissions?.canUpdate ? startRename : undefined}
+            onKeyDown={(event) => {
+              if (
+                permissions?.canUpdate &&
+                (event.key === Key.Enter || event.key === ' ')
+              ) {
+                event.preventDefault();
+                startRename();
+              }
+            }}
+          >
+            <OverflowingTextWithTooltip text={displayTitle} />
+          </StyledTitleDisplay>
         )}
       </StyledTitle>
       <StyledActions>
+        <AiChatSharingDropdown threadId={thread.id} />
         {hasConversation && (
           <Button
             startIcon={<IconPlus />}
@@ -116,7 +158,7 @@ export const AiChatPageThreadHeader = ({
           isArchived={Boolean(thread.deletedAt)}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
           onRenameRequested={startRename}
-          clickableComponent={
+          trigger={
             <IconButton
               size="sm"
               variant="outline"

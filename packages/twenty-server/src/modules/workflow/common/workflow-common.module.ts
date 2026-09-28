@@ -1,3 +1,4 @@
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
@@ -10,6 +11,7 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
 
 @Module({
   imports: [
+    WorkflowCoreModule,
     WorkflowQueryHookModule,
     LogicFunctionModule,
     CommandMenuItemModule,

@@ -1,7 +1,9 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -13,7 +15,6 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { t } = useLingui();
@@ -60,7 +61,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   };
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -80,26 +81,31 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {filteredCalendarFields.map((fieldMetadataItem) => (
-          <MenuItemSelect
+          <ListItem
             key={fieldMetadataItem.id}
-            selected={fieldMetadataItem.id === calendarFieldMetadata?.id}
             onClick={() => handleCalendarFieldChange(fieldMetadataItem)}
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
-          />
+            role="option"
+            aria-selected={fieldMetadataItem.id === calendarFieldMetadata?.id}
+            selected={fieldMetadataItem.id === calendarFieldMetadata?.id}
+            indicator="check"
+            startIcon={
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            }
+          >
+            {fieldMetadataItem.label}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
-        <MenuItem
-          LeftIcon={IconSettings}
-          text={t`Create date field`}
+        <ListItem
+          startIcon={<IconSettings />}
           onClick={() => {
             navigateToDateFieldSettings();
             closeDropdown();
           }}
-        />
+        >{t`Create date field`}</ListItem>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

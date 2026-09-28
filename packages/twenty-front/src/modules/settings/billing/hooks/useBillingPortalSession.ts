@@ -4,7 +4,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLazyQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { BillingPortalSessionDocument } from '~/generated-metadata/graphql';
 
 export const useBillingPortalSession = (returnUrlPath: string) => {

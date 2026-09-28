@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
@@ -11,7 +12,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -20,7 +21,6 @@ import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
@@ -169,22 +169,20 @@ export const AdvancedFilterAddFilterRuleSelect = ({
         />
       }
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconPlus}
-              text={t`Add rule`}
+            <ListItem
+              startIcon={<IconPlus />}
               onClick={handleAddFilter}
-            />
+            >{t`Add rule`}</ListItem>
             {isFilterRuleGroupOptionVisible && (
-              <MenuItem
-                LeftIcon={IconLibraryPlus}
-                text={t`Add rule group`}
+              <ListItem
+                startIcon={<IconLibraryPlus />}
                 onClick={handleAddFilterGroup}
-              />
+              >{t`Add rule group`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"

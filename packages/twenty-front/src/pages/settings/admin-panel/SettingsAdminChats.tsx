@@ -1,14 +1,12 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { t } from '@lingui/core/macro';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { SearchInput, Section } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { SettingsAdminChatsContent } from '@/settings/admin-panel/chats/components/SettingsAdminChatsContent';
@@ -55,8 +53,8 @@ export const SettingsAdminChats = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Chats`}
             description={t`Browse AI chat threads across all workspaces (${totalCount} matching)`}
           />
@@ -64,7 +62,7 @@ export const SettingsAdminChats = () => {
             placeholder={t`Search by workspace, user email or thread id...`}
             value={searchQuery}
             onChange={setSearchQuery}
-            filterDropdown={(filterButton: ReactNode) => (
+            filterDropdown={(filterButton) => (
               <SettingsAdminChatsFilterDropdown
                 filterButton={filterButton}
                 filters={filters}
@@ -88,7 +86,7 @@ export const SettingsAdminChats = () => {
               >{t`Show more`}</Button>
             </StyledShowMoreContainer>
           )}
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

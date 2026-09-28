@@ -20,10 +20,12 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
 import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -41,6 +43,7 @@ export class ImpersonationResolver {
   @UseGuards(
     WorkspaceAuthGuard,
     UserAuthGuard,
+    RequireUserSessionGuard,
     NoImpersonationGuard,
     ImpersonatePermissionGuard,
     CustomPermissionGuard,
@@ -64,8 +67,14 @@ export class ImpersonationResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
+    NoPermissionGuard,
+  )
   @Mutation(() => StopImpersonationDTO)
+  @AllowSuspendedWorkspace()
   async stopImpersonation(
     @AuthImpersonationContext()
     impersonationContext: AuthContext['impersonationContext'],

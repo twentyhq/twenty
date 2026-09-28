@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
+export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
 export type { AiModelEffort } from './constants/ai-model-effort.const';
 export { AI_MODEL_EFFORTS } from './constants/ai-model-effort.const';
@@ -26,18 +28,19 @@ export type { DatabaseCrudOperation } from './constants/database-crud-operation.
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
+export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { ToolCategory } from './constants/tool-category.const';
+export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
   AgentJsonResponseFormat,
   AgentResponseFormat,
-} from './types/agent-response-format.type';
+} from './types/AgentResponseFormat';
 export type {
   AgentResponseFieldType,
   AgentResponseSchema,
-} from './types/agent-response-schema.type';
-export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+} from './types/AgentResponseSchema';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
@@ -58,12 +61,19 @@ export type {
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
-export type { ModelConfiguration } from './types/model-configuration.type';
+export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
+export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
+export {
+  RECORDS_TOOL_WIDGET_NAME,
+  TOOL_WIDGET_NAMES,
+  isToolWidgetName,
+} from './types/ToolWidget';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';

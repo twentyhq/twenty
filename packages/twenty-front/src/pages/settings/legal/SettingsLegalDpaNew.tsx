@@ -3,8 +3,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -22,7 +20,7 @@ import {
   type GenerateSignedDpaResult,
 } from '@/settings/legal/types/Dpa';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section, useToast } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsLegalDpaNew = () => {
@@ -134,13 +132,13 @@ export const SettingsLegalDpaNew = () => {
     >
       <SettingsPageContainer>
         {preview?.notice && (
-          <Section>
+          <Section.Root>
             <DpaNotice text={preview.notice} />
-          </Section>
+          </Section.Root>
         )}
 
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Your details`}
             description={t`The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory.`}
           />
@@ -168,16 +166,16 @@ export const SettingsLegalDpaNew = () => {
             onChange={setSignatoryTitle}
             fullWidth
           />
-        </Section>
+        </Section.Root>
 
         {preview && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Preview`}
               description={t`The full agreement with fields resolved for your deployment.`}
             />
             <DpaDocumentPreview document={preview} />
-          </Section>
+          </Section.Root>
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>

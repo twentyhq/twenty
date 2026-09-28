@@ -19,6 +19,7 @@ export const WorkspaceApp = () => {
 
   return (
     <RouterProvider
+      useTransitions={false}
       router={useCreateWorkspaceAppRouter({
         isAdminPageEnabled,
         isWorkflowCoreIndexPageEnabled,

@@ -6,6 +6,7 @@ import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-st
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,15 +17,11 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconLink, IconTool } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { InputHint } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -192,12 +189,12 @@ export const SettingsAdminMaintenanceMode = () => {
     : undefined;
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Maintenance`}
         description={t`Schedule a maintenance window and notify all users`}
       />
-      <Card rounded>
+      <Card.Root rounded>
         <SettingsOptionCardContentSwitch
           Icon={IconTool}
           title={t`Maintenance mode`}
@@ -206,7 +203,7 @@ export const SettingsAdminMaintenanceMode = () => {
           onChange={handleToggle}
         />
         {isEnabled && (
-          <CardContent>
+          <Card.Content>
             <StyledFormContainer>
               <SettingsDatePickerInput
                 label={t`Start date`}
@@ -246,9 +243,9 @@ export const SettingsAdminMaintenanceMode = () => {
                 </StyledStatusRow>
               )}
             </StyledFormContainer>
-          </CardContent>
+          </Card.Content>
         )}
-      </Card>
-    </Section>
+      </Card.Root>
+    </Section.Root>
   );
 };

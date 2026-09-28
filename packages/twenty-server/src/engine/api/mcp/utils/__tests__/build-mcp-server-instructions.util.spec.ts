@@ -1,4 +1,12 @@
+import { LIST_OBJECT_METADATA_NAMES_TOOL_NAME } from 'src/engine/api/mcp/tools/list-object-metadata-names.tool';
+import { LIST_SKILLS_TOOL_NAME } from 'src/engine/api/mcp/tools/list-skills.tool';
 import { buildMcpServerInstructions } from 'src/engine/api/mcp/utils/build-mcp-server-instructions.util';
+import {
+  EXECUTE_TOOL_TOOL_NAME,
+  LEARN_TOOLS_TOOL_NAME,
+  LOAD_SKILL_TOOL_NAME,
+} from 'src/engine/core-modules/tool-provider/tools';
+import { GET_TOOL_CATALOG_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
 
 const getActionLine = (instructions: string): string =>
   instructions.split('\n').find((line) => line.includes('ACTION:')) ?? '';
@@ -47,6 +55,41 @@ describe('buildMcpServerInstructions', () => {
     });
 
     expect(withoutHttp).not.toContain('http_request is ONLY for external');
+  });
+
+  it('should document every meta-tool the MCP server exposes', () => {
+    const instructions = buildMcpServerInstructions({
+      objectNames: 'companies',
+      actionToolNames: ['send_email'],
+    });
+
+    for (const toolName of [
+      EXECUTE_TOOL_TOOL_NAME,
+      LEARN_TOOLS_TOOL_NAME,
+      LOAD_SKILL_TOOL_NAME,
+      LIST_OBJECT_METADATA_NAMES_TOOL_NAME,
+      LIST_SKILLS_TOOL_NAME,
+      GET_TOOL_CATALOG_TOOL_NAME,
+    ]) {
+      expect(instructions).toContain(toolName);
+    }
+  });
+
+  it('should route an unverified tool name to learn_tools, not to the catalog', () => {
+    const instructions = buildMcpServerInstructions({
+      objectNames: 'companies',
+      actionToolNames: ['send_email'],
+    });
+
+    expect(instructions).toContain(
+      'unknown names come back under notFound with the closest matching names',
+    );
+    expect(instructions).toContain(
+      `Never call ${GET_TOOL_CATALOG_TOOL_NAME} just to check a name`,
+    );
+    expect(instructions).toContain(
+      `${GET_TOOL_CATALOG_TOOL_NAME} with ONE category`,
+    );
   });
 
   it('should omit the skills line when the workspace has no skills', () => {

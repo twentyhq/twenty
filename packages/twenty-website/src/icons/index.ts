@@ -1,4 +1,4 @@
-export { AppleRainbowMark } from './AppleRainbowMark';
+export { AppleWorkspaceMark } from './AppleWorkspaceMark';
 export { ArrowLeft, type ArrowLeftProps } from './ArrowLeft';
 export { ArrowRight, type ArrowRightProps } from './ArrowRight';
 export { ArrowUpRight, type ArrowUpRightProps } from './ArrowUpRight';

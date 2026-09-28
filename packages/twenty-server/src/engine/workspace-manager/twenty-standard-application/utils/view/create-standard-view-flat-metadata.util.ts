@@ -1,4 +1,5 @@
 import { isDefined } from 'class-validator';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type AggregateOperations,
@@ -153,6 +154,7 @@ export const createStandardViewFlatMetadata = <
     mainGroupByFieldMetadataId,
     shouldHideEmptyGroups: false,
     kanbanColumnWidth: null,
+    groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     calendarLayout: null,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
@@ -174,7 +176,9 @@ export const createStandardViewFlatMetadata = <
     viewGroupUniversalIdentifiers: [],
     viewFilterGroupIds: [],
     viewFilterGroupUniversalIdentifiers: [],
+    navigationMenuItemIds: [],
     viewSortIds: [],
+    navigationMenuItemUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,

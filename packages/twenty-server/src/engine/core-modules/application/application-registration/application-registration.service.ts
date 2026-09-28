@@ -136,6 +136,9 @@ export class ApplicationRegistrationService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    // Registration-owner stats: version distribution and the installed-workspace
+    // list are aggregates over every workspace that installed it.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -146,8 +149,8 @@ export class ApplicationRegistrationService {
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly workspaceQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
+    private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
@@ -238,7 +241,7 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string,
   ): Promise<void> {
     try {
-      await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+      await this.applicationUpgradeQueueService.add<UpgradeApplicationsJobData>(
         UPGRADE_APPLICATIONS_JOB_NAME,
         { applicationRegistrationId, onlyAutoUpgrade: true },
       );
@@ -975,34 +978,51 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
+  async findOrCreateCliRegistration(): Promise<ApplicationRegistrationEntity> {
     const existing = await this.findOneByUniversalIdentifierGlobal(
       TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
     );
 
     if (isDefined(existing)) {
-      return null;
+      return existing;
     }
 
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier:
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-      name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
-      oAuthClientId: v4(),
-      oAuthClientSecretHash: null,
-      oAuthRedirectUris: [],
-      oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,
-      ownerWorkspaceId: null,
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      createdByUserId: null,
-    });
+    const insertResult = await this.applicationRegistrationRepository
+      .createQueryBuilder()
+      .insert()
+      .into(ApplicationRegistrationEntity)
+      .values({
+        universalIdentifier:
+          TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+        name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
+        oAuthClientId: v4(),
+        oAuthClientSecretHash: null,
+        oAuthRedirectUris: [],
+        oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,
+        ownerWorkspaceId: null,
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        createdByUserId: null,
+      })
+      .orIgnore()
+      .returning('id')
+      .execute();
 
-    const saved =
-      await this.applicationRegistrationRepository.save(registration);
+    if (insertResult.raw.length > 0) {
+      await this.invalidateMarketplaceAppsCache();
+    }
 
-    await this.invalidateMarketplaceAppsCache();
+    const registration = await this.findOneByUniversalIdentifierGlobal(
+      TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+    );
 
-    return saved;
+    if (!isDefined(registration)) {
+      throw new ApplicationException(
+        'Failed to create the Twenty CLI application registration',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return registration;
   }
 
   async findManyListedCatalogCards(): Promise<

@@ -5,11 +5,9 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconMail } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const SettingsWorkspaceEmailSyncSection = () => {
@@ -47,12 +45,12 @@ export const SettingsWorkspaceEmailSyncSection = () => {
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Sync`}
         description={t`Control what the workspace imports from connected mailboxes and calendars`}
       />
-      <Card rounded>
+      <Card.Root rounded>
         <SettingsOptionCardContentSwitch
           Icon={IconMail}
           title={t`Sync Internal Emails`}
@@ -61,7 +59,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
           onChange={handleSyncInternalEmailsChange}
           advancedMode
         />
-      </Card>
-    </Section>
+      </Card.Root>
+    </Section.Root>
   );
 };

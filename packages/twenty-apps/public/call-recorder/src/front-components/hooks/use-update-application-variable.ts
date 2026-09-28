@@ -13,29 +13,27 @@ type UpdateApplicationVariableState = {
   ) => Promise<boolean>;
 };
 
-export const useUpdateApplicationVariable = (
-  frontComponentId: string,
-): UpdateApplicationVariableState => {
-  const updateApplicationVariable = async ({
-    variableKey,
-    value,
-  }: UpdateApplicationVariableParams): Promise<boolean> => {
-    try {
-      const applicationId =
-        await resolveCallRecorderApplicationId(frontComponentId);
-      const client = new MetadataApiClient();
+export const useUpdateApplicationVariable =
+  (): UpdateApplicationVariableState => {
+    const updateApplicationVariable = async ({
+      variableKey,
+      value,
+    }: UpdateApplicationVariableParams): Promise<boolean> => {
+      try {
+        const applicationId = await resolveCallRecorderApplicationId();
+        const client = new MetadataApiClient();
 
-      await client.mutation({
-        updateOneApplicationVariable: {
-          __args: { key: variableKey, value, applicationId },
-        },
-      });
+        await client.mutation({
+          updateOneApplicationVariable: {
+            __args: { key: variableKey, value, applicationId },
+          },
+        });
 
-      return true;
-    } catch {
-      return false;
-    }
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    return { updateApplicationVariable };
   };
-
-  return { updateApplicationVariable };
-};

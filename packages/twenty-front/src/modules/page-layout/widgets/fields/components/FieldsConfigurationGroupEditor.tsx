@@ -12,7 +12,7 @@ import { type FieldsConfigurationFieldDragData } from '@/page-layout/widgets/fie
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -21,7 +21,7 @@ import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/component
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 
 import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldsDroppable = styled.div`
   display: flex;
@@ -136,7 +136,7 @@ export const FieldsConfigurationGroupEditor = ({
             dropdownOffset={{ x: 32 }}
             onClose={handleCancelRename}
             dropdownComponents={
-              <DropdownContent
+              <LegacyDropdownContent
                 widthInPixels={GenericDropdownContentWidth.Large}
               >
                 <FieldsConfigurationGroupRenameInput
@@ -148,7 +148,7 @@ export const FieldsConfigurationGroupEditor = ({
                   }
                   onCancel={handleCancelRename}
                 />
-              </DropdownContent>
+              </LegacyDropdownContent>
             }
           />
         </DragDropItemSortableHandle>

@@ -1,4 +1,5 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -54,7 +55,11 @@ export const buildStandardFlatCommandMenuItemMaps = ({
     flatObjectMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .filter((flatObject) => flatObject.isActive)
+    .filter(
+      (flatObject) =>
+        flatObject.isActive &&
+        flatObject.readability !== MetadataReadability.SYSTEM,
+    )
     .sort(seedCompareObjectMetadataForNavigationPosition);
 
   const maxStandardPosition = Object.values(

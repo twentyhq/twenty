@@ -1,6 +1,6 @@
 import { type ComponentProps } from 'react';
 import 'twenty-ui/style.css';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
 

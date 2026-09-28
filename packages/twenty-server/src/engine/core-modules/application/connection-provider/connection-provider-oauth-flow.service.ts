@@ -160,9 +160,10 @@ export class ConnectionProviderOAuthFlowService {
   async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
     const statePayload = await this.verifyState(args.state);
 
-    const provider = await this.oauthProviderService.findOneByIdOrThrow(
-      statePayload.connectionProviderId,
-    );
+    const provider = await this.oauthProviderService.findOneByIdOrThrow({
+      id: statePayload.connectionProviderId,
+      workspaceId: statePayload.workspaceId,
+    });
 
     assertOAuthProvider(provider);
 

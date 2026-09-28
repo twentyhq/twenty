@@ -3,7 +3,7 @@ import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-
 import { forgeLegacyHs256Token } from 'test/integration/graphql/utils/forge-legacy-hs256-token.util';
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
@@ -108,7 +108,7 @@ describe('failing user session creation on auth exchanges (integration)', () => 
       getCoreRepository<UserSessionEntity>(UserSessionEntity);
     const sessionCountBefore = await userSessionRepository.count();
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       getLoginTokenFromCredentialsQueryFactory({
         email: 'tim@apple.dev',
         password: 'wrong-password',

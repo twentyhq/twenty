@@ -2,7 +2,7 @@ import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-dr
 import { NavigationMenuItemInsertionPreview } from '@/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';

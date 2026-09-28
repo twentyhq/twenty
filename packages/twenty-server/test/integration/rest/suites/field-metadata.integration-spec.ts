@@ -1,5 +1,5 @@
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   cleanupTestField,
   cleanupTestObject,
@@ -72,7 +72,7 @@ describe.each([
     });
 
     it('returns the expected envelope shape', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/fields',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -96,7 +96,7 @@ describe.each([
     });
 
     it('respects limit and surfaces hasNextPage', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/fields?limit=1',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -114,7 +114,7 @@ describe.each([
     });
 
     it('paginates forward with starting_after without overlap', async () => {
-      const firstPage = await makeRestAPIRequest({
+      const firstPage = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/fields?limit=2',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -125,7 +125,7 @@ describe.each([
         'fields',
       );
 
-      const secondPage = await makeRestAPIRequest({
+      const secondPage = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -144,7 +144,7 @@ describe.each([
     });
 
     it('paginates backward with ending_before', async () => {
-      const firstPage = await makeRestAPIRequest({
+      const firstPage = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/fields?limit=2',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -155,7 +155,7 @@ describe.each([
         'fields',
       );
 
-      const secondPage = await makeRestAPIRequest({
+      const secondPage = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -166,7 +166,7 @@ describe.each([
         'fields',
       );
 
-      const backPage = await makeRestAPIRequest({
+      const backPage = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields?limit=2&ending_before=${secondPayload.pageInfo.startCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -186,7 +186,7 @@ describe.each([
     });
 
     it('rejects combining starting_after and ending_before with 400', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields?starting_after=${NON_EXISTENT_UUID}&ending_before=${NON_EXISTENT_UUID}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -196,7 +196,7 @@ describe.each([
     });
 
     it('rejects malformed cursor IDs with 400', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/fields?starting_after=not-a-uuid',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -206,7 +206,7 @@ describe.each([
     });
 
     it('keeps totalCount stable across pages', async () => {
-      const firstPage = await makeRestAPIRequest({
+      const firstPage = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/fields?limit=2',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -217,7 +217,7 @@ describe.each([
         'fields',
       );
 
-      const secondPage = await makeRestAPIRequest({
+      const secondPage = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -241,7 +241,7 @@ describe.each([
     });
 
     it('returns the field with expected envelope', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields/${testFieldId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -263,7 +263,7 @@ describe.each([
     });
 
     it('returns 400 on a malformed UUID', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields/not-a-uuid`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -273,7 +273,7 @@ describe.each([
     });
 
     it('returns 404 for an unknown id', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields/${NON_EXISTENT_UUID}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -294,7 +294,7 @@ describe.each([
         isLabelSyncedWithName: false,
       };
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/fields',
         body: input,
@@ -327,7 +327,7 @@ describe.each([
       const { id, input } = await createTestFieldViaGraphql(parentObjectId);
 
       try {
-        const response = await makeRestAPIRequest({
+        const response = await makeRestApiRequest({
           method: 'post',
           path: '/metadata/fields',
           body: input,
@@ -341,7 +341,7 @@ describe.each([
     });
 
     it('returns 400 on invalid input', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'post',
         path: '/metadata/fields',
         body: { name: '' },
@@ -368,7 +368,7 @@ describe.each([
     it('updates and returns the field', async () => {
       const newLabel = `Updated Field ${uniqueSuffix()}`;
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/fields/${testFieldId}`,
         body: { label: newLabel },
@@ -391,7 +391,7 @@ describe.each([
     });
 
     it('returns 400 for an unknown id', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'patch',
         path: `/metadata/fields/${NON_EXISTENT_UUID}`,
         body: { label: 'Whatever' },
@@ -409,7 +409,7 @@ describe.each([
       try {
         const newLabel = `PutField ${uniqueSuffix()}`;
 
-        const response = await makeRestAPIRequest({
+        const response = await makeRestApiRequest({
           method: 'put',
           path: `/metadata/fields/${id}`,
           body: { label: newLabel },
@@ -434,7 +434,7 @@ describe.each([
     it('deletes the field and returns the deleted resource', async () => {
       const { id } = await createTestFieldViaGraphql(parentObjectId);
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/fields/${id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -453,7 +453,7 @@ describe.each([
         expect(response.body).toHaveProperty('data.deleteOneField');
       }
 
-      const getResponse = await makeRestAPIRequest({
+      const getResponse = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields/${id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -463,7 +463,7 @@ describe.each([
     });
 
     it('returns 404 for an unknown id', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'delete',
         path: `/metadata/fields/${NON_EXISTENT_UUID}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

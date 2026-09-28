@@ -11,9 +11,10 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
+import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
@@ -29,7 +30,7 @@ export class RunWorkflowJob {
   private readonly logger = new Logger(RunWorkflowJob.name);
 
   constructor(
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -103,13 +104,33 @@ export class RunWorkflowJob {
       return;
     }
 
-    const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-        workspaceId,
-        workflowVersionId: workflowRun.workflowVersionId,
-      });
+    if (!isDefined(workflowRun.coreWorkflowVersionId)) {
+      throw new WorkflowRunException(
+        'Workflow run has no core workflow version',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
 
-    if (!workflowVersion.trigger || !workflowVersion.steps) {
+    const workflowVersion =
+      await this.workflowVersionCoreSyncService.findCoreVersionById(
+        workspaceId,
+        workflowRun.coreWorkflowVersionId,
+      );
+
+    if (
+      !isDefined(workflowVersion) ||
+      workflowVersion.coreWorkflowId !== workflowRun.coreWorkflowId
+    ) {
+      throw new WorkflowRunException(
+        'Core workflow version not found',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const trigger = workflowRun.state?.flow?.trigger;
+    const steps = workflowRun.state?.flow?.steps;
+
+    if (!trigger || !steps) {
       throw new WorkflowRunException(
         'Workflow version has no trigger or steps',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
@@ -118,7 +139,7 @@ export class RunWorkflowJob {
 
     await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
       workspaceId,
-      steps: workflowVersion.steps,
+      steps,
     });
 
     await this.workflowRunWorkspaceService.startWorkflowRun({
@@ -128,10 +149,10 @@ export class RunWorkflowJob {
 
     await this.incrementTriggerMetrics({
       workflowRunId,
-      triggerType: workflowVersion.trigger.type,
+      triggerType: trigger.type,
     });
 
-    const stepIds = workflowVersion.trigger.nextStepIds ?? [];
+    const stepIds = trigger.nextStepIds ?? [];
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
       stepIds,
@@ -239,7 +260,22 @@ export class RunWorkflowJob {
     const hasStepsToExecute =
       isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0;
 
-    if (!hasStepsToSkipOrFailSafely && !hasStepsToExecute) {
+    const steps = workflowRun.state?.flow?.steps ?? [];
+
+    const hasNoMoreStepsToRun =
+      !hasStepsToSkipOrFailSafely && !hasStepsToExecute;
+
+    if (
+      hasNoMoreStepsToRun &&
+      workflowShouldKeepRunning({
+        stepInfos: workflowRun.state?.stepInfos ?? {},
+        steps,
+      })
+    ) {
+      return;
+    }
+
+    if (hasNoMoreStepsToRun) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -248,8 +284,6 @@ export class RunWorkflowJob {
 
       return;
     }
-
-    const steps = workflowRun.state?.flow?.steps ?? [];
 
     if (hasStepsToSkipOrFailSafely) {
       await this.workflowExecutorWorkspaceService.skipAndFailSafelyStepsThenContinue(

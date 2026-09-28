@@ -7,12 +7,11 @@ import { SettingsAdminSigningKeysTable } from '@/settings/admin-panel/signing-ke
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   GetSystemHealthStatusDocument,
 } from '~/generated-admin/graphql';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAdminHealthStatus = () => {
   const apolloAdminClient = useApolloAdminClient();
@@ -42,8 +41,8 @@ export const SettingsAdminHealthStatus = () => {
   return (
     <>
       <SettingsAdminMaintenanceModeFetchEffect />
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Health Status`}
           description={t`How your system is doing`}
         />
@@ -51,23 +50,23 @@ export const SettingsAdminHealthStatus = () => {
           services={services}
           loading={loadingHealthStatus}
         />
-      </Section>
+      </Section.Root>
       {upgradeStatus && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Upgrade Status`}
             description={t`Upgrade health across instance and workspaces`}
           />
           <SettingsAdminUpgradeStatusListCard upgradeStatus={upgradeStatus} />
-        </Section>
+        </Section.Root>
       )}
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Signing Keys`}
           description={t`Asymmetric public keys used to sign and verify access tokens. Revoking a key immediately invalidates every JWT signed with it.`}
         />
         <SettingsAdminSigningKeysTable />
-      </Section>
+      </Section.Root>
       <SettingsAdminMaintenanceMode />
     </>
   );

@@ -1,3 +1,4 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDuplicateWorkflow } from '@/workflow/hooks/useDuplicateWorkflow';
@@ -6,7 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DuplicateWorkflowSingleRecordCommand = () => {
@@ -15,6 +16,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
   const recordId = selectedRecords[0]?.id;
   const workflow = useWorkflowWithCurrentVersion(recordId ?? '');
   const { duplicateWorkflow } = useDuplicateWorkflow();
+  const isCore = useIsWorkflowCoreEnabled();
   const navigate = useNavigateApp();
   const { enqueueToast } = useToast();
   const { t } = useLingui();
@@ -39,6 +41,12 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
         children: t`Workflow duplicated successfully`,
       });
 
+      if (isCore) {
+        navigate(AppPath.WorkflowCoreShowPage, {
+          coreWorkflowId: result.workflowId,
+        });
+        return;
+      }
       navigate(AppPath.RecordShowPage, {
         objectNameSingular: CoreObjectNameSingular.Workflow,
         objectRecordId: result.workflowId,

@@ -98,10 +98,10 @@ export class ConnectionProviderLifecycleHookService {
     connectedAccountId: string;
   }): Promise<void> {
     await this.captureFailures(workspaceId, async () => {
-      const provider =
-        await this.connectionProviderService.findOneByIdOrThrow(
-          connectionProviderId,
-        );
+      const provider = await this.connectionProviderService.findOneByIdOrThrow({
+        id: connectionProviderId,
+        workspaceId,
+      });
       const logicFunctionId = await this.resolveLogicFunctionId({
         hook: 'onDisconnect',
         logicFunctionUniversalIdentifier:
@@ -118,6 +118,7 @@ export class ConnectionProviderLifecycleHookService {
         logicFunctionId,
         workspaceId,
         payload: this.buildPayload({ provider, connectedAccountId }),
+        shouldEnforceUsageLimits: false,
       });
 
       if (isDefined(executionResult.error)) {

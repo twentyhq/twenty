@@ -1,11 +1,8 @@
+import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -17,13 +14,16 @@ const USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES = [
   WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
 ];
 
-const USER_FACING_BILLING_EXCEPTION_CODES = [
-  BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-  BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
-];
-
-const USER_FACING_USAGE_LIMIT_EXCEPTION_CODES = [
-  UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+// A step asking for a model the instance does not serve, or asking it something
+// it cannot answer, is a configuration the author has to change: no retry will
+// produce a model, and reporting it as a system error buries real ones.
+// API_KEY_NOT_CONFIGURED is the one an instance with no provider at all raises,
+// from getDefaultModelForTier under the auto-select fallback.
+const USER_FACING_AI_EXCEPTION_CODES = [
+  AiExceptionCode.API_KEY_NOT_CONFIGURED,
+  AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
+  AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
+  AiExceptionCode.INVALID_EVALUATION_REQUEST,
 ];
 
 export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
@@ -31,12 +31,12 @@ export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
     return USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES.includes(error.code);
   }
 
-  if (error instanceof BillingException) {
-    return USER_FACING_BILLING_EXCEPTION_CODES.includes(error.code);
+  if (isUsageRefusedError(error)) {
+    return true;
   }
 
-  if (error instanceof UsageLimitException) {
-    return USER_FACING_USAGE_LIMIT_EXCEPTION_CODES.includes(error.code);
+  if (error instanceof AiException) {
+    return USER_FACING_AI_EXCEPTION_CODES.includes(error.code);
   }
 
   return false;

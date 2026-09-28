@@ -14,7 +14,7 @@
 ## 💳 Billing
 
 **Free to run**: no per-seat, per-recording or per-import charge. AI actions use
-AI credits on the model's token usage.
+AI credits based on the model's token usage.
 
 ## 📌 Heads up
 

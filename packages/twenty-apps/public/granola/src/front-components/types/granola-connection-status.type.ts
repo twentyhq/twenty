@@ -6,7 +6,6 @@ export const GRANOLA_CONNECTION_STATUS_SCHEMA = z.object({
   isConnected: z.boolean(),
   isApiKeySet: z.boolean(),
   isGranolaReachable: z.boolean().default(true),
-  canManage: z.boolean().default(false),
   needsRegistration: z.boolean().default(false),
   error: z.string().optional(),
   registration: z

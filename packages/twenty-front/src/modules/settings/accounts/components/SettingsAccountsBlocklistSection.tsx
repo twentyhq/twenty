@@ -10,8 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { BlocklistScope, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAccountsBlocklistSection = () => {
   const { t } = useLingui();
@@ -61,8 +60,8 @@ export const SettingsAccountsBlocklistSection = () => {
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Blocklist`}
         description={
           isInternalMessagesImportEnabled
@@ -78,6 +77,6 @@ export const SettingsAccountsBlocklistSection = () => {
         blocklist={blocklist}
         handleBlockedEmailRemove={handleBlockedEmailRemove}
       />
-    </Section>
+    </Section.Root>
   );
 };

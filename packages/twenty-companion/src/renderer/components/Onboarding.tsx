@@ -3,7 +3,7 @@ import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { useState } from 'react';
 import { type CompanionState } from '../../shared/types/CompanionState';
 import { Field } from '@ui/primitives/input/Field/Field';
-import { MainButton } from '@ui/components/MainButton/MainButton';
+import { MainButton } from '@ui/components/input/MainButton/MainButton';
 import { IconArrowUpRight, IconRefresh } from 'twenty-ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { type ActionProps } from '../types/ActionProps';

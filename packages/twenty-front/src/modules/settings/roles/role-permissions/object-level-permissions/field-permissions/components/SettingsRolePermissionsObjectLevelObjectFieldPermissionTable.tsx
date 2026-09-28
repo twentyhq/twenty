@@ -20,10 +20,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID =
@@ -91,8 +90,8 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
     cannotAllowFieldReadRestrict && cannotAllowFieldUpdateRestrict;
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Fields Permissions`}
         description={t`Ability to interact with this object's fields.`}
       />
@@ -151,6 +150,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
             />
           ))}
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

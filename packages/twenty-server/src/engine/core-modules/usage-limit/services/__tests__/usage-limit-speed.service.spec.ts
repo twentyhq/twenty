@@ -45,6 +45,7 @@ const buildApiKeySpeedLimit = (): FlatUsageLimit => ({
   meter: 'quantity',
   limitValue: 100,
   burstValue: null,
+  isInstanceOverride: false,
 });
 
 describe('UsageLimitSpeedService', () => {

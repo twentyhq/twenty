@@ -1,3 +1,8 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import {
+  GetCoreWorkflowVersionDocument,
+  GetCoreWorkflowVersionLegacyMappingDocument,
+} from '~/generated/graphql';
 import { useCallback } from 'react';
 
 import {
@@ -20,13 +25,15 @@ type WorkflowVersionRecord = Pick<
 
 type EnrichParams = {
   headlessEngineCommandContextApi: HeadlessEngineCommandContextApi;
-  workflowVersionId: string;
+  workflowVersionId?: string;
+  coreWorkflowVersionId?: string;
   availabilityType: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: string | null;
 };
 
 export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation =
   () => {
+    const isCore = useIsWorkflowCoreEnabled();
     const apolloCoreClient = useApolloCoreClient();
     const { findOneRecord: findOneWorkflowVersion } =
       useLazyFindOneRecord<WorkflowVersionRecord>({
@@ -69,16 +76,72 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
         async ({
           headlessEngineCommandContextApi,
           workflowVersionId,
+          coreWorkflowVersionId,
           availabilityType,
           availabilityObjectMetadataId,
         }: EnrichParams): Promise<HeadlessCommandContextApi | undefined> => {
-          const workflowVersion = await fetchWorkflowVersion(workflowVersionId);
+          let resolvedCoreVersionId = coreWorkflowVersionId;
+          let resolvedWorkspaceVersionId = workflowVersionId;
+
+          if (
+            isCore &&
+            !isDefined(resolvedCoreVersionId) &&
+            isDefined(workflowVersionId)
+          ) {
+            const { data } = await apolloCoreClient.query({
+              query: GetCoreWorkflowVersionLegacyMappingDocument,
+              variables: { workspaceWorkflowVersionId: workflowVersionId },
+              fetchPolicy: 'network-only',
+            });
+            resolvedCoreVersionId = data?.coreWorkflowVersion?.id;
+          }
+
+          if (
+            isDefined(resolvedCoreVersionId) &&
+            (isCore || !isDefined(resolvedWorkspaceVersionId))
+          ) {
+            const { data } = await apolloCoreClient.query({
+              query: GetCoreWorkflowVersionDocument,
+              variables: { coreWorkflowVersionId: resolvedCoreVersionId },
+              fetchPolicy: 'network-only',
+            });
+            const version = data?.coreWorkflowVersion;
+            if (!isDefined(version)) {
+              return undefined;
+            }
+            if (isCore) {
+              if (!isDefined(version.coreWorkflowId)) {
+                return undefined;
+              }
+              return {
+                ...headlessEngineCommandContextApi,
+                workflowId: version.coreWorkflowId,
+                workflowVersionId: version.id,
+                coreWorkflowId: version.coreWorkflowId,
+                coreWorkflowVersionId: version.id,
+                trigger: version.trigger ?? null,
+                availabilityType,
+                availabilityObjectMetadataId,
+              };
+            }
+            resolvedWorkspaceVersionId =
+              version.workspaceWorkflowVersionId ?? undefined;
+          }
+
+          if (isCore || !isDefined(resolvedWorkspaceVersionId)) {
+            return undefined;
+          }
+          const workflowVersion = await fetchWorkflowVersion(
+            resolvedWorkspaceVersionId,
+          );
 
           if (!isDefined(workflowVersion)) {
             return undefined;
           }
 
-          const trigger = await fetchTriggerFromCore(workflowVersionId);
+          const trigger = await fetchTriggerFromCore(
+            resolvedWorkspaceVersionId,
+          );
 
           return {
             ...headlessEngineCommandContextApi,
@@ -89,7 +152,7 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
             availabilityObjectMetadataId,
           };
         },
-        [fetchWorkflowVersion, fetchTriggerFromCore],
+        [fetchWorkflowVersion, fetchTriggerFromCore, apolloCoreClient, isCore],
       );
 
     return {

@@ -1,5 +1,5 @@
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -15,7 +15,7 @@ import {
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLoadingContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};
@@ -111,7 +111,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   }, [entities, searchFilter, excludedIds, isAgent]);
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+    <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.target.value)}
@@ -138,6 +138,6 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
           </SettingsEmptyPlaceholder>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

@@ -10,6 +10,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import {
+  type ClientAiEvaluationModelConfig,
   type ClientAiModelConfig,
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -134,6 +135,29 @@ export class ClientConfigService {
       },
     );
 
+    const aiEvaluationModels: ClientAiEvaluationModelConfig[] =
+      this.aiModelRegistryService
+        .getAvailableEvaluationModelConfigs()
+        .filter((modelConfig) =>
+          this.aiModelRegistryService.isModelAdminAllowed(modelConfig.modelId),
+        )
+        .map((modelConfig) => ({
+          modelId: modelConfig.modelId,
+          label: modelConfig.label,
+          description: modelConfig.description,
+          providerLabel: getProviderLabel(modelConfig.modelId.split('/')[0]),
+          isAvailable: isDefined(
+            this.aiModelRegistryService.getEvaluationModel(modelConfig.modelId),
+          ),
+          supportedQuestionTypes: modelConfig.supportedQuestionTypes,
+          maxCriteriaPerQuestion: modelConfig.maxCriteriaPerQuestion,
+          maxScoreLevels: modelConfig.maxScoreLevels,
+          medianLatencyMs: modelConfig.medianLatencyMs,
+          inputCostPerMillionTokens: modelConfig.inputCostPerMillionTokens,
+          outputCostPerMillionTokens: modelConfig.outputCostPerMillionTokens,
+          isDeprecated: modelConfig.isDeprecated,
+        }));
+
     // A tier with no model is left out; the client shows its "configure a
     // provider" state from the empty list rather than an error.
     const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
@@ -166,6 +190,7 @@ export class ClientConfigService {
         ],
       },
       aiModels,
+      aiEvaluationModels,
       aiModelTiers,
       authProviders: {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),

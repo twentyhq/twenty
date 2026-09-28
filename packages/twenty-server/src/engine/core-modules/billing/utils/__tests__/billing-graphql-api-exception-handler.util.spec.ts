@@ -20,17 +20,17 @@ const catchGraphqlError = (error: Error): BaseGraphQLError => {
 };
 
 describe('billingGraphqlApiExceptionHandler', () => {
-  it('maps credits exhausted to a GraphQL error with the billing subCode', () => {
+  it('maps an inactive subscription to a GraphQL error with the billing subCode', () => {
     const error = new BillingException(
-      'Credits exhausted',
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+      'No active subscription',
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
     );
 
     const graphqlError = catchGraphqlError(error);
 
     expect(graphqlError.extensions.code).toBe(ErrorCode.FORBIDDEN);
     expect(graphqlError.extensions.subCode).toBe(
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
     );
     expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
   });

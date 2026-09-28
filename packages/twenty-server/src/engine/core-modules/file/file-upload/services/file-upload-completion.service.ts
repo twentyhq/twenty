@@ -5,8 +5,8 @@ import { Readable } from 'stream';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
@@ -23,12 +23,9 @@ import {
   ANY_MIME_TYPE,
   fileFolderConfigs,
 } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -51,11 +48,7 @@ type CompletedUploadedFile = FileDTO & Pick<FileEntity, 'mimeType'>;
 export class FileUploadCompletionService {
   private readonly logger = new Logger(FileUploadCompletionService.name);
 
-  constructor(
-    private readonly fileStorageService: FileStorageService,
-    @InjectWorkspaceScopedRepository(FileEntity)
-    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
-  ) {}
+  constructor(private readonly fileStorageService: FileStorageService) {}
 
   async completeUploadsBatch(
     requests: BatchCompleteUploadRequest[],
@@ -146,11 +139,14 @@ export class FileUploadCompletionService {
       ifMatchChecksum: checksum,
     });
 
-    const { affected } = await this.fileRepository.update(
+    const { affected } = await this.fileStorageService.markFileUploaded({
       workspaceId,
-      { id: file.id },
-      { status: FILE_STATUS.UPLOADED, mimeType, size },
-    );
+      applicationId: file.applicationId,
+      fileId: file.id,
+      chargedSize: declaredSize,
+      size,
+      mimeType,
+    });
 
     // The cleanup cron claims a stale PENDING row by deleting it, then deletes
     // its objects, so losing the row here means it won. The promoting copy may

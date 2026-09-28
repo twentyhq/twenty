@@ -1,13 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
@@ -20,6 +19,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type FindOneSkillQuery } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
@@ -63,7 +63,7 @@ type SettingsSkillFormContentProps = {
 export const SettingsSkillFormContent = ({
   skill,
 }: SettingsSkillFormContentProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const navigate = useNavigateSettings();
 
@@ -162,8 +162,8 @@ export const SettingsSkillFormContent = ({
       links={getSettingsAiBreadcrumbLinks(breadcrumbText)}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`About`}
             description={t`Define the name and instructions for this skill`}
           />
@@ -232,27 +232,24 @@ export const SettingsSkillFormContent = ({
                     fullWidth
                     RightIcon={() =>
                       apiNameTooltipText && (
-                        <>
+                        <Tooltip
+                          content={apiNameTooltipText}
+                          sideOffset={5}
+                          side="bottom"
+                          positionMethod="fixed"
+                          delay={TooltipDelay.shortDelay}
+                        >
                           <IconInfoCircle
                             id="info-circle-id-skill-name"
                             size={theme.icon.size.md}
                             color={theme.font.color.tertiary}
                             style={{ outline: 'none' }}
                           />
-                          <AppTooltip
-                            anchorSelect="#info-circle-id-skill-name"
-                            title={apiNameTooltipText}
-                            offset={5}
-                            noArrow
-                            place="bottom"
-                            positionStrategy="fixed"
-                            delay={TooltipDelay.shortDelay}
-                          />
-                        </>
+                        </Tooltip>
                       )
                     }
                   />
-                  <Card rounded>
+                  <Card.Root rounded>
                     <SettingsOptionCardContentSwitch
                       Icon={IconRefresh}
                       title={t`Synchronize Label and API Name`}
@@ -264,12 +261,12 @@ export const SettingsSkillFormContent = ({
                         handleFieldChange('isLabelSyncedWithName', value)
                       }
                     />
-                  </Card>
+                  </Card.Root>
                 </StyledAdvancedSettingsContainer>
               </StyledAdvancedSettingsOuterContainer>
             </AdvancedSettingsWrapper>
           </StyledFormContainer>
-        </Section>
+        </Section.Root>
 
         {isDefined(skill) && <SettingsSkillDangerZone skill={skill} />}
       </SettingsPageContainer>

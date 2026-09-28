@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { type AgentChatThreadTargetWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-target.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -40,6 +41,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   pointOfContactForOpportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
   taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
+  agentChatThreadTargets: EntityRelation<
+    AgentChatThreadTargetWorkspaceEntity[]
+  >;
   calendarEventTargets: EntityRelation<CalendarEventTargetWorkspaceEntity[]>;
   messageThreadTargets: EntityRelation<MessageThreadTargetWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;

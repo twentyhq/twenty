@@ -301,6 +301,14 @@ export class WorkspaceEntity {
   isInternalMessagesImportEnabled: boolean;
 
   @Field(() => [String], { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.43.0_AddWorkspaceAllowedIframeOriginsFastInstanceCommand_1790232481570',
+  })
+  @Column({ type: 'varchar', array: true, default: '{}' })
+  allowedIframeOrigins: string[];
+
+  @Field(() => [String], { nullable: true })
   @Column({
     type: 'varchar',
     array: true,
@@ -341,6 +349,13 @@ export class WorkspaceEntity {
   @Field(() => GraphQLJSON, { nullable: false })
   @Column({ type: 'jsonb', nullable: false, default: {} })
   aiModelIdByTier: Partial<Record<AiModelTier, string>>;
+
+  // Which evaluation model a Classify step lands on when it names none. Null
+  // means whichever the instance offers, so a workspace that never chooses
+  // still runs and picks up an evaluation provider the day one is configured.
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
+  aiEvaluationModelId: string | null;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })

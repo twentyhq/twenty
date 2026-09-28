@@ -1,8 +1,6 @@
 import { type Appearance } from '@stripe/stripe-js';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { THEME_DARK, THEME_LIGHT, useThemeColorScheme } from 'twenty-ui/theme';
 
 // Stripe's Appearance API rejects CSS color(display-p3 ...) values, which is
 // how the Twenty theme stores colors; map them to sRGB so the PaymentElement
@@ -25,7 +23,7 @@ const toStripeColor = (color: string): string => {
 };
 
 export const useStripeAppearance = (): Appearance => {
-  const { colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const isDark = colorScheme === 'dark';
   const theme = isDark ? THEME_DARK : THEME_LIGHT;
 

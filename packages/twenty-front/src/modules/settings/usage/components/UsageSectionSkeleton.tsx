@@ -1,11 +1,9 @@
-import { useContext } from 'react';
-
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { Section } from 'twenty-ui/primitives/layout';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components';
+import { useTheme } from 'twenty-ui/theme';
 
 export const UsageSectionSkeleton = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <SkeletonTheme
@@ -13,7 +11,7 @@ export const UsageSectionSkeleton = () => {
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Section>
+      <Section.Root>
         <Skeleton width={160} height={16} />
         <Skeleton
           width="100%"
@@ -21,7 +19,7 @@ export const UsageSectionSkeleton = () => {
           borderRadius={8}
           style={{ marginTop: 16 }}
         />
-      </Section>
+      </Section.Root>
     </SkeletonTheme>
   );
 };

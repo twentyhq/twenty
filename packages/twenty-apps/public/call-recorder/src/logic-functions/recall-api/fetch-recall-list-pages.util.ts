@@ -16,6 +16,7 @@ export const fetchRecallListPages = async <TItem>({
   shouldStartPageRequest,
   extractPageItems,
   malformedErrorMessage,
+  signal,
 }: {
   config: RecallApiConfig;
   initialPath: string;
@@ -25,6 +26,7 @@ export const fetchRecallListPages = async <TItem>({
     response: RecallListResponse | undefined,
   ) => TItem[] | undefined;
   malformedErrorMessage: string;
+  signal?: AbortSignal;
 }): Promise<
   { ok: true; items: TItem[]; truncated: boolean } | RecallBotOperationFailure
 > => {
@@ -44,6 +46,7 @@ export const fetchRecallListPages = async <TItem>({
       config,
       path,
       method: 'GET',
+      signal,
     });
 
     if (!result.ok) {

@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
@@ -11,12 +11,13 @@ import {
   coreWorkflowsSelectionState,
 } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
+import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type DeleteCoreWorkflowsMutation,
   type DeleteCoreWorkflowsMutationVariables,
@@ -54,21 +55,23 @@ export const useDeleteSelectedCoreWorkflows = () => {
     currentFilterSettings: coreWorkflowsFilterSettings,
   });
 
-  const deleteSelectedCoreWorkflows = async () => {
-    if (!isNonEmptyArray(selectedCoreWorkflowIds)) {
-      return;
+  const deleteSelectedCoreWorkflows = async (
+    coreWorkflowIds = selectedCoreWorkflowIds,
+  ) => {
+    if (!isNonEmptyArray(coreWorkflowIds)) {
+      return false;
     }
 
-    let deletedWorkspaceWorkflowIds: string[];
+    let deletedCoreWorkflows: NonNullable<
+      DeleteCoreWorkflowsMutation['deleteCoreWorkflows']
+    >;
 
     try {
       const { data } = await deleteCoreWorkflowsMutation({
-        variables: { input: { coreWorkflowIds: selectedCoreWorkflowIds } },
+        variables: { input: { coreWorkflowIds } },
       });
 
-      deletedWorkspaceWorkflowIds = (data?.deleteCoreWorkflows ?? []).map(
-        (deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId,
-      );
+      deletedCoreWorkflows = data?.deleteCoreWorkflows ?? [];
     } catch (error) {
       logError(error);
       enqueueToast({
@@ -76,19 +79,25 @@ export const useDeleteSelectedCoreWorkflows = () => {
         children: t`Failed to delete workflows`,
       });
 
-      return;
+      return false;
     }
 
-    if (!isNonEmptyArray(deletedWorkspaceWorkflowIds)) {
+    if (!isNonEmptyArray(deletedCoreWorkflows)) {
       enqueueToast({
         variant: 'error',
         children: t`No workflows were deleted`,
       });
 
-      return;
+      return false;
     }
 
     setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION);
+
+    const deletedWorkspaceWorkflowIds = deletedCoreWorkflows
+      .map((deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId)
+      .filter(isDefined);
+
+    void invalidateCoreWorkflowQueries(apolloCoreClient).catch(logError);
 
     removeNavigationMenuItemsByTargetRecordIds(deletedWorkspaceWorkflowIds);
 
@@ -99,6 +108,8 @@ export const useDeleteSelectedCoreWorkflows = () => {
         deletedRecordIds: deletedWorkspaceWorkflowIds,
       },
     });
+
+    return true;
   };
 
   return { deleteSelectedCoreWorkflows, selectedCoreWorkflowIds };

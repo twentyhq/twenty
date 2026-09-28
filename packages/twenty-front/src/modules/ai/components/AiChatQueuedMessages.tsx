@@ -1,15 +1,17 @@
+import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
+import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledQueueContainer = styled(StyledAiChatContentContainer)`
   display: flex;
@@ -43,6 +45,7 @@ const StyledQueuedText = styled.span`
 `;
 
 export const AiChatQueuedMessages = () => {
+  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatQueuedMessages = useAtomComponentFamilyStateValue(
     agentChatQueuedMessagesComponentFamilyState,
@@ -66,11 +69,15 @@ export const AiChatQueuedMessages = () => {
         return (
           <StyledQueuedItem key={message.id}>
             <StyledQueuedText>{displayText}</StyledQueuedText>
-            <LightIconButton
-              Icon={IconX}
-              onClick={() => deleteQueuedMessage(message.id)}
-              size="small"
-            />
+            {!isReadOnly && (
+              <LightIconButton
+                onClick={() => deleteQueuedMessage(message.id)}
+                size="sm"
+                aria-label={t`Remove queued message`}
+              >
+                <IconX />
+              </LightIconButton>
+            )}
           </StyledQueuedItem>
         );
       })}

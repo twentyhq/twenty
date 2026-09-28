@@ -23,11 +23,13 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver(() => UsageLimitDTO)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
@@ -85,6 +87,7 @@ export class UsageLimitResolver {
     const usageLimit = await this.usageLimitService.create({
       workspaceId: workspace.id,
       input,
+      isOperator: false,
     });
 
     return fromUsageLimitEntityToDto(usageLimit);
@@ -98,6 +101,7 @@ export class UsageLimitResolver {
     const usageLimit = await this.usageLimitService.update({
       workspaceId: workspace.id,
       input,
+      isOperator: false,
     });
 
     return fromUsageLimitEntityToDto(usageLimit);
@@ -111,6 +115,7 @@ export class UsageLimitResolver {
     return this.usageLimitService.delete({
       workspaceId: workspace.id,
       usageLimitId,
+      isOperator: false,
     });
   }
 }

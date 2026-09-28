@@ -21,7 +21,9 @@ import { useStore } from 'jotai';
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
   'skip' | 'onCompleted' | 'onError'
->;
+> & {
+  shouldToastOnError?: boolean;
+};
 
 export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
@@ -30,6 +32,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   limit = QUERY_DEFAULT_LIMIT_RECORDS,
   recordGqlFields,
   fetchPolicy = 'cache-first',
+  shouldToastOnError = true,
 }: UseLazyFindManyRecordsParams<T>) => {
   const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -84,6 +87,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     data: data as RecordGqlOperationFindManyResult | undefined,
     error,
     objectMetadataItem,
+    shouldToastOnError,
   });
 
   const findManyRecordsLazy = useCallback(async () => {
@@ -108,7 +112,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       variables: defaultVariables,
     }).retain();
 
-    if (isDefined(result?.error)) {
+    if (isDefined(result?.error) && shouldToastOnError) {
       handleFindManyRecordsError(result.error);
     }
 
@@ -151,6 +155,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.namePlural,
     queryIdentifier,
     handleFindManyRecordsError,
+    shouldToastOnError,
     store,
   ]);
 

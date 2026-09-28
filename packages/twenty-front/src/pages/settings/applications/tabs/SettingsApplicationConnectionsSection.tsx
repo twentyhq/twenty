@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -9,15 +8,13 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Avatar, Status } from 'twenty-ui/primitives/data-display';
-import { Info } from 'twenty-ui/primitives/feedback';
+import { Info, Section } from 'twenty-ui/components';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
+import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -41,7 +38,7 @@ export const SettingsApplicationConnectionsSection = ({
   applicationId: string;
 }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
@@ -64,8 +61,8 @@ export const SettingsApplicationConnectionsSection = ({
         );
 
         return (
-          <Section key={provider.id}>
-            <H2Title
+          <Section.Root key={provider.id}>
+            <Section.Header
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
               adornment={
@@ -174,7 +171,7 @@ export const SettingsApplicationConnectionsSection = ({
                 >{t`Add connection`}</Button>
               </StyledFooter>
             )}
-          </Section>
+          </Section.Root>
         );
       })}
     </>

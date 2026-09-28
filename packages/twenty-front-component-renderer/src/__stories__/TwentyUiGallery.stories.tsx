@@ -1,4 +1,15 @@
+import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
+import { inputPreactTest } from '@/__stories__/twenty-ui-gallery/utils/inputPreactTest';
+import { inputReactTest } from '@/__stories__/twenty-ui-gallery/utils/inputReactTest';
+import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
+import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
+import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
+import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
+import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
+import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
+import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
+import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -10,7 +21,6 @@ import {
   createCheckboxTest,
   createFieldControlsTest,
   createRadioGroupPreactTest,
-  listItemTest,
   sliderTest,
   toastTest,
 } from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
@@ -21,16 +31,11 @@ import {
   chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
+import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
 import {
   codeEditorTest,
-  dataDisplayTest,
   displayHelpersTest,
   galleryRenderTest,
-  inputPreactTest,
-  inputReactTest,
-  modalOpenHangTest,
-  navigationTest,
-  themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
   alertDialogTest,
@@ -44,6 +49,7 @@ import {
   tabsReactTest,
 } from '@/__stories__/twenty-ui-gallery/utils/sandboxFailureTests';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { createTooltipSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createTooltipSandboxFailureTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -60,12 +66,12 @@ export default meta;
 export const DataDisplayReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'react',
-  play: dataDisplayTest,
+  play: galleryRenderTest,
 });
 export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
-  play: dataDisplayTest,
+  play: galleryRenderTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
@@ -115,23 +121,23 @@ export const JsonVisualizerPreact: Story = createGalleryStory({
 export const LayoutReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: resizeHandleTest,
 });
 export const LayoutPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: resizeHandleTest,
 });
 
 export const NavigationReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'react',
-  play: navigationTest,
+  play: galleryRenderTest,
 });
 export const NavigationPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'preact',
-  play: navigationTest,
+  play: galleryRenderTest,
 });
 
 export const SurfacesReact: Story = createGalleryStory({
@@ -145,15 +151,15 @@ export const SurfacesPreact: Story = createGalleryStory({
   play: galleryRenderTest,
 });
 
-export const ModalOpenReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-modal-open-gallery',
+export const DialogReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
   runtime: 'react',
-  play: modalOpenHangTest,
+  play: dialogTest,
 });
-export const ModalOpenPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-modal-open-gallery',
+export const DialogPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: dialogTest,
 });
 
 export const CodeEditorReact: Story = createGalleryStory({
@@ -170,12 +176,12 @@ export const CodeEditorPreact: Story = createGalleryStory({
 export const TypographyReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-typography-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: typographyTest,
 });
 export const TypographyPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-typography-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: typographyTest,
 });
 
 export const ThemeTokensReact: Story = createGalleryStory({
@@ -222,12 +228,36 @@ export const DisplayHelpersPreact: Story = createGalleryStory({
 export const ListItemReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'react',
-  play: listItemTest,
+  play: createListItemSandboxFailureTest('react'),
 });
 export const ListItemPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'preact',
-  play: listItemTest,
+  play: createListItemSandboxFailureTest('preact'),
+});
+
+export const PickerListItemsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'react',
+  play: pickerListItemsTest,
+});
+
+export const PickerListItemsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'preact',
+  play: pickerListItemsTest,
+});
+
+export const SettingsRowReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
+  runtime: 'react',
+  play: settingsRowTest,
+});
+
+export const SettingsRowPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
+  runtime: 'preact',
+  play: settingsRowTest,
 });
 
 export const TabsReact: Story = createGalleryStory({
@@ -252,6 +282,18 @@ export const PopoverPreact: Story = createGalleryStory({
   play: popoverTest,
 });
 
+export const TooltipReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip',
+  runtime: 'react',
+  play: createTooltipSandboxFailureTest('react'),
+});
+
+export const TooltipPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip',
+  runtime: 'preact',
+  play: createTooltipSandboxFailureTest('preact'),
+});
+
 export const MenuReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-menu',
   runtime: 'react',
@@ -261,6 +303,18 @@ export const MenuPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-menu',
   runtime: 'preact',
   play: menuTest,
+});
+
+export const DropdownReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'react',
+  play: dropdownSandboxFailureTest,
+});
+
+export const DropdownPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'preact',
+  play: dropdownSandboxFailureTest,
 });
 
 export const SelectReact: Story = createGalleryStory({
@@ -398,6 +452,18 @@ export const ButtonControlsPreact: Story = createGalleryStory({
   play: buttonControlsTest,
 });
 
+export const ResponsiveHooksReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-responsive-hooks',
+  runtime: 'react',
+  play: responsiveHooksTest,
+});
+
+export const ResponsiveHooksPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-responsive-hooks',
+  runtime: 'preact',
+  play: responsiveHooksTest,
+});
+
 export const AvatarControlsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-avatar-controls',
   runtime: 'react',
@@ -420,4 +486,16 @@ export const ChipControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-chip-controls',
   runtime: 'preact',
   play: chipControlsTest,
+});
+
+export const IconButtonElevatedReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
+  runtime: 'react',
+  play: iconButtonElevatedTest,
+});
+
+export const IconButtonElevatedPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
+  runtime: 'preact',
+  play: iconButtonElevatedTest,
 });

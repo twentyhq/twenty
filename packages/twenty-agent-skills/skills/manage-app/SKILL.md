@@ -26,7 +26,7 @@ For background on how Twenty apps work — the SDK packages, remotes, sync lifec
 
 Do not scaffold a new app here. Use `$create-app` when the app does not exist.
 
-Do not add or modify app entities here. Use `$develop-app` for objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, connection providers, and front component registration.
+Do not add or modify app entities here. Use `$develop-app` for objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, connection providers, front component registration, and settings menu items.
 
 Do not prepare marketplace README, screenshots, logos, or npm listing copy here. Use `$publish-app` for public listing work.
 

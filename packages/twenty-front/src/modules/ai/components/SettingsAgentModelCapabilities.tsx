@@ -1,12 +1,12 @@
 import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
-import { InputLabel, Checkbox } from 'twenty-ui/primitives/input';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;
@@ -57,7 +57,7 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const selectedModel = useResolvedAiModel(selectedModelId);
   const nativeCapabilities = selectedModel?.nativeCapabilities;
 
@@ -113,7 +113,7 @@ export const SettingsAgentModelCapabilities = ({
   ];
 
   return (
-    <Section>
+    <Section.Root>
       <InputLabel>{t`Enable model-specific features`}</InputLabel>
       <div>
         {capabilities.map((capability) => (
@@ -140,6 +140,6 @@ export const SettingsAgentModelCapabilities = ({
           </StyledCheckboxContainer>
         ))}
       </div>
-    </Section>
+    </Section.Root>
   );
 };

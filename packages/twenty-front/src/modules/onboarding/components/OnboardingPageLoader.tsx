@@ -1,7 +1,7 @@
 import { isOnOnboardingVerifyPath } from '@/auth/utils/isOnOnboardingVerifyPath';
 import { OnboardingPulsingLogo } from '@/onboarding/components/OnboardingPulsingLogo';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;

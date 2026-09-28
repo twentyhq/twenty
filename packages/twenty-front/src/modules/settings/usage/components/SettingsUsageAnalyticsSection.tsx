@@ -11,9 +11,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconSparkles } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 
 export const SettingsUsageAnalyticsSection = () => {
@@ -25,8 +24,8 @@ export const SettingsUsageAnalyticsSection = () => {
 
   if (!isClickHouseConfigured) {
     return (
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Usage Analytics`}
           description={t`Credit usage breakdown for your workspace.`}
         />
@@ -36,7 +35,7 @@ export const SettingsUsageAnalyticsSection = () => {
             value={t`Usage analytics requires ClickHouse. Contact your administrator.`}
           />
         </SubscriptionInfoContainer>
-      </Section>
+      </Section.Root>
     );
   }
 
@@ -52,8 +51,8 @@ export const SettingsUsageAnalyticsSection = () => {
 
   if (!hasData) {
     return (
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Usage Analytics`}
           description={t`Credit usage breakdown for your workspace.`}
         />
@@ -63,7 +62,7 @@ export const SettingsUsageAnalyticsSection = () => {
             value={t`Usage analytics will appear here once you start using credits.`}
           />
         </SubscriptionInfoContainer>
-      </Section>
+      </Section.Root>
     );
   }
 
@@ -95,13 +94,13 @@ export const SettingsUsageAnalyticsSection = () => {
         }
         showAvatar
       />
-      <Section>
+      <Section.Root>
         <NavigationButton
           to={`${getSettingsPath(SettingsPath.AI)}#${SETTINGS_AI_TABS.TABS_IDS.USAGE}`}
           startIcon={<IconSparkles />}
           variant="outline"
         >{t`View AI usage breakdown`}</NavigationButton>
-      </Section>
+      </Section.Root>
     </>
   );
 };

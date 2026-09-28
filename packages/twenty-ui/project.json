@@ -6,6 +6,19 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": { "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
+    "check:ownership": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["generateBarrels"],
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/docs/module-ownership.json",
+        "{projectRoot}/scripts/checkModuleOwnership.ts"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/checkModuleOwnership.ts"
+      }
+    },
     "generateTokens": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -91,6 +104,16 @@
         "command": "tsx scripts/checkPackSize.ts"
       }
     },
+    "test:package": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["production"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/checkOptionalDependencies.ts && tsx scripts/checkThemeExports.ts"
+      }
+    },
     "clean": {
       "executor": "nx:run-commands",
       "options": { "command": "rimraf {projectRoot}/dist" }
@@ -99,6 +122,7 @@
     "lint": {},
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
     "test": {
+      "dependsOn": ["check:ownership"],
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": ["default", "^default"],
@@ -109,6 +133,7 @@
       "configurations": { "watch": { "command": "npx vitest --project unit" } }
     },
     "typecheck": {},
+    "knip": {},
     "storybook:build": {
       "configurations": {
         "test": {},

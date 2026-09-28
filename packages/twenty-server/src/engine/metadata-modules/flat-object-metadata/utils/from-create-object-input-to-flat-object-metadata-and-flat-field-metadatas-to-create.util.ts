@@ -94,6 +94,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       indexMetadataUniversalIdentifiers: [],
       searchFieldMetadataUniversalIdentifiers: [],
       pageLayoutUniversalIdentifiers: [],
+      navigationMenuItemUniversalIdentifiers: [],
       commandMenuItemUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier,
       imageIdentifierFieldMetadataUniversalIdentifier: null,

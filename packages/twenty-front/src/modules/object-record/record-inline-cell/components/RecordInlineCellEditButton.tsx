@@ -1,7 +1,8 @@
+import { AnimatedContainer } from '@/ui/layout/animation/components/internal/AnimatedContainer/AnimatedContainer';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { IconButton } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
-import { AnimatedContainer } from 'twenty-ui/primitives/layout';
 
 const StyledInlineCellButtonContainer = styled.div`
   align-items: center;
@@ -19,13 +20,16 @@ export const RecordInlineCellButton = ({
 }) => {
   return (
     <AnimatedContainer>
-      <StyledInlineCellButtonContainer onClick={onClick}>
-        <FloatingIconButton
-          size="small"
-          Icon={Icon}
-          ariaLabel={ariaLabel}
+      <StyledInlineCellButtonContainer>
+        <IconButton
+          elevated
+          size="sm"
+          aria-label={ariaLabel ?? t`Edit field`}
+          onClick={onClick}
           data-testid="inline-cell-edit-mode-container"
-        />
+        >
+          <Icon />
+        </IconButton>
       </StyledInlineCellButtonContainer>
     </AnimatedContainer>
   );

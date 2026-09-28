@@ -71,10 +71,15 @@ describe('on-opportunity-created', () => {
       ],
     });
 
-    expect(mutationMock.mock.calls[0][0].updateOpportunity.__args.data).toEqual({
-      lastContactAt: OCCURRED_AT,
-      lastContactItemMessageId: MESSAGE_ID,
-      lastContactItemCalendarEventId: null,
-    });
+    expect(
+      mutationMock.mock.calls[0][0].createOpportunities.__args.data,
+    ).toEqual([
+      {
+        id: OPPORTUNITY_ID,
+        lastContactAt: OCCURRED_AT,
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+      },
+    ]);
   });
 });

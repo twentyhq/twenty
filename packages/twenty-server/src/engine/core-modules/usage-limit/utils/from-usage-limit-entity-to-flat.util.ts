@@ -15,4 +15,5 @@ export const fromUsageLimitEntityToFlat = (
   meter: usageLimit.meter,
   limitValue: usageLimit.limitValue,
   burstValue: usageLimit.burstValue,
+  isInstanceOverride: usageLimit.isInstanceOverride,
 });

@@ -3,6 +3,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { type Histogram } from '@opentelemetry/api';
 import { performance, type EventLoopUtilization } from 'perf_hooks';
 
+import { POD_NAME } from 'src/engine/core-modules/metrics/constants/pod-name.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 const SAMPLE_INTERVAL_MS = 1_000;
@@ -39,7 +40,9 @@ export class EventLoopMetricsService implements OnModuleInit, OnModuleDestroy {
       const lagMs = Math.max(0, now - this.lastSampleAt - SAMPLE_INTERVAL_MS);
 
       this.lastSampleAt = now;
-      this.delayHistogram.record(lagMs / MILLISECONDS_PER_SECOND);
+      this.delayHistogram.record(lagMs / MILLISECONDS_PER_SECOND, {
+        pod: POD_NAME,
+      });
     }, SAMPLE_INTERVAL_MS);
     this.sampler.unref();
 
@@ -61,6 +64,7 @@ export class EventLoopMetricsService implements OnModuleInit, OnModuleDestroy {
 
         return delta.utilization;
       },
+      perPod: true,
     });
   }
 

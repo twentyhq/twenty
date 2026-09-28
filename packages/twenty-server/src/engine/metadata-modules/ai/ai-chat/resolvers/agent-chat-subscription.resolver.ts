@@ -1,3 +1,9 @@
+import { createSubscriptionAuthorization } from 'src/engine/subscriptions/utils/create-subscription-authorization';
+import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { withAsyncIteratorAuthorization } from 'src/engine/subscriptions/utils/with-async-iterator-authorization';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
@@ -12,10 +18,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
@@ -24,8 +26,6 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
@@ -33,8 +33,9 @@ export class AgentChatSubscriptionResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
-    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
-    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    private readonly sharingService: AgentChatSharingService,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
 
   @Subscription(() => AgentChatEventDTO, {
@@ -51,17 +52,18 @@ export class AgentChatSubscriptionResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
-      select: ['id'],
+    const authorize = createSubscriptionAuthorization({
+      check: () =>
+        this.sharingService
+          .getReadableThread({
+            workspaceId: workspace.id,
+            threadId,
+            userWorkspaceId,
+          })
+          .catch(aiGraphqlApiExceptionHandler),
+      maxAgeMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
     });
-
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
+    await authorize();
 
     const iterator = await this.subscriptionService.subscribeToAgentChat({
       workspaceId: workspace.id,
@@ -77,26 +79,31 @@ export class AgentChatSubscriptionResolver {
 
     let lastReapCheckAt = 0;
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
-      initialValue: keepalivePayload,
-      onHeartbeat: async () => {
-        if (
-          Date.now() - lastReapCheckAt >=
-          AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
-        ) {
-          lastReapCheckAt = Date.now();
-          await this.reapWatchedStreamIfDead(workspace.id, threadId);
-        }
+    return withAsyncIteratorAuthorization({
+      iterator: wrapAsyncIteratorWithLifecycle(() => iterator, {
+        initialValue: keepalivePayload,
+        heartbeatErrorBehavior: 'close',
+        onHeartbeat: async () => {
+          await authorize(true);
+          if (
+            Date.now() - lastReapCheckAt >=
+            AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
+          ) {
+            lastReapCheckAt = Date.now();
+            await this.reapWatchedStreamIfDead(workspace.id, threadId);
+          }
 
-        await this.subscriptionService.publishToAgentChat({
-          workspaceId: workspace.id,
-          threadId,
-          payload: keepalivePayload,
-        });
+          await this.subscriptionService.publishToAgentChat({
+            workspaceId: workspace.id,
+            threadId,
+            payload: keepalivePayload,
+          });
 
-        return true;
-      },
-      heartbeatIntervalMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
+          return true;
+        },
+        heartbeatIntervalMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
+      }),
+      authorize,
     });
   }
 

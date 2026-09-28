@@ -3,6 +3,7 @@ import {
   type AuthProviders,
   type Billing,
   type Captcha,
+  type ClientAiEvaluationModelConfig,
   type ClientAiModelConfig,
   type ClientAiModelTierConfig,
   type ClientConfigMaintenanceMode,
@@ -16,6 +17,7 @@ import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 export type ClientConfig = {
   appVersion?: string;
   aiModels: Array<ClientAiModelConfig>;
+  aiEvaluationModels: Array<ClientAiEvaluationModelConfig>;
   aiModelTiers: Array<ClientAiModelTierConfig>;
   analyticsEnabled: boolean;
   api: ApiConfig;

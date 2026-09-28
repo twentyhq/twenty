@@ -9,7 +9,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -35,13 +35,18 @@ export const RecordList = () => {
   return (
     <StyledContainer ref={setContainerElement}>
       <RecordListResponsiveFieldsEffect containerElement={containerElement} />
-      <ScrollWrapper
-        componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
-        defaultEnableXScroll={false}
-      >
-        {hasRecordGroups ? <RecordListRecordGroupsBody /> : <RecordListBody />}
-      </ScrollWrapper>
-      <RecordListFieldTooltip />
+      <RecordListFieldTooltip>
+        <ScrollWrapper
+          componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
+          defaultEnableXScroll={false}
+        >
+          {hasRecordGroups ? (
+            <RecordListRecordGroupsBody />
+          ) : (
+            <RecordListBody />
+          )}
+        </ScrollWrapper>
+      </RecordListFieldTooltip>
     </StyledContainer>
   );
 };

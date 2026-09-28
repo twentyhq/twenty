@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { CodeEditor } from 'twenty-ui/primitives/input';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;

@@ -15,9 +15,13 @@ import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/applicati
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver()
-@UseFilters(ApplicationRegistrationExceptionFilter)
+@UseFilters(
+  ApplicationRegistrationExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
 export class MarketplaceResolver {

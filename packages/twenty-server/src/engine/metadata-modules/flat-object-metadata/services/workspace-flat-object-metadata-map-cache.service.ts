@@ -45,6 +45,10 @@ const FLAT_OBJECT_METADATA_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['navigationTargetObjectMetadataId'],
   },
+  navigationMenuItem: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['targetObjectMetadataId'],
+  },
 } as const;
 
 @Injectable()
@@ -68,6 +72,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends MetadataFlatEnti
       searchFieldMetadata: searchFieldMetadatas,
       pageLayout: pageLayouts,
       commandMenuItem: commandMenuItems,
+      navigationMenuItem: navigationMenuItems,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -102,6 +107,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends MetadataFlatEnti
             pageLayouts.byObjectMetadataId.get(objectMetadataEntity.id) || [],
           commandMenuItems:
             commandMenuItems.byNavigationTargetObjectMetadataId.get(
+              objectMetadataEntity.id,
+            ) || [],
+          navigationMenuItems:
+            navigationMenuItems.byTargetObjectMetadataId.get(
               objectMetadataEntity.id,
             ) || [],
         },

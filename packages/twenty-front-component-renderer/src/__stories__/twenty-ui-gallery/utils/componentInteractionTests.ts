@@ -102,27 +102,6 @@ export const createFieldControlsTest =
     });
   };
 
-export const listItemTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-  await expectFrontComponentMounted(canvas);
-
-  const digest = canvas.getByText('Weekly digest');
-
-  await userEvent.click(digest);
-  await waitFor(() =>
-    expect(canvas.getByRole('status')).toHaveTextContent('Digest: enabled'),
-  );
-  await userEvent.click(digest);
-  await waitFor(() =>
-    expect(canvas.getByRole('status')).toHaveTextContent('Digest: disabled'),
-  );
-  await userEvent.click(canvas.getByText('Disabled preference'));
-  expect(canvas.getByRole('status')).toHaveTextContent('Digest: disabled');
-  expect(errorHandler).not.toHaveBeenCalled();
-};
-
 export const toastTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {

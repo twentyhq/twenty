@@ -5,7 +5,7 @@ import {
   type MessageChannelType,
   type MessageChannelVisibility,
 } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { CREATE_EMAIL_GROUP_CHANNEL } from '@/settings/accounts/graphql/mutations/createEmailGroupChannel';

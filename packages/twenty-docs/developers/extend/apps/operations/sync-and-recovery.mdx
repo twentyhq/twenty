@@ -129,7 +129,7 @@ Each entity goes to the file that already defines it, so a second pull rewrites 
 
 **What it does not write:**
 
-- **Not exported yet** — command menu items, logic functions and front components, skills and agents, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
+- **Not exported yet** — command menu items and settings menu items, logic functions and front components, skills and agents, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
 - **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
 - **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
 - **Placed on a default or foreign page layout** — tabs and widgets added to an engine default page layout, or to one owned by another application, are written as standalone `definePageLayoutTab()` and `definePageLayoutWidget()` files, since the identifier they attach to is known.
@@ -137,7 +137,9 @@ Each entity goes to the file that already defines it, so a second pull rewrites 
 - **Workspace runtime state** — member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design.
 - **Owned by another application** — reported, never pulled.
 
-The report at the end of a pull lists all of it, grouped by reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.
+The report at the end of a pull lists all of it, grouped by kind and reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.
+
+**Workspace-local state.** An entity deactivated in the workspace is written as an active definition, and the overrides the workspace made on an entity, such as a renamed label, are not written. The report lists those rows under "Written without their workspace-local state". Applying the tree back to the same workspace leaves that state untouched; another workspace gets the entity active and without the overrides.
 
 **The base file.** Pull records what it pulled in `.twenty/pull-base.json`, which is gitignored and per checkout. That file is what a later pull compares against to leave untouched the files whose entity did not change, and to delete the file of an entity that is gone from the workspace. A checkout without it simply writes everything and deletes nothing.
 
@@ -173,5 +175,6 @@ When something goes wrong, the metadata diff and named errors let you place the 
 - **Registration ownership error** — the sync is refused because the app's `universalIdentifier` belongs to another workspace, or to no workspace at all; see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
 - **Dependencies size error** — the sync or install fails because the app's production `dependencies` are too large to install as a runtime layer (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); move packages your logic functions do not import at runtime (UI libraries, dev tooling) to `devDependencies`.
+- **Deferred migration in progress** — the sync is refused because a background data model migration from an earlier sync is still running (`DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`); wait for it to finish, then sync again.
 - **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).
 - **Local instance state** — none of the above and the workspace still looks wrong; work down the recovery ladder.

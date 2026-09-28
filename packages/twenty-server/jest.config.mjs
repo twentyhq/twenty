@@ -25,7 +25,7 @@ const jestConfig = {
     // nested under sanitize-html/node_modules because other consumers hold htmlparser2 8/10 at the root -- the optional
     // (.*/node_modules/)? prefix lets the allow-list match a package at any nesting depth, not only the hoisted copy.
     // jest's CJS runtime can't load their `export` syntax, so let swc transform them.
-    '/node_modules/(?!(.*/node_modules/)?(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk|ai|@ai-sdk|@workflow|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|@faker-js)/)',
+    '/node_modules/(?!(.*/node_modules/)?(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk|ai|@ai-sdk|@workflow|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|@faker-js|twenty-oxlint-rules)/)',
   ],
   testRegex: '.*\\.spec\\.ts$',
   transform: {

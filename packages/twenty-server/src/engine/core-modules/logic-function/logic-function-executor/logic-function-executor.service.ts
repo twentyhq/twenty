@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
@@ -32,6 +34,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
@@ -44,6 +47,10 @@ import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modul
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -62,13 +69,25 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { CustomException } from 'src/utils/custom-exception';
 
-export class LogicFunctionExecutionException extends Error {
+export class LogicFunctionExecutionException extends CustomException<LogicFunctionExecutionExceptionCode> {
   constructor(
     message: string,
     public readonly code: LogicFunctionExecutionExceptionCode,
+    {
+      userFriendlyMessage,
+      statusCode,
+    }: { userFriendlyMessage?: MessageDescriptor; statusCode?: number } = {},
   ) {
-    super(message);
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        (code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+          ? msg`Logic function not found.`
+          : msg`An error occurred.`),
+      statusCode,
+    });
     this.name = 'LogicFunctionExecutionException';
   }
 }
@@ -96,6 +115,7 @@ export class LogicFunctionExecutorService {
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly usageRecorderService: UsageRecorderService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
@@ -115,6 +135,7 @@ export class LogicFunctionExecutorService {
     executionMode,
     workspaceDeletionRequestTimestamp,
     retry = { retryCount: 0, maxRetries: 0 },
+    shouldEnforceUsageLimits = true,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -124,6 +145,7 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
+    shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -136,6 +158,14 @@ export class LogicFunctionExecutorService {
     await this.assertApplicationNotStopped(flatApplication);
 
     await this.throttleExecution(workspaceId);
+
+    if (shouldEnforceUsageLimits) {
+      await this.assertExecutionAllowed({
+        workspaceId,
+        flatApplication,
+        flatLogicFunction,
+      });
+    }
 
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
@@ -255,6 +285,40 @@ export class LogicFunctionExecutorService {
     }
   }
 
+  private async assertExecutionAllowed({
+    workspaceId,
+    flatApplication,
+    flatLogicFunction,
+  }: {
+    workspaceId: string;
+    flatApplication: FlatApplication;
+    flatLogicFunction: FlatLogicFunction;
+  }): Promise<void> {
+    if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
+      return;
+    }
+
+    const isExecutionQuotaEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
+        workspaceId,
+      );
+
+    if (!isExecutionQuotaEnabled) {
+      return;
+    }
+
+    await this.billingUsageService.assertUsageAllowed({
+      workspaceId,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders: {
+        logicFunctionId: flatLogicFunction.id,
+        applicationId: flatApplication.id,
+      },
+    });
+  }
+
   private async throttleExecution(workspaceId: string) {
     try {
       await this.throttlerService.tokenBucketThrottleOrThrow(
@@ -263,10 +327,21 @@ export class LogicFunctionExecutorService {
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
       );
-    } catch {
+    } catch (error) {
+      if (
+        !(error instanceof ThrottlerException) ||
+        error.code !== ThrottlerExceptionCode.LIMIT_REACHED
+      ) {
+        throw error;
+      }
+
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+        {
+          userFriendlyMessage: error.userFriendlyMessage,
+          statusCode: error.statusCode,
+        },
       );
     }
   }
@@ -597,7 +672,7 @@ export class LogicFunctionExecutorService {
     };
 
     if (totalCreditsMicro > 0) {
-      await this.billingUsageService.consumeUsageQuota({
+      await this.usageLimitQuotaService.consumeQuota({
         workspaceId,
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
+import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 import {
@@ -70,10 +71,64 @@ export class FlatNavigationMenuItemValidatorService {
     }
   }
 
+  // Entering the flat maps resolves these references, so an unresolvable one
+  // has to fail validation rather than throw there.
+  private getUnresolvedReferenceValidationErrors({
+    flatNavigationMenuItem,
+    flatObjectMetadataMaps,
+    flatViewMaps,
+  }: {
+    flatNavigationMenuItem: MetadataUniversalFlatEntity<'navigationMenuItem'>;
+    flatObjectMetadataMaps: MetadataUniversalFlatEntityMaps<'objectMetadata'>;
+    flatViewMaps: MetadataUniversalFlatEntityMaps<'view'>;
+  }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
+    const errors: FlatEntityValidationError<NavigationMenuItemExceptionCode>[] =
+      [];
+
+    const { targetObjectMetadataUniversalIdentifier, viewUniversalIdentifier } =
+      flatNavigationMenuItem;
+
+    if (
+      isDefined(targetObjectMetadataUniversalIdentifier) &&
+      !isDefined(
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: targetObjectMetadataUniversalIdentifier,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+      )
+    ) {
+      errors.push({
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`Target object metadata not found`,
+        userFriendlyMessage: msg`Target object not found`,
+      });
+    }
+
+    if (
+      isDefined(viewUniversalIdentifier) &&
+      !isDefined(
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: viewUniversalIdentifier,
+          flatEntityMaps: flatViewMaps,
+        }),
+      )
+    ) {
+      errors.push({
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`Target view not found`,
+        userFriendlyMessage: msg`Target view not found`,
+      });
+    }
+
+    return errors;
+  }
+
   public validateFlatNavigationMenuItemCreation({
     flatEntityToValidate: flatNavigationMenuItem,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
     },
     remainingFlatEntityMapsToValidate,
   }: UniversalFlatEntityValidationArgs<
@@ -103,6 +158,11 @@ export class FlatNavigationMenuItemValidatorService {
     validationResult.errors.push(
       ...validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem,
+      }),
+      ...this.getUnresolvedReferenceValidationErrors({
+        flatNavigationMenuItem,
+        flatObjectMetadataMaps,
+        flatViewMaps,
       }),
     );
 

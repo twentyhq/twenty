@@ -1,10 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type FilePart, type ModelMessage } from 'ai';
+import { type FilePart, type ModelMessage, type TextPart } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ResolvedRunAgentAttachment } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-run-agent-attachment.type';
+import { formatUnsupportedFilePlaceholder } from 'src/engine/metadata-modules/ai/ai-models/utils/format-unsupported-file-placeholder.util';
+import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-mime-types-for-modalities.util';
 import {
   AiException,
   AiExceptionCode,
@@ -13,9 +15,11 @@ import {
 export const buildRunAgentModelMessageOrThrow = ({
   message,
   attachmentsByFileId,
+  modalities,
 }: {
   message: RunAgentMessage;
   attachmentsByFileId: Map<string, ResolvedRunAgentAttachment>;
+  modalities: string[] | undefined;
 }): ModelMessage => {
   const attachments = message.attachments ?? [];
 
@@ -23,7 +27,9 @@ export const buildRunAgentModelMessageOrThrow = ({
     return { role: message.role, content: message.content };
   }
 
-  const fileParts = attachments.map((attachment): FilePart => {
+  const supportedMediaTypes = getNativeMimeTypesForModalities(modalities);
+
+  const attachmentParts = attachments.map((attachment): FilePart | TextPart => {
     const resolvedAttachment = attachmentsByFileId.get(attachment.fileId);
 
     if (!isDefined(resolvedAttachment)) {
@@ -31,6 +37,16 @@ export const buildRunAgentModelMessageOrThrow = ({
         `Attachment ${attachment.fileId} is not an uploaded ${FileFolder.AgentChat} file in this workspace`,
         AiExceptionCode.INVALID_AGENT_INPUT,
       );
+    }
+
+    if (!supportedMediaTypes.has(resolvedAttachment.mediaType)) {
+      return {
+        type: 'text',
+        text: formatUnsupportedFilePlaceholder({
+          filename: attachment.filename,
+          mediaType: resolvedAttachment.mediaType,
+        }),
+      };
     }
 
     return {
@@ -47,7 +63,7 @@ export const buildRunAgentModelMessageOrThrow = ({
       ...(isNonEmptyString(message.content)
         ? [{ type: 'text' as const, text: message.content }]
         : []),
-      ...fileParts,
+      ...attachmentParts,
     ],
   };
 };

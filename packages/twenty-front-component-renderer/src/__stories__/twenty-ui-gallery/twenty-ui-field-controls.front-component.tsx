@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  Field,
-  Input,
-  InputGroup,
-  Textarea,
-  InputHint,
-  InputLabel,
-} from 'twenty-ui/primitives/input';
+import { Field, Input, InputGroup, Textarea } from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
@@ -34,10 +27,12 @@ const FieldControls = () => {
         <Field.Label>Notes</Field.Label>
         <Textarea value={notes} onValueChange={setNotes} rows={2} />
       </Field.Root>
-      <InputLabel htmlFor="legacy-reference">Reference</InputLabel>
-      <Input id="legacy-reference" value="REF-42" readOnly />
-      <InputHint>Keep this reference</InputHint>
-      <InputHint danger>Reference cannot be changed</InputHint>
+      <Field.Root invalid>
+        <Field.Label>Reference</Field.Label>
+        <Input value="REF-42" readOnly />
+        <Field.Description>Keep this reference</Field.Description>
+        <Field.Error match>Reference cannot be changed</Field.Error>
+      </Field.Root>
       <Input aria-label="Disabled input" disabled value="Locked" />
       <p role="status">
         Email: {email}; Notes: {notes}
@@ -56,6 +51,6 @@ export default defineFrontComponent({
   universalIdentifier: '4d23e9af-7cb3-4e4a-bbca-8e960f840001',
   name: 'twenty-ui-field-controls',
   description:
-    'Field, Input, InputGroup, Textarea and legacy input helpers in the sandbox',
+    'Field, Input, InputGroup, Textarea and validation in the sandbox',
   component: FieldControls,
 });

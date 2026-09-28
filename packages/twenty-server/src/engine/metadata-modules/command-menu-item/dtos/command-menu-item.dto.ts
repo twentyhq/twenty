@@ -45,6 +45,11 @@ export class CommandMenuItemDTO {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  coreWorkflowVersionId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
   frontComponentId?: string;
 
   @Field(() => FrontComponentDTO, { nullable: true })

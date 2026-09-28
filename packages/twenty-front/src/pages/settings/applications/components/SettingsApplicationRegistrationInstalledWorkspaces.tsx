@@ -1,35 +1,35 @@
-import styled from '@emotion/styled';
 import { useQuery } from '@apollo/client/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Section } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { useDebounce } from 'use-debounce';
 
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { type ApplicationRegistration } from '~/generated-metadata/graphql';
-import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsPath } from 'twenty-shared/types';
+import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const INITIAL_VISIBLE_WORKSPACES = 3;
 const SHOW_MORE_PAGE_SIZE = 20;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
-const StyledSection = styled(Section)`
+const StyledSection = styled(Section.Root)`
   margin-top: ${themeCssVariables.spacing[5]};
 `;
 

@@ -6,8 +6,8 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID } from '@/navigation-menu-item/common/constants/NavigationMenuItemFolderDeleteModalId';
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/edit/folder/hooks/useDeleteNavigationMenuItemFolder';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type UseFavoritesFolderEditParams = {
@@ -33,7 +33,7 @@ export const useFavoritesFolderEdit = ({
 
   const { deleteNavigationMenuItemFolder } =
     useDeleteNavigationMenuItemFolder();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const dropdownId = `navigation-menu-item-folder-edit-${folderId}`;
   const isDropdownOpen = useAtomComponentStateValue(
@@ -42,14 +42,14 @@ export const useFavoritesFolderEdit = ({
   );
 
   const modalId = `${NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID}-${folderId}`;
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
+  const isDialogOpened = useAtomComponentStateValue(
+    isDialogOpenedComponentState,
     modalId,
   );
 
   const handleFolderDelete = async () => {
     if (navigationMenuItems.length > 0) {
-      openModal(modalId);
+      openDialog(modalId);
     } else {
       await deleteNavigationMenuItemFolder(folderId);
     }
@@ -65,7 +65,7 @@ export const useFavoritesFolderEdit = ({
     handleConfirmDelete,
     isDropdownOpen,
     modalId,
-    isModalOpened,
+    isDialogOpened,
     navigationMenuItemCount: navigationMenuItems.length,
   };
 };

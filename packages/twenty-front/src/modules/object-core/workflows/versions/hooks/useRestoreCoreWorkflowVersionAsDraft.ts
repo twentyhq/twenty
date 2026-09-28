@@ -1,21 +1,23 @@
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useRestoreCoreWorkflowVersionAsDraft = ({
   workflowId,
-  workspaceWorkflowVersionId,
+  coreWorkflowVersionId,
 }: {
   workflowId: string;
-  workspaceWorkflowVersionId: string;
+  coreWorkflowVersionId: string;
 }) => {
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { t } = useLingui();
   const [isRestoring, setIsRestoring] = useState(false);
   const { coreWorkflowVersions, loading: isLoadingCoreWorkflowVersions } =
@@ -40,7 +42,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
     try {
       const draftWorkflowVersionId = await createDraftFromWorkflowVersion({
         workflowId,
-        workflowVersionIdToCopy: workspaceWorkflowVersionId,
+        workflowVersionIdToCopy: coreWorkflowVersionId,
       });
 
       if (!isDefined(draftWorkflowVersionId)) {
@@ -52,10 +54,8 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
         return;
       }
 
-      navigate(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflowId,
-      });
+      closeSidePanelMenu();
+      navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
     } catch {
       enqueueToast({
         variant: 'error',

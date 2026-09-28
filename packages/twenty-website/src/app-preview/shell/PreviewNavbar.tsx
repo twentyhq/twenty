@@ -40,15 +40,23 @@ const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
   rocket: IconRocket,
 };
 
+// twenty-ui sizes a labelled button's start icon at icon.size.sm, and an
+// icon-only button's at icon.size.md.
+const LABELLED_ACTION_ICON_SIZE_PX = THEME_LIGHT.icon.size.sm;
+const ICON_ONLY_ACTION_ICON_SIZE_PX = THEME_LIGHT.icon.size.md;
+
 const NavbarBar = styled.div`
   align-items: center;
-  background: transparent;
+  background: ${THEME_LIGHT.background.secondary};
+  border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
+  box-sizing: border-box;
   display: grid;
-  flex: 0 0 32px;
+  flex-shrink: 0;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
-  height: 32px;
+  height: ${APP_PREVIEW_CHROME.appHeaderHeightPx}px;
   min-width: 0;
+  padding: 0 12px;
   width: 100%;
 `;
 
@@ -102,21 +110,23 @@ const NavbarActions = styled.div`
   pointer-events: none;
 `;
 
-const DesktopOnlyAction = styled.div`
+const DesktopOnlyActions = styled.div`
   display: none;
   flex: 0 1 auto;
+  gap: 8px;
   min-width: 0;
 
   ${mediaUp('md')} {
-    display: block;
+    display: flex;
   }
 `;
 
 const ActionButton = styled.div<{ $iconOnly?: boolean }>`
   align-items: center;
-  background: transparent;
+  background: ${THEME_LIGHT.background.transparent.lighter};
   border: 1px solid ${THEME_LIGHT.background.transparent.medium};
-  border-radius: ${THEME_LIGHT.border.radius.sm};
+  border-radius: ${THEME_LIGHT.border.radius.md};
+  color: ${THEME_LIGHT.font.color.secondary};
   display: inline-flex;
   flex: 0 1 auto;
   font-family: var(--font-product), sans-serif;
@@ -132,17 +142,22 @@ const ActionButton = styled.div<{ $iconOnly?: boolean }>`
   white-space: nowrap;
 `;
 
+const PrimaryActionButton = styled(ActionButton)`
+  background: ${THEME_LIGHT.color.blue};
+  border-color: ${THEME_LIGHT.background.transparent.light};
+  color: ${THEME_LIGHT.font.color.inverted};
+`;
+
 const ActionIconWrap = styled.span`
   align-items: center;
-  color: ${THEME_LIGHT.font.color.secondary};
+  color: inherit;
   display: flex;
   flex: 0 0 auto;
   justify-content: center;
 `;
 
-const ActionLabel = styled.span<{ $light?: boolean }>`
-  color: ${({ $light }) =>
-    $light ? THEME_LIGHT.font.color.light : THEME_LIGHT.font.color.secondary};
+const ActionLabel = styled.span`
+  color: inherit;
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
@@ -151,24 +166,6 @@ const ActionLabel = styled.span<{ $light?: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const DesktopOnlyTrailing = styled.div`
-  align-items: center;
-  display: none;
-  gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;
-  height: 100%;
-
-  ${mediaUp('md')} {
-    display: inline-flex;
-  }
-`;
-
-const ActionSeparator = styled.div`
-  background: ${THEME_LIGHT.background.transparent.medium};
-  border-radius: 56px;
-  height: 100%;
-  width: 1px;
 `;
 
 const PinnedActionButton = styled(ActionButton)<{
@@ -204,27 +201,23 @@ const PinnedActionButton = styled(ActionButton)<{
 
 function renderProvidedAction(action: NavbarAction, index: number) {
   const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
+  const iconOnly = action.variant === 'icon' || !action.label;
   return (
-    <ActionButton
-      $iconOnly={action.variant === 'icon' || !action.label}
-      key={`${action.icon}-${index}`}
-    >
+    <ActionButton $iconOnly={iconOnly} key={`${action.icon}-${index}`}>
       {Icon ? (
         <ActionIconWrap>
           <Icon
             aria-hidden
-            size={THEME_LIGHT.icon.size.sm}
+            size={
+              iconOnly
+                ? ICON_ONLY_ACTION_ICON_SIZE_PX
+                : LABELLED_ACTION_ICON_SIZE_PX
+            }
             stroke={THEME_LIGHT.icon.stroke.md}
           />
         </ActionIconWrap>
       ) : null}
       {action.label ? <ActionLabel>{action.label}</ActionLabel> : null}
-      {action.trailingLabel ? (
-        <DesktopOnlyTrailing>
-          <ActionSeparator />
-          <ActionLabel $light>{action.trailingLabel}</ActionLabel>
-        </DesktopOnlyTrailing>
-      ) : null}
     </ActionButton>
   );
 }
@@ -245,7 +238,7 @@ function renderPinnedAction(
         <ActionIconWrap>
           <Icon
             aria-hidden
-            size={THEME_LIGHT.icon.size.sm}
+            size={LABELLED_ACTION_ICON_SIZE_PX}
             stroke={THEME_LIGHT.icon.stroke.md}
           />
         </ActionIconWrap>
@@ -309,30 +302,44 @@ function DefaultActions({
       {pinnedActions?.map((action, index) =>
         renderPinnedAction(action, index, activeItem?.id),
       )}
-      <DesktopOnlyAction>
-        <ActionButton>
+      <DesktopOnlyActions>
+        <PrimaryActionButton>
           <ActionIconWrap>
             <IconPlus
               aria-hidden
-              size={THEME_LIGHT.icon.size.sm}
+              size={LABELLED_ACTION_ICON_SIZE_PX}
               stroke={THEME_LIGHT.icon.stroke.md}
             />
           </ActionIconWrap>
-          <ActionLabel>New</ActionLabel>
+          <ActionLabel>New Record</ActionLabel>
+        </PrimaryActionButton>
+        <ActionButton $iconOnly>
+          <ActionIconWrap>
+            <IconChevronUp
+              aria-hidden
+              size={ICON_ONLY_ACTION_ICON_SIZE_PX}
+              stroke={THEME_LIGHT.icon.stroke.md}
+            />
+          </ActionIconWrap>
         </ActionButton>
-      </DesktopOnlyAction>
-      <ActionButton>
+        <ActionButton $iconOnly>
+          <ActionIconWrap>
+            <IconChevronDown
+              aria-hidden
+              size={ICON_ONLY_ACTION_ICON_SIZE_PX}
+              stroke={THEME_LIGHT.icon.stroke.md}
+            />
+          </ActionIconWrap>
+        </ActionButton>
+      </DesktopOnlyActions>
+      <ActionButton $iconOnly>
         <ActionIconWrap>
           <IconDotsVertical
             aria-hidden
-            size={THEME_LIGHT.icon.size.sm}
+            size={ICON_ONLY_ACTION_ICON_SIZE_PX}
             stroke={THEME_LIGHT.icon.stroke.md}
           />
         </ActionIconWrap>
-        <DesktopOnlyTrailing>
-          <ActionSeparator />
-          <ActionLabel $light>⌘K</ActionLabel>
-        </DesktopOnlyTrailing>
       </ActionButton>
     </>
   );

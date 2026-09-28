@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -15,10 +15,12 @@ import {
 } from 'src/engine/metadata-modules/message-folder/dtos/update-message-folder.input';
 import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-folder/interceptors/message-folder-graphql-api-exception.interceptor';
 import { MessageFolderMetadataService } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(MessageFolderGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => MessageFolderDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class MessageFolderResolver {
   constructor(
     private readonly messageFolderMetadataService: MessageFolderMetadataService,

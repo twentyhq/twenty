@@ -15,7 +15,7 @@ import {
 } from '@storybook/react-vite';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -125,9 +125,17 @@ export const Default: Story = {
 
     await userEvent.click(applyButton);
 
-    const cancelButton = await canvas.findByRole('button', { name: /Cancel/i });
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+      { name: 'Update 3 records' },
+    );
+    const cancelButton = within(dialog).getByRole('button', {
+      name: /Cancel/i,
+    });
     expect(cancelButton).toBeEnabled();
 
     await userEvent.click(cancelButton);
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(applyButton).toHaveFocus());
   },
 };

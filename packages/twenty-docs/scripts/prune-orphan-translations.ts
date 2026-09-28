@@ -1,7 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 
-// Removes orphan localized docs: files under packages/twenty-docs/l/<lang>/**
+import {
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+} from '../navigation/supported-languages';
+import { walkMdxFiles } from './walk-mdx-files';
+
+// Removes orphan localized docs: files under packages/twenty-docs/<lang>/**
 // whose corresponding English source page no longer exists. The Crowdin i18n
 // pull only ever adds/updates files (never deletes), so when an English page is
 // renamed, moved, or removed, its localized copies linger and keep serving
@@ -14,7 +20,9 @@ import path from 'path';
 //   tsx packages/twenty-docs/scripts/prune-orphan-translations.ts --apply
 
 const DOCS_ROOT = path.resolve(__dirname, '..');
-const LOCALIZED_DIR = path.join(DOCS_ROOT, 'l');
+const LOCALIZED_DIRECTORIES = SUPPORTED_LANGUAGES.filter(
+  (language) => language !== DEFAULT_LANGUAGE,
+).map((language) => path.join(DOCS_ROOT, language));
 
 // Safety: never delete a language's localized files wholesale. If more than this
 // fraction of a language's files look orphaned, something is wrong (e.g. the
@@ -23,40 +31,35 @@ const MAX_ORPHAN_RATIO_PER_LANGUAGE = 0.25;
 
 const apply = process.argv.slice(2).includes('--apply');
 
-const walkMdxFiles = (dir: string): string[] => {
-  const result: string[] = [];
-  for (const entry of fs.readdirSync(dir)) {
-    const fullPath = path.join(dir, entry);
-    if (fs.statSync(fullPath).isDirectory()) {
-      result.push(...walkMdxFiles(fullPath));
-    } else if (entry.endsWith('.mdx')) {
-      result.push(fullPath);
-    }
-  }
-  return result;
-};
+const isLocalizedFile = (file: string): boolean =>
+  LOCALIZED_DIRECTORIES.some((directory) =>
+    file.startsWith(`${directory}${path.sep}`),
+  );
 
-// English source path a localized file mirrors: strip the leading `l/<lang>/`.
+// English source path a localized file mirrors: strip the leading `<lang>/`.
 const sourcePathOf = (localizedFile: string): string => {
-  const relativeToL = path.relative(LOCALIZED_DIR, localizedFile);
-  const segments = relativeToL.split(path.sep);
+  const segments = path.relative(DOCS_ROOT, localizedFile).split(path.sep);
   // segments[0] is the language code; the rest is the source-relative path.
   return path.join(DOCS_ROOT, ...segments.slice(1));
 };
 
 const languageOf = (localizedFile: string): string =>
-  path.relative(LOCALIZED_DIR, localizedFile).split(path.sep)[0];
+  path.relative(DOCS_ROOT, localizedFile).split(path.sep)[0];
 
 const main = (): void => {
-  if (!fs.existsSync(LOCALIZED_DIR)) {
-    console.log('No localized docs directory (packages/twenty-docs/l) — nothing to prune.');
+  const existingLocalizedDirectories = LOCALIZED_DIRECTORIES.filter(
+    (directory) => fs.existsSync(directory),
+  );
+
+  if (existingLocalizedDirectories.length === 0) {
+    console.log('No localized docs directories — nothing to prune.');
     return;
   }
 
   // Sanity guard: if the English source tree is empty, the checkout is broken;
   // refuse to prune so we never mass-delete translations by mistake.
   const englishFileCount = walkMdxFiles(DOCS_ROOT).filter(
-    (file) => !file.startsWith(`${LOCALIZED_DIR}${path.sep}`),
+    (file) => !isLocalizedFile(file),
   ).length;
 
   if (englishFileCount === 0) {
@@ -65,13 +68,15 @@ const main = (): void => {
     );
   }
 
-  const localizedFiles = walkMdxFiles(LOCALIZED_DIR);
+  const localizedFiles = existingLocalizedDirectories.flatMap(walkMdxFiles);
   const orphans = localizedFiles.filter(
     (file) => !fs.existsSync(sourcePathOf(file)),
   );
 
   if (orphans.length === 0) {
-    console.log(`No orphan localized files (${localizedFiles.length} scanned).`);
+    console.log(
+      `No orphan localized files (${localizedFiles.length} scanned).`,
+    );
     return;
   }
 
@@ -102,7 +107,9 @@ const main = (): void => {
     `${apply ? 'Removing' : 'Would remove'} ${orphans.length} orphan localized file(s) of ${localizedFiles.length} scanned:`,
   );
   for (const file of orphans.sort()) {
-    console.log(`  ${apply ? 'DELETE' : 'orphan'} ${path.relative(DOCS_ROOT, file)}`);
+    console.log(
+      `  ${apply ? 'DELETE' : 'orphan'} ${path.relative(DOCS_ROOT, file)}`,
+    );
     if (apply) {
       fs.rmSync(file);
     }

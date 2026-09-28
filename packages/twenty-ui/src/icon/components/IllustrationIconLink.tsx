@@ -1,7 +1,7 @@
 import IllustrationIconLinkRaw from '@assets/icons/illustration-link.svg?react';
 import { IllustrationIconWrapper } from '@ui/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IllustrationIconLinkProps = Pick<IconComponentProps, 'size'>;
 

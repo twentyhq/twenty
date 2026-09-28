@@ -4,8 +4,8 @@ import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardM
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +22,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const { t } = useLingui();
   const subscriptionStatus = useSubscriptionStatus();
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
     usePermissionFlagMap();
@@ -63,9 +63,9 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
       : undefined;
 
   const handleButtonClick = isTrialing
-    ? () => openModal(AI_CHAT_END_TRIAL_PERIOD_MODAL_ID)
+    ? () => openDialog(AI_CHAT_END_TRIAL_PERIOD_MODAL_ID)
     : isDefined(nextPrice)
-      ? () => openModal(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID)
+      ? () => openDialog(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID)
       : undefined;
 
   return (
@@ -104,8 +104,8 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
           />
         ))}
       {!isTrialing && (
-        <ConfirmationModal
-          modalInstanceId={AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID}
+        <ConfirmationDialog
+          dialogId={AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID}
           title={t`Get more credits`}
           subtitle={t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`}
           onConfirmClick={upgradeCreditPlan}

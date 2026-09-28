@@ -5,8 +5,8 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
 
+import tabStyles from '../../internal/tab/Tab.module.scss';
 import { Tabs } from '../Tabs';
-import tabStyles from '../Tabs.module.scss';
 import { type TabsListProps } from '../types/TabsListProps';
 import { type TabsRootProps } from '../types/TabsRootProps';
 import { type TabsTabProps } from '../types/TabsTabProps';

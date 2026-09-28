@@ -72,9 +72,9 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  const CoreObjectShowPage = findCoreObjectShowPage(
-    parameters.objectNameSingular,
-  );
+  const CoreObjectShowPage = isWorkflowCoreIndexPageEnabled
+    ? findCoreObjectShowPage(parameters.objectNameSingular)
+    : undefined;
 
   if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
     return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;

@@ -1,4 +1,4 @@
-import { type FieldMetadataTypesToTestForFilterInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+import { type FieldMetadataTypesToTestForFilterInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test.type';
 import { joinColumnNameForManyToOneMorphRelationField1 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 

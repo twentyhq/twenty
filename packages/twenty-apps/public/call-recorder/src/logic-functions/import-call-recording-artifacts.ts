@@ -9,6 +9,6 @@ export default defineLogicFunction({
   name: 'import-call-recording-artifacts',
   description:
     'Imports one recording artifact scope as an enqueued job after a verified Recall webhook resolves the owning CallRecording.',
-  timeoutSeconds: 250,
+  timeoutSeconds: 900,
   handler: handleCallRecordingArtifactsImportJob,
 });

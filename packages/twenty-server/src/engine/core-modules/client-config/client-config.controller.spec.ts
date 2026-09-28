@@ -47,6 +47,7 @@ describe('ClientConfigController', () => {
             },
           ],
         },
+        aiEvaluationModels: [],
         aiModelTiers: [],
         aiModels: [
           {

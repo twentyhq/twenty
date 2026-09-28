@@ -31,19 +31,24 @@ const buildClient = (participants: Record<string, unknown>[] = []) => {
       });
     }
 
-    if (query.person) {
-      return Promise.resolve({ person: null });
+    if (query.people) {
+      const requestedIds: string[] = query.people.__args.filter.id.in;
+      return Promise.resolve({
+        people: buildPage(
+          query.people.edges.node.companyId
+            ? requestedIds.map((id) => ({ id, companyId: null }))
+            : requestedIds.map((id) => ({ id })),
+        ),
+      });
     }
 
-    if (query.people) {
-      return Promise.resolve({ people: buildPage([]) });
+    if (query.companies) {
+      return Promise.resolve({ companies: buildPage([]) });
     }
 
     return Promise.resolve({ opportunities: buildPage([]) });
   });
-  const mutationMock = vi
-    .fn()
-    .mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
+  const mutationMock = vi.fn().mockResolvedValue({});
 
   return {
     client: {
@@ -73,6 +78,9 @@ const buildParticipant = ({
   workspaceMemberId,
   calendarEvent: { startsAt, isCanceled },
 });
+
+const findPersonUpserts = (mutationMock: ReturnType<typeof vi.fn>) =>
+  mutationMock.mock.calls.filter(([mutation]) => mutation.createPeople);
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -119,15 +127,48 @@ describe('applyMeetingInteractions', () => {
       { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
     ]);
 
-    expect(mutationMock.mock.calls[0][0].updatePeople.__args.data).toEqual({
-      lastContactAt: PAST_EVENT_STARTS_AT,
-      lastContactById: MEMBER_ID,
-      lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
-      lastContactItemMessageId: null,
-      lastOutboundAt: PAST_EVENT_STARTS_AT,
-      lastInboundAt: PAST_EVENT_STARTS_AT,
-      lastMeetingId: CALENDAR_EVENT_ID,
+    expect(findPersonUpserts(mutationMock)[0][0].createPeople.__args).toEqual({
+      upsert: true,
+      data: [
+        {
+          id: PERSON_ID,
+          lastContactAt: PAST_EVENT_STARTS_AT,
+          lastContactById: MEMBER_ID,
+          lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
+          lastContactItemMessageId: null,
+          lastOutboundAt: PAST_EVENT_STARTS_AT,
+          lastInboundAt: PAST_EVENT_STARTS_AT,
+          lastMeetingId: CALENDAR_EVENT_ID,
+        },
+      ],
     });
+  });
+
+  it('writes every person of the batch in a single upsert', async () => {
+    const { client, mutationMock } = buildClient([
+      buildParticipant({
+        calendarEventId: CALENDAR_EVENT_ID,
+        startsAt: PAST_EVENT_STARTS_AT,
+      }),
+      buildParticipant({
+        calendarEventId: OLDER_CALENDAR_EVENT_ID,
+        startsAt: OLDER_EVENT_STARTS_AT,
+      }),
+    ]);
+
+    await applyMeetingInteractions(client, [
+      { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
+      { personId: OTHER_PERSON_ID, calendarEventId: OLDER_CALENDAR_EVENT_ID },
+    ]);
+
+    const personUpserts = findPersonUpserts(mutationMock);
+
+    expect(personUpserts).toHaveLength(1);
+    expect(
+      personUpserts[0][0].createPeople.__args.data.map(
+        (record: { id: string }) => record.id,
+      ),
+    ).toEqual([PERSON_ID, OTHER_PERSON_ID]);
   });
 
   it('keeps only the most recent meeting when a person attended several in the batch', async () => {
@@ -147,11 +188,12 @@ describe('applyMeetingInteractions', () => {
       { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
     ]);
 
-    const personUpdates = mutationMock.mock.calls.filter(
-      ([mutation]) => mutation.updatePeople,
-    );
-    expect(personUpdates).toHaveLength(1);
-    expect(personUpdates[0][0].updatePeople.__args.data).toMatchObject({
+    const personUpserts = findPersonUpserts(mutationMock);
+
+    expect(personUpserts).toHaveLength(1);
+    expect(personUpserts[0][0].createPeople.__args.data).toHaveLength(1);
+    expect(personUpserts[0][0].createPeople.__args.data[0]).toMatchObject({
+      id: PERSON_ID,
       lastContactAt: PAST_EVENT_STARTS_AT,
       lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
       lastMeetingId: CALENDAR_EVENT_ID,
@@ -181,6 +223,36 @@ describe('applyMeetingInteractions', () => {
         isCanceled: true,
       }),
     ]);
+
+    await applyMeetingInteractions(client, [
+      { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
+    ]);
+
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('leaves out a person that no longer exists rather than upserting it back', async () => {
+    const { client, mutationMock, queryMock } = buildClient([
+      buildParticipant({
+        calendarEventId: CALENDAR_EVENT_ID,
+        startsAt: PAST_EVENT_STARTS_AT,
+      }),
+    ]);
+
+    queryMock.mockImplementation((query) => {
+      if (query.calendarEventParticipants) {
+        return Promise.resolve({
+          calendarEventParticipants: buildPage([
+            buildParticipant({
+              calendarEventId: CALENDAR_EVENT_ID,
+              startsAt: PAST_EVENT_STARTS_AT,
+            }),
+          ]),
+        });
+      }
+
+      return Promise.resolve({ people: buildPage([]) });
+    });
 
     await applyMeetingInteractions(client, [
       { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },

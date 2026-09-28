@@ -5,28 +5,27 @@ import { useStore } from 'jotai';
 import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  ColorSample,
+  IconButton,
+  LightIconButton,
   getIconTileColorShades,
-} from 'twenty-ui/primitives/data-display';
+} from 'twenty-ui/components';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   type ButtonSize,
   type ButtonVariant,
-  LightIconButton,
 } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
-import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
+import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
 import {
   ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconPickerVisibleCountState,
 } from '@/ui/input/states/iconPickerVisibleCountState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -117,19 +116,15 @@ const IconPickerSearchRow = ({
           }}
           dropdownPlacement="right-start"
           clickableComponent={
-            <LightIconButton
-              accent="secondary"
-              Icon={() => (
-                <ColorSample
-                  colorName={iconColorPicker.selectedColor}
-                  variant="circle"
-                />
-              )}
-              size="small"
-            />
+            <LightIconButton aria-label={t`Choose icon color`}>
+              <ColorSample
+                colorName={iconColorPicker.selectedColor}
+                variant="circle"
+              />
+            </LightIconButton>
           }
           dropdownComponents={
-            <DropdownContent
+            <LegacyDropdownContent
               widthInPixels={
                 dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
               }
@@ -141,7 +136,7 @@ const IconPickerSearchRow = ({
                   closeDropdown(iconColorPickerDropdownId);
                 }}
               />
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       </ClickOutsideListenerContext.Provider>
@@ -164,8 +159,9 @@ const focusedIconButtonStyle = css`
   background: ${themeCssVariables.background.transparent.light};
 `;
 
-type StyledLightIconButtonProps = React.ComponentProps<
-  typeof LightIconButton
+type StyledLightIconButtonProps = Pick<
+  React.ComponentProps<typeof LightIconButton>,
+  'aria-label' | 'children' | 'size' | 'title' | 'onClick' | 'className'
 > & {
   isSelected?: boolean;
   isFocused?: boolean;
@@ -176,29 +172,21 @@ const StyledLightIconButton = ({
   isFocused,
   className,
   'aria-label': ariaLabel,
+  children,
   size,
   title,
-  Icon,
   onClick,
-  testId,
-  active,
-  accent,
-  disabled,
-  focus,
 }: StyledLightIconButtonProps) => (
   <LightIconButton
     aria-label={ariaLabel}
     size={size}
     title={title}
-    Icon={Icon}
     onClick={onClick}
-    testId={testId}
-    active={active}
-    accent={accent}
-    disabled={disabled}
-    focus={focus}
+    aria-pressed={isSelected}
     className={`${className ?? ''} ${isSelected ? selectedIconButtonStyle : isFocused ? focusedIconButtonStyle : ''}`}
-  />
+  >
+    {children}
+  </LightIconButton>
 );
 
 const StyledLoadingMore = styled.div`
@@ -249,23 +237,20 @@ const IconPickerIcon = ({
         <StyledLightIconButton
           key={iconKey}
           aria-label={convertIconKeyToLabel(iconKey)}
-          size="medium"
+          size="md"
           title={iconKey}
           isSelected={iconKey === selectedIconKey || !!selectedItemId}
           isFocused={iconKey === focusedIconKey}
-          Icon={(iconProps) => (
-            <Icon
-              // oxlint-disable-next-line react/jsx-props-no-spreading
-              {...iconProps}
-              color={
-                isDefined(color)
-                  ? getIconTileColorShades(color).iconColor
-                  : iconProps.color
-              }
-            />
-          )}
           onClick={onSelect}
-        />
+        >
+          <Icon
+            color={
+              isDefined(color)
+                ? getIconTileColorShades(color).iconColor
+                : undefined
+            }
+          />
+        </StyledLightIconButton>
       </SelectableListItem>
     </StyledMatrixItem>
   );
@@ -450,7 +435,7 @@ export const IconPicker = ({
         }
         dropdownComponents={
           <ScrollWrapper componentInstanceId="icon-picker-scroll">
-            <DropdownContent
+            <LegacyDropdownContent
               widthInPixels={
                 dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
               }
@@ -499,7 +484,7 @@ export const IconPicker = ({
                   </DropdownMenuItemsContainer>
                 </div>
               </SelectableList>
-            </DropdownContent>
+            </LegacyDropdownContent>
           </ScrollWrapper>
         }
         onClickOutside={onClickOutside}

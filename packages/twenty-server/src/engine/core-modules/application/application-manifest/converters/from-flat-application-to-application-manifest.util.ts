@@ -1,5 +1,5 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
@@ -10,6 +10,7 @@ export type FlatApplicationHeader = Pick<
   | 'description'
   | 'logo'
   | 'billing'
+  | 'grantedCapabilities'
   | 'packageJsonChecksum'
   | 'yarnLockChecksum'
 >;
@@ -33,6 +34,9 @@ export const fromFlatApplicationToApplicationManifest = ({
   ...(isDefined(flatApplication.billing) &&
   !isEmptyObject(flatApplication.billing)
     ? { billing: flatApplication.billing }
+    : {}),
+  ...(isNonEmptyArray(flatApplication.grantedCapabilities)
+    ? { requestedCapabilities: flatApplication.grantedCapabilities }
     : {}),
   ...(isDefined(settingsFrontComponentUniversalIdentifier)
     ? {

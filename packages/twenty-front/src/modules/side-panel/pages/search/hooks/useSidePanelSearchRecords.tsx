@@ -22,9 +22,12 @@ export const useSidePanelSearchRecords = () => {
     selectedObjectNameSingular: sidePanelSearchObjectFilter,
   });
 
+  const hasNoSearchableObject = includedObjectNameSingulars.length === 0;
+
   const { loading, searchRecords, error } = useObjectRecordSearchRecords({
     objectNameSingulars: includedObjectNameSingulars,
     searchInput: deferredSidePanelSearch,
+    skip: hasNoSearchableObject,
   });
 
   const searchResultItems: SearchResultItem[] = useMemo(() => {

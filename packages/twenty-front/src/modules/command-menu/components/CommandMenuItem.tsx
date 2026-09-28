@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
+import { MenuItem } from 'twenty-ui/components';
 import { IconArrowUpRight, type IconComponent } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';

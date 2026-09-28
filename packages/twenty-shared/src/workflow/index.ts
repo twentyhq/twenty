@@ -34,6 +34,14 @@ export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-s
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
 export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema';
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
+export { workflowClassifyActionSchema } from './schemas/classify-action-schema';
+export {
+  CLASSIFY_ANSWER_NAME_PATTERN,
+  CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER,
+  workflowClassifyCriterionSchema,
+  workflowClassifyQuestionSchema,
+  workflowClassifyActionSettingsSchema,
+} from './schemas/classify-action-settings-schema';
 export { workflowCodeActionSchema } from './schemas/code-action-schema';
 export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
 export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
@@ -112,7 +120,11 @@ export type {
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
-export type { BodyType } from './types/workflowHttpRequestStep';
+export type {
+  WorkflowClassifyCriterion,
+  WorkflowClassifyQuestion,
+} from './types/WorkflowClassifyQuestion';
+export type { BodyType } from './types/WorkflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
@@ -151,7 +163,7 @@ export type {
   ValidatableWorkflowStep,
   ValidatableWorkflowTrigger,
   ValidatableWorkflow,
-} from './validation/types/workflow-validation.type';
+} from './validation/types/WorkflowValidation';
 export type { WorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { buildWorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { extractVariablesFromInput } from './validation/utils/extract-variables-from-input.util';
@@ -172,7 +184,7 @@ export type {
   Leaf,
   Node,
   BaseOutputSchemaV2,
-} from './workflow-schema/types/base-output-schema.type';
+} from './workflow-schema/types/BaseOutputSchema';
 export type {
   RecordFieldLeaf,
   RecordFieldNode,
@@ -190,7 +202,7 @@ export type {
   ManualTriggerOutputSchema,
   OutputSchemaV2,
   VariableSearchResult,
-} from './workflow-schema/types/output-schema.type';
+} from './workflow-schema/types/OutputSchema';
 export { buildManualTriggerMetadataNode } from './workflow-schema/utils/build-manual-trigger-metadata-node';
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
 export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
@@ -214,4 +226,4 @@ export type {
   GlobalAvailability,
   SingleRecordAvailability,
   BulkRecordsAvailability,
-} from './workflow-trigger/types/workflow-trigger.type';
+} from './workflow-trigger/types/WorkflowTrigger';

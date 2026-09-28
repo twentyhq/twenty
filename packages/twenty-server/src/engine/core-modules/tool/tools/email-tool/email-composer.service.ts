@@ -39,7 +39,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type ParentThreadContext = {
@@ -311,6 +311,7 @@ export class EmailComposerService {
       const messageRepository =
         this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>(
           'message',
+          { shouldBypassPermissionChecks: true },
         );
 
       const parentMessage = await messageRepository.findOne({
@@ -328,6 +329,7 @@ export class EmailComposerService {
       const associationRepository =
         this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
           'messageChannelMessageAssociation',
+          { shouldBypassPermissionChecks: true },
         );
 
       const [association, ancestorMessages] = await Promise.all([

@@ -10,17 +10,16 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/primitives/layout';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
@@ -70,7 +69,7 @@ export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -113,7 +112,7 @@ export const SettingsObjectNewFieldSelector = ({
   return (
     <>
       {' '}
-      <Section>
+      <Section.Root>
         <StyledSearchInputContainer>
           <SettingsTextInput
             instanceId="new-field-type-search"
@@ -123,15 +122,15 @@ export const SettingsObjectNewFieldSelector = ({
             onChange={setSearchQuery}
           />
         </StyledSearchInputContainer>
-      </Section>
+      </Section.Root>
       <Controller
         name="type"
         control={control}
         render={() => (
           <StyledTypeSelectContainer>
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
-              <Section key={category}>
-                <H2Title
+              <Section.Root key={category}>
+                <Section.Header
                   title={category}
                   description={
                     SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
@@ -180,7 +179,7 @@ export const SettingsObjectNewFieldSelector = ({
                       </StyledCardContainer>
                     ))}
                 </StyledContainer>
-              </Section>
+              </Section.Root>
             ))}
           </StyledTypeSelectContainer>
         )}

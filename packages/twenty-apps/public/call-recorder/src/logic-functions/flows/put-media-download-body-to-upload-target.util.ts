@@ -13,7 +13,6 @@ type MediaUploadTarget = {
   contentType: string;
 };
 
-const MEDIA_UPLOAD_TIMEOUT_MS = 14 * 60 * 1000;
 const HTTP_STATUS_OK_LOWER_BOUND = 200;
 const HTTP_STATUS_OK_UPPER_BOUND = 300;
 
@@ -22,11 +21,13 @@ export const putMediaDownloadBodyToUploadTarget = async ({
   fileName,
   sizeBytes,
   uploadTarget,
+  signal,
 }: {
   mediaDownloadBody: ReadableStream<Uint8Array>;
   fileName: string;
   sizeBytes: number;
   uploadTarget: MediaUploadTarget;
+  signal: AbortSignal;
 }): Promise<void> => {
   // Use node:http instead of fetch here: fetch can buffer ReadableStream
   // request bodies in memory, which OOMs Lambda for large recordings.
@@ -39,6 +40,7 @@ export const putMediaDownloadBodyToUploadTarget = async ({
     mediaDownloadReadable,
     sizeBytes,
     uploadTarget,
+    signal,
   });
 };
 
@@ -47,11 +49,13 @@ const streamMediaDownloadReadableToUploadTarget = async ({
   mediaDownloadReadable,
   sizeBytes,
   uploadTarget,
+  signal,
 }: {
   fileName: string;
   mediaDownloadReadable: Readable;
   sizeBytes: number;
   uploadTarget: MediaUploadTarget;
+  signal: AbortSignal;
 }): Promise<void> => {
   const uploadUrl = new URL(uploadTarget.uploadUrl);
   const requestUpload =
@@ -62,11 +66,13 @@ const streamMediaDownloadReadableToUploadTarget = async ({
       'Content-Type': uploadTarget.contentType,
       'Content-Length': sizeBytes,
     },
-    signal: AbortSignal.timeout(MEDIA_UPLOAD_TIMEOUT_MS),
+    signal,
   });
 
   const uploadResponsePromise = waitForUploadResponse({ uploadRequest });
-  const uploadPipelinePromise = pipeline(mediaDownloadReadable, uploadRequest);
+  const uploadPipelinePromise = pipeline(mediaDownloadReadable, uploadRequest, {
+    signal,
+  });
 
   let uploadResponse: IncomingMessage;
 
