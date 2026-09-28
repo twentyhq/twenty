@@ -4,6 +4,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
@@ -24,11 +25,11 @@ import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 
@@ -91,6 +92,10 @@ export const CreateProfile = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const setCurrentUser = useSetAtomState(currentUserState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const creditsReward =
+    currentUser?.isWorkspaceCreator === true
+      ? (onboardingConfig?.createProfileCreditsReward ?? 0)
+      : 0;
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
@@ -111,6 +116,10 @@ export const CreateProfile = () => {
     },
     resolver: zodResolver(validationSchema),
   });
+
+  useEffect(() => {
+    setOnboardingStepFreeCredits('createProfile', isValid ? creditsReward : 0);
+  }, [isValid, creditsReward, setOnboardingStepFreeCredits]);
 
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -161,12 +170,7 @@ export const CreateProfile = () => {
           return current;
         });
 
-        setOnboardingStepFreeCredits(
-          'createProfile',
-          currentUser?.isWorkspaceCreator
-            ? (onboardingConfig?.createProfileCreditsReward ?? 0)
-            : 0,
-        );
+        setOnboardingStepFreeCredits('createProfile', creditsReward);
         setNextOnboardingStatus({ stepHistoryEffect: 'recordAsReversible' });
         setIsNavigating(true);
       } catch (error: any) {
@@ -176,8 +180,7 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
-      currentUser?.isWorkspaceCreator,
-      onboardingConfig?.createProfileCreditsReward,
+      creditsReward,
       setNextOnboardingStatus,
       setOnboardingStepFreeCredits,
       enqueueToast,
@@ -296,11 +299,12 @@ export const CreateProfile = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <MainButton
-            onClick={handleSubmit(onSubmit)}
+          <OnboardingRewardMainButton
+            label={t`Continue`}
+            creditsReward={creditsReward}
             disabled={!isValid || isSubmitting || isNavigating}
-            fullWidth
-          >{t`Continue`}</MainButton>
+            onClick={handleSubmit(onSubmit)}
+          />
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

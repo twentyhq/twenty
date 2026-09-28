@@ -1,27 +1,33 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
+import { OnboardingSkipDialog } from '@/onboarding/components/OnboardingSkipDialog';
+import { OnboardingSkipDialogAvatars } from '@/onboarding/components/OnboardingSkipDialogAvatars';
+import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { plural } from '@lingui/core/macro';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Controller } from 'react-hook-form';
-import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
+import { useRef } from 'react';
+import { Controller, useWatch } from 'react-hook-form';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledForm = styled.div`
   display: flex;
@@ -46,17 +52,32 @@ export const InviteTeam = () => {
     control,
     fields,
     remove,
-    handleSubmit,
-    onSubmit,
     handleSkip,
+    handleInvite,
     getPlaceholder,
     isValid,
     isSubmitting,
     isNavigating,
   } = useInviteTeam();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
   const transition = useOnboardingMotionTransition();
+  const { openDialog } = useDialog();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const emails = useWatch({ control, name: 'emails' });
+  const firstEmailInputRef = useRef<HTMLInputElement>(null);
+
+  const inviteEmails = getValidInviteEmails(emails.map(({ email }) => email));
+  const hasInviteEmails = isNonEmptyArray(inviteEmails);
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const inviteTeamMaxInvites = onboardingConfig?.inviteTeamMaxInvites ?? 0;
+  const inviteTeamCreditsRewardPerUser =
+    onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
+  const creditsReward = hasInviteEmails
+    ? inviteTeamCreditsRewardPerUser *
+      Math.min(inviteEmails.length, inviteTeamMaxInvites)
+    : inviteTeamCreditsRewardPerUser;
+
+  const handleSkipClick = () =>
+    openDialog(ONBOARDING_SKIP_DIALOG_IDS.inviteTeam);
 
   const canRemoveEmailField = fields.length > 1;
 
@@ -71,19 +92,9 @@ export const InviteTeam = () => {
             {t`Get the most out of your workspace by inviting your team.`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerUser) && (
-          <OnboardingStepAnimatedItem index={2}>
-            <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag
-                amount={creditsRewardPerUser}
-                suffix={t`free credits per user`}
-              />
-            </StyledOnboardingStepTagsRow>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledOnboardingStepHeading>
 
-      <OnboardingStepAnimatedItem index={3}>
+      <OnboardingStepAnimatedItem index={2}>
         <StyledForm>
           <AnimatePresence initial={false}>
             {fields.map((field, index) => (
@@ -103,6 +114,7 @@ export const InviteTeam = () => {
                     fieldState: { error },
                   }) => (
                     <TextInput
+                      ref={index === 0 ? firstEmailInputRef : undefined}
                       autoFocus={index === 0}
                       type="email"
                       value={value}
@@ -125,20 +137,75 @@ export const InviteTeam = () => {
         </StyledForm>
       </OnboardingStepAnimatedItem>
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
-          <MainButton
-            startIcon={isSubmitting || isNavigating ? <Loader /> : null}
+          <OnboardingRewardMainButton
+            label={t`Invite`}
+            creditsReward={creditsReward}
+            isRewardPerItem={!hasInviteEmails}
             disabled={!isValid || isSubmitting || isNavigating}
-            onClick={handleSubmit(onSubmit)}
-            fullWidth
-          >{t`Invite`}</MainButton>
+            isLoading={isSubmitting || isNavigating}
+            onClick={handleInvite}
+          />
           <OnboardingSkipButton
-            onClick={handleSkip}
+            onClick={handleSkipClick}
             disabled={isSubmitting || isNavigating}
           />
         </StyledFooter>
       </OnboardingStepAnimatedItem>
+      <OnboardingSkipDialog
+        dialogId={ONBOARDING_SKIP_DIALOG_IDS.inviteTeam}
+        visual={
+          <OnboardingSkipDialogAvatars
+            avatars={[
+              ...(isDefined(currentWorkspaceMember)
+                ? [
+                    {
+                      id: currentWorkspaceMember.id,
+                      name: `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`,
+                      src: getAbsoluteImageUrl(
+                        currentWorkspaceMember.avatarUrl,
+                      ),
+                      shape: 'circle' as const,
+                    },
+                  ]
+                : []),
+              ...inviteEmails.map((email) => ({
+                id: email,
+                name: email,
+                shape: 'circle' as const,
+              })),
+            ]}
+            emptySeatsCount={hasInviteEmails ? 0 : 2}
+          />
+        }
+        title={
+          hasInviteEmails
+            ? plural(inviteEmails.length, {
+                one: "Your invite isn't sent yet",
+                other: "Your # invites aren't sent yet",
+              })
+            : t`Twenty works better with your team`
+        }
+        description={
+          hasInviteEmails ? undefined : t`All it takes is their email.`
+        }
+        actions={[
+          hasInviteEmails
+            ? {
+                label: plural(inviteEmails.length, {
+                  one: 'Send invite',
+                  other: 'Send # invites',
+                }),
+                onClick: handleInvite,
+              }
+            : { label: t`Add teammates`, onClick: () => {} },
+        ]}
+        creditsReward={creditsReward}
+        isRewardPerItem={!hasInviteEmails}
+        finalFocus={firstEmailInputRef}
+        onSkip={() => void handleSkip()}
+      />
     </StyledOnboardingStepPage>
   );
 };

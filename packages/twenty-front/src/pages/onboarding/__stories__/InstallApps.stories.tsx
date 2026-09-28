@@ -88,9 +88,9 @@ export type Story = StoryObj<typeof InstallApps>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
-    await canvas.findByText('Install your first apps');
+    await canvas.findByText('Start with the essentials');
     await canvas.findByText('Call recorder');
-    await canvas.findByText('Enrichment');
+    await canvas.findByText('People Data Labs');
     await canvas.findByText('Last contact');
   },
 };
@@ -109,7 +109,7 @@ export const OnlyAvailableApps: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('Call recorder');
-    expect(canvas.queryByText('Enrichment')).toBeNull();
+    expect(canvas.queryByText('People Data Labs')).toBeNull();
     expect(canvas.queryByText('Last contact')).toBeNull();
   },
 };
@@ -138,7 +138,7 @@ export const OnlyVettedApps: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('Call recorder');
-    expect(canvas.queryByText('Enrichment')).toBeNull();
+    expect(canvas.queryByText('People Data Labs')).toBeNull();
     expect(canvas.queryByText('Last contact')).toBeNull();
   },
 };
