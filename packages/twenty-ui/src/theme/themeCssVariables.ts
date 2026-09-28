@@ -192,6 +192,7 @@ export const themeCssVariables = {
     color: 'var(--t-box-shadow-color)',
     light: 'var(--t-box-shadow-light)',
     sidebar: 'var(--t-box-shadow-sidebar)',
+    bottomPanel: 'var(--t-box-shadow-bottom-panel)',
     strong: 'var(--t-box-shadow-strong)',
     underline: 'var(--t-box-shadow-underline)',
     superHeavy: 'var(--t-box-shadow-super-heavy)',
