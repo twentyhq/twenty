@@ -372,6 +372,53 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
+  // Undoes releaseStepAwaitingAnswer when the resume it prepared could not be
+  // scheduled, so the question can be answered again instead of stranding the
+  // run on a step nobody will execute.
+  @WithLock('workflowRunId')
+  async restoreStepAwaitingAnswer({
+    stepId,
+    threadId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    threadId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
+      currentStepInfo?.status !== StepStatus.NOT_STARTED ||
+      currentStepInfo.threadId !== threadId
+    ) {
+      return false;
+    }
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...workflowRunToUpdate.state?.stepInfos,
+            [stepId]: { ...currentStepInfo, status: StepStatus.PENDING },
+          },
+        },
+      },
+    });
+
+    return true;
+  }
+
   @WithLock('workflowRunId')
   async setStepThreadId({
     stepId,
