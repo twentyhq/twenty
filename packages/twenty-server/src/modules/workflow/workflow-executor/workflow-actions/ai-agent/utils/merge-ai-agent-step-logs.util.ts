@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 // An agent that asked a question runs again once it is answered, and the
@@ -20,7 +21,7 @@ export const mergeAiAgentStepLogs = ({
     previousValue: number | undefined,
     nextValue: number | undefined,
   ) =>
-    previousValue === undefined && nextValue === undefined
+    !isDefined(previousValue) && !isDefined(nextValue)
       ? undefined
       : (previousValue ?? 0) + (nextValue ?? 0);
 
