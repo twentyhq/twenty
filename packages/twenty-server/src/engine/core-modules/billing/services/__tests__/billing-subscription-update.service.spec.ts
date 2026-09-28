@@ -11,7 +11,6 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
@@ -168,7 +167,6 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
         { provide: StripeSubscriptionService, useValue: noop },
         { provide: StripeInvoiceService, useValue: noop },
         { provide: StripeSubscriptionScheduleService, useValue: noop },
-        { provide: BillingSubscriptionPhaseService, useValue: noop },
         { provide: BillingSubscriptionService, useValue: noop },
         { provide: WorkspaceOrmManager, useValue: noop },
       ],

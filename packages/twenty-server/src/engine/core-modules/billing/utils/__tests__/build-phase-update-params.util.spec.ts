@@ -19,8 +19,11 @@ const toUpdatePrices = {
   resourceCreditPriceId: 'price_credit_year',
 };
 
+const PHASE_START = 1_700_000_000;
+const NEW_START = 1_750_000_000;
+
 const buildPhase = (items: Array<{ price: string; quantity?: number }>) => ({
-  start_date: 1_700_000_000,
+  start_date: PHASE_START,
   proration_behavior: 'none' as const,
   items,
 });
@@ -35,10 +38,11 @@ describe('buildPhaseUpdateParams', () => {
       ]),
       productKeyByPriceId,
       toUpdatePrices,
-      startDate: 1_700_000_000,
+      startDate: NEW_START,
       endDate: undefined,
     });
 
+    expect(phase.start_date).toBe(NEW_START);
     expect(phase.items).toEqual([
       { price: 'price_base_year', quantity: 7 },
       { price: 'price_credit_year', quantity: 1 },
@@ -55,7 +59,7 @@ describe('buildPhaseUpdateParams', () => {
       ]),
       productKeyByPriceId,
       toUpdatePrices,
-      startDate: 1_700_000_000,
+      startDate: NEW_START,
       endDate: undefined,
     });
 
@@ -71,7 +75,7 @@ describe('buildPhaseUpdateParams', () => {
       ]),
       productKeyByPriceId,
       toUpdatePrices,
-      startDate: 1_700_000_000,
+      startDate: NEW_START,
       endDate: undefined,
     });
 
@@ -81,13 +85,30 @@ describe('buildPhaseUpdateParams', () => {
     });
   });
 
+  it('throws when the resource credit price is missing from the catalog', () => {
+    expect(() =>
+      buildPhaseUpdateParams({
+        currentPhase: buildPhase([
+          { price: BASE_PRICE_ID, quantity: 3 },
+          { price: CREDIT_PRICE_ID, quantity: 1 },
+        ]),
+        productKeyByPriceId: new Map([
+          [BASE_PRICE_ID, BillingProductKey.BASE_PRODUCT],
+        ]),
+        toUpdatePrices,
+        startDate: NEW_START,
+        endDate: undefined,
+      }),
+    ).toThrow('Subscription schedule phase has no resource credit item');
+  });
+
   it('throws when the phase carries no base product item', () => {
     expect(() =>
       buildPhaseUpdateParams({
         currentPhase: buildPhase([{ price: CREDIT_PRICE_ID, quantity: 1 }]),
         productKeyByPriceId,
         toUpdatePrices,
-        startDate: 1_700_000_000,
+        startDate: NEW_START,
         endDate: undefined,
       }),
     ).toThrow('Subscription schedule phase has no base product item');
@@ -102,7 +123,7 @@ describe('buildPhaseUpdateParams', () => {
         ]),
         productKeyByPriceId: new Map(),
         toUpdatePrices,
-        startDate: 1_700_000_000,
+        startDate: NEW_START,
         endDate: undefined,
       }),
     ).toThrow('Subscription schedule phase has no base product item');
@@ -118,7 +139,7 @@ describe('buildPhaseUpdateParams', () => {
       currentPhase,
       productKeyByPriceId,
       toUpdatePrices,
-      startDate: 1_700_000_000,
+      startDate: NEW_START,
       endDate: undefined,
     });
 
@@ -126,7 +147,7 @@ describe('buildPhaseUpdateParams', () => {
       currentPhase,
       productKeyByPriceId,
       toUpdatePrices,
-      startDate: 1_700_000_000,
+      startDate: NEW_START,
       endDate: 1_800_000_000,
     });
 

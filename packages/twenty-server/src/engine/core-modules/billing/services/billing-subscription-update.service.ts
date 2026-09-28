@@ -26,7 +26,6 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -45,6 +44,7 @@ import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normali
 import { buildPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/build-phase-update-params.util';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
+import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -66,7 +66,6 @@ export class BillingSubscriptionUpdateService {
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
-    private readonly billingSubscriptionPhaseService: BillingSubscriptionPhaseService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
@@ -269,10 +268,7 @@ export class BillingSubscriptionUpdateService {
           stripeScheduleId: schedule.id,
           toUpdateCurrentPrices: undefined,
           toUpdateNextPrices: toUpdateCurrentPrices,
-          currentPhase:
-            this.billingSubscriptionPhaseService.toPhaseUpdateParams(
-              currentPhase,
-            ),
+          currentPhase: toPhaseUpdateParams(currentPhase),
           subscriptionCurrentPeriodEnd: Math.floor(
             subscription.currentPeriodEnd.getTime() / 1000,
           ),
@@ -293,10 +289,7 @@ export class BillingSubscriptionUpdateService {
           stripeScheduleId: schedule.id,
           toUpdateNextPrices,
           toUpdateCurrentPrices: undefined,
-          currentPhase:
-            this.billingSubscriptionPhaseService.toPhaseUpdateParams(
-              currentPhase,
-            ),
+          currentPhase: toPhaseUpdateParams(currentPhase),
           subscriptionCurrentPeriodEnd: Math.floor(
             subscription.currentPeriodEnd.getTime() / 1000,
           ),
@@ -351,10 +344,7 @@ export class BillingSubscriptionUpdateService {
           stripeScheduleId: schedule.id,
           toUpdateNextPrices,
           toUpdateCurrentPrices: undefined,
-          currentPhase:
-            this.billingSubscriptionPhaseService.toPhaseUpdateParams(
-              refreshedCurrentPhase,
-            ),
+          currentPhase: toPhaseUpdateParams(refreshedCurrentPhase),
           subscriptionCurrentPeriodEnd: Math.floor(
             subscription.currentPeriodEnd.getTime() / 1000,
           ),
@@ -425,6 +415,29 @@ export class BillingSubscriptionUpdateService {
         currency: newPrice.currency,
       });
     }
+  }
+
+  private async getProductKeyByPriceId(
+    stripePriceIds: string[],
+  ): Promise<Map<string, BillingProductKey>> {
+    if (stripePriceIds.length === 0) {
+      return new Map();
+    }
+
+    const prices = await this.billingPriceRepository.find({
+      where: { stripePriceId: In(stripePriceIds) },
+      relations: ['billingProduct'],
+    });
+
+    return new Map(
+      prices.flatMap((price) => {
+        const productKey = price.billingProduct?.metadata?.productKey;
+
+        return isDefined(productKey)
+          ? [[price.stripePriceId, productKey] as const]
+          : [];
+      }),
+    );
   }
 
   private async getSubscriptionPricesFromSchedulePhase(
@@ -506,10 +519,9 @@ export class BillingSubscriptionUpdateService {
     currentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase;
     subscriptionCurrentPeriodEnd: number;
   }) {
-    const productKeyByPriceId =
-      await this.billingSubscriptionPhaseService.getProductKeyByPriceId(
-        (currentPhase.items ?? []).map(({ price }) => price).filter(isDefined),
-      );
+    const productKeyByPriceId = await this.getProductKeyByPriceId(
+      (currentPhase.items ?? []).map(({ price }) => price).filter(isDefined),
+    );
 
     const toUpdateCurrentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase =
       isDefined(toUpdateCurrentPrices)

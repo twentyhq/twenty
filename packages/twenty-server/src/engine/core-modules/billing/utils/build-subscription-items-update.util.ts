@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import type Stripe from 'stripe';
 
 import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { resolveManagedItemPrice } from 'src/engine/core-modules/billing/utils/resolve-managed-item-price.util';
 
 type SubscriptionItemToUpdate = Pick<
   BillingSubscriptionItemEntity,
@@ -18,7 +18,6 @@ type SubscriptionItemToUpdate = Pick<
   } | null;
 };
 
-// Stripe leaves items missing from the payload untouched, so every item is restated.
 export const buildSubscriptionItemsUpdate = ({
   billingSubscriptionItems,
   toUpdatePrices,
@@ -28,25 +27,17 @@ export const buildSubscriptionItemsUpdate = ({
 }): Stripe.SubscriptionUpdateParams.Item[] =>
   billingSubscriptionItems.map(
     ({ stripeSubscriptionItemId, stripePriceId, quantity, billingProduct }) => {
-      switch (billingProduct?.metadata?.productKey) {
-        case BillingProductKey.BASE_PRODUCT:
-          return {
-            id: stripeSubscriptionItemId,
-            price: toUpdatePrices.baseProductPriceId,
-            quantity: toUpdatePrices.seats,
-          };
-        case BillingProductKey.RESOURCE_CREDIT:
-          return {
-            id: stripeSubscriptionItemId,
-            price: toUpdatePrices.resourceCreditPriceId,
-            quantity: 1,
-          };
-        default:
-          return {
+      const managedPrice = resolveManagedItemPrice({
+        productKey: billingProduct?.metadata?.productKey,
+        toUpdatePrices,
+      });
+
+      return isDefined(managedPrice)
+        ? { id: stripeSubscriptionItemId, ...managedPrice }
+        : {
             id: stripeSubscriptionItemId,
             price: stripePriceId,
             ...(isDefined(quantity) ? { quantity } : {}),
           };
-      }
     },
   );

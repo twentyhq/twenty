@@ -11,9 +11,8 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { resolveManagedItemPrice } from 'src/engine/core-modules/billing/utils/resolve-managed-item-price.util';
 
-// Items the catalog does not know are carried through: a phase is declarative,
-// so anything left out is dropped at the period boundary.
 export const buildPhaseUpdateParams = ({
   currentPhase,
   productKeyByPriceId,
@@ -32,39 +31,38 @@ export const buildPhaseUpdateParams = ({
   const getProductKey = (price: string | undefined) =>
     isDefined(price) ? productKeyByPriceId.get(price) : undefined;
 
-  const hasBaseProductItem = currentItems.some(
-    ({ price }) => getProductKey(price) === BillingProductKey.BASE_PRODUCT,
+  const resolvedProductKeys = currentItems.map(({ price }) =>
+    getProductKey(price),
   );
 
-  if (!hasBaseProductItem) {
+  const assertPhaseHolds = (productKey: BillingProductKey, label: string) => {
+    if (resolvedProductKeys.includes(productKey)) {
+      return;
+    }
+
     throw new BillingException(
-      'Subscription schedule phase has no base product item',
+      `Subscription schedule phase has no ${label} item`,
       BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
       {
         userFriendlyMessage: msg`Your billing subscription is corrupted. Please contact support.`,
       },
     );
-  }
+  };
+
+  assertPhaseHolds(BillingProductKey.BASE_PRODUCT, 'base product');
+  assertPhaseHolds(BillingProductKey.RESOURCE_CREDIT, 'resource credit');
 
   return {
     start_date: startDate,
-    ...(endDate ? { end_date: endDate } : {}),
+    ...(isDefined(endDate) ? { end_date: endDate } : {}),
     proration_behavior: 'none',
-    items: currentItems.map((item) => {
-      switch (getProductKey(item.price)) {
-        case BillingProductKey.BASE_PRODUCT:
-          return {
-            price: toUpdatePrices.baseProductPriceId,
-            quantity: toUpdatePrices.seats,
-          };
-        case BillingProductKey.RESOURCE_CREDIT:
-          return {
-            price: toUpdatePrices.resourceCreditPriceId,
-            quantity: 1,
-          };
-        default:
-          return item;
-      }
+    items: currentItems.map((item, index) => {
+      const managedPrice = resolveManagedItemPrice({
+        productKey: resolvedProductKeys[index],
+        toUpdatePrices,
+      });
+
+      return managedPrice ?? item;
     }),
   };
 };
