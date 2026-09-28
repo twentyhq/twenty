@@ -52,40 +52,13 @@ export class WorkflowExecutionContextService {
   async getExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<WorkflowExecutionContext> {
-    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId: runInfo.workspaceId,
-    });
+    const { workflowRun, workflowRunApplications } =
+      await this.findWorkflowRunWithApplications(runInfo);
 
-    const workflowRunApplications =
-      await this.workflowRunApplicationsService.findWorkflowRunApplications(
-        workflowRun,
-        runInfo.workspaceId,
-      );
-
-    const isActingOnBehalfOfUser =
-      workflowRun.createdBy.source === FieldActorSource.MANUAL &&
-      isDefined(workflowRun.createdBy.workspaceMemberId);
-
-    if (isActingOnBehalfOfUser) {
-      return this.buildUserExecutionContext(
-        workflowRun,
-        runInfo.workspaceId,
-        workflowRunApplications,
-      );
-    }
-
-    if (workflowRunApplications.boundingApplications.length > 0) {
-      return this.buildBoundApplicationExecutionContext(
-        workflowRun,
-        runInfo.workspaceId,
-        workflowRunApplications,
-      );
-    }
-
-    return this.buildApplicationExecutionContext(
+    return this.buildExecutionContext(
       workflowRun,
       runInfo.workspaceId,
+      workflowRunApplications,
     );
   }
 
@@ -98,23 +71,22 @@ export class WorkflowExecutionContextService {
     permissionFlag: PermissionFlagType;
     shouldPassWorkspaceRunUser: boolean;
   }): Promise<ToolExecutionContext> {
-    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId: runInfo.workspaceId,
-    });
+    const { workflowRun, workflowRunApplications } =
+      await this.findWorkflowRunWithApplications(runInfo);
 
-    const { boundingApplications } =
-      await this.workflowRunApplicationsService.findWorkflowRunApplications(
-        workflowRun,
-        runInfo.workspaceId,
-      );
-
-    if (boundingApplications.length === 0 && !shouldPassWorkspaceRunUser) {
+    if (
+      workflowRunApplications.boundingApplications.length === 0 &&
+      !shouldPassWorkspaceRunUser
+    ) {
       return { workspaceId: runInfo.workspaceId };
     }
 
     const { authContext, rolePermissionConfig, actingApplication } =
-      await this.getExecutionContext(runInfo);
+      await this.buildExecutionContext(
+        workflowRun,
+        runInfo.workspaceId,
+        workflowRunApplications,
+      );
 
     const toolExecutionContext: ToolExecutionContext = {
       workspaceId: runInfo.workspaceId,
@@ -142,6 +114,49 @@ export class WorkflowExecutionContextService {
       ...toolExecutionContext,
       requireConnectedAccountUsableByCaller: true,
     };
+  }
+
+  private async findWorkflowRunWithApplications(runInfo: WorkflowRunInfo) {
+    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId: runInfo.workspaceId,
+    });
+
+    const workflowRunApplications =
+      await this.workflowRunApplicationsService.findWorkflowRunApplications(
+        workflowRun,
+        runInfo.workspaceId,
+      );
+
+    return { workflowRun, workflowRunApplications };
+  }
+
+  private buildExecutionContext(
+    workflowRun: WorkflowRunWorkspaceEntity,
+    workspaceId: string,
+    workflowRunApplications: WorkflowRunApplications,
+  ): Promise<WorkflowExecutionContext> {
+    const isActingOnBehalfOfUser =
+      workflowRun.createdBy.source === FieldActorSource.MANUAL &&
+      isDefined(workflowRun.createdBy.workspaceMemberId);
+
+    if (isActingOnBehalfOfUser) {
+      return this.buildUserExecutionContext(
+        workflowRun,
+        workspaceId,
+        workflowRunApplications,
+      );
+    }
+
+    if (workflowRunApplications.boundingApplications.length > 0) {
+      return this.buildBoundApplicationExecutionContext(
+        workflowRun,
+        workspaceId,
+        workflowRunApplications,
+      );
+    }
+
+    return this.buildApplicationExecutionContext(workflowRun, workspaceId);
   }
 
   private async buildUserExecutionContext(
