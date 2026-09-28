@@ -91,6 +91,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
   };
 
   const answerArguments = {
+    workspaceMemberId: 'member',
     threadId: 'thread-id',
     messageId: 'question-message-id',
     answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
