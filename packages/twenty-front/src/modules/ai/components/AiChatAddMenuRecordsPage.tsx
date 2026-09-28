@@ -51,6 +51,7 @@ export const AiChatAddMenuRecordsPage = ({
         value={search}
         onValueChange={setSearch}
       />
+      <Dropdown.Separator />
       <Dropdown.Section scrollable>
         {searchRecords.map((record) => (
           <Dropdown.OptionItem

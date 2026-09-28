@@ -60,6 +60,7 @@ export const AiChatAddMenuSkillsPage = ({
         value={search}
         onValueChange={setSearch}
       />
+      <Dropdown.Separator />
       <Dropdown.Section scrollable>
         {skills.map((skill) => {
           const SkillIcon = getIcon(skill.icon ?? DEFAULT_SKILL_ICON);
