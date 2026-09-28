@@ -25,7 +25,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { syncWorkflowRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-record-shares.util';
+import { syncWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-run-record-shares.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -363,8 +363,8 @@ export class UserWorkspaceService {
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
       // The delete sets the creator of this member's workflows to null, which
-      // makes them workspace-visible in core, so their record grants have to
-      // follow or nobody could read those workflows' runs and versions.
+      // makes them workspace-visible in core, so their runs' grants have to
+      // follow or nobody could read those runs.
       const createdCoreWorkflows: { id: string }[] =
         await this.userWorkspaceRepository.manager.query(
           `SELECT id FROM core."workflow" WHERE "workspaceId" = $1 AND "createdByUserWorkspaceId" = $2`,
@@ -375,7 +375,7 @@ export class UserWorkspaceService {
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
 
       if (createdCoreWorkflows.length > 0) {
-        await syncWorkflowRecordShares({
+        await syncWorkflowRunRecordShares({
           manager: this.userWorkspaceRepository.manager,
           workspaceId,
           coreWorkflowIds: createdCoreWorkflows.map(({ id }) => id),

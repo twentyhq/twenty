@@ -11,40 +11,38 @@ import { type EntityManager } from 'typeorm';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// A workflow's runs and versions inherit their readability from its workspace
-// record, so that record's grants are the one place a workflow's visibility is
-// enforced. They are derived from the core workflow rather than set by hand,
-// which is why the whole derived set is replaced: a visibility change or a new
-// creator must also take away what the old state granted. The rule matches
-// buildCoreWorkflowVisibilitySqlPredicate: everyone reads a workspace-visible
-// or ownerless workflow, and the creator always reads their own.
-export const syncWorkflowRecordShares = async ({
+// A run carries its workflow's inputs and outputs, so it is exactly as private
+// as its core workflow. Its grants are derived from that workflow rather than
+// set by hand, which is why the whole derived set is replaced: a visibility
+// change or a new creator must also take away what the old state granted. The
+// rule matches buildCoreWorkflowVisibilitySqlPredicate: everyone reads the runs
+// of a workspace-visible or ownerless workflow, and the creator always reads
+// their own.
+export const syncWorkflowRunRecordShares = async ({
   manager,
   workspaceId,
-  workspaceWorkflowIds = [],
+  workflowRunIds = [],
   coreWorkflowIds = [],
 }: {
   manager: EntityManager;
   workspaceId: string;
-  workspaceWorkflowIds?: string[];
-  // Resolved to their workspace records here because a core workflow's own
-  // pointer to that record is not written on every path.
+  workflowRunIds?: string[];
   coreWorkflowIds?: string[];
 }): Promise<void> => {
-  if (workspaceWorkflowIds.length === 0 && coreWorkflowIds.length === 0) {
+  if (workflowRunIds.length === 0 && coreWorkflowIds.length === 0) {
     return;
   }
 
   const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
   const parameters = [
     workspaceId,
-    STANDARD_OBJECTS.workflow.universalIdentifier,
-    workspaceWorkflowIds,
+    STANDARD_OBJECTS.workflowRun.universalIdentifier,
+    workflowRunIds,
     coreWorkflowIds,
   ];
-  const targetWorkflowsCte = `WITH target AS (
-      SELECT workflow.id FROM ${schema}."workflow" workflow
-      WHERE workflow.id = ANY($3::uuid[]) OR workflow."coreWorkflowId" = ANY($4::uuid[])
+  const targetRunsCte = `WITH target AS (
+      SELECT run.id FROM ${schema}."workflowRun" run
+      WHERE run.id = ANY($3::uuid[]) OR run."coreWorkflowId" = ANY($4::uuid[])
     )`;
 
   const sync = async (transactionManager: EntityManager) => {
@@ -56,18 +54,21 @@ export const syncWorkflowRecordShares = async ({
       `
       SELECT core_workflow.id FROM core."workflow" core_workflow
       WHERE core_workflow."workspaceId" = $1
-        AND core_workflow.id IN (
-          SELECT workflow."coreWorkflowId" FROM ${schema}."workflow" workflow
-          WHERE workflow.id = ANY($2::uuid[]) OR workflow."coreWorkflowId" = ANY($3::uuid[])
+        AND (
+          core_workflow.id = ANY($3::uuid[])
+          OR core_workflow.id IN (
+            SELECT run."coreWorkflowId" FROM ${schema}."workflowRun" run
+            WHERE run.id = ANY($2::uuid[])
+          )
         )
       ORDER BY core_workflow.id
       FOR UPDATE`,
-      [workspaceId, workspaceWorkflowIds, coreWorkflowIds],
+      [workspaceId, workflowRunIds, coreWorkflowIds],
     );
 
     await transactionManager.query(
       `
-      ${targetWorkflowsCte}
+      ${targetRunsCte}
       DELETE FROM ${schema}."recordShare" share
       USING core."objectMetadata" metadata
       WHERE metadata.id = share."objectMetadataId"
@@ -75,14 +76,13 @@ export const syncWorkflowRecordShares = async ({
         AND metadata."universalIdentifier" = $2
         AND share."recordId" IN (SELECT id FROM target)
         AND (
-          -- Grants written on the record's own behalf rather than by a
-          -- person sharing it: the ones this sync derives, and the creator
-          -- role an API key's or an application's create writes, which would
-          -- otherwise keep everyone holding that role reading a private
-          -- workflow.
+          -- Grants written on the run's own behalf rather than by a person
+          -- sharing it: the ones this sync derives, and the creator role an
+          -- application's create writes, which would otherwise keep everyone
+          -- holding that role reading a private workflow's runs.
           share."sourceId" = share."recordId"
           OR share."rowCause" = '${RecordShareRowCause.APPLICATION}'
-          -- Whatever wrote it, a grant to everyone on a workflow means
+          -- Whatever wrote it, a grant to everyone on a run means
           -- workspace-visible, which only the core workflow decides.
           OR share."principalType" = '${RecordSharePrincipalType.EVERYONE}'
         )`,
@@ -91,15 +91,15 @@ export const syncWorkflowRecordShares = async ({
 
     await transactionManager.query(
       `
-      ${targetWorkflowsCte}
+      ${targetRunsCte}
       INSERT INTO ${schema}."recordShare"
         ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-      SELECT metadata.id, workflow.id, '${EVERYONE_PRINCIPAL_ID}', '${RecordSharePrincipalType.EVERYONE}', '${RecordShareAccessLevel.FULL}', '${RecordShareRowCause.RULE}', workflow.id
-      FROM ${schema}."workflow" workflow
+      SELECT metadata.id, run.id, '${EVERYONE_PRINCIPAL_ID}', '${RecordSharePrincipalType.EVERYONE}', '${RecordShareAccessLevel.FULL}', '${RecordShareRowCause.RULE}', run.id
+      FROM ${schema}."workflowRun" run
       JOIN core."objectMetadata" metadata ON metadata."workspaceId" = $1 AND metadata."universalIdentifier" = $2
-      LEFT JOIN core."workflow" core_workflow ON core_workflow.id = workflow."coreWorkflowId"
+      LEFT JOIN core."workflow" core_workflow ON core_workflow.id = run."coreWorkflowId"
         AND core_workflow."workspaceId" = $1
-      WHERE workflow.id IN (SELECT id FROM target)
+      WHERE run.id IN (SELECT id FROM target)
         AND (
           core_workflow.id IS NULL
           OR core_workflow."visibility" = '${WorkflowVisibility.WORKSPACE}'
@@ -111,19 +111,19 @@ export const syncWorkflowRecordShares = async ({
 
     await transactionManager.query(
       `
-      ${targetWorkflowsCte}
+      ${targetRunsCte}
       INSERT INTO ${schema}."recordShare"
         ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-      SELECT metadata.id, workflow.id, member.id, '${RecordSharePrincipalType.WORKSPACE_MEMBER}', '${RecordShareAccessLevel.FULL}', '${RecordShareRowCause.OWNER}', workflow.id
-      FROM ${schema}."workflow" workflow
+      SELECT metadata.id, run.id, member.id, '${RecordSharePrincipalType.WORKSPACE_MEMBER}', '${RecordShareAccessLevel.FULL}', '${RecordShareRowCause.OWNER}', run.id
+      FROM ${schema}."workflowRun" run
       JOIN core."objectMetadata" metadata ON metadata."workspaceId" = $1 AND metadata."universalIdentifier" = $2
-      JOIN core."workflow" core_workflow ON core_workflow.id = workflow."coreWorkflowId"
+      JOIN core."workflow" core_workflow ON core_workflow.id = run."coreWorkflowId"
         AND core_workflow."workspaceId" = $1
       JOIN core."userWorkspace" membership ON membership.id = core_workflow."createdByUserWorkspaceId"
         AND membership."workspaceId" = $1 AND membership."deletedAt" IS NULL
       JOIN ${schema}."workspaceMember" member ON member."userId" = membership."userId"
         AND member."deletedAt" IS NULL
-      WHERE workflow.id IN (SELECT id FROM target)
+      WHERE run.id IN (SELECT id FROM target)
       ON CONFLICT DO NOTHING`,
       parameters,
     );

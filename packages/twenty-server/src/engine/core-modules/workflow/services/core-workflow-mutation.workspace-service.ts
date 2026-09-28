@@ -30,7 +30,7 @@ import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
-import { syncWorkflowRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-record-shares.util';
+import { syncWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/sync-workflow-run-record-shares.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -507,12 +507,6 @@ export class CoreWorkflowMutationWorkspaceService {
         workspaceId,
         workspaceWorkflowId,
       );
-
-      await syncWorkflowRecordShares({
-        manager: this.coreDataSource.manager,
-        workspaceId,
-        workspaceWorkflowIds: [workspaceWorkflowId],
-      });
     } catch (error) {
       try {
         await this.rollbackCreatedWorkflow(
@@ -885,8 +879,8 @@ export class CoreWorkflowMutationWorkspaceService {
     // cannot both pass it and have the later write silently take the workflow.
     // A workspace-visible workflow is already editable and deletable by every
     // member, so claiming one grants no access the claimer did not have.
-    // The grants its runs inherit are rewritten in the same transaction, so a
-    // workflow never reads as private in core while its runs stay shared.
+    // Its runs' grants are rewritten in the same transaction, so a workflow
+    // never reads as private in core while its runs stay shared.
     const claimResult = await this.coreDataSource.transaction(
       async (manager) => {
         const result = await this.coreWorkflowRepository
@@ -901,7 +895,7 @@ export class CoreWorkflowMutationWorkspaceService {
           );
 
         if ((result.affected ?? 0) > 0) {
-          await syncWorkflowRecordShares({
+          await syncWorkflowRunRecordShares({
             manager,
             workspaceId,
             coreWorkflowIds: [coreWorkflowId],
