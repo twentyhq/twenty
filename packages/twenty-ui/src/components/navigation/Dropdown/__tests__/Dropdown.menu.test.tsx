@@ -425,7 +425,7 @@ describe('Dropdown menu', () => {
 
     expect(screen.getByRole('menu')).toBeVisible();
     expect(clickEvents).toHaveLength(1);
-    expect(clickEvents[0].defaultPrevented).toBe(true);
+    expect(clickEvents[0]?.defaultPrevented).toBe(true);
   });
 
   it('lets unhandled modifier shortcuts leave the menu and keeps other keys inside', async () => {

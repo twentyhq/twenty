@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { type TablerIconsProps } from 'twenty-ui/icon';
+import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledBillingFieldRow = styled.div`
@@ -59,7 +59,7 @@ const StyledScheduledChangeItem = styled.div`
 `;
 
 type BillingFieldRowProps = {
-  Icon: (props: TablerIconsProps) => ReactNode;
+  Icon: IconComponent;
   label: string;
   children: ReactNode;
 };

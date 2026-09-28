@@ -1,3 +1,4 @@
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
 import { SettingsRoleAssignmentTable } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTable';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
@@ -27,7 +28,7 @@ type RoleAssignmentSectionProps = {
   roleTargetType: keyof typeof ROLE_TARGET_CONFIG;
   roleId: string;
   settingsDraftRole: RoleWithPartialMembers;
-  currentWorkspaceMember?: PartialWorkspaceMember;
+  currentWorkspaceMember?: CurrentWorkspaceMember;
   onSelect: (
     roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
     roleTargetType: keyof typeof ROLE_TARGET_CONFIG,
