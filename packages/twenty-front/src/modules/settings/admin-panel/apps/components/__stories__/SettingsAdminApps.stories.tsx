@@ -64,8 +64,9 @@ const meta: Meta<typeof SettingsAdminApps> = {
       ],
     },
   },
-  beforeEach: () => {
+  beforeEach: async () => {
     findAllApplicationRegistrations.mockClear();
+    await mockedApolloClient.clearStore();
   },
 };
 
