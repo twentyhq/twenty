@@ -3259,6 +3259,7 @@ export type Mutation = {
   updateMessageChannel: MessageChannel;
   updateMessageFolder: MessageFolder;
   updateMessageFolders: Array<MessageFolder>;
+  updateMyApplicationVariable: Scalars['Boolean']['output'];
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean']['output'];
@@ -4398,6 +4399,13 @@ export type MutationUpdateMessageFoldersArgs = {
 };
 
 
+export type MutationUpdateMyApplicationVariableArgs = {
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
+  key: Scalars['String']['input'];
+  value: Scalars['String']['input'];
+};
+
+
 export type MutationUpdateNavigationMenuItemArgs = {
   input: UpdateOneNavigationMenuItemInput;
 };
@@ -4652,6 +4660,12 @@ export type MutationVerifyEmailingDomainArgs = {
 
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String']['input'];
+};
+
+export type MyApplicationVariable = {
+  __typename?: 'MyApplicationVariable';
+  key: Scalars['String']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type NativeModelCapabilities = {
@@ -5295,6 +5309,7 @@ export type Query = {
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;
   mostlyEmptyFieldMetadataIds: Array<Scalars['UUID']['output']>;
+  myApplicationVariables: Array<MyApplicationVariable>;
   myCalendarChannels: Array<CalendarChannel>;
   myConnectedAccounts: Array<ConnectedAccountPublicDto>;
   myMessageChannels: Array<MessageChannel>;
@@ -5731,6 +5746,11 @@ export type QueryMetadataTranslationsArgs = {
 
 export type QueryMostlyEmptyFieldMetadataIdsArgs = {
   objectMetadataId: Scalars['UUID']['input'];
+};
+
+
+export type QueryMyApplicationVariablesArgs = {
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 

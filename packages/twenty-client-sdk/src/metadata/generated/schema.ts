@@ -1257,6 +1257,12 @@ export interface EnterpriseSubscriptionStatusDTO {
     __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
+export interface MyApplicationVariable {
+    key: Scalars['String']
+    value: Scalars['String']
+    __typename: 'MyApplicationVariable'
+}
+
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
     limitKind: Scalars['String']
@@ -3362,6 +3368,7 @@ export interface Query {
     getResourceCreditUsage: BillingResourceCreditUsage[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     applicationConnectedAccounts: ApplicationConnectedAccountDTO[]
+    myApplicationVariables: MyApplicationVariable[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
     getInviteSuggestions: InviteSuggestion[]
     findWorkspaceInvitations: WorkspaceInvitation[]
@@ -3543,6 +3550,7 @@ export interface Mutation {
     deleteConnectedAccount: ConnectedAccountPublicDTO
     disconnectConnectedAccount: ConnectedAccountPublicDTO
     updateOneApplicationVariable: Scalars['Boolean']
+    updateMyApplicationVariable: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
@@ -5042,6 +5050,13 @@ export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
     cancelAt?: boolean | number
     currentPeriodEnd?: boolean | number
     isCancellationScheduled?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MyApplicationVariableGenqlSelection{
+    key?: boolean | number
+    value?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7261,6 +7276,7 @@ export interface QueryGenqlSelection{
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     applicationConnectedAccounts?: (ApplicationConnectedAccountDTOGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    myApplicationVariables?: (MyApplicationVariableGenqlSelection & { __args?: {applicationId?: (Scalars['UUID'] | null)} })
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
@@ -7495,6 +7511,7 @@ export interface MutationGenqlSelection{
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
+    updateMyApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
@@ -8896,6 +8913,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
       return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const MyApplicationVariable_possibleTypes: string[] = ['MyApplicationVariable']
+    export const isMyApplicationVariable = (obj?: { __typename?: any } | null): obj is MyApplicationVariable => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMyApplicationVariable"')
+      return MyApplicationVariable_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const UsageQuotaDefinition_possibleTypes: string[] = ['UsageQuotaDefinition']

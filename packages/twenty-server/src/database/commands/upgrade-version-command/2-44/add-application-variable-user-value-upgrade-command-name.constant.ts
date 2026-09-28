@@ -1,0 +1,2 @@
+export const ADD_APPLICATION_VARIABLE_USER_VALUE_UPGRADE_COMMAND_NAME =
+  '2.44.0_AddApplicationVariableUserValueFastInstanceCommand_1790623096896';

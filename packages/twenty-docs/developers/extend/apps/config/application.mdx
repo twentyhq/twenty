@@ -133,7 +133,7 @@ The same applies to front components reading values via `getApplicationVariable(
 Each application variable has a `scope`:
 
 - **`WORKSPACE`** (default): one value for the whole workspace, set by a member who can manage apps.
-- **`USER`**: each member keeps their own value.
+- **`USER`**: each member keeps their own value. For non-secret variables, a member who has not set one gets the workspace value, which starts as the manifest `value` and is what the app's settings page edits. Secret variables have no workspace fallback: each member must set their own.
 
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
@@ -152,11 +152,35 @@ export default defineApplication({
 });
 ```
 
-User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`.
+User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest. Secret values are masked when read and return an empty string until the member sets their own value.
 
 For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
 
-User variables are never injected into `process.env` or returned by `getApplicationVariable`, because the person who triggered a run is not always the person the run is about.
+User variables are never injected into `process.env` or returned by `getApplicationVariable`, because the person who triggered a run is not always the person the run is about. Read and write them through `MetadataApiClient` instead:
+
+- `myApplicationVariables` returns the signed-in member's value of each user variable of your app, with secrets masked.
+- `updateMyApplicationVariable` saves the signed-in member's own value.
+
+Both need a token with a person behind it, such as a front component's, and no `APPLICATIONS` permission: a member only ever reads and writes their own values.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+// In a front component, as the member viewing it
+const client = new MetadataApiClient();
+
+const { myApplicationVariables } = await client.query({
+  myApplicationVariables: { key: true, value: true },
+});
+
+await client.mutation({
+  updateMyApplicationVariable: {
+    __args: { key: 'RECORD_MY_MEETINGS', value: 'true' },
+  },
+});
+```
+
+Values are strings, in the same format as `process.env` (see [Variable types](#variable-types)).
 
 ## Default function role
 

@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationVariableUserValueEntity } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.entity';
+import { ApplicationVariableUserValueResolver } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.resolver';
+import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/application/application-variable/application-variable.resolver';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
@@ -14,7 +17,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationVariableEntity, ApplicationEntity]),
+    TypeOrmModule.forFeature([
+      ApplicationVariableEntity,
+      ApplicationVariableUserValueEntity,
+      ApplicationEntity,
+    ]),
     PermissionsModule,
     WorkspaceCacheModule,
     SecretEncryptionModule,
@@ -22,8 +29,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   providers: [
     provideWorkspaceScopedRepository(ApplicationVariableEntity),
+    provideWorkspaceScopedRepository(ApplicationVariableUserValueEntity),
     ApplicationVariableEntityService,
     ApplicationVariableEntityResolver,
+    ApplicationVariableUserValueService,
+    ApplicationVariableUserValueResolver,
     WorkspaceApplicationVariableMapCacheService,
   ],
   exports: [

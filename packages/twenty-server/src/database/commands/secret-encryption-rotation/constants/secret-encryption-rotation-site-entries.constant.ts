@@ -4,6 +4,7 @@ import { ConnectionParametersRotationHandler } from 'src/database/commands/secre
 import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
 import { type SecretEncryptionRotationHandler } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationVariableUserValueEntity } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 import { type ExtractEncryptedColumns } from 'src/engine/core-modules/secret-encryption/branded-strings/extract-encrypted-columns.type';
@@ -55,6 +56,17 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
     columnSiteNames: {
       value: {
         siteName: 'application-variable',
+        customHandler: undefined,
+        isWorkspaceScoped: true,
+        extraWhere: undefined,
+      },
+    },
+  },
+  ApplicationVariableUserValueEntity: {
+    entity: ApplicationVariableUserValueEntity,
+    columnSiteNames: {
+      value: {
+        siteName: 'application-variable-user-value',
         customHandler: undefined,
         isWorkspaceScoped: true,
         extraWhere: undefined,

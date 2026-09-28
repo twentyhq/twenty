@@ -31,7 +31,12 @@ export class ApplicationVariableEntityService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  getDisplayValue(applicationVariable: ApplicationVariableEntity): string {
+  getDisplayValue(
+    applicationVariable: Pick<
+      ApplicationVariableEntity,
+      'value' | 'workspaceId' | 'isSecret'
+    >,
+  ): string {
     const plaintextValue = this.secretEncryptionService.decryptVersionedOrThrow(
       applicationVariable.value,
       { workspaceId: applicationVariable.workspaceId },
@@ -75,7 +80,7 @@ export class ApplicationVariableEntityService {
     );
   }
 
-  private async findFlatApplicationVariables({
+  async findFlatApplicationVariables({
     workspaceId,
     applicationId,
     applicationVariableMaps: preloadedApplicationVariableMaps,

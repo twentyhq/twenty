@@ -1614,6 +1614,11 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
+type MyApplicationVariable {
+  key: String!
+  value: String!
+}
+
 type UsageQuotaDefinition {
   resourceType: UsageResourceType!
   limitKind: String!
@@ -3822,6 +3827,7 @@ type Query {
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
+  myApplicationVariables(applicationId: UUID): [MyApplicationVariable!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -4151,6 +4157,7 @@ type Mutation {
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
+  updateMyApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!

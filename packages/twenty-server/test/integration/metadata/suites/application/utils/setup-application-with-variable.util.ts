@@ -2,7 +2,10 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { type ObjectPermissionManifest } from 'twenty-shared/application';
+import {
+  type ApplicationVariableScope,
+  type ObjectPermissionManifest,
+} from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,18 +16,22 @@ export type ApplicationWithVariable = {
   variableKey: string;
 };
 
-// Syncs an application whose default role holds APPLICATIONS by default, as the
-// official apps with a settings component do, and declares one non-secret
-// variable. The flags are a parameter so a caller can give the application role
-// a workspace permission instead.
+// Application settings components need APPLICATIONS by default; tests can
+// override the permissions to exercise narrower access.
 export const setupApplicationWithVariable = async ({
   name,
   variableKey,
+  variableScope,
+  isSecret = false,
+  isRequired = false,
   permissionFlagUniversalIdentifiers = [SystemPermissionFlag.APPLICATIONS],
   objectPermissions = [],
 }: {
   name: string;
   variableKey: string;
+  variableScope?: ApplicationVariableScope;
+  isSecret?: boolean;
+  isRequired?: boolean;
   permissionFlagUniversalIdentifiers?: string[];
   // An application-owned role can only be granted object permissions through
   // its own manifest; upserting them afterwards is refused.
@@ -53,7 +60,9 @@ export const setupApplicationWithVariable = async ({
           applicationVariables: {
             [variableKey]: {
               universalIdentifier: uuidv4(),
-              value: 'initial',
+              scope: variableScope,
+              isRequired,
+              ...(isSecret ? { isSecret: true } : { value: 'initial' }),
             },
           },
           packageJsonChecksum: null,
