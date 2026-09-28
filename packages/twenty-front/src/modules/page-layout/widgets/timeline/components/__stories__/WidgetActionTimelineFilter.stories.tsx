@@ -109,7 +109,17 @@ const meta: Meta<typeof WidgetActionTimelineFilter> = {
 export default meta;
 type Story = StoryObj<typeof WidgetActionTimelineFilter>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    expect(
+      await within(canvasElement).findByRole(
+        'button',
+        { name: 'Filter timeline' },
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+  },
+};
 
 export const FiltersActivityTypes: Story = {
   play: async ({ canvasElement }) => {

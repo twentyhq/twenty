@@ -122,7 +122,21 @@ const meta: Meta<typeof SidePanelCommandMenuItemEditPage> = {
 export default meta;
 type Story = StoryObj<typeof SidePanelCommandMenuItemEditPage>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole(
+        'button',
+        { name: 'No record selected' },
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.getByText(PINNED_COMMAND_MENU_ITEM.label)).toBeVisible();
+    expect(canvas.getByText(OTHER_COMMAND_MENU_ITEM.label)).toBeVisible();
+  },
+};
 
 export const RecordSelectionPicker: Story = {
   play: async ({ canvasElement }) => {

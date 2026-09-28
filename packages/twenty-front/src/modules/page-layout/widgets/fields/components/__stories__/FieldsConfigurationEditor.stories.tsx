@@ -167,7 +167,19 @@ const meta: Meta<typeof FieldsConfigurationEditor> = {
 export default meta;
 type Story = StoryObj<typeof FieldsConfigurationEditor>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('General', {}, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(canvas.getByText('Details')).toBeVisible();
+    expect(
+      canvas.getAllByRole('button', { name: 'More options' }),
+    ).toHaveLength(2);
+  },
+};
 
 export const GroupMenu: Story = {
   play: async ({ canvasElement }) => {
