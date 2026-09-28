@@ -1,10 +1,12 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { StyledSettingsBillingFieldLabel } from '@/settings/billing/components/internal/SettingsBillingFieldLabel';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -18,8 +20,7 @@ type SettingsBillingLimitNestedSelectProps = {
   SelectedIcon?: IconComponent;
   SelectedAvatar?: ReactNode;
   isDisabled?: boolean;
-  dropdownComponents: ReactNode;
-  onClose?: () => void;
+  children: ReactNode;
 };
 
 export const SettingsBillingLimitNestedSelect = ({
@@ -30,8 +31,7 @@ export const SettingsBillingLimitNestedSelect = ({
   SelectedIcon,
   SelectedAvatar,
   isDisabled = false,
-  dropdownComponents,
-  onClose,
+  children,
 }: SettingsBillingLimitNestedSelectProps) => {
   const selectedOption = {
     value: selectedLabel,
@@ -50,18 +50,17 @@ export const SettingsBillingLimitNestedSelect = ({
           isDisabled
         />
       ) : (
-        <Dropdown
-          dropdownId={dropdownId}
-          dropdownPlacement="bottom-start"
-          onClose={onClose}
-          clickableComponent={
+        <DropdownRoot dropdownId={dropdownId} type="picker">
+          <Dropdown.Trigger render={<div />} nativeButton={false}>
             <SelectControl
               selectedOption={selectedOption}
               LeftComponent={SelectedAvatar}
             />
-          }
-          dropdownComponents={dropdownComponents}
-        />
+          </Dropdown.Trigger>
+          <DropdownContent align="start" aria-label={label}>
+            {children}
+          </DropdownContent>
+        </DropdownRoot>
       )}
     </StyledContainer>
   );

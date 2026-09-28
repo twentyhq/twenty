@@ -184,7 +184,6 @@ msgstr "{0, plural, one {# feladat újrapróbálása nem sikerült} other {# fel
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# Objektum} other {# Objektumok}}"
 
@@ -198,7 +197,7 @@ msgstr "{0, plural, one {# munkaterület sikertelen vagy lemaradásban van} othe
 #. placeholder {0}: otherFieldDiffs.length
 #: src/modules/log-console/components/LogConsoleChangesCell.tsx
 msgid "{0, plural, one {and # more} other {and # more}}"
-msgstr ""
+msgstr "{0, plural, one {és még #} other {és még #}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -436,7 +435,7 @@ msgstr ""
 #. js-lingui-id: JBM5me
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} usage event} other {{formattedCount} usage events}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} használati esemény} other {{formattedCount} használati esemény}}"
 
 #. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -653,7 +652,7 @@ msgstr "{queuedMessage}, {skipReasons} kihagyva"
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "{retentionInDays, plural, one {# day} other {# days}}"
-msgstr ""
+msgstr "{retentionInDays, plural, one {# nap} other {# nap}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -714,7 +713,7 @@ msgstr "{selectedCount} forrástípus"
 #. js-lingui-id: px4Svg
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 msgid "{selectedOptionCount} options"
-msgstr ""
+msgstr "{selectedOptionCount} lehetőség kiválasztva."
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1308,7 +1307,7 @@ msgstr "Tevékenység láthatósága"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/utils/__tests__/getLogConsoleFieldFilters.test.ts
 msgid "Actor"
-msgstr ""
+msgstr "Végrehajtó"
 
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -1531,6 +1530,12 @@ msgstr "Mező hozzáadása"
 #: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "Add file"
 msgstr "Fájl hozzáadása"
+
+#. js-lingui-id: yCsT+y
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenu.tsx
+msgid "Add files, records or skills"
+msgstr ""
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
@@ -2211,6 +2216,16 @@ msgstr "AI-használat felhasználónként"
 msgid "AI Usage by Workspace"
 msgstr "AI-használat munkaterületenként"
 
+#. js-lingui-id: 6ktJa0
+#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+msgid "AI usage limit reached for this period."
+msgstr ""
+
+#. js-lingui-id: JQW6M/
+#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+msgid "AI usage limit reached. Ask an admin to raise the limit."
+msgstr ""
+
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
@@ -2507,11 +2522,6 @@ msgstr "Engedélyezi a média hozzáférését a(z) {applicationName} számára?
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Engedélyezze a Microsoft-alapú bejelentkezést az SSO megkerülési engedéllyel rendelkező felhasználók számára."
-
-#. js-lingui-id: cLzEjc
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow sharing individual records with workspace members."
-msgstr "Egyes rekordok megosztásának engedélyezése a munkaterület tagjaival."
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -2846,12 +2856,12 @@ msgstr "Alkalmazás sikeresen törölve"
 #. js-lingui-id: Oh+wHS
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "App logs"
-msgstr ""
+msgstr "Alkalmazásnaplók"
 
 #. js-lingui-id: ZGfGyx
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "App logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "Az alkalmazásnaplókat {retentionInDays} napig őrizzük meg."
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -3131,11 +3141,6 @@ msgstr "Növekvő"
 msgid "Ask & find"
 msgstr "Kérdezés és keresés"
 
-#. js-lingui-id: LfkDyR
-#: src/modules/ai/components/AiChatErrorRenderer.tsx
-msgid "Ask a workspace admin to raise the limit."
-msgstr "Kérjen meg egy munkaterületi rendszergazdát a korlát emelésére."
-
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
@@ -3144,6 +3149,11 @@ msgstr "Kérjen meg egy munkaterületi rendszergazdát a korlát emelésére."
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
 msgid "Ask AI"
 msgstr "Kérdezze a MI-t"
+
+#. js-lingui-id: IRCQfx
+#: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
+msgid "Ask an admin to raise the limit."
+msgstr ""
 
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3299,6 +3309,7 @@ msgstr "Fájl csatolása"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/internal/AgentChatFileUploadButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
@@ -3336,7 +3347,7 @@ msgstr "Audit Naplók"
 #. js-lingui-id: APXe7E
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Audit logs are kept {retentionInDays} days."
-msgstr ""
+msgstr "Az auditnaplókat {retentionInDays} napig őrizzük meg."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -4372,7 +4383,7 @@ msgstr "Téma módosítása rendszerre"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
-msgstr ""
+msgstr "Módosítások"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -4788,7 +4799,7 @@ msgstr "Banner bezárása"
 #. js-lingui-id: n5fb8M
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Close details"
-msgstr ""
+msgstr "Részletek bezárása"
 
 #. js-lingui-id: c2EYjZ
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
@@ -4803,7 +4814,7 @@ msgstr "Gyorsbillentyűk bezárása"
 #. js-lingui-id: hAei0W
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Close logs console"
-msgstr ""
+msgstr "Naplókonzol bezárása"
 
 #. js-lingui-id: vcpc5o
 #: src/modules/blocknote-editor/components/BlockEditor.tsx
@@ -4922,6 +4933,7 @@ msgstr "Oldalsáv összecsukása"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Color"
 msgstr "Szín"
 
@@ -5611,7 +5623,7 @@ msgstr "Másolás"
 #. js-lingui-id: Qv14oC
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Copy as JSON"
-msgstr ""
+msgstr "Másolás JSON-ként"
 
 #. js-lingui-id: 6gAr5+
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
@@ -5973,6 +5985,7 @@ msgstr "Címzettek számlálása..."
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/ui/field/input/components/AddressInput.tsx
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Country"
 msgstr "Ország"
 
@@ -6411,6 +6424,7 @@ msgstr "valuták"
 
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency"
 msgstr "Pénznem"
 
@@ -6488,7 +6502,7 @@ msgstr "Egyéni alkalmazások"
 #. js-lingui-id: GAD3Dx
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Custom domain"
-msgstr ""
+msgstr "Egyéni domain"
 
 #. js-lingui-id: XQ681Q
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6509,12 +6523,12 @@ msgstr "Egyéni domain (crm.yourco.com)"
 #. js-lingui-id: ML4S78
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain activated"
-msgstr ""
+msgstr "Egyéni domain aktiválva"
 
 #. js-lingui-id: Kj25t7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Custom domain deactivated"
-msgstr ""
+msgstr "Egyéni domain deaktiválva"
 
 #. js-lingui-id: +ub6QN
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6973,7 +6987,7 @@ msgstr "Deaktiválva"
 #. js-lingui-id: Osn70z
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 msgid "Debug"
-msgstr ""
+msgstr "Hibakeresés"
 
 #. js-lingui-id: Iotuxe
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -7565,7 +7579,7 @@ msgstr "Az ezen a példányon futó alkalmazás észlelt verziója"
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "developer"
-msgstr ""
+msgstr "fejlesztő"
 
 #. js-lingui-id: 7aDnUb
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -7576,7 +7590,7 @@ msgstr "Fejlesztő"
 #. js-lingui-id: JSEGvu
 #: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 msgid "Developer mode"
-msgstr ""
+msgstr "Fejlesztői mód"
 
 #. js-lingui-id: n+SX4g
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -7629,6 +7643,7 @@ msgid "Direct REST metadata responses"
 msgstr "Közvetlen REST-metaadatválaszok"
 
 #. js-lingui-id: MRB7nI
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Direction"
 msgstr "Irány"
@@ -8605,7 +8620,7 @@ msgstr "Befejezés"
 #. js-lingui-id: FCKppt
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 msgid "Endpoint"
-msgstr ""
+msgstr "Végpont"
 
 #. js-lingui-id: T3juzf
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -9274,7 +9289,7 @@ msgstr "Aláírt példányok"
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
-msgstr ""
+msgstr "Végrehajtás"
 
 #. js-lingui-id: B0clc7
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -9299,7 +9314,7 @@ msgstr "Kilépés"
 #. js-lingui-id: IkOhTI
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Exit full screen"
-msgstr ""
+msgstr "Kilépés teljes képernyőből"
 
 #. js-lingui-id: XB4onr
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -10639,7 +10654,7 @@ msgstr "Teljes oldal"
 #. js-lingui-id: OwIqiD
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Full screen"
-msgstr ""
+msgstr "Teljes képernyő"
 
 #. js-lingui-id: CU/Sq6
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -11617,12 +11632,12 @@ msgstr "Megszemélyesítés"
 #. js-lingui-id: 2Ay+wL
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation ended"
-msgstr ""
+msgstr "Megszemélyesítés befejezve"
 
 #. js-lingui-id: 6C6HwH
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation failed"
-msgstr ""
+msgstr "Megszemélyesítés sikertelen"
 
 #. js-lingui-id: yImXof
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -11632,12 +11647,12 @@ msgstr "A megszemélyesítés le van tiltva ebben a munkaterületen"
 #. js-lingui-id: Qzg4zX
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation requested"
-msgstr ""
+msgstr "Megszemélyesítés kérelmezve"
 
 #. js-lingui-id: 5LAZwq
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Impersonation started"
-msgstr ""
+msgstr "Megszemélyesítés elindítva"
 
 #. js-lingui-id: yHueLx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11817,7 +11832,7 @@ msgstr "Információk"
 #. js-lingui-id: XP/nZ1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Initial values"
-msgstr ""
+msgstr "Kezdeti értékek"
 
 #. js-lingui-id: XU5AOg
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -12591,12 +12606,12 @@ msgstr "Elmúlt 12 óra (legrégebbi → legújabb)"
 #. js-lingui-id: evdQsU
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 15 minutes"
-msgstr ""
+msgstr "Elmúlt 15 perc"
 
 #. js-lingui-id: aK4uBd
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
 msgid "Last 24 hours"
-msgstr ""
+msgstr "Utolsó 24 óra"
 
 #. js-lingui-id: j5nqnO
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -13240,10 +13255,20 @@ msgstr "Metrikai adatok betöltése..."
 msgid "Loading more..."
 msgstr "Töltés, kérem várjon..."
 
+#. js-lingui-id: WepeNQ
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+msgid "Loading records"
+msgstr ""
+
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "Loading retention configuration..."
 msgstr "Megtartási konfiguráció betöltése..."
+
+#. js-lingui-id: VeVIIk
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "Loading skills"
+msgstr ""
 
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
@@ -13269,7 +13294,7 @@ msgstr "Betöltés..."
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
-#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "Betöltés…"
 
@@ -13304,7 +13329,7 @@ msgstr "Rögzítsen egy új ügyletet (vállalat, összeg, szakasz, várható le
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
-msgstr ""
+msgstr "Napló JSON-ként másolva"
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
@@ -13328,7 +13353,7 @@ msgstr "Naplómegőrzés"
 #. js-lingui-id: ZQMmpY
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Log sources"
-msgstr ""
+msgstr "Naplóforrások"
 
 #. js-lingui-id: hykMbH
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -13338,7 +13363,7 @@ msgstr "Bejelentkezett mint {impersonatedUser}"
 #. js-lingui-id: mxY4xF
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Logged out"
-msgstr ""
+msgstr "Kijelentkezve"
 
 #. js-lingui-id: ILNASD
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -13393,7 +13418,7 @@ msgstr "Kijelentkezés"
 #. js-lingui-id: yYOzWD
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "logs"
-msgstr ""
+msgstr "napló"
 
 #. js-lingui-id: w/bY7R
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
@@ -13407,12 +13432,12 @@ msgstr "Napló"
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Logs console"
-msgstr ""
+msgstr "Naplókonzol"
 
 #. js-lingui-id: fHuZPA
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Logs console hidden. Press {toggleHotkeyLabel} to open it again."
-msgstr ""
+msgstr "A naplókonzol rejtve van. Nyomja meg a(z) {toggleHotkeyLabel} billentyűt az újbóli megnyitásához."
 
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
@@ -13503,6 +13528,11 @@ msgstr "Az alkalmazás által a(z) {0} hívásához használt kapcsolatok kezel�
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Manage feature flags for this workspace"
 msgstr "Funkciójelzők kezelése ezen a munkaterületen"
+
+#. js-lingui-id: BaAAPb
+#: src/modules/settings/billing/hooks/useManageUsageLimitsButton.ts
+msgid "Manage limits"
+msgstr ""
 
 #. js-lingui-id: PxMD2N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13754,7 +13784,7 @@ msgstr "Közepes méretű szakaszcím"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Member"
-msgstr ""
+msgstr "Tag"
 
 #. js-lingui-id: lXyaAg
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -14213,7 +14243,7 @@ msgstr "Vigye előre a munkát csapatok és ügynökök között"
 #. js-lingui-id: Qf/mt6
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Moved to trash"
-msgstr ""
+msgstr "Lomtárba helyezve"
 
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -14581,6 +14611,11 @@ msgstr "Új Jelszó"
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "New rollover limit"
 msgstr "Új átvitel-limit"
+
+#. js-lingui-id: MdpSC1
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "New skill"
+msgstr ""
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15263,6 +15298,7 @@ msgid "No record selected"
 msgstr "Nincs bejegyzés kiválasztva"
 
 #. js-lingui-id: EqGTpW
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 msgid "No records found"
@@ -15355,6 +15391,11 @@ msgstr "Nincs küldési cím. Csatlakoztasson egy ellenőrzött domaint a Beáll
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "No server administrators found."
 msgstr "Nem találhatók szerveradminisztrátorok."
+
+#. js-lingui-id: b5hW1u
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "No skills found"
+msgstr ""
 
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -15466,7 +15507,7 @@ msgstr "Nincs érték"
 #. js-lingui-id: P9sVTw
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "No values kept"
-msgstr ""
+msgstr "Nincsenek megőrzött értékek"
 
 #. js-lingui-id: 4jhave
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdown.tsx
@@ -16198,7 +16239,7 @@ msgstr "Hivatkozás megnyitása"
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
-msgstr ""
+msgstr "Naplókonzol megnyitása"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16252,7 +16293,7 @@ msgstr "Nyissa meg a Twenty hivatalos ChatGPT integrációját a munkaterületé
 #. js-lingui-id: tirDue
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Open webhook settings"
-msgstr ""
+msgstr "Webhook beállításainak megnyitása"
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
@@ -16260,6 +16301,8 @@ msgid "Opened"
 msgstr "Megnyitva"
 
 #. js-lingui-id: Fzfj4N
+#: src/modules/log-console/components/LogConsoleToolbar.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Operand"
 msgstr "Operandus"
@@ -16267,7 +16310,7 @@ msgstr "Operandus"
 #. js-lingui-id: FZg3wM
 #: src/modules/log-console/constants/LogConsoleUsageOperationColumn.tsx
 msgid "Operation"
-msgstr ""
+msgstr "Művelet"
 
 #. js-lingui-id: 8m1COB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
@@ -16626,7 +16669,7 @@ msgstr "Oldalstílus"
 #. js-lingui-id: QbrUIo
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Page views"
-msgstr ""
+msgstr "Oldalmegtekintések"
 
 #. js-lingui-id: sF+Xp9
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
@@ -16836,12 +16879,12 @@ msgstr "Végleges törlés. Írja be a napok számát."
 #. js-lingui-id: e7kLp1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Véglegesen törölve"
 
 #. js-lingui-id: Qun2bc
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 msgid "Permanently deleted records keep no values."
-msgstr ""
+msgstr "A véglegesen törölt rekordokhoz nem őrzünk meg értékeket."
 
 #. js-lingui-id: EPkrPQ
 #: src/modules/command-menu-item/engine-command/record/components/DestroyRecordsCommand.tsx
@@ -17453,7 +17496,7 @@ msgstr "Python-kód végrehajtása"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
 msgid "Quantity"
-msgstr ""
+msgstr "Mennyiség"
 
 #. js-lingui-id: 2vudsu
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -17537,7 +17580,7 @@ msgstr "Arány"
 #. js-lingui-id: 05e9XO
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Raw event"
-msgstr ""
+msgstr "Nyers esemény"
 
 #. js-lingui-id: wdlYqX
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -17745,12 +17788,12 @@ msgstr "Rekord (ID)"
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Record changes"
-msgstr ""
+msgstr "Rekordmódosítások"
 
 #. js-lingui-id: tpEWQj
 #: src/modules/log-console/components/LogConsole.tsx
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "A rekordmódosítások és az alkalmazásnaplók a jelenlegi csomagjában érhetők el. A többi naplótípushoz Szervezeti előfizetés szükséges."
 
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17790,11 +17833,6 @@ msgstr "Felvétel címkéje"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Rekordoldal"
-
-#. js-lingui-id: dmU8dH
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record sharing"
-msgstr "Rekordmegosztás"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -17844,6 +17882,8 @@ msgid "Recording Scheduled"
 msgstr "Rögzítés ütemezve"
 
 #. js-lingui-id: PWlTvh
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -17887,7 +17927,7 @@ msgstr "Átirányítási URI"
 #. js-lingui-id: lCF0wC
 #: src/modules/log-console/components/LogConsoleResults.tsx
 msgid "Refresh"
-msgstr ""
+msgstr "Frissítés"
 
 #. js-lingui-id: pTGa/J
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -18495,12 +18535,12 @@ msgstr "Az alkalmazás által meghatározott tevékenységtípus-beállítások 
 #. js-lingui-id: o8va6N
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored"
-msgstr ""
+msgstr "Visszaállítva"
 
 #. js-lingui-id: fkvsIG
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Restored from trash"
-msgstr ""
+msgstr "Visszaállítva a lomtárból"
 
 #. js-lingui-id: rNDhLF
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
@@ -18529,7 +18569,7 @@ msgstr "Összefoglaló"
 #. js-lingui-id: nBz1I/
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "Retention"
-msgstr ""
+msgstr "Megőrzési idő"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -18990,8 +19030,12 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -19230,6 +19274,12 @@ msgstr "Keresési beállítások"
 msgid "Search people or roles"
 msgstr "Személyek vagy szerepkörök keresése"
 
+#. js-lingui-id: IMeaSJ
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+msgid "Search records"
+msgstr ""
+
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 msgid "Search records..."
@@ -19239,6 +19289,12 @@ msgstr "Rekordok keresése..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "Regisztrációk keresése..."
+
+#. js-lingui-id: BlLxpG
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+msgid "Search skills"
+msgstr ""
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -19619,6 +19675,7 @@ msgstr "Válasszon dátumot és időt"
 
 #. js-lingui-id: hR/4+8
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Select entity"
 msgstr "Válasszon entitást"
 
@@ -19893,7 +19950,7 @@ msgstr "Szerverhozzáférés"
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Server administrator access updated"
-msgstr ""
+msgstr "A szerveradminisztrátori hozzáférés frissítve"
 
 #. js-lingui-id: 4Fpy78
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -19918,22 +19975,22 @@ msgstr "Szolgáltatói adatok"
 #. js-lingui-id: CqO9qC
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 msgid "Session"
-msgstr ""
+msgstr "Munkamenet"
 
 #. js-lingui-id: jvivc3
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Session ID"
-msgstr ""
+msgstr "Munkamenet-azonosító"
 
 #. js-lingui-id: uRGnZ7
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Session revoked"
-msgstr ""
+msgstr "Munkamenet visszavonva"
 
 #. js-lingui-id: 4cEClj
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 msgid "Sessions"
-msgstr ""
+msgstr "Munkamenetek"
 
 #. js-lingui-id: 4FANIj
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellDisplayContainer.tsx
@@ -20156,7 +20213,7 @@ msgstr "A címke módosításakor az API-név is változzon?"
 #. js-lingui-id: 3MO9Sa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr ""
+msgstr "Speciális módban jelenítsen meg egy naplókonzolt az alkalmazás alján."
 
 #. js-lingui-id: vbXZ3k
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -20281,13 +20338,13 @@ msgstr "Az aláírt DPA előállítva és letöltve"
 #. js-lingui-id: q2v4sG
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed in"
-msgstr ""
+msgstr "Bejelentkezve"
 
 #. js-lingui-id: t8SqKm
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
 #: src/modules/log-console/utils/getLogConsoleSecurityEvent.ts
 msgid "Signed up"
-msgstr ""
+msgstr "Regisztrálva"
 
 #. js-lingui-id: X1zsRT
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
@@ -20374,6 +20431,8 @@ msgid "Skill not found"
 msgstr "A készség nem található"
 
 #. js-lingui-id: PCSkw2
+#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -21110,7 +21169,7 @@ msgstr "Támogatás"
 #. js-lingui-id: y1H7Uc
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Support team"
-msgstr ""
+msgstr "Ügyfélszolgálati csapat"
 
 #. js-lingui-id: yYneQW
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
@@ -22259,7 +22318,7 @@ msgstr "Tim"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleTimeColumn.tsx
 msgid "Time"
-msgstr ""
+msgstr "Idő"
 
 #. js-lingui-id: n9nSNJ
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -22753,12 +22812,12 @@ msgstr ""
 #. js-lingui-id: I94zOx
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn off developer mode"
-msgstr ""
+msgstr "Fejlesztői mód kikapcsolása"
 
 #. js-lingui-id: mpTAWL
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Turn on developer mode"
-msgstr ""
+msgstr "Fejlesztői mód bekapcsolása"
 
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -23080,7 +23139,7 @@ msgstr "Ismeretlen téma"
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
 msgid "Unknown user"
-msgstr ""
+msgstr "Ismeretlen felhasználó"
 
 #. js-lingui-id: m/o1+r
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesByHealthAccordion.tsx
@@ -23596,7 +23655,7 @@ msgstr "Feltöltés..."
 #. js-lingui-id: +Ueo4g
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Upserted"
-msgstr ""
+msgstr "Upsertelve"
 
 #. js-lingui-id: PZd7QF
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -23832,7 +23891,7 @@ msgstr "Felhasználói kontextus"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User ID"
-msgstr ""
+msgstr "Felhasználói azonosító"
 
 #. js-lingui-id: tNT8wT
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23866,7 +23925,7 @@ msgstr "Felhasználó használati adatai"
 #. js-lingui-id: UC8MH6
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "User workspace ID"
-msgstr ""
+msgstr "Felhasználói munkaterület azonosítója"
 
 #. js-lingui-id: FYgCVU
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -23953,7 +24012,7 @@ msgstr "Értékek"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Values before deletion"
-msgstr ""
+msgstr "Törlés előtti értékek"
 
 #. js-lingui-id: M9lOpp
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
@@ -24537,7 +24596,7 @@ msgstr "Webhook sikeresen törölve"
 #. js-lingui-id: 0PSwb2
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Webhook ID"
-msgstr ""
+msgstr "Webhook-azonosító"
 
 #. js-lingui-id: 8bfORM
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
