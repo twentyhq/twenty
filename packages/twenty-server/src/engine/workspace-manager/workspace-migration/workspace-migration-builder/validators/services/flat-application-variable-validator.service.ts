@@ -12,6 +12,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateApplicationVariableScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util';
 
 @Injectable()
 export class FlatApplicationVariableValidatorService {
@@ -67,6 +68,10 @@ export class FlatApplicationVariableValidatorService {
         userFriendlyMessage: msg`Application variable key must be unique`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateApplicationVariableScope(flatApplicationVariable),
+    );
 
     return validationResult;
   }
@@ -132,6 +137,8 @@ export class FlatApplicationVariableValidatorService {
         message: t`Application variable not found`,
         userFriendlyMessage: msg`Application variable not found`,
       });
+
+      return validationResult;
     }
 
     const keyUpdate = flatEntityUpdate.key;
@@ -146,6 +153,16 @@ export class FlatApplicationVariableValidatorService {
         userFriendlyMessage: msg`Application variable key ${keyUpdate} is reserved`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateApplicationVariableScope({
+        scope: flatEntityUpdate.scope ?? fromFlatApplicationVariable.scope,
+        isSecret:
+          flatEntityUpdate.isSecret ?? fromFlatApplicationVariable.isSecret,
+        isRequired:
+          flatEntityUpdate.isRequired ?? fromFlatApplicationVariable.isRequired,
+      }),
+    );
 
     return validationResult;
   }
