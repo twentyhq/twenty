@@ -16,13 +16,15 @@ const remapIds = (
 const remapStepSettingsVariables = <TStep extends WorkflowAction>(
   step: TStep,
   clonedStepIdBySourceStepId: Map<string, string>,
-): TStep => ({
-  ...step,
-  settings: remapDuplicatedStepVariables(
-    step.settings,
-    clonedStepIdBySourceStepId,
-  ),
-});
+): TStep => {
+  return {
+    ...step,
+    settings: remapDuplicatedStepVariables(
+      step.settings,
+      clonedStepIdBySourceStepId,
+    ),
+  };
+};
 
 export const remapDuplicatedStepDestinations = <
   TTrigger extends WorkflowTrigger,

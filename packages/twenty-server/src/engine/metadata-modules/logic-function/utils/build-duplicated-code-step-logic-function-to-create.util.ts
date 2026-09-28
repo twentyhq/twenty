@@ -21,8 +21,8 @@ export const buildDuplicatedCodeStepLogicFunctionToCreate = ({
 > & {
   existingLogicFunction: FlatLogicFunction;
   id: string;
-}): UniversalFlatLogicFunction & { id: string } =>
-  buildUniversalFlatLogicFunctionToCreate({
+}): UniversalFlatLogicFunction & { id: string } => {
+  return buildUniversalFlatLogicFunctionToCreate({
     id,
     name: existingLogicFunction.name,
     description: existingLogicFunction.description,
@@ -37,3 +37,4 @@ export const buildDuplicatedCodeStepLogicFunctionToCreate = ({
     isBuildUpToDate,
     applicationUniversalIdentifier,
   });
+};

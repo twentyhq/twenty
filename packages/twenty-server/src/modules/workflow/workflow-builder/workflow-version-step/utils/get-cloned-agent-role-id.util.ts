@@ -8,7 +8,13 @@ export const getClonedAgentRoleId = ({
 }: {
   sourceRole: Pick<FlatRole, 'id' | 'applicationId'> | undefined;
   clonedAgentApplicationId: string;
-}): string | undefined =>
-  isDefined(sourceRole) && sourceRole.applicationId !== clonedAgentApplicationId
-    ? sourceRole.id
-    : undefined;
+}): string | undefined => {
+  if (
+    !isDefined(sourceRole) ||
+    sourceRole.applicationId === clonedAgentApplicationId
+  ) {
+    return undefined;
+  }
+
+  return sourceRole.id;
+};
