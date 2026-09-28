@@ -211,7 +211,7 @@ import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/databas
 import { AddUsageLimitInstanceOverrideFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790245573467-add-usage-limit-instance-override';
 import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790323148754-enforce-workflow-version-core-parent';
 import { AddCoreForeignKeyIndexesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790343790126-add-core-foreign-key-indexes';
-import { AddObjectMetadataValidationRulesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790601733110-add-object-metadata-validation-rules';
+import { AddObjectMetadataValidationRulesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790607276788-add-object-metadata-validation-rules';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
