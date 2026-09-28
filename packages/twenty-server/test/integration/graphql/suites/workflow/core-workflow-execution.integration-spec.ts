@@ -4,6 +4,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 import request from 'supertest';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
@@ -26,6 +27,11 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
@@ -910,152 +916,215 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(answeredInputAsks[0].answeredAt).not.toBeNull();
     });
 
-    // Whoever started the run is who it waits on, until someone hands it on.
-    it('is assigned to the member who started the run and can be handed to another', async () => {
-      const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
-      // Assigning needs to read the Ask, which reads through its run's
-      // workspace workflow, so not a mirrorless fixture.
-      const fixture = await createFixture({ steps: [form, finalStep] });
-      const runId = await runFixture(fixture);
+    describe('handed on to another member', () => {
+      let originalMemberRoleId: string;
+      let workflowsRoleId: string;
 
-      await waitForStep(runId, form.id, 'PENDING');
+      // Only a member who can read the run can be waited on, and the seeded
+      // Member role cannot reach workflows at all.
+      beforeAll(async () => {
+        originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' }))
+          .id;
 
-      const [{ id: inputAskId, assigneeId }] =
-        await global.testDataSource.query(
-          `SELECT id, "assigneeId" FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
-          [runId],
-        );
+        const { data: createdRole } = await createOneRole({
+          expectToFail: false,
+          input: {
+            label: `Workflows-enabled member ${randomUUID()}`,
+            description: 'Member plus the WORKFLOWS permission flag',
+            icon: 'IconSettingsAutomation',
+            canUpdateAllSettings: false,
+            canAccessAllTools: true,
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: true,
+            canSoftDeleteAllObjectRecords: true,
+            canDestroyAllObjectRecords: true,
+            canBeAssignedToUsers: true,
+            canBeAssignedToAgents: false,
+            canBeAssignedToApiKeys: false,
+          },
+        });
 
-      expect(assigneeId).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+        workflowsRoleId = createdRole.createOneRole.id;
 
-      const assign = (workspaceMemberId: string | null, id = inputAskId) =>
-        workflowGraphqlRequest(
-          'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
-          { input: { inputAskId: id, workspaceMemberId } },
-        );
+        await upsertPermissionFlags({
+          expectToFail: false,
+          input: {
+            roleId: workflowsRoleId,
+            permissionFlagKeys: [PermissionFlagType.WORKFLOWS],
+          },
+        });
+        await updateWorkspaceMemberRole({
+          expectToFail: false,
+          input: {
+            roleId: workflowsRoleId,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          },
+        });
+      });
 
-      expect(
-        (await assign(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).body.errors,
-      ).toBeUndefined();
+      afterAll(async () => {
+        await updateWorkspaceMemberRole({
+          expectToFail: false,
+          input: {
+            roleId: originalMemberRoleId,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          },
+        });
+        await deleteOneRole({
+          expectToFail: false,
+          input: { idToDelete: workflowsRoleId },
+        });
+      });
 
-      const readAssignee = async () =>
-        (
+      // Whoever started the run is who it waits on, until someone hands it on.
+      it('is assigned to the member who started the run and can be handed to another', async () => {
+        const finalStep = emptyStep();
+        const form = approvalForm([finalStep.id]);
+        // Assigning needs to read the Ask, which reads through its run's
+        // workspace workflow, so not a mirrorless fixture.
+        const fixture = await createFixture({ steps: [form, finalStep] });
+        const runId = await runFixture(fixture);
+
+        await waitForStep(runId, form.id, 'PENDING');
+
+        const [{ id: inputAskId, assigneeId }] =
           await global.testDataSource.query(
-            `SELECT "assigneeId" FROM "${schema}"."inputAsk" WHERE id = $1`,
-            [inputAskId],
-          )
-        )[0].assigneeId;
+            `SELECT id, "assigneeId" FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
+            [runId],
+          );
 
-      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+        expect(assigneeId).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
 
-      expect((await assign(randomUUID())).body.errors).toBeDefined();
-      expect((await assign(null, randomUUID())).body.errors).toBeDefined();
-      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
-
-      // Leaving the member out is not asking to unassign.
-      expect(
-        (
-          await workflowGraphqlRequest(
+        const assign = (workspaceMemberId: string | null, id = inputAskId) =>
+          workflowGraphqlRequest(
             'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
-            { input: { inputAskId } },
-          )
-        ).body.errors,
-      ).toBeDefined();
-      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+            { input: { inputAskId: id, workspaceMemberId } },
+          );
 
-      expect((await assign(null)).body.errors).toBeUndefined();
-      expect(await readAssignee()).toBeNull();
-    });
+        expect(
+          (await assign(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).body.errors,
+        ).toBeUndefined();
 
-    it('is handed on only by and to someone who can read it, and only while it waits', async () => {
-      const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
-      const fixture = await createFixture({ steps: [form, finalStep] });
-      const runId = await runFixture(fixture);
+        const readAssignee = async () =>
+          (
+            await global.testDataSource.query(
+              `SELECT "assigneeId" FROM "${schema}"."inputAsk" WHERE id = $1`,
+              [inputAskId],
+            )
+          )[0].assigneeId;
 
-      await waitForStep(runId, form.id, 'PENDING');
+        expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
 
-      const [{ id: inputAskId }] = await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
-        [runId],
-      );
+        expect((await assign(randomUUID())).body.errors).toBeDefined();
+        expect((await assign(null, randomUUID())).body.errors).toBeDefined();
+        expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
 
-      const assignAs = (accessToken: string, workspaceMemberId: string) =>
-        request(`http://localhost:${APP_PORT}`)
-          .post('/graphql')
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send({
-            query:
-              'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
-            variables: { input: { inputAskId, workspaceMemberId } },
-          });
-
-      const setVisibility = async (visibility: WorkflowVisibility) =>
+        // Leaving the member out is not asking to unassign.
         expect(
           (
             await workflowGraphqlRequest(
-              'mutation Visibility($input: UpdateCoreWorkflowVisibilityInput!) { updateCoreWorkflowVisibility(input: $input) { id } }',
-              { input: { coreWorkflowId: fixture.coreWorkflowId, visibility } },
+              'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
+              { input: { inputAskId } },
+            )
+          ).body.errors,
+        ).toBeDefined();
+        expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+        expect((await assign(null)).body.errors).toBeUndefined();
+        expect(await readAssignee()).toBeNull();
+      });
+
+      it('is handed on only by and to someone who can read it, and only while it waits', async () => {
+        const finalStep = emptyStep();
+        const form = approvalForm([finalStep.id]);
+        const fixture = await createFixture({ steps: [form, finalStep] });
+        const runId = await runFixture(fixture);
+
+        await waitForStep(runId, form.id, 'PENDING');
+
+        const [{ id: inputAskId }] = await global.testDataSource.query(
+          `SELECT id FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
+          [runId],
+        );
+
+        const assignAs = (accessToken: string, workspaceMemberId: string) =>
+          request(`http://localhost:${APP_PORT}`)
+            .post('/graphql')
+            .set('Authorization', `Bearer ${accessToken}`)
+            .send({
+              query:
+                'mutation Assign($input: AssignInputAskInput!) { assignInputAsk(input: $input) }',
+              variables: { input: { inputAskId, workspaceMemberId } },
+            });
+
+        const setVisibility = async (visibility: WorkflowVisibility) =>
+          expect(
+            (
+              await workflowGraphqlRequest(
+                'mutation Visibility($input: UpdateCoreWorkflowVisibilityInput!) { updateCoreWorkflowVisibility(input: $input) { id } }',
+                {
+                  input: { coreWorkflowId: fixture.coreWorkflowId, visibility },
+                },
+              )
+            ).body.errors,
+          ).toBeUndefined();
+
+        const readAssignee = async () =>
+          (
+            await global.testDataSource.query(
+              `SELECT "assigneeId" FROM "${schema}"."inputAsk" WHERE id = $1`,
+              [inputAskId],
+            )
+          )[0].assigneeId;
+
+        // Jony may assign Asks he can read, so what follows is about reading.
+        expect(
+          (
+            await assignAs(
+              APPLE_JONY_MEMBER_ACCESS_TOKEN,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
             )
           ).body.errors,
         ).toBeUndefined();
 
-      const readAssignee = async () =>
-        (
-          await global.testDataSource.query(
-            `SELECT "assigneeId" FROM "${schema}"."inputAsk" WHERE id = $1`,
-            [inputAskId],
-          )
-        )[0].assigneeId;
+        await setVisibility(WorkflowVisibility.PRIVATE);
 
-      // Jony may assign Asks he can read, so what follows is about reading.
-      expect(
-        (
-          await assignAs(
-            APPLE_JONY_MEMBER_ACCESS_TOKEN,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          )
-        ).body.errors,
-      ).toBeUndefined();
+        expect(
+          (
+            await assignAs(
+              APPLE_JONY_MEMBER_ACCESS_TOKEN,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            )
+          ).body.errors,
+        ).toBeDefined();
+        expect(
+          (
+            await assignAs(
+              APPLE_JANE_ADMIN_ACCESS_TOKEN,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            )
+          ).body.errors,
+        ).toBeDefined();
+        expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
 
-      await setVisibility(WorkflowVisibility.PRIVATE);
+        await setVisibility(WorkflowVisibility.WORKSPACE);
 
-      expect(
-        (
-          await assignAs(
-            APPLE_JONY_MEMBER_ACCESS_TOKEN,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          )
-        ).body.errors,
-      ).toBeDefined();
-      expect(
-        (
-          await assignAs(
-            APPLE_JANE_ADMIN_ACCESS_TOKEN,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          )
-        ).body.errors,
-      ).toBeDefined();
-      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+        expect(
+          (await submitForm({ runId, stepId: form.id, answer: 'Approved' }))
+            .body.errors,
+        ).toBeUndefined();
+        await waitForRun(runId, 'COMPLETED');
 
-      await setVisibility(WorkflowVisibility.WORKSPACE);
-
-      expect(
-        (await submitForm({ runId, stepId: form.id, answer: 'Approved' })).body
-          .errors,
-      ).toBeUndefined();
-      await waitForRun(runId, 'COMPLETED');
-
-      expect(
-        (
-          await assignAs(
-            APPLE_JANE_ADMIN_ACCESS_TOKEN,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          )
-        ).body.errors,
-      ).toBeDefined();
-      expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+        expect(
+          (
+            await assignAs(
+              APPLE_JANE_ADMIN_ACCESS_TOKEN,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            )
+          ).body.errors,
+        ).toBeDefined();
+        expect(await readAssignee()).toBe(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+      });
     });
 
     it('resumes the run when recording the answer fails and records it once the run ends', async () => {
