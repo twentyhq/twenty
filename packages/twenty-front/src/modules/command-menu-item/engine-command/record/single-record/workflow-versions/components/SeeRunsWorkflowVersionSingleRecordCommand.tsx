@@ -1,11 +1,14 @@
+import { useQuery } from '@apollo/client/react';
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { GetCoreWorkflowDocument } from '~/generated/graphql';
 
 const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
   workflowId,
@@ -15,7 +18,23 @@ const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
   recordId: string;
 }) => {
   const isCore = useIsWorkflowCoreEnabled();
+  const apolloCoreClient = useApolloCoreClient();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(
+    isCore ? recordId : undefined,
+  );
+  const { data: coreWorkflowData, loading: coreWorkflowLoading } = useQuery(
+    GetCoreWorkflowDocument,
+    {
+      client: apolloCoreClient,
+      variables: { coreWorkflowId: workflowId },
+      skip: !isCore,
+    },
+  );
+
+  if (coreWorkflowLoading) {
+    return null;
+  }
 
   return (
     <HeadlessNavigateEngineCommand
@@ -39,6 +58,16 @@ const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
                 },
               },
             },
+        filterDisplayValue: isCore
+          ? {
+              coreWorkflowId: {
+                [ViewFilterOperand.IS]: coreWorkflowData?.coreWorkflow?.name,
+              },
+              coreWorkflowVersionId: {
+                [ViewFilterOperand.IS]: coreWorkflowVersion?.label,
+              },
+            }
+          : undefined,
       }}
     />
   );

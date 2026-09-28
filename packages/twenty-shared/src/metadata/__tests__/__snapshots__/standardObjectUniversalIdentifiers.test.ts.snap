@@ -70,6 +70,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "userWorkspaceId": {
         "universalIdentifier": "bf830886-b6dc-46e9-a229-eecbb0e66032",
       },
+      "workflowRun": {
+        "universalIdentifier": "2187f4c6-bff3-4b80-8585-c82965faf79b",
+      },
+      "workflowStepId": {
+        "universalIdentifier": "ba4091ef-dfa2-4a99-bfb3-322ef9a745ab",
+      },
       "workspaceMember": {
         "universalIdentifier": "6f3ed3b5-0642-4a2a-9558-98376adb60f4",
       },
@@ -77,6 +83,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "indexes": {
       "ownerIndex": {
         "universalIdentifier": "c97a4c97-266b-490a-a4d6-76274f5de429",
+      },
+      "workflowRunIndex": {
+        "universalIdentifier": "cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b",
       },
       "workspaceMemberIndex": {
         "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",
@@ -174,6 +183,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "senderUserWorkspaceId": {
         "universalIdentifier": "f4184c3a-b85c-4cef-8181-b2fefdf98fda",
       },
+      "senderWorkspaceMember": {
+        "universalIdentifier": "69bea8e1-451d-4c3c-9d34-505b5a67e06e",
+      },
       "status": {
         "universalIdentifier": "3845ccfa-9394-4cb9-a75c-4ca704414b83",
       },
@@ -193,6 +205,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "hiddenKickoffIndex": {
         "universalIdentifier": "1d423c31-007a-4fcd-8514-dcb1f7a8fa78",
+      },
+      "senderWorkspaceMemberIndex": {
+        "universalIdentifier": "8ecdac01-7bbe-411e-8461-6ff265c90759",
       },
       "threadIndex": {
         "universalIdentifier": "2054f1a5-554f-42ac-a41a-b8ccd6ba72ec",
@@ -3754,6 +3769,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "workflowRun": {
     "fields": {
+      "agentChatThreads": {
+        "universalIdentifier": "c664a2e7-ef64-4597-9cdf-ded3eae85ae4",
+      },
       "coreWorkflowId": {
         "universalIdentifier": "e07d8ac0-6b6e-4685-81fa-50d82ae7f880",
       },
@@ -4026,6 +4044,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "agentChatThreads": {
         "universalIdentifier": "fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1",
+      },
+      "agentMessages": {
+        "universalIdentifier": "211b2717-450a-4f5f-808f-39695c819319",
       },
       "assignedTasks": {
         "universalIdentifier": "20202020-61dc-4a1c-99e8-38ebf8d2bbeb",

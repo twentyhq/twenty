@@ -33,7 +33,6 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
-import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -179,7 +178,6 @@ export class WorkflowExecutorWorkspaceService {
         if (canRetryStep) {
           await this.scheduleStepRetry({
             stepId,
-            stepInfo: stepInfos[stepId],
             error: actionOutput.error,
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
@@ -676,34 +674,20 @@ export class WorkflowExecutorWorkspaceService {
 
   private async scheduleStepRetry({
     stepId,
-    stepInfo,
     error,
     retryDelayMs,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
-    stepInfo?: WorkflowRunStepInfo;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
     workspaceId: string;
   }) {
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
-      stepInfos: {
-        [stepId]: {
-          status: StepStatus.PENDING,
-          error,
-          history: [
-            ...(stepInfo?.history ?? []),
-            {
-              status: StepStatus.FAILED,
-              error,
-              retryAttempt: getStepRetryAttempt({ stepInfo }) + 1,
-            },
-          ],
-        },
-      },
+    await this.workflowRunWorkspaceService.moveStepToRetry({
+      stepId,
+      error,
       workflowRunId,
       workspaceId,
     });

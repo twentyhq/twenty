@@ -1418,6 +1418,9 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
+      workflowRunIndex: {
+        universalIdentifier: 'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b',
+      },
     },
   },
   agentChatThreadTarget: {
@@ -1476,6 +1479,9 @@ export const STANDARD_OBJECTS = {
       },
       turnIndex: {
         universalIdentifier: 'dc46f804-a55f-4283-884e-9cb938741da3',
+      },
+      senderWorkspaceMemberIndex: {
+        universalIdentifier: '8ecdac01-7bbe-411e-8461-6ff265c90759',
       },
       hiddenKickoffIndex: {
         universalIdentifier: '1d423c31-007a-4fcd-8514-dcb1f7a8fa78',

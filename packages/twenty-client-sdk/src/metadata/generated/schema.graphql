@@ -262,6 +262,7 @@ type LogicFunction {
   universalIdentifier: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+  canRunOnDemand: Boolean
 }
 
 enum LogicFunctionExecutionMode {
@@ -413,6 +414,7 @@ type WorkspaceMember {
   dateFormat: WorkspaceMemberDateFormatEnum
   timeFormat: WorkspaceMemberTimeFormatEnum
   roles: [Role!]
+  userId: UUID!
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
 }
@@ -2067,6 +2069,7 @@ enum FeatureFlagKey {
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_EXECUTION_QUOTA_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
+  IS_LOGS_SETTINGS_SECTION_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3248,30 +3251,6 @@ type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
 }
 
-type Webhook {
-  id: UUID!
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-}
-
-type ToolIndexEntry {
-  name: String!
-  label: String!
-  description: String!
-  category: String!
-  objectName: String
-  icon: String
-  widgetName: String
-  frontComponentId: String
-  inputSchema: JSON
-}
-
 type AgentMessagePart {
   id: UUID!
   messageId: UUID!
@@ -3300,6 +3279,43 @@ type AgentMessagePart {
   fileUrl: String
   providerMetadata: JSON
   createdAt: DateTime!
+}
+
+type AgentMessage {
+  id: UUID!
+  threadId: UUID!
+  turnId: UUID
+  agentId: UUID
+  senderUserWorkspaceId: UUID
+  role: String!
+  status: String!
+  parts: [AgentMessagePart!]!
+  processedAt: DateTime
+  createdAt: DateTime!
+}
+
+type Webhook {
+  id: UUID!
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+type ToolIndexEntry {
+  name: String!
+  label: String!
+  description: String!
+  category: String!
+  objectName: String
+  icon: String
+  widgetName: String
+  frontComponentId: String
+  inputSchema: JSON
 }
 
 type RunAgentResult {
@@ -3428,6 +3444,7 @@ type AiChatUsage {
   limitValue: BigInt!
   consumedValue: BigInt
   periodEnd: DateTime
+  kind: String!
 }
 
 type Skill {
@@ -3443,19 +3460,6 @@ type Skill {
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type AgentMessage {
-  id: UUID!
-  threadId: UUID!
-  turnId: UUID
-  agentId: UUID
-  senderUserWorkspaceId: UUID
-  role: String!
-  status: String!
-  parts: [AgentMessagePart!]!
-  processedAt: DateTime
-  createdAt: DateTime!
 }
 
 type AgentChatThread {
@@ -4033,11 +4037,23 @@ input EventLogFiltersInput {
   dateRange: EventLogDateRangeInput
   recordId: String
   objectMetadataId: String
+  fieldFilters: [EventLogFieldFilterInput!]
 }
 
 input EventLogDateRangeInput {
   start: DateTime
   end: DateTime
+}
+
+input EventLogFieldFilterInput {
+  field: String!
+  operand: EventLogFilterOperand!
+  values: [String!]!
+}
+
+enum EventLogFilterOperand {
+  IS
+  IS_NOT
 }
 
 input PieChartDataInput {
@@ -4180,9 +4196,7 @@ type Mutation {
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
   deleteApplicationRegistration(id: String!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  deleteApplicationRegistrationVariable(id: String!): Boolean!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
@@ -5096,14 +5110,6 @@ input UpdateApplicationRegistrationPayload {
   oAuthScopes: [String!]
 }
 
-input CreateApplicationRegistrationVariableInput {
-  applicationRegistrationId: String!
-  key: String!
-  value: String!
-  description: String
-  isSecret: Boolean
-}
-
 input UpdateApplicationRegistrationVariableInput {
   id: String!
   update: UpdateApplicationRegistrationVariablePayload!
@@ -5682,7 +5688,7 @@ type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
-  eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  eventLogsLive(table: EventLogTable!, fieldFilters: [EventLogFieldFilterInput!]): [EventLogRecord!]
   exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
