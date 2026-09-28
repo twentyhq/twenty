@@ -34,7 +34,7 @@
   &[data-with-exit-animation] {
     transition:
       opacity duration(fast) ease-out,
-      transform duration(fast) ease-out;
+      transform duration(fast) cubic-bezier(0.2, 0, 0, 1);
 
     &[data-ending-style] {
       transition-duration: duration(fast);

@@ -73,7 +73,7 @@ export const ProgressBar = ({
           data-paused={(isCountdown && isCountdownPaused) || undefined}
           onAnimationEnd={isCountdown ? onCountdownComplete : undefined}
         >
-          {withGlint && <span className={styles.glint} />}
+          {withGlint && <span key={value} className={styles.glint} />}
         </Progress.Indicator>
       </Progress.Track>
     </Progress.Root>

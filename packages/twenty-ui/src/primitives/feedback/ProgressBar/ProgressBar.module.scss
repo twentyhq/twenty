@@ -12,7 +12,7 @@
   }
 
   &[data-grow-in] {
-    animation: progressBarGrowIn duration(normal) ease-out;
+    animation: progressBarGrowIn duration(normal) cubic-bezier(0.2, 0, 0, 1);
   }
 }
 
@@ -68,7 +68,8 @@
 }
 
 .glint {
-  animation: progressBarGlint calc(#{duration(normal)} * 3) ease-out forwards;
+  animation: progressBarGlint calc(#{duration(normal)} * 3)
+    cubic-bezier(0.2, 0, 0, 1) forwards;
   backdrop-filter: brightness(1.6);
   inset: 0;
   mask-image: linear-gradient(90deg, transparent, black, transparent);
