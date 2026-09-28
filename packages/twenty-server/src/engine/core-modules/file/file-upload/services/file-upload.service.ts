@@ -68,8 +68,8 @@ export class FileUploadService {
     private readonly fileUrlService: FileUrlService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FieldMetadataEntity)
@@ -388,12 +388,14 @@ export class FileUploadService {
         },
       );
 
-      const application = await this.applicationRepository.findOneOrFail({
-        where: {
-          id: fieldMetadata.applicationId,
-          workspaceId,
+      const application = await this.applicationRepository.findOneOrFail(
+        workspaceId,
+        {
+          where: {
+            id: fieldMetadata.applicationId,
+          },
         },
-      });
+      );
 
       return {
         applicationUniversalIdentifier: application.universalIdentifier,
@@ -415,8 +417,9 @@ export class FileUploadService {
     }
 
     const workspaceCustomApplication = await this.applicationRepository.findOne(
+      workspaceId,
       {
-        where: { id: workspace.workspaceCustomApplicationId, workspaceId },
+        where: { id: workspace.workspaceCustomApplicationId },
       },
     );
 
@@ -471,12 +474,14 @@ export class FileUploadService {
   }> {
     const [fileFolder] = file.path.split('/');
 
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: file.applicationId,
-        workspaceId,
+    const application = await this.applicationRepository.findOneOrFail(
+      workspaceId,
+      {
+        where: {
+          id: file.applicationId,
+        },
       },
-    });
+    );
 
     return {
       application,

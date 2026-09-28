@@ -43,6 +43,7 @@ export class EventLogsService {
   async queryEventLogs(
     workspaceId: string,
     input: EventLogQueryInput,
+    { callingApplicationId }: { callingApplicationId?: string } = {},
   ): Promise<EventLogQueryResult> {
     await this.validateAccess(workspaceId, input.table);
 
@@ -56,6 +57,14 @@ export class EventLogsService {
 
     const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
     const params: Record<string, unknown> = { workspaceId };
+
+    if (
+      input.table === EventLogTable.APPLICATION_LOG &&
+      isDefined(callingApplicationId)
+    ) {
+      whereClauses.push('"applicationId" = {callingApplicationId:String}');
+      params.callingApplicationId = callingApplicationId;
+    }
 
     await this.applyFilters(
       whereClauses,

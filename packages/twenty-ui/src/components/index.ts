@@ -72,7 +72,9 @@ export type { SectionHeaderProps } from './layout/Section/types/SectionHeaderPro
 export type { SectionRootProps } from './layout/Section/types/SectionRootProps';
 export { Dropdown } from './navigation/Dropdown/Dropdown';
 export type { DropdownActionItemProps } from './navigation/Dropdown/types/DropdownActionItemProps';
+export type { DropdownCloseProps } from './navigation/Dropdown/types/DropdownCloseProps';
 export type { DropdownContentProps } from './navigation/Dropdown/types/DropdownContentProps';
+export type { DropdownHeaderProps } from './navigation/Dropdown/types/DropdownHeaderProps';
 export type { DropdownOptionItemProps } from './navigation/Dropdown/types/DropdownOptionItemProps';
 export type { DropdownPageProps } from './navigation/Dropdown/types/DropdownPageProps';
 export type { DropdownRootProps } from './navigation/Dropdown/types/DropdownRootProps';
@@ -80,6 +82,7 @@ export type { DropdownSearchProps } from './navigation/Dropdown/types/DropdownSe
 export type { DropdownSectionProps } from './navigation/Dropdown/types/DropdownSectionProps';
 export type { DropdownSubmenuProps } from './navigation/Dropdown/types/DropdownSubmenuProps';
 export type { DropdownSubmenuTriggerProps } from './navigation/Dropdown/types/DropdownSubmenuTriggerProps';
+export type { DropdownTitleProps } from './navigation/Dropdown/types/DropdownTitleProps';
 export type { DropdownTriggerProps } from './navigation/Dropdown/types/DropdownTriggerProps';
 export type { DropdownType } from './navigation/Dropdown/types/DropdownType';
 export { DEFAULT_COLOR_LABELS } from './navigation/MenuItem/constants/DefaultColorLabels';

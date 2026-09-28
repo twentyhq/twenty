@@ -53,12 +53,19 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -68,6 +75,7 @@ import {
 @MetadataResolver(() => ApplicationRegistrationEntity)
 @UseFilters(
   ApplicationRegistrationExceptionFilter,
+  ApplicationExceptionFilter,
   FileUploadGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -94,7 +102,10 @@ export class ApplicationRegistrationResolver {
   @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
   @Query(() => ApplicationRegistrationEntity, { nullable: true })
   async findApplicationRegistrationByUniversalIdentifier(
-    @Args('universalIdentifier') universalIdentifier: string,
+    @ApplicationTargetArg('universalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+    })
+    universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
     return this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
       universalIdentifier,
@@ -108,8 +119,23 @@ export class ApplicationRegistrationResolver {
   @Query(() => [ApplicationRegistrationEntity])
   async findManyApplicationRegistrations(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationService.findMany(workspaceId);
+    const registrations =
+      await this.applicationRegistrationService.findMany(workspaceId);
+
+    const scopedCallingApplication =
+      getScopedCallingApplication(callingApplication);
+
+    if (!isDefined(scopedCallingApplication)) {
+      return registrations;
+    }
+
+    return registrations.filter(
+      (registration) =>
+        registration.id === scopedCallingApplication.applicationRegistrationId,
+    );
   }
 
   @UseGuards(
@@ -118,7 +144,8 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => ApplicationRegistrationEntity)
   async findOneApplicationRegistration(
-    @Args('id') id: string,
+    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
     return this.applicationRegistrationService.findOneById(id, workspaceId);
@@ -130,7 +157,8 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => ApplicationRegistrationStatsDTO)
   async findApplicationRegistrationStats(
-    @Args('id') id: string,
+    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationStatsDTO> {
     return this.applicationRegistrationService.getStats(id, workspaceId);
@@ -202,7 +230,10 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => [ApplicationRegistrationVariableDTO])
   async findApplicationRegistrationVariables(
-    @Args('applicationRegistrationId') applicationRegistrationId: string,
+    @ApplicationTargetArg('applicationRegistrationId', {
+      kind: 'applicationRegistrationId',
+    })
+    applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationVariableDTO[]> {
     return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValues(
@@ -321,7 +352,8 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => String, { nullable: true })
   async applicationRegistrationTarballUrl(
-    @Args('id') id: string,
+    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string | null> {
     const registration = await this.applicationRegistrationService.findOneById(
@@ -363,6 +395,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
     AdminPanelGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
@@ -408,6 +442,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Mutation(() => ApplicationRegistrationEntity)

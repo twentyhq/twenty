@@ -1,6 +1,7 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
 import { styled } from '@linaria/react';
@@ -16,7 +17,6 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonGroup = styled.div`
   display: flex;
@@ -38,7 +38,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 }) => {
   const { t } = useLingui();
 
-  const { copyToClipboard } = useCopyToClipboard();
+  const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
@@ -84,13 +84,10 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
       {withCopyButton && (
         <Button
           startIcon={<IconCopy />}
-          disabled={!shareLink}
-          onClick={async () => {
-            if (shareLink) {
-              await copyToClipboard(
-                `${window.location.origin}${shareLink}`,
-                t`Sharing link copied to clipboard`,
-              );
+          disabled={!isDefined(universalIdentifier)}
+          onClick={() => {
+            if (isDefined(universalIdentifier)) {
+              copyMarketplaceAppLink(universalIdentifier);
             }
           }}
           variant="outline"

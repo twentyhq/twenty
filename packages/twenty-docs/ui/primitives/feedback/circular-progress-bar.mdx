@@ -1,0 +1,41 @@
+---
+title: CircularProgressBar
+description: Show an animated circular indicator while progress is unknown.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import CircularProgressBarReference from '/snippets/ui/generated/feedback/circular-progress-bar.mdx';
+
+`CircularProgressBar` is an indeterminate loading spinner. It animates continuously while mounted and does not accept a progress value. Use [ProgressBar](/ui/primitives/feedback/progress-bar) when you can report a percentage.
+
+<StoryEmbed
+  storyId="ui-feedback-circularprogressbar-circularprogressbar--default"
+  title="CircularProgressBar example"
+/>
+
+## Usage
+
+```tsx
+import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportLoading = () => (
+  <div role="status">
+    <span aria-hidden="true">
+      <CircularProgressBar size={24} barWidth={2} />
+    </span>
+    <Text>Importing records</Text>
+  </div>
+);
+```
+
+The application controls loading by mounting or removing the indicator. Keep an explanatory label beside it. The SVG does not supply an accessible name or live region and does not forward native attributes; apply those to a wrapper.
+
+## Appearance
+
+`size` sets the width and height in pixels and defaults to `50`. `barWidth` defaults to `5`; keep it smaller than half the size. `barColor` accepts a CSS color and defaults to `currentColor`, so it inherits the surrounding text color. Theme variables work as color values, for example `var(--t-font-color-secondary)`.
+
+## Props
+
+<CircularProgressBarReference />

@@ -9,6 +9,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UpgradeStatusModule } from 'src/engine/core-modules/upgrade/upgrade-status.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UpgradeStatusModule } from 'src/engine/core-modules/upgrade/upgrade-sta
   providers: [
     ApplicationPackageFetcherService,
     ApplicationVersionValidationService,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     ApplicationPackageFetcherService,

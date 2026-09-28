@@ -6,14 +6,12 @@ import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-do
 export const resolveCampaignAudience = ({
   rawRecipients,
   totalMemberCount,
-  maxRecipients,
   hardSuppressedEmails,
   globallySuppressedEmails,
   topicSuppressedEmails,
 }: {
   rawRecipients: RawCampaignRecipient[];
   totalMemberCount: number;
-  maxRecipients: number;
   hardSuppressedEmails: Set<string>;
   globallySuppressedEmails: Set<string>;
   topicSuppressedEmails: Set<string>;
@@ -22,7 +20,6 @@ export const resolveCampaignAudience = ({
 
   const sendableRecipients: CampaignRecipient[] = [];
   const excluded = { hardSuppressed: 0, globally: 0, byTopic: 0 };
-  let overCap = 0;
 
   for (const recipient of recipients) {
     if (hardSuppressedEmails.has(recipient.email)) {
@@ -40,11 +37,6 @@ export const resolveCampaignAudience = ({
       continue;
     }
 
-    if (sendableRecipients.length >= maxRecipients) {
-      overCap += 1;
-      continue;
-    }
-
     sendableRecipients.push(recipient);
   }
 
@@ -54,7 +46,6 @@ export const resolveCampaignAudience = ({
       totalMembers: totalMemberCount,
       withoutEmail: skipped.noEmail,
       duplicateEmails: skipped.deduped,
-      overCap,
       hardSuppressed: excluded.hardSuppressed,
       globallyUnsubscribed: excluded.globally,
       topicUnsubscribed: excluded.byTopic,

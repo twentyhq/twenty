@@ -2,7 +2,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
-import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import {
@@ -10,16 +9,11 @@ import {
   useSaveUpdateDataModelObjectAboutForm,
 } from '@/settings/data-model/object-details/hooks/useSaveUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
-import {
-  type SettingsDataModelObjectAboutFormValues,
-  settingsDataModelObjectAboutFormSchema,
-} from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { FormProvider, useForm } from 'react-hook-form';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { FormProvider, type UseFormReturn } from 'react-hook-form';
 
 const StyledCenteredButton = styled(Button)`
   box-sizing: border-box;
@@ -28,45 +22,19 @@ const StyledCenteredButton = styled(Button)`
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
+  formConfig: UseFormReturn<SettingsDataModelObjectAboutFormValues>;
 };
 
 export const SettingsUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
+  formConfig,
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
   const { t } = useLingui();
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
-  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
-  const isCustomObject = getIsMetadataItemCustom(objectMetadataItem);
   const readonly =
     isObjectMetadataReadOnly({
       objectMetadataItem,
     }) || isDDLLocked;
-
-  const {
-    description,
-    icon,
-    isLabelSyncedWithName,
-    labelPlural,
-    labelSingular,
-    namePlural,
-    nameSingular,
-  } = objectMetadataItem;
-  const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
-    mode: 'onTouched',
-    resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
-    defaultValues: {
-      description,
-      icon: icon ?? undefined,
-      isLabelSyncedWithName,
-      labelPlural,
-      labelSingular,
-      namePlural,
-      nameSingular,
-      ...(isCustomObject
-        ? { color: getObjectColorWithFallback(objectMetadataItem) }
-        : {}),
-    },
-  });
 
   const {
     handleSave,

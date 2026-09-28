@@ -204,7 +204,7 @@ export const SettingsSecuritySettings = () => {
             adornment={<OrganizationAdornment />}
           />
           {hasEnterpriseAccess ? (
-            <Card rounded>
+            <Card.Root rounded>
               {isEventLogsEnabled ? (
                 <SettingsOptionCardContentCounter
                   Icon={IconClockHour8}
@@ -223,7 +223,7 @@ export const SettingsSecuritySettings = () => {
                   description={t`ClickHouse is required for audit logs. Contact your administrator.`}
                 />
               )}
-            </Card>
+            </Card.Root>
           ) : (
             <SettingsEnterpriseFeatureGateCard
               title={t`Organization feature`}
@@ -237,7 +237,7 @@ export const SettingsSecuritySettings = () => {
             title={t`Other`}
             description={t`Other security settings`}
           />
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentCounter
               Icon={IconTrash}
               title={t`Erasure of soft-deleted records`}
@@ -247,7 +247,7 @@ export const SettingsSecuritySettings = () => {
               minValue={0}
               showButtons={false}
             />
-          </Card>
+          </Card.Root>
         </Section.Root>
       </StyledMainContent>
     </>

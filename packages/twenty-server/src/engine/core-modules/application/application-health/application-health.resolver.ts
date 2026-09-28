@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -11,6 +11,7 @@ import { ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/applica
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -28,7 +29,11 @@ export class ApplicationHealthResolver {
 
   @Mutation(() => ApplicationHealthCheckResultDTO, { nullable: true })
   async runApplicationHealthCheck(
-    @Args('applicationId', { type: () => UUIDScalarType })
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId' },
+      { type: () => UUIDScalarType },
+    )
     applicationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationHealthCheckResultDTO | null> {

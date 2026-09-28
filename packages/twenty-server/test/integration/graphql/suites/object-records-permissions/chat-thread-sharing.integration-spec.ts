@@ -25,6 +25,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 // Avoid loading the migration runner's ESM file dependencies inside Jest. The
 // command below receives the real migration service from the running test app.
@@ -600,5 +601,32 @@ describe('Conversation sharing through the authenticated API', () => {
     await expect(chat.getWritableThread(owner)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
+  });
+
+  it('stores the creator as the workspace member owner', async () => {
+    const chat =
+      getAppProviderByClassName<AgentChatService>('AgentChatService');
+    const owner = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      threadId: randomUUID(),
+    };
+    await chat.createThread({ ...owner, id: owner.threadId });
+    try {
+      const rows: { workspaceMemberId: string; userWorkspaceId: string }[] =
+        await global.testDataSource.query(
+          `SELECT "workspaceMemberId", "userWorkspaceId" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
+          [owner.threadId],
+        );
+
+      expect(rows).toEqual([
+        {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        },
+      ]);
+    } finally {
+      await chat.hardDeleteThread(owner);
+    }
   });
 });

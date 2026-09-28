@@ -33,10 +33,10 @@ export type TimelineActivityTypeOverrides = {
 };
 
 @Entity({ name: 'timelineActivityType', schema: 'core' })
-@Unique('IDX_TIMELINE_ACTIVITY_TYPE_NAME_APPLICATION_WORKSPACE_UNIQUE', [
-  'name',
+@Unique('IDX_TIMELINE_ACTIVITY_TYPE_APPLICATION_WORKSPACE_NAME_UNIQUE', [
   'applicationId',
   'workspaceId',
+  'name',
 ])
 @Index('IDX_TIMELINE_ACTIVITY_TYPE_BASE_EMIT_SLOT_UNIQUE', {
   synchronize: false,

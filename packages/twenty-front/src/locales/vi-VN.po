@@ -287,12 +287,6 @@ msgstr "{0} trên {1}"
 msgid "{0} opted out of this topic"
 msgstr "{0} đã chọn không nhận chủ đề này"
 
-#. js-lingui-id: q1Pok/
-#. placeholder {0}: formatNumber(counts.overCap)
-#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
-msgid "{0} over the recipient limit"
-msgstr "{0} vượt quá giới hạn người nhận"
-
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -4417,6 +4411,7 @@ msgstr "Chọn gói tín dụng {intervalAdjective}"
 
 #. js-lingui-id: n5pcaT
 #: src/modules/ai/components/AiModelTierDropdown.tsx
+#: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
 msgstr "Chọn chế độ mô hình"
 
@@ -4706,6 +4701,7 @@ msgstr "Bộ nhớ tạm yêu cầu kết nối bảo mật (HTTPS). Vui lòng t
 #. js-lingui-id: yz7wBu
 #: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -7375,7 +7371,7 @@ msgstr "Mô tả điều bạn muốn AI làm gì..."
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -8112,7 +8108,8 @@ msgid "Edit tab icon"
 msgstr "Chỉnh sửa biểu tượng thẻ"
 
 #. js-lingui-id: /VLYQj
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Edit translations"
 msgstr "Chỉnh sửa bản dịch"
 
@@ -12309,7 +12306,7 @@ msgid "Korean"
 msgstr "Tiếng Hàn"
 
 #. js-lingui-id: 87a/t/
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -12321,16 +12318,6 @@ msgstr "Tiếng Hàn"
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "Nhãn"
-
-#. js-lingui-id: B9/B0O
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (plural)"
-msgstr "Nhãn (số nhiều)"
-
-#. js-lingui-id: J8GEvd
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Label (singular)"
-msgstr "Nhãn (số ít)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -12344,19 +12331,21 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Nhãn phải chứa ít nhất một ký tự chữ hoặc số"
 
 #. js-lingui-id: vXIe7J
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Ngôn ngữ"
 
 #. js-lingui-id: GAmD3h
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Languages"
 msgstr "Ngôn ngữ"
 
-#. js-lingui-id: PEi+K2
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Languages without their own translation show the source text."
-msgstr "Các ngôn ngữ không có bản dịch riêng sẽ hiển thị văn bản nguồn."
+#. js-lingui-id: oWZaVM
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Languages without a translation show the source text."
+msgstr "Các ngôn ngữ chưa có bản dịch sẽ hiển thị văn bản nguồn."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -13605,11 +13594,6 @@ msgstr "Đang hợp nhất..."
 msgid "Message"
 msgstr "Thông điệp"
 
-#. js-lingui-id: jBzu2R
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message and calendar target reads"
-msgstr "Đọc mục tiêu tin nhắn và lịch"
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -14854,6 +14838,11 @@ msgstr "Không có công việc nào bị xóa{errorDetails}"
 msgid "No jobs were retried{errorDetails}"
 msgstr "Không có công việc nào được thử lại{errorDetails}"
 
+#. js-lingui-id: CYafz+
+#: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
+msgid "No languages found"
+msgstr "Không tìm thấy ngôn ngữ nào"
+
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
@@ -15650,6 +15639,7 @@ msgstr "Cấp độ đối tượng"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Objects"
 msgstr "Các đối tượng"
 
@@ -16810,6 +16800,7 @@ msgstr "Mận tím"
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Plural"
 msgstr "Số nhiều"
 
@@ -18068,8 +18059,8 @@ msgstr "Đặt lại bố cục trang bản ghi"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
+#: src/modules/settings/translations/components/MetadataTranslationsTableRow.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
@@ -18561,6 +18552,11 @@ msgstr "Lưu cài đặt"
 msgid "Save the record before attaching a file"
 msgstr "Lưu bản ghi trước khi đính kèm tệp"
 
+#. js-lingui-id: kv9Dnn
+#: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
+msgid "Save your changes first"
+msgstr "Trước tiên, hãy lưu các thay đổi của bạn"
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -18685,6 +18681,11 @@ msgstr "Tìm 1 trường"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Search a field..."
 msgstr "Tìm một trường..."
+
+#. js-lingui-id: grvmBE
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
+msgid "Search a language..."
+msgstr "Tìm kiếm một ngôn ngữ..."
 
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -18827,6 +18828,7 @@ msgstr "siêu dữ liệu trường tìm kiếm"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
@@ -19744,11 +19746,6 @@ msgstr "Chia sẻ ứng dụng của bạn tới các không gian làm việc kh
 msgid "Shared email"
 msgstr "Email dùng chung"
 
-#. js-lingui-id: NyIsOu
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-msgid "Sharing link copied to clipboard"
-msgstr "Đã sao chép liên kết chia sẻ vào bảng tạm"
-
 #. js-lingui-id: Z+MFnO
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "Sharing settings could not be loaded."
@@ -19932,6 +19929,7 @@ msgstr "Đăng nhập một lần (SSO)"
 
 #. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/translations/components/SettingsMetadataTranslationsSection.tsx
 msgid "Singular"
 msgstr "Số ít"
 
@@ -20194,11 +20192,6 @@ msgstr "Nguồn"
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "Source Email Address"
 msgstr "Địa chỉ Email nguồn"
-
-#. js-lingui-id: MEXVHu
-#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
-msgid "Source: {canonicalValue}"
-msgstr "Nguồn: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -21031,6 +21024,12 @@ msgstr "văn bản"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Text"
 msgstr "Văn bản"
+
+#. js-lingui-id: MGwdi/
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
+msgid "Text and background colors"
+msgstr "Màu văn bản và màu nền"
 
 #. js-lingui-id: MapzEo
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -22164,8 +22163,9 @@ msgstr "Dịch hay đổi tên?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 msgid "Translations"
 msgstr "Dịch thuật"
 
@@ -22327,6 +22327,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "Turn evaluated successfully"
 msgstr ""
+
+#. js-lingui-id: M4zYAl
+#: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
+msgid "Turn into"
+msgstr "Chuyển thành"
 
 #. js-lingui-id: 8680YN
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -23312,11 +23317,6 @@ msgstr "Chỉ sử dụng chữ cái, số, dấu gạch dưới, dấu chấm h
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Sử dụng API của chúng tôi hoặc thêm {objectLabel} của bạn bằng tay"
-
-#. js-lingui-id: c2ES/s
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use target relations to find messages and calendar events linked to records."
-msgstr "Sử dụng các quan hệ mục tiêu để tìm tin nhắn và sự kiện lịch được liên kết với bản ghi."
 
 #. js-lingui-id: 40bRe+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -24455,6 +24455,7 @@ msgstr "Quy Trình Làm Việc"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTranslations.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx

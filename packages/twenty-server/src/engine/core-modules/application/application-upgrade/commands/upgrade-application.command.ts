@@ -121,6 +121,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
       targetVersion,
       applicationsToUpgrade,
       skippedNonProvisionedWorkspaceIds,
+      skippedIncompatibleWorkspaceIds,
     } = await this.applicationUpgradeService.findApplicationsToUpgrade({
       applicationRegistrationId: registration.id,
       onlyAutoUpgrade: false,
@@ -139,6 +140,12 @@ export class UpgradeApplicationCommand extends CommandRunner {
     if (skippedNonProvisionedWorkspaceIds.length > 0) {
       this.logger.warn(
         `Skipping ${skippedNonProvisionedWorkspaceIds.length} non provisioned workspace(s): ${skippedNonProvisionedWorkspaceIds.join(', ')}`,
+      );
+    }
+
+    if (skippedIncompatibleWorkspaceIds.length > 0) {
+      this.logger.warn(
+        `Skipping ${skippedIncompatibleWorkspaceIds.length} workspace(s) that have not finished the server upgrade ${targetVersion} requires: ${skippedIncompatibleWorkspaceIds.join(', ')}`,
       );
     }
 

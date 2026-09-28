@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import { filterMapAsyncIterator } from 'src/engine/subscriptions/utils/filter-map-async-iterator';
 
 @Injectable()
 export class SubscriptionService {
@@ -27,18 +30,24 @@ export class SubscriptionService {
     return `${SubscriptionChannel.EVENT_STREAM_CHANNEL}:${workspaceId}:${eventStreamChannelId}`;
   }
 
-  async subscribe({
+  async subscribe<TPayload>({
     channel,
     workspaceId,
+    mapPayload,
   }: {
     channel: SubscriptionChannel;
     workspaceId: string;
-  }) {
+    mapPayload?: (payload: TPayload) => TPayload | undefined;
+  }): Promise<AsyncIterableIterator<TPayload>> {
     const client = this.redisClient.getPubSubClient();
 
-    return client.asyncIterator(
+    const iterator = client.asyncIterator<TPayload>(
       this.getSubscriptionChannel({ channel, workspaceId }),
     );
+
+    return isDefined(mapPayload)
+      ? filterMapAsyncIterator(iterator, mapPayload)
+      : iterator;
   }
 
   async subscribeToEventStream({

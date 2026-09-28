@@ -85,6 +85,7 @@ const buildResolver = () => {
   const redis = { getClient: jest.fn() };
   const resolver = new AgentChatResolver(
     chatService,
+    {} as never,
     sharing as never,
     streaming as never,
     events as never,

@@ -36,6 +36,7 @@ import { FileService } from './services/file.service';
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
     provideWorkspaceScopedRepository(FileEntity),
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     FileService,
