@@ -214,14 +214,18 @@ export class WorkflowRunnerWorkspaceService {
             workspaceId,
           });
 
-        newStatus = isStopping
-          ? WorkflowRunStatus.STOPPING
-          : (
-              await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-                workflowRunId,
-                workspaceId,
-              })
-            ).status;
+        if (isStopping) {
+          newStatus = WorkflowRunStatus.STOPPING;
+        } else {
+          // The run changed before the lock was taken, so report what it is now.
+          const currentWorkflowRun =
+            await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+              workflowRunId,
+              workspaceId,
+            });
+
+          newStatus = currentWorkflowRun.status;
+        }
       } else {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
