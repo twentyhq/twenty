@@ -83,6 +83,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "targetTableName": "",
   "universalIdentifier": "object-universal-identifier",
   "updatedAt": "2024-01-01T00:00:00.000Z",
+  "validationRules": [],
   "viewUniversalIdentifiers": [
     "view-universal-identifier",
   ],
