@@ -71,12 +71,9 @@ export const remapDuplicatedStepDestinations = <
       };
     }
 
-    return {
-      ...remappedStep,
-      settings: remapDuplicatedStepVariables(
-        remappedStep.settings,
-        clonedStepIdBySourceStepId,
-      ),
-    };
+    return remapDuplicatedStepVariables(
+      remappedStep,
+      clonedStepIdBySourceStepId,
+    );
   }),
 });
