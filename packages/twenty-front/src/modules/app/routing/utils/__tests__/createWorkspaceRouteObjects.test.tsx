@@ -81,10 +81,8 @@ describe('workspace route objects', () => {
     expect(matchRoutes(mainRoutes, '/settings/billing')).not.toBeNull();
   });
 
-  it('hosts the specialized workflow index on both surfaces', () => {
-    const routeObjects = createWorkspaceRouteObjects({
-      isWorkflowCoreIndexPageEnabled: true,
-    });
+  it('hosts the workflow pages on both surfaces', () => {
+    const routeObjects = createWorkspaceRouteObjects({});
 
     expect(
       isWorkspaceLocationAvailableOnSurface(
@@ -97,7 +95,7 @@ describe('workspace route objects', () => {
       getWorkspaceRouteObjectsForSurface(routeObjects, 'side-panel').map(
         ({ path }) => path,
       ),
-    ).toContain(AppPath.WorkflowCoreIndexPage);
+    ).toContain(AppPath.WorkflowCoreShowPage);
     expect(
       isWorkspaceLocationAvailableOnSurface(
         routeObjects,
@@ -179,14 +177,15 @@ describe('workspace route objects', () => {
     ).toBe(false);
   });
 
-  it('allows the specialized workflow index to expand', () => {
-    expect(
-      isWorkspaceLocationExpandableFromSidePanel(
-        createWorkspaceRouteObjects({
-          isWorkflowCoreIndexPageEnabled: true,
-        }),
-        '/objects/workflows',
-      ),
-    ).toBe(true);
-  });
+  it.each(['/objects/workflows', '/workflow/core-workflow-id'])(
+    'allows the workflow route %s to expand',
+    (path) => {
+      expect(
+        isWorkspaceLocationExpandableFromSidePanel(
+          createWorkspaceRouteObjects({}),
+          path,
+        ),
+      ).toBe(true);
+    },
+  );
 });
