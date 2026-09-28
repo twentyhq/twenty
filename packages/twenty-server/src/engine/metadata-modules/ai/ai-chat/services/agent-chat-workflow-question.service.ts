@@ -96,6 +96,7 @@ export class AgentChatWorkflowQuestionService {
 
     let answerMessageId: string | undefined;
     let isReleased = false;
+    let isNoLongerAwaited = false;
     let answeredInputAskId: string | null = null;
 
     try {
@@ -112,13 +113,16 @@ export class AgentChatWorkflowQuestionService {
 
       answerMessageId = answerMessage.id;
 
-      isReleased =
+      const release =
         await this.workflowRunWorkspaceService.releaseStepAwaitingAnswer({
           stepId: workflowStepId,
           threadId: thread.id,
           workflowRunId,
           workspaceId,
         });
+
+      isReleased = release === 'RELEASED';
+      isNoLongerAwaited = release === 'NO_LONGER_AWAITING';
 
       if (!isReleased) {
         throw new AiException(
@@ -169,13 +173,22 @@ export class AgentChatWorkflowQuestionService {
           .catch(() => {});
       }
 
-      await this.agentChatService.restorePendingQuestion({
-        threadId: thread.id,
-        messageId,
-        streamId: claimId,
-        workspaceId,
-        rollback: resolved.rollback,
-      });
+      if (isNoLongerAwaited) {
+        await this.agentChatService.closePendingQuestion({
+          threadId: thread.id,
+          streamId: claimId,
+          workspaceId,
+          rollback: resolved.rollback,
+        });
+      } else {
+        await this.agentChatService.restorePendingQuestion({
+          threadId: thread.id,
+          messageId,
+          streamId: claimId,
+          workspaceId,
+          rollback: resolved.rollback,
+        });
+      }
 
       throw error;
     }

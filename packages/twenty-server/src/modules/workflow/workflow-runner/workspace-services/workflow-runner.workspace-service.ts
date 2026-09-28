@@ -14,7 +14,6 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
@@ -231,28 +230,20 @@ export class WorkflowRunnerWorkspaceService {
       const steps = workflowRun.state.flow.steps;
 
       if (workflowHasRunningSteps({ stepInfos, steps })) {
-        const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
-          stepInfos,
-          steps,
-        });
+        const isStopping =
+          await this.workflowRunWorkspaceService.markWorkflowRunAsStopping({
+            workflowRunId,
+            workspaceId,
+          });
 
-        const mergedStepInfos = {
-          ...stepInfos,
-          ...stoppedIteratorStepInfos,
-        };
-
-        await this.workflowRunWorkspaceService.updateWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          partialUpdate: {
-            status: WorkflowRunStatus.STOPPING,
-            state: {
-              ...workflowRun.state,
-              stepInfos: mergedStepInfos,
-            },
-          },
-        });
-        newStatus = WorkflowRunStatus.STOPPING;
+        newStatus = isStopping
+          ? WorkflowRunStatus.STOPPING
+          : (
+              await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+                workflowRunId,
+                workspaceId,
+              })
+            ).status;
       } else {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,

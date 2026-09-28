@@ -16,7 +16,6 @@ export const buildInputAskStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'inputAsk'>,
   FlatIndexMetadata
 > => ({
-  // What an assignee's inbox reads: everything still waiting on them.
   assigneeStatusIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
@@ -31,10 +30,9 @@ export const buildInputAskStandardFlatIndexMetadatas = ({
   }),
   // One Ask per form step of a run, enforced here rather than by the read
   // that precedes the insert: a retried or concurrently resumed step would
-  // otherwise pass that read twice and ask the same question twice. Its
-  // leading column also serves the lookups by run alone. Partial, or a
-  // soft-deleted row would hold the key against a reopen that cannot see it,
-  // and an agent's questions, keyed by their tool call, would collide.
+  // otherwise pass that read twice and ask the same question twice. Partial,
+  // or a soft-deleted row would hold the key against a reopen that cannot see
+  // it, and an agent's questions, keyed by their tool call, would collide.
   workflowRunStepUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
@@ -43,6 +41,20 @@ export const buildInputAskStandardFlatIndexMetadatas = ({
       relatedFieldNames: ['workflowRun', 'stepId'],
       isUnique: true,
       indexWhereClause: '"deletedAt" IS NULL AND "toolCallId" IS NULL',
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  // What ending a run reads: every Ask of the run still pending, form or
+  // agent alike, which the partial unique index above cannot serve.
+  workflowRunStatusIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'workflowRunStatusIndex',
+      relatedFieldNames: ['workflowRun', 'status'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
