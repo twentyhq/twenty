@@ -2,7 +2,7 @@ import { globSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 
 import { checkStoryEmbeds } from './ui/check-story-embeds.mjs';
 import { checkStoryPresentation } from './ui/check-story-presentation.mjs';
@@ -40,7 +40,7 @@ const storyErrors = new Map<string, string[]>();
 const getPresentationErrors = (storyId: string): string[] => {
   const cachedErrors = storyErrors.get(storyId);
 
-  if (cachedErrors) {
+  if (!isUndefined(cachedErrors)) {
     return cachedErrors;
   }
 

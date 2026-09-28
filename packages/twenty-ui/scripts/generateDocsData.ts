@@ -172,7 +172,7 @@ const extractProps = ({
   );
 
   if (
-    !parsed ||
+    !isDefined(parsed) ||
     !isDefined(propsSymbol) ||
     Object.keys(parsed.props).length === 0
   ) {
