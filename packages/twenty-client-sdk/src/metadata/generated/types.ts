@@ -7840,6 +7840,9 @@ export default {
                     ]
                 }
             ],
+            "getRoles": [
+                50
+            ],
             "currentWorkspace": [
                 71
             ],
@@ -8043,9 +8046,6 @@ export default {
                         "String!"
                     ]
                 }
-            ],
-            "getRoles": [
-                50
             ],
             "previewMessageCampaignAudience": [
                 341,
@@ -9788,11 +9788,109 @@ export default {
                     ]
                 }
             ],
+            "updateWorkspaceMemberRole": [
+                37,
+                {
+                    "workspaceMemberId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "roleId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createOneRole": [
+                50,
+                {
+                    "createRoleInput": [
+                        519,
+                        "CreateRoleInput!"
+                    ]
+                }
+            ],
+            "updateOneRole": [
+                50,
+                {
+                    "updateRoleInput": [
+                        520,
+                        "UpdateRoleInput!"
+                    ]
+                }
+            ],
+            "deleteOneRole": [
+                1,
+                {
+                    "roleId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "upsertObjectPermissions": [
+                47,
+                {
+                    "upsertObjectPermissionsInput": [
+                        522,
+                        "UpsertObjectPermissionsInput!"
+                    ]
+                }
+            ],
+            "upsertPermissionFlags": [
+                48,
+                {
+                    "upsertPermissionFlagsInput": [
+                        524,
+                        "UpsertPermissionFlagsInput!"
+                    ]
+                }
+            ],
+            "upsertFieldPermissions": [
+                42,
+                {
+                    "upsertFieldPermissionsInput": [
+                        525,
+                        "UpsertFieldPermissionsInput!"
+                    ]
+                }
+            ],
+            "upsertRowLevelPermissionPredicates": [
+                284,
+                {
+                    "input": [
+                        527,
+                        "UpsertRowLevelPermissionPredicatesInput!"
+                    ]
+                }
+            ],
+            "assignRoleToAgent": [
+                8,
+                {
+                    "agentId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "roleId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "removeRoleFromAgent": [
+                8,
+                {
+                    "agentId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "activateWorkspace": [
                 71,
                 {
                     "data": [
-                        519,
+                        530,
                         "ActivateWorkspaceInput!"
                     ]
                 }
@@ -9801,7 +9899,7 @@ export default {
                 71,
                 {
                     "data": [
-                        520,
+                        531,
                         "UpdateWorkspaceInput!"
                     ]
                 }
@@ -9810,7 +9908,7 @@ export default {
                 71,
                 {
                     "data": [
-                        521,
+                        532,
                         "UpdateWorkspaceAllowedIframeOriginsInput!"
                     ]
                 }
@@ -9841,7 +9939,7 @@ export default {
                 235,
                 {
                     "input": [
-                        522,
+                        533,
                         "CreateApplicationRegistrationInput!"
                     ]
                 }
@@ -9850,7 +9948,7 @@ export default {
                 78,
                 {
                     "input": [
-                        523,
+                        534,
                         "UpdateApplicationRegistrationInput!"
                     ]
                 }
@@ -9877,7 +9975,7 @@ export default {
                 207,
                 {
                     "input": [
-                        525,
+                        536,
                         "UpdateApplicationRegistrationVariableInput!"
                     ]
                 }
@@ -9929,7 +10027,7 @@ export default {
                 259,
                 {
                     "input": [
-                        527,
+                        538,
                         "GrantApplicationCapabilitiesInput!"
                     ]
                 }
@@ -9962,7 +10060,7 @@ export default {
                 257,
                 {
                     "input": [
-                        528,
+                        539,
                         "TriggerInstallApplicationJobInput!"
                     ]
                 }
@@ -9971,7 +10069,7 @@ export default {
                 258,
                 {
                     "input": [
-                        529,
+                        540,
                         "TriggerUninstallApplicationJobInput!"
                     ]
                 }
@@ -9984,7 +10082,7 @@ export default {
                         "UUID!"
                     ],
                     "input": [
-                        530,
+                        541,
                         "UpdateApplicationInput!"
                     ]
                 }
@@ -10014,7 +10112,7 @@ export default {
                 263,
                 {
                     "input": [
-                        531,
+                        542,
                         "CreateOneFieldMetadataInput!"
                     ]
                 }
@@ -10023,7 +10121,7 @@ export default {
                 263,
                 {
                     "input": [
-                        533,
+                        544,
                         "UpdateOneFieldMetadataInput!"
                     ]
                 }
@@ -10032,7 +10130,7 @@ export default {
                 263,
                 {
                     "input": [
-                        535,
+                        546,
                         "DeleteOneFieldInput!"
                     ]
                 }
@@ -10041,7 +10139,7 @@ export default {
                 61,
                 {
                     "input": [
-                        536,
+                        547,
                         "CreateViewGroupInput!"
                     ]
                 }
@@ -10050,7 +10148,7 @@ export default {
                 61,
                 {
                     "inputs": [
-                        536,
+                        547,
                         "[CreateViewGroupInput!]!"
                     ]
                 }
@@ -10059,7 +10157,7 @@ export default {
                 61,
                 {
                     "input": [
-                        537,
+                        548,
                         "UpdateViewGroupInput!"
                     ]
                 }
@@ -10068,7 +10166,7 @@ export default {
                 61,
                 {
                     "inputs": [
-                        537,
+                        548,
                         "[UpdateViewGroupInput!]!"
                     ]
                 }
@@ -10077,7 +10175,7 @@ export default {
                 61,
                 {
                     "input": [
-                        539,
+                        550,
                         "DeleteViewGroupInput!"
                     ]
                 }
@@ -10086,106 +10184,8 @@ export default {
                 61,
                 {
                     "input": [
-                        540,
+                        551,
                         "DestroyViewGroupInput!"
-                    ]
-                }
-            ],
-            "updateWorkspaceMemberRole": [
-                37,
-                {
-                    "workspaceMemberId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "roleId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createOneRole": [
-                50,
-                {
-                    "createRoleInput": [
-                        541,
-                        "CreateRoleInput!"
-                    ]
-                }
-            ],
-            "updateOneRole": [
-                50,
-                {
-                    "updateRoleInput": [
-                        542,
-                        "UpdateRoleInput!"
-                    ]
-                }
-            ],
-            "deleteOneRole": [
-                1,
-                {
-                    "roleId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "upsertObjectPermissions": [
-                47,
-                {
-                    "upsertObjectPermissionsInput": [
-                        544,
-                        "UpsertObjectPermissionsInput!"
-                    ]
-                }
-            ],
-            "upsertPermissionFlags": [
-                48,
-                {
-                    "upsertPermissionFlagsInput": [
-                        546,
-                        "UpsertPermissionFlagsInput!"
-                    ]
-                }
-            ],
-            "upsertFieldPermissions": [
-                42,
-                {
-                    "upsertFieldPermissionsInput": [
-                        547,
-                        "UpsertFieldPermissionsInput!"
-                    ]
-                }
-            ],
-            "upsertRowLevelPermissionPredicates": [
-                284,
-                {
-                    "input": [
-                        549,
-                        "UpsertRowLevelPermissionPredicatesInput!"
-                    ]
-                }
-            ],
-            "assignRoleToAgent": [
-                8,
-                {
-                    "agentId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "roleId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "removeRoleFromAgent": [
-                8,
-                {
-                    "agentId": [
-                        3,
-                        "UUID!"
                     ]
                 }
             ],
@@ -12983,6 +12983,241 @@ export default {
                 1
             ]
         },
+        "CreateRoleInput": {
+            "id": [
+                1
+            ],
+            "label": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "canUpdateAllSettings": [
+                8
+            ],
+            "canAccessAllTools": [
+                8
+            ],
+            "canReadAllObjectRecords": [
+                8
+            ],
+            "canUpdateAllObjectRecords": [
+                8
+            ],
+            "canSoftDeleteAllObjectRecords": [
+                8
+            ],
+            "canDestroyAllObjectRecords": [
+                8
+            ],
+            "canBeAssignedToUsers": [
+                8
+            ],
+            "canBeAssignedToAgents": [
+                8
+            ],
+            "canBeAssignedToApiKeys": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateRoleInput": {
+            "update": [
+                521
+            ],
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateRolePayload": {
+            "label": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "canUpdateAllSettings": [
+                8
+            ],
+            "canAccessAllTools": [
+                8
+            ],
+            "canReadAllObjectRecords": [
+                8
+            ],
+            "canUpdateAllObjectRecords": [
+                8
+            ],
+            "canSoftDeleteAllObjectRecords": [
+                8
+            ],
+            "canDestroyAllObjectRecords": [
+                8
+            ],
+            "canBeAssignedToUsers": [
+                8
+            ],
+            "canBeAssignedToAgents": [
+                8
+            ],
+            "canBeAssignedToApiKeys": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpsertObjectPermissionsInput": {
+            "roleId": [
+                3
+            ],
+            "objectPermissions": [
+                523
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ObjectPermissionInput": {
+            "objectMetadataId": [
+                3
+            ],
+            "canReadObjectRecords": [
+                8
+            ],
+            "canUpdateObjectRecords": [
+                8
+            ],
+            "canSoftDeleteObjectRecords": [
+                8
+            ],
+            "canDestroyObjectRecords": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpsertPermissionFlagsInput": {
+            "roleId": [
+                3
+            ],
+            "permissionFlagKeys": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpsertFieldPermissionsInput": {
+            "roleId": [
+                3
+            ],
+            "fieldPermissions": [
+                526
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "FieldPermissionInput": {
+            "objectMetadataId": [
+                3
+            ],
+            "fieldMetadataId": [
+                3
+            ],
+            "canReadFieldValue": [
+                8
+            ],
+            "canUpdateFieldValue": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpsertRowLevelPermissionPredicatesInput": {
+            "roleId": [
+                3
+            ],
+            "objectMetadataId": [
+                3
+            ],
+            "predicates": [
+                528
+            ],
+            "predicateGroups": [
+                529
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RowLevelPermissionPredicateInput": {
+            "id": [
+                3
+            ],
+            "fieldMetadataId": [
+                3
+            ],
+            "operand": [
+                46
+            ],
+            "value": [
+                9
+            ],
+            "subFieldName": [
+                1
+            ],
+            "workspaceMemberFieldMetadataId": [
+                1
+            ],
+            "workspaceMemberSubFieldName": [
+                1
+            ],
+            "rowLevelPermissionPredicateGroupId": [
+                3
+            ],
+            "positionInRowLevelPermissionPredicateGroup": [
+                15
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RowLevelPermissionPredicateGroupInput": {
+            "id": [
+                3
+            ],
+            "objectMetadataId": [
+                3
+            ],
+            "parentRowLevelPermissionPredicateGroupId": [
+                3
+            ],
+            "logicalOperator": [
+                44
+            ],
+            "positionInRowLevelPermissionPredicateGroup": [
+                15
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "ActivateWorkspaceInput": {
             "displayName": [
                 1
@@ -13110,7 +13345,7 @@ export default {
                 1
             ],
             "update": [
-                524
+                535
             ],
             "__typename": [
                 1
@@ -13135,7 +13370,7 @@ export default {
                 1
             ],
             "update": [
-                526
+                537
             ],
             "__typename": [
                 1
@@ -13192,7 +13427,7 @@ export default {
         },
         "CreateOneFieldMetadataInput": {
             "field": [
-                532
+                543
             ],
             "__typename": [
                 1
@@ -13271,7 +13506,7 @@ export default {
                 3
             ],
             "update": [
-                534
+                545
             ],
             "__typename": [
                 1
@@ -13375,7 +13610,7 @@ export default {
                 3
             ],
             "update": [
-                538
+                549
             ],
             "__typename": [
                 1
@@ -13409,241 +13644,6 @@ export default {
         "DestroyViewGroupInput": {
             "id": [
                 3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateRoleInput": {
-            "id": [
-                1
-            ],
-            "label": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "canUpdateAllSettings": [
-                8
-            ],
-            "canAccessAllTools": [
-                8
-            ],
-            "canReadAllObjectRecords": [
-                8
-            ],
-            "canUpdateAllObjectRecords": [
-                8
-            ],
-            "canSoftDeleteAllObjectRecords": [
-                8
-            ],
-            "canDestroyAllObjectRecords": [
-                8
-            ],
-            "canBeAssignedToUsers": [
-                8
-            ],
-            "canBeAssignedToAgents": [
-                8
-            ],
-            "canBeAssignedToApiKeys": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateRoleInput": {
-            "update": [
-                543
-            ],
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateRolePayload": {
-            "label": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "canUpdateAllSettings": [
-                8
-            ],
-            "canAccessAllTools": [
-                8
-            ],
-            "canReadAllObjectRecords": [
-                8
-            ],
-            "canUpdateAllObjectRecords": [
-                8
-            ],
-            "canSoftDeleteAllObjectRecords": [
-                8
-            ],
-            "canDestroyAllObjectRecords": [
-                8
-            ],
-            "canBeAssignedToUsers": [
-                8
-            ],
-            "canBeAssignedToAgents": [
-                8
-            ],
-            "canBeAssignedToApiKeys": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpsertObjectPermissionsInput": {
-            "roleId": [
-                3
-            ],
-            "objectPermissions": [
-                545
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ObjectPermissionInput": {
-            "objectMetadataId": [
-                3
-            ],
-            "canReadObjectRecords": [
-                8
-            ],
-            "canUpdateObjectRecords": [
-                8
-            ],
-            "canSoftDeleteObjectRecords": [
-                8
-            ],
-            "canDestroyObjectRecords": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpsertPermissionFlagsInput": {
-            "roleId": [
-                3
-            ],
-            "permissionFlagKeys": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpsertFieldPermissionsInput": {
-            "roleId": [
-                3
-            ],
-            "fieldPermissions": [
-                548
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "FieldPermissionInput": {
-            "objectMetadataId": [
-                3
-            ],
-            "fieldMetadataId": [
-                3
-            ],
-            "canReadFieldValue": [
-                8
-            ],
-            "canUpdateFieldValue": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpsertRowLevelPermissionPredicatesInput": {
-            "roleId": [
-                3
-            ],
-            "objectMetadataId": [
-                3
-            ],
-            "predicates": [
-                550
-            ],
-            "predicateGroups": [
-                551
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RowLevelPermissionPredicateInput": {
-            "id": [
-                3
-            ],
-            "fieldMetadataId": [
-                3
-            ],
-            "operand": [
-                46
-            ],
-            "value": [
-                9
-            ],
-            "subFieldName": [
-                1
-            ],
-            "workspaceMemberFieldMetadataId": [
-                1
-            ],
-            "workspaceMemberSubFieldName": [
-                1
-            ],
-            "rowLevelPermissionPredicateGroupId": [
-                3
-            ],
-            "positionInRowLevelPermissionPredicateGroup": [
-                15
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RowLevelPermissionPredicateGroupInput": {
-            "id": [
-                3
-            ],
-            "objectMetadataId": [
-                3
-            ],
-            "parentRowLevelPermissionPredicateGroupId": [
-                3
-            ],
-            "logicalOperator": [
-                44
-            ],
-            "positionInRowLevelPermissionPredicateGroup": [
-                15
             ],
             "__typename": [
                 1

@@ -43,6 +43,12 @@ type WorkflowStepManifest = NonNullable<
   Manifest['workflows']
 >[number]['version']['steps'][number];
 
+type WithoutEdges<TStep> = TStep extends unknown
+  ? Omit<TStep, 'universalIdentifier' | 'nextStepIds'>
+  : never;
+
+type WorkflowStepManifestWithoutEdges = WithoutEdges<WorkflowStepManifest>;
+
 type TestWorkflow = {
   universalIdentifier: string;
   versionUniversalIdentifier: string;
@@ -50,7 +56,7 @@ type TestWorkflow = {
 };
 
 const buildTestWorkflow = (
-  steps: Omit<WorkflowStepManifest, 'universalIdentifier' | 'nextStepIds'>[],
+  steps: WorkflowStepManifestWithoutEdges[],
 ): TestWorkflow => {
   const stepIds = steps.map(() => randomUUID());
 
@@ -76,7 +82,7 @@ const CREATE_COMPANY_WORKFLOW = buildTestWorkflow([
       objectUniversalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
       objectRecord: { name: COMPANY_NAME },
     },
-  } as WorkflowStepManifest,
+  } as WorkflowStepManifestWithoutEdges,
 ]);
 
 const CREATE_OPPORTUNITY_WORKFLOW = buildTestWorkflow([
@@ -88,7 +94,7 @@ const CREATE_OPPORTUNITY_WORKFLOW = buildTestWorkflow([
         STANDARD_OBJECTS.opportunity.universalIdentifier,
       objectRecord: { name: OPPORTUNITY_NAME },
     },
-  } as WorkflowStepManifest,
+  } as WorkflowStepManifestWithoutEdges,
 ]);
 
 const SEND_EMAIL_WORKFLOW = buildTestWorkflow([
@@ -101,7 +107,7 @@ const SEND_EMAIL_WORKFLOW = buildTestWorkflow([
       subject: 'Application workflow permissions',
       body: 'Should never be sent',
     },
-  } as WorkflowStepManifest,
+  } as WorkflowStepManifestWithoutEdges,
 ]);
 
 const CREATE_CALENDAR_EVENT_WORKFLOW = buildTestWorkflow([
@@ -118,7 +124,7 @@ const CREATE_CALENDAR_EVENT_WORKFLOW = buildTestWorkflow([
       addConferencing: false,
       timeZone: 'UTC',
     },
-  } as WorkflowStepManifest,
+  } as WorkflowStepManifestWithoutEdges,
 ]);
 
 const LOGIC_FUNCTION_WORKFLOW = buildTestWorkflow([
@@ -127,7 +133,7 @@ const LOGIC_FUNCTION_WORKFLOW = buildTestWorkflow([
     type: 'LOGIC_FUNCTION',
     logicFunctionUniversalIdentifier: FUNCTION_ID,
     input: { greeting: 'Hello' },
-  } as WorkflowStepManifest,
+  } as WorkflowStepManifestWithoutEdges,
 ]);
 
 const DELAYED_CREATE_COMPANY_WORKFLOW = buildTestWorkflow([
@@ -135,7 +141,7 @@ const DELAYED_CREATE_COMPANY_WORKFLOW = buildTestWorkflow([
     name: 'Wait',
     type: 'DELAY',
     input: { delayType: 'DURATION', duration: { seconds: 10 } },
-  } as WorkflowStepManifest,
+  } as WorkflowStepManifestWithoutEdges,
   {
     name: 'Create company after the delay',
     type: 'CREATE_RECORD',
@@ -143,7 +149,7 @@ const DELAYED_CREATE_COMPANY_WORKFLOW = buildTestWorkflow([
       objectUniversalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
       objectRecord: { name: DELAYED_COMPANY_NAME },
     },
-  } as WorkflowStepManifest,
+  } as WorkflowStepManifestWithoutEdges,
 ]);
 
 const TEST_WORKFLOWS = [
