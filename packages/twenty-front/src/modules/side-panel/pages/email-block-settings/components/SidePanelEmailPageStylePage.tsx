@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { EmailPageStyleSection } from '@/side-panel/pages/email-block-settings/components/EmailPageStyleSection';
-import { EmailSidePanelHint } from '@/side-panel/pages/email-block-settings/components/EmailSidePanelHint';
+import { StyledEmailSidePanelHint } from '@/side-panel/pages/email-block-settings/components/StyledEmailSidePanelHint';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SidePanelEmailPageStylePage = () => {
@@ -12,7 +12,7 @@ export const SidePanelEmailPageStylePage = () => {
 
   if (!isDefined(activeEmailEditor) || activeEmailEditor.isDestroyed) {
     return (
-      <EmailSidePanelHint>{t`Open an email editor to edit the page style.`}</EmailSidePanelHint>
+      <StyledEmailSidePanelHint>{t`Open an email editor to edit the page style.`}</StyledEmailSidePanelHint>
     );
   }
 

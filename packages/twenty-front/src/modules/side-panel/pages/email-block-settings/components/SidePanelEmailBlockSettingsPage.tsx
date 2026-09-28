@@ -21,7 +21,7 @@ import {
   EmailBoxSidesInput,
   type CssBoxSides,
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
-import { EmailSidePanelHint } from '@/side-panel/pages/email-block-settings/components/EmailSidePanelHint';
+import { StyledEmailSidePanelHint } from '@/side-panel/pages/email-block-settings/components/StyledEmailSidePanelHint';
 import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -73,7 +73,7 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
 
   if (!isDefined(target)) {
     return (
-      <EmailSidePanelHint>{t`Select a block to edit its style.`}</EmailSidePanelHint>
+      <StyledEmailSidePanelHint>{t`Select a block to edit its style.`}</StyledEmailSidePanelHint>
     );
   }
 
@@ -250,7 +250,7 @@ export const SidePanelEmailBlockSettingsPage = () => {
 
   if (!isDefined(activeEmailEditor) || activeEmailEditor.isDestroyed) {
     return (
-      <EmailSidePanelHint>{t`Open an email editor to edit block settings.`}</EmailSidePanelHint>
+      <StyledEmailSidePanelHint>{t`Open an email editor to edit block settings.`}</StyledEmailSidePanelHint>
     );
   }
 
