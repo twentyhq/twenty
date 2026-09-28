@@ -105,7 +105,7 @@ describe('versioned agent history upgrade (integration)', () => {
       'WorkspaceOrmManager',
     );
     storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+      'AgentHistoryUpgradeStorageService',
     );
     heartbeat = getAppProviderByClassName<AgentChatStreamHeartbeatService>(
       'AgentChatStreamHeartbeatService',

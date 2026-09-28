@@ -30,7 +30,7 @@ const WORKFLOW_RUN_THREAD_INDEX_UNIVERSAL_IDENTIFIERS = [
 // its run rather than by a member. Threads therefore stop requiring an owner
 // and inherit readability from the run; a thread without a run has no parent,
 // so member chats keep reading exactly as they did under PRIVATE.
-@RegisteredWorkspaceCommand('2.44.0', 1790591162158)
+@RegisteredWorkspaceCommand('2.44.0', 1790599104004)
 @Command({
   name: 'upgrade:2-44:add-workflow-run-to-chat-threads',
   description:
