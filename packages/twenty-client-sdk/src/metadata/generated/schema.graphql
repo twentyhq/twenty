@@ -1182,6 +1182,7 @@ enum WidgetType {
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
   FORM_FIELD
+  CHAT_THREADS
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1215,7 +1216,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatThreadsConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1261,6 +1262,7 @@ enum WidgetConfigurationType {
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
   FORM_FIELD
+  CHAT_THREADS
 }
 
 """Format used to display the chart value"""
@@ -1433,6 +1435,10 @@ type CallRecordingSummaryConfiguration {
 }
 
 type CallRecordingTranscriptConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type ChatThreadsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -2078,6 +2084,7 @@ enum FeatureFlagKey {
   IS_EXECUTION_QUOTA_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
+  IS_CONVERSATIONS_TAB_ENABLED
 }
 
 type WorkspaceUrls {
