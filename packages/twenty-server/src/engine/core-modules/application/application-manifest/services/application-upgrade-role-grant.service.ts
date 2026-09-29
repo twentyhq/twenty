@@ -5,7 +5,6 @@ import {
   type RoleManifestGrant,
 } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
 
 import { getDefaultRoleGrantsAddedByManifest } from 'src/engine/core-modules/application/application-manifest/utils/get-default-role-grants-added-by-manifest.util';
 import { getInstalledDefaultRoleManifest } from 'src/engine/core-modules/application/application-manifest/utils/get-installed-default-role-manifest.util';
@@ -36,10 +35,6 @@ export class ApplicationUpgradeRoleGrantService {
       flatApplicationMaps,
       allFlatEntityMaps,
     });
-
-    if (!isDefined(installedDefaultRole)) {
-      return [];
-    }
 
     return getDefaultRoleGrantsAddedByManifest({
       installedDefaultRole,

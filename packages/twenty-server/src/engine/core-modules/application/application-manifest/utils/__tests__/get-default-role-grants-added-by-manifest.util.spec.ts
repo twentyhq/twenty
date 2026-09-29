@@ -93,6 +93,27 @@ describe('getDefaultRoleGrantsAddedByManifest', () => {
     ]);
   });
 
+  it('reports every grant of a default role the installed version did not have', () => {
+    expect(
+      getDefaultRoleGrantsAddedByManifest({
+        installedDefaultRole: undefined,
+        manifest: buildManifest({ defaultRole: installedDefaultRole }),
+      }),
+    ).toEqual([
+      { type: 'ALL_OBJECT_RECORDS', action: 'canReadObjectRecords' },
+      {
+        type: 'OBJECT_RECORDS',
+        action: 'canReadObjectRecords',
+        objectUniversalIdentifier: PET_UID,
+      },
+      {
+        type: 'OBJECT_RECORDS',
+        action: 'canUpdateObjectRecords',
+        objectUniversalIdentifier: PET_UID,
+      },
+    ]);
+  });
+
   it('treats a custom flag without a permission type as a tool flag covered by access to all tools', () => {
     expect(
       getDefaultRoleGrantsAddedByManifest({
