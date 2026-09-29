@@ -6810,13 +6810,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource/roboto@npm:^5.2.8":
-  version: 5.3.0
-  resolution: "@fontsource/roboto@npm:5.3.0"
-  checksum: 10c0/68420d2c669ba05f0ea466343151c6d2efff85b05cedbf0f990c58635d86035cae5e7c4904db9abc7b9fd21c5ad179788243ec9dff0c30dfab90679ae2d226f9
-  languageName: node
-  linkType: hard
-
 "@formatjs/icu-messageformat-parser@npm:^3.5.16":
   version: 3.5.17
   resolution: "@formatjs/icu-messageformat-parser@npm:3.5.17"
@@ -50417,7 +50410,6 @@ __metadata:
     "@floating-ui/react": "npm:^0.24.3"
     "@fontsource/dm-mono": "npm:^5.2.7"
     "@fontsource/inter": "npm:^5.2.8"
-    "@fontsource/roboto": "npm:^5.2.8"
     "@graphiql/plugin-explorer": "npm:^5.1.2"
     "@graphiql/react": "npm:^0.37.6"
     "@graphql-codegen/cli": "npm:^6.3.1"

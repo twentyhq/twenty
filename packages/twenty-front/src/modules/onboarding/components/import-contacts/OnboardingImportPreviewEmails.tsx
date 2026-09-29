@@ -1,6 +1,3 @@
-import '@fontsource/roboto/latin-400.css';
-import '@fontsource/roboto/latin-500.css';
-
 import {
   type ImportContactsPreviewCalendarEvent,
   IMPORT_CONTACTS_PREVIEW_CALENDAR_EVENTS,
@@ -13,8 +10,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
-const EMAIL_ROW_HEIGHT = 32;
-const EMAIL_FONT_SIZE = 11.886;
+const EVENT_CARD_WIDTH = 160;
 
 const SENDER_COLORS: Record<ImportContactsPreviewEmail['senderColor'], string> =
   {
@@ -37,26 +33,25 @@ const StyledColumn = styled.div`
 `;
 
 const StyledEmailRow = styled.div`
+  align-items: center;
   background-color: ${themeCssVariables.background.primary};
+  box-sizing: border-box;
+  display: flex;
   flex-shrink: 0;
-  font-family: Roboto, ${themeCssVariables.font.family};
-  font-size: ${EMAIL_FONT_SIZE}px;
-  height: ${EMAIL_ROW_HEIGHT}px;
-  letter-spacing: -0.0341px;
-  line-height: normal;
-  position: relative;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[3]};
+  height: ${themeCssVariables.spacing[8]};
+  padding: 0 ${themeCssVariables.spacing[3]};
   white-space: nowrap;
 `;
 
 const StyledEmailCheckbox = styled.div`
-  border: 1.371px solid ${themeCssVariables.font.color.light};
-  border-radius: 0.914px;
+  border: 1px solid ${themeCssVariables.font.color.light};
+  border-radius: ${themeCssVariables.border.radius.xs};
   box-sizing: border-box;
-  height: 11.886px;
-  left: 12.71px;
-  position: absolute;
-  top: 9.91px;
-  width: 11.886px;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[3]};
+  width: ${themeCssVariables.spacing[3]};
 
   &[data-selected='true'] {
     border-color: ${themeCssVariables.font.color.primary};
@@ -65,13 +60,11 @@ const StyledEmailCheckbox = styled.div`
 
 const StyledEmailStar = styled.span`
   background-color: ${themeCssVariables.font.color.light};
-  height: 11.87px;
-  left: 36.63px;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[3]};
   mask: url('/images/onboarding/import-preview/star.svg') center / contain
     no-repeat;
-  position: absolute;
-  top: 9.75px;
-  width: 12.5px;
+  width: ${themeCssVariables.spacing[3]};
 
   &[data-selected='true'] {
     background-color: ${themeCssVariables.font.color.primary};
@@ -79,10 +72,11 @@ const StyledEmailStar = styled.span`
 `;
 
 const StyledEmailSender = styled.span`
+  flex-shrink: 0;
   font-weight: ${themeCssVariables.font.weight.regular};
-  left: 61.17px;
-  position: absolute;
-  top: 9px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: ${themeCssVariables.spacing[30]};
 
   &[data-medium='true'] {
     font-weight: ${themeCssVariables.font.weight.medium};
@@ -91,27 +85,23 @@ const StyledEmailSender = styled.span`
 
 const StyledEmailSubject = styled.span`
   color: ${themeCssVariables.font.color.secondary};
-  left: 193.74px;
-  position: absolute;
-  top: 9px;
 `;
 
 const StyledEventCard = styled.div`
   animation: onboardingImportPreviewEventCardIn 900ms
     cubic-bezier(0.22, 1, 0.36, 1) both;
-  box-shadow:
-    0 1.206px 2.411px 0 ${themeCssVariables.background.transparent.light},
-    1.206px 2.411px 9.646px 0 ${themeCssVariables.color.transparent.gray6};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 4.823px;
+  gap: ${themeCssVariables.spacing[1]};
   line-height: 1.1;
   overflow: hidden;
-  padding: 9.646px;
+  padding: ${themeCssVariables.spacing[2]};
   position: absolute;
   transform: var(--event-card-transform);
-  width: 160.014px;
+  width: ${EVENT_CARD_WIDTH}px;
 
   @keyframes onboardingImportPreviewEventCardIn {
     from {
@@ -131,16 +121,14 @@ const StyledEventCard = styled.div`
   &[data-color='orange'] {
     animation-delay: 300ms;
     background-color: ${themeCssVariables.color.orange3};
-    border-left: 2.411px solid ${themeCssVariables.color.orange11};
-    border-radius: ${themeCssVariables.border.radius.md};
+    border-left: 2px solid ${themeCssVariables.color.orange11};
     color: ${themeCssVariables.color.orange11};
   }
 
   &[data-color='sky'] {
     animation-delay: 150ms;
     background-color: ${themeCssVariables.color.sky3};
-    border-left: 2.411px solid ${themeCssVariables.color.sky11};
-    border-radius: 1.638px;
+    border-left: 2px solid ${themeCssVariables.color.sky11};
     color: ${themeCssVariables.color.sky11};
   }
 
@@ -150,12 +138,12 @@ const StyledEventCard = styled.div`
 `;
 
 const StyledEventTitle = styled.span`
-  font-size: 12.06px;
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledEventTime = styled.span`
-  font-size: 9.65px;
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const EVENT_CARD_POSITIONS: Record<
@@ -168,15 +156,15 @@ const EVENT_CARD_POSITIONS: Record<
   }
 > = {
   orange: {
-    top: 158.93,
-    left: 21.35,
-    rotate: -7.06,
+    top: 159,
+    left: 21,
+    rotate: -7,
     entry: { x: 8, y: -10, rotate: -2, scale: 0.94 },
   },
   sky: {
-    top: -5.44,
-    left: 43.09,
-    rotate: 9.98,
+    top: -5,
+    left: 43,
+    rotate: 10,
     entry: { x: 8, y: 10, rotate: 5, scale: 0.94 },
   },
 };
