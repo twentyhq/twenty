@@ -1,7 +1,7 @@
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatLastMessageIdComponentSelector } from '@/ai/states/selectors/agentChatLastMessageIdComponentSelector';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
 export const agentChatNonLastMessageIdsComponentSelector =
@@ -18,13 +18,13 @@ export const agentChatNonLastMessageIdsComponentSelector =
           familyKey: { threadId: currentThreadId },
         });
 
-        const isLastMessageFromUser =
-          messages.at(-1)?.role === AgentMessageRole.USER;
-        const messagesWithoutStreamingState = isLastMessageFromUser
-          ? messages
-          : messages.slice(0, -1);
+        const lastMessageId = get(agentChatLastMessageIdComponentSelector, {
+          instanceId,
+        });
 
-        return messagesWithoutStreamingState.map((message) => message.id);
+        return messages
+          .filter((message) => message.id !== lastMessageId)
+          .map((message) => message.id);
       },
     areEqual: (previous, next) =>
       previous.length === next.length &&
