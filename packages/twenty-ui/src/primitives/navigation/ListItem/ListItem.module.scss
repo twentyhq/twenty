@@ -150,4 +150,8 @@
   flex: none;
   inline-size: calc(var(--t-icon-size-sm) * 1px);
   stroke-width: var(--t-icon-stroke-md);
+
+  &:dir(rtl) {
+    transform: scaleX(-1);
+  }
 }

@@ -299,9 +299,13 @@ export class OnboardingConfig {
 
   inviteTeamCreditsRewardPerUser: number;
 
+  installAppsCreditsReward: number;
+
+  createProfileCreditsReward: number;
+
   upgradeCreditsReward: number;
 
-  installAppsCreditsRewardPerApp: number;
+  inviteTeamMaxInvites: number;
 }
 
 @ObjectType()

@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
-import { replaceCanceledCallRecordingExternalBotId } from 'src/logic-functions/data/replace-canceled-call-recording-external-bot-id.util';
+import { clearCanceledRecallBot } from 'src/logic-functions/data/clear-canceled-recall-bot.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 
 export type CancelRecallBotForCanceledCallRecordingOutcome =
@@ -38,10 +38,9 @@ export const cancelRecallBotForCanceledCallRecording = async ({
   }
 
   if (latestCallRecording.externalBotId === externalBotId) {
-    await replaceCanceledCallRecordingExternalBotId(client, {
-      id: callRecordingId,
-      expectedExternalBotId: externalBotId,
-      nextExternalBotId: null,
+    await clearCanceledRecallBot(client, {
+      callRecordingId,
+      externalBotId,
     });
   }
 

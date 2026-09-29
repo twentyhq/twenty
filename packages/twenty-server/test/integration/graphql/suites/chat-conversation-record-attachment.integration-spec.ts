@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
-import { parse } from 'graphql';
 
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -17,11 +17,6 @@ const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
 const userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
 const companyId = COMPANY_DATA_SEED_IDS.ID_1;
-
-const CHAT_THREADS_FOR_RECORD =
-  parse(`query ChatThreadsForRecord($objectNameSingular: String!, $recordId: UUID!) {
-  chatThreadsForRecord(objectNameSingular: $objectNameSingular, recordId: $recordId, limit: 20) { id }
-}`);
 
 describe('Attaching a conversation to a record from a chat turn', () => {
   let chat: AgentChatService;
@@ -80,20 +75,25 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     });
   };
 
+  // Read back through the record API, the way the record page lists them.
   const listConversationIdsAttachedTo = async (recordId: string) => {
-    const response = await makeMetadataApiRequest({
-      query: CHAT_THREADS_FOR_RECORD,
-      variables: { objectNameSingular: 'company', recordId },
-    });
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'agentChatThreadTarget',
+        objectMetadataPluralName: 'agentChatThreadTargets',
+        gqlFields: 'id threadId',
+        filter: { targetCompanyId: { eq: recordId } },
+      }),
+    );
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.chatThreadsForRecord.map(
-      ({ id }: { id: string }) => id,
+    return response.body.data.agentChatThreadTargets.edges.map(
+      ({ node }: { node: { threadId: string } }) => node.threadId,
     );
   };
 
-  it('lists the conversation on the record it attached it to', async () => {
+  it('links the conversation to the record once, however often it is asked', async () => {
     const tool = await buildTool();
 
     await expect(
@@ -103,9 +103,14 @@ describe('Attaching a conversation to a record from a chat turn', () => {
       tool.execute({ objectNameSingular: 'company', recordId: companyId }),
     ).resolves.toMatchObject({ success: true });
 
-    expect(await listConversationIdsAttachedTo(companyId)).toEqual(
-      expect.arrayContaining([threadId]),
-    );
+    const attachedConversationIds =
+      await listConversationIdsAttachedTo(companyId);
+
+    expect(
+      attachedConversationIds.filter(
+        (conversationId: string) => conversationId === threadId,
+      ),
+    ).toHaveLength(1);
   });
 
   it('reports a record that does not exist without attaching anything', async () => {

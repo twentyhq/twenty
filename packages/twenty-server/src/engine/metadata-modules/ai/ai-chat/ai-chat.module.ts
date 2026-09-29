@@ -2,6 +2,7 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { AgentChatSharingService } from './services/agent-chat-sharing.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
+import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
@@ -47,10 +48,16 @@ import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
 
+import { AgentChatWorkflowQuestionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-workflow-question.service';
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
+import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
+import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
+
 @Module({
   imports: [
     RecordShareModule,
     AgentChatStreamStateModule,
+    AgentChatThreadLifecycleModule,
     AgentHistoryModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([
@@ -76,10 +83,14 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
+    WorkflowRunnerModule,
+    WorkflowExecutionContextModule,
+    InputAskModule,
   ],
   providers: [
     AgentChatActorService,
     AgentChatSharingService,
+    AgentChatWorkflowQuestionService,
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,

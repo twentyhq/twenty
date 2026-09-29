@@ -8207,27 +8207,6 @@ export default {
                     ]
                 }
             ],
-            "chatThreadsForRecord": [
-                382,
-                {
-                    "objectNameSingular": [
-                        1,
-                        "String!"
-                    ],
-                    "recordId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "limit": [
-                        30,
-                        "Int!"
-                    ],
-                    "offset": [
-                        30,
-                        "Int!"
-                    ]
-                }
-            ],
             "getAiSystemPromptPreview": [
                 384
             ],
@@ -10477,40 +10456,6 @@ export default {
                     "input": [
                         585,
                         "ReportAppConnectionAuthFailureInput!"
-                    ]
-                }
-            ],
-            "attachChatThreadToRecord": [
-                8,
-                {
-                    "threadId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "objectNameSingular": [
-                        1,
-                        "String!"
-                    ],
-                    "recordId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "detachChatThreadFromRecord": [
-                8,
-                {
-                    "threadId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "objectNameSingular": [
-                        1,
-                        "String!"
-                    ],
-                    "recordId": [
-                        3,
-                        "UUID!"
                     ]
                 }
             ],
