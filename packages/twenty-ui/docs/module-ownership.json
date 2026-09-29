@@ -1,7 +1,6 @@
 {
   "primitives": [
     "AlertDialog",
-    "AnimatedExpandableContainer",
     "Avatar",
     "Banner",
     "Button",
@@ -9,8 +8,8 @@
     "Card",
     "Checkbox",
     "Chip",
-    "CircularProgressBar",
     "ClickToActionLink",
+    "Collapsible",
     "ColorSample",
     "Dialog",
     "Field",

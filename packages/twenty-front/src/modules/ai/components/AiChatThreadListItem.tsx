@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArchive, IconSparkles } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
@@ -13,7 +15,6 @@ import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadIte
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadItem = styled.div`
   align-items: center;
@@ -81,7 +82,7 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 `;
 
 type AiChatThreadListItemProps = {
-  thread: AgentChatThread;
+  thread: AgentChatThreadRecord;
   surface?: AiChatThreadActionsSurface;
   onDetach?: () => void;
 };
@@ -106,7 +107,7 @@ export const AiChatThreadListItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.deletedAt);
+  const isArchived = isDefined(thread.archivedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({

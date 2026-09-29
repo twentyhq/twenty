@@ -72,7 +72,6 @@ export const createAttachConversationToRecordTool = ({
 
       await agentChatThreadTargetService.attachThreadToRecord({
         workspaceId,
-        workspaceMemberId: authContext.workspaceMemberId,
         threadId,
         objectNameSingular,
         recordId,

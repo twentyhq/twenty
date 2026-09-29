@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
@@ -337,7 +337,7 @@ const ThinkingToolStepRow = ({
       </StyledToolRowButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+        <Collapsible isExpanded={isExpanded}>
           <StyledToolDetailsContainer>
             {hasError ? (
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
@@ -377,7 +377,7 @@ const ThinkingToolStepRow = ({
               </TabListRoot>
             )}
           </StyledToolDetailsContainer>
-        </AnimatedExpandableContainer>
+        </Collapsible>
       )}
     </StyledToolRowContainer>
   );

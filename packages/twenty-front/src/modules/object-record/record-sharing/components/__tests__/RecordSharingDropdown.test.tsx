@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { RecordSharingDropdown } from '@/object-record/record-sharing/components/RecordSharingDropdown';
@@ -45,11 +45,13 @@ it('releases dropdown focus when sharing becomes unavailable and reopens closed'
   mockEnabled = false;
   rerender(component());
   expect(screen.queryByRole('button', { name: 'Share' })).toBeNull();
-  expect(
-    store.get(
-      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
-    ),
-  ).toBe(false);
+  await waitFor(() =>
+    expect(
+      store.get(
+        isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
+      ),
+    ).toBe(false),
+  );
   expect(store.get(activeDropdownFocusIdState.atom)).not.toBe(dropdownId);
   expect(
     store.get(focusStackState.atom).some((item) => item.focusId === dropdownId),
