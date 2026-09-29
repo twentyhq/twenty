@@ -2,10 +2,10 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { expect, it, vi } from 'vitest';
 
-import { ToastContext } from '../../internal/contexts/ToastContext';
-import { createToastStore } from '../../internal/stores/createToastStore';
-import { useToast } from '../useToast';
-import { useToastEntries } from '../../internal/hooks/useToastEntries';
+import { useToast } from '../../../hooks/useToast';
+import { ToastContext } from '../../contexts/ToastContext';
+import { createToastStore } from '../../stores/createToastStore';
+import { useToastEntries } from '../useToastEntries';
 
 it('rerenders only toast subscribers when the toast list changes', () => {
   const store = createToastStore();
