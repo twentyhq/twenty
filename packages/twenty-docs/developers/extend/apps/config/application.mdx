@@ -152,6 +152,8 @@ export default defineApplication({
 });
 ```
 
+A variable's scope is set when it is created and cannot change. To change it, declare the variable with a new `universalIdentifier`: the sync deletes the old variable, with its members' values, and creates the new one.
+
 User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest.
 
 For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
