@@ -24,6 +24,23 @@ export const Default: Story = {
   },
 };
 
+export const Small: Story = {
+  args: {
+    value: 50,
+    ariaLabel: 'Progress',
+    size: 'sm',
+    withBorderRadius: true,
+  },
+  play: async ({ canvasElement }) => {
+    const progressBar = await within(canvasElement).findByRole('progressbar', {
+      name: 'Progress',
+    });
+
+    expect(progressBar).toHaveAttribute('aria-valuenow', '50');
+    await expect(progressBar).toHaveStyle({ height: '6px' });
+  },
+};
+
 export const GrowInWithGlint: Story = {
   args: {
     value: 60,

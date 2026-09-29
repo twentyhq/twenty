@@ -6,6 +6,10 @@
   border-radius: 0;
   overflow: hidden;
 
+  &[data-size='sm'] {
+    height: var(--t-spacing-1_5);
+  }
+
   &[data-with-border-radius] {
     border-radius: var(--t-border-radius-pill);
     corner-shape: round;

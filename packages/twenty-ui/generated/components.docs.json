@@ -215,6 +215,13 @@
         "description": "Called when the grow-in animation ends."
       },
       {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Bar height: `sm` (6px) or `md` (8px)."
+      },
+      {
         "name": "value",
         "type": "number",
         "required": true,

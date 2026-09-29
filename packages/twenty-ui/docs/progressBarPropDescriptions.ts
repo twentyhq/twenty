@@ -5,6 +5,7 @@ import { type ProgressBar } from '../src/primitives/feedback/ProgressBar/Progres
 export const PROGRESS_BAR_PROP_DESCRIPTIONS = {
   value:
     'Current progress from 0 to 100. Also supplies the accessible value during a countdown.',
+  size: 'Bar height: `sm` (6px) or `md` (8px).',
   className: 'CSS class applied to the progress root.',
   barColor: 'CSS color of the filled bar. Defaults to the primary text color.',
   backgroundColor: 'CSS background color of the track.',

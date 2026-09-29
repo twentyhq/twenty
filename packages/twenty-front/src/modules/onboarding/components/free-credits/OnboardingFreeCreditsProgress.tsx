@@ -8,9 +8,8 @@ import { useLingui } from '@lingui/react/macro';
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledProgressBar = styled(ProgressBar)`
+const StyledProgressBarContainer = styled.div`
   flex-shrink: 0;
-  height: ${themeCssVariables.spacing['1.5']};
   width: ${themeCssVariables.spacing[16]};
 `;
 
@@ -37,18 +36,21 @@ export const OnboardingFreeCreditsProgress = ({
 
   return (
     <>
-      <StyledProgressBar
-        value={Math.min(100, (displayedCredits / goalCredits) * 100)}
-        ariaLabel={t`Free credits earned`}
-        backgroundColor={themeCssVariables.background.transparent.medium}
-        barColor={themeCssVariables.color.green9}
-        withBorderRadius
-        withGrowIn={!hasTrackGrown}
-        withGlint={hasTrackGrown && hasNewlyEarnedCredits}
-        withSpringFill
-        withMinimumFillWidth={false}
-        onGrowInComplete={onTrackGrown}
-      />
+      <StyledProgressBarContainer>
+        <ProgressBar
+          value={Math.min(100, (displayedCredits / goalCredits) * 100)}
+          size="sm"
+          ariaLabel={t`Free credits earned`}
+          backgroundColor={themeCssVariables.background.transparent.medium}
+          barColor={themeCssVariables.color.green9}
+          withBorderRadius
+          withGrowIn={!hasTrackGrown}
+          withGlint={hasTrackGrown && hasNewlyEarnedCredits}
+          withSpringFill
+          withMinimumFillWidth={false}
+          onGrowInComplete={onTrackGrown}
+        />
+      </StyledProgressBarContainer>
       <StyledOnboardingFreeCreditsText>
         <StyledOnboardingFreeCreditsCount>
           <OnboardingFreeCreditsAnimatedCount credits={displayedCredits} />

@@ -5,6 +5,7 @@ import styles from './ProgressBar.module.scss';
 
 export type ProgressBarProps = {
   value: number;
+  size?: 'sm' | 'md';
   className?: string;
   barColor?: string;
   backgroundColor?: string;
@@ -22,6 +23,7 @@ export type ProgressBarProps = {
 
 export const ProgressBar = ({
   value,
+  size = 'md',
   className,
   barColor,
   backgroundColor = 'none',
@@ -41,6 +43,7 @@ export const ProgressBar = ({
   return (
     <Progress.Root
       className={clsx(styles.bar, className)}
+      data-size={size}
       data-with-border-radius={withBorderRadius || undefined}
       data-grow-in={withGrowIn || undefined}
       aria-label={ariaLabel}
