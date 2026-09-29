@@ -53,6 +53,10 @@ const buildHandlers = ({
         currentUser: {
           ...currentUser,
           isWorkspaceCreator,
+          currentWorkspace: {
+            ...currentUser.currentWorkspace,
+            workspaceMembersCount: isWorkspaceCreator ? 1 : 2,
+          },
           currentUserWorkspace: {
             ...currentUser.currentUserWorkspace,
             permissionFlags,
