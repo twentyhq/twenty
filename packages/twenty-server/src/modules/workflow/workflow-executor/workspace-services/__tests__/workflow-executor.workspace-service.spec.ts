@@ -94,6 +94,12 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(workflowAction.execute).toHaveBeenCalledTimes(1);
+      expect(workflowAction.execute).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentStepId: AGENT_STEP_ID,
+          resumedThreadId: 'thread',
+        }),
+      );
       expect(
         workflowRunWorkspaceService.updateWorkflowRunStepInfo,
       ).toHaveBeenLastCalledWith({
@@ -121,6 +127,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(workflowAction.execute).toHaveBeenCalledTimes(1);
+      expect(workflowAction.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ resumedThreadId: undefined }),
+      );
       expect(billingUsageService.assertUsageAllowed).toHaveBeenCalledTimes(1);
       expect(usageLimitQuotaService.consumeQuota).toHaveBeenCalledTimes(1);
       expect(usageRecorderService.record).toHaveBeenCalledTimes(1);

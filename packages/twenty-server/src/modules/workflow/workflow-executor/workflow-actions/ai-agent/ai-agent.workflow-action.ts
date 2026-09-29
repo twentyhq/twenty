@@ -28,7 +28,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { mergeAiAgentStepLogs } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/merge-ai-agent-step-logs.util';
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
@@ -42,7 +41,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
-    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -52,6 +50,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     steps,
     context,
     runInfo,
+    resumedThreadId,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = findStepOrThrow({
       stepId: currentStepId,
@@ -92,15 +91,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         : null;
 
     const resolvedPrompt = resolveInput(prompt, context) as string;
-
-    // A step that already holds a conversation before running is one whose
-    // question has just been answered: fresh executions, loop iterations and
-    // retries all start without one.
-    const resumedThreadId = await this.findResumedThreadId({
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId,
-      stepId: currentStepId,
-    });
 
     const recordConversation = (
       executionResult?: AgentExecutionResult,
@@ -223,24 +213,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     return {
       result: executionResult.result,
     };
-  }
-
-  private async findResumedThreadId({
-    workflowRunId,
-    workspaceId,
-    stepId,
-  }: {
-    workflowRunId: string;
-    workspaceId: string;
-    stepId: string;
-  }): Promise<string | undefined> {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId,
-        workspaceId,
-      });
-
-    return workflowRun.state?.stepInfos?.[stepId]?.threadId;
   }
 
   // The conversation is a record of the step, not part of its outcome, so a

@@ -198,6 +198,9 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
         billingSpenders,
         shouldCheckNodeRunQuota: !isResumingAnsweredStep,
+        resumedThreadId: isResumingAnsweredStep
+          ? stepInfos[stepId]?.threadId
+          : undefined,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -540,6 +543,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId,
     billingSpenders,
     shouldCheckNodeRunQuota,
+    resumedThreadId,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
@@ -548,6 +552,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
     shouldCheckNodeRunQuota: boolean;
+    resumedThreadId?: string;
   }) {
     const stepId = step.id;
 
@@ -580,6 +585,7 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
         },
+        resumedThreadId,
       });
     } catch (error) {
       const isUserError = isUserFacingWorkflowExecutorError(error);

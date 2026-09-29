@@ -10,4 +10,7 @@ export type WorkflowActionInput = {
   steps: WorkflowAction[];
   context: Record<string, unknown>;
   runInfo: WorkflowRunInfo;
+  // Set only when the step resumes after its question was answered: the
+  // conversation it continues.
+  resumedThreadId?: string;
 };
