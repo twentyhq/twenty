@@ -1,4 +1,9 @@
 import {
+  type PullAppOptions,
+  type PullAppResult,
+  type ReadAppIdentityResult,
+} from '@/application-build/pull/types';
+import {
   type BuildOperationOptions,
   type BuildResult,
   type BuildSnapshot,
@@ -6,6 +11,14 @@ import {
 } from '@/application-build/types';
 
 export { BUILD_DESCRIPTOR } from '@/application-build/build-descriptor';
+export type {
+  AppIdentity,
+  AppPullTarget,
+  PullAppOptions,
+  PullAppResult,
+  PullBaseStatus,
+  ReadAppIdentityResult,
+} from '@/application-build/pull/types';
 export type {
   BuildArtifact,
   BuildArtifactRole,
@@ -42,3 +55,24 @@ export const generateAppClient = async (
   (
     await import('@/application-build/generate-application-client')
   ).generateApplicationClient(options);
+
+export const readAppIdentity = async (
+  options: BuildOperationOptions,
+): Promise<BuildResult<ReadAppIdentityResult>> =>
+  (
+    await import('@/application-build/pull/read-application-identity')
+  ).readApplicationIdentity(options);
+
+export const pullApp = async (
+  options: PullAppOptions,
+): Promise<BuildResult<PullAppResult>> =>
+  (await import('@/application-build/pull/pull-application')).pullApplication(
+    options,
+  );
+
+export const recordAppBase = async (
+  options: PullAppOptions,
+): Promise<BuildResult<null>> =>
+  (
+    await import('@/application-build/pull/record-application-base')
+  ).recordApplicationBase(options);

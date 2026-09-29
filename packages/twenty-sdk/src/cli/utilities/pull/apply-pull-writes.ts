@@ -19,7 +19,7 @@ const assertPlanIsApplicable = async ({
   deletions,
 }: {
   appPath: string;
-  writes: PullWrite[];
+  writes: Pick<PullWrite, 'relativePath' | 'content'>[];
   deletions: PullDeletion[];
 }): Promise<void> => {
   const relativePaths = writes.map((write) => write.relativePath);
@@ -119,12 +119,19 @@ export const applyPullWrites = async ({
   appPath,
   writes,
   deletions,
+  finalWrite,
+  signal,
 }: {
   appPath: string;
   writes: PullWrite[];
   deletions: PullDeletion[];
+  finalWrite?: Pick<PullWrite, 'relativePath' | 'content'>;
+  signal?: AbortSignal;
 }): Promise<void> => {
-  await assertPlanIsApplicable({ appPath, writes, deletions });
+  const allWrites = finalWrite ? [...writes, finalWrite] : writes;
+
+  signal?.throwIfAborted();
+  await assertPlanIsApplicable({ appPath, writes: allWrites, deletions });
 
   const workDirectory = join(appPath, PULL_WORK_DIRECTORY);
 
@@ -136,7 +143,7 @@ export const applyPullWrites = async ({
   const writtenRelativePaths: string[] = [];
 
   try {
-    for (const write of writes) {
+    for (const write of allWrites) {
       const stagedPath = join(stagingDirectory, write.relativePath);
 
       await ensureDir(dirname(stagedPath));
@@ -144,7 +151,7 @@ export const applyPullWrites = async ({
     }
 
     for (const relativePath of [
-      ...writes.map((write) => write.relativePath),
+      ...allWrites.map((write) => write.relativePath),
       ...deletions.map((deletion) => deletion.relativePath),
     ]) {
       const wasBackedUp = await backUpExistingFile({
@@ -158,6 +165,8 @@ export const applyPullWrites = async ({
       }
     }
 
+    signal?.throwIfAborted();
+
     for (const write of writes) {
       const destinationPath = join(appPath, write.relativePath);
 
@@ -168,6 +177,17 @@ export const applyPullWrites = async ({
 
     for (const deletion of deletions) {
       await rm(join(appPath, deletion.relativePath), { force: true });
+    }
+
+    if (finalWrite) {
+      const destinationPath = join(appPath, finalWrite.relativePath);
+
+      await ensureDir(dirname(destinationPath));
+      writtenRelativePaths.push(finalWrite.relativePath);
+      await copy(
+        join(stagingDirectory, finalWrite.relativePath),
+        destinationPath,
+      );
     }
   } catch (error) {
     try {

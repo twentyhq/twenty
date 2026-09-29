@@ -2,7 +2,10 @@ export type BuildCapability =
   | 'build'
   | 'typecheck'
   | 'releaseSnapshot'
-  | 'generateClient';
+  | 'generateClient'
+  | 'readIdentity'
+  | 'pull'
+  | 'recordBase';
 
 export type BuildDescriptor = {
   protocolVersion: number;
@@ -12,7 +15,13 @@ export type BuildDescriptor = {
   fileWrites: Record<
     'build' | 'typecheck' | 'releaseSnapshot',
     readonly string[]
-  > & { generateClient?: readonly string[] };
+  > &
+    Partial<
+      Record<
+        'generateClient' | 'readIdentity' | 'pull' | 'recordBase',
+        readonly string[]
+      >
+    >;
 };
 
 export type BuildDiagnostic = {
@@ -31,6 +40,9 @@ export type BuildErrorCode =
   | 'BUILD_FAILED'
   | 'TYPECHECK_FAILED'
   | 'CLIENT_GENERATION_FAILED'
+  | 'IDENTITY_READ_FAILED'
+  | 'PULL_FAILED'
+  | 'BASE_RECORD_FAILED'
   | 'SNAPSHOT_NOT_FOUND'
   | 'SNAPSHOT_RELEASE_FAILED';
 

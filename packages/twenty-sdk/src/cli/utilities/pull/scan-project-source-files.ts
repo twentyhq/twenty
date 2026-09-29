@@ -16,6 +16,7 @@ export type ScannedSourceFile = {
   targetFunctionName: TargetFunction | null;
   universalIdentifier: string | null;
   isReadable: boolean;
+  config?: unknown;
 };
 
 type ExtractedConfig = {
@@ -24,6 +25,7 @@ type ExtractedConfig = {
 
 export const scanProjectSourceFiles = async (
   appPath: string,
+  options?: { includeConfig?: boolean },
 ): Promise<ScannedSourceFile[]> => {
   const filePaths = await glob(['**/*.ts', '**/*.tsx'], {
     cwd: appPath,
@@ -91,6 +93,7 @@ export const scanProjectSourceFiles = async (
           ? config.universalIdentifier
           : null,
       isReadable,
+      ...(options?.includeConfig ? { config } : {}),
     });
   }
 
