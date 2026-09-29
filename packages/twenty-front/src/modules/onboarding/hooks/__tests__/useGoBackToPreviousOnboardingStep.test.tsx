@@ -6,13 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
-import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
-import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
-import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import {
   jotaiStore,
@@ -22,22 +16,9 @@ import {
   GoBackToPreviousOnboardingStepDocument,
   OnboardingStatus,
 } from '~/generated-metadata/graphql';
-import {
-  mockCurrentWorkspace,
-  mockedUserData,
-  mockedWorkspaceMemberData,
-} from '~/testing/mock-data/users';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 const mockEnqueueToast = jest.fn();
-
-const onboardingConfig: OnboardingConfig = {
-  importContactsCreditsReward: 1,
-  inviteTeamCreditsRewardPerUser: 0.5,
-  installAppsCreditsReward: 0.5,
-  createProfileCreditsReward: 0.5,
-  upgradeCreditsReward: 2,
-  inviteTeamMaxInvites: 5,
-};
 
 jest.mock('twenty-ui/components', () => ({
   ...jest.requireActual('twenty-ui/components'),
@@ -78,7 +59,6 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     localStorage.clear();
-    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     jotaiStore.set(currentUserState.atom, {
       ...mockedUserData,
       onboardingStatus: OnboardingStatus.PROFILE_CREATION,
@@ -109,62 +89,6 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     expect(jotaiStore.get(onboardingNavigationDirectionState.atom)).toBe(
       'backward',
     );
-  });
-
-  it('should drop the typed profile credits when going back from the profile step', async () => {
-    jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
-    jotaiStore.set(
-      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      {
-        ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
-        createProfile: 0.5,
-      },
-    );
-
-    const { result } = renderGoBackHook([
-      buildGoBackMock({
-        onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
-        previousOnboardingStatus: OnboardingStatus.SYNC_EMAIL,
-      }),
-    ]);
-
-    await act(async () => {
-      await result.current.goBackToPreviousOnboardingStep();
-    });
-
-    expect(
-      jotaiStore.get(
-        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      ).createProfile,
-    ).toBe(0);
-  });
-
-  it('should count the saved profile credits when going back to the profile step', async () => {
-    jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
-    jotaiStore.set(currentUserState.atom, {
-      ...mockedUserData,
-      isWorkspaceCreator: true,
-      onboardingStatus: OnboardingStatus.INVITE_TEAM,
-      previousOnboardingStatus: OnboardingStatus.PROFILE_CREATION,
-    });
-    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
-
-    const { result } = renderGoBackHook([
-      buildGoBackMock({
-        onboardingStatus: OnboardingStatus.PROFILE_CREATION,
-        previousOnboardingStatus: OnboardingStatus.APPS_INSTALLATION,
-      }),
-    ]);
-
-    await act(async () => {
-      await result.current.goBackToPreviousOnboardingStep();
-    });
-
-    expect(
-      jotaiStore.get(
-        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      ).createProfile,
-    ).toBe(0.5);
   });
 
   it('should clear the previous status when the server reports no earlier step', async () => {

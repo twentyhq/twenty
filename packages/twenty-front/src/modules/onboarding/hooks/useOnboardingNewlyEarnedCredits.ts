@@ -4,8 +4,10 @@ import { currentWorkspaceOnboardingFreeCreditsSelector } from '@/onboarding/stat
 import { getOnboardingCountedFreeCredits } from '@/onboarding/utils/getOnboardingCountedFreeCredits';
 import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useStore } from 'jotai';
 
 export const useOnboardingNewlyEarnedCredits = () => {
+  const store = useStore();
   const currentWorkspaceOnboardingFreeCredits = useAtomStateValue(
     currentWorkspaceOnboardingFreeCreditsSelector,
   );
@@ -16,16 +18,21 @@ export const useOnboardingNewlyEarnedCredits = () => {
   const onboardingStatus = currentUser?.onboardingStatus;
   const { seenCredits } = currentWorkspaceOnboardingFreeCredits;
 
-  const markCreditsAsSeen = () =>
+  const markCreditsAsSeen = () => {
+    const earnedCredits = getOnboardingEarnedCredits(
+      getOnboardingCountedFreeCredits({
+        onboardingFreeCredits: store.get(
+          currentWorkspaceOnboardingFreeCreditsSelector.atom,
+        ),
+        onboardingStatus: store.get(currentUserState.atom)?.onboardingStatus,
+      }),
+    );
+
     setOnboardingFreeCredits((current) => ({
       ...current,
-      seenCredits: getOnboardingEarnedCredits(
-        getOnboardingCountedFreeCredits({
-          onboardingFreeCredits: current,
-          onboardingStatus,
-        }),
-      ),
+      seenCredits: earnedCredits,
     }));
+  };
 
   return {
     seenCredits,
