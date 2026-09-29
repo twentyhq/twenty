@@ -221,17 +221,21 @@ export class InputAskWorkspaceService {
   }
 
   // Read as the caller: an Ask they cannot read is one they cannot answer.
-  async findReadableForToolCall({
+  async findReadable({
     workspaceId,
-    threadId,
-    toolCallId,
+    inputAskId,
   }: {
     workspaceId: string;
-    threadId: string;
-    toolCallId: string;
+    inputAskId: string;
   }): Promise<Pick<
     InputAskWorkspaceEntity,
-    'id' | 'status' | 'workflowRunId'
+    | 'id'
+    | 'status'
+    | 'form'
+    | 'threadId'
+    | 'toolCallId'
+    | 'workflowRunId'
+    | 'stepId'
   > | null> {
     if (!(await this.hasInputAskObject(workspaceId))) {
       return null;
@@ -243,8 +247,16 @@ export class InputAskWorkspaceService {
           'inputAsk',
         )
         .findOne({
-          where: { threadId, toolCallId },
-          select: { id: true, status: true, workflowRunId: true },
+          where: { id: inputAskId },
+          select: {
+            id: true,
+            status: true,
+            form: true,
+            threadId: true,
+            toolCallId: true,
+            workflowRunId: true,
+            stepId: true,
+          },
         }),
     );
   }

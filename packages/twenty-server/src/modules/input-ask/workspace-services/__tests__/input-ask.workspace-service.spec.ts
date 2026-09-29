@@ -66,7 +66,10 @@ describe('InputAskWorkspaceService', () => {
     it('inserts a pending Ask', async () => {
       const { service, inputAskRepository } = buildService();
 
-      await service.open({ workspaceId: 'workspace-id', inputAsk: toolCallAsk });
+      await service.open({
+        workspaceId: 'workspace-id',
+        inputAsk: toolCallAsk,
+      });
 
       expect(inputAskRepository.insert).toHaveBeenCalledWith({
         ...toolCallAsk,

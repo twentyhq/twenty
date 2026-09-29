@@ -276,7 +276,9 @@ describe('Chat execution sender', () => {
 
   it('rejects a resolution without an authenticated request context', async () => {
     const { service } = build();
-    await expect(service.authorizeToolCallResolution(job)).rejects.toMatchObject({
+    await expect(
+      service.authorizeToolCallResolution(job),
+    ).rejects.toMatchObject({
       code: 'TOOL_CALL_RESOLUTION_FORBIDDEN',
     });
   });

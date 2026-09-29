@@ -78,9 +78,9 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
       const { service, inputAskWorkspaceService, updateWorkflowRun } =
         buildService();
 
-      expect(await service.resolveStepAwaitingToolCall(resolveArguments)).toEqual(
-        { status: 'RESOLVED', stepId: 'step-id' },
-      );
+      expect(
+        await service.resolveStepAwaitingToolCall(resolveArguments),
+      ).toEqual({ status: 'RESOLVED', stepId: 'step-id' });
       expect(inputAskWorkspaceService.answer).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         key: { threadId: 'thread-id', toolCallId: 'tool-call-id' },
@@ -107,9 +107,9 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         hasAnswered: false,
       });
 
-      expect(await service.resolveStepAwaitingToolCall(resolveArguments)).toEqual(
-        { status: 'NOT_AWAITING' },
-      );
+      expect(
+        await service.resolveStepAwaitingToolCall(resolveArguments),
+      ).toEqual({ status: 'NOT_AWAITING' });
       expect(updateWorkflowRun).not.toHaveBeenCalled();
     });
 
@@ -133,19 +133,16 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
           },
         },
       ],
-    ])(
-      'answers nothing when %s',
-      async (_description, overrides) => {
-        const { service, inputAskWorkspaceService, updateWorkflowRun } =
-          buildService(overrides);
+    ])('answers nothing when %s', async (_description, overrides) => {
+      const { service, inputAskWorkspaceService, updateWorkflowRun } =
+        buildService(overrides);
 
-        expect(
-          await service.resolveStepAwaitingToolCall(resolveArguments),
-        ).toEqual({ status: 'NOT_AWAITING' });
-        expect(inputAskWorkspaceService.answer).not.toHaveBeenCalled();
-        expect(updateWorkflowRun).not.toHaveBeenCalled();
-      },
-    );
+      expect(
+        await service.resolveStepAwaitingToolCall(resolveArguments),
+      ).toEqual({ status: 'NOT_AWAITING' });
+      expect(inputAskWorkspaceService.answer).not.toHaveBeenCalled();
+      expect(updateWorkflowRun).not.toHaveBeenCalled();
+    });
   });
 
   describe('updateWorkflowRunStepInfo', () => {
@@ -193,7 +190,10 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         service.updateWorkflowRunStepInfo({
           stepId: 'step-id',
           stepInfo: { status: StepStatus.PENDING },
-          pendingAsk: { name: 'Approve', form: { kind: 'formFields', fields: [] } },
+          pendingAsk: {
+            name: 'Approve',
+            form: { kind: 'formFields', fields: [] },
+          },
           workflowRunId: 'workflow-run-id',
           workspaceId: 'workspace-id',
         }),
@@ -237,6 +237,24 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         response: { name: 'Tim' },
       });
       expect(updateWorkflowRun).toHaveBeenCalled();
+    });
+
+    it('refuses a submission when another one already answered the Ask', async () => {
+      const { service, updateWorkflowRun } = buildService({
+        stepInfo: { status: StepStatus.PENDING },
+        hasAnswered: false,
+      });
+
+      expect(
+        await service.updateStepInfoIfPending({
+          stepId: 'step-id',
+          stepInfo: { status: StepStatus.SUCCESS, result: { name: 'Tim' } },
+          inputAskResponse: { name: 'Tim' },
+          workflowRunId: 'workflow-run-id',
+          workspaceId: 'workspace-id',
+        }),
+      ).toBe(false);
+      expect(updateWorkflowRun).not.toHaveBeenCalled();
     });
 
     it('answers nothing for a refused submission', async () => {

@@ -32,7 +32,7 @@ const QUESTIONS = [
 
 // The model is not called here: the turn that asked is written as the stream
 // job persists it, and the resumed stream is only checked for being queued.
-describe('Resolving a chat tool call', () => {
+describe('Answering a chat tool call through its Ask', () => {
   const threadId = randomUUID();
   let chat: AgentChatService;
   let inputAsks: InputAskWorkspaceService;
@@ -82,24 +82,29 @@ describe('Resolving a chat tool call', () => {
     });
   };
 
-  const resolveToolCall = (toolCallId: string) =>
-    request(`http://localhost:${APP_PORT}`)
+  const answerToolCallAsk = async (toolCallId: string) => {
+    const [{ id: askId }] = await global.testDataSource.query(
+      `SELECT id FROM "${schema}"."inputAsk" WHERE "threadId" = $1 AND "toolCallId" = $2`,
+      [threadId, toolCallId],
+    );
+
+    return request(`http://localhost:${APP_PORT}`)
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send({
-        query: `mutation Resolve($input: ResolveToolCallInput!) {
-          resolveToolCall(input: $input) { streamId }
+        query: `mutation Answer($input: AnswerAskInput!) {
+          answerAsk(input: $input) { streamId }
         }`,
         variables: {
           input: {
-            threadId,
-            toolCallId,
-            output: {
+            askId,
+            response: {
               answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
             },
           },
         },
       });
+  };
 
   const readAsk = async (toolCallId: string) =>
     (
@@ -179,12 +184,10 @@ describe('Resolving a chat tool call', () => {
       response: null,
     });
 
-    const response = await resolveToolCall('call-answered');
+    const response = await answerToolCallAsk('call-answered');
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.resolveToolCall.streamId).toEqual(
-      expect.any(String),
-    );
+    expect(response.body.data.answerAsk.streamId).toEqual(expect.any(String));
     expect(await readAsk('call-answered')).toEqual({
       status: 'ANSWERED',
       response: {
@@ -196,18 +199,16 @@ describe('Resolving a chat tool call', () => {
       expect.any(String),
       expect.objectContaining({
         threadId,
-        streamId: response.body.data.resolveToolCall.streamId,
+        streamId: response.body.data.answerAsk.streamId,
         userWorkspaceId,
       }),
     );
 
     await stopStream();
 
-    const second = await resolveToolCall('call-answered');
+    const second = await answerToolCallAsk('call-answered');
 
-    expect(JSON.stringify(second.body.errors)).toContain(
-      'TOOL_CALL_NOT_PENDING',
-    );
+    expect(JSON.stringify(second.body.errors)).toContain('ASK_NOT_PENDING');
   });
 
   it('cancels a pending Ask when a message is sent instead of an answer', async () => {
@@ -230,10 +231,8 @@ describe('Resolving a chat tool call', () => {
     });
     expect(await readToolCallStatus('call-skipped')).toBe('skipped');
 
-    const lateAnswer = await resolveToolCall('call-skipped');
+    const lateAnswer = await answerToolCallAsk('call-skipped');
 
-    expect(JSON.stringify(lateAnswer.body.errors)).toContain(
-      'TOOL_CALL_NOT_PENDING',
-    );
+    expect(JSON.stringify(lateAnswer.body.errors)).toContain('ASK_NOT_PENDING');
   });
 });

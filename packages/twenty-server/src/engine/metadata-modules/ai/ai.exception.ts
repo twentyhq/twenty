@@ -16,8 +16,6 @@ export enum AiExceptionCode {
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
   INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
-  TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
-  TOOL_CALL_NOT_PENDING = 'TOOL_CALL_NOT_PENDING',
   INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
   USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
@@ -59,10 +57,6 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Chat thread title cannot be empty.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
-    case AiExceptionCode.TOOL_CALL_NOT_FOUND:
-      return msg`This request for input could not be found.`;
-    case AiExceptionCode.TOOL_CALL_NOT_PENDING:
-      return msg`This request is no longer waiting for an answer.`;
     case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:
       return msg`Invalid answer for this request.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:

@@ -217,7 +217,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         };
       }
 
-      return { pendingEvent: true, pendingAsk: recordedConversation.pendingAsk };
+      return {
+        pendingEvent: true,
+        pendingAsk: recordedConversation.pendingAsk,
+      };
     }
 
     return {

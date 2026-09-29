@@ -16,29 +16,29 @@ export const definePausingTool = <
     }
 
     const input = parsedInput.data;
+    const outputSchema = definition.outputSchema(input);
 
     return {
       buildAsk: () => definition.buildAsk(input),
       toSkippedToolResult: () => definition.toSkippedToolResult(input),
-      resolve: (output) => {
-        const parsedOutput = definition.outputSchema(input).safeParse(output);
+      validate: (output) => {
+        const parsedOutput = outputSchema.safeParse(output);
 
-        if (!parsedOutput.success) {
-          return {
-            isValid: false,
-            errorMessage: parsedOutput.error.issues
-              .map((issue) => issue.message)
-              .join(' '),
-          };
-        }
-
-        return {
-          isValid: true,
-          output: parsedOutput.data,
-          toolResult: definition.toToolResult(parsedOutput.data, input),
-          answerText: definition.toAnswerText(parsedOutput.data, input),
-        };
+        return parsedOutput.success
+          ? { isValid: true, output: parsedOutput.data }
+          : {
+              isValid: false,
+              errorMessage: parsedOutput.error.issues
+                .map((issue) => issue.message)
+                .join(' '),
+            };
       },
+      complete: (output, context) =>
+        definition.complete({
+          output: outputSchema.parse(output),
+          input,
+          context,
+        }),
     };
   },
 });

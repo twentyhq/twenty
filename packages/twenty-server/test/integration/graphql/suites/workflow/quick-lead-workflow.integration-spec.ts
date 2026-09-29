@@ -1,3 +1,4 @@
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import request from 'supertest';
 import {
   destroyWorkflowRun,
@@ -269,26 +270,32 @@ describe('Quick Lead Workflow (e2e)', () => {
         companyDomain: `https://test-${testId}.example.com`,
       };
 
+      const [{ id: formAskId }] = await global.testDataSource.query(
+        `SELECT id FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."inputAsk" WHERE "workflowRunId" = $1 AND "stepId" = $2`,
+        [testWorkflowRunId, FORM_STEP_ID],
+      );
+
       const submitFormResponse = await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send({
           query: `
-            mutation SubmitFormStep($input: SubmitFormStepInput!) {
-              submitFormStep(input: $input)
+          mutation AnswerAsk($input: AnswerAskInput!) {
+            answerAsk(input: $input) {
+              streamId
             }
-          `,
+          }
+        `,
           variables: {
             input: {
-              stepId: FORM_STEP_ID,
-              workflowRunId: testWorkflowRunId,
+              askId: formAskId,
               response: testFormData,
             },
           },
         });
 
       expect(submitFormResponse.body.errors).toBeUndefined();
-      expect(submitFormResponse.body.data.submitFormStep).toBe(true);
+      expect(submitFormResponse.body.data.answerAsk.streamId).toBeNull();
 
       workflowRun = await waitForWorkflowCompletion(
         testWorkflowRunId as string,

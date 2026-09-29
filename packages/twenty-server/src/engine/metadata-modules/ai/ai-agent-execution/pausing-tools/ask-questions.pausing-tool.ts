@@ -4,11 +4,7 @@ import {
   type AskQuestionsToolInput,
   type AskQuestionsToolResult,
 } from 'twenty-shared/ai';
-import {
-  isDefined,
-  isNonEmptyArray,
-  isPlainObject,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
@@ -88,6 +84,24 @@ const buildAskQuestionsOutputSchema = ({
       }
     });
 
+const buildAnswerText = ({
+  answers,
+  questions,
+}: AskQuestionsToolOutput & AskQuestionsToolInput) =>
+  answers
+    .flatMap((answer) => {
+      const question = questions[answer.questionIndex];
+      const freeText = answer.freeText?.trim();
+      const value = isNonEmptyString(freeText)
+        ? freeText
+        : answer.selectedOptionIndices
+            .map((optionIndex) => question.options[optionIndex].label)
+            .join(', ');
+
+      return isNonEmptyString(value) ? [`${question.question}\n${value}`] : [];
+    })
+    .join('\n\n');
+
 // The result keeps the shape the tool part had before answers were resolved
 // through Asks, which the chat renderer, the admin panel and the seeded runs
 // all read.
@@ -105,32 +119,21 @@ export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
     name: questions[0]?.question ?? null,
     form: { kind: 'questions', questions },
   }),
-  toToolResult: ({ answers }, { questions }) => ({
-    success: true,
-    message: 'User answered the questions.',
-    result: {
-      questions,
-      status: 'answered',
-      answers,
-    } satisfies AskQuestionsToolResult,
+  complete: async ({ output: { answers }, input: { questions } }) => ({
+    toolResult: {
+      success: true,
+      message: 'User answered the questions.',
+      result: {
+        questions,
+        status: 'answered',
+        answers,
+      } satisfies AskQuestionsToolResult,
+    },
+    answerText: buildAnswerText({ answers, questions }),
   }),
   toSkippedToolResult: ({ questions }) => ({
     success: true,
     message: 'User skipped the questions and sent another message instead.',
     result: { questions, status: 'skipped' } satisfies AskQuestionsToolResult,
   }),
-  toAnswerText: ({ answers }, { questions }) =>
-    answers
-      .flatMap((answer) => {
-        const question = questions[answer.questionIndex];
-        const freeText = answer.freeText?.trim();
-        const value = isNonEmptyString(freeText)
-          ? freeText
-          : answer.selectedOptionIndices
-              .map((optionIndex) => question.options[optionIndex].label)
-              .join(', ');
-
-        return isNonEmptyString(value) ? [`${question.question}\n${value}`] : [];
-      })
-      .join('\n\n'),
 });

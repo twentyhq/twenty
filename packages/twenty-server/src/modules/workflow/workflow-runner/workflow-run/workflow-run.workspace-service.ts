@@ -455,15 +455,17 @@ export class WorkflowRunWorkspaceService {
       return false;
     }
 
-    // Answered under the lock that accepts the submission, so an accepted
-    // submission always reads answered and a refused one never does. A form
-    // parked before its workspace had Asks has none, which refuses nothing.
-    if (isDefined(inputAskResponse)) {
-      await this.inputAskWorkspaceService.answer({
+    // Answering the Ask under the lock that accepts the submission is the
+    // claim: of two submissions only the one that answers it moves the step.
+    if (
+      isDefined(inputAskResponse) &&
+      !(await this.inputAskWorkspaceService.answer({
         workspaceId,
         key: { workflowRunId, stepId },
         response: inputAskResponse,
-      });
+      }))
+    ) {
+      return false;
     }
 
     await this.updateWorkflowRun({

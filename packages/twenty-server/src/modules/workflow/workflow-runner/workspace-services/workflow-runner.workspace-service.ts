@@ -102,6 +102,8 @@ export class WorkflowRunnerWorkspaceService {
     );
   }
 
+  // Called with the answer to the form step's Ask, whose claim the step
+  // transition takes: false when the form no longer waits for it.
   async submitFormStep({
     workspaceId,
     stepId,
@@ -111,8 +113,8 @@ export class WorkflowRunnerWorkspaceService {
     workspaceId: string;
     stepId: string;
     workflowRunId: string;
-    response: object;
-  }) {
+    response: Record<string, unknown>;
+  }): Promise<boolean> {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
@@ -162,13 +164,7 @@ export class WorkflowRunnerWorkspaceService {
       });
 
     if (!hasCompletedStep) {
-      throw new WorkflowVersionStepException(
-        'Form is no longer awaiting a submission',
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-        {
-          userFriendlyMessage: msg`This form is no longer awaiting a submission`,
-        },
-      );
+      return false;
     }
 
     await this.resume({
@@ -176,45 +172,56 @@ export class WorkflowRunnerWorkspaceService {
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+
+    return true;
   }
 
   // The answer resumes the agent step that asked, not the steps after it:
   // the agent continues its conversation with the answer as the last message.
-  async resolveAgentStepToolCall({
+  async claimAgentStepToolCall({
     workspaceId,
     workflowRunId,
     threadId,
     toolCallId,
     response,
-    toolResult,
-    answerText,
-    senderUserWorkspaceId,
   }: {
     workspaceId: string;
     workflowRunId: string;
     threadId: string;
     toolCallId: string;
     response: Record<string, unknown>;
+  }): Promise<StepInputResolution> {
+    return this.workflowRunWorkspaceService.resolveStepAwaitingToolCall({
+      threadId,
+      toolCallId,
+      response,
+      workflowRunId,
+      workspaceId,
+    });
+  }
+
+  // The Ask is answered and cannot be answered again, so a resume that
+  // cannot be recorded or scheduled fails the run, which a retry resumes
+  // from the answered conversation.
+  async resumeAnsweredAgentStep({
+    workspaceId,
+    workflowRunId,
+    stepId,
+    threadId,
+    toolCallId,
+    toolResult,
+    answerText,
+    senderUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+    threadId: string;
+    toolCallId: string;
     toolResult: Record<string, unknown>;
     answerText: string;
     senderUserWorkspaceId: string;
-  }): Promise<StepInputResolution> {
-    const resolution =
-      await this.workflowRunWorkspaceService.resolveStepAwaitingToolCall({
-        threadId,
-        toolCallId,
-        response,
-        workflowRunId,
-        workspaceId,
-      });
-
-    if (resolution.status !== 'RESOLVED') {
-      return resolution;
-    }
-
-    // The Ask is answered and cannot be answered again, so a resume that
-    // cannot be recorded or scheduled fails the run, which a retry resumes
-    // from the answered conversation.
+  }): Promise<void> {
     try {
       await this.workflowAgentConversationWorkspaceService.recordAnswer({
         workspaceId,
@@ -227,21 +234,29 @@ export class WorkflowRunnerWorkspaceService {
 
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
-        { workspaceId, workflowRunId, stepIdsToRetry: [resolution.stepId] },
+        { workspaceId, workflowRunId, stepIdsToRetry: [stepId] },
         buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: 'The run could not resume after its question was answered',
-      });
+      await this.failAnsweredAgentStep({ workspaceId, workflowRunId });
 
       throw error;
     }
+  }
 
-    return resolution;
+  async failAnsweredAgentStep({
+    workspaceId,
+    workflowRunId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+  }): Promise<void> {
+    await this.workflowRunWorkspaceService.endWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      status: WorkflowRunStatus.FAILED,
+      error: 'The run could not resume after its question was answered',
+    });
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

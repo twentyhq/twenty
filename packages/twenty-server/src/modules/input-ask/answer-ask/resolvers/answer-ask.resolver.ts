@@ -14,6 +14,7 @@ import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billin
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
+import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -21,49 +22,49 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
-import { ResolveToolCallResultDTO } from 'src/engine/metadata-modules/ai/ai-tool-call-resolution/dtos/resolve-tool-call-result.dto';
-import { ResolveToolCallInput } from 'src/engine/metadata-modules/ai/ai-tool-call-resolution/dtos/resolve-tool-call.input';
-import { ToolCallResolutionService } from 'src/engine/metadata-modules/ai/ai-tool-call-resolution/services/tool-call-resolution.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { AnswerAskResultDTO } from 'src/modules/input-ask/answer-ask/dtos/answer-ask-result.dto';
+import { AnswerAskInput } from 'src/modules/input-ask/answer-ask/dtos/answer-ask.input';
+import { AnswerAskService } from 'src/modules/input-ask/answer-ask/services/answer-ask.service';
+import { InputAskGraphqlApiExceptionFilter } from 'src/modules/input-ask/filters/input-ask-graphql-api-exception.filter';
 
-// Served on /graphql beside submitFormStep: which permission an answer needs
-// depends on whether it resumes a chat or a workflow run, so it is checked per
-// call rather than by a class guard.
+// Served on /graphql: the permission an answer needs depends on what the Ask
+// gates, a chat or a workflow run, so it is checked per call rather than by a
+// class guard.
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(
+  InputAskGraphqlApiExceptionFilter,
   UsageLimitGraphqlApiExceptionFilter,
   BillingGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
+  WorkflowVersionStepGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
 )
-export class ToolCallResolutionResolver {
-  constructor(
-    private readonly toolCallResolutionService: ToolCallResolutionService,
-  ) {}
+export class AnswerAskResolver {
+  constructor(private readonly answerAskService: AnswerAskService) {}
 
-  @Mutation(() => ResolveToolCallResultDTO)
-  async resolveToolCall(
-    @Args('input') { threadId, toolCallId, output, modelId }: ResolveToolCallInput,
+  @Mutation(() => AnswerAskResultDTO)
+  async answerAsk(
+    @Args('input') { askId, response, modelId }: AnswerAskInput,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ResolveToolCallResultDTO> {
-    const { streamId, turnId } = await this.toolCallResolutionService.resolve({
-      threadId,
-      toolCallId,
-      output,
+  ): Promise<AnswerAskResultDTO> {
+    const { streamId, threadId, turnId } = await this.answerAskService.answer({
+      askId,
+      response,
       modelId,
       userWorkspaceId,
       workspaceMemberId,
       workspace,
     });
 
-    if (isDefined(streamId)) {
+    if (isDefined(streamId) && isDefined(threadId)) {
       tagAiChatStreamScope({
         streamId,
         turnId,

@@ -298,9 +298,11 @@ describe('AgentChatStreamingService claim & reap', () => {
         },
       });
 
-      await expect(service.streamAgentChat(sendArguments)).rejects.toMatchObject(
-        { code: AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT },
-      );
+      await expect(
+        service.streamAgentChat(sendArguments),
+      ).rejects.toMatchObject({
+        code: AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
+      });
       expect(inputAskWorkspaceService.cancel).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();
       expect(agentChatService.queueMessage).not.toHaveBeenCalled();

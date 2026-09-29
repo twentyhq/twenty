@@ -71,7 +71,6 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
-import { AiToolCallResolutionModule } from 'src/engine/metadata-modules/ai/ai-tool-call-resolution/ai-tool-call-resolution.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
@@ -84,6 +83,7 @@ import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/ch
 import { CreateCalendarEventModule } from 'src/modules/calendar/calendar-event-creation-manager/create-calendar-event.module';
 import { CallRecordingModule } from 'src/modules/call-recording/call-recording.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
+import { AnswerAskModule } from 'src/modules/input-ask/answer-ask/answer-ask.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
@@ -129,7 +129,7 @@ import { FileApiModule } from './file/file-api.module';
     CloudflareModule,
     DnsManagerModule,
     WorkflowApiModule,
-    AiToolCallResolutionModule,
+    AnswerAskModule,
     WorkspaceEventEmitterModule,
     ActorModule,
     TelemetryModule,

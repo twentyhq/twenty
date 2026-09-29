@@ -60,15 +60,20 @@ describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
     });
   });
 
-  it('turns an accepted answer into the answered result and the answer message', () => {
+  const NO_TOOLS = { executeTool: jest.fn() };
+
+  it('turns an accepted answer into the answered result and the answer message', async () => {
     const answers = [
       { questionIndex: 0, selectedOptionIndices: [1] },
       { questionIndex: 1, selectedOptionIndices: [0, 1] },
     ];
+    const call = parseCall();
 
-    expect(parseCall().resolve({ answers })).toEqual({
+    expect(call.validate({ answers })).toEqual({
       isValid: true,
       output: { answers },
+    });
+    expect(await call.complete({ answers }, NO_TOOLS)).toEqual({
       toolResult: {
         success: true,
         message: 'User answered the questions.',
@@ -76,20 +81,21 @@ describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
       },
       answerText: 'Which plan?\nTeam\n\nWhich add-ons?\nSSO, Audit log',
     });
+    expect(NO_TOOLS.executeTool).not.toHaveBeenCalled();
   });
 
-  it('prefers free text and leaves unanswered questions out of the answer message', () => {
-    const resolution = parseCall().resolve({
-      answers: [
-        { questionIndex: 0, selectedOptionIndices: [0], freeText: ' Both ' },
-        { questionIndex: 1, selectedOptionIndices: [] },
-      ],
-    });
+  it('prefers free text and leaves unanswered questions out of the answer message', async () => {
+    const completion = await parseCall().complete(
+      {
+        answers: [
+          { questionIndex: 0, selectedOptionIndices: [0], freeText: ' Both ' },
+          { questionIndex: 1, selectedOptionIndices: [] },
+        ],
+      },
+      NO_TOOLS,
+    );
 
-    expect(resolution).toMatchObject({
-      isValid: true,
-      answerText: 'Which plan?\nBoth',
-    });
+    expect(completion.answerText).toBe('Which plan?\nBoth');
   });
 
   it.each([
@@ -125,7 +131,7 @@ describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
     ],
     ['a malformed output', { answers: 'Team' }],
   ])('refuses %s', (_description, output) => {
-    expect(parseCall().resolve(output)).toMatchObject({ isValid: false });
+    expect(parseCall().validate(output)).toMatchObject({ isValid: false });
   });
 
   it('closes a skipped call with its questions', () => {

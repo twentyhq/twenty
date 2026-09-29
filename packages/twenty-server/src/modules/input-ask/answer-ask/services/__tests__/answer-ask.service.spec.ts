@@ -1,5 +1,5 @@
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ToolCallResolutionService } from 'src/engine/metadata-modules/ai/ai-tool-call-resolution/services/tool-call-resolution.service';
+import { AnswerAskService } from 'src/modules/input-ask/answer-ask/services/answer-ask.service';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 
 const QUESTIONS = [
@@ -12,38 +12,56 @@ const QUESTIONS = [
 
 const ANSWERS = [{ questionIndex: 0, selectedOptionIndices: [1] }];
 
-describe('ToolCallResolutionService', () => {
+type BuildOptions = {
+  inputAsk?: Record<string, unknown> | null;
+  toolPart?: Record<string, unknown> | null;
+  hasClaimedStream?: boolean;
+  hasAnswered?: boolean;
+  hasPermission?: boolean;
+  hasSubmittedForm?: boolean;
+};
+
+const chatInputAsk = {
+  id: 'ask-id',
+  status: InputAskStatus.PENDING,
+  form: { kind: 'questions', questions: QUESTIONS },
+  threadId: 'thread-id',
+  toolCallId: 'tool-call-id',
+  workflowRunId: null,
+  stepId: null,
+};
+
+const questionPart = {
+  id: 'part-id',
+  messageId: 'question-message-id',
+  turnId: 'question-turn-id',
+  toolName: 'ask_questions',
+  toolInput: { questions: QUESTIONS },
+  toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+};
+
+describe('AnswerAskService', () => {
   const workspace = { id: 'workspace-id' } as WorkspaceEntity;
 
-  const resolveArguments = {
-    threadId: 'thread-id',
-    toolCallId: 'tool-call-id',
-    output: { answers: ANSWERS },
+  const answerArguments = {
+    askId: 'ask-id',
+    response: { answers: ANSWERS } as Record<string, unknown>,
     userWorkspaceId: 'user-workspace-id',
     workspaceMemberId: 'member-id',
     workspace,
   };
 
   const buildService = ({
-    inputAsk = {
-      id: 'input-ask-id',
-      status: InputAskStatus.PENDING,
-      workflowRunId: null as string | null,
-    },
+    inputAsk = chatInputAsk,
+    toolPart = questionPart,
     hasClaimedStream = true,
     hasAnswered = true,
     hasPermission = true,
-  } = {}) => {
+    hasSubmittedForm = true,
+  }: BuildOptions = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
     const agentChatService = {
-      findToolPart: jest.fn().mockResolvedValue({
-        id: 'part-id',
-        messageId: 'question-message-id',
-        turnId: 'question-turn-id',
-        toolName: 'ask_questions',
-        toolInput: { questions: QUESTIONS },
-        toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
-      }),
+      findToolPart: jest.fn().mockResolvedValue(toolPart),
       getWritableThread: jest
         .fn()
         .mockResolvedValue({ id: 'thread-id', activeStreamId: null }),
@@ -69,13 +87,16 @@ describe('ToolCallResolutionService', () => {
       }),
     };
     const inputAskWorkspaceService = {
-      findReadableForToolCall: jest.fn().mockResolvedValue(inputAsk),
+      findReadable: jest.fn().mockResolvedValue(inputAsk),
       answer: jest.fn().mockResolvedValue(hasAnswered),
     };
     const workflowRunnerWorkspaceService = {
-      resolveAgentStepToolCall: jest
+      claimAgentStepToolCall: jest
         .fn()
         .mockResolvedValue({ status: 'RESOLVED', stepId: 'step-id' }),
+      resumeAnsweredAgentStep: jest.fn().mockResolvedValue(undefined),
+      failAnsweredAgentStep: jest.fn().mockResolvedValue(undefined),
+      submitFormStep: jest.fn().mockResolvedValue(hasSubmittedForm),
     };
     const permissionsService = {
       userHasWorkspaceSettingPermission: jest
@@ -98,8 +119,15 @@ describe('ToolCallResolutionService', () => {
         .fn()
         .mockReturnValue(workflowRunRepository),
     };
+    const toolRegistryService = {
+      resolveAndExecute: jest.fn().mockResolvedValue({
+        success: true,
+        message: 'Email sent successfully to tim@apple.dev',
+        result: { messageId: 'sent-message-id' },
+      }),
+    };
 
-    const service = new ToolCallResolutionService(
+    const service = new AnswerAskService(
       agentChatService as never,
       agentChatStreamingService as never,
       actorService as never,
@@ -110,22 +138,57 @@ describe('ToolCallResolutionService', () => {
       aiModelRegistryService as never,
       aiBillingService as never,
       workspaceOrmManager as never,
+      {
+        getOrRecompute: jest.fn().mockResolvedValue({
+          userWorkspaceRoleMap: { 'user-workspace-id': 'role-id' },
+        }),
+      } as never,
+      {
+        buildUserAndAgentActorContext: jest.fn().mockResolvedValue({
+          actorContext: {},
+          roleId: 'role-id',
+          userId: 'user-id',
+          userContext: { locale: 'en' },
+        }),
+      } as never,
+      toolRegistryService as never,
     );
 
     return {
       service,
       agentChatService,
       agentChatStreamingService,
-      actorService,
       inputAskWorkspaceService,
       workflowRunnerWorkspaceService,
       permissionsService,
       workflowRunRepository,
+      toolRegistryService,
       publishedEvents,
     };
   };
 
-  describe('in a chat', () => {
+  it('treats an Ask the caller cannot read as not found', async () => {
+    const { service } = buildService({ inputAsk: null });
+
+    await expect(service.answer(answerArguments)).rejects.toMatchObject({
+      code: 'ASK_NOT_FOUND',
+    });
+  });
+
+  it('refuses an Ask that is no longer pending before touching anything', async () => {
+    const { service, agentChatStreamingService, agentChatService } =
+      buildService({
+        inputAsk: { ...chatInputAsk, status: InputAskStatus.ANSWERED },
+      });
+
+    await expect(service.answer(answerArguments)).rejects.toMatchObject({
+      code: 'ASK_NOT_PENDING',
+    });
+    expect(agentChatStreamingService.tryClaimStream).not.toHaveBeenCalled();
+    expect(agentChatService.addMessage).not.toHaveBeenCalled();
+  });
+
+  describe('a chat tool call', () => {
     it('answers the Ask once, records the answer and resumes the stream', async () => {
       const {
         service,
@@ -135,10 +198,11 @@ describe('ToolCallResolutionService', () => {
         publishedEvents,
       } = buildService();
 
-      const result = await service.resolve(resolveArguments);
+      const result = await service.answer(answerArguments);
 
       expect(result).toEqual({
         streamId: expect.any(String),
+        threadId: 'thread-id',
         turnId: 'answer-turn',
       });
       expect(inputAskWorkspaceService.answer).toHaveBeenCalledWith({
@@ -166,7 +230,9 @@ describe('ToolCallResolutionService', () => {
           },
         }),
       );
-      expect(agentChatStreamingService.enqueueResumeStream).toHaveBeenCalledWith(
+      expect(
+        agentChatStreamingService.enqueueResumeStream,
+      ).toHaveBeenCalledWith(
         expect.objectContaining({
           streamId: result.streamId,
           messageId: 'answer-message-id',
@@ -179,31 +245,6 @@ describe('ToolCallResolutionService', () => {
       });
     });
 
-    it('refuses an Ask that is no longer pending before touching the conversation', async () => {
-      const { service, agentChatStreamingService, agentChatService } =
-        buildService({
-          inputAsk: {
-            id: 'input-ask-id',
-            status: InputAskStatus.ANSWERED,
-            workflowRunId: null,
-          },
-        });
-
-      await expect(service.resolve(resolveArguments)).rejects.toMatchObject({
-        code: 'TOOL_CALL_NOT_PENDING',
-      });
-      expect(agentChatStreamingService.tryClaimStream).not.toHaveBeenCalled();
-      expect(agentChatService.addMessage).not.toHaveBeenCalled();
-    });
-
-    it('treats an Ask the caller cannot read as not found', async () => {
-      const { service } = buildService({ inputAsk: null as never });
-
-      await expect(service.resolve(resolveArguments)).rejects.toMatchObject({
-        code: 'TOOL_CALL_NOT_FOUND',
-      });
-    });
-
     it.each([
       { answers: [] },
       {
@@ -213,22 +254,22 @@ describe('ToolCallResolutionService', () => {
       },
       { answers: [{ questionIndex: 3, selectedOptionIndices: [0] }] },
       { answers: [{ questionIndex: 0, selectedOptionIndices: [0, 1] }] },
-    ])('rejects an output the call cannot accept (%j)', async (output) => {
+    ])('rejects a response the call cannot accept (%j)', async (response) => {
       const { service, inputAskWorkspaceService } = buildService();
 
       await expect(
-        service.resolve({ ...resolveArguments, output }),
-      ).rejects.toMatchObject({ code: 'INVALID_TOOL_CALL_OUTPUT' });
+        service.answer({ ...answerArguments, response }),
+      ).rejects.toMatchObject({ code: 'INVALID_ASK_RESPONSE' });
       expect(inputAskWorkspaceService.answer).not.toHaveBeenCalled();
     });
 
-    it('refuses a resolver without the AI permission', async () => {
+    it('refuses someone without the AI permission', async () => {
       const { service, inputAskWorkspaceService } = buildService({
         hasPermission: false,
       });
 
-      await expect(service.resolve(resolveArguments)).rejects.toMatchObject({
-        code: 'TOOL_CALL_RESOLUTION_FORBIDDEN',
+      await expect(service.answer(answerArguments)).rejects.toMatchObject({
+        code: 'ASK_ANSWER_FORBIDDEN',
       });
       expect(inputAskWorkspaceService.answer).not.toHaveBeenCalled();
     });
@@ -238,8 +279,8 @@ describe('ToolCallResolutionService', () => {
         hasClaimedStream: false,
       });
 
-      await expect(service.resolve(resolveArguments)).rejects.toMatchObject({
-        code: 'TOOL_CALL_NOT_PENDING',
+      await expect(service.answer(answerArguments)).rejects.toMatchObject({
+        code: 'ASK_NOT_PENDING',
       });
       expect(inputAskWorkspaceService.answer).not.toHaveBeenCalled();
     });
@@ -248,18 +289,12 @@ describe('ToolCallResolutionService', () => {
       const { service, agentChatStreamingService, agentChatService } =
         buildService({ hasAnswered: false });
 
-      await expect(service.resolve(resolveArguments)).rejects.toMatchObject({
-        code: 'TOOL_CALL_NOT_PENDING',
+      await expect(service.answer(answerArguments)).rejects.toMatchObject({
+        code: 'ASK_NOT_PENDING',
       });
 
-      const [[, , claimedStreamId]] =
-        agentChatStreamingService.tryClaimStream.mock.calls.map(
-          ([{ threadId, workspaceId, streamId }]) => [
-            threadId,
-            workspaceId,
-            streamId,
-          ],
-        );
+      const [[{ streamId: claimedStreamId }]] =
+        agentChatStreamingService.tryClaimStream.mock.calls;
 
       expect(agentChatStreamingService.releaseStreamClaim).toHaveBeenCalledWith(
         'thread-id',
@@ -278,7 +313,7 @@ describe('ToolCallResolutionService', () => {
         new Error('redis down'),
       );
 
-      await expect(service.resolve(resolveArguments)).rejects.toThrow(
+      await expect(service.answer(answerArguments)).rejects.toThrow(
         'redis down',
       );
       expect(agentChatStreamingService.releaseStreamClaim).toHaveBeenCalledWith(
@@ -301,11 +336,11 @@ describe('ToolCallResolutionService', () => {
     });
   });
 
-  describe('in a workflow run', () => {
+  describe('a workflow agent step', () => {
     const runInputAsk = {
-      id: 'input-ask-id',
-      status: InputAskStatus.PENDING,
+      ...chatInputAsk,
       workflowRunId: 'workflow-run-id',
+      stepId: 'step-id',
     };
 
     it('hands the answer to the run, with no chat stream', async () => {
@@ -317,27 +352,32 @@ describe('ToolCallResolutionService', () => {
         publishedEvents,
       } = buildService({ inputAsk: runInputAsk });
 
-      expect(await service.resolve(resolveArguments)).toEqual({
+      expect(await service.answer(answerArguments)).toEqual({
         streamId: null,
+        threadId: null,
         turnId: null,
       });
       expect(
         permissionsService.userHasWorkspaceSettingPermission,
       ).toHaveBeenCalledWith(expect.objectContaining({ setting: 'WORKFLOWS' }));
       expect(
-        workflowRunnerWorkspaceService.resolveAgentStepToolCall,
+        workflowRunnerWorkspaceService.claimAgentStepToolCall,
       ).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         workflowRunId: 'workflow-run-id',
         threadId: 'thread-id',
         toolCallId: 'tool-call-id',
         response: { answers: ANSWERS },
-        toolResult: expect.objectContaining({
-          result: expect.objectContaining({ status: 'answered' }),
-        }),
-        answerText: 'Which plan?\nTeam',
-        senderUserWorkspaceId: 'user-workspace-id',
       });
+      expect(
+        workflowRunnerWorkspaceService.resumeAnsweredAgentStep,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          stepId: 'step-id',
+          answerText: 'Which plan?\nTeam',
+          senderUserWorkspaceId: 'user-workspace-id',
+        }),
+      );
       expect(agentChatStreamingService.tryClaimStream).not.toHaveBeenCalled();
       expect(publishedEvents).toContainEqual({
         type: 'tool-call-resolved',
@@ -350,13 +390,16 @@ describe('ToolCallResolutionService', () => {
         inputAsk: runInputAsk,
       });
 
-      workflowRunnerWorkspaceService.resolveAgentStepToolCall.mockResolvedValue(
-        { status: 'NOT_AWAITING' },
-      );
-
-      await expect(service.resolve(resolveArguments)).rejects.toMatchObject({
-        code: 'TOOL_CALL_NOT_PENDING',
+      workflowRunnerWorkspaceService.claimAgentStepToolCall.mockResolvedValue({
+        status: 'NOT_AWAITING',
       });
+
+      await expect(service.answer(answerArguments)).rejects.toMatchObject({
+        code: 'ASK_NOT_PENDING',
+      });
+      expect(
+        workflowRunnerWorkspaceService.resumeAnsweredAgentStep,
+      ).not.toHaveBeenCalled();
     });
 
     it('treats a run the caller cannot read as not found', async () => {
@@ -365,11 +408,87 @@ describe('ToolCallResolutionService', () => {
 
       workflowRunRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.resolve(resolveArguments)).rejects.toMatchObject({
-        code: 'TOOL_CALL_NOT_FOUND',
+      await expect(service.answer(answerArguments)).rejects.toMatchObject({
+        code: 'ASK_NOT_FOUND',
       });
       expect(
-        workflowRunnerWorkspaceService.resolveAgentStepToolCall,
+        workflowRunnerWorkspaceService.claimAgentStepToolCall,
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('a form step', () => {
+    const formInputAsk = {
+      id: 'ask-id',
+      status: InputAskStatus.PENDING,
+      form: {
+        kind: 'formFields',
+        fields: [
+          { id: 'field-id', name: 'discount', label: 'Discount', type: 'TEXT' },
+        ],
+      },
+      threadId: null,
+      toolCallId: null,
+      workflowRunId: 'workflow-run-id',
+      stepId: 'step-id',
+    };
+
+    it('submits the form step with the response', async () => {
+      const { service, workflowRunnerWorkspaceService } = buildService({
+        inputAsk: formInputAsk,
+      });
+
+      expect(
+        await service.answer({
+          ...answerArguments,
+          response: { discount: '20%' },
+        }),
+      ).toEqual({ streamId: null, threadId: null, turnId: null });
+      expect(
+        workflowRunnerWorkspaceService.submitFormStep,
+      ).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        workflowRunId: 'workflow-run-id',
+        stepId: 'step-id',
+        response: { discount: '20%' },
+      });
+    });
+
+    it('rejects a response naming a field the form does not have', async () => {
+      const { service, workflowRunnerWorkspaceService } = buildService({
+        inputAsk: formInputAsk,
+      });
+
+      await expect(
+        service.answer({ ...answerArguments, response: { price: 10 } }),
+      ).rejects.toMatchObject({ code: 'INVALID_ASK_RESPONSE' });
+      expect(
+        workflowRunnerWorkspaceService.submitFormStep,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('refuses a submission the form no longer waits for', async () => {
+      const { service } = buildService({
+        inputAsk: formInputAsk,
+        hasSubmittedForm: false,
+      });
+
+      await expect(
+        service.answer({ ...answerArguments, response: { discount: '20%' } }),
+      ).rejects.toMatchObject({ code: 'ASK_NOT_PENDING' });
+    });
+
+    it('refuses someone without the Workflows permission', async () => {
+      const { service, workflowRunnerWorkspaceService } = buildService({
+        inputAsk: formInputAsk,
+        hasPermission: false,
+      });
+
+      await expect(
+        service.answer({ ...answerArguments, response: { discount: '20%' } }),
+      ).rejects.toMatchObject({ code: 'ASK_ANSWER_FORBIDDEN' });
+      expect(
+        workflowRunnerWorkspaceService.submitFormStep,
       ).not.toHaveBeenCalled();
     });
   });
