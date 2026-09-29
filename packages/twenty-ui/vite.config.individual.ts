@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
+import { Features } from 'lightningcss';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
@@ -33,6 +34,9 @@ export default defineConfig(() => {
       modules: {
         localsConvention: 'camelCaseOnly',
       },
+      lightningcss: {
+        exclude: Features.DirSelector,
+      },
       preprocessorOptions: {
         scss: {
           api: 'modern-compiler',
@@ -52,7 +56,6 @@ export default defineConfig(() => {
     plugins: [react(), svgr()],
     build: {
       cssCodeSplit: false,
-      cssMinify: 'esbuild',
       minify: 'esbuild',
       sourcemap: true,
       outDir: './dist/individual',

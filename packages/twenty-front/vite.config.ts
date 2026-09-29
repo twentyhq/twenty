@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
+import { Features } from 'lightningcss';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import {
@@ -172,7 +173,6 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
-      cssMinify: 'esbuild',
       minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true' ? 'hidden' : false,
@@ -270,6 +270,9 @@ export default defineConfig(({ mode }) => {
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
+      },
+      lightningcss: {
+        exclude: Features.DirSelector,
       },
     },
     resolve: {
