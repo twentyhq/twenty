@@ -312,6 +312,7 @@ export { compileValidationRuleExpression } from './validation-rule/compileValida
 export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
+export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
 export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';
 export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';

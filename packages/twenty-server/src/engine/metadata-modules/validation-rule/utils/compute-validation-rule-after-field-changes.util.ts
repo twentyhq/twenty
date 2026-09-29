@@ -1,6 +1,7 @@
 import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   isDefined,
+  isValidationRuleReservedName,
   tokenizeValidationRuleExpression,
 } from 'twenty-shared/utils';
 
@@ -56,6 +57,14 @@ const renameFieldsInValidationRule = <
   validationRule: TValidationRule;
   newFieldNameByUniversalIdentifier: Map<string, string>;
 }): TValidationRule | null => {
+  if (
+    [...newFieldNameByUniversalIdentifier.values()].some(
+      isValidationRuleReservedName,
+    )
+  ) {
+    return null;
+  }
+
   const { bindings } = validationRule;
   const renamedBindings: ValidationRuleBindings = {};
 
