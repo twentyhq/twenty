@@ -1,22 +1,22 @@
 .panel {
-  --animated-expandable-opacity-duration: #{duration(normal)};
-  --animated-expandable-size-duration: #{duration(normal)};
+  --collapsible-opacity-duration: #{duration(normal)};
+  --collapsible-size-duration: #{duration(normal)};
 
   opacity: 1;
-  transition: opacity var(--animated-expandable-opacity-duration) ease-in-out;
+  transition: opacity var(--collapsible-opacity-duration) ease-in-out;
 
   &[data-dimension='height'] {
     height: var(--collapsible-panel-height);
     transition:
-      height var(--animated-expandable-size-duration) ease-in-out,
-      opacity var(--animated-expandable-opacity-duration) ease-in-out;
+      height var(--collapsible-size-duration) ease-in-out,
+      opacity var(--collapsible-opacity-duration) ease-in-out;
   }
 
   &[data-dimension='width'] {
     width: var(--collapsible-panel-width);
     transition:
-      width var(--animated-expandable-size-duration) ease-in-out,
-      opacity var(--animated-expandable-opacity-duration) ease-in-out;
+      width var(--collapsible-size-duration) ease-in-out,
+      opacity var(--collapsible-opacity-duration) ease-in-out;
   }
 
   &[data-starting-style],
@@ -47,7 +47,7 @@
 
 @each $duration in (instant, fast, normal, slow) {
   .panel[data-duration='#{$duration}'] {
-    --animated-expandable-opacity-duration: #{duration($duration)};
-    --animated-expandable-size-duration: #{duration($duration)};
+    --collapsible-opacity-duration: #{duration($duration)};
+    --collapsible-size-duration: #{duration($duration)};
   }
 }

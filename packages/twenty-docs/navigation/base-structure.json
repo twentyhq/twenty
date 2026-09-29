@@ -595,7 +595,7 @@
                   "key": "uiLayout",
                   "label": "Layout",
                   "pages": [
-                    "ui/primitives/layout/animated-expandable-container",
+                    "ui/primitives/layout/collapsible",
                     "ui/primitives/layout/horizontal-separator",
                     "ui/primitives/layout/resize-handle",
                     "ui/primitives/layout/text-direction-provider"
