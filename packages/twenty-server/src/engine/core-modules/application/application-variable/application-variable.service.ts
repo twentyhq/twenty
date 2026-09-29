@@ -32,10 +32,7 @@ export class ApplicationVariableEntityService {
   ) {}
 
   getDisplayValue(applicationVariable: ApplicationVariableEntity): string {
-    const plaintextValue = this.secretEncryptionService.decryptVersionedOrThrow(
-      applicationVariable.value,
-      { workspaceId: applicationVariable.workspaceId },
-    );
+    const plaintextValue = this.decryptValue(applicationVariable);
 
     if (plaintextValue === '') {
       return '';
@@ -116,7 +113,11 @@ export class ApplicationVariableEntityService {
   private decryptValue({
     value,
     workspaceId,
-  }: FlatApplicationVariable): string {
+  }: Pick<FlatApplicationVariable, 'value' | 'workspaceId'>): string {
+    if (!isDefined(value)) {
+      return '';
+    }
+
     return this.secretEncryptionService.decryptVersionedOrThrow(value, {
       workspaceId,
     });
@@ -141,6 +142,13 @@ export class ApplicationVariableEntityService {
       throw new ApplicationVariableEntityException(
         `Application variable with key ${key} not found`,
         ApplicationVariableEntityExceptionCode.APPLICATION_VARIABLE_NOT_FOUND,
+      );
+    }
+
+    if (existingVariable.scope === 'USER') {
+      throw new ApplicationVariableEntityException(
+        `Application variable with key ${key} is a user variable`,
+        ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
       );
     }
 
