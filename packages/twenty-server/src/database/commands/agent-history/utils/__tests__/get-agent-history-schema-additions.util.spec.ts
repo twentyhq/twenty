@@ -20,6 +20,21 @@ const HISTORY_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
 ];
 
+// A workspace about to be migrated: every other standard object is installed.
+const createExistingObjectsWithoutHistory = (
+  standard: ReturnType<typeof createStandardMetadata>,
+) => {
+  const flatObjectMetadataMaps = structuredClone(
+    standard.flatObjectMetadataMaps,
+  );
+
+  for (const identifier of HISTORY_IDENTIFIERS) {
+    delete flatObjectMetadataMaps.byUniversalIdentifier[identifier];
+  }
+
+  return flatObjectMetadataMaps;
+};
+
 describe('getAgentHistorySchemaAdditions', () => {
   it('selects only history objects and the fields and indexes relating to them', () => {
     const additions = getAgentHistorySchemaAdditions({
@@ -118,7 +133,7 @@ describe('getAgentHistorySchemaAdditions', () => {
     const standard = createStandardMetadata();
     const additions = getAgentHistorySchemaAdditions({
       existing: {
-        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatObjectMetadataMaps: createExistingObjectsWithoutHistory(standard),
         flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
         flatIndexMaps: createEmptyFlatEntityMaps(),
       },
@@ -172,6 +187,74 @@ describe('getAgentHistorySchemaAdditions', () => {
     ).toEqual([]);
   });
 
+  it.each([
+    ['an empty workspace', () => createEmptyFlatEntityMaps()],
+    [
+      'a workspace without agentChatThreadTarget',
+      (standard: ReturnType<typeof createStandardMetadata>) => {
+        const flatObjectMetadataMaps =
+          createExistingObjectsWithoutHistory(standard);
+
+        delete flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier
+        ];
+
+        return flatObjectMetadataMaps;
+      },
+    ],
+  ])(
+    'only emits relation legs between objects that exist once it runs, in %s',
+    (_, createExistingObjects) => {
+      const standard = createStandardMetadata();
+      const existingObjects = createExistingObjects(standard);
+      const additions = getAgentHistorySchemaAdditions({
+        existing: {
+          flatObjectMetadataMaps: existingObjects,
+          flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+          flatIndexMaps: createEmptyFlatEntityMaps(),
+        },
+        standard,
+      });
+      const existsOnceProvisioned = (identifier: string) =>
+        HISTORY_IDENTIFIERS.includes(identifier) ||
+        identifier in existingObjects.byUniversalIdentifier;
+
+      expect(
+        additions.fields
+          .filter(
+            (field) =>
+              !existsOnceProvisioned(field.objectMetadataUniversalIdentifier) ||
+              !existsOnceProvisioned(
+                field.relationTargetObjectMetadataUniversalIdentifier ??
+                  field.objectMetadataUniversalIdentifier,
+              ),
+          )
+          .map((field) => field.universalIdentifier),
+      ).toEqual([]);
+    },
+  );
+
+  it('provisions both legs of a relation to a later object once it exists', () => {
+    const standard = createStandardMetadata();
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createExistingObjectsWithoutHistory(standard),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard,
+    });
+
+    expect(additions.fields.map((field) => field.universalIdentifier)).toEqual(
+      expect.arrayContaining([
+        STANDARD_OBJECTS.agentChatThread.fields.recordTargets
+          .universalIdentifier,
+        STANDARD_OBJECTS.agentChatThreadTarget.fields.thread
+          .universalIdentifier,
+      ]),
+    );
+  });
+
   it('adds nothing when all history metadata already exists', () => {
     const standard = createStandardMetadata();
     expect(
@@ -198,29 +281,6 @@ describe('getAgentHistorySchemaAdditions', () => {
     expect(
       getAgentHistorySchemaAdditions({ existing, standard }).objects,
     ).toEqual([]);
-  });
-
-  // Created with inputAsk by its own later command; emitted here, before that
-  // object exists, the relation has no other side.
-  it('leaves the Ask relation legs to the command that creates the Ask', () => {
-    const additions = getAgentHistorySchemaAdditions({
-      existing: {
-        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-        flatIndexMaps: createEmptyFlatEntityMaps(),
-      },
-      standard: createStandardMetadata(),
-    });
-    const fieldUniversalIdentifiers = additions.fields.map(
-      ({ universalIdentifier }) => universalIdentifier,
-    );
-
-    expect(fieldUniversalIdentifiers).not.toContain(
-      STANDARD_OBJECTS.agentChatThread.fields.inputAsks.universalIdentifier,
-    );
-    expect(fieldUniversalIdentifiers).not.toContain(
-      STANDARD_OBJECTS.inputAsk.fields.thread.universalIdentifier,
-    );
   });
 
   it('repairs missing fields and indexes without recreating existing objects', () => {

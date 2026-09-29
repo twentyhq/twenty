@@ -8,7 +8,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 
 export class InputAskWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
-  name: string | null;
+  name: string;
   status: InputAskStatus;
   // The questions are snapshotted rather than read back from the step: a
   // workflow version can be edited or discarded after the Ask goes out, and

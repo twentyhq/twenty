@@ -104,6 +104,16 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: [{ type: 'text', text: prompt }],
     });
 
+    // Linked to its step before its question is offered: an answer is matched
+    // to the step through this link, and one arriving before it would find
+    // no step waiting and close the question the step is about to wait on.
+    await this.workflowRunWorkspaceService.setStepThreadId({
+      stepId,
+      threadId,
+      workflowRunId,
+      workspaceId,
+    });
+
     const isAwaitingAnswer = await this.recordReply({
       workspaceId,
       workflowRunId,
@@ -112,13 +122,6 @@ export class WorkflowAgentConversationWorkspaceService {
       turnId,
       agentId,
       executionResult,
-    });
-
-    await this.workflowRunWorkspaceService.setStepThreadId({
-      stepId,
-      threadId,
-      workflowRunId,
-      workspaceId,
     });
 
     return { threadId, isAwaitingAnswer };

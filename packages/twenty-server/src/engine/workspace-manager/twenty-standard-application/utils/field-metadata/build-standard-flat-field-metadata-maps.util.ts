@@ -95,10 +95,10 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workflow: buildWorkflowStandardFlatFieldMetadatas,
   workflowAutomatedTrigger:
     buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas,
-  inputAsk: buildInputAskStandardFlatFieldMetadatas,
   workflowRun: buildWorkflowRunStandardFlatFieldMetadatas,
   workflowVersion: buildWorkflowVersionStandardFlatFieldMetadatas,
   workspaceMember: buildWorkspaceMemberStandardFlatFieldMetadatas,
+  inputAsk: buildInputAskStandardFlatFieldMetadatas,
 } satisfies {
   [P in AllStandardObjectName]: StandardFieldBuilder<P>;
 };

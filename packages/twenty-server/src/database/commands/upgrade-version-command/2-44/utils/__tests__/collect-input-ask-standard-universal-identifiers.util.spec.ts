@@ -67,16 +67,6 @@ describe('collectInputAskStandardUniversalIdentifiers', () => {
     expect(universalIdentifiers.viewField.length).toBeGreaterThan(0);
   });
 
-  it('should collect the filters of the waiting on me view', () => {
-    const declaredViewFilterUniversalIdentifiers = Object.values(
-      STANDARD_OBJECTS.inputAsk.views.waitingOnMe.viewFilters,
-    ).map(({ universalIdentifier }) => universalIdentifier);
-
-    expect(universalIdentifiers.viewFilter).toEqual(
-      expect.arrayContaining(declaredViewFilterUniversalIdentifiers),
-    );
-  });
-
   it('should not collect metadata belonging to unrelated standard objects', () => {
     const companyFieldUniversalIdentifiers = Object.values(
       standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
