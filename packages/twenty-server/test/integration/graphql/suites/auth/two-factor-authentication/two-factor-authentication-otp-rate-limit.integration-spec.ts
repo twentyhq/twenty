@@ -55,7 +55,13 @@ describe('Two-factor authentication OTP rate limiting (integration)', () => {
 
   it('rejects further attempts once the per-user bucket is spent', async () => {
     let limitReachedError:
-      | { extensions?: { code?: string; subCode?: string } }
+      | {
+          extensions?: {
+            code?: string;
+            subCode?: string;
+            userFriendlyMessage?: unknown;
+          };
+        }
       | undefined;
     let attemptsBeforeLimit = 0;
 
@@ -82,6 +88,8 @@ describe('Two-factor authentication OTP rate limiting (integration)', () => {
     expect(attemptsBeforeLimit).toBe(
       TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
     );
-    expect(limitReachedError).toBeDefined();
+    expect(limitReachedError?.extensions?.userFriendlyMessage).toBe(
+      'Rate limit reached. Please try again later.',
+    );
   });
 });
