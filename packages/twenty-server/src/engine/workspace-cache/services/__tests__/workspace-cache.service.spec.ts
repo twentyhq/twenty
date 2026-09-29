@@ -19,6 +19,15 @@ class ApiKeyRoleMapTestProvider extends WorkspaceCacheProvider<
   }
 }
 
+@WorkspaceCache('featureFlagsMap', { packingPonderation: 1 })
+class FeatureFlagsMapTestProvider extends WorkspaceCacheProvider<
+  Record<string, boolean>
+> {
+  computeForCache(): Record<string, boolean> {
+    return {};
+  }
+}
+
 const WORKSPACE_1_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const WORKSPACE_2_ID = '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
 
@@ -34,7 +43,7 @@ describe('WorkspaceCacheService', () => {
   ]);
 
   let cacheStorage: jest.Mocked<
-    Pick<CacheStorageService, 'mget' | 'mset' | 'mdel' | 'setIfAbsent'>
+    Pick<CacheStorageService, 'mget' | 'mset' | 'mdel' | 'del' | 'setIfAbsent'>
   >;
   let service: WorkspaceCacheService;
 
@@ -52,11 +61,15 @@ describe('WorkspaceCacheService', () => {
       ),
       mset: jest.fn(),
       mdel: jest.fn(),
+      del: jest.fn(),
       setIfAbsent: jest.fn(),
     } as unknown as typeof cacheStorage;
 
     const discoveryService = {
-      getProviders: () => [{ instance: new ApiKeyRoleMapTestProvider() }],
+      getProviders: () => [
+        { instance: new ApiKeyRoleMapTestProvider() },
+        { instance: new FeatureFlagsMapTestProvider() },
+      ],
     } as unknown as DiscoveryService;
     const cacheMetricsService = {
       start: jest.fn(),
@@ -125,21 +138,50 @@ describe('WorkspaceCacheService', () => {
   });
 
   describe('redis keys', () => {
-    it('writes every key of a workspace under one hash tag so mset stays in a single slot', async () => {
-      const uncachedWorkspaceId = '7c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
+    const UNCACHED_WORKSPACE_ID = '7c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
 
-      await service.getOrRecompute(uncachedWorkspaceId, ['apiKeyRoleMap']);
+    it('writes every key of a multi-provider batch under the workspace hash tag', async () => {
+      await service.getOrRecompute(UNCACHED_WORKSPACE_ID, [
+        'apiKeyRoleMap',
+        'featureFlagsMap',
+      ]);
 
-      expect(cacheStorage.mset).toHaveBeenCalledTimes(1);
-
-      const writtenKeys = cacheStorage.mset.mock.calls[0][0].map(
-        ({ key }) => key,
+      const writtenKeys = cacheStorage.mset.mock.calls.flatMap(([entries]) =>
+        entries.map(({ key }) => key),
       );
 
-      expect(writtenKeys.length).toBeGreaterThan(0);
+      expect(writtenKeys).toEqual(
+        expect.arrayContaining([
+          `apiKeyRoleMap:{${UNCACHED_WORKSPACE_ID}}:hash`,
+          `featureFlagsMap:{${UNCACHED_WORKSPACE_ID}}:hash`,
+        ]),
+      );
       expect(
-        writtenKeys.every((key) => key.includes(`{${uncachedWorkspaceId}}`)),
+        writtenKeys.every((key) => key.includes(`{${UNCACHED_WORKSPACE_ID}}`)),
       ).toBe(true);
+    });
+
+    it('deletes tagged keys in one batch and untagged legacy keys one by one on flush', async () => {
+      await service.flush(WORKSPACE_1_ID, ['apiKeyRoleMap', 'featureFlagsMap']);
+
+      const deletedInBatch = cacheStorage.mdel.mock.calls.flatMap(
+        ([keys]) => keys,
+      );
+
+      expect(
+        deletedInBatch.every((key) => key.includes(`{${WORKSPACE_1_ID}}`)),
+      ).toBe(true);
+
+      const deletedOneByOne = cacheStorage.del.mock.calls.map(([key]) => key);
+
+      expect(deletedOneByOne.sort()).toEqual(
+        [
+          `apiKeyRoleMap:${WORKSPACE_1_ID}:data`,
+          `apiKeyRoleMap:${WORKSPACE_1_ID}:hash`,
+          `featureFlagsMap:${WORKSPACE_1_ID}:data`,
+          `featureFlagsMap:${WORKSPACE_1_ID}:hash`,
+        ].sort(),
+      );
     });
   });
 });

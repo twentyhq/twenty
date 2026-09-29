@@ -723,6 +723,24 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     });
 
     await this.cacheStorage.mdel(keysToDelete);
+    await this.deleteLegacyKeysFromRedis(workspaceId, cacheKeyNames);
+  }
+
+  // Servers still on a version without the hash tag read `${keyName}:${workspaceId}`.
+  // Deleting those keys too lets an invalidation reach them during a rolling
+  // deployment. One DEL per key, since the legacy keys hash to different slots.
+  // TODO: remove once no supported version reads the untagged keys.
+  private async deleteLegacyKeysFromRedis(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<void> {
+    await Promise.all(
+      cacheKeyNames.flatMap((keyName) =>
+        ['data', 'hash'].map((suffix) =>
+          this.cacheStorage.del(`${keyName}:${workspaceId}:${suffix}`),
+        ),
+      ),
+    );
   }
 
   private setInLocalCache(

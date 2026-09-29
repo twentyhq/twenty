@@ -205,6 +205,7 @@ export class CoreEntityCacheService implements OnModuleInit {
     const localKey = this.buildCacheKey(entityId, cacheKeyName);
 
     await this.cacheStorage.mdel([`${localKey}:data`, `${localKey}:hash`]);
+    await this.deleteLegacyKeys(entityId, cacheKeyName);
 
     const entry = this.localCache.get(localKey);
 
@@ -332,6 +333,23 @@ export class CoreEntityCacheService implements OnModuleInit {
     }
 
     return provider;
+  }
+
+  // Servers still on a version without the hash tag read the untagged keys.
+  // Deleting them too lets an invalidation reach those servers during a rolling
+  // deployment. One DEL per key, since the legacy keys hash to different slots.
+  // TODO: remove once no supported version reads the untagged keys.
+  private async deleteLegacyKeys(
+    entityId: string,
+    keyName: CoreEntityCacheKeyName,
+  ): Promise<void> {
+    const legacyKey = `${CORE_ENTITY_CACHE_KEYS[keyName]}:${entityId}`;
+
+    await Promise.all(
+      ['data', 'hash'].map((suffix) =>
+        this.cacheStorage.del(`${legacyKey}:${suffix}`),
+      ),
+    );
   }
 
   private buildCacheKey(
