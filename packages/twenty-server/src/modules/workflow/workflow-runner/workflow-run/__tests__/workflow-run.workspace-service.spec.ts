@@ -1,5 +1,9 @@
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
+import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
@@ -16,12 +20,19 @@ const AGENT_STEP_ID = 'agent-step-id';
 const THREAD_ID = 'thread-id';
 
 describe('WorkflowRunWorkspaceService', () => {
+  const threadRepository = { find: jest.fn(), update: jest.fn() };
+  const messagePartRepository = { find: jest.fn(), update: jest.fn() };
+
   const service = Object.assign(
     new WorkflowRunWorkspaceService(
       {} as WorkspaceOrmManager,
       {} as RecordPositionService,
-      {} as MetricsService,
+      {
+        incrementCounterForEvent: jest.fn(),
+      } as unknown as MetricsService,
       {} as WorkflowRunRecordShareService,
+      threadRepository as unknown as AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+      messagePartRepository as unknown as AgentHistoryRepository<AgentMessagePartEntity>,
     ),
     {
       cacheLockService: {
@@ -108,6 +119,83 @@ describe('WorkflowRunWorkspaceService', () => {
         status: 'NO_LONGER_AWAITING',
       });
       expect(updateWorkflowRun).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('endWorkflowRun', () => {
+    it('closes the question a conversation of the run still offers', async () => {
+      mockWorkflowRun({
+        stepInfos: {
+          [AGENT_STEP_ID]: { status: StepStatus.PENDING, threadId: THREAD_ID },
+          other: { status: StepStatus.SUCCESS },
+        },
+      });
+      threadRepository.find.mockResolvedValue([
+        { id: THREAD_ID, pendingQuestionMessageId: 'question-message-id' },
+      ]);
+      threadRepository.update.mockResolvedValue({ affected: 1 });
+      messagePartRepository.find.mockResolvedValue([
+        {
+          id: 'part-id',
+          toolName: ASK_QUESTIONS_TOOL_NAME,
+          toolOutput: { result: { questions: [], status: 'pending' } },
+        },
+      ]);
+
+      await service.endWorkflowRun({
+        workflowRunId: WORKFLOW_RUN_ID,
+        workspaceId: WORKSPACE_ID,
+        status: WorkflowRunStatus.STOPPED,
+      });
+
+      expect(threadRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: THREAD_ID, pendingQuestionMessageId: 'question-message-id' },
+        { pendingQuestionMessageId: null },
+      );
+      expect(messagePartRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: 'part-id' },
+        { toolOutput: { result: { questions: [], status: 'skipped' } } },
+      );
+    });
+
+    it('leaves a question an answer has just claimed to that answer', async () => {
+      mockWorkflowRun({
+        stepInfos: {
+          [AGENT_STEP_ID]: { status: StepStatus.PENDING, threadId: THREAD_ID },
+        },
+      });
+      threadRepository.find.mockResolvedValue([
+        { id: THREAD_ID, pendingQuestionMessageId: 'question-message-id' },
+      ]);
+      threadRepository.update.mockResolvedValue({ affected: 0 });
+
+      await service.endWorkflowRun({
+        workflowRunId: WORKFLOW_RUN_ID,
+        workspaceId: WORKSPACE_ID,
+        status: WorkflowRunStatus.STOPPED,
+      });
+
+      expect(messagePartRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('still ends the run when its questions cannot be closed', async () => {
+      mockWorkflowRun({
+        stepInfos: {
+          [AGENT_STEP_ID]: { status: StepStatus.PENDING, threadId: THREAD_ID },
+        },
+      });
+      threadRepository.find.mockRejectedValue(new Error('storage down'));
+
+      await expect(
+        service.endWorkflowRun({
+          workflowRunId: WORKFLOW_RUN_ID,
+          workspaceId: WORKSPACE_ID,
+          status: WorkflowRunStatus.STOPPED,
+        }),
+      ).resolves.toBeUndefined();
+      expect(updateWorkflowRun).toHaveBeenCalledTimes(1);
     });
   });
 });

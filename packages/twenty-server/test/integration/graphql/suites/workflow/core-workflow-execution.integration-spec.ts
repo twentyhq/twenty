@@ -1108,7 +1108,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
     });
 
-    it('refuses an answer once the run is stopped and closes the question', async () => {
+    it('closes the question when the run is stopped and refuses a later answer', async () => {
       mockAgent();
       const { runId, agent, threadId, questionMessageId } =
         await startAskingRun();
@@ -1118,6 +1118,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         { id: runId },
       );
       await waitForRun(runId, 'STOPPED');
+
+      expect(
+        (await getConversation(threadId)).thread.pendingQuestionMessageId,
+      ).toBeNull();
 
       const response = await answer({ threadId, messageId: questionMessageId });
 

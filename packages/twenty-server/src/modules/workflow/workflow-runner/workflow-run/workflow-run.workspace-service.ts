@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  type AskQuestionsToolResult,
+} from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { In, IsNull, Not } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
@@ -10,6 +15,10 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
+import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -33,11 +42,17 @@ export type StepAwaitingAnswer =
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunWorkspaceService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
   ) {}
 
   async createCoreWorkflowRun({
@@ -198,6 +213,11 @@ export class WorkflowRunWorkspaceService {
     };
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+
+    await this.closeQuestionsOfEndedRun({
+      stepInfos: workflowRunToUpdate.state?.stepInfos ?? {},
+      workspaceId,
+    });
 
     const metricKey =
       status === WorkflowRunStatus.COMPLETED
@@ -676,6 +696,91 @@ export class WorkflowRunWorkspaceService {
       },
       workflowRunError: error,
     };
+  }
+
+  // An ended run resumes nothing, so a question still offered in one of its
+  // conversations is closed rather than left to refuse every answer. Clearing
+  // the marker is the same claim an answer makes, so the two never both win.
+  // Closing is cosmetic and must not fail ending the run.
+  private async closeQuestionsOfEndedRun({
+    stepInfos,
+    workspaceId,
+  }: {
+    stepInfos: Record<string, WorkflowRunStepInfo>;
+    workspaceId: string;
+  }): Promise<void> {
+    const threadIds = Object.values(stepInfos)
+      .map((stepInfo) => stepInfo.threadId)
+      .filter(isDefined);
+
+    if (threadIds.length === 0) {
+      return;
+    }
+
+    try {
+      const threadsAwaitingAnswer = await this.threadRepository.find(
+        workspaceId,
+        {
+          where: { id: In(threadIds), pendingQuestionMessageId: Not(IsNull()) },
+        },
+      );
+
+      for (const {
+        id: threadId,
+        pendingQuestionMessageId,
+      } of threadsAwaitingAnswer) {
+        if (!isDefined(pendingQuestionMessageId)) {
+          continue;
+        }
+
+        const claim = await this.threadRepository.update(
+          workspaceId,
+          { id: threadId, pendingQuestionMessageId },
+          { pendingQuestionMessageId: null },
+        );
+
+        if ((claim.affected ?? 0) === 0) {
+          continue;
+        }
+
+        const questionParts = await this.messagePartRepository.find(
+          workspaceId,
+          {
+            where: {
+              messageId: pendingQuestionMessageId,
+              toolName: ASK_QUESTIONS_TOOL_NAME,
+            },
+          },
+        );
+
+        for (const questionPart of questionParts) {
+          const toolOutput = questionPart.toolOutput as {
+            result?: AskQuestionsToolResult;
+          } | null;
+
+          if (toolOutput?.result?.status !== 'pending') {
+            continue;
+          }
+
+          await this.messagePartRepository.update(
+            workspaceId,
+            { id: questionPart.id },
+            {
+              toolOutput: {
+                ...toolOutput,
+                result: { ...toolOutput.result, status: 'skipped' },
+              },
+            },
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Failed to close the questions of an ended workflow run in workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   private markRunningStepsAsFailed({

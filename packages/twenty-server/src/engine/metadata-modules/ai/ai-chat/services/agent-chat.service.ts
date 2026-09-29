@@ -1054,7 +1054,8 @@ export class AgentChatService {
 
   // For a question nothing can consume any more: its run ended, or the step
   // moved on to another conversation. Restoring it would leave a card that
-  // every answer is refused on, so it is closed instead.
+  // every answer is refused on, so it is closed instead. An ending run closes
+  // its questions itself; this covers an answer that claimed one just before.
   async closePendingQuestion({
     workspaceId,
     rollback,
