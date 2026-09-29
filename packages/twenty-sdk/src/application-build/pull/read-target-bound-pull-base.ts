@@ -1,46 +1,17 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { isString } from '@sniptt/guards';
+import { isArray, isString } from '@sniptt/guards';
 import { type Manifest } from 'twenty-shared/application';
-import { isPlainObject, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 
 import { assertPullPaths } from '@/application-build/pull/assert-pull-paths';
+import { normalizePullTarget } from '@/application-build/pull/normalize-pull-target';
 import {
   type AppPullTarget,
   type PullBaseStatus,
 } from '@/application-build/pull/types';
 import { isPullManifest } from '@/application-build/pull/validate-application-export';
 import { PULL_BASE_FILE_PATH } from '@/cli/utilities/pull/pull-base-file';
-
-export const normalizePullTarget = (target: AppPullTarget): AppPullTarget => {
-  if (
-    !isPlainObject(target) ||
-    !isString(target.apiUrl) ||
-    !isString(target.workspaceId) ||
-    !isValidUuid(target.workspaceId)
-  ) {
-    throw new Error('Pull requires an API URL and workspace UUID.');
-  }
-
-  const apiUrl = new URL(target.apiUrl);
-
-  if (
-    !['http:', 'https:'].includes(apiUrl.protocol) ||
-    apiUrl.username ||
-    apiUrl.password ||
-    apiUrl.search ||
-    apiUrl.hash
-  ) {
-    throw new Error(
-      'Pull requires an HTTP API URL without credentials, query or fragment.',
-    );
-  }
-
-  return {
-    apiUrl: apiUrl.toString().replace(/\/+$/, ''),
-    workspaceId: target.workspaceId.toLowerCase(),
-  };
-};
 
 export const readTargetBoundPullBase = async ({
   appPath,
@@ -50,8 +21,12 @@ export const readTargetBoundPullBase = async ({
   appPath: string;
   target: AppPullTarget;
   applicationUniversalIdentifier: string;
-}): Promise<{ status: PullBaseStatus; manifest: Manifest | null }> => {
-  await assertPullPaths(appPath, [PULL_BASE_FILE_PATH]);
+}): Promise<{
+  status: PullBaseStatus;
+  manifest: Manifest | null;
+  unreconciledUniversalIdentifiers?: string[];
+}> => {
+  await assertPullPaths({ appPath, relativePaths: [PULL_BASE_FILE_PATH] });
 
   try {
     const base: unknown = JSON.parse(
@@ -71,7 +46,12 @@ export const readTargetBoundPullBase = async ({
       !isString(base.applicationUniversalIdentifier) ||
       !isPullManifest(base.manifest) ||
       base.applicationUniversalIdentifier.toLowerCase() !==
-        base.manifest.application.universalIdentifier.toLowerCase()
+        base.manifest.application.universalIdentifier.toLowerCase() ||
+      (isDefined(base.unreconciledUniversalIdentifiers) &&
+        (!isArray(base.unreconciledUniversalIdentifiers) ||
+          !base.unreconciledUniversalIdentifiers.every(
+            (identifier) => isString(identifier) && isValidUuid(identifier),
+          )))
     ) {
       return { status: 'unreadable', manifest: null };
     }
@@ -90,7 +70,13 @@ export const readTargetBoundPullBase = async ({
       return { status: 'other-target', manifest: null };
     }
 
-    return { status: 'used', manifest: base.manifest };
+    return {
+      status: 'used',
+      manifest: base.manifest,
+      unreconciledUniversalIdentifiers: base.unreconciledUniversalIdentifiers
+        ?.filter(isString)
+        .map((identifier) => identifier.toLowerCase()),
+    };
   } catch (error) {
     return {
       status:
@@ -101,23 +87,3 @@ export const readTargetBoundPullBase = async ({
     };
   }
 };
-
-export const createPullBaseWrite = ({
-  target,
-  manifest,
-}: {
-  target: AppPullTarget;
-  manifest: Manifest;
-}) => ({
-  relativePath: PULL_BASE_FILE_PATH,
-  content: `${JSON.stringify(
-    {
-      version: 2,
-      target,
-      applicationUniversalIdentifier: manifest.application.universalIdentifier,
-      manifest,
-    },
-    null,
-    2,
-  )}\n`,
-});

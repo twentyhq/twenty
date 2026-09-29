@@ -4,7 +4,7 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { assertPullPaths } from '@/application-build/pull/assert-pull-paths';
 import { readApplicationIdentity } from '@/application-build/pull/read-application-identity';
-import { normalizePullTarget } from '@/application-build/pull/target-bound-pull-base';
+import { normalizePullTarget } from '@/application-build/pull/normalize-pull-target';
 import { type PullAppOptions } from '@/application-build/pull/types';
 import { validateApplicationExport } from '@/application-build/pull/validate-application-export';
 import { PULL_BASE_FILE_PATH } from '@/cli/utilities/pull/pull-base-file';
@@ -20,7 +20,7 @@ export const prepareAppPull = async ({
   const exported = validateApplicationExport(applicationExport);
   const normalizedTarget = normalizePullTarget(target);
 
-  await assertPullPaths(appPath, [PULL_BASE_FILE_PATH]);
+  await assertPullPaths({ appPath, relativePaths: [PULL_BASE_FILE_PATH] });
 
   const packageJson: unknown = JSON.parse(
     await readFile(join(appPath, 'package.json'), 'utf8'),

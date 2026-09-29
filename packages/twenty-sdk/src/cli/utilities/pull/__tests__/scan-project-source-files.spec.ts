@@ -22,7 +22,7 @@ describe('scanProjectSourceFiles', () => {
       "export const PET_LABEL = 'Pet';\n",
     );
 
-    const scannedFiles = await scanProjectSourceFiles(appPath);
+    const scannedFiles = await scanProjectSourceFiles({ appPath });
 
     expect(scannedFiles).toEqual([
       {

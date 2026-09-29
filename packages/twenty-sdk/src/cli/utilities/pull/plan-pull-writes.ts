@@ -1,4 +1,5 @@
 import { ManifestEntityKey } from '@/cli/utilities/build/manifest/manifest-extract-config';
+import { buildPullBaseEntities } from '@/cli/utilities/pull/build-pull-base-entities';
 import {
   buildPullEntities,
   type PullEntity,
@@ -179,37 +180,31 @@ const findExistingSourceFile = ({
     ? applicationFile
     : scannedFileByUniversalIdentifier.get(entity.universalIdentifier);
 
-const buildConfigByUniversalIdentifier = (
-  manifest: Manifest | null,
-): Map<string, string> => {
-  if (!isDefined(manifest)) {
-    return new Map();
-  }
-
-  return new Map(
-    buildPullEntities(manifest).entities.map((entity) => [
-      entity.universalIdentifier,
-      JSON.stringify(entity.config),
-    ]),
-  );
-};
-
 export const planPullWrites = ({
   manifest,
   baseManifest,
   scannedFiles,
   workspaceUniversalIdentifiers,
+  unreconciledUniversalIdentifiers,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
   scannedFiles: ScannedSourceFile[];
   workspaceUniversalIdentifiers: ReadonlySet<string>;
+  unreconciledUniversalIdentifiers?: ReadonlySet<string>;
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {
   const { entities, skipped } = buildPullEntities(manifest);
-  const baseConfigByUniversalIdentifier =
-    buildConfigByUniversalIdentifier(baseManifest);
+  const baseConfigByUniversalIdentifier = new Map(
+    buildPullBaseEntities({
+      manifest: baseManifest,
+      unreconciledUniversalIdentifiers,
+    }).map((entity) => [
+      entity.universalIdentifier,
+      JSON.stringify(entity.config),
+    ]),
+  );
   const fileBaseNameByUniversalIdentifier = resolveFileBaseNames(entities);
 
   const scannedFileByUniversalIdentifier = new Map<string, ScannedSourceFile>();
@@ -273,6 +268,9 @@ export const planPullWrites = ({
     if (
       isDefined(existingSourceFile) &&
       existingSourceFile.targetFunctionName === entity.definer &&
+      !unreconciledUniversalIdentifiers?.has(
+        entity.universalIdentifier.toLowerCase(),
+      ) &&
       isDefined(baseConfig) &&
       baseConfig === JSON.stringify(entity.config)
     ) {

@@ -1,4 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { collectIdentifiers } from '@/application-build/pull/collect-identifiers';
 import {
@@ -62,7 +63,7 @@ export const preserveNestedPullEntities = ({
           !baseIdentifiers.has(identifier)),
     );
 
-    if (!omittedIdentifier) {
+    if (!isDefined(omittedIdentifier)) {
       return true;
     }
 

@@ -6,10 +6,9 @@ import { collectIdentifiers } from '@/application-build/pull/collect-identifiers
 import { getOverwrittenLocalChanges } from '@/application-build/pull/get-overwritten-local-changes';
 import { prepareAppPull } from '@/application-build/pull/prepare-app-pull';
 import { preserveNestedPullEntities } from '@/application-build/pull/preserve-nested-pull-entities';
-import {
-  createPullBaseWrite,
-  readTargetBoundPullBase,
-} from '@/application-build/pull/target-bound-pull-base';
+import { reconcilePullBaseManifest } from '@/application-build/pull/reconcile-pull-base-manifest';
+import { createPullBaseWrite } from '@/application-build/pull/create-pull-base-write';
+import { readTargetBoundPullBase } from '@/application-build/pull/read-target-bound-pull-base';
 import {
   type PullAppOptions,
   type PullAppResult,
@@ -42,7 +41,8 @@ export const pullApplication = async (
       applicationUniversalIdentifier:
         applicationExport.application.universalIdentifier,
     });
-    const scannedFiles = await scanProjectSourceFiles(appPath, {
+    const scannedFiles = await scanProjectSourceFiles({
+      appPath,
       includeConfig: true,
     });
 
@@ -56,6 +56,9 @@ export const pullApplication = async (
       baseManifest: base.manifest,
       scannedFiles,
       workspaceUniversalIdentifiers,
+      unreconciledUniversalIdentifiers: new Set(
+        base.unreconciledUniversalIdentifiers,
+      ),
     });
     const protectedIdentifiers = new Set<string>();
 
@@ -94,13 +97,29 @@ export const pullApplication = async (
           deletion.universalIdentifier in base.manifest.translations,
       ),
     ];
-    const finalWrite = createPullBaseWrite({ target, manifest });
+    const skipped = [...plan.skipped, ...safePlan.skipped];
+    const unreconciledUniversalIdentifiers = new Set(
+      skipped.map((entry) => entry.universalIdentifier.toLowerCase()),
+    );
+    const finalWrite = createPullBaseWrite({
+      target,
+      manifest: reconcilePullBaseManifest({
+        manifest,
+        baseManifest: base.manifest,
+        unreconciledUniversalIdentifiers,
+        protectedIdentifiers,
+      }),
+      unreconciledUniversalIdentifiers: [...unreconciledUniversalIdentifiers],
+    });
 
-    await assertPullPaths(appPath, [
-      ...writes.map((write) => write.relativePath),
-      ...deletions.map((deletion) => deletion.relativePath),
-      finalWrite.relativePath,
-    ]);
+    await assertPullPaths({
+      appPath,
+      relativePaths: [
+        ...writes.map((write) => write.relativePath),
+        ...deletions.map((deletion) => deletion.relativePath),
+        finalWrite.relativePath,
+      ],
+    });
 
     const overwrittenLocalChanges = await getOverwrittenLocalChanges({
       appPath,
@@ -108,6 +127,9 @@ export const pullApplication = async (
       writes,
       deletions,
       frontComponentSourcePaths,
+      unreconciledUniversalIdentifiers: new Set(
+        base.unreconciledUniversalIdentifiers,
+      ),
     });
     const entityLabelByUniversalIdentifier =
       buildManifestEntityLabelByUniversalIdentifier(manifest);
@@ -132,7 +154,7 @@ export const pullApplication = async (
         unreadableRelativePaths: scannedFiles
           .filter((file) => !file.isReadable)
           .map((file) => file.relativePath),
-        skipped: [...plan.skipped, ...safePlan.skipped],
+        skipped,
         compiledTranslationEntryCountByLocale:
           translationPlan.compiledEntryCountByLocale,
         entityLabelByUniversalIdentifier,

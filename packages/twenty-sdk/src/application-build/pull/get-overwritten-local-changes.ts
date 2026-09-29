@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildPullEntities } from '@/cli/utilities/pull/build-pull-entities';
+import { buildPullBaseEntities } from '@/cli/utilities/pull/build-pull-base-entities';
 import {
   type PullDeletion,
   type PullWrite,
@@ -17,19 +17,24 @@ export const getOverwrittenLocalChanges = async ({
   writes,
   deletions,
   frontComponentSourcePaths,
+  unreconciledUniversalIdentifiers,
 }: {
   appPath: string;
   baseManifest: Manifest | null;
   writes: PullWrite[];
   deletions: PullDeletion[];
   frontComponentSourcePaths: string[];
+  unreconciledUniversalIdentifiers?: ReadonlySet<string>;
 }): Promise<PullDeletion[]> => {
   if (!isDefined(baseManifest)) {
     return [];
   }
 
   const baseContents = new Map(
-    buildPullEntities(baseManifest).entities.map((entity) => [
+    buildPullBaseEntities({
+      manifest: baseManifest,
+      unreconciledUniversalIdentifiers,
+    }).map((entity) => [
       entity.universalIdentifier,
       writeDefineFile({
         definer: entity.definer,

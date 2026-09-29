@@ -114,7 +114,7 @@ const innerAppPull = async (
 
   onProgress?.('Reading local source files...');
 
-  const scannedFiles = await scanProjectSourceFiles(appPath);
+  const scannedFiles = await scanProjectSourceFiles({ appPath });
   const localApplicationFile = scannedFiles.find(
     (scannedFile) => scannedFile.entityKey === ManifestEntityKey.Application,
   );

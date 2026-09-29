@@ -1,6 +1,6 @@
 import { assertPullPaths } from '@/application-build/pull/assert-pull-paths';
 import { prepareAppPull } from '@/application-build/pull/prepare-app-pull';
-import { createPullBaseWrite } from '@/application-build/pull/target-bound-pull-base';
+import { createPullBaseWrite } from '@/application-build/pull/create-pull-base-write';
 import { type PullAppOptions } from '@/application-build/pull/types';
 import { type BuildResult } from '@/application-build/types';
 import { validateAppPath } from '@/application-build/validate-app-path';
@@ -23,7 +23,10 @@ export const recordApplicationBase = async (
       manifest: applicationExport.manifest,
     });
 
-    await assertPullPaths(appPath, [finalWrite.relativePath]);
+    await assertPullPaths({
+      appPath,
+      relativePaths: [finalWrite.relativePath],
+    });
     signal?.throwIfAborted();
     await applyPullWrites({
       appPath,

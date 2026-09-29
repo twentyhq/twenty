@@ -363,6 +363,189 @@ describe('programmatic application pull', () => {
       }
     },
   );
+  it('retries a skipped replacement and applies a later confirmed nested deletion', async () => {
+    const originalExport = createExport();
+    originalExport.manifest.objects[0].fields.push({
+      universalIdentifier: OTHER_IDENTIFIER,
+      name: 'note',
+      label: 'Note',
+      type: 'TEXT',
+    });
+    requireSuccess(await pull(originalExport));
+    const original = await read(OBJECT_PATH);
+    const partialExport = createExport({
+      label: 'Changed remotely',
+      coverage: [
+        {
+          metadataName: 'fieldMetadata',
+          universalIdentifier: OTHER_IDENTIFIER,
+          status: 'UNSUPPORTED',
+          reason: 'unsupported field',
+        },
+      ],
+    });
+    partialExport.manifest.application.displayName = 'Changed application';
+
+    requireSuccess(await pull(partialExport));
+    expect(await read(OBJECT_PATH)).toBe(original);
+    const localApplication = (await read('src/application.config.ts')).replace(
+      'Changed application',
+      'Locally edited application',
+    );
+    await writeFile(
+      join(appPath, 'src/application.config.ts'),
+      localApplication,
+    );
+
+    const repeated = requireSuccess(await pull(partialExport));
+    expect(repeated.skipped).toContainEqual(
+      expect.objectContaining({ universalIdentifier: OBJECT_IDENTIFIER }),
+    );
+    expect(repeated.writes).toEqual([]);
+
+    const completed = requireSuccess(
+      await pull({ ...partialExport, coverage: [] }),
+    );
+    expect(completed.writes).toEqual([
+      expect.objectContaining({ relativePath: OBJECT_PATH }),
+    ]);
+    expect(completed.skipped).toEqual([]);
+    expect(completed.overwrittenLocalChanges).toEqual([]);
+    expect(await read(OBJECT_PATH)).toContain('Changed remotely');
+    expect(await read(OBJECT_PATH)).not.toContain(OTHER_IDENTIFIER);
+    expect(await read('src/application.config.ts')).toBe(localApplication);
+    expect(
+      requireSuccess(await pull({ ...partialExport, coverage: [] })).writes,
+    ).toEqual([]);
+  });
+
+  it('retries a skipped file without a prior base once its local-only child is removed', async () => {
+    requireSuccess(await pull());
+    const sourceWithoutChild = await read(OBJECT_PATH);
+    const originalExport = createExport();
+    originalExport.manifest.objects[0].fields.push({
+      universalIdentifier: OTHER_IDENTIFIER,
+      name: 'note',
+      label: 'Note',
+      type: 'TEXT',
+    });
+    requireSuccess(await pull(originalExport));
+    await rm(join(appPath, BASE_PATH));
+    const changed = createExport({ label: 'Changed remotely' });
+    expect(requireSuccess(await pull(changed)).skipped).toHaveLength(1);
+
+    await writeFile(join(appPath, OBJECT_PATH), sourceWithoutChild);
+
+    const result = requireSuccess(await pull(changed));
+    expect(result.writes).toContainEqual(
+      expect.objectContaining({ relativePath: OBJECT_PATH }),
+    );
+    expect(result.skipped).toEqual([]);
+    expect(await read(OBJECT_PATH)).toContain('Changed remotely');
+  });
+
+  it('retries a skipped application declaration without a prior base', async () => {
+    requireSuccess(await pull());
+    const applicationPath = 'src/application.config.ts';
+    const originalApplication = await read(applicationPath);
+    await writeFile(
+      join(appPath, applicationPath),
+      originalApplication.replace(
+        "displayName: 'Pets',",
+        `displayName: 'Pets', postInstallLogicFunction: { universalIdentifier: '${OTHER_IDENTIFIER}' },`,
+      ),
+    );
+    await rm(join(appPath, BASE_PATH));
+    const changed = createExport();
+    changed.manifest.application.displayName = 'Changed remotely';
+
+    expect(requireSuccess(await pull(changed)).skipped).toContainEqual(
+      expect.objectContaining({
+        universalIdentifier: APPLICATION_IDENTIFIER,
+      }),
+    );
+    await writeFile(join(appPath, applicationPath), originalApplication);
+
+    const result = requireSuccess(await pull(changed));
+    expect(result.skipped).toEqual([]);
+    expect(result.writes).toContainEqual(
+      expect.objectContaining({ relativePath: applicationPath }),
+    );
+    expect(await read(applicationPath)).toContain('Changed remotely');
+  });
+
+  it('retains a covered whole-file base until its remote deletion is confirmed', async () => {
+    requireSuccess(await pull());
+    const partialExport = createExport({
+      includeObject: false,
+      coverage: [
+        {
+          metadataName: 'objectMetadata',
+          universalIdentifier: OBJECT_IDENTIFIER,
+          status: 'UNSUPPORTED',
+          reason: 'unsupported object',
+        },
+      ],
+    });
+    requireSuccess(await pull(partialExport));
+    const result = requireSuccess(
+      await pull({ ...partialExport, coverage: [] }),
+    );
+
+    expect(result.deletions).toEqual([
+      { universalIdentifier: OBJECT_IDENTIFIER, relativePath: OBJECT_PATH },
+    ]);
+    await expect(read(OBJECT_PATH)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('preserves application edits while a newly skipped default role is retried', async () => {
+    const exported = createExport();
+    const role = {
+      universalIdentifier: OTHER_IDENTIFIER,
+      label: 'Reader',
+      objectPermissions: [
+        {
+          universalIdentifier: INDEX_IDENTIFIER,
+          objectUniversalIdentifier: OBJECT_IDENTIFIER,
+          canReadObjectRecords: true,
+        },
+      ],
+    };
+    requireSuccess(
+      await pull({
+        ...exported,
+        manifest: { ...exported.manifest, roles: [role] },
+      }),
+    );
+    await rm(join(appPath, BASE_PATH));
+    const partialExport = {
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        roles: [{ ...role, label: 'Changed role', objectPermissions: [] }],
+      },
+    };
+    const first = requireSuccess(await pull(partialExport));
+    expect(first.skipped).toContainEqual(
+      expect.objectContaining({ universalIdentifier: OTHER_IDENTIFIER }),
+    );
+    const localApplication = (await read('src/application.config.ts')).replace(
+      'Pets',
+      'Locally edited application',
+    );
+    await writeFile(
+      join(appPath, 'src/application.config.ts'),
+      localApplication,
+    );
+
+    const second = requireSuccess(await pull(partialExport));
+    expect(second.skipped).toContainEqual(
+      expect.objectContaining({ universalIdentifier: OTHER_IDENTIFIER }),
+    );
+    expect(second.writes).toEqual([]);
+    expect(await read('src/application.config.ts')).toBe(localApplication);
+  });
+
   it('deletes a remotely removed base entity and preserves a local-only definition', async () => {
     requireSuccess(await pull());
     const local = (await read(OBJECT_PATH))
@@ -442,6 +625,19 @@ describe('programmatic application pull', () => {
     expect(JSON.parse(await read(BASE_PATH))).toMatchObject({
       manifest: { objects: [{ labelSingular: 'Applied' }] },
     });
+  });
+  it('does not infer deletions from malformed reconciliation state', async () => {
+    requireSuccess(await pull());
+    const base = JSON.parse(await read(BASE_PATH));
+    base.unreconciledUniversalIdentifiers = ['not-an-identifier'];
+    await writeFile(join(appPath, BASE_PATH), JSON.stringify(base));
+
+    const result = requireSuccess(
+      await pull(createExport({ includeObject: false })),
+    );
+    expect(result.base.status).toBe('unreadable');
+    expect(result.deletions).toEqual([]);
+    expect(await read(OBJECT_PATH)).toContain('defineObject');
   });
   it.each([
     null,

@@ -1,10 +1,13 @@
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, relative, resolve, sep } from 'node:path';
 
-export const assertPullPaths = async (
-  appPath: string,
-  relativePaths: string[],
-): Promise<void> => {
+export const assertPullPaths = async ({
+  appPath,
+  relativePaths,
+}: {
+  appPath: string;
+  relativePaths: string[];
+}): Promise<void> => {
   for (const relativePath of relativePaths) {
     const containedPath = relative(appPath, resolve(appPath, relativePath));
 
