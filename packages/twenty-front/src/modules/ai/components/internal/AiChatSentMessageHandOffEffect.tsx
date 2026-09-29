@@ -20,13 +20,16 @@ export const AiChatSentMessageHandOffEffect = ({
   const store = useStore();
 
   const handOffSentMessage = () => {
+    if (!isComposerCentered) {
+      store.set(agentChatSentMessageHandOffState.atom, null);
+      return;
+    }
+
     if (
-      !isComposerCentered ||
       !isDefined(editor) ||
       editor.isDestroyed ||
       !isNonEmptyString(editor.getText().trim())
     ) {
-      store.set(agentChatSentMessageHandOffState.atom, null);
       return;
     }
 
