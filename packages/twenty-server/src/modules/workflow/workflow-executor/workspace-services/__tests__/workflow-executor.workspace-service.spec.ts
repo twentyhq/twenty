@@ -1,4 +1,8 @@
-import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import {
+  StepStatus,
+  type WorkflowRunStepInfos,
+  type WorkflowRunStepLog,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { type BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -53,11 +57,17 @@ describe('WorkflowExecutorWorkspaceService', () => {
     {} as MessageQueueService,
   );
 
+  const previousStepLog = {
+    status: 'SUCCESS',
+    details: { type: 'AI_AGENT' },
+  } as unknown as WorkflowRunStepLog;
+
   const mockWorkflowRun = (stepInfos: WorkflowRunStepInfos) =>
     workflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValue({
       id: WORKFLOW_RUN_ID,
       status: WorkflowRunStatus.RUNNING,
       coreWorkflowId: 'workflow-id',
+      stepLogs: { [AGENT_STEP_ID]: previousStepLog },
       state: {
         flow: {
           steps: [
@@ -81,16 +91,17 @@ describe('WorkflowExecutorWorkspaceService', () => {
     workflowAction.execute.mockResolvedValue({ result: { response: 'done' } });
   });
 
-  describe('resumeAnsweredStep', () => {
-    it('runs the claimed step without charging it or checking the quota again', async () => {
+  describe('executeFromSteps', () => {
+    it('runs a resumed step without charging it or checking the quota again', async () => {
       mockWorkflowRun({
         [AGENT_STEP_ID]: { status: StepStatus.RUNNING, threadId: 'thread' },
       });
 
-      await service.resumeAnsweredStep({
-        stepId: AGENT_STEP_ID,
+      await service.executeFromSteps({
+        stepIds: [AGENT_STEP_ID],
         workflowRunId: WORKFLOW_RUN_ID,
         workspaceId: WORKSPACE_ID,
+        resumedThreadId: 'thread',
       });
 
       expect(workflowAction.execute).toHaveBeenCalledTimes(1);
@@ -98,6 +109,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         expect.objectContaining({
           currentStepId: AGENT_STEP_ID,
           resumedThreadId: 'thread',
+          previousStepLog,
         }),
       );
       expect(
@@ -112,9 +124,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(usageLimitQuotaService.consumeQuota).not.toHaveBeenCalled();
       expect(usageRecorderService.record).not.toHaveBeenCalled();
     });
-  });
 
-  describe('executeFromSteps', () => {
     it('charges a step it runs, whatever conversation it holds', async () => {
       mockWorkflowRun({
         [AGENT_STEP_ID]: { status: StepStatus.NOT_STARTED, threadId: 'thread' },
@@ -128,7 +138,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       expect(workflowAction.execute).toHaveBeenCalledTimes(1);
       expect(workflowAction.execute).toHaveBeenCalledWith(
-        expect.objectContaining({ resumedThreadId: undefined }),
+        expect.objectContaining({
+          resumedThreadId: undefined,
+          previousStepLog: undefined,
+        }),
       );
       expect(billingUsageService.assertUsageAllowed).toHaveBeenCalledTimes(1);
       expect(usageLimitQuotaService.consumeQuota).toHaveBeenCalledTimes(1);

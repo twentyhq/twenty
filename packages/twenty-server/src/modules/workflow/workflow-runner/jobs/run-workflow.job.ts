@@ -43,7 +43,7 @@ export class RunWorkflowJob {
     workflowRunId,
     lastExecutedStepId,
     stepIdsToRetry,
-    stepIdToResume,
+    stepToResume,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
     this.logger.log(
@@ -53,11 +53,11 @@ export class RunWorkflowJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        if (isDefined(stepIdToResume)) {
+        if (isDefined(stepToResume)) {
           await this.resumeAnsweredStep({
             workspaceId,
             workflowRunId,
-            stepIdToResume,
+            stepToResume,
           });
         } else if (isDefined(stepIdsToRetry)) {
           await this.retryWorkflowExecution({
@@ -227,33 +227,18 @@ export class RunWorkflowJob {
   // is what makes a second resume of the same step do nothing.
   private async resumeAnsweredStep({
     workflowRunId,
-    stepIdToResume,
+    stepToResume: { stepId, threadId },
     workspaceId,
   }: {
     workflowRunId: string;
-    stepIdToResume: string;
+    stepToResume: { stepId: string; threadId: string };
     workspaceId: string;
   }): Promise<void> {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId,
-        workspaceId,
-      });
-
-    const stepInfo = workflowRun.state?.stepInfos?.[stepIdToResume];
-
-    if (
-      workflowRun.status !== WorkflowRunStatus.RUNNING ||
-      stepInfo?.status !== StepStatus.PENDING ||
-      !isDefined(stepInfo.threadId)
-    ) {
-      return;
-    }
-
     const isClaimed =
       await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-        stepId: stepIdToResume,
+        stepId,
         stepInfo: { status: StepStatus.RUNNING },
+        expectedThreadId: threadId,
         workflowRunId,
         workspaceId,
       });
@@ -262,10 +247,11 @@ export class RunWorkflowJob {
       return;
     }
 
-    await this.workflowExecutorWorkspaceService.resumeAnsweredStep({
-      stepId: stepIdToResume,
+    await this.workflowExecutorWorkspaceService.executeFromSteps({
+      stepIds: [stepId],
       workflowRunId,
       workspaceId,
+      resumedThreadId: threadId,
     });
   }
 

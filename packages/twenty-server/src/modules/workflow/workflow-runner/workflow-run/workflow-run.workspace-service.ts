@@ -418,15 +418,19 @@ export class WorkflowRunWorkspaceService {
   // the step no longer PENDING. A stop is refused too: endWorkflowRun turns a
   // pending step into FAILED, and a stop still waiting on another branch
   // leaves the run STOPPING with the step PENDING but nothing left to resume.
+  // An expected conversation must still be the step's: a retry or another loop
+  // iteration replaces it.
   @WithLock('workflowRunId')
   async updateStepInfoIfPending({
     stepId,
     stepInfo,
+    expectedThreadId,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: Partial<WorkflowRunStepInfo>;
+    expectedThreadId?: string;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -439,7 +443,9 @@ export class WorkflowRunWorkspaceService {
 
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
-      currentStepInfo?.status !== StepStatus.PENDING
+      currentStepInfo?.status !== StepStatus.PENDING ||
+      (isDefined(expectedThreadId) &&
+        currentStepInfo.threadId !== expectedThreadId)
     ) {
       return false;
     }
@@ -485,11 +491,10 @@ export class WorkflowRunWorkspaceService {
     // A run conversation names no step: it belongs to the step whose current
     // execution recorded it, so one replaced by a retry or a later loop
     // iteration belongs to no step anymore.
-    const stepInfos = workflowRun.state?.stepInfos ?? {};
-    const stepId = Object.keys(stepInfos).find(
-      (candidateStepId) => stepInfos[candidateStepId]?.threadId === threadId,
-    );
-    const currentStepInfo = isDefined(stepId) ? stepInfos[stepId] : undefined;
+    const [stepId, currentStepInfo] =
+      Object.entries(workflowRun.state?.stepInfos ?? {}).find(
+        ([, stepInfo]) => stepInfo?.threadId === threadId,
+      ) ?? [];
 
     if (
       workflowRun.status !== WorkflowRunStatus.RUNNING ||

@@ -51,7 +51,7 @@ describe('WorkflowRunnerWorkspaceService', () => {
         {
           workspaceId: WORKSPACE_ID,
           workflowRunId: WORKFLOW_RUN_ID,
-          stepIdToResume: 'agent-step-id',
+          stepToResume: { stepId: 'agent-step-id', threadId: THREAD_ID },
         },
         expect.objectContaining({ id: WORKFLOW_RUN_ID }),
       );

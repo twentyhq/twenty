@@ -14,7 +14,6 @@ import { AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrad
 import { SyncDeactivateWorkflowAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607920000-sync-deactivate-workflow-availability.command';
 import { RemoveAddNodeWorkflowCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607921000-remove-add-node-workflow-command-menu-item.command';
 import { AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
-import { DropChatThreadWorkflowStepIdCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790677027260-drop-chat-thread-workflow-step-id.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -38,7 +37,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     RemoveAddNodeWorkflowCommandMenuItemCommand,
     SyncShortLinkObjectCommand,
     AddInputAskObjectCommand,
-    DropChatThreadWorkflowStepIdCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

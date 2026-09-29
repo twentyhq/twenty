@@ -7,7 +7,7 @@ export const mergeAiAgentStepLogs = ({
   previousStepLog,
   nextStepLog,
 }: {
-  previousStepLog: WorkflowRunStepLog | null;
+  previousStepLog?: WorkflowRunStepLog;
   nextStepLog: WorkflowRunStepLog;
 }): WorkflowRunStepLog => {
   const previousDetails = previousStepLog?.details;
