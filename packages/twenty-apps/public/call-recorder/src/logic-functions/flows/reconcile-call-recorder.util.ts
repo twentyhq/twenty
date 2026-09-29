@@ -217,9 +217,14 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
       computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
   );
   const policyManagedCallRecordingsById = new Map(
-    (await findCallRecordingsByIds(client, activeMeetingCallRecordingIds)).map(
-      (callRecording) => [callRecording.id, callRecording],
-    ),
+    (
+      await findCallRecordingsByIds(
+        client,
+        meetingPolicyResults.map((meetingPolicyResult) =>
+          computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
+        ),
+      )
+    ).map((callRecording) => [callRecording.id, callRecording]),
   );
   const canceledMeetingReconciliations = await reconcileCanceledMeetings({
     client,
@@ -228,6 +233,7 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
     ),
     removedCalendarEventIdsByMeetingKey,
     callRecordingsByCalendarEventId,
+    policyManagedCallRecordingsById,
     activeMeetingCallRecordingIds: new Set(activeMeetingCallRecordingIds),
   });
 
@@ -267,12 +273,14 @@ const reconcileCanceledMeetings = async ({
   meetingPolicyResults,
   removedCalendarEventIdsByMeetingKey,
   callRecordingsByCalendarEventId,
+  policyManagedCallRecordingsById,
   activeMeetingCallRecordingIds,
 }: {
   client: CoreApiClient;
   meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
   removedCalendarEventIdsByMeetingKey: Map<string, string[]>;
   callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
+  policyManagedCallRecordingsById: Map<string, CallRecordingRecord>;
   activeMeetingCallRecordingIds: Set<string>;
 }): Promise<CanceledMeetingReconciliation[]> => {
   const callRecordingIdsCanceledInBatch = new Set<string>();
@@ -280,6 +288,7 @@ const reconcileCanceledMeetings = async ({
 
   for (const meetingPolicyResult of meetingPolicyResults) {
     const meetingCallRecordings = collectCanceledMeetingCallRecordings({
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
       calendarEventIds: [
         ...meetingPolicyResult.calendarEventIds,
         ...(removedCalendarEventIdsByMeetingKey.get(
@@ -287,6 +296,7 @@ const reconcileCanceledMeetings = async ({
         ) ?? []),
       ],
       callRecordingsByCalendarEventId,
+      policyManagedCallRecordingsById,
       callRecordingIdsCanceledInBatch,
       activeMeetingCallRecordingIds,
     });
@@ -822,21 +832,48 @@ const collectCallRecordingsForCalendarEventIds = ({
       callRecordingsByCalendarEventId.get(calendarEventId) ?? [],
   );
 
+const collectOrphanedPolicyManagedCallRecordings = ({
+  realMeetingKey,
+  policyManagedCallRecordingsById,
+}: {
+  realMeetingKey: string;
+  policyManagedCallRecordingsById: Map<string, CallRecordingRecord>;
+}): CallRecordingRecord[] => {
+  const policyManagedCallRecording = policyManagedCallRecordingsById.get(
+    computeCallRecordingIdForMeeting(realMeetingKey),
+  );
+
+  return !isUndefined(policyManagedCallRecording) &&
+    isUndefined(policyManagedCallRecording.calendarEventId)
+    ? [policyManagedCallRecording]
+    : [];
+};
+
 const collectCanceledMeetingCallRecordings = ({
+  realMeetingKey,
   calendarEventIds,
   callRecordingsByCalendarEventId,
+  policyManagedCallRecordingsById,
   callRecordingIdsCanceledInBatch,
   activeMeetingCallRecordingIds,
 }: {
+  realMeetingKey: string;
   calendarEventIds: string[];
   callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
+  policyManagedCallRecordingsById: Map<string, CallRecordingRecord>;
   callRecordingIdsCanceledInBatch: Set<string>;
   activeMeetingCallRecordingIds: Set<string>;
 }): CallRecordingRecord[] =>
-  collectCallRecordingsForCalendarEventIds({
-    calendarEventIds,
-    callRecordingsByCalendarEventId,
-  })
+  [
+    ...collectCallRecordingsForCalendarEventIds({
+      calendarEventIds,
+      callRecordingsByCalendarEventId,
+    }),
+    ...collectOrphanedPolicyManagedCallRecordings({
+      realMeetingKey,
+      policyManagedCallRecordingsById,
+    }),
+  ]
     .filter(
       (callRecording) => !activeMeetingCallRecordingIds.has(callRecording.id),
     )

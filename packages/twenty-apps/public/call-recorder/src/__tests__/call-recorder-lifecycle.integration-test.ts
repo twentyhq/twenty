@@ -1117,6 +1117,23 @@ describe('call recorder app lifecycle (integration)', () => {
       ),
     });
 
+  const deliverCalendarEventDestroyed = (
+    destroyedCalendarEvent: Record<string, unknown> & { id: string },
+  ) =>
+    (
+      reconcileCalendarEventLogicFunction.config.handler as (
+        batch: unknown,
+      ) => Promise<object | undefined>
+    )({
+      name: 'calendarEvent.destroyed',
+      events: [
+        {
+          recordId: destroyedCalendarEvent.id,
+          properties: { before: destroyedCalendarEvent },
+        },
+      ],
+    });
+
   const updateCalendarEventForDelivery = async (
     calendarEventId: string,
     data: Partial<CalendarEventFixture>,
@@ -1156,6 +1173,29 @@ describe('call recorder app lifecycle (integration)', () => {
       before,
       after: { ...before, ...data },
     };
+  };
+
+  const simulateCalendarEventDestroy = async ({
+    calendarEventId,
+    callRecordingId,
+  }: {
+    calendarEventId: string;
+    callRecordingId: string;
+  }) => {
+    const { before } = await updateCalendarEventForDelivery(calendarEventId, {
+      startsAt: daysAgo(9),
+      endsAt: daysAgo(8),
+    });
+
+    await client.mutation({
+      updateCallRecording: {
+        __args: { id: callRecordingId, data: { calendarEventId: null } },
+        id: true,
+      },
+    });
+    createdCallRecordingIds.push(callRecordingId);
+
+    return before;
   };
 
   const interceptCoreApiRequests = (
@@ -1493,6 +1533,23 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.deletedBotIds).toEqual([botId]);
       expect(recall.bots.size).toBe(0);
       expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+    });
+
+    it('cancels the bot of a meeting whose calendar event was destroyed', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const destroyedCalendarEvent = await simulateCalendarEventDestroy({
+        calendarEventId,
+        callRecordingId,
+      });
+
+      await deliverCalendarEventDestroyed(destroyedCalendarEvent);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+      expect(callRecording.recordingRequestStatus).toBe('CANCELED');
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect(recall.bots.size).toBe(0);
     });
 
     it('keeps the replacement recorder when the same reschedule is delivered twice', async () => {
