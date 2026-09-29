@@ -6,7 +6,6 @@ import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingSt
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
-import { onboardingInviteTeamHasTypedEmailState } from '@/onboarding/states/onboardingInviteTeamHasTypedEmailState';
 import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
 import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
@@ -125,22 +124,11 @@ export const useInviteTeam = () => {
   ]);
 
   useEffect(() => {
-    const subscription = watch(({ emails }, { name, type }) => {
+    const subscription = watch(({ emails }) => {
       if (!emails) {
         return;
       }
       const emailValues = emails.map((email) => email?.email);
-
-      const changedEmailIndex = Number(
-        name?.match(/^emails\.(\d+)\.email$/)?.[1],
-      );
-      if (
-        type === 'change' &&
-        isNonEmptyArray(getValidInviteEmails([emailValues[changedEmailIndex]]))
-      ) {
-        store.set(onboardingInviteTeamHasTypedEmailState.atom, true);
-      }
-
       store.set(
         onboardingInviteTeamEmailsDraftState.atom,
         emailValues.map((email) => email ?? ''),
