@@ -3,7 +3,9 @@ import { ONBOARDING_INSTALLABLE_APPS } from '@/onboarding/constants/OnboardingIn
 import { InstallAppsAutoSkipEffect } from '@/onboarding/effect-components/InstallAppsAutoSkipEffect';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
 import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingStepEnterHotkey';
+import { onboardingRewardCreditsByStepSelector } from '@/onboarding/states/selectors/onboardingRewardCreditsByStepSelector';
 import { PageFocusId } from '@/types/PageFocusId';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InstallAppsContent } from '~/pages/onboarding/InstallAppsContent';
@@ -36,12 +38,15 @@ export const InstallApps = () => {
   const {
     selectedUniversalIdentifiers,
     isCompleting,
-    creditsReward,
     toggleApp,
     installSelectedAppsAndContinue,
     skip,
   } = useInstallOnboardingApps(
     availableApps.map((app) => app.universalIdentifier),
+  );
+
+  const { installApps: installAppsCreditsReward } = useAtomStateValue(
+    onboardingRewardCreditsByStepSelector,
   );
 
   useOnboardingStepEnterHotkey({
@@ -78,7 +83,7 @@ export const InstallApps = () => {
       apps={availableApps}
       selectedUniversalIdentifiers={selectedUniversalIdentifiers}
       isCompleting={isCompleting}
-      creditsReward={creditsReward}
+      creditsReward={installAppsCreditsReward}
       onToggleApp={toggleApp}
       onInstall={installSelectedAppsAndContinue}
       onSkip={skip}

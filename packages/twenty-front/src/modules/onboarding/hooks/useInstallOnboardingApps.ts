@@ -1,16 +1,14 @@
-import { currentUserState } from '@/auth/states/currentUserState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { useTriggerInstallAppsOnboardingStep } from '@/onboarding/hooks/useTriggerInstallAppsOnboardingStep';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { onboardingRewardCreditsByStepSelector } from '@/onboarding/states/selectors/onboardingRewardCreditsByStepSelector';
+import { useStore } from 'jotai';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useInstallOnboardingApps = (
   availableUniversalIdentifiers: string[],
 ) => {
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const currentUser = useAtomStateValue(currentUserState);
+  const store = useStore();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
   const triggerInstallAppsOnboardingStep =
     useTriggerInstallAppsOnboardingStep();
@@ -18,9 +16,6 @@ export const useInstallOnboardingApps = (
   const [deselectedUniversalIdentifiers, setDeselectedUniversalIdentifiers] =
     useState<string[]>([]);
   const [isCompleting, setIsCompleting] = useState(false);
-  const creditsReward = currentUser?.isWorkspaceCreator
-    ? (onboardingConfig?.installAppsCreditsReward ?? 0)
-    : 0;
 
   const selectedUniversalIdentifiers = availableUniversalIdentifiers.filter(
     (universalIdentifier) =>
@@ -44,7 +39,9 @@ export const useInstallOnboardingApps = (
     setIsCompleting(true);
     setOnboardingStepFreeCredits(
       'installApps',
-      isNonEmptyArray(universalIdentifiers) ? creditsReward : 0,
+      isNonEmptyArray(universalIdentifiers)
+        ? store.get(onboardingRewardCreditsByStepSelector.atom).installApps
+        : 0,
     );
 
     try {
@@ -61,7 +58,6 @@ export const useInstallOnboardingApps = (
   return {
     selectedUniversalIdentifiers,
     isCompleting,
-    creditsReward,
     toggleApp,
     installSelectedAppsAndContinue: () =>
       triggerStep(selectedUniversalIdentifiers),
