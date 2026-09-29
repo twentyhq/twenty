@@ -4,10 +4,12 @@ export const buildMcpServerInstructions = ({
   objectNames,
   actionToolNames,
   skillNames,
+  isDirectMode = false,
 }: {
   objectNames: string;
   actionToolNames: string[];
   skillNames?: string;
+  isDirectMode?: boolean;
 }): string => {
   const availableActionTools = new Set(actionToolNames);
 
@@ -21,21 +23,38 @@ export const buildMcpServerInstructions = ({
     `  person.companyId → company`,
     `  note / task / activity are attachable to any object via targetRecordId`,
     ``,
-    `Meta-tools (always available):`,
-    `  execute_tool(toolName, arguments)   — execute any CRUD or action tool by name`,
-    `  learn_tools(toolNames)              — fetch input schemas before calling tools; pass ALL needed tool names in one call, not one call per tool`,
-    `  load_skills(skillNames)             — load step-by-step instructions for complex tasks`,
-    `  list_object_metadata_names()        — list this workspace's object names`,
-    `  list_skills()                       — list the available skill names`,
-    `  get_tool_catalog(categories)        — fallback discovery, only when you do not know which tool exists. Pass ONE category, never call it unfiltered`,
+    ...(isDirectMode
+      ? [
+          `Tools:`,
+          `  Every tool you can use is listed directly with its input schema. Call it by name.`,
+          `  Tools for objects or app functions created during this session only appear after reconnecting (the tool list does not change mid-session).`,
+          `  load_skills(skillNames)             — load step-by-step instructions for complex tasks`,
+          `  list_object_metadata_names()        — list this workspace's object names`,
+          `  list_skills()                       — list the available skill names`,
+        ]
+      : [
+          `Meta-tools (always available):`,
+          `  execute_tool(toolName, arguments)   — execute any CRUD or action tool by name`,
+          `  learn_tools(toolNames)              — fetch input schemas before calling tools; pass ALL needed tool names in one call, not one call per tool`,
+          `  load_skills(skillNames)             — load step-by-step instructions for complex tasks`,
+          `  list_object_metadata_names()        — list this workspace's object names`,
+          `  list_skills()                       — list the available skill names`,
+          `  get_tool_catalog(categories)        — fallback discovery, only when you do not know which tool exists. Pass ONE category, never call it unfiltered`,
+        ]),
     ``,
     ...(skillNames ? [`Available skills: ${skillNames}.`, ``] : []),
     `CRUD tool name grammar — construct names directly without prior discovery:`,
     `  Read:  find_many_{objects} | find_one_{object} | group_by_{objects}`,
     `  Write: create_one_{object} | create_many_{objects} | update_one_{object} | update_many_{objects} | delete_one_{object} | delete_many_{objects} | upsert_many_{objects}. Use upsert_many_{objects} instead of update_many_{objects} when each record has its own individual data.`,
-    `  Not sure a constructed name exists? Pass it to learn_tools — unknown names come back under notFound with the closest matching names. Never call get_tool_catalog just to check a name.`,
+    ...(isDirectMode
+      ? []
+      : [
+          `  Not sure a constructed name exists? Pass it to learn_tools — unknown names come back under notFound with the closest matching names. Never call get_tool_catalog just to check a name.`,
+        ]),
     ``,
-    `Non-CRUD tools — use learn_tools for schemas:`,
+    isDirectMode
+      ? `Non-CRUD tools:`
+      : `Non-CRUD tools — use learn_tools for schemas:`,
     `  ACTION:           ${actionToolNames.join(' | ')}`,
     `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
     `  METADATA:         get/create/update/delete_object_metadata | get/create/update/delete_field_metadata`,
@@ -43,12 +62,20 @@ export const buildMcpServerInstructions = ({
     `  VIEW:             get_views | get_view_query_parameters | create/update/delete_view | manage view fields, filters, sorts`,
     `  WEBHOOK:          list/create/update/delete_webhook`,
     `  NAVIGATION:       list/create/update/delete_navigation_menu_item`,
-    `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; use list_logic_function_tools to discover`,
-    `  Don't know which tool exists at all? get_tool_catalog with ONE category from the list above, then learn_tools, then execute_tool.`,
+    ...(isDirectMode
+      ? [
+          `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; listed with the other tools`,
+        ]
+      : [
+          `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; use list_logic_function_tools to discover`,
+          `  Don't know which tool exists at all? get_tool_catalog with ONE category from the list above, then learn_tools, then execute_tool.`,
+        ]),
     ``,
     `Skills vs Tools:`,
     `  Skills = documentation (load_skills) — teach HOW to do something, correct schemas and patterns`,
-    `  Tools  = execution (execute_tool)    — let you DO something`,
+    isDirectMode
+      ? `  Tools  = execution (call directly)   — let you DO something`
+      : `  Tools  = execution (execute_tool)    — let you DO something`,
     `  For complex tasks (workflows, metadata), load the matching skill BEFORE calling tools.`,
     `  ⚠️ Never call workflow or metadata tools without loading their skill first.`,
     ``,
@@ -66,7 +93,9 @@ export const buildMcpServerInstructions = ({
     `  Multiple metrics                → run parallel group_by calls, merge results`,
     `  Per-record updates (different data per record) → find_many_{objects} first, then upsert_many_{objects} with each record's id (or other unique identifier) and new values`,
     `  Bulk update (same data for all) → update_many_{objects}`,
-    `  Non-CRUD task                   → use tool name from the list above + learn_tools for schema`,
+    isDirectMode
+      ? `  Non-CRUD task                   → call the matching tool directly`
+      : `  Non-CRUD task                   → use tool name from the list above + learn_tools for schema`,
     ``,
     `Execution rules:`,
     `  Independent tool calls          → run in parallel`,
