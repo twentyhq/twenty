@@ -93,7 +93,6 @@ export class AgentChatWorkflowQuestionService {
     });
 
     let answerMessageId: string | undefined;
-    let releasedStepId: string | undefined;
     let isNoLongerAwaited = false;
 
     try {
@@ -110,43 +109,34 @@ export class AgentChatWorkflowQuestionService {
 
       answerMessageId = answerMessage.id;
 
-      const release =
-        await this.workflowRunWorkspaceService.releaseStepAwaitingAnswer({
+      const stepAwaitingAnswer =
+        await this.workflowRunWorkspaceService.findStepAwaitingAnswer({
           threadId: thread.id,
           workflowRunId,
           workspaceId,
         });
 
-      isNoLongerAwaited = release.status === 'NO_LONGER_AWAITING';
+      isNoLongerAwaited = stepAwaitingAnswer.status === 'NO_LONGER_AWAITING';
 
-      if (release.status !== 'RELEASED') {
+      if (stepAwaitingAnswer.status !== 'AWAITING_ANSWER') {
         throw new AiException(
           'This workflow is no longer waiting for this answer',
           AiExceptionCode.QUESTION_NOT_PENDING,
         );
       }
 
-      releasedStepId = release.stepId;
-
-      // Re-executing the released step is what a retry does; the step is no
-      // longer awaiting a retry, so the retry path runs it without resetting
-      // it. Scheduling stays inside the rollback: a released step nobody
-      // schedules would leave the run waiting on an answer it already has.
+      // The step stays PENDING, keeping its run alive, until the resume job
+      // claims it; the answer itself was claimed once above.
       await this.messageQueueService.add<RunWorkflowJobData>(
         RUN_WORKFLOW_JOB_NAME,
-        { workspaceId, workflowRunId, stepIdsToRetry: [releasedStepId] },
+        {
+          workspaceId,
+          workflowRunId,
+          stepIdToResume: stepAwaitingAnswer.stepId,
+        },
         buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {
-      if (isDefined(releasedStepId)) {
-        await this.workflowRunWorkspaceService.restoreStepAwaitingAnswer({
-          stepId: releasedStepId,
-          threadId: thread.id,
-          workflowRunId,
-          workspaceId,
-        });
-      }
-
       if (isDefined(answerMessageId)) {
         await this.messageRepository
           .delete(workspaceId, { id: answerMessageId })

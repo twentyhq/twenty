@@ -28,8 +28,8 @@ import {
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { findStepIdByThreadId } from 'src/modules/workflow/workflow-runner/utils/find-step-id-by-thread-id.util';
 
-export type StepAnswerRelease =
-  | { status: 'RELEASED'; stepId: string }
+export type StepAwaitingAnswer =
+  | { status: 'AWAITING_ANSWER'; stepId: string }
   | { status: 'NOT_YET_AWAITING' | 'NO_LONGER_AWAITING' };
 
 @Injectable()
@@ -442,13 +442,14 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // Hands the step whose agent asked a question in this conversation back to
-  // the executor, once and only for that question: a stop, a retry or another
-  // loop iteration has moved the step on or replaced its conversation. A step
-  // still RUNNING has asked but not yet been parked, which an answer only has
-  // to wait out.
+  // Finds the step whose agent asked a question in this conversation and is
+  // still waiting for its answer: a stop, a retry or another loop iteration
+  // has moved the step on or replaced its conversation. A step still RUNNING
+  // has asked but not yet been parked, which an answer only has to wait out.
+  // Nothing is written: the step stays PENDING, which keeps its run alive,
+  // until the resume job claims it.
   @WithLock('workflowRunId')
-  async releaseStepAwaitingAnswer({
+  async findStepAwaitingAnswer({
     threadId,
     workflowRunId,
     workspaceId,
@@ -456,18 +457,18 @@ export class WorkflowRunWorkspaceService {
     threadId: string;
     workflowRunId: string;
     workspaceId: string;
-  }): Promise<StepAnswerRelease> {
-    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+  }): Promise<StepAwaitingAnswer> {
+    const workflowRun = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
     });
 
-    const stepInfos = workflowRunToUpdate.state?.stepInfos ?? {};
+    const stepInfos = workflowRun.state?.stepInfos ?? {};
     const stepId = findStepIdByThreadId({ stepInfos, threadId });
     const currentStepInfo = isDefined(stepId) ? stepInfos[stepId] : undefined;
 
     if (
-      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
+      workflowRun.status !== WorkflowRunStatus.RUNNING ||
       !isDefined(stepId) ||
       !isDefined(currentStepInfo) ||
       isDefined(currentStepInfo.error)
@@ -483,68 +484,7 @@ export class WorkflowRunWorkspaceService {
       return { status: 'NO_LONGER_AWAITING' };
     }
 
-    await this.updateWorkflowRun({
-      workflowRunId,
-      workspaceId,
-      partialUpdate: {
-        state: {
-          ...workflowRunToUpdate.state,
-          stepInfos: {
-            ...workflowRunToUpdate.state?.stepInfos,
-            [stepId]: { ...currentStepInfo, status: StepStatus.NOT_STARTED },
-          },
-        },
-      },
-    });
-
-    return { status: 'RELEASED', stepId };
-  }
-
-  // Undoes releaseStepAwaitingAnswer when the resume it prepared could not be
-  // scheduled, so the question can be answered again instead of stranding the
-  // run on a step nobody will execute.
-  @WithLock('workflowRunId')
-  async restoreStepAwaitingAnswer({
-    stepId,
-    threadId,
-    workflowRunId,
-    workspaceId,
-  }: {
-    stepId: string;
-    threadId: string;
-    workflowRunId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
-      workflowRunId,
-      workspaceId,
-    });
-
-    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
-
-    if (
-      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
-      currentStepInfo?.status !== StepStatus.NOT_STARTED ||
-      currentStepInfo.threadId !== threadId
-    ) {
-      return false;
-    }
-
-    await this.updateWorkflowRun({
-      workflowRunId,
-      workspaceId,
-      partialUpdate: {
-        state: {
-          ...workflowRunToUpdate.state,
-          stepInfos: {
-            ...workflowRunToUpdate.state?.stepInfos,
-            [stepId]: { ...currentStepInfo, status: StepStatus.PENDING },
-          },
-        },
-      },
-    });
-
-    return true;
+    return { status: 'AWAITING_ANSWER', stepId };
   }
 
   @WithLock('workflowRunId')
