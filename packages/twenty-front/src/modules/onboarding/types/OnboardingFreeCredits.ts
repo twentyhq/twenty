@@ -1,8 +1,5 @@
-export type OnboardingFreeCredits = {
-  importContacts: number;
-  installApps: number;
-  createProfile: number;
-  inviteTeam: number;
-  upgradeTrial: number;
+import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
+
+export type OnboardingFreeCredits = Record<OnboardingCreditsStep, number> & {
   seenCredits: number;
 };

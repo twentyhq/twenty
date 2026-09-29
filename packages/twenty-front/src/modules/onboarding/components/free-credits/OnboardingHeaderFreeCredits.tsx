@@ -2,7 +2,7 @@ import { OnboardingFreeCreditsPill } from '@/onboarding/components/free-credits/
 import { useOnboardingCreditsProgress } from '@/onboarding/hooks/useOnboardingCreditsProgress';
 import { isDefined } from 'twenty-shared/utils';
 
-export const OnboardingFreeCredits = () => {
+export const OnboardingHeaderFreeCredits = () => {
   const progress = useOnboardingCreditsProgress();
 
   if (

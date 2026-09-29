@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
-import { OnboardingFreeCredits } from '@/onboarding/components/free-credits/OnboardingFreeCredits';
+import { OnboardingHeaderFreeCredits } from '@/onboarding/components/free-credits/OnboardingHeaderFreeCredits';
 import { PrefetchBookCallStepEffect } from '@/onboarding/effect-components/PrefetchBookCallStepEffect';
 import { PrefetchPlanRequiredStepEffect } from '@/onboarding/effect-components/PrefetchPlanRequiredStepEffect';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
@@ -29,7 +29,7 @@ export const OnboardingStepLayout = () => {
           : undefined
       }
       isBackDisabled={isGoingBackToPreviousOnboardingStep}
-      headerRightComponent={<OnboardingFreeCredits />}
+      headerRightComponent={<OnboardingHeaderFreeCredits />}
     >
       <PrefetchBookCallStepEffect />
       <PrefetchPlanRequiredStepEffect />

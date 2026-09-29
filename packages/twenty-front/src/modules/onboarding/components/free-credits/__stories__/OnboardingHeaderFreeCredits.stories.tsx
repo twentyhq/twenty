@@ -5,10 +5,10 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
-import { OnboardingFreeCredits } from '@/onboarding/components/free-credits/OnboardingFreeCredits';
+import { OnboardingHeaderFreeCredits } from '@/onboarding/components/free-credits/OnboardingHeaderFreeCredits';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
-import { type OnboardingFreeCredits as OnboardingFreeCreditsCounter } from '@/onboarding/types/OnboardingFreeCredits';
+import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
@@ -22,7 +22,7 @@ const seedOnboardingFreeCredits = ({
   onboardingFreeCredits = {},
 }: {
   onboardingStatus: OnboardingStatus;
-  onboardingFreeCredits?: Partial<OnboardingFreeCreditsCounter>;
+  onboardingFreeCredits?: Partial<OnboardingFreeCredits>;
 }) => {
   jotaiStore.set(onboardingConfigState.atom, {
     importContactsCreditsReward: 1,
@@ -55,9 +55,9 @@ const findVisibleTooltip = async (canvasElement: HTMLElement, text: string) => {
   await waitFor(() => expect(tooltip).toBeVisible());
 };
 
-const meta: Meta<typeof OnboardingFreeCredits> = {
+const meta: Meta<typeof OnboardingHeaderFreeCredits> = {
   title: 'Modules/Onboarding/FreeCredits',
-  component: OnboardingFreeCredits,
+  component: OnboardingHeaderFreeCredits,
   decorators: [ComponentDecorator, WorkspaceDecorator],
   parameters: {
     container: { width: 360, height: 560 },
@@ -65,7 +65,7 @@ const meta: Meta<typeof OnboardingFreeCredits> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof OnboardingFreeCredits>;
+type Story = StoryObj<typeof OnboardingHeaderFreeCredits>;
 
 export const FirstStep: Story = {
   beforeEach: () => {
