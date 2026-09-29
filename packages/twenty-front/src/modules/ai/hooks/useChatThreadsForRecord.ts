@@ -127,12 +127,14 @@ export const useChatThreadsForRecord = ({
     ({
       operation,
     }: MetadataOperationBrowserEventDetail<FlatAgentChatThread>) => {
+      if (operation.type === 'create') {
+        return;
+      }
+
       const threadId =
         operation.type === 'delete'
           ? operation.deletedRecordId
-          : operation.type === 'update'
-            ? operation.updatedRecord.id
-            : undefined;
+          : operation.updatedRecord.id;
       const isThreadListed = links.some((link) => link.threadId === threadId);
 
       if (operation.type === 'update' && isThreadListed) {
