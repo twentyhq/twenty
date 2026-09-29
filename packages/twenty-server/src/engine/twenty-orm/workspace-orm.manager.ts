@@ -21,6 +21,7 @@ import {
   withWorkspaceContext,
   getWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import type { RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -78,15 +79,21 @@ export class WorkspaceOrmManager {
   >(
     objectMetadataName: string,
     transactionScope?: WorkspaceTransactionScope,
+    readScope: RecordReadScope = 'content',
   ): WorkspaceRepository<TData> {
     const context = getWorkspaceContext();
-    const permissionConfig = resolveRolePermissionConfig(context);
-    if (!isDefined(permissionConfig)) {
+    const rolePermissionConfig = resolveRolePermissionConfig(context);
+    if (!isDefined(rolePermissionConfig)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
+    const permissionConfig: RolePermissionConfig =
+      readScope === 'content' ||
+      'shouldBypassPermissionChecks' in rolePermissionConfig
+        ? rolePermissionConfig
+        : { ...rolePermissionConfig, readScope };
     return isDefined(transactionScope)
       ? transactionScope.getRepository<TData>(
           objectMetadataName,

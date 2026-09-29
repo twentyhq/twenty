@@ -212,6 +212,7 @@ export interface Object {
     openRecordIn: ObjectOpenRecordIn
     readability: MetadataReadability
     readabilityParentFieldUniversalIdentifiers?: Scalars['UUID'][]
+    discoverableFieldUniversalIdentifiers?: Scalars['UUID'][]
     writability: MetadataWritability
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -230,7 +231,7 @@ export interface Object {
 
 export type ObjectOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE' | 'USER_CHOICE'
 
-export type MetadataReadability = 'OPEN' | 'PRIVATE' | 'INHERITED' | 'APPLICATION' | 'SYSTEM'
+export type MetadataReadability = 'OPEN' | 'PRIVATE' | 'DISCOVERABLE' | 'INHERITED' | 'APPLICATION' | 'SYSTEM'
 
 export type MetadataWritability = 'OPEN' | 'APPLICATION' | 'SYSTEM'
 
@@ -3992,6 +3993,7 @@ export interface ObjectGenqlSelection{
     openRecordIn?: boolean | number
     readability?: boolean | number
     readabilityParentFieldUniversalIdentifiers?: boolean | number
+    discoverableFieldUniversalIdentifiers?: boolean | number
     writability?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -10819,6 +10821,7 @@ export const enumObjectOpenRecordIn = {
 export const enumMetadataReadability = {
    OPEN: 'OPEN' as const,
    PRIVATE: 'PRIVATE' as const,
+   DISCOVERABLE: 'DISCOVERABLE' as const,
    INHERITED: 'INHERITED' as const,
    APPLICATION: 'APPLICATION' as const,
    SYSTEM: 'SYSTEM' as const

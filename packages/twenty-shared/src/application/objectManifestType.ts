@@ -21,6 +21,9 @@ export type ObjectManifest = SyncableEntityOptions & {
   writability?: MetadataWritability;
   readability?: MetadataReadability;
   readabilityParentFieldUniversalIdentifiers?: string[] | null;
+  // Readable without a grant, beside id, createdAt and createdBy, by callers
+  // asking only whether a record exists
+  discoverableFieldUniversalIdentifiers?: string[] | null;
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

@@ -8,9 +8,11 @@ export type RecordShareGateKind = 'open' | 'deny' | 'private' | 'inherited';
 export const resolveRecordShareGateKind = ({
   readability,
   isOwningApplication,
+  isExistenceRead = false,
 }: {
   readability: MetadataReadability;
   isOwningApplication: boolean;
+  isExistenceRead?: boolean;
 }): RecordShareGateKind => {
   switch (readability) {
     case MetadataReadability.OPEN:
@@ -21,6 +23,8 @@ export const resolveRecordShareGateKind = ({
       return isOwningApplication ? 'open' : 'deny';
     case MetadataReadability.PRIVATE:
       return isOwningApplication ? 'open' : 'private';
+    case MetadataReadability.DISCOVERABLE:
+      return isOwningApplication || isExistenceRead ? 'open' : 'private';
     case MetadataReadability.INHERITED:
       return isOwningApplication ? 'open' : 'inherited';
     default:

@@ -9,6 +9,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { type RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
 import { type WorkspaceRelationShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
@@ -22,6 +23,7 @@ export type RowAccessPolicySubject = {
   isSystemContext: boolean;
   objectsPermissions: ObjectsPermissions | undefined;
   principalIds: string[] | undefined;
+  readScope?: RecordReadScope;
   isOwningApplication: (objectMetadata: FlatObjectMetadata) => boolean;
   resolveRowLevelPermissionRecordFilter: (
     objectMetadata: FlatObjectMetadata,
@@ -46,4 +48,7 @@ export type RowAccessPolicyTarget = {
   operationType: OperationType;
   depth: number;
   joinParentRelationShape?: WorkspaceRelationShape;
+  // Set on the parents of an inherited record so that they are read in the
+  // scope of the record that inherits from them.
+  isExistenceRead?: boolean;
 };

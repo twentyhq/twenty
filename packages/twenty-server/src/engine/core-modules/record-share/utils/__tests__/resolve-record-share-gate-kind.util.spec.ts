@@ -65,3 +65,32 @@ describe('resolveRecordShareGateKind', () => {
     },
   );
 });
+
+describe('resolveRecordShareGateKind for DISCOVERABLE readability', () => {
+  it.each([
+    { isOwningApplication: false, isExistenceRead: false, expected: 'private' },
+    { isOwningApplication: false, isExistenceRead: true, expected: 'open' },
+    { isOwningApplication: true, isExistenceRead: false, expected: 'open' },
+  ])(
+    'should resolve $expected when isOwningApplication is $isOwningApplication and isExistenceRead is $isExistenceRead',
+    ({ isOwningApplication, isExistenceRead, expected }) => {
+      expect(
+        resolveRecordShareGateKind({
+          readability: MetadataReadability.DISCOVERABLE,
+          isOwningApplication,
+          isExistenceRead,
+        }),
+      ).toBe(expected);
+    },
+  );
+
+  it('should not open a PRIVATE object to an existence read', () => {
+    expect(
+      resolveRecordShareGateKind({
+        readability: MetadataReadability.PRIVATE,
+        isOwningApplication: false,
+        isExistenceRead: true,
+      }),
+    ).toBe('private');
+  });
+});

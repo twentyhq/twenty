@@ -73,9 +73,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const isPrivateObject =
-      queryRunnerContext.flatObjectMetadata.readability ===
-      MetadataReadability.PRIVATE;
+    const isPrivateObject = [
+      MetadataReadability.PRIVATE,
+      MetadataReadability.DISCOVERABLE,
+    ].includes(queryRunnerContext.flatObjectMetadata.readability);
     const isGatedThroughRecordShares =
       this.isGatedThroughRecordShares(queryRunnerContext);
 
@@ -625,12 +626,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   private isGatedThroughRecordShares(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    return (
-      queryRunnerContext.flatObjectMetadata.readability ===
-        MetadataReadability.PRIVATE ||
-      queryRunnerContext.flatObjectMetadata.readability ===
-        MetadataReadability.INHERITED
-    );
+    return [
+      MetadataReadability.PRIVATE,
+      MetadataReadability.DISCOVERABLE,
+      MetadataReadability.INHERITED,
+    ].includes(queryRunnerContext.flatObjectMetadata.readability);
   }
 
   private resolveNestedRelationsForCreate({

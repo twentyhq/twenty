@@ -246,6 +246,119 @@ describe('buildRowAccessPolicy', () => {
     },
   );
 
+  describe('DISCOVERABLE objects', () => {
+    const discoverablePerson = {
+      ...person,
+      readability: MetadataReadability.DISCOVERABLE,
+    };
+    const readExistence: RowAccessPolicySubject = {
+      ...readEverything,
+      readScope: 'existence',
+    };
+
+    beforeEach(() => {
+      jest.mocked(resolveInheritedReadabilityParents).mockReturnValue([
+        {
+          kind: 'column',
+          fieldMetadataId: 'target-person-field-id',
+          joinColumnName: 'targetPersonId',
+          parentFlatObjectMetadata: discoverablePerson,
+        },
+      ]);
+    });
+
+    it('gates an ordinary read on share rows like a PRIVATE object', () => {
+      expect(gatedSql(readEverything, discoverablePerson)).toContain(
+        '"person_recordShare"."recordId" = "person"."id"',
+      );
+    });
+
+    it('opens an existence read to the role predicate alone', () => {
+      expect(build(readExistence, discoverablePerson)).toEqual({
+        kind: 'open',
+      });
+      expect(
+        gatedSql(
+          {
+            ...readExistence,
+            resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
+          },
+          discoverablePerson,
+        ),
+      ).toBe('("person"."title" = :restricted)');
+    });
+
+    it('keeps writes gated on share rows in an existence read', () => {
+      const policy = buildRowAccessPolicy({
+        subject: readExistence,
+        environment,
+        tableAlias: 'person',
+        flatObjectMetadata: discoverablePerson,
+        operationType: 'update',
+        depth: 0,
+      });
+
+      expect(policy.kind).toBe('gated');
+      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      expect(policy.condition.sql).toContain('recordShare');
+    });
+
+    it('discovers the parent of a child that declares discoverable fields', () => {
+      const sql = gatedSql(readExistence, {
+        ...attachment,
+        discoverableFieldUniversalIdentifiers: [],
+      });
+
+      expect(sql).toContain('"attachment"."targetPersonId" IS NOT NULL');
+      expect(sql).not.toContain('attachment_targetPersonId_recordShare');
+    });
+
+    it('does not open a child that declares no discoverable fields when joined from its discovered parent', () => {
+      const policy = buildRowAccessPolicy({
+        subject: readExistence,
+        environment,
+        tableAlias: 'attachment',
+        flatObjectMetadata: attachment,
+        operationType: 'select',
+        depth: 0,
+        joinParentRelationShape: {
+          targetFieldMetadataId: 'target-person-field-id',
+        } as never,
+      });
+
+      expect(policy.kind).toBe('gated');
+      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      expect(policy.condition.sql).toContain(
+        'attachment_targetPersonId_recordShare',
+      );
+    });
+
+    it('opens a discoverable child joined from its discovered parent', () => {
+      expect(
+        buildRowAccessPolicy({
+          subject: readExistence,
+          environment,
+          tableAlias: 'attachment',
+          flatObjectMetadata: {
+            ...attachment,
+            discoverableFieldUniversalIdentifiers: [],
+          },
+          operationType: 'select',
+          depth: 0,
+          joinParentRelationShape: {
+            targetFieldMetadataId: 'target-person-field-id',
+          } as never,
+        }),
+      ).toEqual({ kind: 'open' });
+    });
+
+    it('keeps the parent gated for a child that declares no discoverable fields', () => {
+      expect(gatedSql(readExistence, attachment)).toContain(
+        'attachment_targetPersonId_recordShare',
+      );
+    });
+  });
+
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildRowAccessPolicy({
       subject: readEverything,

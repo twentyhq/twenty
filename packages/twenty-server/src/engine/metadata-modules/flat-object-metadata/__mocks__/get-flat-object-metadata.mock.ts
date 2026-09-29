@@ -37,6 +37,7 @@ export const getFlatObjectMetadataMock = (
     writability: MetadataWritability.OPEN,
     readability: MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers: null,
+    discoverableFieldUniversalIdentifiers: null,
     color: null,
     id: faker.string.uuid(),
     imageIdentifierFieldMetadataId,

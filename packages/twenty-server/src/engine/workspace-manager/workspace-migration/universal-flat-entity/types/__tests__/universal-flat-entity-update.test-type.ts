@@ -48,6 +48,7 @@ type Assertions = [
       | 'writability'
       | 'readability'
       | 'readabilityParentFieldUniversalIdentifiers'
+      | 'discoverableFieldUniversalIdentifiers'
     >
   >,
 ];

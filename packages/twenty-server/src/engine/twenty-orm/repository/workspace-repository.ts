@@ -98,6 +98,7 @@ import {
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { type RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
@@ -124,6 +125,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
+  readScope: RecordReadScope;
   // Suppresses the CREATED/UPDATED/DELETED database events this repository
   // would otherwise emit, and with them the snapshot SELECT that reads every
   // written row back to build the event payload. Only for bulk system writes
@@ -1827,18 +1829,32 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private onBeforeExecute(queryBuilder: WorkspaceSelectQueryBuilder): void {
+    // Filters are checked before the row-level predicates join them, as those
+    // reference columns of their own
+    if (
+      this.options.readScope === 'existence' &&
+      !queryBuilder.isRowLevelPermissionApplied(queryBuilder.alias)
+    ) {
+      this.validateQueryIsPermitted(
+        queryBuilder,
+        queryBuilder.getFilterReferencedColumnNamesByAlias(),
+      );
+    }
+
     this.applyRowLevelPermissionPredicates(queryBuilder);
-    this.validateQueryIsPermitted(queryBuilder);
+    this.validateQueryIsPermitted(
+      queryBuilder,
+      queryBuilder.getReferencedColumnNamesByAlias(),
+    );
   }
 
   private validateQueryIsPermitted(
     queryBuilder: WorkspaceSelectQueryBuilder,
+    columnNamesByAlias: Record<string, string[]>,
   ): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
     }
-
-    const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
 
     for (const [alias, columnNames] of Object.entries(columnNamesByAlias)) {
       const nameSingular =
@@ -1998,6 +2014,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
         apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
       }),
+      readScope: this.options.readScope,
       isOwningApplication: (objectMetadata) =>
         isOwningApplicationAuthContext({
           authContext: this.options.authContext,

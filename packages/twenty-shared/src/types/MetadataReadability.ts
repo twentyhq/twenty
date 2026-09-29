@@ -1,6 +1,7 @@
 export enum MetadataReadability {
   OPEN = 'OPEN',
   PRIVATE = 'PRIVATE',
+  DISCOVERABLE = 'DISCOVERABLE',
   INHERITED = 'INHERITED',
   APPLICATION = 'APPLICATION',
   SYSTEM = 'SYSTEM',

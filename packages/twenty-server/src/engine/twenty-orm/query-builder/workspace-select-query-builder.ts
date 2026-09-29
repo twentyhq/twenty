@@ -22,6 +22,7 @@ import {
 import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
+import { collectQualifiedAndMainAliasColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-qualified-and-main-alias-column-names.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import {
@@ -738,6 +739,41 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         })),
       distinctOnExpressions: this.distinctOnExpressions,
     });
+  }
+
+  // Columns the query filters, correlates or groups on, the projection aside.
+  // A column written without its alias counts as the main alias's.
+  getFilterReferencedColumnNamesByAlias(): Record<string, string[]> {
+    const aliases = collectStatementAliases(this.toSelectStatementState());
+    const expressions = [
+      ...this.whereClauses.map((whereClause) => whereClause.sql),
+      ...this.existsFilterClauses.flatMap((existsFilterClause) => [
+        existsFilterClause.conditionSql,
+        existsFilterClause.correlationCondition,
+      ]),
+      ...this.joinClauses
+        .map((joinClause) => joinClause.condition)
+        .filter(isDefined),
+      ...this.groupByExpressions,
+    ].map((expression) => quoteQualifiedAliasReferences(expression, aliases));
+
+    return collectQualifiedAndMainAliasColumnNames({
+      expressions,
+      mainAlias: this.alias,
+      mainAliasColumnNames: Object.keys(
+        this.tableShape.columnShapeByColumnName,
+      ),
+      aliases: [
+        ...aliases,
+        ...this.existsFilterClauses.map(
+          (existsFilterClause) => existsFilterClause.alias,
+        ),
+      ],
+    });
+  }
+
+  isRowLevelPermissionApplied(alias: string): boolean {
+    return this.aliasesWithRowLevelPermissionApplied.has(alias);
   }
 
   getSelectedColumnNames(): string[] {

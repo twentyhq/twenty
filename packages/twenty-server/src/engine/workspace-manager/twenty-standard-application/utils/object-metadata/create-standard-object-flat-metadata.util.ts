@@ -28,6 +28,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   writability?: MetadataWritability;
   readability?: MetadataReadability;
   readabilityParentFieldMetadataNames?: AllStandardObjectFieldName<O>[];
+  discoverableFieldMetadataNames?: AllStandardObjectFieldName<O>[];
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
@@ -76,6 +77,7 @@ export const createStandardObjectFlatMetadata = <
     writability = MetadataWritability.OPEN,
     readability = MetadataReadability.OPEN,
     readabilityParentFieldMetadataNames,
+    discoverableFieldMetadataNames,
     openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
     duplicateCriteria = null,
@@ -113,6 +115,17 @@ export const createStandardObjectFlatMetadata = <
       )
     : null;
 
+  const discoverableFieldUniversalIdentifiers = isDefined(
+    discoverableFieldMetadataNames,
+  )
+    ? discoverableFieldMetadataNames.map((discoverableFieldMetadataName) =>
+        getStandardFieldUniversalIdentifier({
+          objectName: nameSingular,
+          fieldName: discoverableFieldMetadataName,
+        }),
+      )
+    : null;
+
   return {
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
@@ -134,6 +147,7 @@ export const createStandardObjectFlatMetadata = <
     writability,
     readability,
     readabilityParentFieldUniversalIdentifiers,
+    discoverableFieldUniversalIdentifiers,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,

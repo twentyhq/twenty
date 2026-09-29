@@ -50,6 +50,7 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
     writability: MetadataWritability.OPEN,
     readability: MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers: null,
+    discoverableFieldUniversalIdentifiers: null,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,

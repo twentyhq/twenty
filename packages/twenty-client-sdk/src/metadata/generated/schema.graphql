@@ -291,6 +291,7 @@ type Object {
   openRecordIn: ObjectOpenRecordIn!
   readability: MetadataReadability!
   readabilityParentFieldUniversalIdentifiers: [UUID!]
+  discoverableFieldUniversalIdentifiers: [UUID!]
   writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
@@ -327,6 +328,7 @@ enum ObjectOpenRecordIn {
 enum MetadataReadability {
   OPEN
   PRIVATE
+  DISCOVERABLE
   INHERITED
   APPLICATION
   SYSTEM

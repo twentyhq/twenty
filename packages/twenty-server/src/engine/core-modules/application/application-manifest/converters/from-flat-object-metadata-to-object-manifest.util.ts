@@ -35,6 +35,8 @@ export const fromFlatObjectMetadataToObjectManifest = ({
   readability: flatObjectMetadata.readability,
   readabilityParentFieldUniversalIdentifiers:
     flatObjectMetadata.readabilityParentFieldUniversalIdentifiers,
+  discoverableFieldUniversalIdentifiers:
+    flatObjectMetadata.discoverableFieldUniversalIdentifiers,
   openRecordIn: flatObjectMetadata.openRecordIn,
   labelIdentifierFieldMetadataUniversalIdentifier,
   imageIdentifierFieldMetadataUniversalIdentifier:

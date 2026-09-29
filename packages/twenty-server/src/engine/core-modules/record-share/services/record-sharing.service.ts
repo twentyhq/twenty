@@ -282,10 +282,11 @@ export class RecordSharingService {
   }
 
   private isShareable(objectMetadata: FlatObjectMetadata): boolean {
-    return (
-      objectMetadata.readability === MetadataReadability.PRIVATE ||
-      objectMetadata.readability === MetadataReadability.INHERITED
-    );
+    return [
+      MetadataReadability.PRIVATE,
+      MetadataReadability.DISCOVERABLE,
+      MetadataReadability.INHERITED,
+    ].includes(objectMetadata.readability);
   }
 
   private async getObjectMetadata(
