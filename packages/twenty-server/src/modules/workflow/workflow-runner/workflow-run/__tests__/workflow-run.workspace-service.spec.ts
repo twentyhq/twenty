@@ -8,6 +8,7 @@ import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.ser
 import { type RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
@@ -30,6 +31,7 @@ describe('WorkflowRunWorkspaceService', () => {
       {
         incrementCounterForEvent: jest.fn(),
       } as unknown as MetricsService,
+      {} as InputAskWorkspaceService,
       {} as WorkflowRunRecordShareService,
       threadRepository as unknown as AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
       messagePartRepository as unknown as AgentHistoryRepository<AgentMessagePartEntity>,
