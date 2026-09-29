@@ -127,7 +127,7 @@ describe('2-44 workspace command 1790622117809 - AddInputAskObjectCommand (integ
         STANDARD_OBJECTS.inputAsk.fields.workflowRun.universalIdentifier,
         STANDARD_OBJECTS.inputAsk.fields.thread.universalIdentifier,
       ],
-      writability: MetadataWritability.SYSTEM,
+      writability: MetadataWritability.OPEN,
       fieldCount: Object.keys(STANDARD_OBJECTS.inputAsk.fields).length,
       inverseFieldCount: INVERSE_FIELD_UNIVERSAL_IDENTIFIERS.length,
       indexCount: Object.keys(STANDARD_OBJECTS.inputAsk.indexes).length,

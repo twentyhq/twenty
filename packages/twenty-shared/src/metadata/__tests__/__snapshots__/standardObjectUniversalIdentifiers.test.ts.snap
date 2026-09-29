@@ -1556,9 +1556,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "searchVector": {
         "universalIdentifier": "3eed9577-932b-5c7a-bde5-99ab561f8745",
       },
-      "source": {
-        "universalIdentifier": "55698568-39cb-453e-85b2-7a8ba3793f6a",
-      },
       "status": {
         "universalIdentifier": "919f0339-ee8e-4197-8b6a-b57bbd31035b",
       },
@@ -1631,9 +1628,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "name": {
             "universalIdentifier": "dafbcd58-b311-5cf8-b60e-7d2edc251b16",
           },
-          "source": {
-            "universalIdentifier": "06b2dd4f-5dd5-5f7c-acd8-338c6974ffeb",
-          },
           "status": {
             "universalIdentifier": "4adc644d-eae8-5692-ac22-c2285f66183b",
           },
@@ -1653,9 +1647,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "name": {
             "universalIdentifier": "f1ae6a65-159f-4e87-a99d-04d39598c74a",
-          },
-          "source": {
-            "universalIdentifier": "76633724-5037-45cb-871a-08c576e3059b",
           },
           "thread": {
             "universalIdentifier": "c81b54d7-ffaf-4222-8beb-4479e662426e",
