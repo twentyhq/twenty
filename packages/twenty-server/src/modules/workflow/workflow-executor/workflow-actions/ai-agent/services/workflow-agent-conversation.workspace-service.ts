@@ -81,7 +81,7 @@ export class WorkflowAgentConversationWorkspaceService {
     agentId: string | null;
     prompt: string;
     initiatorUserWorkspaceId: string | null;
-    executionResult?: RecordedExecutionResult;
+    executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation | null> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -139,7 +139,7 @@ export class WorkflowAgentConversationWorkspaceService {
     workspaceId: string;
     threadId: string;
     agentId: string | null;
-    executionResult?: RecordedExecutionResult;
+    executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation> {
     const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
 
@@ -269,9 +269,9 @@ export class WorkflowAgentConversationWorkspaceService {
     threadId: string;
     turnId: string;
     agentId: string | null;
-    executionResult?: RecordedExecutionResult;
+    executionResult: RecordedExecutionResult;
   }): Promise<WorkflowPendingAsk[]> {
-    const replyParts = mapAiStepsToUiMessageParts(executionResult?.steps ?? []);
+    const replyParts = mapAiStepsToUiMessageParts(executionResult.steps ?? []);
 
     if (replyParts.length === 0) {
       return [];
@@ -287,7 +287,7 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: replyParts,
     });
 
-    if (executionResult?.isPaused !== true) {
+    if (executionResult.isPaused !== true) {
       return [];
     }
 

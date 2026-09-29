@@ -3,6 +3,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 
 const WORKSPACE_ID = 'workspace';
@@ -56,9 +57,6 @@ const buildResolver = () => {
     deleteThreadWithAccess: jest.fn(),
   };
   const broadcaster = { broadcast: jest.fn() };
-  const sandbox = {
-    releaseThreadSandboxBestEffort: jest.fn(),
-  };
   const recordEvents = {
     emitThreadCreated: jest.fn(),
     emitThreadUpdated: jest.fn(),
@@ -72,7 +70,6 @@ const buildResolver = () => {
     {} as never,
     {} as never,
     broadcaster as never,
-    sandbox as never,
     sharing as never,
     recordEvents as never,
   );
@@ -89,6 +86,13 @@ const buildResolver = () => {
       .mockResolvedValue({ chunks: [], maxSeq: 0 }),
   };
   const redis = { getClient: jest.fn() };
+  const threadLifecycle = new AgentChatThreadLifecycleService(
+    threadRepository as never,
+    redis as never,
+    {} as never,
+    {} as never,
+    recordEvents as never,
+  );
   const resolver = new AgentChatResolver(
     chatService,
     sharing as never,
@@ -100,8 +104,7 @@ const buildResolver = () => {
       getAvailableModels: () => ['model'],
       validateModelAvailability: jest.fn(),
     } as never,
-    redis as never,
-    threadRepository as never,
+    threadLifecycle,
   );
   return {
     resolver,
@@ -113,12 +116,12 @@ const buildResolver = () => {
     events,
     redis,
     broadcaster,
-    sandbox,
+    recordEvents,
   };
 };
 
 describe('Shared conversation API boundaries', () => {
-  it('does not announce deletion or release a sandbox when the transaction rolls back', async () => {
+  it('does not announce deletion when the transaction rolls back', async () => {
     const context = buildResolver();
     context.threadRepository.findOne.mockResolvedValue({
       id: THREAD_ID,
@@ -136,9 +139,7 @@ describe('Shared conversation API boundaries', () => {
       }),
     ).rejects.toThrow('delete failed');
     expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
-    expect(
-      context.sandbox.releaseThreadSandboxBestEffort,
-    ).not.toHaveBeenCalled();
+    expect(context.recordEvents.emitThreadDestroyed).not.toHaveBeenCalled();
   });
 
   it('returns readable threads and catchup to viewers without granting ownership', async () => {
