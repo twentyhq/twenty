@@ -317,8 +317,6 @@ export class ApplicationUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
-    // The grants an admin reviews are computed against the latest available
-    // version, so an approval only covers an upgrade to that version.
     const hasUserApprovedRoleGrants =
       (params.hasUserApprovedRoleGrants ?? false) &&
       params.targetVersion === appRegistration.latestAvailableVersion;
