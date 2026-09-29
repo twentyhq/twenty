@@ -57,7 +57,12 @@ const buildResolver = () => {
   };
   const broadcaster = { broadcast: jest.fn() };
   const sandbox = {
-    releaseThreadSandbox: jest.fn().mockResolvedValue(undefined),
+    releaseThreadSandboxBestEffort: jest.fn(),
+  };
+  const recordEvents = {
+    emitThreadCreated: jest.fn(),
+    emitThreadUpdated: jest.fn(),
+    emitThreadDestroyed: jest.fn(),
   };
   const chatService = new AgentChatService(
     threadRepository as never,
@@ -69,6 +74,7 @@ const buildResolver = () => {
     broadcaster as never,
     sandbox as never,
     sharing as never,
+    recordEvents as never,
   );
   const streaming = {
     streamAgentChat: jest
@@ -132,7 +138,9 @@ describe('Shared conversation API boundaries', () => {
       }),
     ).rejects.toThrow('cleanup failed');
     expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
-    expect(context.sandbox.releaseThreadSandbox).not.toHaveBeenCalled();
+    expect(
+      context.sandbox.releaseThreadSandboxBestEffort,
+    ).not.toHaveBeenCalled();
   });
 
   it('returns readable threads and catchup to viewers without granting ownership', async () => {
