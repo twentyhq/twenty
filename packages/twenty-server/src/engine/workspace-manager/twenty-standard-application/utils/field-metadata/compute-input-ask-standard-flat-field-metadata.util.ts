@@ -14,7 +14,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { InputAskSource } from 'src/modules/input-ask/enums/input-ask-source.enum';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 
 export const buildInputAskStandardFlatFieldMetadatas = ({
@@ -306,69 +305,6 @@ export const buildInputAskStandardFlatFieldMetadatas = ({
           ),
           position: 2,
           color: 'gray',
-        },
-        {
-          id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d04',
-          value: InputAskStatus.EXPIRED,
-          label: i18nLabel(
-            msg({ message: `Expired`, context: 'fieldMetadata.label' }),
-          ),
-          position: 3,
-          color: 'red',
-        },
-      ],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  source: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'source',
-      type: FieldMetadataType.SELECT,
-      label: i18nLabel(
-        msg({ message: `Source`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `What is blocked on the answer`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconAffiliate',
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: "'WORKFLOW_RUN_STEP'",
-      options: [
-        {
-          id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c2d01',
-          value: InputAskSource.WORKFLOW_RUN_STEP,
-          label: i18nLabel(
-            msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
-          ),
-          position: 0,
-          color: 'blue',
-        },
-        {
-          id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c2d02',
-          value: InputAskSource.AGENT_CHAT,
-          label: i18nLabel(
-            msg({ message: `Chat`, context: 'fieldMetadata.label' }),
-          ),
-          position: 1,
-          color: 'purple',
-        },
-        {
-          id: 'ef00cb9f-d455-4096-a095-8a9567597157',
-          value: InputAskSource.TOOL_CALL,
-          label: i18nLabel(
-            msg({ message: `Tool call`, context: 'fieldMetadata.label' }),
-          ),
-          position: 2,
-          color: 'green',
         },
       ],
     },
