@@ -19,7 +19,14 @@ export const buildDuplicatedCodeStepLogicFunctionToCreate = ({
   | 'isBuildUpToDate'
   | 'applicationUniversalIdentifier'
 > & {
-  existingLogicFunction: FlatLogicFunction;
+  existingLogicFunction: Pick<
+    FlatLogicFunction,
+    | 'name'
+    | 'description'
+    | 'timeoutSeconds'
+    | 'handlerName'
+    | 'workflowActionTriggerSettings'
+  >;
   id: string;
 }): UniversalFlatLogicFunction & { id: string } => {
   return buildUniversalFlatLogicFunctionToCreate({
