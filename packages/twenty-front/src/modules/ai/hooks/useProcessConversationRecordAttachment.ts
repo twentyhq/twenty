@@ -1,16 +1,20 @@
-import { AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadObjectNameSingular';
-import { AGENT_CHAT_THREAD_TARGET_OBJECT_NAME_PLURAL } from '@/ai/constants/AgentChatThreadTargetObjectNamePlural';
-import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
-import { isSucceededAttachConversationToRecordToolPart } from '@/ai/utils/isSucceededAttachConversationToRecordToolPart';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { capitalize } from 'twenty-shared/utils';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
+import { isSucceededAttachConversationToRecordToolPart } from '@/ai/utils/isSucceededAttachConversationToRecordToolPart';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useProcessConversationRecordAttachment = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const junctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+  });
 
   const processedToolExecutionPartIdsCallbackState =
     useAtomComponentStateCallbackState(
@@ -43,17 +47,24 @@ export const useProcessConversationRecordAttachment = () => {
       ...toolCallIdsToProcess,
     ]);
 
-    // The server wrote the link, which this client's cache cannot know about,
-    // so the record page's conversations and the chat header's linked records
-    // are refetched. A failed refetch surfaces in their own error states.
-    apolloCoreClient
-      .refetchQueries({
-        include: [
-          `FindMany${capitalize(AGENT_CHAT_THREAD_TARGET_OBJECT_NAME_PLURAL)}`,
-          `FindOne${capitalize(AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR)}`,
-        ],
-      })
-      .catch(() => undefined);
+    if (!isDefined(junctionConfig)) {
+      return;
+    }
+
+    // The chat tool wrote the link on the server, where no record event
+    // reaches this client unless a query listens for it, so the cached lists
+    // of links and the cached threads are dropped: mounted queries refetch
+    // now and the others on their next mount.
+    const { cache } = apolloCoreClient;
+
+    cache.evict({
+      id: 'ROOT_QUERY',
+      fieldName: junctionConfig.junctionObjectMetadata.namePlural,
+    });
+    cache.evict({
+      id: 'ROOT_QUERY',
+      fieldName: CoreObjectNameSingular.AgentChatThread,
+    });
   };
 
   return {
