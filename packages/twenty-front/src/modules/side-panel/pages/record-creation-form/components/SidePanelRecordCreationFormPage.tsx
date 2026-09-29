@@ -121,7 +121,7 @@ const SidePanelRecordCreationForm = ({
       serverFilledFieldNames: objectMetadataItem.fields
         .filter(
           (fieldMetadataItem) =>
-            fieldMetadataItem.isSystem === true ||
+            fieldMetadataItem.isSystem ||
             isDefined(fieldMetadataItem.defaultValue),
         )
         .map((fieldMetadataItem) => fieldMetadataItem.name),
