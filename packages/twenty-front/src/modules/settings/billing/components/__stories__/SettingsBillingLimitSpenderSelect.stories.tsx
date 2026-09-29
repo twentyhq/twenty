@@ -47,6 +47,33 @@ export const WorkspaceOnlyPlan: Story = {
   },
 };
 
+export const WorkspaceOnlyPlanWithUserSpender: Story = {
+  args: {
+    isIntraWorkspaceLimitEntitled: false,
+    spenderType: 'userWorkspace',
+    spenderId: '',
+    onChange: fn(),
+  },
+  parameters: { msw: graphqlMocks },
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(within(canvasElement).getByRole('button'));
+    const popup = await body.findByRole('dialog', { name: 'Spender' });
+
+    expect(
+      within(popup).queryByRole('button', { name: 'User' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      within(popup).getByRole('button', { name: /Workspace/ }),
+    );
+    expect(args.onChange).toHaveBeenCalledWith({
+      spenderType: 'workspace',
+      spenderId: '',
+    });
+  },
+};
+
 export const ReadOnly: Story = {
   args: { isDisabled: true },
   play: async ({ canvasElement }) => {

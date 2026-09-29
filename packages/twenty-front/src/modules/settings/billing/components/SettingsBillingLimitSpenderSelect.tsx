@@ -124,9 +124,14 @@ export const SettingsBillingLimitSpenderSelect = ({
 
   const workspaceGroup = groups.find((group) => group.id === 'workspace');
   const otherGroups = groups.filter((group) => group.id !== 'workspace');
+  const selectableSpenderGroups = isIntraWorkspaceLimitEntitled
+    ? otherGroups
+    : [];
 
   const isLockedByPlan =
     !isIntraWorkspaceLimitEntitled && otherGroups.length > 0;
+  const isSpenderLockedToWorkspace =
+    !isIntraWorkspaceLimitEntitled && spenderType === 'workspace';
 
   return (
     <SettingsBillingLimitNestedSelect
@@ -155,7 +160,7 @@ export const SettingsBillingLimitSpenderSelect = ({
           : undefined
       }
       SelectedAvatar={renderSelectedAvatar()}
-      isDisabled={isDisabled || !isIntraWorkspaceLimitEntitled}
+      isDisabled={isDisabled || isSpenderLockedToWorkspace}
     >
       <Dropdown.Page id="root">
         {isDefined(workspaceGroup) && (
@@ -178,12 +183,12 @@ export const SettingsBillingLimitSpenderSelect = ({
             </Dropdown.OptionItem>
           </Dropdown.Section>
         )}
-        {isDefined(workspaceGroup) && otherGroups.length > 0 && (
+        {isDefined(workspaceGroup) && selectableSpenderGroups.length > 0 && (
           <Dropdown.Separator />
         )}
-        {otherGroups.length > 0 && (
+        {selectableSpenderGroups.length > 0 && (
           <Dropdown.Section>
-            {otherGroups.map((group) => (
+            {selectableSpenderGroups.map((group) => (
               <Dropdown.ActionItem
                 key={group.id}
                 page={group.spenderType}
@@ -195,7 +200,7 @@ export const SettingsBillingLimitSpenderSelect = ({
           </Dropdown.Section>
         )}
       </Dropdown.Page>
-      {otherGroups.map((group) => (
+      {selectableSpenderGroups.map((group) => (
         <Dropdown.Page key={group.id} id={group.spenderType}>
           <Dropdown.Back>
             {t(USAGE_LIMIT_SPENDER_TYPE_LABELS[group.spenderType])}
