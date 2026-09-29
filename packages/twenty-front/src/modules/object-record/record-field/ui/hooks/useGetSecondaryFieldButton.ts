@@ -85,7 +85,7 @@ export const useGetSecondaryFieldButton = () => {
   if (isFieldLinks(fieldDefinition)) {
     const url = (fieldValue as FieldLinksValue).primaryLinkUrl ?? '';
     openLinkOnClick = () => {
-      window.open(ensureAbsoluteUrl(url), '_blank');
+      window.open(ensureAbsoluteUrl(url), '_blank', 'noopener,noreferrer');
     };
     copyOnClick = () => {
       copyToClipboard(url, t`Link copied to clipboard`);
