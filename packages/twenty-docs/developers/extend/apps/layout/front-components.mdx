@@ -131,7 +131,7 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 `USER` items are not displayed yet. Their placement under the user's own settings lands with per-member variable values; until then a `USER` item is persisted and synced but nothing renders it.
 </Note>
 
-A `USER` item runs as the member viewing it. Note that `applicationVariables` are workspace-wide: one value shared by everyone. An item that stores something per person should persist it through the app's own objects rather than a variable, otherwise one member's value overwrites another's.
+A `USER` item runs as the member viewing it. Members cannot save their own value of an application variable yet, even one declared with `scope: 'USER'` (see [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables)). Until they can, an item that stores something per person should persist it through the app's own objects: a workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
 `defineSettingsFrontComponent()` is deprecated in favor of `defineSettingsMenuItem()`. An app still using it keeps working — its component is treated as a single **Settings** menu item — but it can only ever declare one, which is what `defineSettingsMenuItem()` exists to lift.
@@ -482,7 +482,7 @@ Object metadata can be available even when no records are selected. It belongs t
 
 ## Application variables
 
-Application variables defined in [`defineApplication()`](/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
+Workspace application variables defined in [`defineApplication()`](/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
 
 ```tsx src/front-components/greeting.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
