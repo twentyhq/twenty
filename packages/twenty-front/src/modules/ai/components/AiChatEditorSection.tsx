@@ -166,7 +166,9 @@ const EditableAiChatEditorSection = () => {
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
-  const displayedThreadId = useAtomStateValue(agentChatDisplayedThreadState);
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
   // A workspace the Ask object has not reached yet has nothing to wait on.
   const inputAskObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -174,9 +176,9 @@ const EditableAiChatEditorSection = () => {
   );
   const pendingAskThreadId =
     isDefined(inputAskObjectMetadataItem) &&
-    isDefined(displayedThreadId) &&
-    displayedThreadId !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-      ? displayedThreadId
+    isDefined(agentChatDisplayedThread) &&
+    agentChatDisplayedThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+      ? agentChatDisplayedThread
       : null;
 
   const composer = (
