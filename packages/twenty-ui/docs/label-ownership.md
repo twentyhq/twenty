@@ -1,6 +1,6 @@
 # Retained UI label ownership
 
-Audit baseline: `24744ee72b2` (2026-09-28). This covers production exports under components, primitives, and icons, including the current Dropdown compound API. Stories, renderer fixtures, frontend imports, website imports, documentation, and separately versioned apps were checked as consumers.
+This covers production exports under components, primitives, and icons, including the Dropdown compound API.
 
 | Surface                                                                                                                   | Text ownership                                                                                                                                                                                                                                                                                                              |
 | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -20,20 +20,3 @@ Audit baseline: `24744ee72b2` (2026-09-28). This covers production exports under
 | Dialog, AlertDialog, Popover, Tooltip, Tabs                                                                               | Text belongs to title, description, close, trigger, tab, and popup parts. No built-in English action or status strings.                                                                                                                                                                                                     |
 | Banner, InlineBanner, Info, CardPicker, SettingsRow, Section, NavigationBar, RoundedLink, ClickToActionLink, CommandBlock | Content and labels belong to supplied props or children.                                                                                                                                                                                                                                                                    |
 | Tag, Status, Pill, AvatarGroup, NotificationCounter, ColorSample, TintedIconTile, typography, layout and icon exports     | Caller content, data values, native accessible attributes where supported, or decorative output. Loader and progress graphics add no built-in English loading message.                                                                                                                                                      |
-
-## Consumers and coordination
-
-- The two dismissible frontend Callouts supply `t` source messages for `closeLabel`. CommandMenuItem supplies the localized shortcut join text for all its callers. SettingsExperience already supplies localized appearance labels, which now also name the choices. AppToaster already localizes the region, icon, close, and cancel labels. Existing frontend chip, JSON-tree, search-filter, and editor-resize consumers own their labels.
-- The website has no imports of the changed controls. Its local Callout and MenuItem names refer to website components.
-- The companion, call-recorder, Fireflies, Granola, Slack, and Teams apps pin `1.0.0-alpha.1` (exactly for companion, with a caret for the others). Last-contact uses `^2.41.0`; minimal-app uses `latest`. These apps need coordinated source and dependency upgrades before adopting the new props. Slack's current Callouts are not dismissible. No app sources or manifests are changed here.
-- Documentation coverage PR #26791 is open at this baseline. Reconcile its Callout and ColorSchemePicker pages, component registrations, and navigation entries when integrating. Preserve these label descriptions and regenerate references with the owning scripts.
-- RTL cleanup overlaps ColorSchemeCard.tsx and DropdownSubmenuTrigger.tsx. Preserve its logical radii and provider direction together with the label forwarding here. No CSS or direction behavior is changed by this label work.
-- Dropdown settings migration PR #26794 and the menu consolidation work remain separate. Preserve the join-label option when migrating legacy MenuItem callers to ListItem or Dropdown. No root, page, ID, or open/close contract changes are needed.
-
-## Renderer coverage
-
-The two label gallery cases pass in React and Preact, covering Callout defaults and dismissal, ColorSchemePicker names and selection, and ListItem and legacy MenuItem shortcut text. Seven native story cases pass, including Menu and Dropdown shortcut propagation and native accessible-name precedence.
-
-Menu and Dropdown fixtures include supplied shortcut join text. The existing failure probes reproduce missing native event `pointerType` for Menu and missing viewport `width` for Dropdown in both runtimes. These are unresolved popup compatibility limitations. They prevent claiming renderer support for the popup label content; the four passing failure probes only confirm those limitations.
-
-The UI, frontend, and renderer direct typechecks pass after fresh shared, client SDK, SDK, UI, and renderer builds. Changed-source lint and formatting, handwritten documentation formatting, generated reference checks, documentation example and embed checks, module ownership, theme token drift, and optional-peer package checks pass. Generated documentation remains exactly as produced by its owning scripts.
