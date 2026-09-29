@@ -19,7 +19,7 @@ export const serializeAgentChatThreadForBroadcast = ({
   conversationSize: thread.conversationSize,
   totalInputCredits: toDisplayCredits(Number(thread.totalInputCredits)),
   totalOutputCredits: toDisplayCredits(Number(thread.totalOutputCredits)),
-  deletedAt: thread.archivedAt,
+  deletedAt: thread.deletedAt,
   lastMessageAt,
   createdAt: thread.createdAt,
   updatedAt: thread.updatedAt,

@@ -2,6 +2,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
+import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -36,7 +37,7 @@ describe('Persisted chat senders', () => {
     });
   });
   afterAll(async () => {
-    await chat.hardDeleteThread({ workspaceId, workspaceMemberId, threadId });
+    await destroyAgentChatThread({ threadId });
   });
 
   it('persists the authenticated user on ordinary and queued messages', async () => {

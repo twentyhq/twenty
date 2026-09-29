@@ -714,10 +714,10 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'archivedAt', 'pendingQuestionMessageId'],
+      select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    if (!threadStatus || threadStatus.archivedAt) {
+    if (!threadStatus || threadStatus.deletedAt) {
       return;
     }
 

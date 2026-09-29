@@ -1,7 +1,6 @@
 import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
 import { IsNull } from 'typeorm';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
@@ -82,7 +81,7 @@ export class AgentChatSharingService {
             recordIds: [args.threadId],
             operationType,
             updatedColumns,
-            withDeleted: false,
+            withDeleted: true,
           }),
       authContext,
     );
@@ -109,7 +108,7 @@ export class AgentChatSharingService {
       authContext,
       objectMetadataId: objectMetadata.id,
       recordIds: args.threadIds,
-      withDeleted: false,
+      withDeleted: true,
     });
   }
 
@@ -132,7 +131,7 @@ export class AgentChatSharingService {
             ? { workflowRunId: IsNull() }
             : undefined,
           select: { id: true },
-          withDeleted: false,
+          withDeleted: true,
           order: { updatedAt: 'DESC', id: 'DESC' },
           take: MAX_CHAT_THREADS,
         });
@@ -198,52 +197,26 @@ export class AgentChatSharingService {
     );
   }
 
-  async updateThreadWithAccess({
-    operationType,
-    changes,
-    ...args
-  }: ThreadAccessArgs & {
-    operationType: 'update' | 'soft-delete' | 'restore';
-    changes: { title: string } | { archivedAt: Date | null };
-  }): Promise<AgentChatThreadWorkspaceEntity> {
+  async restoreThreadWithAccess(
+    args: ThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity> {
     return this.mutateThreadWithAccess({
       ...args,
-      operationType,
-      updatedColumns: operationType === 'update' ? Object.keys(changes) : [],
+      operationType: 'restore',
+      updatedColumns: [],
       mutate: async ({ manager, table }, thread) => {
-        if (operationType === 'soft-delete' && isDefined(thread.archivedAt)) {
+        if (!isDefined(thread.deletedAt)) {
           return thread;
         }
-        const entries = Object.entries(changes).map(
-          ([fieldName, value]) => [fieldName, value] as const,
-        );
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `WITH updated_thread AS (UPDATE ${table('agentChatThread')} SET ${entries.map(([key], index) => `${escapeIdentifier(key)} = $${index + 2}`).join(', ')}, "updatedAt" = NOW() WHERE id = $1 RETURNING *) SELECT * FROM updated_thread`,
-          [args.threadId, ...entries.map(([, value]) => value)],
+          `WITH restored_thread AS (UPDATE ${table('agentChatThread')} SET "deletedAt" = NULL, "updatedAt" = NOW() WHERE id = $1 RETURNING *) SELECT * FROM restored_thread`,
+          [args.threadId],
         );
         const record = records[0];
         if (!isDefined(record)) {
           return this.throwNotFound();
         }
         return record;
-      },
-    });
-  }
-
-  // Sharing grants stay, as for any destroyed record, so that the destroy
-  // event still reaches the thread's audience; createThread clears them when
-  // an id is reused
-  async deleteThreadWithAccess(args: ThreadAccessArgs): Promise<boolean> {
-    return this.mutateThreadWithAccess({
-      ...args,
-      operationType: 'delete',
-      updatedColumns: [],
-      mutate: async ({ manager, table }) => {
-        const deleted = await manager.query<{ id: string }[]>(
-          `WITH deleted_thread AS (DELETE FROM ${table('agentChatThread')} WHERE id = $1 RETURNING id) SELECT id FROM deleted_thread`,
-          [args.threadId],
-        );
-        return deleted.length === 1;
       },
     });
   }
@@ -282,7 +255,7 @@ export class AgentChatSharingService {
               recordIds: [args.threadId],
               operationType,
               updatedColumns,
-              withDeleted: false,
+              withDeleted: true,
             });
           if (allowedIds.length !== 1) {
             return this.throwNotFound();

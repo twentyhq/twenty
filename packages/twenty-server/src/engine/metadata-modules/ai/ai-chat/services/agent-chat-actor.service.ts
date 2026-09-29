@@ -119,9 +119,9 @@ export class AgentChatActorService {
         workspaceMemberId: authContext.workspaceMemberId,
       }),
     );
-    if (isDefined(thread.archivedAt)) {
+    if (isDefined(thread.deletedAt)) {
       throw new AiException(
-        'Thread is archived',
+        'Thread is deleted',
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }

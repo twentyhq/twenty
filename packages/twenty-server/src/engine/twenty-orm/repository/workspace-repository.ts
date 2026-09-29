@@ -40,6 +40,7 @@ import {
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -1987,6 +1988,22 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType,
       depth,
     });
+  }
+
+  // Records of an object whose readability keeps them out of the API are never
+  // readable here, whatever the caller's role or grants
+  isReadDeniedByReadability(): boolean {
+    const subject = this.resolveRowAccessPolicySubject();
+
+    return (
+      !subject.isSystemContext &&
+      resolveRecordShareGateKind({
+        readability: this.options.flatObjectMetadata.readability,
+        isOwningApplication: subject.isOwningApplication(
+          this.options.flatObjectMetadata,
+        ),
+      }) === 'deny'
+    );
   }
 
   private resolveRowAccessPolicySubject(): RowAccessPolicySubject {

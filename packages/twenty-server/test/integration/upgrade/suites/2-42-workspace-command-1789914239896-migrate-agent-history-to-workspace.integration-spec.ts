@@ -1,6 +1,8 @@
 import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
+import { type MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790710419702-move-agent-chat-threads-to-record-model.command';
+import { type AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790710942137-add-chat-record-page-command-menu-items.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -254,13 +256,21 @@ describe('versioned agent history upgrade (integration)', () => {
       options: {},
     });
     // The history objects were rebuilt as 2.42 leaves them; replay the later
-    // upgrades that link threads to runs and asks for the suites that follow.
+    // upgrades that link threads to runs and asks, move chats to the record
+    // model and re-add the chat commands dropped with the rebuilt object, for
+    // the suites that follow.
     for (const laterCommand of [
       getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
         'AddWorkflowRunToChatThreadsCommand',
       ),
       getAppProviderByClassName<AddInputAskObjectCommand>(
         'AddInputAskObjectCommand',
+      ),
+      getAppProviderByClassName<MoveAgentChatThreadsToRecordModelCommand>(
+        'MoveAgentChatThreadsToRecordModelCommand',
+      ),
+      getAppProviderByClassName<AddChatRecordPageCommandMenuItemsCommand>(
+        'AddChatRecordPageCommandMenuItemsCommand',
       ),
     ]) {
       await workspaceOrmManager.executeInWorkspaceContext(
