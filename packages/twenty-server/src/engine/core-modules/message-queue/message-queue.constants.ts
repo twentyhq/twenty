@@ -17,6 +17,7 @@ export enum MessageQueue {
   contactCreationQueue = 'contact-creation-queue',
   billingQueue = 'billing-queue',
   workspaceQueue = 'workspace-queue',
+  workspaceDestroyQueue = 'workspace-destroy-queue',
   entityEventsToDbQueue = 'entity-events-to-db-queue',
   eventLogQueue = 'event-log-queue',
   workflowQueue = 'workflow-queue',
