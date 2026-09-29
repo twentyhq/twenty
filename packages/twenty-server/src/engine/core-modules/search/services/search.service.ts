@@ -67,6 +67,8 @@ export type SearchCursor = {
 };
 
 const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
+const CJK_CHARACTER_PATTERN =
+  /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}\p{Script_Extensions=Hangul}]/u;
 
 @Injectable()
 export class SearchService {
@@ -203,11 +205,8 @@ export class SearchService {
     });
   }
 
-  // Runs a fast tsvector query first (uses GIN index). If tsvector returns zero
-  // results for an object type on the first page, falls back to ILIKE on the
-  // searchVector text to catch cases where tokenization fails (e.g. CJK text).
-  // Skipped when tsvector finds any results (partial results mean the data just
-  // has fewer matches, not a tokenization issue) and on paginated requests.
+  // The simple text search configuration does not segment continuous CJK text,
+  // so substring matching is needed when the full-text search misses.
   async buildSearchQueryAndGetRecordsWithFallback<
     Entity extends ObjectLiteral,
   >({
@@ -246,7 +245,7 @@ export class SearchService {
 
     if (
       tsvectorResults.length > 0 ||
-      !isNonEmptyString(searchInput.trim()) ||
+      !CJK_CHARACTER_PATTERN.test(searchInput) ||
       isDefined(after)
     ) {
       return tsvectorResults;
