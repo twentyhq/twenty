@@ -555,7 +555,6 @@
                         "group": "Feedback",
                         "pages": [
                           "ui/primitives/feedback/banner",
-                          "ui/primitives/feedback/circular-progress-bar",
                           "ui/primitives/feedback/loader",
                           "ui/primitives/feedback/progress-bar"
                         ]
