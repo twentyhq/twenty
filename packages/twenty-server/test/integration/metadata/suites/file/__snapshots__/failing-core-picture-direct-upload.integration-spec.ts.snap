@@ -27,12 +27,12 @@ exports[`Core picture direct upload should fail should refuse the generic comple
 exports[`Core picture direct upload should fail should refuse to bind a completed profile picture as the workspace logo 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "BAD_REQUEST",
-    "userFriendlyMessage": "This file upload has already been finalized.",
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
   },
-  "message": "File <fileId> is not awaiting an upload confirmation",
-  "name": "UserInputError",
+  "message": "File <fileId> can only be completed by the principal that initiated its upload",
+  "name": "ForbiddenError",
 }
 `;
 
