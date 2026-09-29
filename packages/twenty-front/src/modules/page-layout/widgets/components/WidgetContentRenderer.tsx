@@ -52,7 +52,7 @@ export const WidgetContentRenderer = ({
       return <NoteWidget widget={widget} />;
 
     case WidgetType.CHAT_THREADS:
-      return <ChatThreadsWidget widget={widget} />;
+      return <ChatThreadsWidget />;
 
     case WidgetType.FIELD_RICH_TEXT:
       return <FieldRichTextWidgetRenderer widget={widget} />;
