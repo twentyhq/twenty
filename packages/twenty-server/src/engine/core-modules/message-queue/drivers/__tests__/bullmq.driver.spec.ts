@@ -222,9 +222,7 @@ describe('BullMQDriver global concurrency', () => {
   });
 
   it('removes the global concurrency when the queue declares none', () => {
-    driver.work(MessageQueue.recordExportQueue, jest.fn(), {
-      globalConcurrency: null,
-    });
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {});
 
     expect(mockRemoveGlobalConcurrency).toHaveBeenCalledTimes(1);
     expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();

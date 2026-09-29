@@ -183,7 +183,7 @@ export class BullMQDriver
 
   private async writeGlobalConcurrency(
     queueName: MessageQueue,
-    globalConcurrency: number | null | undefined,
+    globalConcurrency: number | undefined,
   ): Promise<void> {
     const queue = this.queueMap[queueName];
 
