@@ -12,7 +12,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { getTwoFactorVerificationErrorToastOptions } from '@/auth/utils/getTwoFactorVerificationErrorToastOptions';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
@@ -203,7 +203,7 @@ export const SignInUpTOTPVerification = () => {
       form.setValue('otp', '');
 
       enqueueToast(
-        getTwoFactorVerificationErrorToastOptions({
+        getTwoFactorAuthenticationErrorToastOptions({
           error,
           dedupeKey: 'invalid-otp-dedupe-key',
         }),

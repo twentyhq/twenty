@@ -17,6 +17,9 @@ const expectImpersonationDenied = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
   expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   expect(errors[0].message).toContain('while impersonating');
+  expect(errors[0].extensions.userFriendlyMessage).toBe(
+    "You can't do this while impersonating another user.",
+  );
 };
 
 const expectImpersonationLoginTokenRejected = (errors: BaseGraphQLError[]) => {

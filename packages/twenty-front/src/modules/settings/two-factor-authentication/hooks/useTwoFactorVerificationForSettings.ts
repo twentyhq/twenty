@@ -1,5 +1,5 @@
 import { type OTPFormValues } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
-import { getTwoFactorVerificationErrorToastOptions } from '@/auth/utils/getTwoFactorVerificationErrorToastOptions';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client/react';
@@ -55,7 +55,7 @@ export const useTwoFactorVerificationForSettings = () => {
 
       await handleVerificationSuccess();
     } catch (error) {
-      enqueueToast(getTwoFactorVerificationErrorToastOptions({ error }));
+      enqueueToast(getTwoFactorAuthenticationErrorToastOptions({ error }));
     } finally {
       setIsLoading(false);
     }

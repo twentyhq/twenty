@@ -1,10 +1,13 @@
 import {
   type CanActivate,
   type ExecutionContext,
-  ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+
+import { msg } from '@lingui/core/macro';
+
+import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Injectable()
 export class NoImpersonationGuard implements CanActivate {
@@ -23,8 +26,11 @@ export class NoImpersonationGuard implements CanActivate {
     );
 
     if (isCurrentlyImpersonating) {
-      throw new ForbiddenException(
+      throw new ForbiddenError(
         "Can't access this resource while impersonating",
+        {
+          userFriendlyMessage: msg`You can't do this while impersonating another user.`,
+        },
       );
     }
 

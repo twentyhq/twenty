@@ -1,8 +1,8 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 
-import { getTwoFactorVerificationErrorToastOptions } from '@/auth/utils/getTwoFactorVerificationErrorToastOptions';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 
-describe('getTwoFactorVerificationErrorToastOptions', () => {
+describe('getTwoFactorAuthenticationErrorToastOptions', () => {
   it('shows the server message when verification is rate limited', () => {
     const error = new CombinedGraphQLErrors({
       errors: [
@@ -17,7 +17,7 @@ describe('getTwoFactorVerificationErrorToastOptions', () => {
     });
 
     expect(
-      getTwoFactorVerificationErrorToastOptions({
+      getTwoFactorAuthenticationErrorToastOptions({
         error,
         dedupeKey: 'invalid-otp-dedupe-key',
       }),
@@ -32,7 +32,7 @@ describe('getTwoFactorVerificationErrorToastOptions', () => {
 
   it('falls back to the invalid code message for a non-GraphQL error', () => {
     expect(
-      getTwoFactorVerificationErrorToastOptions({
+      getTwoFactorAuthenticationErrorToastOptions({
         error: new Error('Network error'),
       }),
     ).toEqual({
@@ -40,5 +40,18 @@ describe('getTwoFactorVerificationErrorToastOptions', () => {
       children: 'Invalid verification code. Please try again.',
       dedupeKey: undefined,
     });
+  });
+
+  it('uses the given fallback message for a non-GraphQL error', () => {
+    expect(
+      getTwoFactorAuthenticationErrorToastOptions({
+        error: new Error('Network error'),
+        fallbackMessage: 'Two factor authentication provisioning failed.',
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        children: 'Two factor authentication provisioning failed.',
+      }),
+    );
   });
 });
