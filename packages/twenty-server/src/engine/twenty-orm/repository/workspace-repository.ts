@@ -762,16 +762,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       : this.options.runInNewTransaction(work);
   }
 
-  private runWithValidationRules<T>({
+  private runWithValidationRules<TResult>({
     write,
     inputRecordIds,
   }: {
     write: (
       repository: WorkspaceRepository<TEntity>,
       validateWrittenRecords?: ValidateWrittenRecords,
-    ) => Promise<T>;
+    ) => Promise<TResult>;
     inputRecordIds?: (string | undefined)[];
-  }): Promise<T> {
+  }): Promise<TResult> {
     const validationRules = getActiveValidationRules({
       flatValidationRuleMaps:
         this.options.internalContext.flatValidationRuleMaps,
