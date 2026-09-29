@@ -39,13 +39,14 @@ export const DropdownRoot = ({
     instanceId: dropdownId,
   });
   const subscribeToDropdownOpenState = useCallback(
-    (onStoreChange: () => void) =>
-      store.sub(dropdownOpenState, () => {
+    (onStoreChange: () => void) => {
+      return store.sub(dropdownOpenState, () => {
         const open = store.get(dropdownOpenState);
 
         onStoreChange();
         onOpenChange?.(open);
-      }),
+      });
+    },
     [dropdownOpenState, onOpenChange, store],
   );
   const getIsDropdownOpen = () => store.get(dropdownOpenState);

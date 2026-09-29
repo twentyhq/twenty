@@ -20,21 +20,23 @@ const DismissibleRecordActions = ({
   onEscapeKeyDown,
   onInteractOutside,
   onOutsideClick,
-}: DismissibleRecordActionsProps) => (
-  <>
-    <Dropdown.Root
-      type="menu"
-      onEscapeKeyDown={onEscapeKeyDown}
-      onInteractOutside={onInteractOutside}
-    >
-      <Dropdown.Trigger>Record actions</Dropdown.Trigger>
-      <Dropdown.Content aria-label="Record actions">
-        <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
-      </Dropdown.Content>
-    </Dropdown.Root>
-    <Button onClick={onOutsideClick}>Outside</Button>
-  </>
-);
+}: DismissibleRecordActionsProps) => {
+  return (
+    <>
+      <Dropdown.Root
+        type="menu"
+        onEscapeKeyDown={onEscapeKeyDown}
+        onInteractOutside={onInteractOutside}
+      >
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+      <Button onClick={onOutsideClick}>Outside</Button>
+    </>
+  );
+};
 
 const preventDismiss = (event: DropdownDismissEvent) => {
   event.preventDefault();
