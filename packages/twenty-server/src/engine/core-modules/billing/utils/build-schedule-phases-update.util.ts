@@ -6,7 +6,7 @@ import type Stripe from 'stripe';
 
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
-import { buildPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/build-phase-update-params.util';
+import { buildPhaseUpdateParamsOrThrow } from 'src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util';
 
 export const buildSchedulePhasesUpdate = ({
   currentPhase,
@@ -27,7 +27,7 @@ export const buildSchedulePhasesUpdate = ({
   toUpdateNextPhase: Stripe.SubscriptionScheduleUpdateParams.Phase;
 } => ({
   toUpdateCurrentPhase: isDefined(toUpdateCurrentPrices)
-    ? buildPhaseUpdateParams({
+    ? buildPhaseUpdateParamsOrThrow({
         currentPhase,
         productKeyByPriceId,
         toUpdatePrices: toUpdateCurrentPrices,
@@ -35,7 +35,7 @@ export const buildSchedulePhasesUpdate = ({
         startDate: currentPhase.start_date,
       })
     : { ...currentPhase, end_date: subscriptionCurrentPeriodEnd },
-  toUpdateNextPhase: buildPhaseUpdateParams({
+  toUpdateNextPhase: buildPhaseUpdateParamsOrThrow({
     currentPhase: nextPhase ?? currentPhase,
     productKeyByPriceId,
     toUpdatePrices: toUpdateNextPrices,

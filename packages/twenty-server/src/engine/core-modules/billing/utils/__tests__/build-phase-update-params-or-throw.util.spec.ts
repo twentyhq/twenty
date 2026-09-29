@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { buildPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/build-phase-update-params.util';
+import { buildPhaseUpdateParamsOrThrow } from 'src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util';
 
 const BASE_PRICE_ID = 'price_base_month';
 const CREDIT_PRICE_ID = 'price_credit_month';
@@ -27,9 +27,9 @@ const buildPhase = (items: Array<{ price: string; quantity?: number }>) => ({
   items,
 });
 
-describe('buildPhaseUpdateParams', () => {
+describe('buildPhaseUpdateParamsOrThrow', () => {
   it('rewrites the base and credit items and leaves an unclassified item untouched', () => {
-    const phase = buildPhaseUpdateParams({
+    const phase = buildPhaseUpdateParamsOrThrow({
       currentPhase: buildPhase([
         { price: BASE_PRICE_ID, quantity: 3 },
         { price: CREDIT_PRICE_ID, quantity: 1 },
@@ -50,7 +50,7 @@ describe('buildPhaseUpdateParams', () => {
   });
 
   it('keeps an unclassified item whatever its position', () => {
-    const phase = buildPhaseUpdateParams({
+    const phase = buildPhaseUpdateParamsOrThrow({
       currentPhase: buildPhase([
         { price: ADD_ON_PRICE_ID, quantity: 1 },
         { price: BASE_PRICE_ID, quantity: 3 },
@@ -66,7 +66,7 @@ describe('buildPhaseUpdateParams', () => {
   });
 
   it('keeps an item whose price the catalog does not know', () => {
-    const phase = buildPhaseUpdateParams({
+    const phase = buildPhaseUpdateParamsOrThrow({
       currentPhase: buildPhase([
         { price: BASE_PRICE_ID, quantity: 3 },
         { price: CREDIT_PRICE_ID, quantity: 1 },
@@ -86,7 +86,7 @@ describe('buildPhaseUpdateParams', () => {
 
   it('throws when the resource credit price is missing from the catalog', () => {
     expect(() =>
-      buildPhaseUpdateParams({
+      buildPhaseUpdateParamsOrThrow({
         currentPhase: buildPhase([
           { price: BASE_PRICE_ID, quantity: 3 },
           { price: CREDIT_PRICE_ID, quantity: 1 },
@@ -103,7 +103,7 @@ describe('buildPhaseUpdateParams', () => {
 
   it('throws when the phase carries no base product item', () => {
     expect(() =>
-      buildPhaseUpdateParams({
+      buildPhaseUpdateParamsOrThrow({
         currentPhase: buildPhase([{ price: CREDIT_PRICE_ID, quantity: 1 }]),
         productKeyByPriceId,
         toUpdatePrices,
@@ -115,7 +115,7 @@ describe('buildPhaseUpdateParams', () => {
 
   it('throws when the base product price is missing from the catalog', () => {
     expect(() =>
-      buildPhaseUpdateParams({
+      buildPhaseUpdateParamsOrThrow({
         currentPhase: buildPhase([
           { price: BASE_PRICE_ID, quantity: 3 },
           { price: CREDIT_PRICE_ID, quantity: 1 },
@@ -134,7 +134,7 @@ describe('buildPhaseUpdateParams', () => {
       { price: CREDIT_PRICE_ID, quantity: 1 },
     ]);
 
-    const withoutEndDate = buildPhaseUpdateParams({
+    const withoutEndDate = buildPhaseUpdateParamsOrThrow({
       currentPhase,
       productKeyByPriceId,
       toUpdatePrices,
@@ -142,7 +142,7 @@ describe('buildPhaseUpdateParams', () => {
       endDate: undefined,
     });
 
-    const withEndDate = buildPhaseUpdateParams({
+    const withEndDate = buildPhaseUpdateParamsOrThrow({
       currentPhase,
       productKeyByPriceId,
       toUpdatePrices,

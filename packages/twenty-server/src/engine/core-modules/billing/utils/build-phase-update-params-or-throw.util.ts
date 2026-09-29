@@ -13,7 +13,7 @@ import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { resolveManagedItemPrice } from 'src/engine/core-modules/billing/utils/resolve-managed-item-price.util';
 
-export const buildPhaseUpdateParams = ({
+export const buildPhaseUpdateParamsOrThrow = ({
   currentPhase,
   productKeyByPriceId,
   toUpdatePrices,
