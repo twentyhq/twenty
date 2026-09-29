@@ -1,11 +1,12 @@
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { ONBOARDING_CREDITS_STEPS } from '@/onboarding/constants/OnboardingCreditsSteps';
 import { ONBOARDING_STATUS_BY_CREDITS_STEP } from '@/onboarding/constants/OnboardingStatusByCreditsStep';
-import { ONBOARDING_STATUS_ORDER } from '@/onboarding/constants/OnboardingStatusOrder';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
 import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
+import { getOnboardingCountedFreeCredits } from '@/onboarding/utils/getOnboardingCountedFreeCredits';
 import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
+import { isOnboardingCreditsStepDone } from '@/onboarding/utils/isOnboardingCreditsStepDone';
 import { isDefined } from 'twenty-shared/utils';
 import { type OnboardingStatus } from '~/generated-metadata/graphql';
 
@@ -24,19 +25,10 @@ export const getOnboardingCreditsProgress = ({
   isWorkspaceCreator,
   isPlanRequired,
 }: GetOnboardingCreditsProgressArgs): OnboardingCreditsProgress => {
-  const statusIndex = isDefined(onboardingStatus)
-    ? ONBOARDING_STATUS_ORDER.indexOf(onboardingStatus)
-    : -1;
-
-  const isStepDone = (step: OnboardingCreditsStep) => {
-    const stepStatusIndex = ONBOARDING_STATUS_ORDER.indexOf(
-      ONBOARDING_STATUS_BY_CREDITS_STEP[step],
-    );
-
-    return step === 'upgradeTrial'
-      ? statusIndex >= stepStatusIndex
-      : statusIndex > stepStatusIndex;
-  };
+  const countedFreeCredits = getOnboardingCountedFreeCredits({
+    onboardingFreeCredits,
+    onboardingStatus,
+  });
 
   const rewardCreditsByStep: Record<OnboardingCreditsStep, number> = {
     importContacts: isWorkspaceCreator
@@ -62,21 +54,22 @@ export const getOnboardingCreditsProgress = ({
     ? Math.max(
         0,
         rewardCreditsByStep[onboardingStep] -
-          onboardingFreeCredits[onboardingStep],
+          countedFreeCredits[onboardingStep],
       )
     : 0;
 
   const goalCredits = ONBOARDING_CREDITS_STEPS.reduce(
     (goal, step) =>
       goal +
-      (isStepDone(step) && step !== 'inviteTeam'
-        ? Math.max(rewardCreditsByStep[step], onboardingFreeCredits[step])
-        : onboardingFreeCredits[step]),
+      (isOnboardingCreditsStepDone({ step, onboardingStatus }) &&
+      step !== 'inviteTeam'
+        ? Math.max(rewardCreditsByStep[step], countedFreeCredits[step])
+        : countedFreeCredits[step]),
     0,
   );
 
   return {
-    earnedCredits: getOnboardingEarnedCredits(onboardingFreeCredits),
+    earnedCredits: getOnboardingEarnedCredits(countedFreeCredits),
     goalCredits,
     currentStep:
       isDefined(onboardingStep) && currentStepCredits > 0

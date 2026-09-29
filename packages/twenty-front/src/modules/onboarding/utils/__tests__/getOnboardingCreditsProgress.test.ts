@@ -72,21 +72,23 @@ describe('getOnboardingCreditsProgress', () => {
     expect(progress.currentStepCredits).toBe(1);
   });
 
-  it('should not point at a step once its reward is earned', () => {
-    const progress = getOnboardingCreditsProgress({
-      onboardingFreeCredits: buildOnboardingFreeCredits({
-        importContacts: 2,
-        installApps: 1,
+  it('should not count the email reward while the mailbox step is at hand', () => {
+    expect(
+      getOnboardingCreditsProgress({
+        onboardingFreeCredits: buildOnboardingFreeCredits({
+          importContacts: 2,
+        }),
+        onboardingConfig,
+        onboardingStatus: OnboardingStatus.SYNC_EMAIL,
+        isWorkspaceCreator: true,
+        isPlanRequired: true,
       }),
-      onboardingConfig,
-      onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
-      isWorkspaceCreator: true,
-      isPlanRequired: false,
+    ).toEqual({
+      earnedCredits: 0,
+      goalCredits: 0,
+      currentStep: 'importContacts',
+      currentStepCredits: 2,
     });
-
-    expect(progress.goalCredits).toBe(3);
-    expect(progress.currentStep).toBeNull();
-    expect(progress.currentStepCredits).toBe(0);
   });
 
   it('should keep skipped steps in the goal on the profile step', () => {
