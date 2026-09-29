@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
+  FeatureFlagKey,
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
@@ -56,6 +57,16 @@ import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/r
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
+import {
+  RecordValidationRuleException,
+  RecordValidationRuleExceptionCode,
+} from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
+import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
+import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
+import { VALIDATION_RULE_MAX_REPORTED_VIOLATIONS } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-max-reported-violations.constant';
+import { VALIDATION_RULE_RECORD_CHUNK_SIZE } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-record-chunk-size.constant';
+import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
+import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -953,7 +964,25 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  async runInsert({
+  async runInsert(args: {
+    records: Partial<ObjectRecord>[];
+    columnsToReturn: string[];
+    onConflictDoNothing?: boolean;
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    if (args.records.length === 0) {
+      return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
+    return this.runWithValidationRuleAtomicity((repository) =>
+      repository.performInsert(args),
+    );
+  }
+
+  private async performInsert({
     records,
     columnsToReturn,
     onConflictDoNothing,
@@ -966,10 +995,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
-    if (records.length === 0) {
-      return { identifiers: [], generatedMaps: [], raw: [] };
-    }
-
     const filesFieldDiff =
       this.filesFieldSync.computeFilesFieldDiffBeforeInsert(
         records,
@@ -1020,6 +1045,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
+    const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
+
+    await this.validateWrittenRecordsAgainstValidationRulesOrThrow({
+      recordIds: insertedIds,
+      inputIndexByRecordId: new Map(
+        records.every((record) => isNonEmptyString(record.id))
+          ? records.map((record, inputIndex) => [String(record.id), inputIndex])
+          : insertedIds.map((insertedId, inputIndex) => [
+              insertedId,
+              inputIndex,
+            ]),
+      ),
+    });
 
     await this.acquireRecordStock(rawRows.length);
 
@@ -1028,7 +1066,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
-    const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
     await this.emitCreateEvents(insertedIds);
 
@@ -1039,7 +1076,24 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     };
   }
 
-  async runBatchUpdate({
+  async runBatchUpdate(args: {
+    inputs: { id: string; data: Partial<ObjectRecord> }[];
+    columnsToReturn: string[];
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    if (args.inputs.length === 0) {
+      return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
+    return this.runWithValidationRuleAtomicity((repository) =>
+      repository.performBatchUpdate(args),
+    );
+  }
+
+  private async performBatchUpdate({
     inputs,
     columnsToReturn,
   }: {
@@ -1050,10 +1104,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
-    if (inputs.length === 0) {
-      return { identifiers: [], generatedMaps: [], raw: [] };
-    }
-
     const writableRecordIds = await this.resolveWritableRecordIds({
       ids: inputs.map((input) => input.id),
       operationType: 'update',
@@ -1064,6 +1114,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const recordsBefore: ObjectRecord[] = [];
     const recordsAfter: ObjectRecord[] = [];
+    const rawRecordsAfterWrite: ObjectRecord[] = [];
     const generatedMaps: ObjectRecord[] = [];
     const updateEventColumnsToReturn = getUpdateEventColumnsToReturn(
       columnsToReturn,
@@ -1173,6 +1224,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             noFormatting: true,
           });
 
+      rawRecordsAfterWrite.push(...recordsAfterWrite);
+
       recordsAfter.push(
         ...mergeReturnedUpdateTimestamps(
           mergeRecordsWithUpdateValues(
@@ -1183,6 +1236,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ),
       );
     }
+
+    await this.validateWrittenRecordsAgainstValidationRulesOrThrow({
+      recordIds: generatedMaps.map((record) => String(record.id)),
+      inputIndexByRecordId: new Map(
+        inputs.map((input, inputIndex) => [input.id, inputIndex]),
+      ),
+      rawWrittenRecordSnapshots: this.options.shouldSkipEventEmission
+        ? undefined
+        : rawRecordsAfterWrite,
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1323,6 +1386,249 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           event,
         );
       }
+    }
+  }
+
+  bindQueryBuilderToExecutor(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ): WorkspaceSelectQueryBuilder {
+    return queryBuilder.clone(this.options.executor);
+  }
+
+  async findLiveRecordsForValidationRules({
+    ids,
+    fieldNames,
+  }: {
+    ids: string[];
+    fieldNames: string[];
+  }): Promise<ObjectRecord[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const { columnNames, columnShapeByColumnName } = this.options.tableShape;
+
+    const selectedColumnNames = columnNames.filter((columnName) => {
+      const columnShape = columnShapeByColumnName[columnName];
+
+      return (
+        columnName === 'id' ||
+        columnName === 'deletedAt' ||
+        (isDefined(columnShape) &&
+          (fieldNames.includes(columnShape.fieldName) ||
+            fieldNames.includes(columnShape.compositeParentFieldName ?? '')))
+      );
+    });
+
+    const rawRecords = await this.buildIdsEventSnapshotQueryBuilder(ids)
+      .select(selectedColumnNames)
+      .getMany<ObjectRecord>({ noFormatting: true });
+
+    return this.formatResult<ObjectRecord[]>(
+      rawRecords.filter((rawRecord) => !isDefined(rawRecord.deletedAt)),
+    );
+  }
+
+  private getActiveValidationRules(): FlatValidationRule[] {
+    if (
+      !this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_VALIDATION_RULES_ENABLED
+      ]
+    ) {
+      return [];
+    }
+
+    return Object.values(
+      this.options.internalContext.flatValidationRuleMaps.byUniversalIdentifier,
+    ).filter(
+      (flatValidationRule): flatValidationRule is FlatValidationRule =>
+        isDefined(flatValidationRule) &&
+        flatValidationRule.isActive &&
+        flatValidationRule.objectMetadataId ===
+          this.options.flatObjectMetadata.id,
+    );
+  }
+
+  private async runWithValidationRuleAtomicity<T>(
+    work: (repository: WorkspaceRepository<TEntity>) => Promise<T>,
+  ): Promise<T> {
+    if (this.getActiveValidationRules().length === 0) {
+      return work(this);
+    }
+
+    return this.runAtomically(work);
+  }
+
+  private async attachRelatedRecordsForValidationRules({
+    writtenRecords,
+    rawWrittenRecords,
+    validationRules,
+  }: {
+    writtenRecords: ObjectRecord[];
+    rawWrittenRecords: ObjectRecord[];
+    validationRules: FlatValidationRule[];
+  }): Promise<ObjectRecord[]> {
+    const referencedRelationShapes = [
+      ...new Set(
+        validationRules.flatMap((validationRule) =>
+          Object.keys(validationRule.bindings),
+        ),
+      ),
+    ]
+      .map(
+        (bindingPath) =>
+          this.options.tableShape.relationShapeByFieldName[bindingPath],
+      )
+      .filter(isDefined)
+      .filter(
+        (relationShape) =>
+          relationShape.relationType === RelationType.MANY_TO_ONE &&
+          isNonEmptyString(relationShape.joinColumnName),
+      );
+
+    let recordsWithRelatedRecords = writtenRecords;
+
+    for (const relationShape of referencedRelationShapes) {
+      const joinColumnName = relationShape.joinColumnName ?? '';
+
+      const relatedRecordIds = [
+        ...new Set(
+          rawWrittenRecords
+            .map((rawWrittenRecord) => rawWrittenRecord[joinColumnName])
+            .filter(isNonEmptyString),
+        ),
+      ];
+
+      const relatedRecords = await this.options
+        .getRepositoryForObjectMetadataId(relationShape.targetObjectMetadataId)
+        .findLiveRecordsForValidationRules({
+          ids: relatedRecordIds,
+          fieldNames: [
+            ...new Set(
+              validationRules.flatMap((validationRule) =>
+                Object.keys(validationRule.bindings)
+                  .filter((bindingPath) =>
+                    bindingPath.startsWith(`${relationShape.fieldName}.`),
+                  )
+                  .map((bindingPath) =>
+                    bindingPath.slice(relationShape.fieldName.length + 1),
+                  ),
+              ),
+            ),
+          ],
+        });
+
+      const relatedRecordById = new Map(
+        relatedRecords.map((relatedRecord) => [
+          String(relatedRecord.id),
+          relatedRecord,
+        ]),
+      );
+
+      recordsWithRelatedRecords = recordsWithRelatedRecords.map(
+        (record, recordIndex) => ({
+          ...record,
+          [relationShape.fieldName]:
+            relatedRecordById.get(
+              String(rawWrittenRecords[recordIndex]?.[joinColumnName]),
+            ) ?? null,
+        }),
+      );
+    }
+
+    return recordsWithRelatedRecords;
+  }
+
+  private async validateWrittenRecordsAgainstValidationRulesOrThrow({
+    recordIds,
+    inputIndexByRecordId = new Map(),
+    rawWrittenRecordSnapshots,
+  }: {
+    recordIds: string[];
+    inputIndexByRecordId?: Map<string, number>;
+    rawWrittenRecordSnapshots?: ObjectRecord[];
+  }): Promise<void> {
+    const validationRules = this.getActiveValidationRules();
+
+    if (validationRules.length === 0 || recordIds.length === 0) {
+      return;
+    }
+
+    const fields = buildValidationRuleFieldDescriptors({
+      objectMetadataId: this.options.flatObjectMetadata.id,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+    });
+    const now = new Date().toISOString();
+    const rawSnapshotById = new Map(
+      (rawWrittenRecordSnapshots ?? []).map((rawSnapshot) => [
+        String(rawSnapshot.id),
+        rawSnapshot,
+      ]),
+    );
+
+    const violations: RecordValidationRuleViolation[] = [];
+    const evaluationErrors: RecordValidationRuleViolation[] = [];
+
+    for (
+      let chunkStart = 0;
+      chunkStart < recordIds.length &&
+      violations.length + evaluationErrors.length <
+        VALIDATION_RULE_MAX_REPORTED_VIOLATIONS;
+      chunkStart += VALIDATION_RULE_RECORD_CHUNK_SIZE
+    ) {
+      const chunkRecordIds = recordIds.slice(
+        chunkStart,
+        chunkStart + VALIDATION_RULE_RECORD_CHUNK_SIZE,
+      );
+      const snapshotRecords = chunkRecordIds
+        .map((recordId) => rawSnapshotById.get(recordId))
+        .filter(isDefined);
+
+      const rawWrittenRecords =
+        snapshotRecords.length === chunkRecordIds.length
+          ? snapshotRecords
+          : await this.buildIdsEventSnapshotQueryBuilder(
+              chunkRecordIds,
+            ).getMany<ObjectRecord>({ noFormatting: true });
+
+      const records = await this.attachRelatedRecordsForValidationRules({
+        writtenRecords: this.formatResult<ObjectRecord[]>(rawWrittenRecords),
+        rawWrittenRecords,
+        validationRules,
+      });
+
+      const chunkResult = computeRecordValidationRuleViolations({
+        records,
+        validationRules,
+        fields,
+        now,
+        inputIndexByRecordId,
+        maxViolations:
+          VALIDATION_RULE_MAX_REPORTED_VIOLATIONS -
+          violations.length -
+          evaluationErrors.length,
+      });
+
+      violations.push(...chunkResult.violations);
+      evaluationErrors.push(...chunkResult.evaluationErrors);
+    }
+
+    if (evaluationErrors.length > 0) {
+      throw new RecordValidationRuleException(
+        'A validation rule could not be evaluated',
+        RecordValidationRuleExceptionCode.VALIDATION_RULE_EVALUATION_FAILED,
+        evaluationErrors,
+      );
+    }
+
+    if (violations.length > 0) {
+      throw new RecordValidationRuleException(
+        violations[0].message,
+        RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION,
+        violations,
+      );
     }
   }
 
@@ -1479,7 +1785,29 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
-  async runMutation({
+  async runMutation(args: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+  }): Promise<ObjectRecord[]> {
+    if (args.kind !== 'update') {
+      return this.performMutation(args);
+    }
+
+    return this.runWithValidationRuleAtomicity((repository) =>
+      repository.performMutation({
+        ...args,
+        selectQueryBuilder:
+          repository === this
+            ? args.selectQueryBuilder
+            : repository.bindQueryBuilderToExecutor(args.selectQueryBuilder),
+      }),
+    );
+  }
+
+  private async performMutation({
     selectQueryBuilder,
     rowLevelPermissionsApplied,
     kind,
@@ -1595,6 +1923,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (kind === 'delete') {
       await this.releaseRecordStock(mutationResult.generatedMaps.length);
+    }
+
+    if (kind === 'update') {
+      await this.validateWrittenRecordsAgainstValidationRulesOrThrow({
+        recordIds: mutationResult.generatedMaps.map((record) =>
+          String(record.id),
+        ),
+      });
     }
 
     if (isDefined(filesFieldFileIds)) {
