@@ -58,6 +58,7 @@ export const useCreateAgentChatThread = () => {
 
       if (store.get(isCreatingForFirstSendState.atom)) {
         store.set(isCreatingForFirstSendState.atom, false);
+        store.set(threadIdCreatedFromDraftState.atom, newThread.id);
         setIsCreatingChatThread(false);
         return;
       }
