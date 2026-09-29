@@ -1,0 +1,37 @@
+import { VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE } from '@/constants/ValidationRuleEmptinessSubfieldsByCompositeType';
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { isDefined } from '@/utils/validation/isDefined';
+import {
+  validationRuleCompositeFieldTypeByValue,
+  validationRuleNullPlaceholders,
+} from '@/utils/validation-rule/validationRuleValueRegistry';
+
+export const isValidationRuleValueEmpty = (value: unknown): boolean => {
+  if (!isDefined(value) || value === '') {
+    return true;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length === 0;
+  }
+
+  if (!isPlainObject(value) || value instanceof Date) {
+    return false;
+  }
+
+  if (validationRuleNullPlaceholders.has(value)) {
+    return true;
+  }
+
+  const compositeFieldType = validationRuleCompositeFieldTypeByValue.get(value);
+
+  const emptinessSubfields = isDefined(compositeFieldType)
+    ? VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE[compositeFieldType]
+    : undefined;
+
+  const subfieldValues = isDefined(emptinessSubfields)
+    ? emptinessSubfields.map((subfieldName) => value[subfieldName])
+    : Object.values(value);
+
+  return subfieldValues.every(isValidationRuleValueEmpty);
+};
