@@ -3,9 +3,9 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { canRescheduleCallRecordingWithoutRecallLookup } from 'src/logic-functions/domain/can-reschedule-call-recording-without-recall-lookup.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { attachRecallBotToPendingCallRecording } from 'src/logic-functions/data/attach-recall-bot-to-pending-call-recording.util';
 import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { findResumablePendingCallRecording } from 'src/logic-functions/flows/find-resumable-pending-call-recording.util';
 import {
   scheduleRecallBotForCallRecording,
@@ -48,10 +48,17 @@ export const recoverPendingCallRecording = async ({
     : await findExistingExternalBotIdOrThrow(callRecording.id);
 
   if (!isUndefined(existingExternalBotId)) {
-    await updateCallRecording(client, {
+    const isAttached = await attachRecallBotToPendingCallRecording(client, {
       id: callRecording.id,
-      data: { externalBotId: existingExternalBotId },
+      externalBotId: existingExternalBotId,
     });
+
+    if (!isAttached) {
+      return {
+        status: 'skipped',
+        reason: 'call recording no longer awaits a bot',
+      };
+    }
 
     if (!isUndefined(calendarEvent.startsAt)) {
       await enqueuePreJoinCreditCheck({
