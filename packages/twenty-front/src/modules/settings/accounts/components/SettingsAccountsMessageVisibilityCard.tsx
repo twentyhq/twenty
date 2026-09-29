@@ -10,8 +10,8 @@ type SettingsAccountsMessageVisibilityCardProps = {
 
 const inboxSettingsVisibilityOptions = [
   {
-    title: msg`Everything`,
-    description: msg`Subject, body and attachments will be shared with your team.`,
+    title: msg`Shared with everyone`,
+    description: msg`Everyone in your workspace can read the subject, body and attachments.`,
     value: MessageChannelVisibility.SHARE_EVERYTHING,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
@@ -22,20 +22,8 @@ const inboxSettingsVisibilityOptions = [
     ),
   },
   {
-    title: msg`Subject and metadata`,
-    description: msg`Subject and metadata will be shared with your team.`,
-    value: MessageChannelVisibility.SUBJECT,
-    cardMedia: (
-      <SettingsAccountsVisibilityIcon
-        metadata="active"
-        subject="active"
-        body="inactive"
-      />
-    ),
-  },
-  {
-    title: msg`Metadata`,
-    description: msg`Timestamp and participants will be shared with your team.`,
+    title: msg`Private`,
+    description: msg`Only you and others who received an email can read it. Your workspace sees who took part and when.`,
     value: MessageChannelVisibility.METADATA,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
@@ -54,7 +42,12 @@ export const SettingsAccountsMessageVisibilityCard = ({
   <SettingsRadioSettingsCard
     name="message-visibility"
     options={inboxSettingsVisibilityOptions}
-    value={value}
+    // Subjects are no longer shared on their own, so this level is private.
+    value={
+      value === MessageChannelVisibility.SUBJECT
+        ? MessageChannelVisibility.METADATA
+        : value
+    }
     onChange={onChange}
   />
 );
