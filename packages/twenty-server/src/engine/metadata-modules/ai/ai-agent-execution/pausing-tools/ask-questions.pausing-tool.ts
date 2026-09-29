@@ -116,7 +116,7 @@ export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
     isPlainObject(toolOutput.result) &&
     toolOutput.result.status === 'pending',
   buildAsk: ({ questions }) => ({
-    name: questions[0]?.question ?? null,
+    name: questions[0]?.question ?? '',
     form: { kind: 'questions', questions },
   }),
   complete: async ({ output: { answers }, input: { questions } }) => ({

@@ -220,7 +220,7 @@ export class OpenAsksForPendingInputCommand extends ProvisionedWorkspaceCommandR
 
     try {
       await inputAskRepository.insert({
-        name: pendingPart.questions[0]?.question ?? null,
+        name: pendingPart.questions[0]?.question ?? '',
         status: InputAskStatus.PENDING,
         form: { kind: 'questions', questions: pendingPart.questions },
         threadId: thread.id,

@@ -58,7 +58,7 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
     isPlainObject(toolOutput.result) &&
     toolOutput.result.status === 'pending',
   buildAsk: (email) => ({
-    name: isNonEmptyString(email.subject.trim()) ? email.subject : null,
+    name: email.subject.trim(),
     form: { kind: 'emailApproval', email },
   }),
   complete: async ({ output: { decision, email }, input, context }) => {
