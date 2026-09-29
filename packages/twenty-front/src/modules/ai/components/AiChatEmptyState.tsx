@@ -21,11 +21,11 @@ export const AiChatEmptyState = ({
 }: AiChatEmptyStateProps) => {
   const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
 
+  MarkdownRenderer.preload();
+
   if (!shouldShowAiChatEmptyState) {
     return null;
   }
-
-  MarkdownRenderer.preload();
 
   return (
     <StyledEmptyState>
