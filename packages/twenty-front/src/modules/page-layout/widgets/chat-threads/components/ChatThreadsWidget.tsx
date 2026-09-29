@@ -6,8 +6,10 @@ type ChatThreadsWidgetProps = {
   widget: PageLayoutWidget;
 };
 
-export const ChatThreadsWidget = ({ widget }: ChatThreadsWidgetProps) => (
+export const ChatThreadsWidget = ({
+  widget: _widget,
+}: ChatThreadsWidgetProps) => (
   <WidgetContentShell>
-    <ChatThreadsCard widgetId={widget.id} />
+    <ChatThreadsCard />
   </WidgetContentShell>
 );

@@ -1,11 +1,7 @@
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadRecordTargetsContent } from '@/ai/components/AiChatThreadRecordTargetsContent';
-import { AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadObjectNameSingular';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
-import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { useAgentChatThreadJunctionConfig } from '@/ai/hooks/useAgentChatThreadJunctionConfig';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -21,25 +17,9 @@ export const AiChatThreadRecordTargets = ({
   const isConversationsTabEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
   );
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const junctionConfig = useAgentChatThreadJunctionConfig();
 
-  // The thread query is built from this config, so it has to keep its
-  // identity across renders or the query would be rebuilt each time.
-  const junctionConfig = useMemo(() => {
-    const threadObjectMetadataItem = objectMetadataItems.find(
-      ({ nameSingular }) =>
-        nameSingular === AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR,
-    );
-
-    return isDefined(threadObjectMetadataItem)
-      ? getObjectMorphJunctionConfig({
-          objectMetadata: threadObjectMetadataItem,
-          objectMetadataItems,
-        })
-      : null;
-  }, [objectMetadataItems]);
-
-  if (!isConversationsTabEnabled || !isUsableJunctionConfig(junctionConfig)) {
+  if (!isConversationsTabEnabled || !isDefined(junctionConfig)) {
     return null;
   }
 

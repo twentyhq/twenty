@@ -20,6 +20,7 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const ACME_ID = '20202020-0000-4000-8000-000000000002';
+const OTHER_COMPANY_ID = '20202020-0000-4000-8000-000000000003';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
@@ -30,15 +31,21 @@ const companyTargetField = getMockFieldMetadataItemOrThrow({
 });
 
 const attachChatThreadToRecord = jest.fn(() => Promise.resolve(true));
-const detachChatThreadFromRecord = jest.fn(() => Promise.resolve());
+const detachChatThreadFromRecord = jest.fn((_linkIds: string[]) =>
+  Promise.resolve(),
+);
 const mockThread: { current: ObjectRecord | undefined } = {
   current: undefined,
 };
 
-jest.mock('@/ai/hooks/useChatThreadRecordAttachmentActions', () => ({
-  useChatThreadRecordAttachmentActions: () => ({
-    attachChatThreadToRecord,
-    detachChatThreadFromRecord,
+jest.mock('@/ai/hooks/useAttachChatThreadToRecord', () => ({
+  useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
+}));
+
+jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
+  useDetachChatThreadFromRecord: () => ({
+    detachChatThreadFromRecord: (linkIds: string[]) =>
+      detachChatThreadFromRecord(linkIds),
   }),
 }));
 
@@ -167,12 +174,43 @@ describe('AiChatThreadRecordTargetsContent', () => {
       await screen.findByRole('button', { name: 'Unlink Acme' }),
     );
 
-    expect(detachChatThreadFromRecord).toHaveBeenCalledWith({
-      threadId: THREAD_ID,
-      objectNameSingular: 'company',
-      recordId: ACME_ID,
-    });
+    expect(detachChatThreadFromRecord).toHaveBeenCalledWith(['link-1']);
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
+  });
+
+  // A custom object leg carries no unique index, so a record can be linked
+  // more than once, and unlinking it removes every link.
+  it('unlinks every link between the conversation and the record', async () => {
+    const user = userEvent.setup();
+    mockThread.current = buildThread({
+      recordTargets: [
+        ACME_LINK,
+        { ...ACME_LINK, id: 'link-2' },
+        {
+          __typename: 'AgentChatThreadTarget',
+          id: 'link-3',
+          company: {
+            __typename: 'Company',
+            id: OTHER_COMPANY_ID,
+            name: 'Globex',
+          },
+        },
+      ],
+    });
+
+    renderRecordTargets();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Edit linked records' }),
+    );
+    await user.click(
+      await screen.findByRole('button', { name: 'Unlink Acme' }),
+    );
+
+    expect(detachChatThreadFromRecord).toHaveBeenCalledWith([
+      'link-1',
+      'link-2',
+    ]);
   });
 
   it('offers to link a record when the conversation has none', () => {

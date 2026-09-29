@@ -2,13 +2,13 @@ import { useStore } from 'jotai';
 import omit from 'lodash.omit';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useChatThreadRecordAttachmentActions } from '@/ai/hooks/useChatThreadRecordAttachmentActions';
+import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { agentChatPendingRecordTargetByDraftKeyState } from '@/ai/states/agentChatPendingRecordTargetByDraftKeyState';
 import { movePendingRecordTargetToDraftKey } from '@/ai/utils/movePendingRecordTargetToDraftKey';
 
 export const useAttachPendingRecordTargetOnSend = () => {
   const store = useStore();
-  const { attachChatThreadToRecord } = useChatThreadRecordAttachmentActions();
+  const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
 
   // A failed first send restores its draft under the thread it created, so the
   // record has to move with it for the retry to find it.
@@ -30,8 +30,6 @@ export const useAttachPendingRecordTargetOnSend = () => {
     );
   };
 
-  // The model may attach the same record through its own tool during this
-  // turn; attaching is idempotent on the server, so both can run.
   const attachPendingRecordTargetOnSend = async ({
     threadId,
   }: {

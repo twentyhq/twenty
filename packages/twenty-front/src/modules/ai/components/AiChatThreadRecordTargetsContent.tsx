@@ -7,14 +7,17 @@ import { IconPencil, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadObjectNameSingular';
-import { useChatThreadRecordAttachmentActions } from '@/ai/hooks/useChatThreadRecordAttachmentActions';
+import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
+import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFromRecord';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
+import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
+import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
 import { type ObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
@@ -76,8 +79,8 @@ export const AiChatThreadRecordTargetsContent = ({
     agentChatThreadPermissionsFamilySelector,
     threadId,
   );
-  const { attachChatThreadToRecord, detachChatThreadFromRecord } =
-    useChatThreadRecordAttachmentActions();
+  const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
+  const { detachChatThreadFromRecord } = useDetachChatThreadFromRecord();
 
   const dropdownId = `${instanceId}-${threadId}`;
   const { closeDropdown } = useCloseDropdown();
@@ -118,8 +121,8 @@ export const AiChatThreadRecordTargetsContent = ({
       : [];
   });
 
-  // A workflow run's conversation belongs to the run, and the server refuses
-  // to file it under anything else.
+  // A workflow run's conversation is the record of what its agent step did,
+  // so it is not filed under anything else.
   const canEditRecordTargets =
     (permissions?.canUpdate ?? false) && !isDefined(thread.workflowRunId);
 
@@ -158,15 +161,39 @@ export const AiChatThreadRecordTargetsContent = ({
       return;
     }
 
-    const attachment = {
-      threadId,
-      objectNameSingular: objectMetadataItem.nameSingular,
-      recordId: morphItem.recordId,
-    };
+    if (morphItem.isSelected) {
+      void attachChatThreadToRecord({
+        threadId,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        recordId: morphItem.recordId,
+      });
 
-    void (morphItem.isSelected
-      ? attachChatThreadToRecord(attachment)
-      : detachChatThreadFromRecord(attachment));
+      return;
+    }
+
+    const targetFieldInfo = findTargetFieldInfo(
+      junctionConfig.targetFields,
+      morphItem.objectMetadataId,
+      objectMetadataItems,
+    );
+    const targetJoinColumnName = targetFieldInfo?.joinColumnName;
+
+    if (!isDefined(targetFieldInfo) || !isDefined(targetJoinColumnName)) {
+      return;
+    }
+
+    const linkIdsToRecord = (junctionRecords ?? [])
+      .filter(
+        (junctionRecord) =>
+          getRelatedRecordIdFromJunction({
+            junctionRecord,
+            relationFieldName: targetFieldInfo.fieldName,
+            joinColumnName: targetJoinColumnName,
+          }) === morphItem.recordId,
+      )
+      .map(({ id }) => id);
+
+    void detachChatThreadFromRecord(linkIdsToRecord);
   };
 
   const hasTargetRecords = targetRecords.length > 0;

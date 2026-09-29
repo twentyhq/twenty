@@ -1,17 +1,15 @@
 import { AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadObjectNameSingular';
+import { AGENT_CHAT_THREAD_TARGET_OBJECT_NAME_PLURAL } from '@/ai/constants/AgentChatThreadTargetObjectNamePlural';
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
 import { isSucceededAttachConversationToRecordToolPart } from '@/ai/utils/isSucceededAttachConversationToRecordToolPart';
-import { refetchActiveFindOneRecordQueries } from '@/ai/utils/refetchActiveFindOneRecordQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useApolloClient } from '@apollo/client/react';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { GetChatThreadsForRecordDocument } from '~/generated-metadata/graphql';
+import { capitalize } from 'twenty-shared/utils';
 
 export const useProcessConversationRecordAttachment = () => {
-  const apolloClient = useApolloClient();
   const apolloCoreClient = useApolloCoreClient();
 
   const processedToolExecutionPartIdsCallbackState =
@@ -45,17 +43,17 @@ export const useProcessConversationRecordAttachment = () => {
       ...toolCallIdsToProcess,
     ]);
 
-    // The link is written without record events, so a record page already
-    // showing its conversations would not hear about it. A failed refetch
-    // surfaces in that widget's own error state.
-    apolloClient
-      .refetchQueries({ include: [GetChatThreadsForRecordDocument] })
+    // The server wrote the link, which this client's cache cannot know about,
+    // so the record page's conversations and the chat header's linked records
+    // are refetched. A failed refetch surfaces in their own error states.
+    apolloCoreClient
+      .refetchQueries({
+        include: [
+          `FindMany${capitalize(AGENT_CHAT_THREAD_TARGET_OBJECT_NAME_PLURAL)}`,
+          `FindOne${capitalize(AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR)}`,
+        ],
+      })
       .catch(() => undefined);
-    // The thread header reads the same links from the workspace API.
-    refetchActiveFindOneRecordQueries({
-      apolloCoreClient,
-      objectNameSingular: AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR,
-    }).catch(() => undefined);
   };
 
   return {

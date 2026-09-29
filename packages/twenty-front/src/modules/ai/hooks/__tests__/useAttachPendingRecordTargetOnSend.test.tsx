@@ -12,8 +12,8 @@ import {
 
 const attachChatThreadToRecord = jest.fn(() => Promise.resolve(true));
 
-jest.mock('@/ai/hooks/useChatThreadRecordAttachmentActions', () => ({
-  useChatThreadRecordAttachmentActions: () => ({ attachChatThreadToRecord }),
+jest.mock('@/ai/hooks/useAttachChatThreadToRecord', () => ({
+  useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';

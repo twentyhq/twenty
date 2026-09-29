@@ -9,15 +9,8 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { GetChatThreadsForRecordDocument } from '~/generated-metadata/graphql';
 
-const refetchQueriesMock = jest.fn(() => Promise.resolve([]));
 const refetchCoreQueriesMock = jest.fn(() => Promise.resolve([]));
-
-jest.mock('@apollo/client/react', () => ({
-  ...jest.requireActual('@apollo/client/react'),
-  useApolloClient: () => ({ refetchQueries: refetchQueriesMock }),
-}));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ refetchQueries: refetchCoreQueriesMock }),
@@ -69,7 +62,7 @@ describe('useProcessConversationRecordAttachment', () => {
     resetJotaiStore();
   });
 
-  it('should refresh the conversations listed on record pages once per attachment', () => {
+  it('should refresh the record pages and chat headers listing the links once per attachment', () => {
     const result = renderProcessConversationRecordAttachment();
     const message = buildMessage([
       { type: 'text', text: 'Done.' },
@@ -81,11 +74,10 @@ describe('useProcessConversationRecordAttachment', () => {
       result.current.processConversationRecordAttachment(message);
     });
 
-    expect(refetchQueriesMock).toHaveBeenCalledTimes(1);
-    expect(refetchQueriesMock).toHaveBeenCalledWith({
-      include: [GetChatThreadsForRecordDocument],
-    });
     expect(refetchCoreQueriesMock).toHaveBeenCalledTimes(1);
+    expect(refetchCoreQueriesMock).toHaveBeenCalledWith({
+      include: ['FindManyAgentChatThreadTargets', 'FindOneAgentChatThread'],
+    });
 
     act(() => {
       result.current.processConversationRecordAttachment(
@@ -96,7 +88,7 @@ describe('useProcessConversationRecordAttachment', () => {
       );
     });
 
-    expect(refetchQueriesMock).toHaveBeenCalledTimes(2);
+    expect(refetchCoreQueriesMock).toHaveBeenCalledTimes(2);
   });
 
   it('should leave the conversations alone until an attachment succeeds', () => {
@@ -118,7 +110,6 @@ describe('useProcessConversationRecordAttachment', () => {
       );
     });
 
-    expect(refetchQueriesMock).not.toHaveBeenCalled();
     expect(refetchCoreQueriesMock).not.toHaveBeenCalled();
   });
 });
