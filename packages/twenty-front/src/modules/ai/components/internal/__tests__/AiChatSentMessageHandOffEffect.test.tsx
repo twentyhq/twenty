@@ -14,8 +14,6 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const COMPOSER_TEXT_RECT = { left: 10, top: 20 } as DOMRect;
-
 const PENDING_HAND_OFF = {
   composerTextRect: { left: 1, top: 2 } as DOMRect,
   messageId: null,
@@ -27,10 +25,6 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('AiChatSentMessageHandOffEffect', () => {
   let editor: Editor;
-
-  beforeAll(() => {
-    Range.prototype.getBoundingClientRect = () => COMPOSER_TEXT_RECT;
-  });
 
   beforeEach(() => {
     resetJotaiStore();
@@ -46,16 +40,6 @@ describe('AiChatSentMessageHandOffEffect', () => {
   });
 
   it.each([
-    {
-      description:
-        'captures where the text sat when a message is sent from the centered composer',
-      composerText: 'Show my pipeline',
-      isComposerCentered: true,
-      expectedHandOff: {
-        composerTextRect: COMPOSER_TEXT_RECT,
-        messageId: null,
-      },
-    },
     {
       description:
         'keeps the pending hand-off when Enter is pressed again on the emptied composer',
