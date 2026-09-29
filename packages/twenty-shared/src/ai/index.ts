@@ -57,12 +57,12 @@ export type {
   DataMessagePart,
 } from './types/DataMessagePart';
 export { isExtendedFileUIPart } from './types/DataMessagePart';
+export type { EmailApprovalDecision } from './types/EmailApprovalDecision';
 export type {
   AiChatUsageMetadata,
   AiChatModelMetadata,
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
-export type { EmailApprovalDecision } from './types/EmailApprovalDecision';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type {
   InputAskQuestionsForm,
@@ -79,11 +79,11 @@ export type {
 } from './types/InputAskResponse';
 export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
+export type { ProposedEmail } from './types/ProposedEmail';
 export type {
   ProposeEmailToolStatus,
   ProposeEmailToolResult,
 } from './types/ProposeEmailToolResult';
-export type { ProposedEmail } from './types/ProposedEmail';
 export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
 export {
   RECORDS_TOOL_WIDGET_NAME,
