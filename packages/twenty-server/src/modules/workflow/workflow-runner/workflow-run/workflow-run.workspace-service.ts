@@ -485,11 +485,10 @@ export class WorkflowRunWorkspaceService {
     // A run conversation names no step: it belongs to the step whose current
     // execution recorded it, so one replaced by a retry or a later loop
     // iteration belongs to no step anymore.
-    const stepInfos = workflowRun.state?.stepInfos ?? {};
-    const stepId = Object.keys(stepInfos).find(
-      (candidateStepId) => stepInfos[candidateStepId]?.threadId === threadId,
-    );
-    const currentStepInfo = isDefined(stepId) ? stepInfos[stepId] : undefined;
+    const [stepId, currentStepInfo] =
+      Object.entries(workflowRun.state?.stepInfos ?? {}).find(
+        ([, stepInfo]) => stepInfo?.threadId === threadId,
+      ) ?? [];
 
     if (
       workflowRun.status !== WorkflowRunStatus.RUNNING ||
