@@ -9,12 +9,17 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
+import { type ApplicationVariableUserValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable-user-value.dto';
 import { type MyApplicationVariableDTO } from 'src/engine/core-modules/application/application-variable/dtos/my-application-variable.dto';
+import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ApplicationVariableTarget = {
   workspaceId: string;
@@ -26,7 +31,10 @@ export class ApplicationVariableUserValueService {
   constructor(
     @InjectWorkspaceScopedRepository(ApplicationVariableUserValueEntity)
     private readonly applicationVariableUserValueRepository: WorkspaceScopedRepository<ApplicationVariableUserValueEntity>,
+    @InjectWorkspaceScopedRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: WorkspaceScopedRepository<UserWorkspaceEntity>,
     private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
@@ -67,21 +75,77 @@ export class ApplicationVariableUserValueService {
       ]),
     );
 
-    return userFlatApplicationVariables.map(({ id, key, value, isSecret }) => {
-      const userValue = userValueByApplicationVariableId.get(id);
+    return userFlatApplicationVariables.map((flatApplicationVariable) => ({
+      key: flatApplicationVariable.key,
+      value: this.resolveValue({
+        flatApplicationVariable,
+        userValue: userValueByApplicationVariableId.get(
+          flatApplicationVariable.id,
+        ),
+        workspaceId,
+        shouldMaskSecret: true,
+      }),
+    }));
+  }
 
-      if (isSecret && !isDefined(userValue)) {
-        return { key, value: '' };
+  async findAllUserValues({
+    workspaceId,
+    applicationId,
+    key,
+    requestUserWorkspaceId,
+  }: ApplicationVariableTarget & {
+    key: string;
+    requestUserWorkspaceId: string | undefined;
+  }): Promise<ApplicationVariableUserValueDTO[]> {
+    const flatApplicationVariable =
+      await this.findUserFlatApplicationVariableOrThrow({
+        workspaceId,
+        applicationId,
+        key,
+      });
+
+    const [userWorkspaces, userValues, { flatWorkspaceMemberMaps }] =
+      await Promise.all([
+        this.userWorkspaceRepository.find(workspaceId, {
+          select: { id: true, userId: true },
+          where: isDefined(requestUserWorkspaceId)
+            ? { id: requestUserWorkspaceId }
+            : undefined,
+        }),
+        this.applicationVariableUserValueRepository.find(workspaceId, {
+          where: { applicationVariableId: flatApplicationVariable.id },
+        }),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatWorkspaceMemberMaps',
+        ]),
+      ]);
+
+    const userValueByUserWorkspaceId = new Map(
+      userValues.map(({ userWorkspaceId, value }) => [userWorkspaceId, value]),
+    );
+
+    return userWorkspaces.flatMap(({ id: userWorkspaceId, userId }) => {
+      const workspaceMemberId = resolveWorkspaceMemberIdForUser({
+        userId,
+        flatWorkspaceMemberMaps,
+      });
+
+      if (!isDefined(workspaceMemberId)) {
+        return [];
       }
 
-      return {
-        key,
-        value: this.applicationVariableService.getDisplayValue({
-          value: userValue ?? value,
-          workspaceId,
-          isSecret,
-        }),
-      };
+      return [
+        {
+          userWorkspaceId,
+          workspaceMemberId,
+          value: this.resolveValue({
+            flatApplicationVariable,
+            userValue: userValueByUserWorkspaceId.get(userWorkspaceId),
+            workspaceId,
+            shouldMaskSecret: isDefined(requestUserWorkspaceId),
+          }),
+        },
+      ];
     });
   }
 
@@ -113,6 +177,40 @@ export class ApplicationVariableUserValueService {
         }),
       },
       ['applicationVariableId', 'userWorkspaceId'],
+    );
+  }
+
+  private resolveValue({
+    flatApplicationVariable: { value, isSecret },
+    userValue,
+    workspaceId,
+    shouldMaskSecret,
+  }: {
+    flatApplicationVariable: Pick<
+      FlatApplicationVariable,
+      'value' | 'isSecret'
+    >;
+    userValue: EncryptedString | undefined;
+    workspaceId: string;
+    shouldMaskSecret: boolean;
+  }): string {
+    if (isSecret && !isDefined(userValue)) {
+      return '';
+    }
+
+    const encryptedValue = userValue ?? value;
+
+    if (shouldMaskSecret) {
+      return this.applicationVariableService.getDisplayValue({
+        value: encryptedValue,
+        workspaceId,
+        isSecret,
+      });
+    }
+
+    return this.secretEncryptionService.decryptVersionedOrThrow(
+      encryptedValue,
+      { workspaceId },
     );
   }
 

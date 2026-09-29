@@ -1,3 +1,4 @@
+import { applicationVariableUserValues } from 'test/integration/metadata/suites/application/utils/application-variable-user-values.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { myApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-application-variables.util';
 import {
@@ -119,6 +120,17 @@ describe('Application variable user values should fail', () => {
 
     expect(errors.map(({ extensions }) => extensions.code)).toEqual([
       'BAD_USER_INPUT',
+    ]);
+  });
+
+  it('should refuse to list every member value from a session', async () => {
+    const { errors } = await applicationVariableUserValues({
+      input: { key: userVariableApplication.variableKey },
+      expectToFail: true,
+    });
+
+    expect(errors.map(({ extensions }) => extensions.code)).toEqual([
+      'FORBIDDEN',
     ]);
   });
 });

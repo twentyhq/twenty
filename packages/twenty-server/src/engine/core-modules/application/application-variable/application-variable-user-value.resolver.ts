@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
 import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
+import { ApplicationVariableUserValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable-user-value.dto';
 import { MyApplicationVariableDTO } from 'src/engine/core-modules/application/application-variable/dtos/my-application-variable.dto';
 import { UpdateApplicationVariableEntityInput } from 'src/engine/core-modules/application/application-variable/dtos/update-application-variable.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -79,5 +80,21 @@ export class ApplicationVariableUserValueResolver {
     });
 
     return true;
+  }
+
+  @Query(() => [ApplicationVariableUserValueDTO])
+  async applicationVariableUserValues(
+    @Args('key') key: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication() callingApplication: FlatApplication,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    requestUserWorkspaceId: string | undefined,
+  ): Promise<ApplicationVariableUserValueDTO[]> {
+    return this.applicationVariableUserValueService.findAllUserValues({
+      workspaceId,
+      applicationId: callingApplication.id,
+      key,
+      requestUserWorkspaceId,
+    });
   }
 }

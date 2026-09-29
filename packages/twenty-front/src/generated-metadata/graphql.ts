@@ -603,6 +603,13 @@ export enum ApplicationVariableScope {
   WORKSPACE = 'WORKSPACE'
 }
 
+export type ApplicationVariableUserValue = {
+  __typename?: 'ApplicationVariableUserValue';
+  userWorkspaceId: Scalars['UUID']['output'];
+  value: Scalars['String']['output'];
+  workspaceMemberId: Scalars['UUID']['output'];
+};
+
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime']['output'];
@@ -5219,6 +5226,7 @@ export type Query = {
   applicationCoreGraphqlSchema: Scalars['String']['output'];
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
+  applicationVariableUserValues: Array<ApplicationVariableUserValue>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
@@ -5398,6 +5406,11 @@ export type QueryApplicationRegistrationTarballUrlArgs = {
 
 export type QueryApplicationSdkClientChecksumsArgs = {
   applicationId: Scalars['UUID']['input'];
+};
+
+
+export type QueryApplicationVariableUserValuesArgs = {
+  key: Scalars['String']['input'];
 };
 
 

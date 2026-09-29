@@ -1262,6 +1262,13 @@ export interface EnterpriseSubscriptionStatusDTO {
     __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
+export interface ApplicationVariableUserValue {
+    userWorkspaceId: Scalars['UUID']
+    workspaceMemberId: Scalars['UUID']
+    value: Scalars['String']
+    __typename: 'ApplicationVariableUserValue'
+}
+
 export interface MyApplicationVariable {
     key: Scalars['String']
     value: Scalars['String']
@@ -3374,6 +3381,7 @@ export interface Query {
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     applicationConnectedAccounts: ApplicationConnectedAccountDTO[]
     myApplicationVariables: MyApplicationVariable[]
+    applicationVariableUserValues: ApplicationVariableUserValue[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
     getInviteSuggestions: InviteSuggestion[]
     findWorkspaceInvitations: WorkspaceInvitation[]
@@ -5062,6 +5070,14 @@ export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
     cancelAt?: boolean | number
     currentPeriodEnd?: boolean | number
     isCancellationScheduled?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationVariableUserValueGenqlSelection{
+    userWorkspaceId?: boolean | number
+    workspaceMemberId?: boolean | number
+    value?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7289,6 +7305,7 @@ export interface QueryGenqlSelection{
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     applicationConnectedAccounts?: (ApplicationConnectedAccountDTOGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     myApplicationVariables?: (MyApplicationVariableGenqlSelection & { __args?: {applicationId?: (Scalars['UUID'] | null)} })
+    applicationVariableUserValues?: (ApplicationVariableUserValueGenqlSelection & { __args: {key: Scalars['String']} })
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
@@ -8935,12 +8952,20 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const ApplicationVariableUserValue_possibleTypes: string[] = ['ApplicationVariableUserValue']
+    export const isApplicationVariableUserValue = (obj?: { __typename?: any } | null): obj is ApplicationVariableUserValue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationVariableUserValue"')
+      return ApplicationVariableUserValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MyApplicationVariable_possibleTypes: string[] = ['MyApplicationVariable']
     export const isMyApplicationVariable = (obj?: { __typename?: any } | null): obj is MyApplicationVariable => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMyApplicationVariable"')
       return MyApplicationVariable_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UsageQuotaDefinition_possibleTypes: string[] = ['UsageQuotaDefinition']

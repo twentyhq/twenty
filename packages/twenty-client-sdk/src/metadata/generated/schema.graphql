@@ -1620,6 +1620,12 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
+type ApplicationVariableUserValue {
+  userWorkspaceId: UUID!
+  workspaceMemberId: UUID!
+  value: String!
+}
+
 type MyApplicationVariable {
   key: String!
   value: String!
@@ -3835,6 +3841,7 @@ type Query {
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   myApplicationVariables(applicationId: UUID): [MyApplicationVariable!]!
+  applicationVariableUserValues(key: String!): [ApplicationVariableUserValue!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!

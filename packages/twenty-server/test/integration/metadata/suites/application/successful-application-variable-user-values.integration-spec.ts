@@ -1,3 +1,4 @@
+import { applicationVariableUserValues } from 'test/integration/metadata/suites/application/utils/application-variable-user-values.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { myApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-application-variables.util';
 import {
@@ -7,9 +8,15 @@ import {
 import { updateMyApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-variable.util';
 import { updateOneApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-one-application-variable.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('Application variable user values should succeed', () => {
   let application: ApplicationWithVariable;
+  let applicationToken: string;
   let janeApplicationToken: string;
 
   beforeAll(async () => {
@@ -19,11 +26,17 @@ describe('Application variable user values should succeed', () => {
       variableScope: 'USER',
     });
 
-    const janeApplicationTokenPair =
-      await generateAppleAdminApplicationTokenPair({
+    const [applicationTokenPair, janeApplicationTokenPair] = await Promise.all([
+      generateApplicationTokenPair({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
         applicationId: application.id,
-      });
+      }),
+      generateAppleAdminApplicationTokenPair({
+        applicationId: application.id,
+      }),
+    ]);
 
+    applicationToken = applicationTokenPair.applicationAccessToken.token;
     janeApplicationToken =
       janeApplicationTokenPair.applicationAccessToken.token;
   }, 120000);
@@ -118,6 +131,50 @@ describe('Application variable user values should succeed', () => {
     ]);
     expect(jonyData.myApplicationVariables).toEqual([
       { key: application.variableKey, value: 'jony' },
+    ]);
+  });
+
+  it('should list the value of every member for a token no person is behind', async () => {
+    const { data } = await applicationVariableUserValues({
+      input: { key: application.variableKey },
+      token: applicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.applicationVariableUserValues).toEqual(
+      expect.arrayContaining([
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          value: 'jane',
+        },
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          value: 'jony',
+        },
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          value: 'workspace',
+        },
+      ]),
+    );
+  });
+
+  it('should list only the own value for a token a person is behind', async () => {
+    const { data } = await applicationVariableUserValues({
+      input: { key: application.variableKey },
+      token: janeApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.applicationVariableUserValues).toEqual([
+      {
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        value: 'jane',
+      },
     ]);
   });
 });

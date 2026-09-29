@@ -160,8 +160,9 @@ User variables are never injected into `process.env` or returned by `getApplicat
 
 - `myApplicationVariables` returns the signed-in member's value of each user variable of your app, with secrets masked.
 - `updateMyApplicationVariable` saves the signed-in member's own value.
+- `applicationVariableUserValues` lists every member's value of one user variable, for a logic function that works for many members.
 
-Both need a token with a person behind it, such as a front component's, and no `APPLICATIONS` permission: a member only ever reads and writes their own values.
+`myApplicationVariables` and `updateMyApplicationVariable` need a token with a person behind it, such as a front component's, and no `APPLICATIONS` permission: a member only ever reads and writes their own values.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -176,6 +177,23 @@ const { myApplicationVariables } = await client.query({
 await client.mutation({
   updateMyApplicationVariable: {
     __args: { key: 'RECORD_MY_MEETINGS', value: 'true' },
+  },
+});
+```
+
+`applicationVariableUserValues` works in every logic function run, including cron jobs and webhooks. Each entry carries the member's `userWorkspaceId` and `workspaceMemberId`. A member who has not set a value gets the workspace value, or an empty string for a secret. Query it as the application to get real values: with a token that has a person behind it, it only returns that person's value, with secrets masked.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+// In a logic function, for example a cron job
+const client = new MetadataApiClient({ runAs: 'application' });
+
+const { applicationVariableUserValues } = await client.query({
+  applicationVariableUserValues: {
+    __args: { key: 'API_KEY' },
+    workspaceMemberId: true,
+    value: true,
   },
 });
 ```
