@@ -25,6 +25,7 @@ import {
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
+import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -173,7 +174,7 @@ export class TwoFactorAuthenticationService {
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
     await this.throttlerService.atomicTokenBucketThrottleOrThrow({
-      key: `two-factor-authentication-otp:${userId}:${workspaceId}`,
+      key: buildTwoFactorAuthenticationOtpRateLimitKey({ userId, workspaceId }),
       maxTokens: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
       timeWindow: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
     });

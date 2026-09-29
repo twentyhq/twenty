@@ -4,10 +4,16 @@ import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/ut
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
+import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const RATE_LIMIT_CACHE_KEY = `${CacheStorageNamespace.IntegrationTests}:${CacheStorageNamespace.EngineWorkspace}:two-factor-authentication-otp:${USER_DATA_SEED_IDS.PHIL}:${SEED_APPLE_WORKSPACE_ID}`;
+const RATE_LIMIT_KEY = buildTwoFactorAuthenticationOtpRateLimitKey({
+  userId: USER_DATA_SEED_IDS.PHIL,
+  workspaceId: SEED_APPLE_WORKSPACE_ID,
+});
+
+const RATE_LIMIT_CACHE_KEY = `${CacheStorageNamespace.IntegrationTests}:${CacheStorageNamespace.EngineWorkspace}:${RATE_LIMIT_KEY}`;
 
 const clearRateLimitBucket = async (): Promise<void> => {
   const redis = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379');

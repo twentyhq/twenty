@@ -26,6 +26,7 @@ import {
 
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
+import { buildTwoFactorAuthenticationOtpRateLimitKey } from './utils/build-two-factor-authentication-otp-rate-limit-key.util';
 
 const TOTP_STEP_DURATION_MS = 30_000;
 
@@ -124,7 +125,10 @@ describe('TwoFactorAuthenticationService', () => {
       expect(
         throttlerService.atomicTokenBucketThrottleOrThrow,
       ).toHaveBeenCalledWith({
-        key: `two-factor-authentication-otp:${USER_ID}:${WORKSPACE_ID}`,
+        key: buildTwoFactorAuthenticationOtpRateLimitKey({
+          userId: USER_ID,
+          workspaceId: WORKSPACE_ID,
+        }),
         maxTokens: expect.any(Number),
         timeWindow: expect.any(Number),
       });
