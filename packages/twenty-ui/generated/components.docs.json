@@ -6807,14 +6807,14 @@
             "type": "((event: DropdownDismissEvent) => void)",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open."
           },
           {
             "name": "onInteractOutside",
             "type": "((event: DropdownDismissEvent) => void)",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open."
           },
           {
             "name": "onOpenChange",

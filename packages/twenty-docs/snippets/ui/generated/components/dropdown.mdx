@@ -26,11 +26,11 @@
 </ParamField>
 
 <ParamField body="Root.onEscapeKeyDown" type="((event: DropdownDismissEvent) =&gt; void)">
-
+  Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open.
 </ParamField>
 
 <ParamField body="Root.onInteractOutside" type="((event: DropdownDismissEvent) =&gt; void)">
-
+  Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open.
 </ParamField>
 
 <ParamField body="Root.onOpenChange" type="((open: boolean) =&gt; void)">

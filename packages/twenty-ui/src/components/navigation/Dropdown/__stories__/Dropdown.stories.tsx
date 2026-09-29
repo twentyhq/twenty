@@ -351,6 +351,10 @@ export const ContextMenu: Story = {
   },
 };
 
+export const ContextMenuDocumentation: Story = {
+  render: ContextMenu.render,
+};
+
 export const CollisionPadding: Story = {
   render: () => (
     <div style={{ position: 'fixed', insetInlineEnd: 8, insetBlockStart: 16 }}>
