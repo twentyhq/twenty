@@ -3411,46 +3411,6 @@ type DuplicatedDashboard {
   updatedAt: String!
 }
 
-type SendEmailOutput {
-  success: Boolean!
-  error: String
-  messageThreadId: String
-}
-
-type Analytics {
-  """Boolean that confirms query was dispatched"""
-  success: Boolean!
-}
-
-type EventLogRecord {
-  event: String!
-  timestamp: DateTime!
-  userId: String
-  properties: JSON
-  recordId: String
-  objectMetadataId: String
-  isCustom: Boolean
-}
-
-type EventLogPageInfo {
-  endCursor: String
-  hasNextPage: Boolean!
-}
-
-type EventLogQueryResult {
-  records: [EventLogRecord!]!
-  totalCount: Int!
-  pageInfo: EventLogPageInfo!
-}
-
-type RecordExport {
-  id: UUID!
-  filename: String!
-  progress: Int!
-  errorMessage: String
-  downloadPath: String
-}
-
 type AiChatUsage {
   limitValue: BigInt!
   consumedValue: BigInt
@@ -3531,6 +3491,46 @@ enum WorkspaceSetupChatOutcome {
   STARTED
   ALREADY_STARTED
   UNAVAILABLE
+}
+
+type SendEmailOutput {
+  success: Boolean!
+  error: String
+  messageThreadId: String
+}
+
+type Analytics {
+  """Boolean that confirms query was dispatched"""
+  success: Boolean!
+}
+
+type EventLogRecord {
+  event: String!
+  timestamp: DateTime!
+  userId: String
+  properties: JSON
+  recordId: String
+  objectMetadataId: String
+  isCustom: Boolean
+}
+
+type EventLogPageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type EventLogQueryResult {
+  records: [EventLogRecord!]!
+  totalCount: Int!
+  pageInfo: EventLogPageInfo!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadPath: String
 }
 
 type RecordPermissionsResult {
@@ -3801,38 +3801,22 @@ type Query {
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
   usageQuotaScopeConsumption(input: UsageQuotaScopeInput!): UsageQuotaScopeConsumption
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
-  getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
-  getViewFilterGroup(id: String!): ViewFilterGroup
-  getViewFilters(viewId: String): [ViewFilter!]!
-  getViewFilter(id: String!): ViewFilter
-  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
-  getView(id: String!): View
-  getViewSorts(viewId: String): [ViewSort!]!
-  getViewSort(id: String!): ViewSort
-  getViewFields(viewId: String!): [ViewField!]!
-  getViewField(id: String!): ViewField
-  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
-  getViewFieldGroup(id: String!): ViewFieldGroup
-  apiKeys: [ApiKey!]!
-  getApiKeyRoles: [Role!]!
-  apiKey(input: GetApiKeyInput!): ApiKey
-  currentUserSessions: [UserSession!]!
-  billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
-  listPlans: [BillingPlan!]!
-  getResourceCreditUsage: [BillingResourceCreditUsage!]!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
-  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
-  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  getInviteSuggestions: [InviteSuggestion!]!
-  findWorkspaceInvitations: [WorkspaceInvitation!]!
-  getApprovedAccessDomains: [ApprovedAccessDomain!]!
+  getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
+  getPageLayoutWidget(id: String!): PageLayoutWidget!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
-  getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
-  getPageLayoutWidget(id: String!): PageLayoutWidget!
+  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
+  getView(id: String!): View
+  getViewSorts(viewId: String): [ViewSort!]!
+  getViewSort(id: String!): ViewSort
+  getViewFilters(viewId: String): [ViewFilter!]!
+  getViewFilter(id: String!): ViewFilter
+  getViewFields(viewId: String!): [ViewField!]!
+  getViewField(id: String!): ViewField
+  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
+  getViewFieldGroup(id: String!): ViewFieldGroup
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   objects(
@@ -3848,6 +3832,7 @@ type Query {
   ): Object!
   objectRecordCounts: [ObjectRecordCount!]!
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
+  currentUserSessions: [UserSession!]!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
@@ -3856,9 +3841,24 @@ type Query {
   commandMenuItem(id: UUID!): CommandMenuItem
   frontComponents: [FrontComponent!]!
   frontComponent(id: UUID!): FrontComponent
+  billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
+  listPlans: [BillingPlan!]!
+  getResourceCreditUsage: [BillingResourceCreditUsage!]!
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
+  getInviteSuggestions: [InviteSuggestion!]!
+  findWorkspaceInvitations: [WorkspaceInvitation!]!
+  getApprovedAccessDomains: [ApprovedAccessDomain!]!
+  getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
+  getViewFilterGroup(id: String!): ViewFilterGroup
+  apiKeys: [ApiKey!]!
+  getApiKeyRoles: [Role!]!
+  apiKey(input: GetApiKeyInput!): ApiKey
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -3958,17 +3958,6 @@ input UsageQuotaScopeInput {
   meter: String!
 }
 
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
-  operationTypes: [UsageOperationType!]
-}
-
-input GetApiKeyInput {
-  id: UUID!
-}
-
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
@@ -3991,6 +3980,17 @@ input ObjectFilter {
 input LogicFunctionIdInput {
   """The id of the function."""
   id: ID!
+}
+
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
+}
+
+input GetApiKeyInput {
+  id: UUID!
 }
 
 input PreviewMessageCampaignAudienceInput {
@@ -4105,14 +4105,19 @@ type Mutation {
   createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
   deleteUsageLimit(usageLimitId: UUID!): Boolean!
-  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
-  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
-  deleteViewFilterGroup(id: String!): Boolean!
-  destroyViewFilterGroup(id: String!): Boolean!
-  createViewFilter(input: CreateViewFilterInput!): ViewFilter!
-  updateViewFilter(input: UpdateViewFilterInput!): ViewFilter!
-  deleteViewFilter(input: DeleteViewFilterInput!): ViewFilter!
-  destroyViewFilter(input: DestroyViewFilterInput!): ViewFilter!
+  createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
+  updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
+  destroyPageLayoutWidget(id: String!): Boolean!
+  createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
+  updatePageLayoutTab(id: String!, input: UpdatePageLayoutTabInput!): PageLayoutTab!
+  destroyPageLayoutTab(id: String!): Boolean!
+  createPageLayout(input: CreatePageLayoutInput!): PageLayout!
+  updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
+  destroyPageLayout(id: String!): Boolean!
+  updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
+  resetPageLayoutToDefault(id: String!): PageLayout!
+  resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
+  resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   createView(input: CreateViewInput!): View!
   updateView(id: String!, input: UpdateViewInput!): View!
   deleteView(id: String!): Boolean!
@@ -4122,6 +4127,10 @@ type Mutation {
   updateViewSort(input: UpdateViewSortInput!): ViewSort!
   deleteViewSort(input: DeleteViewSortInput!): Boolean!
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  createViewFilter(input: CreateViewFilterInput!): ViewFilter!
+  updateViewFilter(input: UpdateViewFilterInput!): ViewFilter!
+  deleteViewFilter(input: DeleteViewFilterInput!): ViewFilter!
+  destroyViewFilter(input: DestroyViewFilterInput!): ViewFilter!
   updateViewField(input: UpdateViewFieldInput!): ViewField!
   createViewField(input: CreateViewFieldInput!): ViewField!
   createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
@@ -4133,48 +4142,6 @@ type Mutation {
   deleteViewFieldGroup(input: DeleteViewFieldGroupInput!): ViewFieldGroup!
   destroyViewFieldGroup(input: DestroyViewFieldGroupInput!): ViewFieldGroup!
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
-  createApiKey(input: CreateApiKeyInput!): ApiKey!
-  updateApiKey(input: UpdateApiKeyInput!): ApiKey
-  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
-  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
-  revokeUserSession(userSessionId: UUID!): Boolean!
-  revokeAllOtherUserSessions: Int!
-  checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
-  createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
-  createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
-  switchSubscriptionInterval: BillingUpdate!
-  switchBillingPlan: BillingUpdate!
-  cancelSwitchBillingPlan: BillingUpdate!
-  cancelSwitchBillingInterval: BillingUpdate!
-  setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
-  endSubscriptionTrialPeriod: BillingEndTrialPeriod!
-  cancelSwitchResourceCreditPrice: BillingUpdate!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
-  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
-  deleteWorkspaceInvitation(appTokenId: String!): String!
-  resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
-  sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
-  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
-  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
-  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
-  createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
-  updatePageLayoutTab(id: String!, input: UpdatePageLayoutTabInput!): PageLayoutTab!
-  destroyPageLayoutTab(id: String!): Boolean!
-  createPageLayout(input: CreatePageLayoutInput!): PageLayout!
-  updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
-  destroyPageLayout(id: String!): Boolean!
-  updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
-  resetPageLayoutToDefault(id: String!): PageLayout!
-  resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
-  resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
-  updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
-  destroyPageLayoutWidget(id: String!): Boolean!
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -4184,6 +4151,8 @@ type Mutation {
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   createOneIndex(input: CreateOneIndexInput!): Index!
   deleteOneIndex(input: DeleteOneIndexInput!): Index!
+  revokeUserSession(userSessionId: UUID!): Boolean!
+  revokeAllOtherUserSessions: Int!
   deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
@@ -4196,12 +4165,43 @@ type Mutation {
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
+  checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
+  createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
+  createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
+  switchSubscriptionInterval: BillingUpdate!
+  switchBillingPlan: BillingUpdate!
+  cancelSwitchBillingPlan: BillingUpdate!
+  cancelSwitchBillingInterval: BillingUpdate!
+  setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
+  endSubscriptionTrialPeriod: BillingEndTrialPeriod!
+  cancelSwitchResourceCreditPrice: BillingUpdate!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
+  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
+  deleteWorkspaceInvitation(appTokenId: String!): String!
+  resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
+  sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
+  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
+  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
+  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
+  deleteViewFilterGroup(id: String!): Boolean!
+  destroyViewFilterGroup(id: String!): Boolean!
+  createApiKey(input: CreateApiKeyInput!): ApiKey!
+  updateApiKey(input: UpdateApiKeyInput!): ApiKey
+  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
+  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
@@ -4422,60 +4422,79 @@ input UpdateUsageLimitInput {
   payload: CreateUsageLimitInput!
 }
 
-input CreateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID!
+input CreatePageLayoutWidgetInput {
+  pageLayoutTabId: UUID!
+  title: String!
+  type: WidgetType!
+  objectMetadataId: UUID
+  position: JSON
+  configuration: JSON!
 }
 
-input UpdateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID
+input UpdatePageLayoutWidgetInput {
+  pageLayoutTabId: UUID
+  title: String
+  type: WidgetType
+  objectMetadataId: UUID
+  position: JSON
+  configuration: JSON
+  conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
 }
 
-input CreateViewFilterInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  operand: ViewFilterOperand
-  value: JSON!
-  viewFilterGroupId: UUID
-  positionInViewFilterGroup: Float
-  subFieldName: String
-  relationTargetFieldMetadataId: UUID
-  viewId: UUID!
+input CreatePageLayoutTabInput {
+  title: String!
+  position: Float
+  pageLayoutId: UUID!
+  layoutMode: PageLayoutTabLayoutMode = GRID
 }
 
-input UpdateViewFilterInput {
-  """The id of the view filter to update"""
+input UpdatePageLayoutTabInput {
+  title: String
+  position: Float
+  icon: String
+  layoutMode: PageLayoutTabLayoutMode
+}
+
+input CreatePageLayoutInput {
+  name: String!
+  type: PageLayoutType = RECORD_PAGE
+  objectMetadataId: UUID
+}
+
+input UpdatePageLayoutInput {
+  name: String
+  type: PageLayoutType
+  objectMetadataId: UUID
+}
+
+input UpdatePageLayoutWithTabsInput {
+  name: String!
+  type: PageLayoutType!
+  objectMetadataId: UUID
+  isFirstTabPinned: Boolean
+  tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
+}
+
+input UpdatePageLayoutTabWithWidgetsInput {
   id: UUID!
-
-  """The view filter to update"""
-  update: UpdateViewFilterInputUpdates!
+  title: String!
+  position: Float!
+  icon: String
+  layoutMode: PageLayoutTabLayoutMode = GRID
+  widgets: [UpdatePageLayoutWidgetWithIdInput!]!
 }
 
-input UpdateViewFilterInputUpdates {
-  fieldMetadataId: UUID
-  operand: ViewFilterOperand
-  value: JSON
-  viewFilterGroupId: UUID
-  positionInViewFilterGroup: Float
-  subFieldName: String
-  relationTargetFieldMetadataId: UUID
-}
-
-input DeleteViewFilterInput {
-  """The id of the view filter to delete."""
+input UpdatePageLayoutWidgetWithIdInput {
   id: UUID!
-}
-
-input DestroyViewFilterInput {
-  """The id of the view filter to destroy."""
-  id: UUID!
+  pageLayoutTabId: UUID!
+  title: String!
+  type: WidgetType!
+  objectMetadataId: UUID
+  position: JSON
+  configuration: JSON
+  conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
 }
 
 input CreateViewInput {
@@ -4641,6 +4660,46 @@ input DestroyViewSortInput {
   id: UUID!
 }
 
+input CreateViewFilterInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  operand: ViewFilterOperand
+  value: JSON!
+  viewFilterGroupId: UUID
+  positionInViewFilterGroup: Float
+  subFieldName: String
+  relationTargetFieldMetadataId: UUID
+  viewId: UUID!
+}
+
+input UpdateViewFilterInput {
+  """The id of the view filter to update"""
+  id: UUID!
+
+  """The view filter to update"""
+  update: UpdateViewFilterInputUpdates!
+}
+
+input UpdateViewFilterInputUpdates {
+  fieldMetadataId: UUID
+  operand: ViewFilterOperand
+  value: JSON
+  viewFilterGroupId: UUID
+  positionInViewFilterGroup: Float
+  subFieldName: String
+  relationTargetFieldMetadataId: UUID
+}
+
+input DeleteViewFilterInput {
+  """The id of the view filter to delete."""
+  id: UUID!
+}
+
+input DestroyViewFilterInput {
+  """The id of the view filter to destroy."""
+  id: UUID!
+}
+
 input UpdateViewFieldInput {
   """The id of the view field to update"""
   id: UUID!
@@ -4744,113 +4803,6 @@ input UpsertFieldsWidgetFieldInput {
   fieldMetadataId: UUID
   isVisible: Boolean!
   position: Float!
-}
-
-input CreateApiKeyInput {
-  name: String!
-  expiresAt: String!
-  revokedAt: String
-  roleId: UUID!
-}
-
-input UpdateApiKeyInput {
-  id: UUID!
-  name: String
-  expiresAt: String
-  revokedAt: String
-}
-
-input RevokeApiKeyInput {
-  id: UUID!
-}
-
-input CreateApprovedAccessDomainInput {
-  domain: String!
-  email: String!
-}
-
-input DeleteApprovedAccessDomainInput {
-  id: UUID!
-}
-
-input ValidateApprovedAccessDomainInput {
-  validationToken: String!
-  approvedAccessDomainId: UUID!
-}
-
-input CreatePageLayoutTabInput {
-  title: String!
-  position: Float
-  pageLayoutId: UUID!
-  layoutMode: PageLayoutTabLayoutMode = GRID
-}
-
-input UpdatePageLayoutTabInput {
-  title: String
-  position: Float
-  icon: String
-  layoutMode: PageLayoutTabLayoutMode
-}
-
-input CreatePageLayoutInput {
-  name: String!
-  type: PageLayoutType = RECORD_PAGE
-  objectMetadataId: UUID
-}
-
-input UpdatePageLayoutInput {
-  name: String
-  type: PageLayoutType
-  objectMetadataId: UUID
-}
-
-input UpdatePageLayoutWithTabsInput {
-  name: String!
-  type: PageLayoutType!
-  objectMetadataId: UUID
-  isFirstTabPinned: Boolean
-  tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
-}
-
-input UpdatePageLayoutTabWithWidgetsInput {
-  id: UUID!
-  title: String!
-  position: Float!
-  icon: String
-  layoutMode: PageLayoutTabLayoutMode = GRID
-  widgets: [UpdatePageLayoutWidgetWithIdInput!]!
-}
-
-input UpdatePageLayoutWidgetWithIdInput {
-  id: UUID!
-  pageLayoutTabId: UUID!
-  title: String!
-  type: WidgetType!
-  objectMetadataId: UUID
-  position: JSON
-  configuration: JSON
-  conditionalDisplay: JSON
-  conditionalAvailabilityExpression: String
-}
-
-input CreatePageLayoutWidgetInput {
-  pageLayoutTabId: UUID!
-  title: String!
-  type: WidgetType!
-  objectMetadataId: UUID
-  position: JSON
-  configuration: JSON!
-}
-
-input UpdatePageLayoutWidgetInput {
-  pageLayoutTabId: UUID
-  title: String
-  type: WidgetType
-  objectMetadataId: UUID
-  position: JSON
-  configuration: JSON
-  conditionalDisplay: JSON
-  conditionalAvailabilityExpression: String
 }
 
 input CreateAgentInput {
@@ -5101,6 +5053,54 @@ input UpdateWorkspaceInput {
 input UpdateWorkspaceAllowedIframeOriginsInput {
   operation: String!
   origin: String!
+}
+
+input CreateApprovedAccessDomainInput {
+  domain: String!
+  email: String!
+}
+
+input DeleteApprovedAccessDomainInput {
+  id: UUID!
+}
+
+input ValidateApprovedAccessDomainInput {
+  validationToken: String!
+  approvedAccessDomainId: UUID!
+}
+
+input CreateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID!
+}
+
+input UpdateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID
+}
+
+input CreateApiKeyInput {
+  name: String!
+  expiresAt: String!
+  revokedAt: String
+  roleId: UUID!
+}
+
+input UpdateApiKeyInput {
+  id: UUID!
+  name: String
+  expiresAt: String
+  revokedAt: String
+}
+
+input RevokeApiKeyInput {
+  id: UUID!
 }
 
 input CreateApplicationRegistrationInput {
