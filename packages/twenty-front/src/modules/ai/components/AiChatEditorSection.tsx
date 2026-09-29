@@ -29,6 +29,7 @@ import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedTex
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -106,13 +107,21 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
+const StyledMessageListPlaceholder = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
 // Collapsing this spacer is what slides the composer from the middle of an
 // empty page down to the bottom once the conversation starts.
 const StyledComposerBottomSpacer = styled.div`
   flex-basis: 0;
   flex-grow: 0;
   flex-shrink: 0;
-  transition-duration: calc(${themeCssVariables.animation.duration.fast} * 1s);
+  transition-duration: calc(
+    ${themeCssVariables.animation.duration.normal} * 1s
+  );
   transition-property: flex-grow;
   transition-timing-function: ease-out;
 
@@ -166,6 +175,9 @@ const EditableAiChatEditorSection = () => {
   const pendingQuestion = useAtomComponentSelectorValue(
     agentChatPendingQuestionComponentSelector,
   );
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
+  );
 
   return (
     <>
@@ -174,8 +186,12 @@ const EditableAiChatEditorSection = () => {
         onInterimText={setDictationInterimText}
         onFinalText={insertDictatedText}
       />
-      <AiChatEmptyState isCentered={isComposerCentered} />
-      <AiChatStandaloneError />
+      {!hasMessages && (
+        <StyledMessageListPlaceholder>
+          <AiChatEmptyState isCentered={isComposerCentered} />
+          <AiChatStandaloneError />
+        </StyledMessageListPlaceholder>
+      )}
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
