@@ -1,5 +1,6 @@
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
+import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
 import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
 import { getOnboardingCreditsProgress } from '@/onboarding/utils/getOnboardingCreditsProgress';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -19,6 +20,32 @@ const buildOnboardingFreeCredits = (
   ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
   ...onboardingFreeCredits,
 });
+
+const LIVE_CREDITS_CASES: {
+  step: OnboardingCreditsStep;
+  onboardingStatus: OnboardingStatus;
+  credits: number;
+  currentStepCredits: number;
+}[] = [
+  {
+    step: 'installApps',
+    onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+    credits: 1,
+    currentStepCredits: 0,
+  },
+  {
+    step: 'createProfile',
+    onboardingStatus: OnboardingStatus.PROFILE_CREATION,
+    credits: 0.5,
+    currentStepCredits: 0,
+  },
+  {
+    step: 'inviteTeam',
+    onboardingStatus: OnboardingStatus.INVITE_TEAM,
+    credits: 1,
+    currentStepCredits: 1,
+  },
+];
 
 describe('getOnboardingCreditsProgress', () => {
   it('should offer the email reward on the first step', () => {
@@ -92,6 +119,22 @@ describe('getOnboardingCreditsProgress', () => {
       currentStepCredits: 2,
     });
   });
+
+  it.each(LIVE_CREDITS_CASES)(
+    'should count the $step credits live while its step is at hand',
+    ({ step, onboardingStatus, credits, currentStepCredits }) => {
+      const progress = getOnboardingCreditsProgress({
+        onboardingFreeCredits: buildOnboardingFreeCredits({ [step]: credits }),
+        onboardingConfig,
+        onboardingStatus,
+        isWorkspaceCreator: true,
+        isPlanRequired: false,
+      });
+
+      expect(progress.earnedCredits).toBe(credits);
+      expect(progress.currentStepCredits).toBe(currentStepCredits);
+    },
+  );
 
   it('should keep skipped steps in the goal on the profile step', () => {
     const progress = getOnboardingCreditsProgress({
