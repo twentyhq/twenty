@@ -1214,6 +1214,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         .mockResolvedValueOnce(askingResult)
         .mockResolvedValueOnce(replyingResult);
 
+    const getThreadInputAsks = async (threadId: string) =>
+      global.testDataSource.query(
+        `SELECT name, status, "toolCallId", "stepId", "workflowRunId", form, response FROM "${schema}"."inputAsk" WHERE "threadId" = $1`,
+        [threadId],
+      );
+
     const getConversation = async (threadId: string) => {
       const [thread] = await global.testDataSource.query(
         `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
@@ -1307,6 +1313,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect((await getRun(runId)).state.stepInfos[finalStep.id].status).toBe(
         'NOT_STARTED',
       );
+      expect(await getThreadInputAsks(threadId)).toEqual([
+        {
+          name: 'Send the quote to the customer?',
+          status: 'PENDING',
+          toolCallId: 'ask-1',
+          stepId: agent.id,
+          workflowRunId: runId,
+          form: { questions: QUESTIONS },
+          response: null,
+        },
+      ]);
 
       const response = await answer({ threadId, messageId: questionMessageId });
 
@@ -1332,6 +1349,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const { thread, messages } = await getConversation(threadId);
 
       expect(thread.pendingQuestionMessageId).toBeNull();
+      expect(await getThreadInputAsks(threadId)).toMatchObject([
+        {
+          status: 'ANSWERED',
+          response: {
+            answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+          },
+        },
+      ]);
       expect(messages.map(({ role }: { role: string }) => role)).toEqual([
         'user',
         'assistant',
@@ -1388,6 +1413,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(thread.pendingQuestionMessageId).toBeNull();
       expect(questionPart.toolOutput.result.status).toBe('skipped');
       expect(messages).toHaveLength(2);
+      expect(await getThreadInputAsks(threadId)).toMatchObject([
+        { status: 'CANCELED', response: null },
+      ]);
       expect((await getRun(runId)).state.stepInfos[agent.id].status).toBe(
         'FAILED',
       );
@@ -1492,10 +1520,38 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       expect(thread.pendingQuestionMessageId).toBe(questionMessageId);
       expect(messages).toHaveLength(2);
+      expect(await getThreadInputAsks(threadId)).toMatchObject([
+        { status: 'PENDING', response: null },
+      ]);
 
       expect(
         (await answer({ threadId, messageId: questionMessageId })).body.errors,
       ).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+
+      expect(await getThreadInputAsks(threadId)).toMatchObject([
+        { status: 'ANSWERED' },
+      ]);
+    });
+
+    it('resumes the run when the Ask cannot record the answer', async () => {
+      mockAgent();
+      const { runId, threadId, questionMessageId } = await startAskingRun();
+
+      const answerForToolCall = jest
+        .spyOn(
+          getAppProviderByClassName<InputAskWorkspaceService>(
+            'InputAskWorkspaceService',
+          ),
+          'answerForToolCall',
+        )
+        .mockRejectedValueOnce(new Error('Ask write failed'));
+
+      const response = await answer({ threadId, messageId: questionMessageId });
+
+      answerForToolCall.mockRestore();
+
+      expect(response.body.errors).toBeUndefined();
       await waitForRun(runId, 'COMPLETED');
     });
   });

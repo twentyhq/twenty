@@ -794,6 +794,7 @@ export class AgentChatService {
     workspaceId: string;
   }): Promise<{
     answerText: string;
+    toolCallId: string | null;
     turnId: string | null;
     rollback: PendingQuestionRollback;
   }> {
@@ -888,6 +889,7 @@ export class AgentChatService {
 
     return {
       answerText,
+      toolCallId: pendingPart.toolCallId,
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };

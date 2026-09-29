@@ -8,6 +8,7 @@ import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-h
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { type WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -36,11 +37,14 @@ describe('AgentChatWorkflowQuestionService', () => {
     resumeAgentStepWithAnswer: jest.fn(),
   };
 
+  const inputAskWorkspaceService = { answerForToolCall: jest.fn() };
+
   const service = new AgentChatWorkflowQuestionService(
     messageRepository as unknown as AgentHistoryRepository<AgentMessageEntity>,
     agentChatService as unknown as AgentChatService,
     permissionsService as unknown as PermissionsService,
     workflowRunnerWorkspaceService as unknown as WorkflowRunnerWorkspaceService,
+    inputAskWorkspaceService as unknown as InputAskWorkspaceService,
   );
 
   const answers: AskQuestionAnswer[] = [
@@ -73,6 +77,7 @@ describe('AgentChatWorkflowQuestionService', () => {
     agentChatService.resolvePendingQuestion.mockResolvedValue({
       answerText: 'Send the quote?\nSend it',
       turnId: 'turn-id',
+      toolCallId: 'tool-call-id',
       rollback: ROLLBACK,
     });
     agentChatService.addMessage.mockResolvedValue({ id: ANSWER_MESSAGE_ID });
@@ -111,6 +116,12 @@ describe('AgentChatWorkflowQuestionService', () => {
     });
     expect(messageRepository.delete).not.toHaveBeenCalled();
     expect(agentChatService.restorePendingQuestion).not.toHaveBeenCalled();
+    expect(inputAskWorkspaceService.answerForToolCall).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      toolCallId: 'tool-call-id',
+      response: { answers, answerText: 'Send the quote?\nSend it' },
+    });
   });
 
   it('refuses an answer that says nothing', async () => {
@@ -194,5 +205,6 @@ describe('AgentChatWorkflowQuestionService', () => {
         messageId: QUESTION_MESSAGE_ID,
       }),
     );
+    expect(inputAskWorkspaceService.answerForToolCall).not.toHaveBeenCalled();
   });
 });

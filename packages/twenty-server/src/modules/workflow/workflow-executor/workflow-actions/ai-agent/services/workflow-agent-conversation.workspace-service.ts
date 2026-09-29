@@ -1,3 +1,4 @@
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { Injectable } from '@nestjs/common';
 
 import { randomUUID } from 'node:crypto';
@@ -55,6 +56,7 @@ export class WorkflowAgentConversationWorkspaceService {
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async recordExecution({
@@ -115,6 +117,8 @@ export class WorkflowAgentConversationWorkspaceService {
 
     const isAwaitingAnswer = await this.recordReply({
       workspaceId,
+      workflowRunId,
+      stepId,
       threadId,
       turnId,
       agentId,
@@ -128,11 +132,15 @@ export class WorkflowAgentConversationWorkspaceService {
   // already recorded as the last message, so only the agent's reply is added.
   async recordContinuation({
     workspaceId,
+    workflowRunId,
+    stepId,
     threadId,
     agentId,
     executionResult,
   }: {
     workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
     threadId: string;
     agentId: string | null;
     executionResult?: RecordedExecutionResult;
@@ -141,6 +149,8 @@ export class WorkflowAgentConversationWorkspaceService {
 
     const isAwaitingAnswer = await this.recordReply({
       workspaceId,
+      workflowRunId,
+      stepId,
       threadId,
       turnId,
       agentId,
@@ -179,12 +189,16 @@ export class WorkflowAgentConversationWorkspaceService {
 
   private async recordReply({
     workspaceId,
+    workflowRunId,
+    stepId,
     threadId,
     turnId,
     agentId,
     executionResult,
   }: {
     workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
     threadId: string;
     turnId: string;
     agentId: string | null;
@@ -206,12 +220,28 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: replyParts,
     });
 
-    if (
-      executionResult?.isPaused !== true ||
-      !isDefined(findPendingQuestionPart(replyParts))
-    ) {
+    const pendingQuestionPart = executionResult?.isPaused
+      ? findPendingQuestionPart(replyParts)
+      : undefined;
+
+    if (!isDefined(pendingQuestionPart)) {
       return false;
     }
+
+    const questions = pendingQuestionPart.output?.result?.questions ?? [];
+
+    // Opened before the marker: a question pending without its Ask is one
+    // nobody can find, while an Ask whose marker failed ends canceled with the
+    // run that step then fails.
+    await this.inputAskWorkspaceService.openForAgentQuestion({
+      workspaceId,
+      workflowRunId,
+      stepId,
+      threadId,
+      toolCallId: pendingQuestionPart.toolCallId,
+      name: questions[0]?.question ?? 'Question',
+      questions,
+    });
 
     // The same marker a chat question sets, so the answer flow can claim the
     // question exactly once.
