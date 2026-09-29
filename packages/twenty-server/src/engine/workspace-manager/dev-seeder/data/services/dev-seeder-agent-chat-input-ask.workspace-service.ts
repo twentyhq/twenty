@@ -109,15 +109,53 @@ const STRIPE_QUOTE_EMAIL: ProposedEmail = {
   body: 'Hi Stripe team,\n\nPlease find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.\n\nLet me know if anything needs to change before you sign.\n\nBest,\nTim',
 };
 
+type CallToSeed = {
+  toolName: string;
+  input: Record<string, unknown>;
+  pendingOutput: Record<string, unknown>;
+};
+
+const proposeEmailCall = (email: ProposedEmail): CallToSeed => ({
+  toolName: PROPOSE_EMAIL_TOOL_NAME,
+  input: email,
+  pendingOutput: {
+    success: true,
+    message: 'Email proposed to the user; awaiting their decision.',
+    result: { status: 'pending', email },
+  },
+});
+
+const askQuestionsCall = (questions: AskQuestionItem[]): CallToSeed => ({
+  toolName: ASK_QUESTIONS_TOOL_NAME,
+  input: { questions },
+  pendingOutput: {
+    success: true,
+    message: 'Questions presented to the user; awaiting their answer.',
+    result: { questions, status: 'pending' },
+  },
+});
+
+const LINEAR_WELCOME_EMAIL: ProposedEmail = {
+  recipients: { to: 'ops@linear.app', cc: '', bcc: '' },
+  subject: 'Welcome to Twenty, Linear',
+  body: 'Hi Linear team,\n\nWelcome aboard! Phil will run your onboarding: expect a kickoff invite from him this week, with SSO and your data import on the agenda.\n\nBest,\nTim',
+};
+
+const FIGMA_WELCOME_EMAIL: ProposedEmail = {
+  recipients: { to: 'it@figma.com', cc: '', bcc: '' },
+  subject: 'Welcome to Twenty, Figma',
+  body: 'Hi Figma team,\n\nWelcome aboard! Your workspace is ready, and we will start with the pipeline import you asked about on our last call.\n\nBest,\nTim',
+};
+
 type ConversationToSeed = {
   threadId: string;
   title: string;
   askedBy: Member;
   prompt: string;
   intro: string;
-  toolName: string;
-  input: Record<string, unknown>;
-  pendingOutput: Record<string, unknown>;
+  // Calls made in the same step, each waiting on its own Ask.
+  calls: CallToSeed[];
+  // Answers the first call, in a conversation that made only one.
   answer?: {
     response: Record<string, unknown>;
     reply: string;
@@ -132,13 +170,7 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'TIM',
     prompt: 'Help me plan the Q3 customer webinar and draft the invitation.',
     intro: 'Two choices before I draft the invitation:',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: { questions: WEBINAR_QUESTIONS },
-    pendingOutput: {
-      success: true,
-      message: 'Questions presented to the user; awaiting their answer.',
-      result: { questions: WEBINAR_QUESTIONS, status: 'pending' },
-    },
+    calls: [askQuestionsCall(WEBINAR_QUESTIONS)],
   },
   {
     threadId: AGENT_CHAT_INPUT_ASK_THREAD_DATA_SEED_IDS.PENDING_EMAIL_APPROVAL,
@@ -146,13 +178,7 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'JONY',
     prompt: 'Draft the follow-up to Airbnb after Tuesday’s demo.',
     intro: 'Here is a draft. Review it before it goes out:',
-    toolName: PROPOSE_EMAIL_TOOL_NAME,
-    input: AIRBNB_FOLLOW_UP_EMAIL,
-    pendingOutput: {
-      success: true,
-      message: 'Email proposed to the user; awaiting their decision.',
-      result: { status: 'pending', email: AIRBNB_FOLLOW_UP_EMAIL },
-    },
+    calls: [proposeEmailCall(AIRBNB_FOLLOW_UP_EMAIL)],
     sharedWith: {
       member: 'JONY',
       accessLevel: RecordShareAccessLevel.READ_WRITE,
@@ -164,13 +190,7 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'TIM',
     prompt: 'Send Stripe their renewal quote for 2027.',
     intro: 'I drafted the quote email. Review it before it goes out:',
-    toolName: PROPOSE_EMAIL_TOOL_NAME,
-    input: STRIPE_QUOTE_EMAIL,
-    pendingOutput: {
-      success: true,
-      message: 'Email proposed to the user; awaiting their decision.',
-      result: { status: 'pending', email: STRIPE_QUOTE_EMAIL },
-    },
+    calls: [proposeEmailCall(STRIPE_QUOTE_EMAIL)],
     answer: {
       response: {
         decision: 'send',
@@ -193,13 +213,7 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'TIM',
     prompt: 'Linear signed. Set up their onboarding.',
     intro: 'One question before I create the onboarding tasks:',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: { questions: ONBOARDING_OWNER_QUESTIONS },
-    pendingOutput: {
-      success: true,
-      message: 'Questions presented to the user; awaiting their answer.',
-      result: { questions: ONBOARDING_OWNER_QUESTIONS, status: 'pending' },
-    },
+    calls: [askQuestionsCall(ONBOARDING_OWNER_QUESTIONS)],
     answer: {
       response: {
         answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
@@ -208,6 +222,17 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
         'Phil owns the Linear onboarding. I will create the kickoff, the SSO setup and the data import tasks for him.',
     },
     sharedWith: { member: 'PHIL', accessLevel: RecordShareAccessLevel.READ },
+  },
+  {
+    threadId: AGENT_CHAT_INPUT_ASK_THREAD_DATA_SEED_IDS.PENDING_EMAIL_APPROVALS,
+    title: 'Welcome this week’s new customers',
+    askedBy: 'TIM',
+    prompt: 'Linear and Figma signed this week. Send them a welcome email.',
+    intro: 'I drafted one email for each. Review them before they go out:',
+    calls: [
+      proposeEmailCall(LINEAR_WELCOME_EMAIL),
+      proposeEmailCall(FIGMA_WELCOME_EMAIL),
+    ],
   },
 ];
 
@@ -256,8 +281,24 @@ export class DevSeederAgentChatInputAskWorkspaceService {
         AGENT_CHAT_INPUT_ASK_SEED_NAMESPACE,
       );
     const { threadId } = conversation;
-    const toolCallId = `call_${seedId('toolCall').replace(/-/g, '')}`;
     const askedBy = MEMBERS[conversation.askedBy];
+    const calls = conversation.calls.map((call, callIndex) => {
+      const pausingToolCall = PAUSING_TOOLS.get(call.toolName)?.parseCall(
+        call.input,
+      );
+
+      if (!isDefined(pausingToolCall)) {
+        throw new Error(`Seeded ${call.toolName} call does not parse`);
+      }
+
+      return {
+        ...call,
+        pausingToolCall,
+        // The first call keeps the id it had when conversations made one.
+        toolCallId: `call_${seedId(callIndex === 0 ? 'toolCall' : `toolCall${callIndex}`).replace(/-/g, '')}`,
+      };
+    });
+    const [firstCall] = calls;
 
     await this.threadRepository.insert(workspaceId, {
       id: threadId,
@@ -283,16 +324,8 @@ export class DevSeederAgentChatInputAskWorkspaceService {
       parts: [{ type: 'text', text: conversation.prompt }],
     });
 
-    const pausingToolCall = PAUSING_TOOLS.get(conversation.toolName)?.parseCall(
-      conversation.input,
-    );
-
-    if (!isDefined(pausingToolCall)) {
-      throw new Error(`Seeded ${conversation.toolName} call does not parse`);
-    }
-
     const completion = isDefined(conversation.answer)
-      ? await pausingToolCall.complete(conversation.answer.response, {
+      ? await firstCall.pausingToolCall.complete(conversation.answer.response, {
           // Seeds never send anything: the email reads as sent, as it would
           // once the person's own send_email succeeded.
           executeTool: async () => ({
@@ -313,33 +346,40 @@ export class DevSeederAgentChatInputAskWorkspaceService {
         {
           content: [
             { type: 'text', text: conversation.intro },
-            {
-              type: 'tool-call',
-              toolCallId,
-              toolName: conversation.toolName,
-              input: conversation.input,
-            },
-            {
-              type: 'tool-result',
-              toolCallId,
-              toolName: conversation.toolName,
-              input: conversation.input,
-              output: completion?.toolResult ?? conversation.pendingOutput,
-            },
+            ...calls.flatMap((call) => [
+              {
+                type: 'tool-call' as const,
+                toolCallId: call.toolCallId,
+                toolName: call.toolName,
+                input: call.input,
+              },
+              {
+                type: 'tool-result' as const,
+                toolCallId: call.toolCallId,
+                toolName: call.toolName,
+                input: call.input,
+                output:
+                  call === firstCall && isDefined(completion)
+                    ? completion.toolResult
+                    : call.pendingOutput,
+              },
+            ]),
           ],
         },
       ]),
     });
 
-    await this.inputAskWorkspaceService.open({
-      workspaceId,
-      inputAsk: {
-        ...pausingToolCall.buildAsk(),
-        threadId,
-        toolCallId,
-        assigneeId: askedBy.workspaceMemberId,
-      },
-    });
+    for (const call of calls) {
+      await this.inputAskWorkspaceService.open({
+        workspaceId,
+        inputAsk: {
+          ...call.pausingToolCall.buildAsk(),
+          threadId,
+          toolCallId: call.toolCallId,
+          assigneeId: askedBy.workspaceMemberId,
+        },
+      });
+    }
 
     if (!isDefined(conversation.answer) || !isDefined(completion)) {
       return;
@@ -347,7 +387,7 @@ export class DevSeederAgentChatInputAskWorkspaceService {
 
     await this.inputAskWorkspaceService.answer({
       workspaceId,
-      key: { threadId, toolCallId },
+      key: { threadId, toolCallId: firstCall.toolCallId },
       response: conversation.answer.response,
     });
 
