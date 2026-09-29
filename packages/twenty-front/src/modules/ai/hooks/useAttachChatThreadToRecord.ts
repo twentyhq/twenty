@@ -1,8 +1,7 @@
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
-import { AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadObjectNameSingular';
-import { useAgentChatThreadJunctionConfig } from '@/ai/hooks/useAgentChatThreadJunctionConfig';
 import { findAgentChatThreadTargetFieldInfo } from '@/ai/utils/findAgentChatThreadTargetFieldInfo';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -10,6 +9,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { type SearchRecord } from '~/generated/graphql';
 
 const EXISTING_LINK_GQL_FIELDS = { id: true };
@@ -18,22 +19,20 @@ export const useAttachChatThreadToRecord = () => {
   const { enqueueToast } = useToast();
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const junctionConfig = useAgentChatThreadJunctionConfig();
-
-  // Hooks cannot be conditional, so a workspace without the link object falls
-  // back to the thread object, and attaching gives up before using either.
-  const linkObjectNameSingular =
-    junctionConfig?.junctionObjectMetadata.nameSingular ??
-    AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR;
+  const junctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+  });
 
   const { findManyRecordsQuery: findExistingLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: linkObjectNameSingular,
+      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: EXISTING_LINK_GQL_FIELDS,
     });
   const { createManyRecords: createLinks } = useCreateManyRecords({
-    objectNameSingular: linkObjectNameSingular,
+    objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+    shouldRefetchAggregateQueries: false,
   });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   // Resolves once the link exists, whoever wrote it: the chat model may attach
   // the same record through its own tool during the same turn.
@@ -95,13 +94,20 @@ export const useAttachChatThreadToRecord = () => {
         ],
         upsert: true,
       });
-
-      return true;
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
 
       return false;
     }
+
+    // The link exists by now, so a failed refresh of the counts must not
+    // report the attach as failed and get it retried.
+    refetchAggregateQueries({
+      objectMetadataNamePlural:
+        junctionConfig.junctionObjectMetadata.namePlural,
+    }).catch(() => undefined);
+
+    return true;
   };
 
   return { attachChatThreadToRecord };

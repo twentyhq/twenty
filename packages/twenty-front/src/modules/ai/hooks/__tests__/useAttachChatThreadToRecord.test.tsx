@@ -24,11 +24,12 @@ const buildExistingLinks = (linkIds: string[]) => ({
 });
 
 const query = jest.fn();
+const refetchQueries = jest.fn();
 const createManyRecords = jest.fn();
 const enqueueToast = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: () => ({ query }),
+  useApolloCoreClient: () => ({ query, refetchQueries }),
 }));
 
 jest.mock('@/object-record/hooks/useFindManyRecordsQuery', () => ({
@@ -50,16 +51,19 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useAgentChatThreadJunctionConfig', () => ({
-  useAgentChatThreadJunctionConfig: () => ({
-    junctionObjectMetadata: {
-      nameSingular: 'agentChatThreadTarget',
-      namePlural: 'agentChatThreadTargets',
-    },
-    sourceJoinColumnName: 'threadId',
-    targetFields: [companyTargetField],
+jest.mock(
+  '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig',
+  () => ({
+    useObjectMorphJunctionConfig: () => ({
+      junctionObjectMetadata: {
+        nameSingular: 'agentChatThreadTarget',
+        namePlural: 'agentChatThreadTargets',
+      },
+      sourceJoinColumnName: 'threadId',
+      targetFields: [companyTargetField],
+    }),
   }),
-}));
+);
 
 const attachToCompany = async (objectNameSingular = 'company') => {
   const { result } = renderHook(() => useAttachChatThreadToRecord());
@@ -81,6 +85,7 @@ describe('useAttachChatThreadToRecord', () => {
     jest.clearAllMocks();
     query.mockResolvedValue(buildExistingLinks([]));
     createManyRecords.mockResolvedValue([]);
+    refetchQueries.mockResolvedValue([]);
   });
 
   it('links the conversation to the record on its leg', async () => {
@@ -120,6 +125,16 @@ describe('useAttachChatThreadToRecord', () => {
     expect(await attachToCompany()).toBe(false);
 
     expect(enqueueToast).toHaveBeenCalledTimes(1);
+  });
+
+  // The link is written by then, so retrying it would only look it up again.
+  it('reports the link as made when only the refresh of the counts fails', async () => {
+    refetchQueries.mockRejectedValue(new Error('Network error'));
+
+    expect(await attachToCompany()).toBe(true);
+
+    expect(createManyRecords).toHaveBeenCalledTimes(1);
+    expect(enqueueToast).not.toHaveBeenCalled();
   });
 
   it('does not link a record whose object conversations cannot be attached to', async () => {

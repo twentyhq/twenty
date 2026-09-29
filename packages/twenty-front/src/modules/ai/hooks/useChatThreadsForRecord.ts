@@ -1,10 +1,11 @@
 import uniqBy from 'lodash.uniqby';
 import { useCallback } from 'react';
-import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlOperationOrderBy,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_THREAD_TARGET_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadTargetObjectNameSingular';
-import { useAgentChatThreadJunctionConfig } from '@/ai/hooks/useAgentChatThreadJunctionConfig';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
 import { findAgentChatThreadTargetFieldInfo } from '@/ai/utils/findAgentChatThreadTargetFieldInfo';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
@@ -13,6 +14,7 @@ import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 
 // The widget shows the most recent conversations in a card rather than a
@@ -38,7 +40,9 @@ export const useChatThreadsForRecord = ({
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
   const { objectMetadataItems } = useObjectMetadataItems();
-  const junctionConfig = useAgentChatThreadJunctionConfig();
+  const junctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+  });
 
   const targetJoinColumnName = isDefined(junctionConfig)
     ? findAgentChatThreadTargetFieldInfo({
@@ -54,7 +58,7 @@ export const useChatThreadsForRecord = ({
     error,
     refetch,
   } = useFindManyRecords<AgentChatThreadTargetRecord>({
-    objectNameSingular: AGENT_CHAT_THREAD_TARGET_OBJECT_NAME_SINGULAR,
+    objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
     skip: !isDefined(targetJoinColumnName),
     filter: isDefined(targetJoinColumnName)
       ? { [targetJoinColumnName]: { eq: id } }

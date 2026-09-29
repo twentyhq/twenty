@@ -82,11 +82,14 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useAgentChatThreadJunctionConfig', () => ({
-  useAgentChatThreadJunctionConfig: () => ({
-    targetFields: [companyTargetField],
+jest.mock(
+  '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig',
+  () => ({
+    useObjectMorphJunctionConfig: () => ({
+      targetFields: [companyTargetField],
+    }),
   }),
-}));
+);
 
 const renderChatThreadsForRecord = (targetObjectNameSingular = 'company') =>
   renderHook(() =>
