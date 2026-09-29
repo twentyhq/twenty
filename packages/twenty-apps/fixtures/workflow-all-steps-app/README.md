@@ -10,10 +10,10 @@ The agent needs an enabled AI provider, such as OpenAI. Classify specifically re
 
 `loop-validation.workflow.ts` installs a separate diagnostic workflow using the gallery's create, iterator, delay, delete, and finish steps. It verifies both loop iterations and cleanup without requiring AI or email providers.
 
-Running the demo creates, updates, upserts, reads and finally deletes its own newly created company. The delete step references the create step's result, never an existing selected company. If the run stops before cleanup, the uniquely named demo company remains for manual cleanup. Workflow steps run under the application's `workflow.role.ts`, limited by the role of the member who starts the run: it grants the demo company access and the email and calendar tools the gallery needs. The agent keeps its own `my.role.ts`, which grants no record access, and is also limited by the run's roles.
+Running the demo creates, updates, upserts, reads and finally deletes its own newly created company. The delete step references the create step's result, never an existing selected company. If the run stops before cleanup, the uniquely named demo company remains for manual cleanup. The agent role grants no record access. Existing workflow execution permissions still apply.
 
 Build the branch SDK, configure a local CLI remote and run `twenty dev` from this directory to install it. Open **All 20 step types — app demo** in Workflows. No automated triggers are included.
 
 The CODE step declares an expected result for output inspection; the greeting function declares its output schema. Agent outputs are derived from its response format. These declarations do not execute the integrations during installation. The HTTP example returns HTML rather than a structured object, so it declares no object properties.
 
-Email and calendar steps only use a connected account owned by the member who started the run or shared with the workspace. The email branch is opt-in.
+Use this POC only in a trusted development workspace. Existing explicit connected-account lookup validates workspace membership and email capability but does not enforce the runner's ownership/visibility of that account. The email branch is opt-in; the application workflow flag does not repair this permission gap. Account authorization must be fixed before rollout to untrusted application authors or runners.

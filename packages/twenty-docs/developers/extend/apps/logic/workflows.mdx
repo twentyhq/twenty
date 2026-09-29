@@ -10,7 +10,7 @@ icon: 'diagram-project'
   production rollout.
 </Warning>
 
-`defineWorkflow` from `twenty-sdk/define` declares a workflow in the application's manifest. The POC supports manual triggers and every existing workflow action type. Declare referenced functions and agents in the same app. Functions used by `LOGIC_FUNCTION` steps must expose `workflowActionTriggerSettings`. `CODE` steps follow the platform rule for running a function on demand: the function must expose `workflowActionTriggerSettings` unless the installing workspace owns the app's registration.
+`defineWorkflow` from `twenty-sdk/define` declares a workflow in the application's manifest. The POC supports manual triggers and every existing workflow action type. Declare referenced functions and agents in the same app. Functions used by `LOGIC_FUNCTION` steps must expose `workflowActionTriggerSettings`; `CODE` steps can use any app-declared function.
 
 ```ts src/workflows/greeting.workflow.ts
 import { defineWorkflow } from 'twenty-sdk/define';
@@ -73,7 +73,7 @@ Every step has a stable `universalIdentifier`, `name`, `type`, `input`, and `nex
 | `FORM` record picker         | `settings.objectUniversalIdentifier`                                | Object API name                                                                                |
 | `AI_AGENT`                   | Optional `input.agentUniversalIdentifier`                           | An app-declared agent ID                                                                       |
 
-Objects and fields can come from the same installation or metadata already installed in the workspace. Record values and `fieldsToUpdate` use API field names. Record IDs and connected-account IDs are runtime data, not metadata universal identifiers; provide workspace-specific values or workflow variable references. Steps run with the application's permissions, described below.
+Objects and fields can come from the same installation or metadata already installed in the workspace. Record values and `fieldsToUpdate` use API field names. Record IDs and connected-account IDs are runtime data, not metadata universal identifiers; provide workspace-specific values or workflow variable references. Existing execution permissions still apply.
 
 A record step can use an object declared by the same app:
 
@@ -94,26 +94,6 @@ For `IF_ELSE`, each branch's `nextStepIds` identifies its entry steps. For `ITER
 
 `CODE` uses a separately declared app logic function rather than inline source. External integrations still require their normal setup: connected accounts for email/calendar, AI availability for agent/classification actions, and reachable HTTP endpoints. Supporting their definitions does not bypass those requirements or change their permissions.
 
-## Permissions
-
-Starting an app workflow and running its steps are authorized separately. Starting it keeps the usual checks: the member needs the Workflows permission and must be able to see the workflow. A token issued to an application can start that application's workflows and workspace workflows, but not another application's workflows. A run started through an application token, including a workspace workflow run, is also limited by that application's role, so a function cannot gain the member's full role by starting a workflow.
-
-Each step then runs with the application's default role, never with more than the member who started the run. The effective permissions are the intersection of the member's role and the app role, so object, field and row-level permissions of both apply. An app without a default role cannot run steps.
-
-| Step | Runs with |
-| --- | --- |
-| Record actions | The intersection of the member's role and the app role |
-| `CODE`, `LOGIC_FUNCTION` | The app's own function only. It receives the app token and a token acting for the member within the app role |
-| `AI_AGENT` | The app's own agent only. The agent's role is limited by the run's roles, and the code interpreter and campaign drafting tools are unavailable |
-| `SEND_EMAIL`, `DRAFT_EMAIL` | Requires `SEND_EMAIL_TOOL` on the app role and the member's role |
-| `CREATE_CALENDAR_EVENT` | Requires `CREATE_CALENDAR_EVENT_TOOL` on the app role and the member's role |
-
-Email and calendar steps, including agent tools, only use a connected account owned by the member who started the run or shared with the workspace. Another member's private account is refused, whether it is given as an account ID, a workspace member or picked by default.
-
-Permissions are checked again at every step, including after a delay, a retry or an iterator pass. Nothing about the identity is stored in queued jobs: removing a permission from the app or the member, removing the member, uninstalling the app or deleting the workflow makes the next step fail with an error on that step. Only the member who started a run can fill its form, submit it or retry the run. This also applies to a workspace workflow run started through an application token.
-
-Workspace workflows keep their current behavior.
-
 ## Updates and runs
 
 Synchronization creates one ACTIVE version. Changing the source updates that same version without allocating another workflow or version ID. Keep both universal identifiers stable across releases.
@@ -126,10 +106,10 @@ Installed app workflows are read-only in the normal workflow editor and APIs. Op
 
 Removing a workflow from a full manifest sync, replacing its version universal identifier, and adopting a workspace-owned workflow are rejected. Additive pre-install synchronization can omit existing workflows.
 
-Automated triggers, command-menu registration, duplication, export/pull, uninstall safety, execution-dependency pinning and production rollback support remain separate work. Existing workspace-owned workflow APIs and rollback mirrors retain their current lifecycle.
+Automated triggers, command-menu registration, duplication, export/pull, uninstall safety, execution-dependency pinning, application execution permissions and production rollback support remain separate work. Existing workspace-owned workflow APIs and rollback mirrors retain their current lifecycle.
 
 
-Application workflows are experimental. Enable `IS_APPLICATION_WORKFLOWS_ENABLED` to install or update workflow definitions and start new runs, and enable `IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED` for the core workflow UI. Both flags default off unless configured. Disabling the application-workflow flag blocks installation/updates containing workflows and hides Run; it does not delete definitions or interrupt already-started runs. The older workspace UI cannot display these core-only definitions. Uninstall safety and dependency pinning remain outside this POC.
+Application workflows are experimental. Enable `IS_APPLICATION_WORKFLOWS_ENABLED` to install or update workflow definitions and start new runs, and enable `IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED` for the core workflow UI. Both flags default off unless configured. Disabling the application-workflow flag blocks installation/updates containing workflows and hides Run; it does not delete definitions or interrupt already-started runs. The older workspace UI cannot display these core-only definitions. Execution permissions, uninstall safety and dependency pinning remain outside this POC.
 
 Output schemas are populated during installation without executing steps. Explicit step `outputSchema` takes precedence. CODE and LOGIC_FUNCTION steps can reuse the referenced function's `workflowActionTriggerSettings.outputSchema`; otherwise provide an `expectedOutputSchema` containing a representative result. HTTP_REQUEST also uses `expectedOutputSchema`. AI_AGENT uses the referenced agent's response format. Arbitrary code and HTTP response shapes cannot be inferred without an output declaration. Keep declarations in sync with the implementation.
 
