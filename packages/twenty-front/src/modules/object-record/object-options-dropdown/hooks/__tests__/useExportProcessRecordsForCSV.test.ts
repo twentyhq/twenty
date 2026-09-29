@@ -59,6 +59,36 @@ describe('useExportProcessRecordsForCSV', () => {
     ]);
   });
 
+  it('preserves null currency amounts instead of converting them to 0', () => {
+    const { result } = renderHook(() =>
+      useExportProcessRecordsForCSV('someObject'),
+    );
+
+    const records = [
+      {
+        __typename: 'ObjectRecord',
+        id: '1',
+        price: { amountMicros: null, currencyCode: 'USD' },
+        name: 'Item 1',
+      },
+    ];
+
+    let processedRecords;
+
+    act(() => {
+      processedRecords = result.current.processRecordsForCSVExport(records);
+    });
+
+    expect(processedRecords).toEqual([
+      {
+        __typename: 'ObjectRecord',
+        id: '1',
+        price: { amountMicros: null, currencyCode: 'USD' },
+        name: 'Item 1',
+      },
+    ]);
+  });
+
   it('processes records with multi-select and array fields correctly', () => {
     const { result } = renderHook(() =>
       useExportProcessRecordsForCSV('someObject'),
