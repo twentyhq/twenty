@@ -1,9 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { isAncestorOrSelfOfNode } from '@/polyfills/dom/utils/isAncestorOrSelfOfNode';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 import { canElementBeDisabled } from '@/polyfills/selectors/utils/canElementBeDisabled';
-import { isSelectorElementNode } from '@/polyfills/selectors/utils/isSelectorElementNode';
+import { isInsideFirstLegendOfFieldset } from '@/polyfills/selectors/utils/isInsideFirstLegendOfFieldset';
 import { readBooleanControlState } from '@/polyfills/selectors/utils/readBooleanControlState';
 import { resolveHtmlTagNameOfElement } from '@/polyfills/selectors/utils/resolveHtmlTagNameOfElement';
 import { resolveParentElement } from '@/polyfills/selectors/utils/resolveParentElement';
@@ -18,30 +17,6 @@ const TAG_NAMES_DISABLED_BY_ANCESTOR_FIELDSET = new Set([
 
 const hasOwnDisabledState = (element: SelectorElementLike): boolean =>
   readBooleanControlState({ element, propertyName: 'disabled' });
-
-const isInsideFirstLegendOfFieldset = ({
-  element,
-  fieldset,
-}: {
-  element: SelectorElementLike;
-  fieldset: SelectorElementLike;
-}): boolean => {
-  const children = fieldset.childNodes ?? [];
-
-  for (let index = 0; index < children.length; index += 1) {
-    const child = children[index];
-
-    if (
-      isSelectorElementNode(child) &&
-      resolveHtmlTagNameOfElement(child) === 'legend'
-    ) {
-      return isAncestorOrSelfOfNode(child, element);
-    }
-  }
-
-  return false;
-};
-
 export const isElementDisabled = (element: SelectorElementLike): boolean => {
   if (!canElementBeDisabled(element)) {
     return false;

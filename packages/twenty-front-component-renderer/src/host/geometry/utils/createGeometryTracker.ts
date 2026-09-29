@@ -1,4 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { findRemoteElementIdContainingNode } from '@/host/geometry/utils/findRemoteElementIdContainingNode';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
@@ -13,10 +13,6 @@ import { measureViewportGeometry } from '@/host/geometry/utils/measureViewportGe
 import { sanitizeRemoteElementIds } from '@/host/geometry/utils/sanitizeRemoteElementIds';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
-
-type NodeWithParent = {
-  parentNode?: unknown;
-};
 
 export const createGeometryTracker = (): GeometryTracker => {
   const registeredNodes = new Map<string, Element>();
@@ -182,24 +178,6 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
   };
 
-  const findRemoteElementIdContainingNode = (
-    node: unknown,
-  ): string | undefined => {
-    let currentNode: unknown = node;
-
-    while (isObject(currentNode)) {
-      const remoteElementId = remoteElementIdByRegisteredNode.get(currentNode);
-
-      if (isDefined(remoteElementId)) {
-        return remoteElementId;
-      }
-
-      currentNode = (currentNode as NodeWithParent).parentNode;
-    }
-
-    return undefined;
-  };
-
   const observe = (remoteElementIds: unknown): void => {
     let hasNewlyObservedRemoteElementIds = false;
 
@@ -292,7 +270,11 @@ export const createGeometryTracker = (): GeometryTracker => {
   return {
     registerNode,
     unregisterNode,
-    findRemoteElementIdContainingNode,
+    findRemoteElementIdContainingNode: (node) =>
+      findRemoteElementIdContainingNode({
+        node,
+        remoteElementIdByRegisteredNode,
+      }),
     observe,
     unobserve,
     setRoot,

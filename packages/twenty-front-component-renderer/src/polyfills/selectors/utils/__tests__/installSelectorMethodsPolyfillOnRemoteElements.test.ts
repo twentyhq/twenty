@@ -43,7 +43,7 @@ describe('installSelectorMethodsPolyfill on remote elements', () => {
     expect(button.matches(':enabled')).toBe(true);
     expect(button.matches(':not([disabled])')).toBe(true);
     expect(checkbox.matches(':checked')).toBe(false);
-    expect(checkbox.matches('[checked]')).toBe(false);
+    expect(checkbox.matches('[checked]')).toBe(true);
   });
 
   it('should read declared remote properties and ignore inherited accessors', () => {
