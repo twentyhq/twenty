@@ -13,4 +13,5 @@ export interface ExceptionHandlerOptions {
   additionalData?: Record<string, any>;
   user?: ExceptionHandlerUser | null;
   workspace?: ExceptionHandlerWorkspace | null;
+  fingerprint?: string[];
 }

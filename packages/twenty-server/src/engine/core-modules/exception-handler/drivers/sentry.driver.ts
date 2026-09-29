@@ -48,6 +48,10 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
         });
       }
 
+      if (isDefined(options?.fingerprint)) {
+        scope.setFingerprint(options.fingerprint);
+      }
+
       for (const exception of exceptions) {
         const isObjectException = isObject(exception);
 

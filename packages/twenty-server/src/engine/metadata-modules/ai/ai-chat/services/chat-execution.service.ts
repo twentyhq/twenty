@@ -85,6 +85,9 @@ import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-module
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import { extractToolExecutionErrors } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-tool-execution-errors.util';
+import { getAiChatToolErrorFingerprint } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-ai-chat-tool-error-fingerprint.util';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
   getCacheProviderOptions,
@@ -126,6 +129,7 @@ export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
   hasNoMoreAvailableCredits: () => boolean;
+  getStreamError: () => unknown;
 };
 
 @Injectable()
@@ -723,6 +727,24 @@ export class ChatExecutionService {
             bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
           });
         }
+
+        for (const toolExecutionError of extractToolExecutionErrors(
+          step.content,
+        )) {
+          if (!shouldCaptureException(toolExecutionError.error)) {
+            continue;
+          }
+
+          this.exceptionHandlerService.captureExceptions(
+            [toolExecutionError.error],
+            {
+              fingerprint: getAiChatToolErrorFingerprint({
+                error: toolExecutionError.error,
+                toolName: resolveToolName(toolExecutionError),
+              }),
+            },
+          );
+        }
       },
       onAbort: async ({ steps }) => {
         await emitTurnUsageEvent(steps);
@@ -767,31 +789,6 @@ export class ChatExecutionService {
         }
 
         if (NoOutputGeneratedError.isInstance(error)) {
-          const underlying = lastUnderlyingStreamError;
-
-          this.exceptionHandlerService.captureExceptions([
-            Object.assign(
-              new Error(
-                `AI chat stream produced no output. ${JSON.stringify({
-                  modelId: registeredModel.modelId,
-                  provider: registeredModel.sdkPackage,
-                  workspaceId: workspace.id,
-                  threadId,
-                  streamId,
-                  turnId,
-                  messageCount: messages.length,
-                  conversationSizeTokens,
-                  elapsedMs: Math.round(performance.now() - streamStartedAt),
-                  underlyingError:
-                    underlying instanceof Error
-                      ? `${underlying.name}: ${underlying.message}`
-                      : String(underlying ?? 'none-recorded'),
-                })}`,
-              ),
-              { cause: underlying },
-            ),
-          ]);
-
           return;
         }
 
@@ -802,6 +799,7 @@ export class ChatExecutionService {
       stream,
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
+      getStreamError: () => lastUnderlyingStreamError,
     };
   }
 

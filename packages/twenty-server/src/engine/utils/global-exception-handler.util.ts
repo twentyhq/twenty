@@ -63,7 +63,7 @@ export const handleExceptionAndConvertToGraphQLError = (
 };
 
 export const shouldCaptureException = (
-  exception: Error,
+  exception: unknown,
   statusCode?: number,
 ): boolean => {
   if (exception instanceof RetryableLogicFunctionError) {

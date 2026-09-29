@@ -21,6 +21,7 @@ import { v5 as uuidv5 } from 'uuid';
 
 import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -48,6 +49,8 @@ import {
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
+import { getAiChatStreamFailureFingerprint } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-ai-chat-stream-failure-fingerprint.util';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
@@ -89,6 +92,7 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -200,6 +204,16 @@ export class StreamAgentChatJob {
         },
         turnModelId,
       );
+
+      if (shouldCaptureException(error)) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          fingerprint: getAiChatStreamFailureFingerprint({
+            error,
+            modelId: turnModelId,
+          }),
+          additionalData: { modelId: turnModelId },
+        });
+      }
 
       await this.threadRepository
         .update(
@@ -462,22 +476,26 @@ export class StreamAgentChatJob {
             });
           };
 
-          const { stream, modelConfig, hasNoMoreAvailableCredits } =
-            await this.chatExecutionService.streamChat({
-              workspace,
-              userWorkspaceId: data.userWorkspaceId,
-              threadId: data.threadId,
-              streamId: data.streamId,
-              turnId: data.existingTurnId,
-              messageId: data.messageId,
-              messages: data.messages,
-              browsingContext: data.browsingContext,
-              modelId: data.modelId,
-              onCodeExecutionUpdate,
-              onCompaction,
-              abortSignal,
-              conversationSizeTokens: data.conversationSizeTokens,
-            });
+          const {
+            stream,
+            modelConfig,
+            hasNoMoreAvailableCredits,
+            getStreamError,
+          } = await this.chatExecutionService.streamChat({
+            workspace,
+            userWorkspaceId: data.userWorkspaceId,
+            threadId: data.threadId,
+            streamId: data.streamId,
+            turnId: data.existingTurnId,
+            messageId: data.messageId,
+            messages: data.messages,
+            browsingContext: data.browsingContext,
+            modelId: data.modelId,
+            onCodeExecutionUpdate,
+            onCompaction,
+            abortSignal,
+            conversationSizeTokens: data.conversationSizeTokens,
+          });
 
           checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
 
@@ -494,11 +512,8 @@ export class StreamAgentChatJob {
           writer.merge(
             toUIMessageStream({
               stream: stream.stream,
-              onError: (error) => {
-                streamError = error;
-
-                return error instanceof Error ? error.message : String(error);
-              },
+              onError: (error) =>
+                error instanceof Error ? error.message : String(error),
               sendStart: true,
               generateMessageId: () => assistantMessageId,
               messageMetadata: ({ part }) => {
@@ -521,6 +536,7 @@ export class StreamAgentChatJob {
               onEnd: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
+                  streamError ??= getStreamError();
                   isFinalizingPersist = true;
                   await persistChain;
                   await this.handleStreamFinish({

@@ -1,4 +1,10 @@
-import { type LanguageModelUsage, type TextStreamPart, type ToolSet } from 'ai';
+import { msg } from '@lingui/core/macro';
+import {
+  APICallError,
+  type LanguageModelUsage,
+  type TextStreamPart,
+  type ToolSet,
+} from 'ai';
 import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -6,6 +12,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { UnknownException } from 'src/utils/custom-exception';
 
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
@@ -92,6 +99,32 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
   ...FINISH_PARTS,
 ];
 
+const RECOVERED_TOOL_CALL_PARTS: ModelStreamPart[] = [
+  ...START_PARTS,
+  {
+    type: 'tool-call',
+    toolCallId: 'tool-call-id',
+    toolName: 'code_interpreter',
+    input: {},
+    dynamic: true,
+    invalid: true,
+    error: new Error("Model tried to call unavailable tool 'code_interpreter'"),
+  },
+  {
+    type: 'tool-error',
+    toolCallId: 'tool-call-id',
+    toolName: 'code_interpreter',
+    input: {},
+    dynamic: true,
+    error:
+      "AI_NoSuchToolError: Model tried to call unavailable tool 'code_interpreter'",
+  },
+  { type: 'text-start', id: 'text-1' },
+  { type: 'text-delta', id: 'text-1', text: 'Here is the answer' },
+  { type: 'text-end', id: 'text-1' },
+  ...FINISH_PARTS,
+];
+
 const createFakeChatStream = ({
   parts = TEXT_PARTS,
   midStreamError,
@@ -103,6 +136,7 @@ const createFakeChatStream = ({
   onFirstPart?: () => void;
   isAborted?: boolean;
 } = {}) => ({
+  streamError: midStreamError,
   stream: new ReadableStream<ModelStreamPart>(
     {
       pull(controller) {
@@ -211,6 +245,7 @@ describe('StreamAgentChatJob', () => {
               outputCostPerMillionTokens: 2,
             },
             hasNoMoreAvailableCredits: () => false,
+            getStreamError: () => chatStream.streamError,
           }),
     };
     const eventPublisherService = {
@@ -261,6 +296,7 @@ describe('StreamAgentChatJob', () => {
         message: { id: 'user-message-id', turnId: 'turn-id' },
       }),
     };
+    const exceptionHandlerService = { captureExceptions: jest.fn() };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -273,6 +309,7 @@ describe('StreamAgentChatJob', () => {
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
+      exceptionHandlerService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -292,6 +329,7 @@ describe('StreamAgentChatJob', () => {
       cancelCallbacks,
       metricsService,
       aiModelRegistryService,
+      exceptionHandlerService,
       turnCounts,
     };
   };
@@ -743,6 +781,71 @@ describe('StreamAgentChatJob', () => {
       }),
     ]);
     expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+  });
+
+  it('counts a reply as answered when the model recovers from a failed tool call', async () => {
+    const { job, publishedEvents, exceptionHandlerService, turnCounts } =
+      buildJob({
+        chatStream: createFakeChatStream({
+          parts: RECOVERED_TOOL_CALL_PARTS,
+        }),
+      });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'answered' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+    expect(publishedEvents.map((event) => event.type)).not.toContain(
+      'stream-error',
+    );
+    expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed stream to Sentry grouped by provider, error class and HTTP status', async () => {
+    const providerError = new APICallError({
+      message: 'Overloaded',
+      url: 'https://api.openai.com/v1/responses',
+      requestBodyValues: {},
+      statusCode: 529,
+    });
+    const { job, exceptionHandlerService } = buildJob({
+      chatStream: createFakeChatStream({ midStreamError: providerError }),
+    });
+
+    await expect(job.handle(jobData)).rejects.toBe(providerError);
+
+    expect(exceptionHandlerService.captureExceptions).toHaveBeenCalledTimes(1);
+    expect(exceptionHandlerService.captureExceptions).toHaveBeenCalledWith(
+      [providerError],
+      {
+        fingerprint: [
+          'ai-chat-stream-failure',
+          'openai',
+          'AI_APICallError',
+          '529',
+        ],
+        additionalData: { modelId: 'openai/gpt-5.6-luna' },
+      },
+    );
+  });
+
+  it('keeps expected client errors out of Sentry', async () => {
+    const creditsExhausted = new UnknownException(
+      'Credits exhausted',
+      'BILLING_CREDITS_EXHAUSTED',
+      { userFriendlyMessage: msg`Credits exhausted`, statusCode: 402 },
+    );
+    const { job, exceptionHandlerService } = buildJob({
+      streamChatRejection: creditsExhausted,
+    });
+
+    await expect(job.handle(jobData)).rejects.toBe(creditsExhausted);
+
+    expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
   });
 
   it('counts an aborted turn as cancelled rather than leaving it unaccounted', async () => {
