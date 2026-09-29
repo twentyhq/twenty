@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationUpgradeRoleGrantService } from 'src/engine/core-modules/application/application-manifest/services/application-upgrade-role-grant.service';
+import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -65,6 +66,10 @@ describe('ApplicationUpgradeService', () => {
   const applicationUpgradeRoleGrantService = {
     getDefaultRoleGrantsAddedByManifest: jest.fn(),
   };
+  const applicationPackageFetcherService = {
+    resolvePackage: jest.fn(),
+    cleanupExtractedDir: jest.fn(),
+  };
   const workspaceVersionService = { getProvisionedWorkspaceIds: jest.fn() };
   const applicationVersionValidationService = {
     validateWorkspaceCompatibility: jest.fn(),
@@ -118,6 +123,10 @@ describe('ApplicationUpgradeService', () => {
         {
           provide: ApplicationUpgradeRoleGrantService,
           useValue: applicationUpgradeRoleGrantService,
+        },
+        {
+          provide: ApplicationPackageFetcherService,
+          useValue: applicationPackageFetcherService,
         },
         {
           provide: ApplicationVersionValidationService,
@@ -534,14 +543,19 @@ describe('ApplicationUpgradeService', () => {
       permissionFlags: [],
     };
     const addedGrant = { type: 'ALL_SETTINGS' };
+    const CLEANUP_DIR = '/tmp/latest-package';
 
     beforeEach(() => {
       applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest.mockResolvedValue(
         [addedGrant],
       );
+      applicationPackageFetcherService.resolvePackage.mockResolvedValue({
+        manifest: latestManifest,
+        cleanupDir: CLEANUP_DIR,
+      });
     });
 
-    it('compares the installed default role with the latest manifest', async () => {
+    it('compares the installed default role with the latest package manifest', async () => {
       applicationRepository.findOne.mockResolvedValue({
         ...buildApplication({
           workspaceId: OUTDATED_WORKSPACE_ID,
@@ -550,7 +564,7 @@ describe('ApplicationUpgradeService', () => {
         id: APPLICATION_ID,
         applicationRegistration: {
           ...appRegistration,
-          manifest: latestManifest,
+          manifest: { application: latestManifest.application },
         },
       });
 
@@ -562,12 +576,43 @@ describe('ApplicationUpgradeService', () => {
       ).resolves.toEqual([addedGrant]);
 
       expect(
+        applicationPackageFetcherService.resolvePackage,
+      ).toHaveBeenCalledWith(expect.anything(), {
+        targetVersion: TARGET_VERSION,
+      });
+      expect(
         applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest,
       ).toHaveBeenCalledWith({
         workspaceId: OUTDATED_WORKSPACE_ID,
         applicationId: APPLICATION_ID,
         manifest: latestManifest,
       });
+      expect(
+        applicationPackageFetcherService.cleanupExtractedDir,
+      ).toHaveBeenCalledWith(CLEANUP_DIR);
+    });
+
+    it('returns nothing when the latest package cannot be resolved', async () => {
+      applicationRepository.findOne.mockResolvedValue({
+        ...buildApplication({
+          workspaceId: OUTDATED_WORKSPACE_ID,
+          version: '1.0.0',
+        }),
+        id: APPLICATION_ID,
+        applicationRegistration: appRegistration,
+      });
+      applicationPackageFetcherService.resolvePackage.mockResolvedValue(null);
+
+      await expect(
+        service.getRoleGrantsAddedByLatestVersion({
+          applicationId: APPLICATION_ID,
+          workspaceId: OUTDATED_WORKSPACE_ID,
+        }),
+      ).resolves.toEqual([]);
+
+      expect(
+        applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest,
+      ).not.toHaveBeenCalled();
     });
 
     it('returns nothing when the workspace already runs the latest version', async () => {
@@ -577,10 +622,7 @@ describe('ApplicationUpgradeService', () => {
           version: TARGET_VERSION,
         }),
         id: APPLICATION_ID,
-        applicationRegistration: {
-          ...appRegistration,
-          manifest: latestManifest,
-        },
+        applicationRegistration: appRegistration,
       });
 
       await expect(
@@ -591,7 +633,7 @@ describe('ApplicationUpgradeService', () => {
       ).resolves.toEqual([]);
 
       expect(
-        applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest,
+        applicationPackageFetcherService.resolvePackage,
       ).not.toHaveBeenCalled();
     });
 

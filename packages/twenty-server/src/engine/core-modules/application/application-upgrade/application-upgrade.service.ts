@@ -8,6 +8,7 @@ import { In, Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationUpgradeRoleGrantService } from 'src/engine/core-modules/application/application-manifest/services/application-upgrade-role-grant.service';
+import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -46,6 +47,7 @@ export class ApplicationUpgradeService {
     private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationUpgradeRoleGrantService: ApplicationUpgradeRoleGrantService,
+    private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
@@ -352,20 +354,35 @@ export class ApplicationUpgradeService {
     const appRegistration = application.applicationRegistration;
 
     if (
-      !isDefined(appRegistration?.manifest) ||
-      !isDefined(appRegistration.latestAvailableVersion) ||
+      !isDefined(appRegistration?.latestAvailableVersion) ||
       appRegistration.latestAvailableVersion === application.version
     ) {
       return [];
     }
 
-    return this.applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest(
-      {
-        workspaceId,
-        applicationId,
-        manifest: appRegistration.manifest,
-      },
-    );
+    const resolvedPackage =
+      await this.applicationPackageFetcherService.resolvePackage(
+        appRegistration,
+        { targetVersion: appRegistration.latestAvailableVersion },
+      );
+
+    if (!isDefined(resolvedPackage)) {
+      return [];
+    }
+
+    try {
+      return await this.applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest(
+        {
+          workspaceId,
+          applicationId,
+          manifest: resolvedPackage.manifest,
+        },
+      );
+    } finally {
+      await this.applicationPackageFetcherService.cleanupExtractedDir(
+        resolvedPackage.cleanupDir,
+      );
+    }
   }
 
   private async upgradeApplicationToVersion(params: {
