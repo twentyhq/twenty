@@ -6,8 +6,6 @@ type LoadState<TProps extends object> =
   | { status: 'loaded'; component: ComponentType<TProps> }
   | { status: 'failed'; error: unknown };
 
-type PreloadableComponentProps<TProps extends object> = TProps;
-
 type PreloadableComponent<TProps extends object> = ComponentType<TProps> & {
   preload: () => void;
 };
@@ -59,7 +57,7 @@ export const lazyWithPreload: LazyWithPreload = <TProps extends object>(
     startLoading();
   };
 
-  const PreloadableComponent = (props: PreloadableComponentProps<TProps>) => {
+  const PreloadableComponent: ComponentType<TProps> = (props) => {
     if (loadState.status === 'failed') {
       throw loadState.error;
     }

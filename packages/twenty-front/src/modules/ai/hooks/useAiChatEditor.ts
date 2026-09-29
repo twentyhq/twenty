@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
-import { MarkdownRenderer } from '@/ai/components/MarkdownRenderer';
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
@@ -88,7 +87,6 @@ export const useAiChatEditor = () => {
       }
     },
     onFocus: () => {
-      MarkdownRenderer.preload();
       pushFocusItemToFocusStack({
         focusId: AI_CHAT_INPUT_ID,
         component: {
