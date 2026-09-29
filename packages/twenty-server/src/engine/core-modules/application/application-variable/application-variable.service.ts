@@ -57,9 +57,7 @@ export class ApplicationVariableEntityService {
     const flatApplicationVariables =
       await this.findFlatApplicationVariables(args);
 
-    return this.toEnvVariables(
-      flatApplicationVariables.filter(({ scope }) => scope !== 'USER'),
-    );
+    return this.toEnvVariables(flatApplicationVariables);
   }
 
   async getPublicEnvVariables(
@@ -69,9 +67,7 @@ export class ApplicationVariableEntityService {
       await this.findFlatApplicationVariables(args);
 
     return this.toEnvVariables(
-      flatApplicationVariables.filter(
-        ({ isSecret, scope }) => !isSecret && scope !== 'USER',
-      ),
+      flatApplicationVariables.filter(({ isSecret }) => !isSecret),
     );
   }
 
@@ -106,16 +102,15 @@ export class ApplicationVariableEntityService {
   private toEnvVariables(
     flatApplicationVariables: FlatApplicationVariable[],
   ): Record<string, string> {
-    return flatApplicationVariables.reduce<Record<string, string>>(
-      (acc, flatApplicationVariable) => {
+    return flatApplicationVariables
+      .filter(({ scope }) => scope !== 'USER')
+      .reduce<Record<string, string>>((acc, flatApplicationVariable) => {
         acc[flatApplicationVariable.key] = this.decryptValue(
           flatApplicationVariable,
         );
 
         return acc;
-      },
-      {},
-    );
+      }, {});
   }
 
   private decryptValue({
