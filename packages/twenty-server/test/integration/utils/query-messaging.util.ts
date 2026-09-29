@@ -246,22 +246,28 @@ export const queryConnectedAccount = async (
 export const updateMessageChannel = async (
   messageChannelId: string,
   update: MessageChannelUpdate,
+  token?: string,
 ): Promise<void> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      mutation UpdateMessageChannelForTest($input: UpdateMessageChannelInput!) {
-        updateMessageChannel(input: $input) {
-          id
+  const response = await makeMetadataApiRequest(
+    {
+      query: gql`
+        mutation UpdateMessageChannelForTest(
+          $input: UpdateMessageChannelInput!
+        ) {
+          updateMessageChannel(input: $input) {
+            id
+          }
         }
-      }
-    `,
-    variables: {
-      input: {
-        id: messageChannelId,
-        update,
+      `,
+      variables: {
+        input: {
+          id: messageChannelId,
+          update,
+        },
       },
     },
-  });
+    token,
+  );
 
   getDataOrThrow(response);
 };
@@ -269,24 +275,28 @@ export const updateMessageChannel = async (
 export const updateCalendarChannel = async (
   calendarChannelId: string,
   update: CalendarChannelUpdate,
+  token?: string,
 ): Promise<void> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      mutation UpdateCalendarChannelForTest(
-        $input: UpdateCalendarChannelInput!
-      ) {
-        updateCalendarChannel(input: $input) {
-          id
+  const response = await makeMetadataApiRequest(
+    {
+      query: gql`
+        mutation UpdateCalendarChannelForTest(
+          $input: UpdateCalendarChannelInput!
+        ) {
+          updateCalendarChannel(input: $input) {
+            id
+          }
         }
-      }
-    `,
-    variables: {
-      input: {
-        id: calendarChannelId,
-        update,
+      `,
+      variables: {
+        input: {
+          id: calendarChannelId,
+          update,
+        },
       },
     },
-  });
+    token,
+  );
 
   getDataOrThrow(response);
 };

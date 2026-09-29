@@ -33,6 +33,7 @@ import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/da
 import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { DevSeederWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.workspace-service';
 import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill.module';
@@ -76,6 +77,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     UpgradeModule,
     WorkflowRunModule,
     WorkflowAgentConversationModule,
+    ChannelRecordShareModule,
   ],
   exports: [DevSeederWorkspaceService],
   providers: [

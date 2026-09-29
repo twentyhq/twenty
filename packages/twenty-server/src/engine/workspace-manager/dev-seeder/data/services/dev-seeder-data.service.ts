@@ -14,6 +14,9 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/calendar-event-channel-record-share-source.constant';
+import { MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/message-thread-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/data/utils/seed-message-suppressions.util';
 import {
   ATTACHMENT_DATA_SEED_COLUMNS,
@@ -322,6 +325,7 @@ export class DevSeederDataService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly channelRecordShareService: ChannelRecordShareService,
   ) {}
 
   public async seed({
@@ -391,6 +395,8 @@ export class DevSeederDataService {
       },
     );
 
+    await this.seedChannelRecordShares(workspaceId);
+
     await prefillWorkflowCommandMenuItems({
       workspaceId,
       applicationService: this.applicationService,
@@ -406,6 +412,26 @@ export class DevSeederDataService {
       workspaceMigrationValidateBuildAndRunService:
         this.workspaceMigrationValidateBuildAndRunService,
     });
+  }
+
+  private async seedChannelRecordShares(workspaceId: string) {
+    for (const [channelTableName, source] of [
+      ['messageChannel', MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE],
+      ['calendarChannel', CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE],
+    ] as const) {
+      const channels: { id: string }[] = await this.coreDataSource.query(
+        `SELECT id FROM core."${channelTableName}" WHERE "workspaceId" = $1`,
+        [workspaceId],
+      );
+
+      for (const { id: channelId } of channels) {
+        await this.channelRecordShareService.syncChannelRecordShares({
+          workspaceId,
+          source,
+          channelId,
+        });
+      }
+    }
   }
 
   private async seedRecordsInBatches({

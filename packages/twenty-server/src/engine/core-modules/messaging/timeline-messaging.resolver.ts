@@ -116,7 +116,6 @@ export class TimelineMessagingResolver {
     }
 
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
       objectNameSingular,
       recordId,
       workspace.id,
@@ -143,7 +142,6 @@ export class TimelineMessagingResolver {
     }
 
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
       CoreObjectNameSingular.Person,
       personId,
       workspace.id,
@@ -170,7 +168,6 @@ export class TimelineMessagingResolver {
     }
 
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
       CoreObjectNameSingular.Company,
       companyId,
       workspace.id,
@@ -198,7 +195,6 @@ export class TimelineMessagingResolver {
     }
 
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
       CoreObjectNameSingular.Opportunity,
       opportunityId,
       workspace.id,

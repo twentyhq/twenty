@@ -1,63 +1,52 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import {
   MessageChannelVisibility,
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, type Repository } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+
+export type TimelineThreadWithoutParticipants = Omit<
+  TimelineThreadDTO,
+  'firstParticipant' | 'lastTwoParticipants' | 'participantCount' | 'read'
+>;
 
 @Injectable()
 export class TimelineMessagingService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(MessageChannelEntity)
-    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly fileUrlService: FileUrlService,
   ) {}
 
+  // Runs as the caller: the existence read lists every thread their role can
+  // read, and record shares decide which ones show a subject and a body.
   public async getAndCountMessageThreads(
     personIds: string[],
-    workspaceId: string,
     offset: number,
     pageSize: number,
     targetFilter?: TargetFilter,
   ): Promise<{
-    messageThreads: Omit<
-      TimelineThreadDTO,
-      | 'firstParticipant'
-      | 'lastTwoParticipants'
-      | 'participantCount'
-      | 'read'
-      | 'visibility'
-    >[];
+    messageThreads: TimelineThreadWithoutParticipants[];
     totalNumberOfThreads: number;
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithContextPermissions<MessageThreadWorkspaceEntity>(
           'messageThread',
-          { shouldBypassPermissionChecks: true },
+          undefined,
+          'existence',
         );
 
       const totalQueryBuilder = messageThreadRepository
@@ -101,41 +90,115 @@ export class TimelineMessagingService {
       applyRecordFilter(totalQueryBuilder);
       applyRecordFilter(threadIdsQueryBuilder);
 
-      const totalNumberOfThreads = await totalQueryBuilder.getCount();
-      const threadIdsQuery = await threadIdsQueryBuilder.getRawMany();
+      let totalNumberOfThreads: number;
+      let messageThreadIds: string[];
 
-      const messageThreadIds = threadIdsQuery.map((thread) => thread.id);
+      try {
+        totalNumberOfThreads = await totalQueryBuilder.getCount();
+        messageThreadIds = (
+          await threadIdsQueryBuilder.getRawMany<{ id: string }>()
+        ).map((thread) => thread.id);
+      } catch (error) {
+        if (error instanceof PermissionsException) {
+          return { messageThreads: [], totalNumberOfThreads: 0 };
+        }
 
-      const messageThreads = await messageThreadRepository.find({
-        where: {
-          id: In(messageThreadIds),
-        },
-        order: {
-          messages: {
-            receivedAt: 'DESC',
-          },
-        },
-        relations: ['messages'],
-      });
+        throw error;
+      }
+
+      if (messageThreadIds.length === 0) {
+        return { messageThreads: [], totalNumberOfThreads };
+      }
+
+      const messages = await this.workspaceOrmManager
+        .getRepositoryWithContextPermissions<MessageWorkspaceEntity>(
+          'message',
+          undefined,
+          'existence',
+        )
+        .createQueryBuilder('message')
+        .select([
+          'message.id',
+          'message.messageThreadId',
+          'message.receivedAt',
+          'message.isDraft',
+        ])
+        .where('message.messageThreadId IN (:...messageThreadIds)', {
+          messageThreadIds,
+        })
+        .orderBy('message.receivedAt', 'DESC')
+        .getMany<
+          Pick<
+            MessageWorkspaceEntity,
+            'id' | 'messageThreadId' | 'receivedAt' | 'isDraft'
+          >
+        >();
+
+      const messageContentById =
+        await this.findReadableMessageContentById(messageThreadIds);
 
       return {
-        messageThreads: messageThreads.map((messageThread) => {
-          const lastMessage = messageThread.messages[0];
-          const firstMessage =
-            messageThread.messages[messageThread.messages.length - 1];
+        messageThreads: messageThreadIds.flatMap((messageThreadId) => {
+          const threadMessages = messages.filter(
+            (message) => message.messageThreadId === messageThreadId,
+          );
+          const lastMessage = threadMessages[0];
+          const firstMessage = threadMessages[threadMessages.length - 1];
 
-          return {
-            id: messageThread.id,
-            subject: firstMessage.subject ?? '',
-            lastMessageBody: lastMessage.text ?? '',
-            lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
-            numberOfMessagesInThread: messageThread.messages.length,
-            lastMessageIsDraft: lastMessage.isDraft ?? false,
-          };
+          if (!isDefined(lastMessage) || !isDefined(firstMessage)) {
+            return [];
+          }
+
+          const firstMessageContent = messageContentById.get(firstMessage.id);
+          const lastMessageContent = messageContentById.get(lastMessage.id);
+          const isShared =
+            isDefined(firstMessageContent) && isDefined(lastMessageContent);
+
+          return [
+            {
+              id: messageThreadId,
+              subject: isShared
+                ? (firstMessageContent.subject ?? '')
+                : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+              lastMessageBody: isShared
+                ? (lastMessageContent.text ?? '')
+                : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+              lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
+              numberOfMessagesInThread: threadMessages.length,
+              lastMessageIsDraft: lastMessage.isDraft ?? false,
+              visibility: isShared
+                ? MessageChannelVisibility.SHARE_EVERYTHING
+                : MessageChannelVisibility.METADATA,
+            },
+          ];
         }),
         totalNumberOfThreads,
       };
-    }, authContext);
+    });
+  }
+
+  // A role that cannot read subjects or bodies sees every thread as unshared.
+  private async findReadableMessageContentById(
+    messageThreadIds: string[],
+  ): Promise<Map<string, Pick<MessageWorkspaceEntity, 'subject' | 'text'>>> {
+    try {
+      const messages = await this.workspaceOrmManager
+        .getRepositoryWithContextPermissions<MessageWorkspaceEntity>('message')
+        .createQueryBuilder('message')
+        .select(['message.id', 'message.subject', 'message.text'])
+        .where('message.messageThreadId IN (:...messageThreadIds)', {
+          messageThreadIds,
+        })
+        .getMany<Pick<MessageWorkspaceEntity, 'id' | 'subject' | 'text'>>();
+
+      return new Map(messages.map((message) => [message.id, message]));
+    } catch (error) {
+      if (error instanceof PermissionsException) {
+        return new Map();
+      }
+
+      throw error;
+    }
   }
 
   public async getThreadParticipantsByThreadId(
@@ -245,138 +308,6 @@ export class TimelineMessagingService {
         },
         {},
       );
-    }, authContext);
-  }
-
-  public async getThreadVisibilityByThreadId(
-    messageThreadIds: string[],
-    workspaceMemberId: string,
-    workspaceId: string,
-  ): Promise<{
-    [key: string]: MessageChannelVisibility;
-  }> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const currentMember = await workspaceMemberRepository.findOne({
-        where: { id: workspaceMemberId },
-        select: { userId: true },
-      });
-
-      if (!currentMember) {
-        return {};
-      }
-
-      const currentUserWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { userId: currentMember.userId, workspaceId },
-        select: { id: true },
-      });
-
-      if (!currentUserWorkspace) {
-        return {};
-      }
-
-      const currentUserWorkspaceId = currentUserWorkspace.id;
-
-      const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
-          'messageThread',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const threadChannelRows = await messageThreadRepository
-        .createQueryBuilder()
-        .select('messageThread.id', 'id')
-        .addSelect(
-          'messageChannelMessageAssociation.messageChannelId',
-          'messageChannelId',
-        )
-        .leftJoin('messageThread.messages', 'message')
-        .leftJoin(
-          'message.messageChannelMessageAssociations',
-          'messageChannelMessageAssociation',
-        )
-        .where('messageThread.id = ANY(:messageThreadIds)', {
-          messageThreadIds,
-        })
-        .getRawMany<{ id: string; messageChannelId: string | null }>();
-
-      const allMessageChannelIds = [
-        ...new Set(
-          threadChannelRows
-            .map((row) => row.messageChannelId)
-            .filter((id): id is string => id !== null && id !== undefined),
-        ),
-      ];
-
-      if (allMessageChannelIds.length === 0) {
-        return {};
-      }
-
-      const messageChannels = await this.messageChannelRepository.find({
-        where: { id: In(allMessageChannelIds), workspaceId },
-        select: { id: true, visibility: true, connectedAccountId: true },
-      });
-
-      const allConnectedAccountIds = [
-        ...new Set(
-          messageChannels.map((channel) => channel.connectedAccountId),
-        ),
-      ];
-
-      const ownedAccountIds = new Set(
-        (
-          await this.connectedAccountRepository.find({
-            where: {
-              id: In(allConnectedAccountIds),
-              userWorkspaceId: currentUserWorkspaceId,
-            },
-            select: { id: true },
-          })
-        ).map((account) => account.id),
-      );
-
-      const channelVisibilityMap = new Map(
-        messageChannels.map((channel) => [
-          channel.id,
-          ownedAccountIds.has(channel.connectedAccountId)
-            ? MessageChannelVisibility.SHARE_EVERYTHING
-            : channel.visibility,
-        ]),
-      );
-
-      const visibilityValues = Object.values(MessageChannelVisibility);
-
-      const threadVisibilityByThreadId: {
-        [key: string]: MessageChannelVisibility;
-      } = {};
-
-      for (const { id: threadId, messageChannelId } of threadChannelRows) {
-        if (!messageChannelId) continue;
-
-        const channelVisibility = channelVisibilityMap.get(messageChannelId);
-
-        if (!channelVisibility) continue;
-
-        threadVisibilityByThreadId[threadId] =
-          visibilityValues[
-            Math.max(
-              visibilityValues.indexOf(channelVisibility),
-              visibilityValues.indexOf(
-                threadVisibilityByThreadId[threadId] ??
-                  MessageChannelVisibility.METADATA,
-              ),
-            )
-          ];
-      }
-
-      return threadVisibilityByThreadId;
     }, authContext);
   }
 }

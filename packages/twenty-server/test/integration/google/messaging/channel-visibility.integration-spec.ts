@@ -1,109 +1,285 @@
+import { randomUUID } from 'node:crypto';
+
+import gql from 'graphql-tag';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   MessageChannelVisibility,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getGmailMessageSubject } from 'test/integration/google/mocks/gmail-message-subject.util';
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { updateMessageChannel } from 'test/integration/utils/query-messaging.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
-const HANDLE = 'gmail-channel-visibility@apple.dev';
+const JANE_HANDLE = 'gmail-channel-visibility-jane@apple.dev';
+const JONY_HANDLE = 'gmail-channel-visibility-jony@apple.dev';
+const SENDER_HANDLE = `sender-${randomUUID()}@acme.com`;
 
 const RESTRICTED = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
 
-describe('Message channel visibility (integration)', () => {
-  const inbox = [gmailMessage()];
+type MakeRequest =
+  | typeof makeGraphqlApiRequest
+  | typeof makeGraphqlApiRequestWithMemberRole;
+
+// Jane (admin) connects the account; Jony (member) is the other member.
+describe('Message thread access from channel visibility (integration)', () => {
+  const inbox = [gmailMessage({ from: SENDER_HANDLE })];
   const subject = getGmailMessageSubject(inbox[0]);
 
-  setupGoogleMock({ handle: HANDLE, inbox });
+  const gmail = setupGoogleMock({ handle: JANE_HANDLE, inbox });
 
-  let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let janeChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let jonyChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let senderPersonId: string;
+  let messageId: string;
+  let messageThreadId: string;
 
-  const messageQuery = () =>
-    findManyOperationFactory({
-      objectMetadataSingularName: 'message',
-      objectMetadataPluralName: 'messages',
-      gqlFields: 'subject text',
-      filter: { subject: { eq: subject } },
-    });
-
-  const readMessageAs = async (
-    makeRequest:
-      | typeof makeGraphqlApiRequest
-      | typeof makeGraphqlApiRequestWithMemberRole,
-  ) => {
-    const response = await makeRequest(messageQuery());
+  const readMessages = async (makeRequest: MakeRequest) => {
+    const response = await makeRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'message',
+        objectMetadataPluralName: 'messages',
+        gqlFields: 'id subject text',
+        filter: { id: { eq: messageId } },
+      }),
+    );
 
     expect(response.body.errors).toBeUndefined();
 
     return response.body.data.messages.edges.map(
-      (edge: { node: { subject: string; text: string } }) => edge.node,
+      (edge: { node: { id: string; subject: string; text: string } }) =>
+        edge.node,
     );
   };
 
-  const setVisibility = async (visibility: MessageChannelVisibility) => {
-    await getCoreRepository<MessageChannelEntity>(MessageChannelEntity).update(
-      { id: channel.channelId },
-      { visibility },
-    );
-  };
-
-  beforeAll(async () => {
-    channel = await connectMessagingAccount({
-      provider: ConnectedAccountProvider.GOOGLE,
-      handle: HANDLE,
+  const discoverThreads = (makeRequest: MakeRequest, gqlFields: string) =>
+    makeRequest({
+      query: gql`
+        query DiscoverMessageThreads($id: UUID) {
+          messageThreads(discover: true, filter: { id: { eq: $id } }) {
+            edges {
+              node {
+                ${gqlFields}
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: messageThreadId },
     });
 
-    await runMessageChannelSync(channel.channelId);
+  const readTimeline = async (makeRequest: MakeRequest) => {
+    const response = await makeRequest({
+      query: gql`
+        query GetTimelineThreadsFromObjectRecord($recordId: UUID!) {
+          getTimelineThreadsFromObjectRecord(
+            objectNameSingular: "person"
+            recordId: $recordId
+            page: 1
+            pageSize: 10
+          ) {
+            totalNumberOfThreads
+            timelineThreads {
+              id
+              subject
+              lastMessageBody
+              visibility
+              numberOfMessagesInThread
+            }
+          }
+        }
+      `,
+      variables: { recordId: senderPersonId },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.getTimelineThreadsFromObjectRecord;
+  };
+
+  const setJaneChannelVisibility = (visibility: MessageChannelVisibility) =>
+    updateMessageChannel(janeChannel.channelId, { visibility });
+
+  beforeAll(async () => {
+    const personResponse = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        data: { emails: { primaryEmail: SENDER_HANDLE } },
+      }),
+    );
+
+    senderPersonId = personResponse.body.data.createPerson.id;
+
+    janeChannel = await connectMessagingAccount({
+      provider: ConnectedAccountProvider.GOOGLE,
+      handle: JANE_HANDLE,
+    });
+
+    await runMessageChannelSync(janeChannel.channelId);
+
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'message',
+        objectMetadataPluralName: 'messages',
+        gqlFields: 'id messageThreadId',
+        filter: { subject: { eq: subject } },
+      }),
+    );
+
+    messageId = response.body.data.messages.edges[0].node.id;
+    messageThreadId = response.body.data.messages.edges[0].node.messageThreadId;
   }, 120000);
 
   afterAll(async () => {
-    await channel?.cleanup().catch(() => undefined);
+    await janeChannel?.cleanup().catch(() => undefined);
+    await jonyChannel?.cleanup().catch(() => undefined);
+
+    if (isDefined(senderPersonId)) {
+      await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: senderPersonId,
+        }),
+      ).catch(() => undefined);
+    }
   });
 
-  it('shows the full message to another member when the channel shares everything', async () => {
-    await setVisibility(MessageChannelVisibility.SHARE_EVERYTHING);
+  it('shows the message to another member when the channel shares everything', async () => {
+    await setJaneChannelVisibility(MessageChannelVisibility.SHARE_EVERYTHING);
 
-    const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
+    const [message] = await readMessages(makeGraphqlApiRequestWithMemberRole);
+
+    expect(message.subject).toBe(subject);
+    expect(message.text).not.toBe(RESTRICTED);
+  }, 60000);
+
+  it.each([
+    MessageChannelVisibility.METADATA,
+    MessageChannelVisibility.SUBJECT,
+  ])(
+    'hides the message from another member under %s visibility',
+    async (visibility) => {
+      await setJaneChannelVisibility(visibility);
+
+      expect(await readMessages(makeGraphqlApiRequestWithMemberRole)).toEqual(
+        [],
+      );
+    },
+    60000,
+  );
+
+  it('always shows the message to the member who synced it', async () => {
+    await setJaneChannelVisibility(MessageChannelVisibility.METADATA);
+
+    const [message] = await readMessages(makeGraphqlApiRequest);
 
     expect(message.subject).toBe(subject);
     expect(message.text).not.toBe(RESTRICTED);
   }, 60000);
 
-  it('masks the body but keeps the subject for another member under subject visibility', async () => {
-    await setVisibility(MessageChannelVisibility.SUBJECT);
+  it('lets another member discover that the thread happened', async () => {
+    await setJaneChannelVisibility(MessageChannelVisibility.METADATA);
 
-    const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
+    const response = await discoverThreads(
+      makeGraphqlApiRequestWithMemberRole,
+      'id messages { edges { node { id receivedAt } } }',
+    );
 
-    expect(message.subject).toBe(subject);
-    expect(message.text).toBe(RESTRICTED);
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.messageThreads.edges).toEqual([
+      {
+        node: {
+          id: messageThreadId,
+          messages: {
+            edges: [
+              { node: { id: messageId, receivedAt: expect.any(String) } },
+            ],
+          },
+        },
+      },
+    ]);
   }, 60000);
 
-  it('masks both the subject and the body for another member under metadata visibility', async () => {
-    await setVisibility(MessageChannelVisibility.METADATA);
+  it('refuses to discover the subject of an unshared thread', async () => {
+    await setJaneChannelVisibility(MessageChannelVisibility.METADATA);
 
-    const [message] = await readMessageAs(makeGraphqlApiRequestWithMemberRole);
+    const response = await discoverThreads(
+      makeGraphqlApiRequestWithMemberRole,
+      'id messages { edges { node { subject } } }',
+    );
 
-    expect(message.subject).toBe(RESTRICTED);
-    expect(message.text).toBe(RESTRICTED);
+    expect(response.body.errors?.[0]?.message).toContain('subject');
   }, 60000);
 
-  it('always shows the full message to the owner of the connected account', async () => {
-    await setVisibility(MessageChannelVisibility.METADATA);
+  it('shows an unshared thread on another member timeline without its content', async () => {
+    await setJaneChannelVisibility(MessageChannelVisibility.METADATA);
 
-    const [message] = await readMessageAs(makeGraphqlApiRequest);
-
-    expect(message.subject).toBe(subject);
-    expect(message.text).not.toBe(RESTRICTED);
+    expect(await readTimeline(makeGraphqlApiRequestWithMemberRole)).toEqual({
+      totalNumberOfThreads: 1,
+      timelineThreads: [
+        {
+          id: messageThreadId,
+          subject: RESTRICTED,
+          lastMessageBody: RESTRICTED,
+          visibility: MessageChannelVisibility.METADATA,
+          numberOfMessagesInThread: 1,
+        },
+      ],
+    });
   }, 60000);
+
+  it('shows the content on the timeline once the channel shares everything', async () => {
+    await setJaneChannelVisibility(MessageChannelVisibility.SHARE_EVERYTHING);
+
+    const { timelineThreads } = await readTimeline(
+      makeGraphqlApiRequestWithMemberRole,
+    );
+
+    expect(timelineThreads).toEqual([
+      expect.objectContaining({
+        id: messageThreadId,
+        subject,
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      }),
+    ]);
+  }, 60000);
+
+  it('shows the message to every member who synced it', async () => {
+    gmail.actAsAccount(JONY_HANDLE);
+
+    jonyChannel = await connectMessagingAccount({
+      provider: ConnectedAccountProvider.GOOGLE,
+      handle: JONY_HANDLE,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    await runMessageChannelSync(jonyChannel.channelId);
+
+    await setJaneChannelVisibility(MessageChannelVisibility.METADATA);
+    await updateMessageChannel(
+      jonyChannel.channelId,
+      { visibility: MessageChannelVisibility.METADATA },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    for (const makeRequest of [
+      makeGraphqlApiRequest,
+      makeGraphqlApiRequestWithMemberRole,
+    ]) {
+      const [message] = await readMessages(makeRequest);
+
+      expect(message?.subject).toBe(subject);
+    }
+  }, 120000);
 });
