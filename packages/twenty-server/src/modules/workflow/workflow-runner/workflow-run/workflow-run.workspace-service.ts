@@ -28,6 +28,7 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { canWorkflowRunHaveAsks } from 'src/modules/workflow/workflow-runner/utils/can-workflow-run-have-asks.util';
 import { findStepIdByThreadId } from 'src/modules/workflow/workflow-runner/utils/find-step-id-by-thread-id.util';
 import { getRunInitiatorWorkspaceMemberId } from 'src/modules/workflow/workflow-runner/utils/get-run-initiator-workspace-member-id.util';
 
@@ -206,10 +207,12 @@ export class WorkflowRunWorkspaceService {
 
     // A run that ends can no longer consume an answer, so an Ask still
     // waiting on one stops being actionable rather than outliving it.
-    await this.inputAskWorkspaceService.cancel({
-      workspaceId,
-      match: { workflowRunId },
-    });
+    if (canWorkflowRunHaveAsks(workflowRunToUpdate.state)) {
+      await this.inputAskWorkspaceService.cancel({
+        workspaceId,
+        match: { workflowRunId },
+      });
+    }
 
     const metricKey =
       status === WorkflowRunStatus.COMPLETED

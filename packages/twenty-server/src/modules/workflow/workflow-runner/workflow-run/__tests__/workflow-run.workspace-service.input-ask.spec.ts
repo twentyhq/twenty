@@ -290,5 +290,19 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         match: { workflowRunId: 'workflow-run-id' },
       });
     });
+
+    it('leaves the Asks alone for a run that could not open any', async () => {
+      const { service, inputAskWorkspaceService } = buildService({
+        stepInfo: { status: StepStatus.SUCCESS },
+      });
+
+      await service.endWorkflowRun({
+        workflowRunId: 'workflow-run-id',
+        workspaceId: 'workspace-id',
+        status: WorkflowRunStatus.COMPLETED,
+      });
+
+      expect(inputAskWorkspaceService.cancel).not.toHaveBeenCalled();
+    });
   });
 });

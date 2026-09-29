@@ -7,11 +7,8 @@ import { type FindOptionsWhere, IsNull, Not } from 'typeorm';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { isDuplicateEntryError } from 'src/engine/twenty-orm/utils/is-duplicate-entry-error.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 import {
@@ -36,10 +33,6 @@ export type InputAskToOpen = Pick<
       'workflowRunId' | 'stepId' | 'threadId' | 'toolCallId'
     >
   >;
-
-const isDuplicateEntry = (error: unknown): boolean =>
-  error instanceof TwentyOrmException &&
-  error.code === TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED;
 
 const isToolCallKey = (
   key: InputAskKey,
@@ -79,50 +72,51 @@ export class InputAskWorkspaceService {
   }): Promise<void> {
     const key = this.getKey(inputAsk);
 
-    if (!(await this.hasInputAskObject(workspaceId))) {
-      // A form can still be submitted without its Ask, while a tool call is
-      // only ever answered through it.
-      if (isToolCallKey(key)) {
-        throw new InputAskException(
-          'This workspace cannot record a request for input yet',
-          InputAskExceptionCode.INPUT_ASK_OBJECT_MISSING,
-        );
-      }
-
-      return;
-    }
-
-    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const position = await this.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
-        workspaceId,
-      });
-
-      try {
-        await inputAskRepository.insert({
-          ...inputAsk,
-          status: InputAskStatus.PENDING,
-          position,
+    await this.execute({
+      workspaceId,
+      // A paused tool call can only be answered through its Ask, so it must
+      // not pause without one. A form step still parks, and the 2.44 upgrade
+      // opens the Ask it waits on.
+      whenObjectMissing: () => {
+        if (isToolCallKey(key)) {
+          throw new InputAskException(
+            'This workspace cannot record a request for input yet',
+            InputAskExceptionCode.INPUT_ASK_OBJECT_MISSING,
+          );
+        }
+      },
+      run: async (inputAskRepository) => {
+        const position = await this.recordPositionService.buildRecordPosition({
+          value: 'first',
+          objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
+          workspaceId,
         });
 
-        return;
-      } catch (error) {
-        if (!isDuplicateEntry(error)) {
-          throw error;
-        }
-      }
+        try {
+          await inputAskRepository.insert({
+            ...inputAsk,
+            status: InputAskStatus.PENDING,
+            position,
+          });
 
-      await inputAskRepository.update(
-        { ...buildKeyWhere(key), status: Not(InputAskStatus.PENDING) },
-        {
-          name: inputAsk.name,
-          form: inputAsk.form,
-          status: InputAskStatus.PENDING,
-          response: null,
-          answeredAt: null,
-        },
-      );
+          return;
+        } catch (error) {
+          if (!isDuplicateEntryError(error)) {
+            throw error;
+          }
+        }
+
+        await inputAskRepository.update(
+          { ...buildKeyWhere(key), status: Not(InputAskStatus.PENDING) },
+          {
+            name: inputAsk.name,
+            form: inputAsk.form,
+            status: InputAskStatus.PENDING,
+            response: null,
+            answeredAt: null,
+          },
+        );
+      },
     });
   }
 
@@ -137,21 +131,21 @@ export class InputAskWorkspaceService {
     key: InputAskKey;
     response: Record<string, unknown>;
   }): Promise<boolean> {
-    if (!(await this.hasInputAskObject(workspaceId))) {
-      return false;
-    }
+    return this.execute({
+      workspaceId,
+      whenObjectMissing: () => false,
+      run: async (inputAskRepository) => {
+        const result = await inputAskRepository.update(
+          { ...buildKeyWhere(key), status: InputAskStatus.PENDING },
+          {
+            status: InputAskStatus.ANSWERED,
+            response,
+            answeredAt: new Date().toISOString(),
+          },
+        );
 
-    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const result = await inputAskRepository.update(
-        { ...buildKeyWhere(key), status: InputAskStatus.PENDING },
-        {
-          status: InputAskStatus.ANSWERED,
-          response,
-          answeredAt: new Date().toISOString(),
-        },
-      );
-
-      return (result.affected ?? 0) > 0;
+        return (result.affected ?? 0) > 0;
+      },
     });
   }
 
@@ -162,23 +156,23 @@ export class InputAskWorkspaceService {
     workspaceId: string;
     match: InputAskKey | { workflowRunId: string };
   }): Promise<boolean> {
-    if (!(await this.hasInputAskObject(workspaceId))) {
-      return false;
-    }
-
     const cancelPending = () =>
-      this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-        const result = await inputAskRepository.update(
-          {
-            ...('stepId' in match || 'toolCallId' in match
-              ? buildKeyWhere(match)
-              : { workflowRunId: match.workflowRunId }),
-            status: InputAskStatus.PENDING,
-          },
-          { status: InputAskStatus.CANCELED },
-        );
+      this.execute({
+        workspaceId,
+        whenObjectMissing: () => false,
+        run: async (inputAskRepository) => {
+          const result = await inputAskRepository.update(
+            {
+              ...('stepId' in match || 'toolCallId' in match
+                ? buildKeyWhere(match)
+                : { workflowRunId: match.workflowRunId }),
+              status: InputAskStatus.PENDING,
+            },
+            { status: InputAskStatus.CANCELED },
+          );
 
-        return (result.affected ?? 0) > 0;
+          return (result.affected ?? 0) > 0;
+        },
       });
 
     if ('stepId' in match || 'toolCallId' in match) {
@@ -208,19 +202,17 @@ export class InputAskWorkspaceService {
     InputAskWorkspaceEntity,
     'id' | 'toolCallId' | 'workflowRunId'
   > | null> {
-    if (!(await this.hasInputAskObject(workspaceId))) {
-      return null;
-    }
-
-    return this.executeAsSystem(workspaceId, (inputAskRepository) =>
-      inputAskRepository.findOne({
-        where: { threadId, status: InputAskStatus.PENDING },
-        select: { id: true, toolCallId: true, workflowRunId: true },
-      }),
-    );
+    return this.execute({
+      workspaceId,
+      whenObjectMissing: () => null,
+      run: (inputAskRepository) =>
+        inputAskRepository.findOne({
+          where: { threadId, status: InputAskStatus.PENDING },
+          select: { id: true, toolCallId: true, workflowRunId: true },
+        }),
+    });
   }
 
-  // Read as the caller: an Ask they cannot read is one they cannot answer.
   async findReadable({
     workspaceId,
     inputAskId,
@@ -237,16 +229,12 @@ export class InputAskWorkspaceService {
     | 'workflowRunId'
     | 'stepId'
   > | null> {
-    if (!(await this.hasInputAskObject(workspaceId))) {
-      return null;
-    }
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () =>
-      this.workspaceOrmManager
-        .getRepositoryWithContextPermissions<InputAskWorkspaceEntity>(
-          'inputAsk',
-        )
-        .findOne({
+    return this.execute({
+      workspaceId,
+      asCaller: true,
+      whenObjectMissing: () => null,
+      run: (inputAskRepository) =>
+        inputAskRepository.findOne({
           where: { id: inputAskId },
           select: {
             id: true,
@@ -258,7 +246,7 @@ export class InputAskWorkspaceService {
             stepId: true,
           },
         }),
-    );
+    });
   }
 
   private getKey(inputAsk: InputAskToOpen): InputAskKey {
@@ -276,10 +264,6 @@ export class InputAskWorkspaceService {
     );
   }
 
-  // The object reaches existing workspaces through a workspace upgrade command,
-  // which runs per workspace while this code is already serving — and an
-  // interrupted upgrade leaves the rest without it indefinitely. Until a
-  // workspace has the object, a form step behaves exactly as it did before.
   private async hasInputAskObject(workspaceId: string): Promise<boolean> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -293,15 +277,41 @@ export class InputAskWorkspaceService {
     );
   }
 
-  private async executeAsSystem<TResult>(
-    workspaceId: string,
-    execute: (
+  // The object reaches existing workspaces through a workspace upgrade command,
+  // which runs per workspace while this code is already serving, and an
+  // interrupted upgrade leaves the rest without it indefinitely: every use
+  // says what it means for a workspace that does not have it yet.
+  private async execute<TResult>({
+    workspaceId,
+    asCaller = false,
+    whenObjectMissing,
+    run,
+  }: {
+    workspaceId: string;
+    // Read as the caller: an Ask they cannot read is one they cannot answer.
+    asCaller?: boolean;
+    whenObjectMissing: () => TResult;
+    run: (
       inputAskRepository: WorkspaceRepository<InputAskWorkspaceEntity>,
-    ) => Promise<TResult>,
-  ): Promise<TResult> {
+    ) => Promise<TResult>;
+  }): Promise<TResult> {
+    if (!(await this.hasInputAskObject(workspaceId))) {
+      return whenObjectMissing();
+    }
+
+    if (asCaller) {
+      return this.workspaceOrmManager.executeInWorkspaceContext(async () =>
+        run(
+          this.workspaceOrmManager.getRepositoryWithContextPermissions<InputAskWorkspaceEntity>(
+            'inputAsk',
+          ),
+        ),
+      );
+    }
+
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () =>
-        execute(
+        run(
           this.workspaceOrmManager.getRepository<InputAskWorkspaceEntity>(
             'inputAsk',
             { shouldBypassPermissionChecks: true },
