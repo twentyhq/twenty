@@ -7,12 +7,13 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { type MailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
+import { isDraftFolder } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-draft-folder.util';
 import { type ImapSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 
 type SyncResult = {
   messageUids: number[];
   expungedUids: number[];
-  currentUids: number[];
+  currentUids?: number[];
 };
 
 @Injectable()
@@ -24,8 +25,45 @@ export class ImapSyncService {
     folderPath: string,
     previousCursor: ImapSyncCursor | null,
     mailboxState: MailboxState,
+    options?: { isDraftFolder?: boolean },
   ): Promise<SyncResult> {
     this.validateUidValidity(previousCursor, mailboxState, folderPath);
+
+    const isDraft =
+      options?.isDraftFolder ??
+      isDraftFolder(
+        folderPath,
+        typeof client.mailbox === 'object' && client.mailbox !== null
+          ? client.mailbox.specialUse
+          : undefined,
+      );
+
+    if (!isDraft) {
+      const lastSyncedUid = previousCursor?.highestUid ?? 0;
+      const { maxUid } = mailboxState;
+
+      if (lastSyncedUid >= maxUid) {
+        return {
+          messageUids: [],
+          expungedUids: [],
+        };
+      }
+
+      const uidRange = `${lastSyncedUid + 1}:${maxUid}`;
+      const uids = await client.search({ uid: uidRange }, { uid: true });
+
+      if (!Array.isArray(uids)) {
+        throw new MessageImportDriverException(
+          `Failed to search UIDs in mailbox ${folderPath}`,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
+      }
+
+      return {
+        messageUids: uids.sort((a, b) => a - b),
+        expungedUids: [],
+      };
+    }
 
     // Fetch live UIDs to discover new arrivals and expunged messages (Issue #26099)
     const currentLiveUids = await this.fetchLiveUids(client, mailboxState);
@@ -65,7 +103,7 @@ export class ImapSyncService {
     }
   }
 
-  // Live UID search short-circuits on empty mailboxes and safely handles non-array responses (Issue #26099)
+  // Live UID search short-circuits on empty mailboxes and fails closed on invalid responses (Issue #26099)
   private async fetchLiveUids(
     client: ImapFlow,
     mailboxState: MailboxState,
@@ -76,8 +114,15 @@ export class ImapSyncService {
 
     const uids = await client.search({ all: true }, { uid: true });
 
-    if (!Array.isArray(uids)) {
-      return [];
+    const hasExpectedMessages =
+      typeof mailboxState.messageCount === 'number' &&
+      mailboxState.messageCount > 0;
+
+    if (!Array.isArray(uids) || (hasExpectedMessages && uids.length === 0)) {
+      throw new MessageImportDriverException(
+        'Failed to retrieve live UIDs from mailbox',
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
     }
 
     return uids.sort((a, b) => a - b);

@@ -20,18 +20,17 @@ export const createSyncCursor = (
     }
   }
 
-  // Preserve numeric 0 for empty mailboxes to avoid omitting messageCount due to falsiness (Issue #26099)
-  const resolvedMessageCount = isDefined(currentLiveUids)
-    ? currentLiveUids.length
-    : mailboxState.messageCount;
+  const isTrackingLiveUids = isDefined(currentLiveUids);
+  const boundedLiveUids =
+    isTrackingLiveUids && currentLiveUids.length > 1000
+      ? currentLiveUids.slice(-1000)
+      : currentLiveUids;
 
   return {
     highestUid,
     uidValidity,
     ...(highestModSeq ? { modSeq: highestModSeq.toString() } : {}),
-    ...(isDefined(currentLiveUids) ? { knownUids: currentLiveUids } : {}),
-    ...(isDefined(resolvedMessageCount)
-      ? { messageCount: resolvedMessageCount }
-      : {}),
+    ...(isTrackingLiveUids ? { knownUids: boundedLiveUids } : {}),
+    ...(isTrackingLiveUids ? { messageCount: currentLiveUids.length } : {}),
   };
 };

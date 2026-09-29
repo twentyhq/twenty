@@ -16,6 +16,7 @@ import { ImapSyncService } from 'src/modules/messaging/message-import-manager/dr
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
 import { resolveMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
+import { isDraftFolder } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-draft-folder.util';
 import { isImapMailboxNotFoundError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-mailbox-not-found-error.util';
 import { normalizeImapUnicode } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-unicode.util';
 import { parseSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
@@ -137,12 +138,17 @@ export class ImapGetMessageListService {
         mailbox,
       );
 
+      const isDraft =
+        isDraftFolder(folder.name, client.mailbox?.specialUse) ||
+        isDraftFolder(folderPath, client.mailbox?.specialUse);
+
       const { messageUids, expungedUids, currentUids } =
         await this.imapSyncService.syncFolder(
           client,
           folderPath,
           previousCursor,
           mailboxState,
+          { isDraftFolder: isDraft },
         );
 
       const nextCursor = createSyncCursor(
@@ -231,35 +237,39 @@ export class ImapGetMessageListService {
         return false;
       }
 
-      // Upgrade legacy cursors lacking knownUids or messageCount (Issue #26099)
-      if (
-        !isDefined(previousCursor.knownUids) ||
-        !isDefined(previousCursor.messageCount)
-      ) {
-        this.logger.debug(
-          `Folder ${folderPath}: Legacy cursor missing knownUids or messageCount. Sync required.`,
-        );
+      const isDraft = isDraftFolder(folder.name) || isDraftFolder(folderPath);
 
-        return false;
-      }
+      if (isDraft) {
+        // Upgrade legacy draft cursors lacking knownUids or messageCount (Issue #26099)
+        if (
+          !isDefined(previousCursor.knownUids) ||
+          !isDefined(previousCursor.messageCount)
+        ) {
+          this.logger.debug(
+            `Folder ${folderPath}: Legacy draft cursor missing knownUids or messageCount. Sync required.`,
+          );
 
-      if (!isDefined(status.messages)) {
-        this.logger.debug(
-          `Folder ${folderPath}: Server missing MESSAGES count in status. Sync required.`,
-        );
+          return false;
+        }
 
-        return false;
-      }
+        if (!isDefined(status.messages)) {
+          this.logger.debug(
+            `Folder ${folderPath}: Server missing MESSAGES count in status. Sync required.`,
+          );
 
-      const messages = Number(status.messages);
+          return false;
+        }
 
-      // Force sync if message count changed (e.g. draft expunged/discarded) even if uidNext hasn't advanced (Issue #26099)
-      if (previousCursor.messageCount !== messages) {
-        this.logger.debug(
-          `Folder ${folderPath}: Message count changed (${previousCursor.messageCount} → ${messages}). Sync required.`,
-        );
+        const messages = Number(status.messages);
 
-        return false;
+        // Force sync if draft message count changed even if uidNext hasn't advanced (Issue #26099)
+        if (previousCursor.messageCount !== messages) {
+          this.logger.debug(
+            `Folder ${folderPath}: Message count changed (${previousCursor.messageCount} → ${messages}). Sync required.`,
+          );
+
+          return false;
+        }
       }
 
       const hasModSeqChanged =
