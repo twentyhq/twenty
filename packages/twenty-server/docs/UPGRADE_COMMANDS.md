@@ -146,6 +146,12 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
 
+## Dry run
+
+`upgrade --dry-run` stops as soon as it reaches an instance command, logging `Dry run stopped before instance step "<name>"`. It does not execute that command or any later step, and records nothing in `upgradeMigration`.
+
+If the run starts within a workspace segment, pending workspace commands run with `options.dryRun` set until the next instance command or the end of the sequence. Each workspace command is responsible for simulating its own changes. Dry runs cannot preview the full upgrade sequence because later workspace commands may depend on schema changes made by preceding instance commands.
+
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
 Ctrl+C during an `upgrade` stops it gracefully: the workspace being processed finishes its commands, then the run stops instead of starting the next one. Ctrl+C again forces an immediate exit, leaving the command in progress unfinished.

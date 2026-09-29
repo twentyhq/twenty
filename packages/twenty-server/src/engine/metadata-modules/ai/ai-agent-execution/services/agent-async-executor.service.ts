@@ -585,9 +585,9 @@ export class AgentAsyncExecutorService {
         result = structuredResult.output as object;
       }
 
-      const tokenCostInDollars = this.aiBillingService.calculateCost(
+      const tokenCostInDollars = this.aiBillingService.calculateStepsCost(
         registeredModel.modelId,
-        { usage: accumulatedUsage, cacheCreationTokens },
+        executionSteps,
       );
       const totalCostInDollars =
         tokenCostInDollars +
@@ -624,10 +624,10 @@ export class AgentAsyncExecutorService {
       // Nothing was generated when execution failed before a model resolved,
       // and pricing an unresolved id would throw over the original error.
       const costInDollars = isDefined(resolvedModelId)
-        ? this.aiBillingService.calculateCost(resolvedModelId, {
-            usage: accumulatedUsage,
-            cacheCreationTokens,
-          })
+        ? this.aiBillingService.calculateStepsCost(
+            resolvedModelId,
+            executionSteps,
+          )
         : 0;
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
       const totalTokens =

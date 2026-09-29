@@ -1,11 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Callout, Info, InlineBanner } from 'twenty-ui/components';
-import {
-  Banner,
-  CircularProgressBar,
-  Loader,
-  ProgressBar,
-} from 'twenty-ui/primitives/feedback';
+import { Banner, Loader, ProgressBar } from 'twenty-ui/primitives/feedback';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
@@ -27,10 +22,6 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
     node: (
       <Callout variant="info" title="Info" description="A short description." />
     ),
-  },
-  {
-    name: 'CircularProgressBar',
-    node: <CircularProgressBar size={50} barWidth={5} />,
   },
   {
     name: 'Info',

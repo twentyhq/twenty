@@ -1401,8 +1401,8 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     sharp: "npm:^0.35.3"
-    twenty-client-sdk: "npm:2.38.0"
-    twenty-sdk: "npm:2.38.0"
+    twenty-client-sdk: "npm:2.42.0"
+    twenty-sdk: "npm:2.42.0"
     twenty-ui: "npm:^1.0.0-alpha.1"
     typescript: "npm:^5.9.3"
     use-debounce: "npm:^10.0.0"
@@ -3620,22 +3620,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.38.0":
-  version: 2.38.0
-  resolution: "twenty-client-sdk@npm:2.38.0"
+"twenty-client-sdk@npm:2.42.0":
+  version: 2.42.0
+  resolution: "twenty-client-sdk@npm:2.42.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/2ab1c0371a5b48187211477740d833c8454e624d45b4ea1b964864077745d85e6921f5e8452eacb1eceab44e698507a4854686e225e467dd4f5fc481553b047b
+  checksum: 10c0/38f77595ffc2bb365cef23a30d7ab7096fcf129d407921bb97497327da27526e9721ba6a1a16d299bd9b3a2e3f0eeac3fb41ec360c0547e7a2c0f0c044cc570b
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.38.0":
-  version: 2.38.0
-  resolution: "twenty-sdk@npm:2.38.0"
+"twenty-sdk@npm:2.42.0":
+  version: 2.42.0
+  resolution: "twenty-sdk@npm:2.42.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3654,12 +3654,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.35.3"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.38.0"
+    twenty-client-sdk: "npm:2.42.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/9946e0018f6233bbd8bd3ab0ca9dcc96276b25126b9c14328b90b15b8f2948d550ebb9395354ec87066bd8ab74372d242d94c4e5629b4cd16421bf21beb8a62e
+  checksum: 10c0/1e43d0c2af55ab8705506f55fe693688575325e506b6cfb16ba4d486d0bfdc0c0f257fc8963ee86f218c10d09b87bacdc769803b6b59283f9e24c7a88346fb84
   languageName: node
   linkType: hard
 
