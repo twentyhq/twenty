@@ -10,7 +10,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { fromFlatIndexMetadataToIndexMetadataDto } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-flat-index-metadata-to-index-metadata-dto.util';
 import { CreateOneIndexInput } from 'src/engine/metadata-modules/index-metadata/dtos/create-one-index.input';
 import { DeleteOneIndexInput } from 'src/engine/metadata-modules/index-metadata/dtos/delete-index.input';
@@ -22,7 +22,14 @@ import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mo
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @MetadataResolver(() => IndexMetadataDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(

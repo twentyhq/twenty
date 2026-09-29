@@ -13,12 +13,20 @@ import {
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @MetadataResolver()
 @UseFilters(ApplicationExceptionFilter)
-@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  NoPermissionGuard,
+)
 export class ApplicationSchemaResolver {
   constructor(
     private readonly workspaceGraphqlSchemaSDLService: WorkspaceGraphqlSchemaSDLService,

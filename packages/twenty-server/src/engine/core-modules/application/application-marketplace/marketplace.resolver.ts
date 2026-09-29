@@ -9,7 +9,7 @@ import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/app
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -23,7 +23,15 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   AuthGraphqlApiExceptionFilter,
 )
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  NoPermissionGuard,
+)
 export class MarketplaceResolver {
   constructor(
     private readonly marketplaceQueryService: MarketplaceQueryService,

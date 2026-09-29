@@ -18,10 +18,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
 @ArgsType()
@@ -79,12 +77,7 @@ class GetTimelineThreadsFromOpportunityIdArgs {
   pageSize: number;
 }
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
-  RequireUserSessionGuard,
-  CustomPermissionGuard,
-)
+@UseGuards(CallerGuard({ userSession: true }), CustomPermissionGuard)
 @CoreResolver(() => TimelineThreadsWithTotalDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class TimelineMessagingResolver {

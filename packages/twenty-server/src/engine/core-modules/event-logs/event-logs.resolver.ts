@@ -17,7 +17,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { EventLogsService } from './event-logs.service';
@@ -38,7 +38,12 @@ export class EventLogsResolver {
   constructor(private readonly eventLogsService: EventLogsService) {}
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
   )
   @Query(() => EventLogQueryResult)

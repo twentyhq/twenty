@@ -31,7 +31,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -53,7 +53,16 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  FeatureFlagGuard,
+  NoPermissionGuard,
+)
 @MetadataResolver(() => LogicFunctionDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(

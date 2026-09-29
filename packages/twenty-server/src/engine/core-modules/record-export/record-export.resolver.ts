@@ -15,13 +15,15 @@ import { CreateRecordExportInput } from 'src/engine/core-modules/record-export/d
 import { RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 
 @MetadataResolver()
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
+  CallerGuard({
+    userSession: true,
+    oauthClient: { requireUser: true },
+    application: { requireUser: true },
+  }),
   SettingsPermissionGuard(PermissionFlagType.EXPORT_CSV),
 )
 @UsePipes(ResolverValidationPipe)

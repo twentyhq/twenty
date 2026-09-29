@@ -20,7 +20,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 const APPLICATION_ID = 'c832302c-e551-4b4f-b11c-19907888a284';
@@ -39,7 +39,15 @@ const USER_REQUEST = {
 @Resolver()
 class TestQueryResolver {
   @Query(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    NoPermissionGuard,
+  )
   isReady(): boolean {
     return true;
   }

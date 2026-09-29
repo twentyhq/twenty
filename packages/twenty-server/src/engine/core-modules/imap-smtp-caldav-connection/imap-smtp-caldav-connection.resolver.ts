@@ -19,7 +19,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -38,7 +38,12 @@ export class ImapSmtpCaldavResolver {
 
   @Query(() => ConnectedImapSmtpCaldavAccountDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
   )
   async getConnectedImapSmtpCaldavAccount(
@@ -73,7 +78,12 @@ export class ImapSmtpCaldavResolver {
 
   @Mutation(() => ImapSmtpCaldavConnectionSuccessDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
   )
   async saveImapSmtpCaldavAccount(

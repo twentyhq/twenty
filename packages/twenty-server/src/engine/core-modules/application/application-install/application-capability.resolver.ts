@@ -13,18 +13,14 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
-  RequireAccessTokenGuard,
+  CallerGuard({ userSession: { playground: false } }),
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 export class ApplicationCapabilityResolver {

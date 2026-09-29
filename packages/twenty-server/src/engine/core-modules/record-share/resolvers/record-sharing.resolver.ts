@@ -16,13 +16,19 @@ import {
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-graphql-api-exception-handler.util';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 
 registerEnumType(RecordShareAccessLevel, { name: 'RecordShareAccessLevel' });
 
 @MetadataResolver()
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    oauthClient: { requireUser: true },
+    application: { requireUser: true },
+  }),
+  CustomPermissionGuard,
+)
 export class RecordSharingResolver {
   constructor(private readonly sharingService: RecordSharingService) {}
 

@@ -65,11 +65,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { buildUserSessionRequiredError } from 'src/engine/guards/utils/is-user-session-principal.util';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -135,7 +133,14 @@ export class UserResolver {
   }
 
   @Query(() => UserEntity)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: { workspaceAgnostic: true },
+      oauthClient: { requireUser: true },
+      application: { requireUser: true },
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
@@ -397,14 +402,24 @@ export class UserResolver {
   }
 
   @Mutation(() => UserEntity)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({ userSession: { workspaceAgnostic: true } }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async deleteUser(@AuthUser() { id: userId }: AuthContextUser) {
     return this.userService.deleteUser(userId);
   }
 
   @Mutation(() => UserWorkspaceEntity)
-  @UseGuards(UserAuthGuard, CustomPermissionGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: { workspaceAgnostic: true },
+      oauthClient: { requireUser: true },
+      application: { requireUser: true },
+    }),
+    CustomPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async deleteUserFromWorkspace(
     @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,
@@ -484,7 +499,15 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    CustomPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async updateWorkspaceMemberSettings(
     @Args('input') input: UpdateWorkspaceMemberSettingsInput,
@@ -724,9 +747,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    WorkspaceAuthGuard,
+    CallerGuard({ userSession: true }),
     SettingsPermissionGuard(PermissionFlagType.PROFILE_INFORMATION),
   )
   async updateUserEmail(

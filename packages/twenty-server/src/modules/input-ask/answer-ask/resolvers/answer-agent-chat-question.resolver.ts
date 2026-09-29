@@ -20,9 +20,8 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentChatQuestionAnswerInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-question-answer.input';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
@@ -41,7 +40,13 @@ import {
 // question the message asked, with the same checks as answerAsk.
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    oauthClient: { requireUser: true },
+    application: { requireUser: true },
+  }),
+)
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(
   InputAskGraphqlApiExceptionFilter,

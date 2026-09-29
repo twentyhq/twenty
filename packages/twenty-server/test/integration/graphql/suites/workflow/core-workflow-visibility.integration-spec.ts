@@ -587,9 +587,9 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.runWorkflowVersion ?? null).toBeNull();
     });
 
-    // WorkflowTriggerResolver carries no class-level UserAuthGuard, so unlike
-    // the core workflow API an API key does reach this mutation, and the rule
-    // has to hold for a caller that is a workspace rather than a person.
+    // WorkflowTriggerResolver's CallerGuard accepts API keys, so unlike the
+    // core workflow API an API key does reach this mutation, and the rule has
+    // to hold for a caller that is a workspace rather than a person.
     it('refuses to activate it for an API key', async () => {
       const response = await asApiKey(ACTIVATE_VERSION_MUTATION, {
         workflowVersionId: workspaceWorkflowVersionId,

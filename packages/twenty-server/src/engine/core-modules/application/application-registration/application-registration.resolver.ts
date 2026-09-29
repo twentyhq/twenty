@@ -52,10 +52,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -98,7 +96,15 @@ export class ApplicationRegistrationResolver {
     return this.applicationRegistrationService.findPublicByClientId(clientId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    NoPermissionGuard,
+  )
   @Query(() => ApplicationRegistrationEntity, { nullable: true })
   async findApplicationRegistrationByUniversalIdentifier(
     @ApplicationTargetArg('universalIdentifier', {
@@ -112,7 +118,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Query(() => [ApplicationRegistrationEntity])
@@ -138,7 +149,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Query(() => ApplicationRegistrationEntity)
@@ -154,7 +170,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Query(() => ApplicationRegistrationStatsDTO)
@@ -170,7 +191,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => CreateApplicationRegistrationDTO)
@@ -187,7 +213,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
@@ -203,7 +234,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => Boolean)
@@ -219,7 +255,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
@@ -239,7 +280,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Query(() => [ApplicationRegistrationVariableDTO])
@@ -256,7 +302,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApplicationRegistrationVariableDTO)
@@ -274,7 +325,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
@@ -289,7 +345,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
   @Mutation(() => ApplicationRegistrationEntity, {
@@ -333,7 +394,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Query(() => String, { nullable: true })
@@ -362,7 +428,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Query(() => ClaimableApplicationRegistrationDTO, { nullable: true })
@@ -380,9 +451,7 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
+    CallerGuard({ userSession: true }),
     AdminPanelGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
@@ -399,7 +468,12 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Query(() => String)
@@ -427,9 +501,7 @@ export class ApplicationRegistrationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
+    CallerGuard({ userSession: true }),
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Mutation(() => ApplicationRegistrationEntity)

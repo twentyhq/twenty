@@ -10,10 +10,18 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 
 @MetadataResolver(() => AiChatUsageDTO)
-@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  SettingsPermissionGuard(PermissionFlagType.AI),
+)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class AiChatUsageResolver {
   constructor(private readonly aiChatUsageService: AiChatUsageService) {}

@@ -36,9 +36,7 @@ import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/serv
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { UserOrApplicationAuthGuard } from 'src/engine/guards/user-or-application-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -49,8 +47,7 @@ import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserOrApplicationAuthGuard,
+  CallerGuard({ userSession: true, oauthClient: true, application: true }),
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UseFilters(
@@ -108,7 +105,13 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => RunWorkflowVersionDTO)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      oauthClient: { requireUser: true },
+      application: { requireUser: true },
+    }),
+  )
   async runCoreWorkflowVersion(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

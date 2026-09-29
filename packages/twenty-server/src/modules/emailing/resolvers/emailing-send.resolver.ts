@@ -33,7 +33,7 @@ import {
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
@@ -45,7 +45,12 @@ import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emai
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
-  WorkspaceAuthGuard,
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )

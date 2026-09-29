@@ -5,7 +5,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
@@ -19,7 +19,14 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 
 @MetadataResolver(() => ViewGroupDTO)
 @UseFilters(ViewGroupGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 export class ViewGroupResolver {
   constructor(private readonly viewGroupService: ViewGroupService) {}
 

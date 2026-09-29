@@ -16,7 +16,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { AgentTurnDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-turn.dto';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-monitor/dtos/agent-turn-evaluation.dto';
@@ -25,10 +25,14 @@ import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 @UseGuards(
-  WorkspaceAuthGuard,
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
 )
 @MetadataResolver(() => AgentTurnDTO)
@@ -87,7 +91,13 @@ export class AgentTurnResolver {
   }
 
   @Mutation(() => AgentTurnDTO)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      oauthClient: { requireUser: true },
+      application: { requireUser: true },
+    }),
+  )
   async runEvaluationInput(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @Args('input') input: string,

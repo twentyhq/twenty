@@ -33,13 +33,18 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
 @Controller(ApiPath.Mcp)
 @UseGuards(
   McpAuthGuard,
-  WorkspaceAuthGuard,
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   WorkspaceNotSuspendedGuard,
   NoPermissionGuard,
 )

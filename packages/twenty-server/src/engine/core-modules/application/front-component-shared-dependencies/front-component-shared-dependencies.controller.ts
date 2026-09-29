@@ -32,11 +32,18 @@ import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-t
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 
 @Controller(`${ApiPath.Rest}/front-component-shared-dependencies`)
 @AllowSuspendedWorkspace()
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UseFilters(ApplicationRestApiExceptionFilter)
 export class FrontComponentSharedDependenciesController {
   private readonly logger = new Logger(

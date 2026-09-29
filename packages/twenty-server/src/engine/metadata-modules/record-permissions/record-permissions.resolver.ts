@@ -13,8 +13,7 @@ import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import {
   RecordPermissionsResult,
   RecordPermissionsTargetInput,
@@ -24,7 +23,14 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const MAX_PERMISSION_TARGETS = 100;
 
 @MetadataResolver()
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    oauthClient: { requireUser: true },
+    application: { requireUser: true },
+  }),
+  CustomPermissionGuard,
+)
 export class RecordPermissionsResolver {
   constructor(
     private readonly recordSharingService: RecordSharingService,

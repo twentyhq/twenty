@@ -65,11 +65,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -109,7 +107,15 @@ export class WorkspaceResolver {
   ) {}
 
   @Query(() => WorkspaceEntity)
-  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    NoPermissionGuard,
+  )
   async currentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     const workspace = await this.workspaceService.findOneWorkspaceById(id);
 
@@ -119,12 +125,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => WorkspaceEntity)
-  @UseGuards(
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    WorkspaceAuthGuard,
-    NoPermissionGuard,
-  )
+  @UseGuards(CallerGuard({ userSession: true }), NoPermissionGuard)
   async activateWorkspace(
     // Deprecated: the workspace name is set at creation. This argument is kept
     // for backward compatibility (removing it would be a breaking schema change)
@@ -137,7 +138,15 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => WorkspaceEntity)
-  @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    CustomPermissionGuard,
+  )
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -163,7 +172,12 @@ export class WorkspaceResolver {
 
   @Mutation(() => WorkspaceEntity)
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
   )
   async updateWorkspaceAllowedIframeOrigins(
@@ -195,7 +209,12 @@ export class WorkspaceResolver {
 
   @Mutation(() => WorkspaceEntity)
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   @AllowSuspendedWorkspace()
@@ -469,7 +488,12 @@ export class WorkspaceResolver {
 
   @Mutation(() => DomainValidRecords, { nullable: true })
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({
+      userSession: true,
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async checkCustomDomainValidRecords(

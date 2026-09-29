@@ -13,7 +13,7 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/create-skill.input';
 import { SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
@@ -24,7 +24,15 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 
 // Reads are open to chat users so the composer can list skills; mutations
 // stay behind AI settings.
-@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  SettingsPermissionGuard(PermissionFlagType.AI),
+)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   SkillGraphqlApiExceptionInterceptor,

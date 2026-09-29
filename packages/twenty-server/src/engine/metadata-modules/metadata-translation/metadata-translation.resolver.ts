@@ -7,12 +7,19 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { MetadataTranslationDTO } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation.dto';
 import { MetadataTranslationsInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translations.input';
 import { MetadataTranslationService } from 'src/engine/metadata-modules/metadata-translation/services/metadata-translation.service';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @MetadataResolver(() => MetadataTranslationDTO)
 export class MetadataTranslationResolver {
   constructor(

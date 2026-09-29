@@ -11,7 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ChannelSyncSuccessDTO } from 'src/modules/connected-account/channel-sync/dtos/channel-sync-success.dto';
 import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/services/channel-sync.service';
@@ -19,7 +19,14 @@ import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/s
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 export class ChannelSyncResolver {
   constructor(
     private readonly channelSyncService: ChannelSyncService,

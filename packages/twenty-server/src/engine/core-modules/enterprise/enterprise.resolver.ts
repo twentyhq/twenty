@@ -19,8 +19,7 @@ import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-conf
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 
 // Server-binding rejections that should surface as an activation failure with
 // their own user-facing message (rather than being silently swallowed).
@@ -32,7 +31,7 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
 ];
 
 @Resolver()
-@UseGuards(RequireUserSessionGuard)
+@UseGuards(CallerGuard({ userSession: { workspaceAgnostic: true } }))
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class EnterpriseResolver {
@@ -60,7 +59,7 @@ export class EnterpriseResolver {
 
   @Query(() => String, { nullable: true })
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({ userSession: true }),
     BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
@@ -74,7 +73,7 @@ export class EnterpriseResolver {
 
   @Query(() => String, { nullable: true })
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({ userSession: true }),
     BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
@@ -91,7 +90,7 @@ export class EnterpriseResolver {
 
   @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({ userSession: true }),
     BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
@@ -102,7 +101,7 @@ export class EnterpriseResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({ userSession: true }),
     BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
@@ -117,7 +116,7 @@ export class EnterpriseResolver {
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({ userSession: true }),
     BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
@@ -136,7 +135,7 @@ export class EnterpriseResolver {
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
+    CallerGuard({ userSession: true }),
     BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,

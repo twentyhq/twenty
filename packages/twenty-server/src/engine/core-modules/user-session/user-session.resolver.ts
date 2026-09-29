@@ -20,8 +20,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -34,7 +33,10 @@ export class UserSessionResolver {
   ) {}
 
   @Query(() => [UserSessionDTO])
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({ userSession: { workspaceAgnostic: true } }),
+    NoPermissionGuard,
+  )
   async currentUserSessions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -42,8 +44,8 @@ export class UserSessionResolver {
       | undefined,
     @Context() context: { req: Request },
   ): Promise<UserSessionDTO[]> {
-    // UserAuthGuard admits workspace-agnostic credentials, which have no
-    // workspace to scope to. Nothing is in scope rather than everything.
+    // Workspace-agnostic sessions are admitted and have no workspace to
+    // scope to. Nothing is in scope rather than everything.
     if (!isDefined(workspace)) {
       return [];
     }
@@ -66,7 +68,10 @@ export class UserSessionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({ userSession: { workspaceAgnostic: true } }),
+    NoPermissionGuard,
+  )
   async revokeUserSession(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -136,7 +141,10 @@ export class UserSessionResolver {
   }
 
   @Mutation(() => Int)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({ userSession: { workspaceAgnostic: true } }),
+    NoPermissionGuard,
+  )
   async revokeAllOtherUserSessions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:

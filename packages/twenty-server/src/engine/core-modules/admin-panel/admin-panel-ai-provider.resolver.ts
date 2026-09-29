@@ -15,10 +15,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ModelsDevModelSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-model-suggestion.dto';
 import { ModelsDevProviderSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-provider-suggestion.dto';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
@@ -32,9 +30,7 @@ import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-model
   ConfigVariableGraphqlApiExceptionFilter,
 )
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
-  RequireUserSessionGuard,
+  CallerGuard({ userSession: true }),
   SettingsPermissionGuard(PermissionFlagType.SECURITY),
 )
 export class AdminPanelAiProviderResolver {

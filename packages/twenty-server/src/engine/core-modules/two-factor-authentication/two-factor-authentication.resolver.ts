@@ -21,10 +21,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
@@ -103,7 +101,10 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    CallerGuard({ userSession: { workspaceAgnostic: true } }),
+    NoPermissionGuard,
+  )
   async initiateOTPProvisioningForAuthenticatedUser(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -127,12 +128,7 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => DeleteTwoFactorAuthenticationMethodDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    CustomPermissionGuard,
-  )
+  @UseGuards(CallerGuard({ userSession: true }), CustomPermissionGuard)
   async deleteTwoFactorAuthenticationMethod(
     @Args()
     deleteTwoFactorAuthenticationMethodInput: DeleteTwoFactorAuthenticationMethodInput,
@@ -169,12 +165,7 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoPermissionGuard,
-  )
+  @UseGuards(CallerGuard({ userSession: true }), NoPermissionGuard)
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
     @Args()
     verifyTwoFactorAuthenticationMethodInput: VerifyTwoFactorAuthenticationMethodInput,

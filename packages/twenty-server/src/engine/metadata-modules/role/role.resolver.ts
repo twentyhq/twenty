@@ -22,8 +22,7 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CallerGuard } from 'src/engine/guards/caller.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import {
   AiException,
@@ -69,7 +68,12 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @MetadataResolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
-  WorkspaceAuthGuard,
+  CallerGuard({
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.ROLES),
 )
 @UseFilters(
@@ -103,7 +107,13 @@ export class RoleResolver {
   }
 
   @Mutation(() => WorkspaceMemberDTO)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(
+    CallerGuard({
+      userSession: true,
+      oauthClient: { requireUser: true },
+      application: { requireUser: true },
+    }),
+  )
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workspaceMemberId', { type: () => UUIDScalarType })
