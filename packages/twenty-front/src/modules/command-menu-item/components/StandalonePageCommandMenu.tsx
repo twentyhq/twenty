@@ -15,6 +15,7 @@ import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customiza
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useMemo } from 'react';
 import {
@@ -42,11 +43,9 @@ export const StandalonePageCommandMenu = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const commandMenuContextApi = useMemo<CommandMenuContextApi>(() => {
-    const featureFlags: Record<string, boolean> = {};
-
-    for (const flag of currentWorkspace?.featureFlags ?? []) {
-      featureFlags[flag.key] = flag.value === true;
-    }
+    const featureFlags = getWorkspaceFeatureFlagsMap(
+      currentWorkspace?.featureFlags,
+    );
 
     const permissionFlags: Record<string, boolean> = {};
 

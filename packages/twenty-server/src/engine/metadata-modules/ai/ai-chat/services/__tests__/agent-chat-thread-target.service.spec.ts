@@ -368,6 +368,25 @@ describe('Authorizing the record a conversation is attached to', () => {
     });
   });
 
+  it('checks the record as the member a chat turn runs for when given their context', async () => {
+    const { service, workspaceOrmManager } = buildService();
+    const senderAuthContext = {
+      type: 'user',
+      userWorkspaceId: OWNER_ID,
+      workspaceMemberId: OWNER_ID,
+    } as never;
+
+    await service.attachThreadToRecord({
+      ...args,
+      authContext: senderAuthContext,
+    });
+
+    expect(workspaceOrmManager.executeInWorkspaceContext).toHaveBeenCalledWith(
+      expect.any(Function),
+      senderAuthContext,
+    );
+  });
+
   it('treats a permission denial as a record that does not exist', async () => {
     const { service, recordRepository } = buildService();
 
