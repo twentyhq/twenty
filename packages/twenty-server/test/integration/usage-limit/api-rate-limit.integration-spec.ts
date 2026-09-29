@@ -52,7 +52,7 @@ describe('API rate limiting', () => {
 
   const invalidateWorkspaceCaches = async () => {
     const keys = [
-      ...(await redis.keys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`)),
+      ...(await redis.keys(`*usageLimits:{${SEED_APPLE_WORKSPACE_ID}}*`)),
     ];
 
     if (keys.length > 0) {

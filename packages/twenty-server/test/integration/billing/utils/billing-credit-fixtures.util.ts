@@ -229,7 +229,7 @@ export const resetBillingCreditState = async (
   const redis = await getRedisClient();
   const staleKeys = [
     ...(await redis.keys(`*{${workspaceId}}:quota:allowance:*`)),
-    ...(await redis.keys(`*currentBillingSubscription:${workspaceId}*`)),
+    ...(await redis.keys(`*currentBillingSubscription:{${workspaceId}}*`)),
   ];
 
   if (isNonEmptyArray(staleKeys)) {

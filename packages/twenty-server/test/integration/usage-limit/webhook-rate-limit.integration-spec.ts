@@ -65,8 +65,8 @@ describe('Webhook rate limiting', () => {
 
   const invalidateWorkspaceCaches = async () => {
     const keys = [
-      ...(await redis.keys(`*featureFlagsMap:${SEED_APPLE_WORKSPACE_ID}*`)),
-      ...(await redis.keys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`)),
+      ...(await redis.keys(`*featureFlagsMap:{${SEED_APPLE_WORKSPACE_ID}}*`)),
+      ...(await redis.keys(`*usageLimits:{${SEED_APPLE_WORKSPACE_ID}}*`)),
     ];
 
     if (keys.length > 0) {
