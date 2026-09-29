@@ -169,6 +169,24 @@ describe('computeValidationRuleAfterFieldChanges', () => {
     }
   });
 
+  it('should rename a related-record field to a name that is only reserved at the start of a path', () => {
+    expect(
+      computeValidationRuleAfterFieldChanges({
+        validationRule: COMPANY_RULE,
+        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'now')],
+      }),
+    ).toMatchObject({
+      expression: 'not isDefined(company) or company.now > 10',
+      isActive: true,
+    });
+    expect(
+      computeValidationRuleAfterFieldChanges({
+        validationRule: COMPANY_RULE,
+        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'and')],
+      }),
+    ).toEqual({ ...COMPANY_RULE, isActive: false });
+  });
+
   it('should move errors shown on the field to the record level without disabling a rule that does not read it', () => {
     expect(
       computeValidationRuleAfterFieldChanges({
