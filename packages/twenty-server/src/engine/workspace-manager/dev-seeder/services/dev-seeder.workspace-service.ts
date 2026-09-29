@@ -238,7 +238,6 @@ export class DevSeederWorkspaceService {
 
     await this.devSeederWorkflowAgentQuestionService.seed({
       workspaceId,
-      schemaName,
       applicationId: workspaceCustomFlatApplication.id,
     });
 
