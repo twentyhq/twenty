@@ -36,6 +36,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   marketplaceUniversalIdentifier?: string;
   hasUpdate: boolean;
   latestAvailableVersion?: string;
+  requiresPermissionApproval: boolean;
   onUpgrade: () => void;
   isUpgrading: boolean;
   onUninstall: () => void;
@@ -50,6 +51,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   marketplaceUniversalIdentifier,
   hasUpdate,
   latestAvailableVersion,
+  requiresPermissionApproval,
   onUpgrade,
   isUpgrading,
   onUninstall,
@@ -93,7 +95,9 @@ export const SettingsApplicationDetailGeneralTab = ({
           >
             {isUpgrading
               ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion ?? ''}`}
+              : requiresPermissionApproval
+                ? t`Review and upgrade to ${latestAvailableVersion ?? ''}`
+                : t`Upgrade to ${latestAvailableVersion ?? ''}`}
           </Button>,
         ]
       : []),
