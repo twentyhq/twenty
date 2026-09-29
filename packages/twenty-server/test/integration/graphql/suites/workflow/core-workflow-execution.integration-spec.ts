@@ -16,6 +16,9 @@ import {
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
+import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -70,11 +73,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     triggerType = 'MANUAL',
     triggerSettings = {},
     steps = [emptyStep()],
+    triggerNextStepIds = steps.length > 0 ? [steps[0].id] : [],
   }: {
     mirrorless?: boolean;
     triggerType?: string;
     triggerSettings?: object;
     steps?: WorkflowAction[];
+    triggerNextStepIds?: string[];
   } = {}): Promise<Fixture> => {
     let coreWorkflowId = randomUUID();
     let coreWorkflowVersionId = randomUUID();
@@ -84,7 +89,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       name: 'B-Async trigger',
       type: triggerType,
       settings: { outputSchema: {}, ...triggerSettings },
-      nextStepIds: steps.length > 0 ? [steps[0].id] : [],
+      nextStepIds: triggerNextStepIds,
     };
 
     if (mirrorless) {
@@ -1103,7 +1108,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
     });
 
-    it('refuses an answer once the run is stopped and closes the question', async () => {
+    it('closes the question when the run is stopped and refuses a later answer', async () => {
       mockAgent();
       const { runId, agent, threadId, questionMessageId } =
         await startAskingRun();
@@ -1113,6 +1118,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         { id: runId },
       );
       await waitForRun(runId, 'STOPPED');
+
+      expect(
+        (await getConversation(threadId)).thread.pendingQuestionMessageId,
+      ).toBeNull();
 
       const response = await answer({ threadId, messageId: questionMessageId });
 
@@ -1134,6 +1143,72 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect((await getRun(runId)).state.stepInfos[agent.id].status).toBe(
         'FAILED',
       );
+    });
+
+    it('keeps the run alive while the resume is queued, even once a parallel branch has finished', async () => {
+      const executeAgent = mockAgent();
+      const agent = agentStep([]);
+      const parallelBranch = emptyStep();
+      const fixture = await createFixture({
+        steps: [agent, parallelBranch],
+        triggerNextStepIds: [agent.id, parallelBranch.id],
+      });
+      const runId = await runFixture(fixture);
+      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+
+      await waitForStep(runId, parallelBranch.id, 'SUCCESS');
+
+      const threadId: string = pausedRun.state.stepInfos[agent.id].threadId;
+      const { thread } = await getConversation(threadId);
+      const queue = global.app.get<MessageQueueService>(
+        getQueueToken(MessageQueue.workflowQueue),
+      );
+
+      // Holds the resume back, so the run's fate can be decided while it is
+      // still queued.
+      const enqueue = jest.spyOn(queue, 'add').mockResolvedValueOnce(undefined);
+
+      const response = await answer({
+        threadId,
+        messageId: thread.pendingQuestionMessageId,
+      });
+      const [[resumeJobName, resumeJobData, resumeJobOptions]] =
+        enqueue.mock.calls;
+
+      enqueue.mockRestore();
+
+      expect(response.body.errors).toBeUndefined();
+      expect(resumeJobData).toMatchObject({ stepIdToResume: agent.id });
+
+      // The decision a parallel branch finishing in that window takes.
+      await queue.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        {
+          workspaceId,
+          workflowRunId: runId,
+          lastExecutedStepId: parallelBranch.id,
+        },
+        buildRunWorkflowJobOptions(runId),
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const queuedRun = await getRun(runId);
+
+      expect(queuedRun.status).toBe('RUNNING');
+      expect(queuedRun.state.stepInfos[agent.id].status).toBe('PENDING');
+
+      // Delivered twice: the second finds the step already claimed.
+      await queue.add(resumeJobName, resumeJobData, resumeJobOptions);
+      await queue.add(resumeJobName, resumeJobData, resumeJobOptions);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+        threadId,
+      });
+      expect(executeAgent).toHaveBeenCalledTimes(2);
     });
 
     it('keeps the question open when the resume cannot be scheduled, so it can be answered again', async () => {

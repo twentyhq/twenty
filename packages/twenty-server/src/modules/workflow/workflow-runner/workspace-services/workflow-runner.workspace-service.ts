@@ -26,7 +26,10 @@ import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import {
+  type StepAwaitingAnswer,
+  WorkflowRunWorkspaceService,
+} from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 
@@ -170,6 +173,39 @@ export class WorkflowRunnerWorkspaceService {
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+  }
+
+  // The answer is already recorded in the step's conversation. The step stays
+  // PENDING, which keeps its run alive, until the resume job claims it.
+  async resumeAgentStepWithAnswer({
+    threadId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<StepAwaitingAnswer> {
+    const stepAwaitingAnswer =
+      await this.workflowRunWorkspaceService.findStepAwaitingAnswer({
+        threadId,
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (stepAwaitingAnswer.status === 'AWAITING_ANSWER') {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        {
+          workspaceId,
+          workflowRunId,
+          stepIdToResume: stepAwaitingAnswer.stepId,
+        },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
+    }
+
+    return stepAwaitingAnswer;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

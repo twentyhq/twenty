@@ -465,6 +465,7 @@ export class AgentChatResolver {
         thread: readableThread,
         messageId,
         answers,
+        fileAttachments: fileAttachments ?? undefined,
         userWorkspaceId,
         workspaceId: workspace.id,
       });
