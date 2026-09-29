@@ -95,6 +95,24 @@ describe('AiChatEmailApprovalCard', () => {
     );
   });
 
+  it('lets the person add a Bcc the draft did not have', async () => {
+    const user = userEvent.setup();
+
+    renderCard();
+
+    expect(
+      screen.queryByRole('textbox', { name: 'Add a recipient to Bcc' }),
+    ).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Cc' })).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Bcc' }));
+
+    expect(
+      screen.getByRole('textbox', { name: 'Add a recipient to Bcc' }),
+    ).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Bcc' })).toBeNull();
+  });
+
   it('cannot send once every recipient is removed', async () => {
     const user = userEvent.setup();
 

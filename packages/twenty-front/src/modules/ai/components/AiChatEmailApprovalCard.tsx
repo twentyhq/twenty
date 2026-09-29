@@ -8,6 +8,7 @@ import {
   type ProposeEmailToolResult,
   type ProposedEmail,
 } from 'twenty-shared/ai';
+import { LightButton } from 'twenty-ui/components';
 import { IconDeviceFloppy, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -67,6 +68,11 @@ const StyledBodyTextarea = styled(TextareaAutosize)`
   resize: none;
 `;
 
+const StyledRecipientToggles = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledDivider = styled.div`
   background: ${themeCssVariables.border.color.light};
   height: 1px;
@@ -103,6 +109,10 @@ export const AiChatEmailApprovalCard = ({
   const [bcc, setBcc] = useState(() =>
     splitEmailRecipients(email.recipients.bcc),
   );
+  // Shown from the start when the draft has any, and kept once opened, so
+  // removing the last recipient does not take the field away.
+  const [isCcShown, setIsCcShown] = useState(cc.length > 0);
+  const [isBccShown, setIsBccShown] = useState(bcc.length > 0);
   const [subject, setSubject] = useState(email.subject);
   const [body, setBody] = useState(email.body);
   const [pendingDecision, setPendingDecision] =
@@ -177,7 +187,27 @@ export const AiChatEmailApprovalCard = ({
           onFocus={handleFieldFocus}
           onBlur={handleFieldBlur}
         />
-        {cc.length > 0 && (
+        {(!isCcShown || !isBccShown) && (
+          <StyledRecipientToggles>
+            {!isCcShown && (
+              <LightButton
+                disabled={isAnswering}
+                onClick={() => setIsCcShown(true)}
+              >
+                {t`Cc`}
+              </LightButton>
+            )}
+            {!isBccShown && (
+              <LightButton
+                disabled={isAnswering}
+                onClick={() => setIsBccShown(true)}
+              >
+                {t`Bcc`}
+              </LightButton>
+            )}
+          </StyledRecipientToggles>
+        )}
+        {isCcShown && (
           <AiChatEmailRecipientsRow
             label={t`Cc`}
             recipients={cc}
@@ -187,7 +217,7 @@ export const AiChatEmailApprovalCard = ({
             onBlur={handleFieldBlur}
           />
         )}
-        {bcc.length > 0 && (
+        {isBccShown && (
           <AiChatEmailRecipientsRow
             label={t`Bcc`}
             recipients={bcc}
