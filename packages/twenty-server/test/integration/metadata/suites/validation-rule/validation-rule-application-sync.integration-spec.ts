@@ -11,6 +11,7 @@ import {
   findValidationRules,
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { type FieldManifest } from 'twenty-shared/application';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -28,7 +29,7 @@ const TEST_OBJECT = buildDefaultObjectManifest({
   description: 'Object used to test validation rules across application syncs',
 });
 
-const PRIORITY_FIELD = {
+const PRIORITY_FIELD: FieldManifest = {
   universalIdentifier: PRIORITY_FIELD_ID,
   type: FieldMetadataType.TEXT,
   name: 'priority',

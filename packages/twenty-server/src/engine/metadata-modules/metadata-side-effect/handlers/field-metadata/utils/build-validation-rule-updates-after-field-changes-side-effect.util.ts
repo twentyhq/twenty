@@ -17,8 +17,12 @@ export const buildValidationRuleUpdatesAfterFieldChangesSideEffect = ({
   const fieldOperations =
     allFlatEntityOperationRecordByMetadataName.fieldMetadata;
   const fieldChanges = computeValidationRuleFieldChanges({
-    updatedFields: Object.values(fieldOperations?.flatEntityToUpdate ?? {}),
-    deletedFields: Object.values(fieldOperations?.flatEntityToDelete ?? {}),
+    updatedFields: Object.values(
+      fieldOperations?.flatEntityToUpdate ?? {},
+    ).filter(isDefined),
+    deletedFields: Object.values(
+      fieldOperations?.flatEntityToDelete ?? {},
+    ).filter(isDefined),
     existingFieldByUniversalIdentifier:
       relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
   });
