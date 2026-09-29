@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type OpenAsksForPendingAgentQuestionsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790673787346-open-asks-for-pending-agent-questions.command';
+import { type OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790673787346-open-asks-for-pending-input.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -25,8 +25,8 @@ const QUESTIONS = [
   },
 ];
 
-describe('2-44 workspace command 1790673787346 - OpenAsksForPendingAgentQuestionsCommand (integration)', () => {
-  let command: OpenAsksForPendingAgentQuestionsCommand;
+describe('2-44 workspace command 1790673787346 - OpenAsksForPendingInputCommand (integration)', () => {
+  let command: OpenAsksForPendingInputCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
 
   const threadIds: string[] = [];
@@ -121,8 +121,8 @@ describe('2-44 workspace command 1790673787346 - OpenAsksForPendingAgentQuestion
   };
 
   beforeAll(() => {
-    command = getAppProviderByClassName<OpenAsksForPendingAgentQuestionsCommand>(
-      'OpenAsksForPendingAgentQuestionsCommand',
+    command = getAppProviderByClassName<OpenAsksForPendingInputCommand>(
+      'OpenAsksForPendingInputCommand',
     );
     workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',

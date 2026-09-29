@@ -1,6 +1,8 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { IsNull, Not } from 'typeorm';
 
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
@@ -22,23 +24,27 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  type WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 type PendingQuestionThread = Pick<
   AgentChatThreadWorkspaceEntity,
   'id' | 'pendingQuestionMessageId' | 'workflowRunId' | 'workspaceMemberId'
 >;
 
-// An agent question was answered through its conversation's pending marker;
-// it is now answered through its Ask, and a question asked before this
-// release has none. Each one still waiting gets the Ask it would have opened.
+// Every pause for a person is now answered through its Ask, and one that
+// started before this release may have none: an agent question was answered
+// through its conversation's pending marker, a form step through its run.
+// Each one still waiting gets the Ask it would have opened.
 @RegisteredWorkspaceCommand('2.44.0', 1790673787346)
 @Command({
-  name: 'upgrade:2-44:open-asks-for-pending-agent-questions',
+  name: 'upgrade:2-44:open-asks-for-pending-input',
   description:
-    'Open an Ask for every agent question still waiting on an answer in a conversation',
+    'Open an Ask for every agent question and form step still waiting on an answer',
 })
-export class OpenAsksForPendingAgentQuestionsCommand extends ProvisionedWorkspaceCommandRunner {
+export class OpenAsksForPendingInputCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -78,32 +84,32 @@ export class OpenAsksForPendingAgentQuestionsCommand extends ProvisionedWorkspac
     }
 
     // The history fence: its tables cannot move while the questions are read.
-    const openedCount = await this.storage.run(workspaceId, () =>
+    const isDryRun = options.dryRun ?? false;
+    const questionCount = await this.storage.run(workspaceId, () =>
       this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.openAsksForPendingQuestions({
-            workspaceId,
-            isDryRun: options.dryRun ?? false,
-          }),
+        () => this.openAsksForPendingQuestions({ isDryRun }),
         buildSystemAuthContext(workspaceId),
       ),
     );
+    const formStepCount =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () => this.openAsksForPendingFormSteps({ isDryRun }),
+        buildSystemAuthContext(workspaceId),
+      );
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] Would open' : 'Opened'} ${openedCount} Ask(s) for pending agent questions in workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] Would open' : 'Opened'} ${questionCount} Ask(s) for pending agent questions and ${formStepCount} for pending form steps in workspace ${workspaceId}`,
     );
   }
 
   async down(_args: RunOnWorkspaceArgs): Promise<void> {
-    // The Asks are where these questions are answered from now on; the
+    // The Asks are where these pauses are answered from now on; the
     // conversations' pending markers are left as they were.
   }
 
   private async openAsksForPendingQuestions({
-    workspaceId,
     isDryRun,
   }: {
-    workspaceId: string;
     isDryRun: boolean;
   }): Promise<number> {
     const threadRepository =
@@ -126,7 +132,6 @@ export class OpenAsksForPendingAgentQuestionsCommand extends ProvisionedWorkspac
 
     for (const thread of threads) {
       const isOpened = await this.openAskForThread({
-        workspaceId,
         thread,
         isDryRun,
       });
@@ -140,11 +145,9 @@ export class OpenAsksForPendingAgentQuestionsCommand extends ProvisionedWorkspac
   }
 
   private async openAskForThread({
-    workspaceId,
     thread,
     isDryRun,
   }: {
-    workspaceId: string;
     thread: PendingQuestionThread;
     isDryRun: boolean;
   }): Promise<boolean> {
@@ -243,6 +246,84 @@ export class OpenAsksForPendingAgentQuestionsCommand extends ProvisionedWorkspac
     }
 
     return true;
+  }
+
+  private async openAsksForPendingFormSteps({
+    isDryRun,
+  }: {
+    isDryRun: boolean;
+  }): Promise<number> {
+    const workflowRunRepository =
+      this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+        { shouldBypassPermissionChecks: true },
+      );
+    const inputAskRepository =
+      this.workspaceOrmManager.getRepository<InputAskWorkspaceEntity>(
+        'inputAsk',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    // Only a running run accepts a submission.
+    const workflowRuns = await workflowRunRepository.find({
+      where: { status: WorkflowRunStatus.RUNNING },
+      select: { id: true, state: true, createdBy: true },
+    });
+
+    let openedCount = 0;
+
+    for (const workflowRun of workflowRuns) {
+      const stepInfos = workflowRun.state?.stepInfos ?? {};
+
+      for (const step of workflowRun.state?.flow?.steps ?? []) {
+        if (
+          step.type !== WorkflowActionType.FORM ||
+          stepInfos[step.id]?.status !== StepStatus.PENDING ||
+          isDefined(stepInfos[step.id]?.error)
+        ) {
+          continue;
+        }
+
+        const existingInputAsk = await inputAskRepository.findOne({
+          where: {
+            workflowRunId: workflowRun.id,
+            stepId: step.id,
+            toolCallId: IsNull(),
+          },
+          select: { id: true },
+        });
+
+        if (isDefined(existingInputAsk)) {
+          continue;
+        }
+
+        openedCount++;
+
+        if (isDryRun) {
+          continue;
+        }
+
+        const lowestPosition = await inputAskRepository.minimum('position');
+
+        await inputAskRepository.insert({
+          name: step.name,
+          status: InputAskStatus.PENDING,
+          form: {
+            kind: 'formFields',
+            fields: step.settings.input,
+          },
+          workflowRunId: workflowRun.id,
+          stepId: step.id,
+          assigneeId:
+            workflowRun.createdBy?.source === FieldActorSource.MANUAL
+              ? (workflowRun.createdBy.workspaceMemberId ?? null)
+              : null,
+          position: (lowestPosition ?? 0) - 1,
+        });
+      }
+    }
+
+    return openedCount;
   }
 
   // A run conversation belongs to the step whose current execution recorded

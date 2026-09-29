@@ -22,11 +22,12 @@ export const findPendingAskQuestionsPart = (
       isNonEmptyString(part.toolCallId) &&
       isPlainObject(result) &&
       result.status === 'pending' &&
+      Array.isArray(result.questions) &&
       isNonEmptyArray(result.questions)
     ) {
       return {
         toolCallId: part.toolCallId,
-        questions: result.questions as AskQuestionItem[],
+        questions: result.questions as unknown as AskQuestionItem[],
       };
     }
   }
