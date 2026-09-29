@@ -336,6 +336,16 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'tsVectorFieldMetadataId',
     },
   },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    errorFieldMetadata: {
+      foreignKey: 'errorFieldMetadataId',
+    },
+  },
   workflow: {
     workspace: null,
     createdBy: null,

@@ -1,5 +1,6 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { OnboardingFreeCreditsChange } from '@/onboarding/components/free-credits/OnboardingFreeCreditsChange';
+import { OnboardingFreeCreditsPopoverContent } from '@/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent';
 import { OnboardingFreeCreditsProgress } from '@/onboarding/components/free-credits/OnboardingFreeCreditsProgress';
 import { StyledOnboardingFreeCreditsCount } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsCount';
 import { StyledOnboardingFreeCreditsLabel } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsLabel';
@@ -14,8 +15,8 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCoins } from 'twenty-ui/icon';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { IconCoins, IconInfoCircle } from 'twenty-ui/icon';
+import { Popover, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -24,19 +25,42 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledPill = styled.div`
+const StyledPillAnchor = styled.div`
+  display: flex;
+`;
+
+const StyledTrigger = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: ${themeCssVariables.border.radius.pill};
+  color: ${themeCssVariables.font.color.tertiary};
+  corner-shape: round;
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  padding: 0;
+
+  &:hover > span,
+  &[data-popup-open] > span {
+    background-color: ${themeCssVariables.background.transparent.medium};
+  }
+
+  &:hover > span[data-highlighted='earned'],
+  &[data-popup-open] > span[data-highlighted='earned'] {
+    background-color: ${themeCssVariables.color.green4};
+    border-color: ${themeCssVariables.color.green5};
+  }
+`;
+
+const StyledTriggerPart = styled.span`
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.light};
   border: 1px solid transparent;
-  border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
   corner-shape: round;
   display: flex;
-  gap: ${themeCssVariables.spacing['1.5']};
   height: ${themeCssVariables.spacing[6]};
-  padding: 0 ${themeCssVariables.spacing[2]} 0
-    ${themeCssVariables.spacing['1.5']};
   transition:
     background-color calc(${themeCssVariables.animation.duration.normal} * 1s),
     border-color calc(${themeCssVariables.animation.duration.normal} * 1s),
@@ -49,10 +73,31 @@ const StyledPill = styled.div`
   }
 `;
 
+const StyledCreditsPart = styled(StyledTriggerPart)`
+  border-bottom-left-radius: ${themeCssVariables.border.radius.pill};
+  border-right: none;
+  border-top-left-radius: ${themeCssVariables.border.radius.pill};
+  gap: ${themeCssVariables.spacing['1.5']};
+  padding: 0 ${themeCssVariables.spacing[2]} 0
+    ${themeCssVariables.spacing['1.5']};
+`;
+
 const StyledCreditsContent = styled(motion.span)`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing['1.5']};
+`;
+
+const StyledInfoPart = styled(StyledTriggerPart)`
+  border-bottom-right-radius: ${themeCssVariables.border.radius.rounded};
+  border-top-right-radius: ${themeCssVariables.border.radius.rounded};
+  justify-content: center;
+  padding: 0 ${themeCssVariables.spacing['1.5']} 0
+    ${themeCssVariables.spacing[1]};
+
+  &:not([data-highlighted='earned']) {
+    border-left-color: ${themeCssVariables.border.color.transparentStrong};
+  }
 `;
 
 const StyledTooltipContents = styled.div`
@@ -74,13 +119,19 @@ export const OnboardingFreeCreditsPill = ({
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
   const { numberFormat } = useNumberFormat();
+  const [isPopoverShown, setIsPopoverShown] = useState(false);
   const [hasTrackGrown, setHasTrackGrown] = useState(
     shouldReduceMotion ?? false,
   );
   const pillRef = useRef<HTMLDivElement>(null);
 
-  const { earnedCredits, goalCredits, currentStep, currentStepCredits } =
-    progress;
+  const {
+    earnedCredits,
+    earnedCreditsByStep,
+    goalCredits,
+    currentStep,
+    currentStepCredits,
+  } = progress;
   const {
     seenCredits,
     newlyEarnedCredits,
@@ -95,6 +146,8 @@ export const OnboardingFreeCreditsPill = ({
 
   const hasNewlyEarnedCredits = newlyEarnedCredits > 0;
   const isEarningFirstCredits = goalCredits <= 0;
+  const highlight =
+    isEarningFirstCredits || hasNewlyEarnedCredits ? 'earned' : undefined;
 
   const formattedCurrentStepCredits = formatOnboardingCredits(
     currentStepCredits,
@@ -121,45 +174,66 @@ export const OnboardingFreeCreditsPill = ({
           />
         )}
       </AnimatePresence>
-      <StyledPill
-        ref={pillRef}
-        data-highlighted={
-          isEarningFirstCredits || hasNewlyEarnedCredits ? 'earned' : undefined
-        }
-      >
-        <IconCoins size={theme.icon.size.md} color="currentColor" />
-        <AnimatePresence mode="wait">
-          <StyledCreditsContent
-            key={isEarningFirstCredits ? 'earn' : 'progress'}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: theme.animation.duration.fast }}
-          >
-            {isEarningFirstCredits ? (
-              <StyledOnboardingFreeCreditsText>
-                <StyledOnboardingFreeCreditsCount>{t`Earn ${formattedCurrentStepCredits}`}</StyledOnboardingFreeCreditsCount>
-                <StyledOnboardingFreeCreditsLabel>
-                  {plural(currentStepCredits, {
-                    one: 'free credit',
-                    other: 'free credits',
-                  })}
-                </StyledOnboardingFreeCreditsLabel>
-              </StyledOnboardingFreeCreditsText>
-            ) : (
-              <OnboardingFreeCreditsProgress
-                earnedCredits={earnedCredits}
-                goalCredits={goalCredits}
-                seenCredits={seenCredits}
-                hasNewlyEarnedCredits={hasNewlyEarnedCredits}
-                hasTrackGrown={hasTrackGrown}
-                onTrackGrown={() => setHasTrackGrown(true)}
-              />
-            )}
-          </StyledCreditsContent>
-        </AnimatePresence>
-      </StyledPill>
-      <Tooltip.Root open={isDefined(tooltipContent)}>
+      <StyledPillAnchor ref={pillRef}>
+        <Popover.Root
+          onOpenChange={(open) => {
+            if (open) {
+              setIsPopoverShown(true);
+            }
+          }}
+          onOpenChangeComplete={(open) => {
+            if (!open) {
+              setIsPopoverShown(false);
+            }
+          }}
+        >
+          <Popover.Trigger openOnHover render={<StyledTrigger />}>
+            <StyledCreditsPart data-highlighted={highlight}>
+              <IconCoins size={theme.icon.size.md} color="currentColor" />
+              <AnimatePresence mode="wait">
+                <StyledCreditsContent
+                  key={isEarningFirstCredits ? 'earn' : 'progress'}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: theme.animation.duration.fast }}
+                >
+                  {isEarningFirstCredits ? (
+                    <StyledOnboardingFreeCreditsText>
+                      <StyledOnboardingFreeCreditsCount>{t`Earn ${formattedCurrentStepCredits}`}</StyledOnboardingFreeCreditsCount>
+                      <StyledOnboardingFreeCreditsLabel>
+                        {plural(currentStepCredits, {
+                          one: 'free credit',
+                          other: 'free credits',
+                        })}
+                      </StyledOnboardingFreeCreditsLabel>
+                    </StyledOnboardingFreeCreditsText>
+                  ) : (
+                    <OnboardingFreeCreditsProgress
+                      earnedCredits={earnedCredits}
+                      goalCredits={goalCredits}
+                      seenCredits={seenCredits}
+                      hasNewlyEarnedCredits={hasNewlyEarnedCredits}
+                      hasTrackGrown={hasTrackGrown}
+                      onTrackGrown={() => setHasTrackGrown(true)}
+                    />
+                  )}
+                </StyledCreditsContent>
+              </AnimatePresence>
+            </StyledCreditsPart>
+            <StyledInfoPart data-highlighted={highlight}>
+              <IconInfoCircle size={theme.icon.size.md} color="currentColor" />
+            </StyledInfoPart>
+          </Popover.Trigger>
+          <Popover.Popup side="bottom" align="end" aria-label={t`Free credits`}>
+            <OnboardingFreeCreditsPopoverContent
+              earnedCredits={earnedCredits}
+              earnedCreditsByStep={earnedCreditsByStep}
+            />
+          </Popover.Popup>
+        </Popover.Root>
+      </StyledPillAnchor>
+      <Tooltip.Root open={!isPopoverShown && isDefined(tooltipContent)}>
         <Tooltip.Popup
           anchor={pillRef}
           side="bottom"
