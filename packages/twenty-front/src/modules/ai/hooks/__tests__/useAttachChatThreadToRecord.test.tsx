@@ -12,7 +12,6 @@ const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const customCompanyObjectMetadataItem = {
   ...companyObjectMetadataItem,
   nameSingular: 'customCompany',
-  isCustom: true,
 };
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 // Any relation to company stands in for the thread target's company leg.

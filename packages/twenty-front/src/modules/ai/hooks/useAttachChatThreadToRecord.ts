@@ -15,6 +15,14 @@ import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junct
 
 const EXISTING_LINK_GQL_FIELDS = { id: true };
 
+// The legs the standard link object declares, each with a unique index on the
+// conversation and the record; the legs added for other objects have none.
+const UNIQUE_LINK_OBJECT_NAMES: string[] = [
+  CoreObjectNameSingular.Person,
+  CoreObjectNameSingular.Company,
+  CoreObjectNameSingular.Opportunity,
+];
+
 export const useAttachChatThreadToRecord = () => {
   const { enqueueToast } = useToast();
   const apolloCoreClient = useApolloCoreClient();
@@ -58,9 +66,8 @@ export const useAttachChatThreadToRecord = () => {
     }
 
     try {
-      // Only the standard legs carry a unique index on the conversation and
-      // the record, which the upsert resolves; a custom leg is looked up first.
-      if (targetObjectMetadataItem?.isCustom === true) {
+      // The upsert resolves a link on a unique leg; any other is looked up.
+      if (!UNIQUE_LINK_OBJECT_NAMES.includes(objectNameSingular)) {
         const { data: existingLinks, error: existingLinksError } =
           await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
             query: findExistingLinksQuery,
