@@ -1,3 +1,4 @@
+import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { registerEnumType } from '@nestjs/graphql';
 
@@ -73,5 +74,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   coreWorkflowId: string | null;
   coreWorkflowVersionId: string | null;
   agentChatThreads: EntityRelation<AgentChatThreadWorkspaceEntity[]>;
+  inputAsks: EntityRelation<InputAskWorkspaceEntity[]>;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
 }

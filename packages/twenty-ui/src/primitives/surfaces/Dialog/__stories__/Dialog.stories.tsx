@@ -14,7 +14,7 @@ const meta: Meta<typeof DialogExample> = {
   argTypes: {
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg', 'xl', 'fullscreen'],
+      options: ['sm', 'compact', 'md', 'lg', 'xl', 'fullscreen'],
     },
   },
 };
@@ -75,6 +75,10 @@ export const DocumentationInteractions: Story = {
 export const Small: Story = {
   ...Default,
   args: { defaultOpen: true, size: 'sm' },
+};
+export const Compact: Story = {
+  ...Default,
+  args: { defaultOpen: true, size: 'compact' },
 };
 export const Large: Story = {
   ...Default,
