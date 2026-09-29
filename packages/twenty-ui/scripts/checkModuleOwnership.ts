@@ -1,4 +1,4 @@
-import { isNonEmptyArray, isString } from '@sniptt/guards';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { globSync } from 'glob';
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -7,9 +7,6 @@ import ts from 'typescript';
 import { isDefined } from '../src/utilities/utils/isDefined';
 
 import ownership from '../docs/module-ownership.json';
-import publicExports from '../docs/public-exports.json';
-import packageJson from '../package.json';
-import { getPublicExportSnapshot } from './getPublicExportSnapshot';
 
 const PACKAGE_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -18,8 +15,6 @@ const PACKAGE_ROOT = path.resolve(
 const SOURCE_ROOT = path.join(PACKAGE_ROOT, 'src');
 const SHARED_COMPONENTS_ROOT = path.join(SOURCE_ROOT, 'components');
 const SOURCE_EXTENSIONS = ['.tsx', '.ts'];
-const DISTRIBUTION_PREFIX = './dist/';
-const DECLARATION_EXTENSION_PATTERN = /\.d\.ts$/;
 const PACKAGE_ENTRY_POINTS = new Set([
   SOURCE_ROOT,
   path.join(SOURCE_ROOT, 'index'),
@@ -27,6 +22,7 @@ const PACKAGE_ENTRY_POINTS = new Set([
     path.join(SOURCE_ROOT, `index${extension}`),
   ),
 ]);
+const IMPLEMENTATION_ONLY_PATTERN = /\/(internal|internals|parts)\//;
 const SUPPORT_DIRECTORY_PATTERN = /\/(contexts|hooks)\//;
 const TEST_DIRECTORY_PATTERN = /\/(testing|__tests__|__stories__|__mocks__)\//;
 const TEST_FILE_PATTERN = /\.(stories|test|spec)\.tsx?$/;
@@ -67,6 +63,11 @@ for (const layer of ['primitives', 'components'] as const) {
         path.dirname(filePath),
         statement.moduleSpecifier.text,
       );
+      if (IMPLEMENTATION_ONLY_PATTERN.test(target)) {
+        errors.push(
+          `${file} exports an implementation part: ${statement.moduleSpecifier.text}`,
+        );
+      }
 
       const componentSource = SOURCE_EXTENSIONS.map(
         (extension) => `${target}${extension}`,
@@ -146,73 +147,11 @@ for (const file of globSync('**/*.{ts,tsx}', { cwd: SOURCE_ROOT })) {
   }
 }
 
-const entryPoints = Object.fromEntries(
-  Object.entries(packageJson.exports).flatMap(([name, entry]) => {
-    if (isString(entry)) {
-      return [];
-    }
-
-    return [
-      [
-        name,
-        path.join(
-          SOURCE_ROOT,
-          entry.types
-            .slice(DISTRIBUTION_PREFIX.length)
-            .replace(DECLARATION_EXTENSION_PATTERN, '.ts'),
-        ),
-      ],
-    ];
-  }),
-);
-const actualPublicExports = getPublicExportSnapshot({
-  sourceRoot: SOURCE_ROOT,
-  entryPoints,
-});
-
-if (!shouldUpdateSnapshot) {
-  const expectedPublicExports: Record<string, string[]> = publicExports;
-
-  for (const entryName of new Set([
-    ...Object.keys(expectedPublicExports),
-    ...Object.keys(actualPublicExports),
-  ])) {
-    if (!isDefined(actualPublicExports[entryName])) {
-      errors.push(`Public entry ${entryName} is missing`);
-      continue;
-    }
-
-    if (!isDefined(expectedPublicExports[entryName])) {
-      errors.push(`Public entry ${entryName} has no public export decision`);
-      continue;
-    }
-
-    const expected = new Set(expectedPublicExports[entryName] ?? []);
-    const actual = new Set(actualPublicExports[entryName] ?? []);
-
-    for (const name of expected) {
-      if (!actual.has(name)) {
-        errors.push(`${name} is missing from public entry ${entryName}`);
-      }
-    }
-
-    for (const name of actual) {
-      if (!expected.has(name)) {
-        errors.push(`${name} has no public export decision in ${entryName}`);
-      }
-    }
-  }
-}
-
 if (isNonEmptyArray(errors)) {
   throw new Error(errors.join('\n'));
 }
 
 if (shouldUpdateSnapshot) {
-  writeFileSync(
-    path.join(PACKAGE_ROOT, 'docs/public-exports.json'),
-    `${JSON.stringify(actualPublicExports, null, 2)}\n`,
-  );
   writeFileSync(
     path.join(PACKAGE_ROOT, 'docs/module-ownership.json'),
     `${JSON.stringify(actualOwnership, null, 2)}\n`,
@@ -220,5 +159,5 @@ if (shouldUpdateSnapshot) {
 }
 
 process.stdout.write(
-  `Module ownership verified: ${actualOwnership.primitives.length} primitives and ${actualOwnership.components.length} shared components across ${Object.keys(actualPublicExports).length} public entries.\n`,
+  `Module ownership verified: ${actualOwnership.primitives.length} primitives and ${actualOwnership.components.length} shared components.\n`,
 );

@@ -39,18 +39,14 @@ const configureMonacoLoader = () => {
   return monacoLoaderConfiguration;
 };
 
-const setCodeEditorTheme = ({
-  monaco,
-  theme,
-  colorScheme,
-}: {
-  monaco: Monaco;
-  theme: ThemeType;
-  colorScheme: 'light' | 'dark';
-}) => {
+const setCodeEditorTheme = (
+  monaco: Monaco,
+  theme: ThemeType,
+  colorScheme: 'light' | 'dark',
+) => {
   monaco.editor.defineTheme(
     BASE_CODE_EDITOR_THEME_ID,
-    getBaseCodeEditorTheme({ theme, colorScheme }),
+    getBaseCodeEditorTheme(theme, colorScheme),
   );
   monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
 };
@@ -151,7 +147,7 @@ export const CodeEditor = ({
       return;
     }
 
-    setCodeEditorTheme({ monaco, theme, colorScheme });
+    setCodeEditorTheme(monaco, theme, colorScheme);
   }, [colorScheme, monaco, theme]);
 
   // Drive the container height from Monaco's content height; the editor's
@@ -222,7 +218,7 @@ export const CodeEditor = ({
             setMonaco(monaco);
             setEditor(editor);
 
-            setCodeEditorTheme({ monaco, theme, colorScheme });
+            setCodeEditorTheme(monaco, theme, colorScheme);
 
             editor.onDidFocusEditorWidget(() => {
               setIsEditorFocused(true);
