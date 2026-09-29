@@ -2,10 +2,10 @@ import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { ONBOARDING_CREDITS_STEPS } from '@/onboarding/constants/OnboardingCreditsSteps';
 import { ONBOARDING_STATUS_BY_CREDITS_STEP } from '@/onboarding/constants/OnboardingStatusByCreditsStep';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
-import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
 import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
 import { getOnboardingCountedFreeCredits } from '@/onboarding/utils/getOnboardingCountedFreeCredits';
 import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
+import { getOnboardingRewardCreditsByStep } from '@/onboarding/utils/getOnboardingRewardCreditsByStep';
 import { isOnboardingCreditsStepDone } from '@/onboarding/utils/isOnboardingCreditsStepDone';
 import { isDefined } from 'twenty-shared/utils';
 import { type OnboardingStatus } from '~/generated-metadata/graphql';
@@ -30,21 +30,11 @@ export const getOnboardingCreditsProgress = ({
     onboardingStatus,
   });
 
-  const rewardCreditsByStep: Record<OnboardingCreditsStep, number> = {
-    importContacts: isWorkspaceCreator
-      ? onboardingConfig.importContactsCreditsReward
-      : 0,
-    installApps: isWorkspaceCreator
-      ? onboardingConfig.installAppsCreditsReward
-      : 0,
-    createProfile: isWorkspaceCreator
-      ? onboardingConfig.createProfileCreditsReward
-      : 0,
-    inviteTeam:
-      onboardingConfig.inviteTeamCreditsRewardPerUser *
-      onboardingConfig.inviteTeamMaxInvites,
-    upgradeTrial: isPlanRequired ? onboardingConfig.upgradeCreditsReward : 0,
-  };
+  const rewardCreditsByStep = getOnboardingRewardCreditsByStep({
+    onboardingConfig,
+    isWorkspaceCreator,
+    isPlanRequired,
+  });
 
   const onboardingStep = ONBOARDING_CREDITS_STEPS.find(
     (step) => ONBOARDING_STATUS_BY_CREDITS_STEP[step] === onboardingStatus,

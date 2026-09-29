@@ -1,7 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { CreateProfileCreditsEffect } from '@/onboarding/components/CreateProfileCreditsEffect';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
@@ -15,6 +14,7 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
+import { onboardingRewardCreditsByStepSelector } from '@/onboarding/states/selectors/onboardingRewardCreditsByStepSelector';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -90,12 +90,10 @@ export const CreateProfile = () => {
 
   const { enqueueToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const currentUser = useAtomStateValue(currentUserState);
   const setCurrentUser = useSetAtomState(currentUserState);
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsReward = currentUser?.isWorkspaceCreator
-    ? (onboardingConfig?.createProfileCreditsReward ?? 0)
-    : 0;
+  const { createProfile: creditsReward } = useAtomStateValue(
+    onboardingRewardCreditsByStepSelector,
+  );
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
