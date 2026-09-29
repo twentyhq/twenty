@@ -26,6 +26,7 @@ import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
+import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
@@ -331,6 +332,7 @@ class FakeRecallApi {
   activeArtifactJobIds = new Set<string>();
   recoveryRequests: object[] = [];
   pendingRecoveryRequests: object[] = [];
+  pendingRecoveryEnqueues: { retryLimit?: number; delayMs?: number }[] = [];
   creditCheckRequests: object[] = [];
   // Undefined lets the credit verdict fall through to the real server.
   creditAvailability:
@@ -467,6 +469,8 @@ class FakeRecallApi {
         logicFunctionUniversalIdentifier: string;
         payloads: object[];
         jobs?: { jobId: string; payload: object }[];
+        retryLimit?: number;
+        delayMs?: number;
       }[];
       const payloads =
         input?.jobs?.map(({ payload }) => payload) ?? input?.payloads ?? [];
@@ -481,6 +485,10 @@ class FakeRecallApi {
         PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
       ) {
         this.pendingRecoveryRequests.push(...payloads);
+        this.pendingRecoveryEnqueues.push({
+          retryLimit: input.retryLimit,
+          delayMs: input.delayMs,
+        });
       } else if (
         input?.logicFunctionUniversalIdentifier ===
         CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
@@ -3188,6 +3196,9 @@ describe('call recorder app lifecycle (integration)', () => {
         name: 'RetryableLogicFunctionError',
       });
 
+      expect(recall.pendingRecoveryEnqueues).toEqual([
+        { retryLimit: ENQUEUED_JOB_RETRY_LIMIT, delayMs: 0 },
+      ]);
       expect(
         (await fetchCallRecording(callRecordingId)).externalBotId,
       ).toBeFalsy();
