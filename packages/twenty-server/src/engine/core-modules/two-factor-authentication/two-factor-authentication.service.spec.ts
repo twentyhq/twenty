@@ -173,7 +173,6 @@ describe('TwoFactorAuthenticationService', () => {
         {
           action: 'otp_rejected',
           strategy: TwoFactorAuthenticationStrategy.TOTP,
-          targetUserId: USER_ID,
           message: 'No two-factor authentication method configured',
         },
       );
@@ -206,7 +205,6 @@ describe('TwoFactorAuthenticationService', () => {
         {
           action: 'otp_rejected',
           strategy: TwoFactorAuthenticationStrategy.TOTP,
-          targetUserId: USER_ID,
         },
       );
     });
@@ -233,7 +231,6 @@ describe('TwoFactorAuthenticationService', () => {
         {
           action: 'method_verified',
           strategy: TwoFactorAuthenticationStrategy.TOTP,
-          targetUserId: USER_ID,
         },
       );
     });
@@ -277,7 +274,6 @@ describe('TwoFactorAuthenticationService', () => {
         {
           action: 'method_deleted',
           strategy: TwoFactorAuthenticationStrategy.TOTP,
-          targetUserId: USER_ID,
         },
       );
     });

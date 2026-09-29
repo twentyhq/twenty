@@ -15,7 +15,6 @@ export const twoFactorAuthenticationSchema = z.strictObject({
       'otp_rejected',
     ]),
     strategy: z.string(),
-    targetUserId: z.string(),
     message: z.string().optional(),
   }),
 });

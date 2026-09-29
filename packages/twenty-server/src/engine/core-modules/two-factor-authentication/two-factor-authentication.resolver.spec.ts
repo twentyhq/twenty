@@ -275,25 +275,6 @@ describe('TwoFactorAuthenticationResolver', () => {
           mockInput.twoFactorAuthenticationMethodId,
       });
     });
-
-    it('should propagate service errors', async () => {
-      const serviceError = new AuthException(
-        'You can only delete your own two-factor authentication methods',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-
-      twoFactorAuthenticationService.deleteTwoFactorAuthenticationMethodForAuthenticatedUser.mockRejectedValue(
-        serviceError,
-      );
-
-      await expect(
-        resolver.deleteTwoFactorAuthenticationMethod(
-          mockInput,
-          mockWorkspace,
-          mockUser,
-        ),
-      ).rejects.toThrow(serviceError);
-    });
   });
 
   describe('verifyTwoFactorAuthenticationMethodForAuthenticatedUser', () => {

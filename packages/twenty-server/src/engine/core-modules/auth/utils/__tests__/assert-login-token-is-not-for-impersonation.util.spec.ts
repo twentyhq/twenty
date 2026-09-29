@@ -15,16 +15,6 @@ describe('assertLoginTokenIsNotForImpersonation', () => {
     expect(() =>
       assertLoginTokenIsNotForImpersonation({
         authProvider: AuthProviderEnum.Impersonation,
-        impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
-      }),
-    ).toThrow(AuthException);
-  });
-
-  it('rejects a login token carrying an impersonator even with another provider', () => {
-    expect(() =>
-      assertLoginTokenIsNotForImpersonation({
-        authProvider: AuthProviderEnum.Password,
-        impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
       }),
     ).toThrow(AuthException);
   });

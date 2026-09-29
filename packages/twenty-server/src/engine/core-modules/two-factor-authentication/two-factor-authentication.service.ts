@@ -326,7 +326,6 @@ export class TwoFactorAuthenticationService {
     void eventLogContext.insertWorkspaceEvent(TWO_FACTOR_AUTHENTICATION_EVENT, {
       action,
       strategy,
-      targetUserId: userId,
       ...(isDefined(message) ? { message } : {}),
     });
   }

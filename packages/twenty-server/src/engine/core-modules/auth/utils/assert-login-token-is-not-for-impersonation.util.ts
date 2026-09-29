@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   AuthException,
   AuthExceptionCode,
@@ -11,15 +9,9 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 // which mints a bounded impersonation session. Any other exchange would issue
 // a regular session as the target, outside every impersonation check.
 export const assertLoginTokenIsNotForImpersonation = (
-  loginTokenPayload: Pick<
-    LoginTokenJwtPayload,
-    'authProvider' | 'impersonatorUserWorkspaceId'
-  >,
+  loginTokenPayload: Pick<LoginTokenJwtPayload, 'authProvider'>,
 ): void => {
-  if (
-    loginTokenPayload.authProvider === AuthProviderEnum.Impersonation ||
-    isDefined(loginTokenPayload.impersonatorUserWorkspaceId)
-  ) {
+  if (loginTokenPayload.authProvider === AuthProviderEnum.Impersonation) {
     throw new AuthException(
       'This operation cannot be performed with an impersonation login token',
       AuthExceptionCode.FORBIDDEN_EXCEPTION,
