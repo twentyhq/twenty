@@ -76,6 +76,14 @@ export const WorkspaceOnlyPlan: Story = {
     definitions: { ...DEFINITIONS, isIntraWorkspaceLimitEntitled: false },
     values: FILLED_VALUES,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      canvas.queryByRole('button', { name: /Workspace · Workspace/ }),
+    ).not.toBeInTheDocument();
+    expect(canvas.getByRole('link', { name: 'Upgrade' })).toBeVisible();
+  },
 };
 
 export const WithConsumption: Story = {
