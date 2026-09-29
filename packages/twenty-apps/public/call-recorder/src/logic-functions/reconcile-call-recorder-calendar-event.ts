@@ -10,7 +10,6 @@ import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/bat
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CalendarEventForDatabaseEvent } from 'src/logic-functions/types/calendar-event-for-database-event.type';
 import { type CallRecorderReconciliationResult } from 'src/logic-functions/types/call-recorder-reconciliation-result.type';
-import { type RemovedCallRecorderOccurrence } from 'src/logic-functions/types/removed-call-recorder-occurrence.type';
 import { buildCalendarEventReconciliationPayload } from 'src/logic-functions/domain/build-calendar-event-reconciliation-payload.util';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
@@ -19,7 +18,7 @@ import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calenda
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
-import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { fetchWithTransientRetry } from 'src/logic-functions/utils/fetch-with-transient-retry.util';
 
 const CALENDAR_EVENT_OBJECT_NAME = 'calendarEvent';
 
@@ -56,7 +55,7 @@ const handler = async (
     return { skipped: true, reason: 'no relevant calendar event change' };
   }
 
-  const client = new CoreApiClient();
+  const client = new CoreApiClient({ fetch: fetchWithTransientRetry });
   const calendarEventIds = await resolveCalendarEventIdsToReconcile({
     client,
     changedCalendarEventIds: reconciliationPayload.calendarEventIds,
@@ -74,7 +73,7 @@ const handler = async (
     };
   }
 
-  const reconciliationResults = await reconcileCalendarEventChanges({
+  const reconciliationResults = await reconcileCallRecorderForCalendarEventIds({
     client,
     calendarEventIds,
     removedOccurrences: reconciliationPayload.removedOccurrences,
@@ -97,25 +96,21 @@ const resolveCalendarEventIdsToReconcile = async ({
   changedCalendarEventIds: string[];
   echoCandidateCalendarEventIds: string[];
 }): Promise<string[]> => {
-  try {
-    const calendarEventIdsWithRecordingOnAlreadyHonored =
-      await findCalendarEventIdsWithRecordingOnAlreadyHonored(
-        client,
-        echoCandidateCalendarEventIds,
-      );
+  const calendarEventIdsWithRecordingOnAlreadyHonored =
+    await findCalendarEventIdsWithRecordingOnAlreadyHonored(
+      client,
+      echoCandidateCalendarEventIds,
+    );
 
-    return getUniqueSortedIds([
-      ...changedCalendarEventIds,
-      ...echoCandidateCalendarEventIds.filter(
-        (calendarEventId) =>
-          !calendarEventIdsWithRecordingOnAlreadyHonored.includes(
-            calendarEventId,
-          ),
-      ),
-    ]);
-  } catch (error) {
-    throw buildRetryableStepFailure('recording On echo check', error);
-  }
+  return getUniqueSortedIds([
+    ...changedCalendarEventIds,
+    ...echoCandidateCalendarEventIds.filter(
+      (calendarEventId) =>
+        !calendarEventIdsWithRecordingOnAlreadyHonored.includes(
+          calendarEventId,
+        ),
+    ),
+  ]);
 };
 
 const findCalendarEventIdsWithRecordingOnAlreadyHonored = async (
@@ -160,29 +155,6 @@ const findCalendarEventIdsWithRecordingOnAlreadyHonored = async (
       requestedCallRecordingIds.has(requestingCalendarEvent.callRecordingId),
     )
     .map((requestingCalendarEvent) => requestingCalendarEvent.calendarEventId);
-};
-
-const reconcileCalendarEventChanges = async ({
-  client,
-  calendarEventIds,
-  removedOccurrences,
-}: {
-  client: CoreApiClient;
-  calendarEventIds: string[];
-  removedOccurrences: RemovedCallRecorderOccurrence[];
-}): Promise<CallRecorderReconciliationResult[]> => {
-  try {
-    return await reconcileCallRecorderForCalendarEventIds({
-      client,
-      calendarEventIds,
-      removedOccurrences,
-    });
-  } catch (error) {
-    throw buildRetryableStepFailure(
-      'calendar event batch reconciliation',
-      error,
-    );
-  }
 };
 
 export default defineLogicFunction({
