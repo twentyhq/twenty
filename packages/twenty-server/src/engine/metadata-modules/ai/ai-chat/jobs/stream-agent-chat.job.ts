@@ -28,7 +28,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import {
@@ -695,11 +695,8 @@ export class StreamAgentChatJob {
       const stepCacheCreationTokens = extractCacheCreationTokens(
         part.providerMetadata,
       );
-      const stepBreakdown = computeCostBreakdown(modelConfig, {
-        inputTokens: part.usage?.inputTokens,
-        outputTokens: part.usage?.outputTokens,
-        cachedInputTokens: part.usage?.inputTokenDetails?.cacheReadTokens,
-        reasoningTokens: part.usage?.outputTokenDetails?.reasoningTokens,
+      const stepBreakdown = computeStepCostBreakdown(modelConfig, {
+        usage: part.usage,
         cacheCreationTokens: stepCacheCreationTokens,
       });
 
