@@ -9,10 +9,10 @@ import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-// Destroy query hooks only see the selected columns of a row that is already
-// gone, so the running stream is read from the event snapshot
+// Destroys reach here from both the record API and the chat mutations, and a
+// destroy hook only sees the selected columns of a row that is already gone
 @Injectable()
-export class AgentChatThreadDestroyedListener {
+export class AgentChatThreadLifecycleListener {
   constructor(
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
@@ -32,6 +32,10 @@ export class AgentChatThreadDestroyedListener {
           streamId: activeStreamId,
         });
       }
+      this.threadLifecycleService.releaseThreadSandboxBestEffort({
+        workspaceId: payload.workspaceId,
+        threadId: id,
+      });
     }
   }
 }

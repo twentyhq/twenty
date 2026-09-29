@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type AskQuestionItem } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
@@ -72,14 +73,6 @@ export class InputAskWorkspaceService {
         return;
       }
 
-      const existingInputAsk = await inputAskRepository.findOne({
-        where: { workflowRunId, stepId, toolCallId: IsNull() },
-      });
-
-      if (isDefined(existingInputAsk)) {
-        return;
-      }
-
       const position = await this.recordPositionService.buildRecordPosition({
         value: 'first',
         objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
@@ -96,8 +89,8 @@ export class InputAskWorkspaceService {
           position,
         });
       } catch (error) {
-        // Two workers can clear the read above at the same time, and the loser
-        // of that race wants the winner's row rather than a failed step.
+        // The row is already pending, whether from an earlier execution or a
+        // concurrent worker
         if (!isDuplicateEntry(error)) {
           throw error;
         }
@@ -160,7 +153,7 @@ export class InputAskWorkspaceService {
     threadId: string;
     toolCallId: string;
     name: string;
-    questions: unknown[];
+    questions: AskQuestionItem[];
   }): Promise<void> {
     if (!(await this.hasInputAskObject(workspaceId))) {
       return;
@@ -195,6 +188,7 @@ export class InputAskWorkspaceService {
 
   // An agent can ask several times in one conversation, so the answer is
   // matched to its question by tool call, never to whichever Ask is pending.
+  // The run may already have ended and canceled it after taking the answer.
   async answerForToolCall({
     workspaceId,
     threadId,
@@ -215,7 +209,7 @@ export class InputAskWorkspaceService {
 
     await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
       await inputAskRepository.update(
-        { threadId, toolCallId, status: InputAskStatus.PENDING },
+        { threadId, toolCallId, status: Not(InputAskStatus.ANSWERED) },
         {
           status: InputAskStatus.ANSWERED,
           response,

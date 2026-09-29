@@ -1,10 +1,9 @@
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatWorkflowQuestionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-workflow-question.service';
 import { isWorkflowRunThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
@@ -21,7 +20,6 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -42,7 +40,6 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
-import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -78,10 +75,8 @@ export class AgentChatResolver {
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly aiBillingService: AiBillingService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly redisClientService: RedisClientService,
     private readonly agentChatWorkflowQuestionService: AgentChatWorkflowQuestionService,
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
   @Query(() => [AgentChatThreadDTO])
@@ -452,22 +447,8 @@ export class AgentChatResolver {
       workspaceMemberId,
       workspaceId,
     });
-    if (!isNonEmptyString(thread.activeStreamId)) {
-      return true;
-    }
 
-    const redis = this.redisClientService.getClient();
-
-    await redis.publish(
-      getCancelChannel(threadId, thread.activeStreamId),
-      'cancel',
-    );
-
-    await this.threadRepository.update(
-      workspaceId,
-      { id: threadId, activeStreamId: thread.activeStreamId },
-      { activeStreamId: null },
-    );
+    await this.threadLifecycleService.stopStreamIfAny({ workspaceId, thread });
 
     return true;
   }
@@ -495,22 +476,18 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadWorkspaceEntity> {
-    await this.sharingService.getThreadWithAccess({
+    const thread = await this.agentChatService.archiveThread({
       threadId: id,
       workspaceMemberId,
-      workspaceId,
-      operationType: 'soft-delete',
-    });
-    await this.agentChatService.cancelActiveStreamIfAny({
-      threadId: id,
       workspaceId,
     });
 
-    return this.agentChatService.archiveThread({
-      threadId: id,
-      workspaceMemberId,
+    await this.threadLifecycleService.stopArchivedThreads({
       workspaceId,
+      threadIds: [id],
     });
+
+    return thread;
   }
 
   @Mutation(() => AgentChatThreadDTO)
@@ -534,17 +511,6 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    await this.sharingService.getThreadWithAccess({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-      operationType: 'delete',
-    });
-    await this.agentChatService.cancelActiveStreamIfAny({
-      threadId: id,
-      workspaceId,
-    });
-
     await this.agentChatService.hardDeleteThread({
       threadId: id,
       workspaceMemberId,

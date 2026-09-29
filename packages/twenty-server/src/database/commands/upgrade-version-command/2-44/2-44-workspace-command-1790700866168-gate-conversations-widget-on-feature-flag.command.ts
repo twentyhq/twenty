@@ -1,8 +1,7 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataWritability } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -12,13 +11,27 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.44.0', 1790672076234)
+const CONVERSATIONS_WIDGET_EXPRESSION =
+  'featureFlags.IS_CONVERSATIONS_TAB_ENABLED';
+
+const CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+    .conversations.widgets.conversations.universalIdentifier,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.conversations
+    .widgets.conversations.universalIdentifier,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.tabs
+    .conversations.widgets.conversations.universalIdentifier,
+];
+
+// Workspaces created before the Conversations widget carried its flag as an
+// expression hold it ungated
+@RegisteredWorkspaceCommand('2.44.0', 1790700866168)
 @Command({
-  name: 'upgrade:2-44:open-agent-chat-thread-archived-at-writability',
+  name: 'upgrade:2-44:gate-conversations-widget-on-feature-flag',
   description:
-    'Let the record API archive and unarchive conversations by making agentChatThread.archivedAt writable',
+    'Hide the standard Conversations widget unless IS_CONVERSATIONS_TAB_ENABLED is on',
 })
-export class OpenAgentChatThreadArchivedAtWritabilityCommand extends ProvisionedWorkspaceCommandRunner {
+export class GateConversationsWidgetOnFeatureFlagCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -32,35 +45,44 @@ export class OpenAgentChatThreadArchivedAtWritabilityCommand extends Provisioned
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.setWritability(args, MetadataWritability.OPEN);
+    await this.setExpression(args, CONVERSATIONS_WIDGET_EXPRESSION);
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.setWritability(args, MetadataWritability.SYSTEM);
+    await this.setExpression(args, null);
   }
 
-  private async setWritability(
+  private async setExpression(
     { workspaceId, options }: RunOnWorkspaceArgs,
-    writability: MetadataWritability,
+    conditionalAvailabilityExpression: string | null,
   ): Promise<void> {
-    const { flatFieldMetadataMaps } =
+    const { flatPageLayoutWidgetMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
+        'flatPageLayoutWidgetMaps',
       ]);
-    const archivedAtField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier
-      ];
+    const now = new Date().toISOString();
+    const widgetsToUpdate = CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) =>
+        flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier],
+    )
+      .filter(isDefined)
+      .filter(
+        (widget) =>
+          widget.conditionalAvailabilityExpression !==
+          conditionalAvailabilityExpression,
+      )
+      .map((widget) => ({
+        ...widget,
+        conditionalAvailabilityExpression,
+        updatedAt: now,
+      }));
 
-    if (
-      !isDefined(archivedAtField) ||
-      archivedAtField.writability === writability
-    ) {
+    if (!isNonEmptyArray(widgetsToUpdate)) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: setting agentChatThread.archivedAt writability to ${writability}`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: updating ${widgetsToUpdate.length} Conversations widget(s)`,
     );
 
     if (options.dryRun) {
@@ -75,16 +97,10 @@ export class OpenAgentChatThreadArchivedAtWritabilityCommand extends Provisioned
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           allFlatEntityOperationByMetadataName: {
-            fieldMetadata: {
+            pageLayoutWidget: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                {
-                  ...archivedAtField,
-                  writability,
-                  updatedAt: new Date().toISOString(),
-                },
-              ],
+              flatEntityToUpdate: widgetsToUpdate,
             },
           },
         },

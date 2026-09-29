@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -54,13 +53,6 @@ export class AgentChatWorkflowQuestionService {
     workspaceId: string;
   }): Promise<void> {
     const { workflowRunId } = thread;
-
-    if (!isNonEmptyString(workflowRunId)) {
-      throw new AiException(
-        'This conversation does not belong to a workflow run',
-        AiExceptionCode.QUESTION_NOT_PENDING,
-      );
-    }
 
     // Only the answer's text is recorded for the resumed agent, so an
     // attachment would be dropped without the agent ever seeing it.
