@@ -9,26 +9,34 @@ type ClickableElement = EventTarget & SelectorElementLike & Node;
 export const installElementClickMethodPolyfill = (
   elementPrototype: object,
 ): void => {
+  const elementsWithClickInProgress = new WeakSet<ClickableElement>();
+
   Object.defineProperty(elementPrototype, 'click', {
     value: function (this: ClickableElement): void {
-      if (isElementDisabled(this)) {
+      if (isElementDisabled(this) || elementsWithClickInProgress.has(this)) {
         return;
       }
 
-      const clickEventClass = resolveEventClassForEventType({
-        eventType: 'click',
-        eventClassScope: resolveOwnerWindowOfNode(this),
-      });
+      elementsWithClickInProgress.add(this);
 
-      this.dispatchEvent(
-        applySyntheticEventCompatibility(
-          new clickEventClass('click', {
-            bubbles: true,
-            cancelable: true,
-            composed: true,
-          }),
-        ),
-      );
+      try {
+        const clickEventClass = resolveEventClassForEventType({
+          eventType: 'click',
+          eventClassScope: resolveOwnerWindowOfNode(this),
+        });
+
+        this.dispatchEvent(
+          applySyntheticEventCompatibility(
+            new clickEventClass('click', {
+              bubbles: true,
+              cancelable: true,
+              composed: true,
+            }),
+          ),
+        );
+      } finally {
+        elementsWithClickInProgress.delete(this);
+      }
     },
     configurable: true,
     writable: true,

@@ -1,10 +1,14 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { HtmlInputElement } from '@/remote/generated/remote-elements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
 import { markEventAsHostOriginated } from '@/polyfills/events/utils/markEventAsHostOriginated';
 
 import { installInputClickActivationPolyfill } from '../installInputClickActivationPolyfill';
+import { installElementClickMethodPolyfill } from '../installElementClickMethodPolyfill';
 
 patchRemoteElementAttributes();
+installElementClickMethodPolyfill(HtmlInputElement.prototype);
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
 
 const createInput = ({
@@ -44,6 +48,25 @@ const recordEventTypes = (input: HTMLInputElement): string[] => {
 };
 
 describe('installInputClickActivationPolyfill', () => {
+  it.each(['checkbox', 'radio'])(
+    'should suppress recursive %s clicks without duplicating activation events',
+    (type) => {
+      const input = createInput({ type });
+      const eventTypes = recordEventTypes(input);
+
+      input.addEventListener('click', () => {
+        if (eventTypes.length === 1) {
+          input.click();
+        }
+      });
+
+      input.click();
+
+      expect(input.checked).toBe(true);
+      expect(eventTypes).toEqual(['click:true', 'input:true', 'change:true']);
+    },
+  );
+
   it('should toggle a checkbox and fire input then change after a guest click', () => {
     const checkbox = createInput({ type: 'checkbox' });
     const eventTypes = recordEventTypes(checkbox);
@@ -297,4 +320,3 @@ describe('installInputClickActivationPolyfill', () => {
     container.remove();
   });
 });
-import { isDefined } from 'twenty-shared/utils';

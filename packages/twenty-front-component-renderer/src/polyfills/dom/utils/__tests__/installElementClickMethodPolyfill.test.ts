@@ -56,4 +56,35 @@ describe('installElementClickMethodPolyfill', () => {
 
     expect(clickListener).not.toHaveBeenCalled();
   });
+
+  it('should allow nested clicks on other elements and later clicks on the same element', () => {
+    const document = createPolyfillDocument();
+    const first = document.createElement('button');
+    const second = document.createElement('button');
+    const secondClickListener = jest.fn();
+
+    first.addEventListener('click', () => second.click());
+    second.addEventListener('click', secondClickListener);
+
+    first.click();
+    first.click();
+
+    expect(secondClickListener).toHaveBeenCalledTimes(2);
+  });
+
+  it('should allow later clicks after dispatch throws', () => {
+    const document = createPolyfillDocument();
+    const button = document.createElement('button');
+    const clickListener = jest.fn();
+
+    button.addEventListener('click', clickListener);
+    jest.spyOn(button, 'dispatchEvent').mockImplementationOnce(() => {
+      throw new Error('dispatch failed');
+    });
+
+    expect(() => button.click()).toThrow('dispatch failed');
+    button.click();
+
+    expect(clickListener).toHaveBeenCalledTimes(1);
+  });
 });
