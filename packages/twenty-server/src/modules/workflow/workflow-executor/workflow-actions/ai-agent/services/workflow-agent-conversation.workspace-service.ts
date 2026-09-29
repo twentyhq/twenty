@@ -73,7 +73,7 @@ export class WorkflowAgentConversationWorkspaceService {
     agentId: string | null;
     prompt: string;
     initiatorUserWorkspaceId: string | null;
-    executionResult: RecordedExecutionResult;
+    executionResult?: RecordedExecutionResult;
   }): Promise<RecordedConversation | null> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [

@@ -92,27 +92,19 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const resolvedPrompt = resolveInput(prompt, context) as string;
 
+    // The conversation is a record of the step, not part of its outcome, so a
+    // failure to write it must not fail a step whose agent did its work.
     const recordConversation = (
       executionResult?: AgentExecutionResult,
     ): Promise<RecordedConversation | null> =>
-      this.recordConversation({
-        workflowRunId: runInfo.workflowRunId,
-        stepId: currentStepId,
-        record: async () => {
-          if (isDefined(resumedThreadId)) {
-            return this.workflowAgentConversationService.recordContinuation({
-              workspaceId,
-              threadId: resumedThreadId,
-              agentId: agent?.id ?? null,
-              executionResult,
-            });
-          }
-
-          if (!isDefined(executionResult)) {
-            return null;
-          }
-
-          return this.workflowAgentConversationService.recordExecution({
+      (isDefined(resumedThreadId)
+        ? this.workflowAgentConversationService.recordContinuation({
+            workspaceId,
+            threadId: resumedThreadId,
+            agentId: agent?.id ?? null,
+            executionResult,
+          })
+        : this.workflowAgentConversationService.recordExecution({
             workspaceId,
             workflowRunId: runInfo.workflowRunId,
             stepId: currentStepId,
@@ -121,9 +113,18 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             prompt: resolvedPrompt,
             initiatorUserWorkspaceId: userWorkspaceId,
             executionResult,
-          });
-        },
+          })
+      ).catch((error: unknown) => {
+        this.logger.warn(
+          `Failed to record the conversation for workflowRun=${runInfo.workflowRunId} step=${currentStepId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+
+        return null;
       });
+
+    const isAskingQuestionsAllowed = canAskQuestions === true;
 
     const startedAtMs = Date.now();
 
@@ -140,18 +141,16 @@ export class AiAgentWorkflowAction implements WorkflowAction {
                 }),
             }
           : { messages: [{ role: 'user', content: resolvedPrompt }] }),
-        baseSystemPrompt:
-          canAskQuestions === true
-            ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT}`
-            : WORKFLOW_BASE_SYSTEM_PROMPT,
-        pausingTools:
-          canAskQuestions === true
-            ? {
-                [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
-                  isWorkspaceSetupThread: false,
-                }),
-              }
-            : {},
+        baseSystemPrompt: isAskingQuestionsAllowed
+          ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT}`
+          : WORKFLOW_BASE_SYSTEM_PROMPT,
+        pausingTools: isAskingQuestionsAllowed
+          ? {
+              [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
+                isWorkspaceSetupThread: false,
+              }),
+            }
+          : {},
         actorContext: executionContext.isActingOnBehalfOfUser
           ? executionContext.initiator
           : undefined,
@@ -169,18 +168,12 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const durationMs = Date.now() - startedAtMs;
 
-    // A step that runs out of credits fails even if its agent asked something,
-    // so its question must not be left open as though the run waited for it.
-    const conversationResult = executionResult.hasNoMoreAvailableCredits
-      ? { ...executionResult, isPaused: false }
-      : executionResult;
-
     // A conversation only exists to be answered in: an execution that never
     // asks keeps its step log as its record, which saves a thread per
     // execution for agents running in loops or on busy triggers.
     const recordedConversation =
-      isDefined(resumedThreadId) || conversationResult.isPaused === true
-        ? await recordConversation(conversationResult)
+      isDefined(resumedThreadId) || executionResult.isPaused === true
+        ? await recordConversation(executionResult)
         : null;
 
     await this.persistStepLog({
@@ -213,30 +206,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     return {
       result: executionResult.result,
     };
-  }
-
-  // The conversation is a record of the step, not part of its outcome, so a
-  // failure to write it must not fail a step whose agent did its work.
-  private async recordConversation({
-    workflowRunId,
-    stepId,
-    record,
-  }: {
-    workflowRunId: string;
-    stepId: string;
-    record: () => Promise<RecordedConversation | null>;
-  }): Promise<RecordedConversation | null> {
-    try {
-      return await record();
-    } catch (error) {
-      this.logger.warn(
-        `Failed to record the conversation for workflowRun=${workflowRunId} step=${stepId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-
-      return null;
-    }
   }
 
   private async persistStepLog({
