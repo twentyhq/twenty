@@ -820,6 +820,24 @@ describe('installSelectorMethodsPolyfill', () => {
       ).toEqual([duplicateValueSelect.options[0]]);
     });
 
+    it.each(['button', 'color', 'hidden', 'image', 'range', 'reset', 'submit'])(
+      'should exclude %s inputs from both required and optional selectors',
+      (inputType) => {
+        const { document } = createSelectorFixture();
+        const input = document.createElement('html-input');
+
+        input.setAttribute('type', inputType);
+        document.body.append(input);
+
+        expect(input.matches(':required, :optional')).toBe(false);
+        input.setAttribute('required', '');
+        expect(input.matches(':required, :optional')).toBe(false);
+        expect(document.querySelectorAll(':required, :optional')).toHaveLength(
+          0,
+        );
+      },
+    );
+
     it('should evaluate :required, :optional, :any-link and :link', () => {
       const { document } = createSelectorFixture();
       const requiredInput = document.createElement('input');
@@ -838,12 +856,6 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(requiredInput.matches(':required')).toBe(true);
       expect(requiredInput.matches(':optional')).toBe(false);
       expect(optionalSelect.matches(':optional')).toBe(true);
-      const requiredHiddenInput = document.createElement('input');
-      requiredHiddenInput.setAttribute('type', 'hidden');
-      requiredHiddenInput.setAttribute('required', '');
-      document.body.append(requiredHiddenInput);
-      expect(requiredHiddenInput.matches(':required')).toBe(false);
-      expect(requiredHiddenInput.matches(':optional')).toBe(true);
       expect(link.matches(':any-link')).toBe(true);
       expect(link.matches(':link')).toBe(true);
       expect(placeholderLink.matches(':any-link')).toBe(false);
