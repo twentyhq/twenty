@@ -76,7 +76,6 @@ const buildService = () => {
   const targetRepository = {
     existsBy: jest.fn().mockResolvedValue(false),
     insert: jest.fn(),
-    delete: jest.fn(),
   };
 
   // Records the caller is allowed to read. A record outside their grants is
@@ -232,47 +231,10 @@ describe('Attaching a conversation to a record', () => {
 
     expect(targetRepository.insert).not.toHaveBeenCalled();
   });
-
-  it('removes only the link it was asked to remove', async () => {
-    const { service, targetRepository } = buildService();
-
-    await service.detachThreadFromRecord(args);
-
-    expect(targetRepository.delete).toHaveBeenCalledWith({
-      threadId: THREAD_ID,
-      targetCompanyId: RECORD_ID,
-    });
-  });
 });
 
-// A record in the trash keeps its links, and its page still shows them.
+// A record in the trash keeps its links, but nothing new is filed under it.
 describe('Conversations of a record in the trash', () => {
-  it('lists them', async () => {
-    const { service } = buildService();
-
-    await expect(
-      service.resolveAuthorizedRecordOrThrow({
-        workspaceId: WORKSPACE_ID,
-        objectNameSingular: 'company',
-        recordId: TRASHED_RECORD_ID,
-      }),
-    ).resolves.toBe('targetCompanyId');
-  });
-
-  it('detaches one', async () => {
-    const { service, targetRepository } = buildService();
-
-    await service.detachThreadFromRecord({
-      ...args,
-      recordId: TRASHED_RECORD_ID,
-    });
-
-    expect(targetRepository.delete).toHaveBeenCalledWith({
-      threadId: THREAD_ID,
-      targetCompanyId: TRASHED_RECORD_ID,
-    });
-  });
-
   it('files no new one', async () => {
     const { service, targetRepository } = buildService();
 
@@ -281,32 +243,6 @@ describe('Conversations of a record in the trash', () => {
     ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
 
     expect(targetRepository.insert).not.toHaveBeenCalled();
-  });
-});
-
-describe('Resolving the record a conversation list is scoped to', () => {
-  it('returns the join column of the record object leg once the record is readable', async () => {
-    const { service } = buildService();
-
-    await expect(
-      service.resolveAuthorizedRecordOrThrow({
-        workspaceId: WORKSPACE_ID,
-        objectNameSingular: 'company',
-        recordId: RECORD_ID,
-      }),
-    ).resolves.toBe('targetCompanyId');
-  });
-
-  it('rejects an unknown object', async () => {
-    const { service } = buildService();
-
-    await expect(
-      service.resolveAuthorizedRecordOrThrow({
-        workspaceId: WORKSPACE_ID,
-        objectNameSingular: 'unknownObject',
-        recordId: RECORD_ID,
-      }),
-    ).rejects.toMatchObject({ code: 'INVALID_AGENT_INPUT' });
   });
 });
 
@@ -322,31 +258,6 @@ describe('Authorizing the record a conversation is attached to', () => {
     ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
 
     expect(targetRepository.insert).not.toHaveBeenCalled();
-  });
-
-  it('refuses to detach from a record the member cannot read', async () => {
-    const { service, targetRepository } = buildService();
-
-    await expect(
-      service.detachThreadFromRecord({
-        ...args,
-        recordId: UNREADABLE_RECORD_ID,
-      }),
-    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
-
-    expect(targetRepository.delete).not.toHaveBeenCalled();
-  });
-
-  it('refuses to resolve a record the member cannot read', async () => {
-    const { service } = buildService();
-
-    await expect(
-      service.resolveAuthorizedRecordOrThrow({
-        workspaceId: WORKSPACE_ID,
-        objectNameSingular: 'company',
-        recordId: UNREADABLE_RECORD_ID,
-      }),
-    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
   });
 
   it('reads the record through the caller permissions, not the system context', async () => {

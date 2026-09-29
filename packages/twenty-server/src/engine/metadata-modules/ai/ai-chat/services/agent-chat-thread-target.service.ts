@@ -69,42 +69,6 @@ export class AgentChatThreadTargetService {
     });
   }
 
-  async detachThreadFromRecord(args: ThreadRecordArgs): Promise<void> {
-    const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
-
-    await this.assertThreadIsEditableOrThrow(args);
-    await this.assertRecordIsReadableOrThrow({ ...args, withDeleted: true });
-
-    await this.withTargetRepository(args.workspaceId, (repository) =>
-      repository.delete({
-        threadId: args.threadId,
-        [joinColumnName]: args.recordId,
-      }),
-    );
-  }
-
-  // Resolving the record is the whole of the list path here: the attachment
-  // predicate itself lives in the ranked thread query, so paging applies to the
-  // ranked conversations rather than to an arbitrary prefix of the links.
-  async resolveAuthorizedRecordOrThrow({
-    workspaceId,
-    objectNameSingular,
-    recordId,
-  }: RecordReference & { workspaceId: string }): Promise<string> {
-    const joinColumnName = await this.resolveJoinColumnNameOrThrow({
-      workspaceId,
-      objectNameSingular,
-    });
-
-    await this.assertRecordIsReadableOrThrow({
-      objectNameSingular,
-      recordId,
-      withDeleted: true,
-    });
-
-    return joinColumnName;
-  }
-
   // Filing a conversation under a record changes the conversation, so it takes
   // the access renaming it does. A conversation the caller cannot edit reads as
   // not found, so no one can probe for conversations they do not share.
