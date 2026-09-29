@@ -7,7 +7,7 @@
 }
 
 .nested {
-  padding-left: var(--t-spacing-8);
+  padding-inline-start: var(--t-spacing-8);
 
   > :first-of-type {
     margin-top: var(--t-spacing-2);

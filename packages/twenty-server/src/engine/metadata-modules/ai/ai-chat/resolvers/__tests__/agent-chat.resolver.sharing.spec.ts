@@ -53,11 +53,16 @@ const buildResolver = () => {
       .mockRejectedValue(
         new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
       ),
-    deleteThreadWithShares: jest.fn(),
+    deleteThreadWithAccess: jest.fn(),
   };
   const broadcaster = { broadcast: jest.fn() };
   const sandbox = {
-    releaseThreadSandbox: jest.fn().mockResolvedValue(undefined),
+    releaseThreadSandboxBestEffort: jest.fn(),
+  };
+  const recordEvents = {
+    emitThreadCreated: jest.fn(),
+    emitThreadUpdated: jest.fn(),
+    emitThreadDestroyed: jest.fn(),
   };
   const chatService = new AgentChatService(
     threadRepository as never,
@@ -69,6 +74,7 @@ const buildResolver = () => {
     broadcaster as never,
     sandbox as never,
     sharing as never,
+    recordEvents as never,
   );
   const streaming = {
     streamAgentChat: jest
@@ -85,7 +91,6 @@ const buildResolver = () => {
   const redis = { getClient: jest.fn() };
   const resolver = new AgentChatResolver(
     chatService,
-    {} as never,
     sharing as never,
     streaming as never,
     events as never,
@@ -120,8 +125,8 @@ describe('Shared conversation API boundaries', () => {
       workspaceMemberId: 'owner',
       workspaceId: WORKSPACE_ID,
     });
-    context.sharing.deleteThreadWithShares.mockRejectedValue(
-      new Error('cleanup failed'),
+    context.sharing.deleteThreadWithAccess.mockRejectedValue(
+      new Error('delete failed'),
     );
     await expect(
       context.chatService.hardDeleteThread({
@@ -129,9 +134,11 @@ describe('Shared conversation API boundaries', () => {
         workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,
       }),
-    ).rejects.toThrow('cleanup failed');
+    ).rejects.toThrow('delete failed');
     expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
-    expect(context.sandbox.releaseThreadSandbox).not.toHaveBeenCalled();
+    expect(
+      context.sandbox.releaseThreadSandboxBestEffort,
+    ).not.toHaveBeenCalled();
   });
 
   it('returns readable threads and catchup to viewers without granting ownership', async () => {

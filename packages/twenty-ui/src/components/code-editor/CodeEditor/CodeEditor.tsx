@@ -1,7 +1,7 @@
 import Editor, { loader, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
-import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/constants/BaseCodeEditorThemeId';
-import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
+import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/internal/constants/BaseCodeEditorThemeId';
+import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/internal/utils/getBaseCodeEditorTheme';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 import { useTheme, useThemeColorScheme, type ThemeType } from '@ui/theme';
 import { type editor } from 'monaco-editor';

@@ -51,8 +51,7 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
-  play: undefined,
+  decorators: Default.decorators,
 };
 
 export const Catalog: CatalogStory<Story, typeof RadioExample> = {

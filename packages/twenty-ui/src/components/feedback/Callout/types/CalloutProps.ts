@@ -12,5 +12,6 @@ export type CalloutProps = {
     onClick: () => void;
   };
   isClosable?: boolean;
+  closeLabel?: string;
   onClose?: () => void;
 };

@@ -7,7 +7,6 @@ import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Float,
-  Int,
   Mutation,
   Parent,
   Query,
@@ -31,10 +30,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
-import {
-  assertValidChatThreadsForRecordPagination,
-  DEFAULT_CHAT_THREADS_FOR_RECORD_LIMIT,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-valid-chat-threads-for-record-pagination.util';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
@@ -43,7 +38,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
@@ -75,7 +69,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 export class AgentChatResolver {
   constructor(
     private readonly agentChatService: AgentChatService,
-    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly sharingService: AgentChatSharingService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
@@ -164,82 +157,6 @@ export class AgentChatResolver {
           }
         : null,
     };
-  }
-
-  @Query(() => [AgentChatThreadDTO])
-  async chatThreadsForRecord(
-    @Args('objectNameSingular', { type: () => String })
-    objectNameSingular: string,
-    @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
-    @Args('limit', {
-      type: () => Int,
-      defaultValue: DEFAULT_CHAT_THREADS_FOR_RECORD_LIMIT,
-    })
-    limit: number,
-    @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    assertValidChatThreadsForRecordPagination({ limit, offset });
-
-    const joinColumnName =
-      await this.agentChatThreadTargetService.resolveAuthorizedRecordOrThrow({
-        objectNameSingular,
-        recordId,
-        workspaceId,
-      });
-
-    return this.agentChatService.getThreadsAttachedToRecord({
-      joinColumnName,
-      recordId,
-      workspaceMemberId,
-      workspaceId,
-      limit,
-      offset,
-    });
-  }
-
-  @Mutation(() => Boolean)
-  async attachChatThreadToRecord(
-    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @Args('objectNameSingular', { type: () => String })
-    objectNameSingular: string,
-    @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    await this.agentChatThreadTargetService.attachThreadToRecord({
-      threadId,
-      objectNameSingular,
-      recordId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  async detachChatThreadFromRecord(
-    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @Args('objectNameSingular', { type: () => String })
-    objectNameSingular: string,
-    @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    await this.agentChatThreadTargetService.detachThreadFromRecord({
-      threadId,
-      objectNameSingular,
-      recordId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
   }
 
   @Mutation(() => AgentChatThreadDTO)
@@ -489,7 +406,10 @@ export class AgentChatResolver {
       workspaceId,
       operationType: 'soft-delete',
     });
-    await this.cancelActiveStreamIfAny(id, workspaceId);
+    await this.agentChatService.cancelActiveStreamIfAny({
+      threadId: id,
+      workspaceId,
+    });
 
     return this.agentChatService.archiveThread({
       threadId: id,
@@ -525,7 +445,10 @@ export class AgentChatResolver {
       workspaceId,
       operationType: 'delete',
     });
-    await this.cancelActiveStreamIfAny(id, workspaceId);
+    await this.agentChatService.cancelActiveStreamIfAny({
+      threadId: id,
+      workspaceId,
+    });
 
     await this.agentChatService.hardDeleteThread({
       threadId: id,
@@ -534,26 +457,6 @@ export class AgentChatResolver {
     });
 
     return true;
-  }
-
-  private async cancelActiveStreamIfAny(
-    threadId: string,
-    workspaceId: string,
-  ): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-
-    if (!isDefined(thread) || !isNonEmptyString(thread.activeStreamId)) {
-      return;
-    }
-
-    const redis = this.redisClientService.getClient();
-
-    await redis.publish(
-      getCancelChannel(threadId, thread.activeStreamId),
-      'cancel',
-    );
   }
 
   @Mutation(() => Boolean)

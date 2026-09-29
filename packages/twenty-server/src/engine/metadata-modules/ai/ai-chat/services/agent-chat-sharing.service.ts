@@ -231,8 +231,10 @@ export class AgentChatSharingService {
     });
   }
 
-  async deleteThreadWithShares(args: ThreadAccessArgs): Promise<boolean> {
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
+  // Sharing grants stay, as for any destroyed record, so that the destroy
+  // event still reaches the thread's audience; createThread clears them when
+  // an id is reused
+  async deleteThreadWithAccess(args: ThreadAccessArgs): Promise<boolean> {
     return this.mutateThreadWithAccess({
       ...args,
       operationType: 'delete',
@@ -242,12 +244,6 @@ export class AgentChatSharingService {
           `WITH deleted_thread AS (DELETE FROM ${table('agentChatThread')} WHERE id = $1 RETURNING id) SELECT id FROM deleted_thread`,
           [args.threadId],
         );
-        await this.recordShareStorageService.deleteByRecordIdsInTransaction({
-          workspaceId: args.workspaceId,
-          objectMetadataId: objectMetadata.id,
-          recordIds: [args.threadId],
-          manager,
-        });
         return deleted.length === 1;
       },
     });

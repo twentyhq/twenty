@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
@@ -329,7 +329,7 @@ export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
         )}
       </StyledToggleButton>
 
-      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+      <Collapsible isExpanded={isExpanded}>
         <StyledContentContainer>
           <StyledTabContainer>
             <StyledTab
@@ -362,7 +362,7 @@ export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
             <ContextTab debug={debug} copyToClipboard={copyToClipboard} />
           )}
         </StyledContentContainer>
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </StyledContainer>
   );
 };

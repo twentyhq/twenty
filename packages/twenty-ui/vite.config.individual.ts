@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
+import { Features } from 'lightningcss';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
@@ -32,6 +33,9 @@ export default defineConfig(() => {
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
+      },
+      lightningcss: {
+        exclude: Features.DirSelector,
       },
       preprocessorOptions: {
         scss: {

@@ -119,9 +119,17 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
     );
     queryMock.mockReset();
     mutationMock.mockReset();
-    mutationMock.mockImplementation(async (mutation: any) => ({
-      updateCallRecording: { id: mutation.updateCallRecording.__args.id },
-    }));
+    mutationMock.mockImplementation(async (mutation: any) =>
+      mutation.updateCallRecordings !== undefined
+        ? {
+            updateCallRecordings: [
+              { id: mutation.updateCallRecordings.__args.filter.id.eq },
+            ],
+          }
+        : {
+            updateCallRecording: { id: mutation.updateCallRecording.__args.id },
+          },
+    );
     fetchMock.mockReset();
     fetchMock.mockImplementation(async (requestUrl: string) => {
       if (requestUrl === RECALL_CREATE_BOT_URL) {
