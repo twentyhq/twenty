@@ -28,23 +28,23 @@ export const NavigationDrawerModeTransitionEffect = ({
 
   if (activeNavigationDrawerMode !== previousNavigationDrawerMode) {
     setPreviousNavigationDrawerMode(activeNavigationDrawerMode);
-    setModeTransition({
-      direction: getNavigationDrawerModeTransitionDirection({
-        previousNavigationDrawerMode,
-        nextNavigationDrawerMode: activeNavigationDrawerMode,
-        textDirection: getLocaleTextDirection(i18n.locale),
-      }),
-    });
+    setModeTransition(
+      shouldReduceMotion
+        ? null
+        : {
+            direction: getNavigationDrawerModeTransitionDirection({
+              previousNavigationDrawerMode,
+              nextNavigationDrawerMode: activeNavigationDrawerMode,
+              textDirection: getLocaleTextDirection(i18n.locale),
+            }),
+          },
+    );
   }
 
   useLayoutEffect(() => {
     const container = containerRef.current;
 
-    if (
-      !isDefined(modeTransition) ||
-      shouldReduceMotion ||
-      !isDefined(container)
-    ) {
+    if (!isDefined(modeTransition) || !isDefined(container)) {
       return;
     }
 
@@ -63,7 +63,7 @@ export const NavigationDrawerModeTransitionEffect = ({
     );
 
     return () => animation.cancel();
-  }, [containerRef, modeTransition, shouldReduceMotion]);
+  }, [containerRef, modeTransition]);
 
   return null;
 };
