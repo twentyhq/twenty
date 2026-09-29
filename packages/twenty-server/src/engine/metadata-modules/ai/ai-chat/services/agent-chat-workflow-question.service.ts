@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -18,6 +18,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 // A workflow agent's question is answered in its run's conversation, but what
@@ -26,12 +27,15 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 // continues the same conversation with it.
 @Injectable()
 export class AgentChatWorkflowQuestionService {
+  private readonly logger = new Logger(AgentChatWorkflowQuestionService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly permissionsService: PermissionsService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async answer({
@@ -155,6 +159,21 @@ export class AgentChatWorkflowQuestionService {
       }
 
       throw error;
+    }
+
+    // Only once the run has taken the answer: the Ask mirrors it and gates
+    // nothing, so a failure here must not undo an accepted answer.
+    try {
+      await this.inputAskWorkspaceService.answerForToolCall({
+        workspaceId,
+        threadId: thread.id,
+        toolCallId: resolved.toolCallId,
+        response: { answers, answerText: resolved.answerText },
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to record the answer to Ask of tool call ${resolved.toolCallId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 }
