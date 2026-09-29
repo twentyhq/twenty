@@ -47,6 +47,13 @@ describe('ApplicationManifestExportService ownership', () => {
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     });
 
+  const expectRegistrationLookedUpOnce = () => {
+    expect(applicationRegistrationRepository.findOne).toHaveBeenCalledTimes(1);
+    expect(applicationRegistrationRepository.findOne).toHaveBeenCalledWith({
+      where: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+    });
+  };
+
   beforeEach(async () => {
     jest.resetAllMocks();
 
@@ -115,6 +122,7 @@ describe('ApplicationManifestExportService ownership', () => {
         },
         manifest: { translations: { en: { greeting: 'Hello' } } },
       });
+      expectRegistrationLookedUpOnce();
     },
   );
 
@@ -129,6 +137,7 @@ describe('ApplicationManifestExportService ownership', () => {
     await expect(exportApplication()).rejects.toMatchObject({
       code: ApplicationExceptionCode.FORBIDDEN,
     });
+    expectRegistrationLookedUpOnce();
     expect(
       applicationTranslationCacheService.getCatalogsByLocale,
     ).not.toHaveBeenCalled();
@@ -140,6 +149,7 @@ describe('ApplicationManifestExportService ownership', () => {
     await expect(exportApplication()).rejects.toMatchObject({
       code: ApplicationExceptionCode.APPLICATION_NOT_FOUND,
     });
+    expectRegistrationLookedUpOnce();
     expect(
       applicationTranslationCacheService.getCatalogsByLocale,
     ).not.toHaveBeenCalled();
@@ -154,13 +164,16 @@ describe('ApplicationManifestExportService ownership', () => {
     await expect(exportApplication()).rejects.toMatchObject({
       code: ApplicationExceptionCode.FORBIDDEN,
     });
+    expectRegistrationLookedUpOnce();
   });
 
   it('rechecks ownership when the local installation remains cached after a transfer', async () => {
     await expect(exportApplication()).resolves.toMatchObject({
       application: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
     });
+    expectRegistrationLookedUpOnce();
 
+    applicationRegistrationRepository.findOne.mockClear();
     applicationRegistrationRepository.findOne.mockResolvedValue({
       ownerWorkspaceId: OTHER_WORKSPACE_ID,
     });
@@ -169,6 +182,7 @@ describe('ApplicationManifestExportService ownership', () => {
     await expect(exportApplication()).rejects.toMatchObject({
       code: ApplicationExceptionCode.FORBIDDEN,
     });
+    expectRegistrationLookedUpOnce();
     expect(
       applicationTranslationCacheService.getCatalogsByLocale,
     ).not.toHaveBeenCalled();
