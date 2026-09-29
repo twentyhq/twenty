@@ -4,11 +4,28 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { randomUUID } from 'node:crypto';
+
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 
 const MESSAGE_THREAD_ID = MESSAGE_THREAD_DATA_SEED_IDS.ID_1;
+const SHARE_SOURCE_ID = randomUUID();
+
+const getRecordShareStorageService = () =>
+  getAppProviderByClassName<RecordShareStorageService>(
+    'RecordShareStorageService',
+  );
 
 const findMessageThread = async () => {
   const [messageThread] = await findRecordNodesByFilter<{
@@ -48,9 +65,31 @@ describe('UPDATE_RECORD workflow action on message threads (integration)', () =>
       });
 
     categoryFieldMetadataId = selectFieldMetadataId;
+
+    // Channels only share threads for reading, so the workflow needs the
+    // thread shared for editing to update it.
+    await getRecordShareStorageService().insertMany({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recordShares: [
+        {
+          recordId: MESSAGE_THREAD_ID,
+          objectMetadataId: messageThreadObjectMetadata.id,
+          principalId: EVERYONE_PRINCIPAL_ID,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          accessLevel: RecordShareAccessLevel.READ_WRITE,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: SHARE_SOURCE_ID,
+        },
+      ],
+    });
   });
 
   afterAll(async () => {
+    await getRecordShareStorageService().deleteBySourceId({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      sourceId: SHARE_SOURCE_ID,
+    });
+
     if (!isDefined(categoryFieldMetadataId)) {
       return;
     }
