@@ -82,17 +82,12 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
   };
   let input: unknown;
   switch (step.type) {
-    case 'CODE':
     case 'LOGIC_FUNCTION':
       input = {
         logicFunctionId: resolve(
-          step.type === 'CODE'
-            ? references.codeFunctionIdByUniversalIdentifier
-            : references.logicFunctionIdByUniversalIdentifier,
+          references.logicFunctionIdByUniversalIdentifier,
           step.logicFunctionUniversalIdentifier,
-          step.type === 'CODE'
-            ? 'application code function'
-            : 'application workflow action',
+          'application workflow action',
         ),
         logicFunctionInput: step.input,
       };

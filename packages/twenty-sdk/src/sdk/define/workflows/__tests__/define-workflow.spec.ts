@@ -69,27 +69,34 @@ describe('defineWorkflow POC', () => {
     );
   });
 
-  it.each(['missing', 'cycle', 'unreachable', 'duplicate', 'unsupported'])(
-    'rejects %s definitions before installation',
-    (problem) => {
-      const invalid = structuredClone(workflow);
-      const step = invalid.version.steps[0];
-      if (problem === 'missing') {
-        step.nextStepIds = ['66666666-6666-4666-8666-666666666666'];
-      }
-      if (problem === 'cycle') {
-        step.nextStepIds = [step.universalIdentifier];
-      }
-      if (problem === 'unreachable') {
-        invalid.version.trigger.nextStepIds = [];
-      }
-      if (problem === 'duplicate') {
-        invalid.version.universalIdentifier = invalid.universalIdentifier;
-      }
-      if (problem === 'unsupported') {
-        Object.assign(invalid.version.trigger, { type: 'CRON' });
-      }
-      expect(defineWorkflow(invalid).success).toBe(false);
-    },
-  );
+  it.each([
+    'missing',
+    'cycle',
+    'unreachable',
+    'duplicate',
+    'unsupported',
+    'code',
+  ])('rejects %s definitions before installation', (problem) => {
+    const invalid = structuredClone(workflow);
+    const step = invalid.version.steps[0];
+    if (problem === 'missing') {
+      step.nextStepIds = ['66666666-6666-4666-8666-666666666666'];
+    }
+    if (problem === 'cycle') {
+      step.nextStepIds = [step.universalIdentifier];
+    }
+    if (problem === 'unreachable') {
+      invalid.version.trigger.nextStepIds = [];
+    }
+    if (problem === 'duplicate') {
+      invalid.version.universalIdentifier = invalid.universalIdentifier;
+    }
+    if (problem === 'unsupported') {
+      Object.assign(invalid.version.trigger, { type: 'CRON' });
+    }
+    if (problem === 'code') {
+      Object.assign(step, { type: 'CODE' });
+    }
+    expect(defineWorkflow(invalid).success).toBe(false);
+  });
 });

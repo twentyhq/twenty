@@ -1,5 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { workflowStepManifestSchema } from 'twenty-shared/application';
+import {
+  workflowStepManifestSchema,
+  type WorkflowStepManifest,
+} from 'twenty-shared/application';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
@@ -10,7 +13,6 @@ const FIELD_ID = '33333333-3333-4333-8333-333333333333';
 const LOCAL_ID = '44444444-4444-4444-8444-444444444444';
 const references = {
   logicFunctionIdByUniversalIdentifier: new Map([[REFERENCE_ID, LOCAL_ID]]),
-  codeFunctionIdByUniversalIdentifier: new Map([[REFERENCE_ID, LOCAL_ID]]),
   agentIdByUniversalIdentifier: new Map([[REFERENCE_ID, LOCAL_ID]]),
   objectByUniversalIdentifier: new Map([
     [REFERENCE_ID, { nameSingular: 'company' }],
@@ -50,7 +52,6 @@ const email = {
 };
 const filters = { stepFilterGroups: [], stepFilters: [] };
 const inputs = {
-  CODE: { value: 'Hello' },
   LOGIC_FUNCTION: { value: 'Hello' },
   CREATE_RECORD: record,
   UPDATE_RECORD: {
@@ -127,21 +128,21 @@ const inputs = {
   ITERATOR: { items: '{{trigger.items}}', initialLoopStepIds: [FIELD_ID] },
   DELAY: { delayType: 'DURATION', duration: { seconds: 1 } },
   EMPTY: {},
-} satisfies Record<WorkflowActionType, unknown>;
+} satisfies Record<WorkflowStepManifest['type'], unknown>;
 
-const stepFor = (type: WorkflowActionType) =>
+const stepFor = (type: WorkflowStepManifest['type']) =>
   workflowStepManifestSchema.parse({
     universalIdentifier: STEP_ID,
     name: type,
     type,
     input: inputs[type],
     nextStepIds: [],
-    ...(['CODE', 'LOGIC_FUNCTION'].includes(type)
+    ...(type === 'LOGIC_FUNCTION'
       ? { logicFunctionUniversalIdentifier: REFERENCE_ID }
       : {}),
   });
 
-const convert = (type: WorkflowActionType) =>
+const convert = (type: WorkflowStepManifest['type']) =>
   fromWorkflowStepManifestToActionOrThrow({
     step: stepFor(type),
     index: 0,
@@ -149,8 +150,8 @@ const convert = (type: WorkflowActionType) =>
   });
 
 describe('application workflow actions', () => {
-  it('derives a nested code output schema from an expected result', () => {
-    const step = stepFor(WorkflowActionType.CODE);
+  it('derives a nested function output schema from an expected result', () => {
+    const step = stepFor(WorkflowActionType.LOGIC_FUNCTION);
     step.expectedOutputSchema = { company: { name: 'Example' }, count: 2 };
     const result = fromWorkflowStepManifestToActionOrThrow({
       step,
@@ -186,17 +187,18 @@ describe('application workflow actions', () => {
     expect(result.settings.outputSchema).not.toBe(outputSchema);
   });
 
-  it.each(Object.values(WorkflowActionType))(
-    'converts %s to its runtime action',
-    (type) => {
-      expect(convert(type)).toMatchObject({ id: STEP_ID, type, valid: true });
-    },
-  );
+  it.each(
+    Object.values(WorkflowActionType).filter(
+      (type) => type !== WorkflowActionType.CODE,
+    ),
+  )('converts %s to its runtime action', (type) => {
+    expect(convert(type)).toMatchObject({ id: STEP_ID, type, valid: true });
+  });
 
   it('resolves functions, agents, objects and filter fields', () => {
-    expect(convert(WorkflowActionType.CODE).settings.input).toEqual({
+    expect(convert(WorkflowActionType.LOGIC_FUNCTION).settings.input).toEqual({
       logicFunctionId: LOCAL_ID,
-      logicFunctionInput: inputs.CODE,
+      logicFunctionInput: inputs.LOGIC_FUNCTION,
     });
     expect(convert(WorkflowActionType.AI_AGENT).settings.input).toEqual({
       agentId: LOCAL_ID,

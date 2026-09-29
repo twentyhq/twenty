@@ -92,9 +92,6 @@ describe('workflow manifest references', () => {
     expect(references.agentIdByUniversalIdentifier?.get('agent')).toBe(
       proposed.flatAgentMaps.byUniversalIdentifier.agent?.id,
     );
-    expect(references.codeFunctionIdByUniversalIdentifier?.get('code')).toBe(
-      proposed.flatLogicFunctionMaps.byUniversalIdentifier.code?.id,
-    );
     expect(references.logicFunctionIdByUniversalIdentifier.has('code')).toBe(
       false,
     );

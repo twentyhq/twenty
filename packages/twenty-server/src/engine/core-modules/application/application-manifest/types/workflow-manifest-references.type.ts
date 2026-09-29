@@ -34,7 +34,6 @@ export type WorkflowManifestReferences = {
     BaseOutputSchemaV2
   >;
   logicFunctionIdByUniversalIdentifier: ReadonlyMap<string, string>;
-  codeFunctionIdByUniversalIdentifier?: ReadonlyMap<string, string>;
   agentIdByUniversalIdentifier?: ReadonlyMap<string, string>;
   objectByUniversalIdentifier?: ReadonlyMap<
     string,
