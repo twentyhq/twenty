@@ -3,11 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { hasQuestionAnswerContent } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-question-answer-content.util';
 import { type WorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -36,12 +38,14 @@ export class AgentChatWorkflowQuestionService {
     thread,
     messageId,
     answers,
+    fileAttachments,
     userWorkspaceId,
     workspaceId,
   }: {
     thread: AgentChatThreadWorkspaceEntity & WorkflowRunThreadFields;
     messageId: string;
     answers: AskQuestionAnswer[];
+    fileAttachments?: AiChatFileAttachment[];
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
@@ -51,6 +55,22 @@ export class AgentChatWorkflowQuestionService {
       throw new AiException(
         'This conversation does not belong to a workflow run',
         AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
+
+    // Only the answer's text is recorded for the resumed agent, so an
+    // attachment would be dropped without the agent ever seeing it.
+    if (isNonEmptyArray(fileAttachments)) {
+      throw new AiException(
+        'A workflow agent question cannot be answered with attachments',
+        AiExceptionCode.INVALID_QUESTION_ANSWER,
+      );
+    }
+
+    if (!hasQuestionAnswerContent(answers)) {
+      throw new AiException(
+        'Provide an answer',
+        AiExceptionCode.INVALID_QUESTION_ANSWER,
       );
     }
 

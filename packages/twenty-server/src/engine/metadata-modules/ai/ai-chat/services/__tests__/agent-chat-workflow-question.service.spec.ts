@@ -1,6 +1,7 @@
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
 
 import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { type AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentChatWorkflowQuestionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-workflow-question.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -46,7 +47,12 @@ describe('AgentChatWorkflowQuestionService', () => {
     { questionIndex: 0, selectedOptionIndices: [0] },
   ];
 
-  const answer = (overrides: { answers?: AskQuestionAnswer[] } = {}) =>
+  const answer = (
+    overrides: {
+      answers?: AskQuestionAnswer[];
+      fileAttachments?: AiChatFileAttachment[];
+    } = {},
+  ) =>
     service.answer({
       thread: {
         id: THREAD_ID,
@@ -105,6 +111,26 @@ describe('AgentChatWorkflowQuestionService', () => {
     });
     expect(messageRepository.delete).not.toHaveBeenCalled();
     expect(agentChatService.restorePendingQuestion).not.toHaveBeenCalled();
+  });
+
+  it('refuses an answer that says nothing', async () => {
+    await expect(
+      answer({
+        answers: [
+          { questionIndex: 0, selectedOptionIndices: [], freeText: ' ' },
+        ],
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_QUESTION_ANSWER });
+    expect(agentChatService.resolvePendingQuestion).not.toHaveBeenCalled();
+  });
+
+  it('refuses attachments rather than dropping them', async () => {
+    await expect(
+      answer({
+        fileAttachments: [{ id: 'file-id', filename: 'quote.pdf' }],
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_QUESTION_ANSWER });
+    expect(agentChatService.resolvePendingQuestion).not.toHaveBeenCalled();
   });
 
   it('refuses someone without the Workflows permission before claiming anything', async () => {
