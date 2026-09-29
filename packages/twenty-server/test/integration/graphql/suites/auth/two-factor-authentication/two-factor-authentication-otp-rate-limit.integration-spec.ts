@@ -7,8 +7,6 @@ import { TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX } from 'src/engine/core-mo
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-// Phil has no two-factor method and no other suite verifies codes for him, so
-// spending his whole bucket cannot interfere with the TOTP window tests.
 const RATE_LIMIT_CACHE_KEY = `${CacheStorageNamespace.IntegrationTests}:${CacheStorageNamespace.EngineWorkspace}:two-factor-authentication-otp:${USER_DATA_SEED_IDS.PHIL}:${SEED_APPLE_WORKSPACE_ID}`;
 
 const clearRateLimitBucket = async (): Promise<void> => {

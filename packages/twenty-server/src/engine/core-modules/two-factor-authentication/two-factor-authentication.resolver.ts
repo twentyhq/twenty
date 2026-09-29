@@ -38,9 +38,6 @@ import { InitiateTwoFactorAuthenticationProvisioningDTO } from './dto/initiate-t
 import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
 import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-authentication-method.dto';
 
-// The authenticated mutations below change or remove the caller's own second
-// factor, so they refuse impersonated sessions: an impersonator must not be
-// able to swap or drop a member's authenticator under that member's identity.
 @MetadataResolver()
 @UseFilters(
   AuthGraphqlApiExceptionFilter,

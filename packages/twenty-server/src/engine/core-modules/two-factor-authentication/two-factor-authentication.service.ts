@@ -172,8 +172,6 @@ export class TwoFactorAuthenticationService {
     workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
-    // Counted per (user, workspace) and consumed before any lookup so that
-    // every guess, including ones against a missing method, spends a token.
     await this.throttlerService.atomicTokenBucketThrottleOrThrow({
       key: `two-factor-authentication-otp:${userId}:${workspaceId}`,
       maxTokens: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
@@ -291,8 +289,6 @@ export class TwoFactorAuthenticationService {
         id: twoFactorAuthenticationMethodId,
       });
 
-    // A concurrent request may have removed the row after our lookup; only the
-    // request that actually deleted it records the deletion.
     if ((deleteResult.affected ?? 0) > 0) {
       this.emitTwoFactorAuthenticationEvent({
         workspaceId,

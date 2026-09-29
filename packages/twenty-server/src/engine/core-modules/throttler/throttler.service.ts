@@ -52,9 +52,6 @@ export class ThrottlerService {
     return availableTokens - tokensToConsume;
   }
 
-  // Same bucket semantics as tokenBucketThrottleOrThrow, but the read and the
-  // write happen in one Redis script, so concurrent callers cannot all spend
-  // the same token. Use it wherever the limit guards against guessing.
   async atomicTokenBucketThrottleOrThrow({
     key,
     maxTokens,

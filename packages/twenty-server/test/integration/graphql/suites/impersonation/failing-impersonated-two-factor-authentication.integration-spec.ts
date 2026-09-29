@@ -13,11 +13,6 @@ import {
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-// Jane (Apple admin, IMPERSONATE permission) impersonates Scott (regular
-// member). The impersonated session must not be able to enrol, verify or
-// remove Scott's second factor: those mutations act on the caller's own
-// account and would otherwise let an impersonator replace or drop a member's
-// authenticator under that member's identity.
 const expectImpersonationDenied = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
   expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
@@ -72,8 +67,6 @@ describe('Impersonation - two-factor authentication mutations denial (integratio
 
   afterAll(deleteScottTwoFactorAuthenticationMethods);
 
-  // The public login-time mutations take the impersonation login token
-  // directly, so the session guard above never sees them.
   it('rejects login-time OTP provisioning with an impersonation login token', async () => {
     const { errors } = await initiateOtpProvisioning({
       loginToken: impersonationLoginToken,
