@@ -343,9 +343,9 @@
     ]
   },
   {
-    "name": "AnimatedExpandableContainer",
+    "name": "Collapsible",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/animated-expandable-container",
+    "slug": "layout/collapsible",
     "props": [
       {
         "name": "animationDurations",
@@ -383,25 +383,11 @@
         "description": "Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence."
       },
       {
-        "name": "initial",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Compatibility prop accepted by the type but not used by the current implementation."
-      },
-      {
         "name": "isExpanded",
         "type": "boolean",
         "required": true,
         "defaultValue": null,
         "description": "Controlled visibility of the panel. The application owns the trigger and state."
-      },
-      {
-        "name": "mode",
-        "type": "\"fit-content\" | \"scroll-height\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Compatibility prop accepted by the type but not used by the current implementation."
       }
     ]
   },

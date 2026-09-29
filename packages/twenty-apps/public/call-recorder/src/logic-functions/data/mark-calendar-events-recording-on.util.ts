@@ -9,30 +9,46 @@ export const markCalendarEventsRecordingOn = async (
   client: CoreApiClient,
   calendarEventIds: string[],
 ): Promise<number> => {
-  let markedCalendarEventCount = 0;
-
-  for (const calendarEventIdBatch of getBatches(
+  const calendarEventIdBatches = getBatches(
     getUniqueSortedIds(calendarEventIds),
     CALENDAR_EVENT_UPDATE_BATCH_SIZE,
-  )) {
-    const updateCalendarEventsResult = await client.mutation({
-      updateCalendarEvents: {
-        __args: {
-          filter: {
-            id: { in: calendarEventIdBatch },
-            callRecorderPreference: { is: 'NULL' },
-          },
-          data: {
-            callRecorderPreference: CallRecorderPreference.ON,
-          },
-        },
-        id: true,
-      },
-    });
+  );
+  let markedCalendarEventCount = 0;
+  const batchErrors: unknown[] = [];
 
-    markedCalendarEventCount += (
-      updateCalendarEventsResult.updateCalendarEvents ?? []
-    ).length;
+  for (const calendarEventIdBatch of calendarEventIdBatches) {
+    try {
+      const updateCalendarEventsResult = await client.mutation({
+        updateCalendarEvents: {
+          __args: {
+            filter: {
+              id: { in: calendarEventIdBatch },
+              callRecorderPreference: { is: 'NULL' },
+            },
+            data: {
+              callRecorderPreference: CallRecorderPreference.ON,
+            },
+          },
+          id: true,
+        },
+      });
+
+      markedCalendarEventCount += (
+        updateCalendarEventsResult.updateCalendarEvents ?? []
+      ).length;
+    } catch (error) {
+      batchErrors.push(error);
+    }
+  }
+
+  if (batchErrors.length > 0) {
+    throw new Error(
+      `${batchErrors.length} of ${calendarEventIdBatches.length} calendar event preference batches failed: ${batchErrors
+        .map((batchError) =>
+          batchError instanceof Error ? batchError.message : String(batchError),
+        )
+        .join('; ')}`,
+    );
   }
 
   return markedCalendarEventCount;
