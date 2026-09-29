@@ -1914,6 +1914,12 @@ export interface ClientConfig {
     __typename: 'ClientConfig'
 }
 
+export interface TwoFactorAuthenticationRecoveryCode {
+    recoveryCode: Scalars['String']
+    expiresAt: Scalars['DateTime']
+    __typename: 'TwoFactorAuthenticationRecoveryCode'
+}
+
 export interface ClaimableApplicationRegistration {
     id: Scalars['String']
     universalIdentifier: Scalars['String']
@@ -2377,6 +2383,12 @@ export interface InitiateTwoFactorAuthenticationProvisioning {
 export interface VerifyTwoFactorAuthenticationMethod {
     success: Scalars['Boolean']
     __typename: 'VerifyTwoFactorAuthenticationMethod'
+}
+
+export interface TwoFactorAuthenticationRecoveryStatus {
+    hasVerifiedTwoFactorAuthenticationMethod: Scalars['Boolean']
+    pendingRecoveryCodeExpiresAt?: Scalars['DateTime']
+    __typename: 'TwoFactorAuthenticationRecoveryStatus'
 }
 
 export interface AuthorizeApp {
@@ -3441,6 +3453,7 @@ export interface Query {
     checkWorkspaceSubdomainAvailability: SubdomainAvailabilityDTO
     getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
     validatePasswordResetToken: ValidatePasswordResetToken
+    twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus
     currentUser: User
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     eventLogs: EventLogQueryResult
@@ -3688,6 +3701,7 @@ export interface Mutation {
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
     verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens
     getAuthTokensFromOTP: AuthTokens
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode: AuthTokens
     signUp: AvailableWorkspacesAndAccessTokens
     signUpInWorkspace: SignUp
     signUpInNewWorkspace: SignUp
@@ -3709,6 +3723,8 @@ export interface Mutation {
     initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning
     deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod
     verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethod
+    generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode
+    revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     deleteUser: User
     deleteUserFromWorkspace: UserWorkspace
     updateWorkspaceMemberSettings: Scalars['Boolean']
@@ -5729,6 +5745,13 @@ export interface ClientConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
+    recoveryCode?: boolean | number
+    expiresAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ClaimableApplicationRegistrationGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -6218,6 +6241,13 @@ export interface InitiateTwoFactorAuthenticationProvisioningGenqlSelection{
 
 export interface VerifyTwoFactorAuthenticationMethodGenqlSelection{
     success?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationRecoveryStatusGenqlSelection{
+    hasVerifiedTwoFactorAuthenticationMethod?: boolean | number
+    pendingRecoveryCodeExpiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7348,6 +7378,7 @@ export interface QueryGenqlSelection{
     checkWorkspaceSubdomainAvailability?: (SubdomainAvailabilityDTOGenqlSelection & { __args: {subdomain: Scalars['String']} })
     getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
+    twoFactorAuthenticationRecoveryStatus?: (TwoFactorAuthenticationRecoveryStatusGenqlSelection & { __args: {userId: Scalars['UUID']} })
     currentUser?: UserGenqlSelection
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
@@ -7636,6 +7667,7 @@ export interface MutationGenqlSelection{
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {emailVerificationToken: Scalars['String'], email: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     verifyEmailAndGetWorkspaceAgnosticToken?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {emailVerificationToken: Scalars['String'], email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {otp: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode?: (AuthTokensGenqlSelection & { __args: {recoveryCode: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
@@ -7657,6 +7689,8 @@ export interface MutationGenqlSelection{
     initiateOTPProvisioningForAuthenticatedUser?: InitiateTwoFactorAuthenticationProvisioningGenqlSelection
     deleteTwoFactorAuthenticationMethod?: (DeleteTwoFactorAuthenticationMethodGenqlSelection & { __args: {twoFactorAuthenticationMethodId: Scalars['UUID']} })
     verifyTwoFactorAuthenticationMethodForAuthenticatedUser?: (VerifyTwoFactorAuthenticationMethodGenqlSelection & { __args: {otp: Scalars['String']} })
+    generateTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeGenqlSelection & { __args: {userId: Scalars['UUID'], otp?: (Scalars['String'] | null)} })
+    revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     deleteUser?: UserGenqlSelection
     deleteUserFromWorkspace?: (UserWorkspaceGenqlSelection & { __args: {workspaceMemberIdToDelete: Scalars['String']} })
     updateWorkspaceMemberSettings?: { __args: {input: UpdateWorkspaceMemberSettingsInput} }
@@ -9402,6 +9436,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const TwoFactorAuthenticationRecoveryCode_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCode']
+    export const isTwoFactorAuthenticationRecoveryCode = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCode"')
+      return TwoFactorAuthenticationRecoveryCode_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ClaimableApplicationRegistration_possibleTypes: string[] = ['ClaimableApplicationRegistration']
     export const isClaimableApplicationRegistration = (obj?: { __typename?: any } | null): obj is ClaimableApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
@@ -9782,6 +9824,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isVerifyTwoFactorAuthenticationMethod = (obj?: { __typename?: any } | null): obj is VerifyTwoFactorAuthenticationMethod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyTwoFactorAuthenticationMethod"')
       return VerifyTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationRecoveryStatus_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryStatus']
+    export const isTwoFactorAuthenticationRecoveryStatus = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryStatus => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryStatus"')
+      return TwoFactorAuthenticationRecoveryStatus_possibleTypes.includes(obj.__typename)
     }
     
 

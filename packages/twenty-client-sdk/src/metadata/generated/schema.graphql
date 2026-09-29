@@ -2309,6 +2309,11 @@ type ClientConfig {
   maintenance: ClientConfigMaintenanceMode
 }
 
+type TwoFactorAuthenticationRecoveryCode {
+  recoveryCode: String!
+  expiresAt: DateTime!
+}
+
 type ClaimableApplicationRegistration {
   id: String!
   universalIdentifier: String!
@@ -2783,6 +2788,11 @@ type InitiateTwoFactorAuthenticationProvisioning {
 
 type VerifyTwoFactorAuthenticationMethod {
   success: Boolean!
+}
+
+type TwoFactorAuthenticationRecoveryStatus {
+  hasVerifiedTwoFactorAuthenticationMethod: Boolean!
+  pendingRecoveryCodeExpiresAt: DateTime
 }
 
 type AuthorizeApp {
@@ -3915,6 +3925,7 @@ type Query {
   checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
+  twoFactorAuthenticationRecoveryStatus(userId: UUID!): TwoFactorAuthenticationRecoveryStatus!
   currentUser: User!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
@@ -4289,6 +4300,7 @@ type Mutation {
   verifyEmailAndGetLoginToken(emailVerificationToken: String!, email: String!, captchaToken: String, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(emailVerificationToken: String!, email: String!, captchaToken: String): AvailableWorkspacesAndAccessTokens!
   getAuthTokensFromOTP(otp: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
+  getAuthTokensFromTwoFactorAuthenticationRecoveryCode(recoveryCode: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
@@ -4309,6 +4321,8 @@ type Mutation {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
+  generateTwoFactorAuthenticationRecoveryCode(userId: UUID!, otp: String): TwoFactorAuthenticationRecoveryCode!
+  revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
