@@ -1,6 +1,8 @@
 import { deleteTwoFactorAuthenticationMethod } from 'test/integration/graphql/suites/user-session/utils/delete-two-factor-authentication-method.util';
+import { generateTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/generate-two-factor-authentication-recovery-code.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getAuthTokensFromOtp } from 'test/integration/graphql/utils/get-auth-tokens-from-otp.util';
+import { getAuthTokensFromTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/get-auth-tokens-from-two-factor-authentication-recovery-code.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 import { initiateOtpProvisioning } from 'test/integration/graphql/utils/initiate-otp-provisioning.util';
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
@@ -89,6 +91,29 @@ describe('Impersonation - two-factor authentication mutations denial (integratio
     });
 
     expectImpersonationLoginTokenRejected(errors);
+  });
+
+  it('rejects exchanging a recovery code for tokens with an impersonation login token', async () => {
+    const { errors } =
+      await getAuthTokensFromTwoFactorAuthenticationRecoveryCode({
+        loginToken: impersonationLoginToken,
+        origin: impersonationOrigin,
+        recoveryCode: 'ABCDE-FGHJK-MNPQR-STVWX',
+        expectToFail: true,
+      });
+
+    expectImpersonationLoginTokenRejected(errors);
+  });
+
+  it('rejects generating a recovery code while impersonating', async () => {
+    const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
+      userId: USER_DATA_SEED_IDS.JONY,
+      otp: '123456',
+      accessToken: impersonationAccessToken,
+      expectToFail: true,
+    });
+
+    expectImpersonationDenied(errors);
   });
 
   it('rejects initiating OTP provisioning while impersonating', async () => {

@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { ServerAdminAccessChangedEmail, renderEmail } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,11 +15,8 @@ import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/
 import { SERVER_ADMIN_ACCESS_CHANGED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/server-admin/server-admin-access-changed';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
-import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
@@ -30,8 +26,6 @@ export class AdminPanelServerAdminService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly emailService: EmailService,
@@ -76,11 +70,15 @@ export class AdminPanelServerAdminService {
       throw new UserInputError('User not found.');
     }
 
-    await this.assertFreshStepUpAuthentication({
-      actorUserId: actor.id,
-      actorWorkspaceId,
-      otp,
-    });
+    await this.twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow(
+      {
+        userId: actor.id,
+        workspaceId: actorWorkspaceId,
+        otp,
+        otpRequiredMessage: msg`Enter your two-factor authentication code to manage server administrators.`,
+        twoFactorAuthenticationRequiredMessage: msg`Enable two-factor authentication in your current workspace to manage server administrators.`,
+      },
+    );
 
     const nextCanAccessFullAdminPanel =
       canAccessFullAdminPanel ?? targetUser.canAccessFullAdminPanel;
@@ -141,66 +139,6 @@ export class AdminPanelServerAdminService {
     await this.notifyAdministrators({ actor, targetUser });
 
     return this.toServerAdminDTO(targetUser);
-  }
-
-  private async assertFreshStepUpAuthentication({
-    actorUserId,
-    actorWorkspaceId,
-    otp,
-  }: {
-    actorUserId: string;
-    actorWorkspaceId: string;
-    otp?: string;
-  }): Promise<void> {
-    const isDevelopment =
-      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
-
-    if (isDevelopment) {
-      return;
-    }
-
-    if (!isNonEmptyString(otp)) {
-      throw new UserInputError(
-        'A two-factor authentication code is required to change server administrator access.',
-        {
-          userFriendlyMessage: msg`Enter your two-factor authentication code to manage server administrators.`,
-        },
-      );
-    }
-
-    // Verify against the actor's current workspace only — checking the same code
-    // against every workspace they belong to would allow one OTP guess per
-    // workspace, weakening brute-force resistance.
-    const actorUserWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId: actorUserId, workspaceId: actorWorkspaceId },
-      relations: ['twoFactorAuthenticationMethods'],
-    });
-
-    const hasVerifiedTwoFactor =
-      isDefined(actorUserWorkspace) &&
-      twoFactorAuthenticationMethodsValidator.areDefined(
-        actorUserWorkspace.twoFactorAuthenticationMethods,
-      ) &&
-      twoFactorAuthenticationMethodsValidator.areVerified(
-        actorUserWorkspace.twoFactorAuthenticationMethods,
-      );
-
-    if (!hasVerifiedTwoFactor) {
-      throw new UserInputError(
-        'Enable two-factor authentication in your current workspace to manage server administrators.',
-        {
-          userFriendlyMessage: msg`Enable two-factor authentication in your current workspace to manage server administrators.`,
-        },
-      );
-    }
-
-    // A wrong code throws INVALID_OTP, which the resolver's
-    // TwoFactorAuthenticationExceptionFilter maps to a user-friendly message.
-    await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
-      actorUserId,
-      otp,
-      actorWorkspaceId,
-    );
   }
 
   private async notifyAdministrators({

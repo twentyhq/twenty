@@ -12,6 +12,8 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
+import { TwoFactorAuthenticationRecoveryService } from './services/two-factor-authentication-recovery.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { type DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
 import { type InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
@@ -75,6 +77,14 @@ describe('TwoFactorAuthenticationResolver', () => {
         {
           provide: TwoFactorAuthenticationService,
           useFactory: createMockTwoFactorAuthenticationService,
+        },
+        {
+          provide: TwoFactorAuthenticationRecoveryService,
+          useValue: {},
+        },
+        {
+          provide: PermissionsService,
+          useValue: {},
         },
         {
           provide: LoginTokenService,

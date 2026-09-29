@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -23,6 +24,7 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -30,6 +32,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 
 import { TwoFactorAuthenticationExceptionFilter } from './two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
+import { TwoFactorAuthenticationRecoveryService } from './services/two-factor-authentication-recovery.service';
 
 import { DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
 import { DeleteTwoFactorAuthenticationMethodDTO } from './dto/delete-two-factor-authentication-method.dto';
@@ -37,6 +40,10 @@ import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate
 import { InitiateTwoFactorAuthenticationProvisioningDTO } from './dto/initiate-two-factor-authentication-provisioning.dto';
 import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
 import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-authentication-method.dto';
+import { GenerateTwoFactorAuthenticationRecoveryCodeInput } from './dto/generate-two-factor-authentication-recovery-code.input';
+import { TwoFactorAuthenticationRecoveryCodeDTO } from './dto/two-factor-authentication-recovery-code.dto';
+import { TwoFactorAuthenticationRecoveryStatusDTO } from './dto/two-factor-authentication-recovery-status.dto';
+import { TwoFactorAuthenticationRecoveryTargetInput } from './dto/two-factor-authentication-recovery-target.input';
 
 @MetadataResolver()
 @UseFilters(
@@ -48,6 +55,7 @@ import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-
 export class TwoFactorAuthenticationResolver {
   constructor(
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
@@ -180,6 +188,70 @@ export class TwoFactorAuthenticationResolver {
       user.id,
       verifyTwoFactorAuthenticationMethodInput.otp,
       workspace.id,
+    );
+  }
+
+  @Query(() => TwoFactorAuthenticationRecoveryStatusDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
+    NoImpersonationGuard,
+    SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  )
+  async twoFactorAuthenticationRecoveryStatus(
+    @Args() { userId }: TwoFactorAuthenticationRecoveryTargetInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<TwoFactorAuthenticationRecoveryStatusDTO> {
+    return await this.twoFactorAuthenticationRecoveryService.getRecoveryStatus({
+      targetUserId: userId,
+      targetWorkspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => TwoFactorAuthenticationRecoveryCodeDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
+    NoImpersonationGuard,
+    SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  )
+  async generateTwoFactorAuthenticationRecoveryCode(
+    @Args() { userId, otp }: GenerateTwoFactorAuthenticationRecoveryCodeInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+  ): Promise<TwoFactorAuthenticationRecoveryCodeDTO> {
+    return await this.twoFactorAuthenticationRecoveryService.generateRecoveryCode(
+      {
+        actor: user,
+        actorWorkspaceId: workspace.id,
+        otp,
+        targetUserId: userId,
+        targetWorkspaceId: workspace.id,
+      },
+    );
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
+    NoImpersonationGuard,
+    SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  )
+  async revokeTwoFactorAuthenticationRecoveryCode(
+    @Args() { userId }: TwoFactorAuthenticationRecoveryTargetInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+  ): Promise<boolean> {
+    return await this.twoFactorAuthenticationRecoveryService.revokeRecoveryCode(
+      {
+        actorUserId: user.id,
+        targetUserId: userId,
+        targetWorkspaceId: workspace.id,
+      },
     );
   }
 }

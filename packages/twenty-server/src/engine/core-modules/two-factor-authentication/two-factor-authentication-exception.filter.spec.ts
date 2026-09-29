@@ -105,5 +105,23 @@ describe('TwoFactorAuthenticationExceptionFilter', () => {
         expect(error).toBeInstanceOf(ForbiddenError);
       }
     });
+
+    it.each([
+      TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+      TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+    ])('should throw UserInputError for %s exception', (code) => {
+      const exception = new TwoFactorAuthenticationException('Error', code);
+
+      expect(() => filter.catch(exception)).toThrow(UserInputError);
+    });
+
+    it('should throw ForbiddenError for RECOVERY_CODE_TARGET_NOT_ALLOWED exception', () => {
+      const exception = new TwoFactorAuthenticationException(
+        'Not allowed',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
+      );
+
+      expect(() => filter.catch(exception)).toThrow(ForbiddenError);
+    });
   });
 });
