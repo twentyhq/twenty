@@ -8,9 +8,14 @@ import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/sel
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { type ComponentProps } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+
+type OnboardingInviteTeamSkipDialogAvatar = ComponentProps<
+  typeof OnboardingSkipDialogAvatars
+>['avatars'][number];
 
 type OnboardingInviteTeamSkipDialogProps = {
   isValid: boolean;
@@ -36,28 +41,30 @@ export const OnboardingInviteTeamSkipDialog = ({
 
   const hasInviteEmails = isNonEmptyArray(onboardingInviteTeamValidEmails);
 
+  const currentWorkspaceMemberAvatars: OnboardingInviteTeamSkipDialogAvatar[] =
+    isDefined(currentWorkspaceMember)
+      ? [
+          {
+            id: currentWorkspaceMember.id,
+            name: `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`,
+            src: getAbsoluteImageUrl(currentWorkspaceMember.avatarUrl),
+            shape: 'circle',
+          },
+        ]
+      : [];
+  const teammateAvatars: OnboardingInviteTeamSkipDialogAvatar[] =
+    onboardingInviteTeamValidEmails.map((email) => ({
+      id: email,
+      name: email,
+      shape: 'circle',
+    }));
+
   return (
     <OnboardingSkipDialog
       dialogId={ONBOARDING_SKIP_DIALOG_IDS.inviteTeam}
       visual={
         <OnboardingSkipDialogAvatars
-          avatars={[
-            ...(isDefined(currentWorkspaceMember)
-              ? [
-                  {
-                    id: currentWorkspaceMember.id,
-                    name: `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`,
-                    src: getAbsoluteImageUrl(currentWorkspaceMember.avatarUrl),
-                    shape: 'circle' as const,
-                  },
-                ]
-              : []),
-            ...onboardingInviteTeamValidEmails.map((email) => ({
-              id: email,
-              name: email,
-              shape: 'circle' as const,
-            })),
-          ]}
+          avatars={[...currentWorkspaceMemberAvatars, ...teammateAvatars]}
           emptySeatsCount={
             hasInviteEmails ? 0 : ONBOARDING_INVITE_TEAM_EMPTY_SEATS_COUNT
           }
