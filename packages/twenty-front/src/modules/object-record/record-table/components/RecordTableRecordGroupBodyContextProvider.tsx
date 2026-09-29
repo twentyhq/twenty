@@ -1,3 +1,4 @@
+import { type RecordIndexCommandMenuDropdownTargetCell } from '@/command-menu-item/types/RecordIndexCommandMenuDropdownTargetCell';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
@@ -51,9 +52,9 @@ export const RecordTableRecordGroupBodyContextProvider = ({
 
   const handleCommandMenuDropdown = (
     event: React.MouseEvent,
-    recordId: string,
+    targetCell: RecordIndexCommandMenuDropdownTargetCell,
   ) => {
-    triggerCommandMenuDropdown(event, recordId);
+    triggerCommandMenuDropdown(event, targetCell);
   };
 
   return (

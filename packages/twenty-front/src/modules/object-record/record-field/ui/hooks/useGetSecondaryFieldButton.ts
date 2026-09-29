@@ -8,6 +8,7 @@ import {
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
+import { hasFieldCopyAction } from '@/object-record/record-field/ui/utils/hasFieldCopyAction';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -28,12 +29,7 @@ export const useGetSecondaryFieldButton = () => {
     FieldPhonesValue | FieldEmailsValue | FieldLinksValue | undefined
   >(recordId, fieldDefinition.metadata.fieldName, fieldDefinition);
 
-  if (
-    (!isFieldPhones(fieldDefinition) &&
-      !isFieldLinks(fieldDefinition) &&
-      !isEmailField) ||
-    !isDefined(fieldValue)
-  ) {
+  if (!hasFieldCopyAction(fieldDefinition) || !isDefined(fieldValue)) {
     return [];
   }
 
