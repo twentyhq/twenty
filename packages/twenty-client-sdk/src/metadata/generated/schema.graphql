@@ -1561,61 +1561,6 @@ enum PageLayoutType {
   RECORD_FORM
 }
 
-type ApplicationConnectionProviderOAuthConfig {
-  scopes: [String!]!
-  isClientCredentialsConfigured: Boolean!
-}
-
-type ApplicationConnectionProvider {
-  id: UUID!
-  applicationId: String!
-  type: String!
-  name: String!
-  displayName: String!
-  oauth: ApplicationConnectionProviderOAuthConfig
-  logoUrl: String
-}
-
-type LogicFunctionExecutionResult {
-  """Execution result in JSON format"""
-  data: JSON
-
-  """Execution Logs"""
-  logs: String!
-
-  """Execution duration in milliseconds"""
-  duration: Float!
-
-  """Execution status"""
-  status: LogicFunctionExecutionStatus!
-
-  """Execution error in JSON format"""
-  error: JSON
-}
-
-"""Status of the logic function execution"""
-enum LogicFunctionExecutionStatus {
-  IDLE
-  SUCCESS
-  ERROR
-}
-
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
-}
-
 type UsageQuotaDefinition {
   resourceType: UsageResourceType!
   limitKind: String!
@@ -1701,6 +1646,61 @@ type UsageLimit {
   burstValue: BigInt
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type ApplicationConnectionProviderOAuthConfig {
+  scopes: [String!]!
+  isClientCredentialsConfigured: Boolean!
+}
+
+type ApplicationConnectionProvider {
+  id: UUID!
+  applicationId: String!
+  type: String!
+  name: String!
+  displayName: String!
+  oauth: ApplicationConnectionProviderOAuthConfig
+  logoUrl: String
+}
+
+type LogicFunctionExecutionResult {
+  """Execution result in JSON format"""
+  data: JSON
+
+  """Execution Logs"""
+  logs: String!
+
+  """Execution duration in milliseconds"""
+  duration: Float!
+
+  """Execution status"""
+  status: LogicFunctionExecutionStatus!
+
+  """Execution error in JSON format"""
+  error: JSON
+}
+
+"""Status of the logic function execution"""
+enum LogicFunctionExecutionStatus {
+  IDLE
+  SUCCESS
+  ERROR
+}
+
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
 }
 
 type FileWithSignedUrl {
