@@ -39,12 +39,6 @@ const LIVE_CREDITS_CASES: {
     credits: 0.5,
     currentStepCredits: 0,
   },
-  {
-    step: 'inviteTeam',
-    onboardingStatus: OnboardingStatus.INVITE_TEAM,
-    credits: 1,
-    currentStepCredits: 1,
-  },
 ];
 
 describe('getOnboardingCreditsProgress', () => {

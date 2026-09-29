@@ -130,7 +130,6 @@ export const useInviteTeam = () => {
         return;
       }
       const emailValues = emails.map((email) => email?.email);
-      const validEmailsCount = getValidInviteEmails(emailValues).length;
 
       const changedEmailIndex = Number(
         name?.match(/^emails\.(\d+)\.email$/)?.[1],
@@ -142,7 +141,6 @@ export const useInviteTeam = () => {
         store.set(onboardingInviteTeamHasTypedEmailState.atom, true);
       }
 
-      setInviteTeamFreeCredits(validEmailsCount);
       store.set(
         onboardingInviteTeamEmailsDraftState.atom,
         emailValues.map((email) => email ?? ''),
@@ -159,7 +157,7 @@ export const useInviteTeam = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, append, remove, setInviteTeamFreeCredits, store]);
+  }, [watch, append, remove, store]);
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
@@ -243,8 +241,6 @@ export const useInviteTeam = () => {
   );
 
   const handleSkip = async () => {
-    setInviteTeamFreeCredits(0);
-
     await onSubmit({ emails: [] });
   };
 

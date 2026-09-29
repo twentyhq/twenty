@@ -302,39 +302,6 @@ describe('useInviteTeam', () => {
     expect(mockSendInvitation).toHaveBeenCalledTimes(1);
   });
 
-  it('should count the invite suggestions prefilled from the cache', () => {
-    jotaiStore.set(onboardingConfigState.atom, {
-      importContactsCreditsReward: 1,
-      inviteTeamCreditsRewardPerUser: 0.5,
-      installAppsCreditsReward: 0.5,
-      createProfileCreditsReward: 0.5,
-      upgradeCreditsReward: 2,
-      inviteTeamMaxInvites: 10,
-    });
-    mockUseQuery.mockReturnValue({
-      data: {
-        getInviteSuggestions: [
-          { email: 'grace@example.com' },
-          { email: 'alan@example.com' },
-        ],
-      },
-      loading: false,
-    });
-
-    renderInviteTeam();
-
-    expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
-      'grace@example.com',
-      'alan@example.com',
-      '',
-    ]);
-    expect(
-      jotaiStore.get(
-        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      ).inviteTeam,
-    ).toBe(1);
-  });
-
   it('should drop the invite credits on skip and keep the typed emails', async () => {
     jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
       'grace@example.com',

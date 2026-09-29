@@ -2,7 +2,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { NO_PREVIOUS_ONBOARDING_STEP_ERROR_CODE } from '@/onboarding/constants/NoPreviousOnboardingStepErrorCode';
 import { useRecomputeCreateProfileFreeCredits } from '@/onboarding/hooks/useRecomputeCreateProfileFreeCredits';
-import { useRecomputeInviteTeamFreeCredits } from '@/onboarding/hooks/useRecomputeInviteTeamFreeCredits';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { useMutation } from '@apollo/client/react';
@@ -24,7 +23,6 @@ export const useGoBackToPreviousOnboardingStep = () => {
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
   const recomputeCreateProfileFreeCredits =
     useRecomputeCreateProfileFreeCredits();
-  const recomputeInviteTeamFreeCredits = useRecomputeInviteTeamFreeCredits();
   const [goBackToPreviousOnboardingStepMutation, { loading }] = useMutation(
     GoBackToPreviousOnboardingStepDocument,
   );
@@ -66,13 +64,6 @@ export const useGoBackToPreviousOnboardingStep = () => {
       ) {
         recomputeCreateProfileFreeCredits();
       }
-
-      if (
-        onboardingStepNavigation.onboardingStatus ===
-        OnboardingStatus.INVITE_TEAM
-      ) {
-        recomputeInviteTeamFreeCredits();
-      }
     } catch (error) {
       if (isGraphqlErrorOfType(error, NO_PREVIOUS_ONBOARDING_STEP_ERROR_CODE)) {
         store.set(currentUserState.atom, (currentUser) => {
@@ -95,7 +86,6 @@ export const useGoBackToPreviousOnboardingStep = () => {
     goBackToPreviousOnboardingStepMutation,
     enqueueToast,
     recomputeCreateProfileFreeCredits,
-    recomputeInviteTeamFreeCredits,
     setOnboardingStepFreeCredits,
     store,
   ]);

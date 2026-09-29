@@ -13,7 +13,6 @@ import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
-import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import {
   jotaiStore,
@@ -110,32 +109,6 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     expect(jotaiStore.get(onboardingNavigationDirectionState.atom)).toBe(
       'backward',
     );
-  });
-
-  it('should count the restored invite emails when going back to the invite step', async () => {
-    jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
-    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
-      'grace@example.com',
-      'alan@example.com',
-      '',
-    ]);
-
-    const { result } = renderGoBackHook([
-      buildGoBackMock({
-        onboardingStatus: OnboardingStatus.INVITE_TEAM,
-        previousOnboardingStatus: OnboardingStatus.PROFILE_CREATION,
-      }),
-    ]);
-
-    await act(async () => {
-      await result.current.goBackToPreviousOnboardingStep();
-    });
-
-    expect(
-      jotaiStore.get(
-        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      ).inviteTeam,
-    ).toBe(1);
   });
 
   it('should drop the typed profile credits when going back from the profile step', async () => {

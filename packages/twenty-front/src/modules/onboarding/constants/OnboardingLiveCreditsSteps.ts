@@ -3,5 +3,4 @@ import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCredits
 export const ONBOARDING_LIVE_CREDITS_STEPS: OnboardingCreditsStep[] = [
   'installApps',
   'createProfile',
-  'inviteTeam',
 ];

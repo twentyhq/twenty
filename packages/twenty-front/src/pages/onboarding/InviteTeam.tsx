@@ -1,6 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
-import { InviteTeamCreditsEffect } from '@/onboarding/components/InviteTeamCreditsEffect';
 import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingSkipDialog } from '@/onboarding/components/OnboardingSkipDialog';
@@ -91,7 +90,6 @@ export const InviteTeam = () => {
 
   return (
     <StyledOnboardingStepPage>
-      <InviteTeamCreditsEffect />
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Invite your team`}</StyledOnboardingStepTitle>
