@@ -1,20 +1,20 @@
 ---
-title: AnimatedExpandableContainer
+title: Collapsible
 description: Animate a controlled panel as it opens and closes.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
-import AnimatedExpandableContainerReference from '/snippets/ui/generated/layout/animated-expandable-container.mdx';
+import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx';
 
-`AnimatedExpandableContainer` animates the height or width of its content. The application owns its expanded state and trigger. There is no uncontrolled mode or built-in toggle.
+`Collapsible` animates the height or width of its content. The application owns its expanded state and trigger. There is no uncontrolled mode or built-in toggle.
 
 ## Anatomy
 
 ```text
 Application
 ├── Button (application-supplied trigger)
-└── AnimatedExpandableContainer
+└── Collapsible
     └── Content
 ```
 
@@ -22,7 +22,7 @@ Application
 
 <StoryEmbed
   storyId="ui-layout-animatedexpandablecontainer--default"
-  title="AnimatedExpandableContainer example"
+  title="Collapsible example"
 />
 
 ## Usage
@@ -30,7 +30,7 @@ Application
 ```tsx
 import { useState } from 'react';
 import { Button } from 'twenty-ui/primitives/input';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const ImportDetails = () => {
@@ -44,9 +44,9 @@ export const ImportDetails = () => {
       >
         {isExpanded ? 'Hide import details' : 'Show import details'}
       </Button>
-      <AnimatedExpandableContainer isExpanded={isExpanded}>
+      <Collapsible isExpanded={isExpanded}>
         <Text>Match each CSV column to a record field before importing.</Text>
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </>
   );
 };
@@ -60,8 +60,6 @@ Use `duration` for a theme timing preset (`instant`, `fast`, `normal`, or `slow`
 
 The panel unmounts its content after closing. Keep state that must survive closing outside the panel. The component does not forward native attributes or refs to its internal panel; keep focus handling and trigger relationships in the application.
 
-`mode` and `initial` remain in the accepted prop type but currently have no effect.
-
 ## Props
 
-<AnimatedExpandableContainerReference />
+<CollapsibleReference />

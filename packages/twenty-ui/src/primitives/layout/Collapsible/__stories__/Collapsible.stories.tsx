@@ -2,16 +2,16 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { clsx } from 'clsx';
 import { useState } from 'react';
-import { AnimatedExpandableContainer } from '@ui/primitives/layout/AnimatedExpandableContainer/AnimatedExpandableContainer';
+import { Collapsible } from '@ui/primitives/layout/Collapsible/Collapsible';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
-import styles from './AnimatedExpandableContainer.stories.module.scss';
+import styles from './Collapsible.stories.module.scss';
 
-type AnimatedExpandableContainerWithButtonProps = {
+type CollapsibleWithButtonProps = {
   isExpanded: boolean;
   dimension: 'width' | 'height';
-  mode: 'scroll-height' | 'fit-content';
+  hasFixedHeight: boolean;
   animationDurations:
     | {
         opacity: number;
@@ -20,10 +20,10 @@ type AnimatedExpandableContainerWithButtonProps = {
     | 'default';
 };
 
-const AnimatedExpandableContainerWithButton = ({
+const CollapsibleWithButton = ({
   isExpanded: initialIsExpanded,
   ...args
-}: AnimatedExpandableContainerWithButtonProps) => {
+}: CollapsibleWithButtonProps) => {
   const [isExpanded, setIsExpanded] = useState(initialIsExpanded);
 
   return (
@@ -43,10 +43,9 @@ const AnimatedExpandableContainerWithButton = ({
       >
         {isExpanded ? 'Collapse' : 'Expand'}
       </Button>
-      <AnimatedExpandableContainer
+      <Collapsible
         isExpanded={isExpanded}
         dimension={args.dimension}
-        mode={args.mode}
         animationDurations={args.animationDurations}
       >
         <div className={styles.expandableWrapper}>
@@ -54,18 +53,18 @@ const AnimatedExpandableContainerWithButton = ({
             className={clsx(
               styles.content,
               args.dimension === 'height' &&
-                args.mode === 'scroll-height' &&
+                args.hasFixedHeight &&
                 styles.contentFixedHeight,
               args.dimension === 'width' && styles.contentFixedWidth,
             )}
           >
             <Text render={<p />}>
-              This is some content inside the AnimatedExpandableContainer. It
-              will animate smoothly when expanding or collapsing.
+              This is some content inside the Collapsible. It will animate
+              smoothly when expanding or collapsing.
             </Text>
             <Text render={<p />}>
-              You can control the animation duration, dimension, and mode
-              through the Storybook controls.
+              You can control the animation duration, dimension, and content
+              height through the Storybook controls.
             </Text>
             <Text render={<p />}>
               Try different combinations to see how the container behaves with
@@ -73,14 +72,15 @@ const AnimatedExpandableContainerWithButton = ({
             </Text>
           </div>
         </div>
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </div>
   );
 };
 
-const meta: Meta<typeof AnimatedExpandableContainerWithButton> = {
-  title: 'UI/Layout/AnimatedExpandableContainer',
-  component: AnimatedExpandableContainerWithButton,
+const meta: Meta<typeof CollapsibleWithButton> = {
+  id: 'ui-layout-animatedexpandablecontainer',
+  title: 'UI/Layout/Collapsible',
+  component: CollapsibleWithButton,
   decorators: [ComponentDecorator],
   argTypes: {
     isExpanded: {
@@ -94,11 +94,10 @@ const meta: Meta<typeof AnimatedExpandableContainerWithButton> = {
       description: 'The dimension along which the container expands',
       defaultValue: 'height',
     },
-    mode: {
-      control: 'radio',
-      options: ['scroll-height', 'fit-content'],
-      description: 'How the container should calculate its expanded size',
-      defaultValue: 'scroll-height',
+    hasFixedHeight: {
+      control: 'boolean',
+      description: 'Use content with a fixed height in this example',
+      defaultValue: true,
     },
     animationDurations: {
       control: 'radio',
@@ -114,14 +113,14 @@ const meta: Meta<typeof AnimatedExpandableContainerWithButton> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof AnimatedExpandableContainerWithButton>;
+type Story = StoryObj<typeof CollapsibleWithButton>;
 
 export const Default: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     isExpanded: false,
     dimension: 'height',
-    mode: 'scroll-height',
+    hasFixedHeight: true,
     animationDurations: 'default',
   },
 };
@@ -130,7 +129,7 @@ export const FitContent: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     ...Default.args,
-    mode: 'fit-content',
+    hasFixedHeight: false,
   },
 };
 

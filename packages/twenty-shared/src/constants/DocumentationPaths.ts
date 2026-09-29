@@ -188,8 +188,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_SLIDER: '/ui/primitives/input/slider',
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
   UI_PRIMITIVES_INPUT_TEXTAREA: '/ui/primitives/input/textarea',
-  UI_PRIMITIVES_LAYOUT_ANIMATED_EXPANDABLE_CONTAINER:
-    '/ui/primitives/layout/animated-expandable-container',
+  UI_PRIMITIVES_LAYOUT_COLLAPSIBLE: '/ui/primitives/layout/collapsible',
   UI_PRIMITIVES_LAYOUT_HORIZONTAL_SEPARATOR:
     '/ui/primitives/layout/horizontal-separator',
   UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
