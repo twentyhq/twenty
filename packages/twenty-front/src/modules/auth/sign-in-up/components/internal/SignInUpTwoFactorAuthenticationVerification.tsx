@@ -12,13 +12,12 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { getTwoFactorVerificationErrorToastOptions } from '@/auth/utils/getTwoFactorVerificationErrorToastOptions';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
@@ -204,16 +203,10 @@ export const SignInUpTOTPVerification = () => {
       form.setValue('otp', '');
 
       enqueueToast(
-        CombinedGraphQLErrors.is(error)
-          ? getToastOptionsFromError({
-              error,
-              dedupeKey: 'invalid-otp-dedupe-key',
-            })
-          : {
-              variant: 'error',
-              children: t`Invalid verification code. Please try again.`,
-              dedupeKey: 'invalid-otp-dedupe-key',
-            },
+        getTwoFactorVerificationErrorToastOptions({
+          error,
+          dedupeKey: 'invalid-otp-dedupe-key',
+        }),
       );
     } finally {
       setIsLoading(false);

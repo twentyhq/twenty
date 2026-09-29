@@ -1,8 +1,7 @@
 import { type OTPFormValues } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { getTwoFactorVerificationErrorToastOptions } from '@/auth/utils/getTwoFactorVerificationErrorToastOptions';
 import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -56,14 +55,7 @@ export const useTwoFactorVerificationForSettings = () => {
 
       await handleVerificationSuccess();
     } catch (error) {
-      enqueueToast(
-        CombinedGraphQLErrors.is(error)
-          ? getToastOptionsFromError({ error })
-          : {
-              variant: 'error',
-              children: t`Invalid verification code. Please try again.`,
-            },
-      );
+      enqueueToast(getTwoFactorVerificationErrorToastOptions({ error }));
     } finally {
       setIsLoading(false);
     }
