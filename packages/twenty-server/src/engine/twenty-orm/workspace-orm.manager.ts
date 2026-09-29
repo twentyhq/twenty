@@ -3,6 +3,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { applyRecordReadScope } from 'src/engine/twenty-orm/utils/apply-record-read-scope.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { Injectable, type Type } from '@nestjs/common';
 
@@ -89,11 +90,10 @@ export class WorkspaceOrmManager {
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
-    const permissionConfig: RolePermissionConfig =
-      readScope === 'content' ||
-      'shouldBypassPermissionChecks' in rolePermissionConfig
-        ? rolePermissionConfig
-        : { ...rolePermissionConfig, readScope };
+    const permissionConfig = applyRecordReadScope(
+      rolePermissionConfig,
+      readScope,
+    );
     return isDefined(transactionScope)
       ? transactionScope.getRepository<TData>(
           objectMetadataName,

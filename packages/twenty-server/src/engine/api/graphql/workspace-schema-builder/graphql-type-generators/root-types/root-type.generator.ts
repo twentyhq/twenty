@@ -78,7 +78,7 @@ export class RootTypeGenerator {
           )
         ) {
           const name = getResolverName(objectMetadata, methodName);
-          const args = getResolverArgs(methodName);
+          const args = getResolverArgs(methodName, objectMetadata);
           const key = computeObjectMetadataObjectTypeKey(
             objectMetadata.nameSingular,
             this.getObjectTypeDefinitionKindByMethodName(methodName),

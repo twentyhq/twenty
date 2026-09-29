@@ -29,12 +29,15 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
   ): Resolver<FindManyResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, _requestContext, info) => {
+    return async (_source, { discover, ...args }, _requestContext, info) => {
       const selectedFields = graphqlFields(info);
 
-      const resolverContext = createQueryRunnerContext({
-        workspaceSchemaBuilderContext: internalContext,
-      });
+      const resolverContext = {
+        ...createQueryRunnerContext({
+          workspaceSchemaBuilderContext: internalContext,
+        }),
+        readScope: discover === true ? ('existence' as const) : undefined,
+      };
 
       try {
         const {

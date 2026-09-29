@@ -1,4 +1,10 @@
-import { isArray, isNumber, isObject, isString } from 'class-validator';
+import {
+  isArray,
+  isBoolean,
+  isNumber,
+  isObject,
+  isString,
+} from 'class-validator';
 
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
@@ -30,6 +36,7 @@ export function assertFindManyArgs(
     'before',
     'after',
     'offset',
+    'discover',
   ]);
 
   for (const key of argKeys) {
@@ -91,6 +98,18 @@ export function assertFindManyArgs(
   if ('after' in args && isDefined(args.after) && !isString(args.after)) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "after" must be a string',
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  if (
+    'discover' in args &&
+    isDefined(args.discover) &&
+    !isBoolean(args.discover)
+  ) {
+    throw new GraphqlDirectExecutionException(
+      'Invalid argument: "discover" must be a boolean',
       GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );

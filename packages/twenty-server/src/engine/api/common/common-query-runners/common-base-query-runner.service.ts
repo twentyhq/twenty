@@ -68,10 +68,12 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/resolve-discoverable-field-metadata-ids.util';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { applyRecordReadScope } from 'src/engine/twenty-orm/utils/apply-record-read-scope.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -356,7 +358,7 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const context = getWorkspaceContext();
 
-    const rolePermissionConfig =
+    const resolvedRolePermissionConfig =
       queryRunnerContext.rolePermissionConfig ??
       resolveRolePermissionConfig({
         authContext: context.authContext,
@@ -364,13 +366,29 @@ export abstract class CommonBaseQueryRunnerService<
         apiKeyRoleMap: context.apiKeyRoleMap,
       });
 
-    if (!rolePermissionConfig) {
+    if (!resolvedRolePermissionConfig) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+
+    if (
+      queryRunnerContext.readScope === 'existence' &&
+      !isDiscoverableObject(queryRunnerContext.flatObjectMetadata)
+    ) {
+      throw new CommonQueryRunnerException(
+        `Records of ${queryRunnerContext.flatObjectMetadata.namePlural} cannot be discovered`,
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    const rolePermissionConfig = applyRecordReadScope(
+      resolvedRolePermissionConfig,
+      queryRunnerContext.readScope,
+    );
 
     const repository = isDefined(queryRunnerContext.transactionScope)
       ? queryRunnerContext.transactionScope.getRepository<ObjectRecord>(
