@@ -8,7 +8,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { useCallback, useMemo } from 'react';
@@ -16,7 +16,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { TabListRow } from '@/ui/layout/tab-list/components/TabListRow';
 import { TabListItem } from '@/ui/layout/tab-list/components/TabListItem';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListSelectionSyncEffect } from '@/ui/layout/tab-list/components/TabListSelectionSyncEffect';
 
@@ -72,6 +72,7 @@ export const TabList = ({
   className,
   componentInstanceId,
   onChangeTab,
+  onClickTab,
   rightComponent,
   centerTabs = false,
 }: TabListProps) => {
@@ -132,6 +133,8 @@ export const TabList = ({
 
   const handleTabSelect = useCallback(
     (tabId: string) => {
+      onClickTab?.(tabId);
+
       if (tabId === activeTabId) {
         return;
       }
@@ -139,7 +142,7 @@ export const TabList = ({
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [activeTabId, setActiveTabId, onChangeTab],
+    [activeTabId, setActiveTabId, onChangeTab, onClickTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(

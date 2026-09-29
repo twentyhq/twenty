@@ -25,9 +25,7 @@ export class InFlightDeferredWorkspaceMigrationActionsService {
       await this.deferredWorkspaceMigrationActionRepository.count(workspaceId, {
         where: {
           status: In(['PENDING', 'IN_PROGRESS']),
-          actionHandlerKey: In([
-            ...SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS,
-          ]),
+          name: In([...SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS]),
         },
       });
 

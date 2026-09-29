@@ -2,12 +2,10 @@ import { playgroundApiKeyState } from '@/settings/mcp-and-apis/states/playground
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
-import {
-  ComponentDecorator,
-  ComponentWithRouterDecorator,
-} from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { SettingsGraphQLPlayground } from '~/pages/settings/developers/playground/SettingsGraphQLPlayground';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof SettingsGraphQLPlayground> = {
   title: 'Pages/Settings/Playground/GraphQLPlayground',

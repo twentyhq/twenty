@@ -4,13 +4,13 @@ import {
   seedWorkspaceInvitation,
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { sendInvitationsOperationFactory } from 'test/integration/graphql/utils/send-invitations-operation-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
 describe('sendInvitations expired invitation handling (integration)', () => {
   const sendInvitations = (email: string) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       sendInvitationsOperationFactory({ emails: [email] }),
     );
 

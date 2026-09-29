@@ -17,7 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { LightButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 const StyledPage = styled(StyledOnboardingStepPage)`

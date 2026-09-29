@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconArrowDown } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledScrollAreaMock = styled.div`
   background: ${themeCssVariables.background.secondary};

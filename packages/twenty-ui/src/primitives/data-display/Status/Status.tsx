@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
-import { themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables } from '@ui/theme';
 import { parseThemeColor } from '@ui/utilities';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 

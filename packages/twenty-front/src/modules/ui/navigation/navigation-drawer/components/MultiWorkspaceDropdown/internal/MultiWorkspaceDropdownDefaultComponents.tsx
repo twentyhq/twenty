@@ -10,7 +10,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -24,6 +24,7 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -100,13 +101,16 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
             Avatar={
               <Avatar
                 name={currentWorkspace?.displayName || ''}
+                colorSeed={getWorkspaceAvatarColorSeed(
+                  currentWorkspace?.displayName,
+                )}
                 src={getAbsoluteImageUrl(
                   currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
                 )}
@@ -127,7 +131,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             }
             dropdownId="multi-workspace-dropdown-context-menu"
             dropdownComponents={
-              <DropdownContent>
+              <LegacyDropdownContent>
                 <DropdownMenuItemsContainer>
                   {isMultiWorkspaceEnabled && (
                     <ListItem
@@ -140,7 +144,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     onClick={signOut}
                   >{t`Log out`}</ListItem>
                 </DropdownMenuItemsContainer>
-              </DropdownContent>
+              </LegacyDropdownContent>
             }
           />
         }
@@ -175,6 +179,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     startIcon={
                       <Avatar
                         name={availableWorkspace.displayName || ''}
+                        colorSeed={getWorkspaceAvatarColorSeed(
+                          availableWorkspace.displayName,
+                        )}
                         src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
@@ -244,6 +251,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           >{t`Support`}</ListItem>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

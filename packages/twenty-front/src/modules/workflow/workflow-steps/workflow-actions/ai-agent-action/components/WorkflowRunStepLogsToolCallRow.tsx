@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { type AiToolCallLog } from 'twenty-shared/workflow';
 
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
@@ -15,7 +15,7 @@ import {
   IconCircleX,
 } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -144,7 +144,7 @@ export const WorkflowRunStepLogsToolCallRow = ({
 }: {
   toolCall: AiToolCallLog;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);

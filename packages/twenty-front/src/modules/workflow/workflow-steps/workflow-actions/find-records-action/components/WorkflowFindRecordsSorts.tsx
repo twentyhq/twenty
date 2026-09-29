@@ -8,7 +8,7 @@ import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/icon';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;

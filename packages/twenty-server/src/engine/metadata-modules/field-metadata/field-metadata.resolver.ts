@@ -7,11 +7,9 @@ import {
   Query,
   ResolveField,
 } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -53,6 +51,8 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 // Keep @Parent() structurally typed so ResolverValidationPipe does not validate
 // FieldMetadataDTO date decorators on already-loaded parent records.
@@ -73,8 +73,8 @@ export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
   ) {}
 
@@ -136,9 +136,10 @@ export class FieldMetadataResolver {
     id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<FieldMetadataDTO> {
-    const fieldMetadata = await this.fieldMetadataRepository.findOne({
-      where: { id, workspaceId },
-    });
+    const fieldMetadata = await this.fieldMetadataRepository.findOne(
+      workspaceId,
+      { where: { id } },
+    );
 
     if (!isDefined(fieldMetadata)) {
       throw new NotFoundError(

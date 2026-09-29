@@ -51,6 +51,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationUpgradeRoleGrantService,
     ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     ApplicationManifestExportService,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     ApplicationManifestApplyService,

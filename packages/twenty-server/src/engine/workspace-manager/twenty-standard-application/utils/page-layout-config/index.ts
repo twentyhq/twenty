@@ -1,3 +1,4 @@
+export { STANDARD_ATTACHMENT_PAGE_LAYOUT_CONFIG } from './standard-attachment-page-layout.config';
 export { STANDARD_BLOCKLIST_PAGE_LAYOUT_CONFIG } from './standard-blocklist-page-layout.config';
 export { STANDARD_CALENDAR_CHANNEL_EVENT_ASSOCIATION_PAGE_LAYOUT_CONFIG } from './standard-calendar-channel-event-association-page-layout.config';
 export { STANDARD_CALENDAR_EVENT_PAGE_LAYOUT_CONFIG } from './standard-calendar-event-page-layout.config';

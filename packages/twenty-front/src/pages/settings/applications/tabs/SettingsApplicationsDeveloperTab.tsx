@@ -9,13 +9,13 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { CommandBlock, SearchInput, Section } from 'twenty-ui/components';
 import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistrationListItemFragment,
   FindManyApplicationRegistrationsDocument,
@@ -45,7 +45,7 @@ const StyledTableRowsContainer = styled.div`
 
 export const SettingsApplicationsDeveloperTab = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { copyToClipboard } = useCopyToClipboard();

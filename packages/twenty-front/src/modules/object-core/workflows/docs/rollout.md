@@ -4,7 +4,7 @@ This frontend uses the core-ID API merged through #26068, and this branch is reb
 
 ## Definition ownership and rollback
 
-With the flag enabled, workflow routes use `/workflow-core/:coreWorkflowId`. Version selectors, diagrams, draft editing, output-schema keys, command-menu actions and definition mutations use core IDs. The existing workspace route resolves its mirror's core ID and redirects. A failed core query shows an error; it never loads a workspace definition as a fallback.
+With the flag enabled, the workflow show page uses `/workflow/:coreWorkflowId` and the index stays at `/objects/workflows`. Version selectors, diagrams, draft editing, output-schema keys, command-menu actions and definition mutations use core IDs. The existing workspace route resolves its mirror's core ID and redirects. A failed core query shows an error; it never loads a workspace definition as a fallback.
 
 With the flag disabled, the workspace index, show page and mutation paths remain available. A core direct link resolves its workspace mirror and redirects. The backend's core-authoritative writes and rollback mirrors must remain deployed, including the legacy-write-to-core synchronization provided by #26068. Disabling the UI flag does not roll back database migrations.
 
@@ -23,7 +23,7 @@ Before rollout, the SSE dependency must provide:
 - An ordering/revision mechanism and reconnect resynchronization, including missed deletions and draft replacement.
 - Lifecycle coverage for every writer: core mutations, legacy mirror writes, activation/deactivation, draft creation/discard, duplication and deletion.
 
-Deliver the backend contract and frontend consumer together in a separate follow-up PR, which may be stacked on this frontend PR. The consumer must invalidate `coreWorkflows`, `coreWorkflowById`, `coreWorkflowVersionsByCoreWorkflowId` and `coreWorkflowVersionById`, reconcile removed selections and update open diagrams. It must not subscribe using workspace definition IDs. Local mutation refetches and the explicit Refresh action are implemented; remote live updates are not complete. Keep general rollout blocked until that contract and consumer land and multi-session/reconnect tests pass.
+Deliver the backend contract and frontend consumer together in a separate follow-up PR, which may be stacked on this frontend PR. The consumer must invalidate `coreWorkflows`, `coreWorkflowById`, `coreWorkflowVersionsByCoreWorkflowId` and `coreWorkflowVersionById`, reconcile removed selections and update open diagrams. It must not subscribe using workspace definition IDs. Local mutation refetches are implemented; remote live updates are not complete. Keep general rollout blocked until that contract and consumer land and multi-session/reconnect tests pass.
 
 ## Execution integration
 

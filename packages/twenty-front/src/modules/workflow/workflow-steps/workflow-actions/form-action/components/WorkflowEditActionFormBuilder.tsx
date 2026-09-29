@@ -19,7 +19,7 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout, LightIconButton } from 'twenty-ui/components';
@@ -30,7 +30,7 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
@@ -154,7 +154,7 @@ export const WorkflowEditActionFormBuilder = ({
   actionOptions,
 }: WorkflowEditActionFormBuilderProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [formData, setFormData] = useState<FormData>(action.settings.input);
 

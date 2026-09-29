@@ -8,7 +8,7 @@ import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
 import { getAdminToolDisplayName } from '@/settings/admin-panel/utils/getAdminToolDisplayName';

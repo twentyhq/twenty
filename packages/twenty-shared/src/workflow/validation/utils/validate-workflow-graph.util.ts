@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils';
+import { isDefined, isNonEmptyArray } from '@/utils';
 import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
   type IfElseStepInput,
@@ -6,7 +6,7 @@ import {
   type ValidatableWorkflow,
   type ValidatableWorkflowStep,
   type WorkflowValidationIssue,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { type WorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { getStepInput } from '@/workflow/validation/utils/get-step-outgoing-step-ids.util';
 
@@ -39,7 +39,7 @@ export const validateWorkflowGraph = ({
     isDefined,
   );
 
-  if (steps.length > 0 && triggerNextStepIds.length === 0) {
+  if (isNonEmptyArray(steps) && triggerNextStepIds.length === 0) {
     issues.push({
       severity: 'error',
       code: 'TRIGGER_HAS_NO_NEXT_STEP',

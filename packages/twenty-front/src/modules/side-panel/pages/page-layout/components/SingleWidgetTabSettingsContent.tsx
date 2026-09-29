@@ -8,7 +8,7 @@ import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/pag
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -103,7 +103,7 @@ export const SingleWidgetTabSettingsContent = ({
                 TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
               }
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <SingleWidgetTabVisibilityDropdownContent
                     widgetId={singleWidget.id}
                     currentExpression={
@@ -111,7 +111,7 @@ export const SingleWidgetTabSettingsContent = ({
                     }
                     pageLayoutId={pageLayoutId}
                   />
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
               dropdownPlacement="bottom-end"
               description={visibilityLabel}

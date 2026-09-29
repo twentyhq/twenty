@@ -1,3 +1,4 @@
+import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-job-retry-limit.constant';
 import { Injectable } from '@nestjs/common';
 
@@ -14,17 +15,15 @@ import {
   REFRESH_CAMPAIGN_STATS_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
-import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { type CampaignCountGroup } from 'src/engine/core-modules/emailing-domain/types/campaign-count-group.type';
 import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
 import { computeCampaignCounts } from 'src/engine/core-modules/emailing-domain/utils/compute-campaign-counts.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getCampaignDeliveryTableName } from 'src/modules/emailing/utils/get-campaign-delivery-table-name.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 
 const RECONCILIATION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
@@ -33,8 +32,6 @@ const REFRESH_LOCK_TTL_MS = CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + 2_000;
 @Injectable()
 export class MessageCampaignStatisticsService {
   constructor(
-    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
-    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -83,21 +80,30 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<CampaignCounts> {
-    const groups = await this.campaignDeliveryRepository
-      .createQueryBuilder('delivery')
-      .select('delivery.state', 'state')
-      .addSelect('COUNT(*)', 'total')
-      .addSelect('COUNT(delivery."deliveredAt")', 'deliveredCount')
-      .addSelect('COUNT(delivery."bouncedAt")', 'bouncedCount')
-      .addSelect('COUNT(delivery."complainedAt")', 'complainedCount')
-      .addSelect(
-        `COUNT(*) FILTER (WHERE delivery."rejectedAt" IS NOT NULL OR delivery."renderingFailedAt" IS NOT NULL)`,
-        'providerFailedCount',
-      )
-      .where('delivery."workspaceId" = :workspaceId', { workspaceId })
-      .andWhere('delivery."campaignId" = :campaignId', { campaignId })
-      .groupBy('delivery.state')
-      .getRawMany<CampaignCountGroup>();
+    const groups = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const campaignDeliveryRepository =
+          this.workspaceOrmManager.getRepository(
+            CampaignDeliveryWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+            { shouldSkipEventEmission: true },
+          );
+        return campaignDeliveryRepository.executeRaw<CampaignCountGroup>(
+          `SELECT
+        "state",
+        COUNT(*) AS "total",
+        COUNT("deliveredAt") AS "deliveredCount",
+        COUNT("bouncedAt") AS "bouncedCount",
+        COUNT("complainedAt") AS "complainedCount",
+        COUNT(*) FILTER (WHERE "rejectedAt" IS NOT NULL OR "renderingFailedAt" IS NOT NULL) AS "providerFailedCount"
+      FROM ${getCampaignDeliveryTableName(workspaceId)}
+      WHERE "campaignId" = :campaignId
+      GROUP BY "state"`,
+          { campaignId },
+        );
+      },
+      buildSystemAuthContext(workspaceId),
+    );
 
     return computeCampaignCounts({ groups });
   }

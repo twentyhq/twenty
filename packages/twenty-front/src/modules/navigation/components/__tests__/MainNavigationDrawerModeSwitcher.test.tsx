@@ -18,7 +18,8 @@ jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded');
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
 
-jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
 }));
 

@@ -18,7 +18,6 @@ const PACKAGE_PATH = path.resolve(
   '..',
 );
 const ALLOWED_OPTIONAL_PEERS_BY_ENTRY_POINT: Record<string, string[]> = {
-  './testing': ['react-router-dom'],
   './components/code-editor': ['@monaco-editor/react', 'monaco-editor'],
 };
 const OPTIONAL_PEER_DEPENDENCY_NAMES = Object.entries(

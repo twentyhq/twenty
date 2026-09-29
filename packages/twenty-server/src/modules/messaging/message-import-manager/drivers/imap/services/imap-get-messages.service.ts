@@ -10,7 +10,7 @@ import { ImapMessageParserService } from 'src/modules/messaging/message-import-m
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { resolveReceivedAt } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/resolve-received-at.util';
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { extractAddressesFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-addresses-from-parsed-email.util';
 import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 import { extractParticipantsFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-participants-from-parsed-email.util';

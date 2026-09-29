@@ -1,6 +1,6 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
@@ -18,7 +18,11 @@ import {
   IconUserCircle,
 } from 'twenty-ui/icon';
 import { Heading } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  useTheme,
+  useThemeColorScheme,
+  themeCssVariables,
+} from 'twenty-ui/theme';
 import {
   AuthorizeAppDocument,
   FindApplicationRegistrationByClientIdDocument,
@@ -135,7 +139,8 @@ const OAUTH_SCOPE_ICONS: { [scope: string]: IconComponent | undefined } = {
 
 export const Authorize = () => {
   const { t } = useLingui();
-  const { theme, colorScheme } = useContext(ThemeContext);
+  const theme = useTheme();
+  const colorScheme = useThemeColorScheme();
   const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();

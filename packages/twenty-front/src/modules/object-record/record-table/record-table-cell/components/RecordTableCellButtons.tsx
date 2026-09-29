@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonContainer = styled.div`
   /* Buttons stay concentric with the frame: its radius minus the 1px border.

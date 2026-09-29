@@ -5,8 +5,7 @@ import {
   IconInbox,
   IconSend,
 } from 'twenty-ui/icon';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 type SettingsAccountsMessageFolderIconProps = {
   folder: MessageFolder;
   isChildFolder?: boolean;
@@ -16,7 +15,7 @@ export const SettingsAccountsMessageFolderIcon = ({
   folder,
   isChildFolder = false,
 }: SettingsAccountsMessageFolderIconProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   if (folder.isSentFolder) {
     return <IconSend size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;

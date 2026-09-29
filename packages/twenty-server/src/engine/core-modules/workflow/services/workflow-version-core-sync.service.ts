@@ -408,9 +408,57 @@ export class WorkflowVersionCoreSyncService {
     workspaceId: string,
     workspaceWorkflowVersionId: string,
   ): Promise<WorkflowVersionEntity | null> {
-    return this.coreWorkflowVersionRepository.findOne(workspaceId, {
-      where: { workspaceWorkflowVersionId },
-    });
+    const aliasedCoreVersion = await this.coreWorkflowVersionRepository.findOne(
+      workspaceId,
+      { where: { workspaceWorkflowVersionId } },
+    );
+
+    if (isDefined(aliasedCoreVersion)) {
+      return aliasedCoreVersion;
+    }
+
+    const linkedCoreVersionId =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowVersion = await this.workspaceOrmManager
+          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          })
+          .findOne({
+            where: { id: workspaceWorkflowVersionId },
+            select: { coreWorkflowVersionId: true },
+          });
+
+        return workflowVersion?.coreWorkflowVersionId ?? null;
+      }, buildSystemAuthContext(workspaceId));
+
+    if (!isNonEmptyString(linkedCoreVersionId)) {
+      return null;
+    }
+
+    const linkedCoreVersion = await this.coreWorkflowVersionRepository.findOne(
+      workspaceId,
+      { where: { id: linkedCoreVersionId } },
+    );
+
+    return isDefined(linkedCoreVersion) &&
+      !isDefined(linkedCoreVersion.workspaceWorkflowVersionId)
+      ? linkedCoreVersion
+      : null;
+  }
+
+  async findWorkspaceVersionIdByCoreVersionId(
+    workspaceId: string,
+    coreWorkflowVersionId: string,
+  ): Promise<string | null> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersion = await this.workspaceOrmManager
+        .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+          shouldBypassPermissionChecks: true,
+        })
+        .findOne({ where: { coreWorkflowVersionId }, select: { id: true } });
+
+      return workflowVersion?.id ?? null;
+    }, buildSystemAuthContext(workspaceId));
   }
 
   async mirrorWorkflowVersionWrite({
@@ -442,12 +490,13 @@ export class WorkflowVersionCoreSyncService {
     const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
     const candidateRows = isNonEmptyString(candidateCoreVersionId)
       ? ((await transactionScope.executeRawQuery(
-          `SELECT "id", "workspaceId", "workflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''} FROM core."workflowVersion" WHERE id = $1 FOR UPDATE`,
+          `SELECT "id", "workspaceId", "workflowId", "coreWorkflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''} FROM core."workflowVersion" WHERE id = $1 FOR UPDATE`,
           [candidateCoreVersionId],
         )) as {
           id: string;
           workspaceId: string;
           workflowId: string | null;
+          coreWorkflowId: string | null;
           workspaceWorkflowVersionId?: string | null;
         }[])
       : [];
@@ -467,9 +516,9 @@ export class WorkflowVersionCoreSyncService {
 
     const reverseRows = hasWorkspaceVersionMapping
       ? ((await transactionScope.executeRawQuery(
-          `SELECT id FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 FOR UPDATE`,
+          `SELECT id, "coreWorkflowId" FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 FOR UPDATE`,
           [workspaceId, workflowVersion.id],
-        )) as { id: string }[])
+        )) as { id: string; coreWorkflowId: string | null }[])
       : [];
 
     if (
@@ -483,16 +532,26 @@ export class WorkflowVersionCoreSyncService {
       );
     }
 
+    const existingCoreRow = reverseRows[0] ?? candidate;
+
     const coreWorkflowVersionId =
-      reverseRows[0]?.id ?? candidateCoreVersionId ?? uuidv4();
+      existingCoreRow?.id ?? candidateCoreVersionId ?? uuidv4();
     const isNewLink =
       workflowVersion.coreWorkflowVersionId !== coreWorkflowVersionId;
 
-    const coreWorkflowId = await this.resolveCoreWorkflowIdInTransaction({
-      workspaceId,
-      workflowId: workflowVersion.workflowId,
-      transactionScope,
-    });
+    const coreWorkflowId =
+      (await this.resolveCoreWorkflowIdInTransaction({
+        workspaceId,
+        workflowId: workflowVersion.workflowId,
+        transactionScope,
+      })) ?? existingCoreRow?.coreWorkflowId;
+
+    if (!isNonEmptyString(coreWorkflowId)) {
+      throw new CoreWorkflowMetadataException(
+        `Core workflow for workflow ${workflowVersion.workflowId} not found in workspace ${workspaceId}`,
+        CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW,
+      );
+    }
 
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
@@ -506,7 +565,7 @@ export class WorkflowVersionCoreSyncService {
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
          "status" = EXCLUDED."status",
-         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+         "coreWorkflowId" = EXCLUDED."coreWorkflowId"
        WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId" RETURNING id`,
       [
         coreWorkflowVersionId,

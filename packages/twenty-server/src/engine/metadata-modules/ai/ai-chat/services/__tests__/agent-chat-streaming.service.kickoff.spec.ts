@@ -3,9 +3,9 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import {
   AgentMessageRole,
   AgentMessageStatus,
-  type AgentMessageEntity,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
@@ -20,7 +20,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     activeStreamId: null,
     lastStreamError: null,
     pendingQuestionMessageId: null,
-  } as unknown as AgentChatThreadEntity;
+  } as unknown as AgentChatThreadWorkspaceEntity;
 
   const hiddenKickoffMessageEntity = {
     id: 'kickoff-message-id',
@@ -28,7 +28,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     status: AgentMessageStatus.SENT,
     isHidden: true,
     parts: [{ type: 'text', textContent: kickoffText, orderIndex: 0 }],
-  } as unknown as AgentMessageEntity;
+  } as unknown as AgentMessageWorkspaceEntity;
 
   const buildService = ({
     claimAffected = 1,
@@ -38,12 +38,15 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     const threadRepository = {
       findOneOrFail: jest
         .fn()
-        .mockResolvedValue({ userWorkspaceId: 'user-workspace-id' }),
+        .mockResolvedValue({ workspaceMemberId: 'member' }),
       findOne: jest.fn().mockResolvedValue(kickoffThread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
+      getWritableThread: jest
+        .fn()
+        .mockImplementation(() => threadRepository.findOne()),
       hasConversationMessages: jest
         .fn()
         .mockResolvedValue(hasConversationMessages),
@@ -86,7 +89,9 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       {
         authorizeJob: jest.fn().mockResolvedValue(undefined),
         authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest.fn().mockResolvedValue({}),
+        authorize: jest
+          .fn()
+          .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
         resolveMessage: jest.fn().mockResolvedValue({
           sender: {
             userWorkspaceId: 'user-workspace-id',
@@ -107,6 +112,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
   };
 
   const kickoffArguments = {
+    workspaceMemberId: 'member',
     thread: kickoffThread,
     userWorkspaceId: 'user-workspace-id',
     workspace,
@@ -194,7 +200,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     const staleMessageEntity = {
       ...hiddenKickoffMessageEntity,
       id: 'other-message-id',
-    } as unknown as AgentMessageEntity;
+    } as unknown as AgentMessageWorkspaceEntity;
     const { service, threadRepository, messageQueueService } = buildService({
       threadMessages: [staleMessageEntity],
     });

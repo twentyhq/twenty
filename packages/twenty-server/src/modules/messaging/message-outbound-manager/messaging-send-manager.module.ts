@@ -48,6 +48,7 @@ import { SentMessagePersistenceService } from 'src/modules/messaging/message-out
     SendEmailService,
     SentMessagePersistenceService,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
+    provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
   exports: [
     MessagingMessageOutboundService,

@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLoadingIconContainer = styled.div`
   align-items: center;
@@ -20,7 +19,7 @@ const StyledLoadingIconWrapper = styled.span`
 `;
 
 export const AiChatInitialLoadingIndicator = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledLoadingIconContainer>

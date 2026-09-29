@@ -13,7 +13,7 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsMessageFoldersTreeItemProps = {
   depth?: number;

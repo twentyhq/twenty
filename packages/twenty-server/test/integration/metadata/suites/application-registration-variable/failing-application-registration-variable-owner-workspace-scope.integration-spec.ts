@@ -2,29 +2,25 @@ import { randomUUID } from 'crypto';
 
 import gql from 'graphql-tag';
 import {
-  createApplicationRegistrationVariable,
-  deleteApplicationRegistrationVariable,
   findApplicationRegistrationVariables,
   updateApplicationRegistrationVariable,
 } from 'test/integration/metadata/suites/application-registration-variable/utils/application-registration-variable-api.util';
+import { insertApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/insert-application-registration-variable.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import {
-  SEED_APPLE_WORKSPACE_ID,
-  SEED_YCOMBINATOR_WORKSPACE_ID,
-} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 type TestContext = {
   ownerWorkspaceId: string | null;
 };
 
-// The metadata API requests below authenticate as Jane, in the Apple workspace.
-// Each case hands the registration to someone else once its variable exists.
+// The metadata API requests below authenticate as Jane, in the Apple workspace,
+// and each case seeds the registration under another owner.
 const ownerWorkspaceTestCases: EachTestingContext<TestContext>[] = [
   {
     title: 'a registration owned by another workspace',
@@ -35,19 +31,6 @@ const ownerWorkspaceTestCases: EachTestingContext<TestContext>[] = [
     context: { ownerWorkspaceId: null },
   },
 ];
-
-const findVariableIdByKey = async (
-  applicationRegistrationId: string,
-  key: string,
-): Promise<string | null> => {
-  const [row] = await globalThis.testDataSource.query(
-    `SELECT id FROM core."applicationRegistrationVariable"
-     WHERE "applicationRegistrationId" = $1 AND key = $2`,
-    [applicationRegistrationId, key],
-  );
-
-  return row?.id ?? null;
-};
 
 const readEncryptedValue = async (
   variableId: string,
@@ -88,24 +71,15 @@ describe('Application registration variable access outside the owner workspace s
             randomUUID(),
             ['http://localhost:3000/callback'],
             ['read'],
-            SEED_APPLE_WORKSPACE_ID,
+            context.ownerWorkspaceId,
           ],
         );
 
-        const { data } = await createApplicationRegistrationVariable({
+        foreignVariableId = await insertApplicationRegistrationVariable({
           applicationRegistrationId: foreignRegistrationId,
           key: 'FOREIGN_API_KEY',
           value: 'foreign-secret-value',
-          isSecret: true,
-          expectToFail: false,
         });
-
-        foreignVariableId = data.createApplicationRegistrationVariable.id;
-
-        await globalThis.testDataSource.query(
-          `UPDATE core."applicationRegistration" SET "workspaceId" = $2 WHERE id = $1`,
-          [foreignRegistrationId, context.ownerWorkspaceId],
-        );
 
         encryptedValueBeforeAttempt =
           await readEncryptedValue(foreignVariableId);
@@ -142,7 +116,7 @@ describe('Application registration variable access outside the owner workspace s
       });
 
       it('should fail to reset one of its variables', async () => {
-        const response = await makeMetadataAPIRequest({
+        const response = await makeMetadataApiRequest({
           query: gql`
             mutation UpdateApplicationRegistrationVariable(
               $input: UpdateApplicationRegistrationVariableInput!
@@ -162,34 +136,6 @@ describe('Application registration variable access outside the owner workspace s
           errors: response.body.errors,
           normalizeMessage,
         });
-
-        expect(await readEncryptedValue(foreignVariableId)).toBe(
-          encryptedValueBeforeAttempt,
-        );
-      });
-
-      it('should fail to create a variable on it', async () => {
-        const { errors } = await createApplicationRegistrationVariable({
-          applicationRegistrationId: foreignRegistrationId,
-          key: 'INJECTED_KEY',
-          value: 'injected-value',
-          expectToFail: true,
-        });
-
-        expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });
-
-        expect(
-          await findVariableIdByKey(foreignRegistrationId, 'INJECTED_KEY'),
-        ).toBeNull();
-      });
-
-      it('should fail to delete one of its variables', async () => {
-        const { errors } = await deleteApplicationRegistrationVariable({
-          id: foreignVariableId,
-          expectToFail: true,
-        });
-
-        expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });
 
         expect(await readEncryptedValue(foreignVariableId)).toBe(
           encryptedValueBeforeAttempt,

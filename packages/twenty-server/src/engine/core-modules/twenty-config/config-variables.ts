@@ -35,6 +35,8 @@ import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.en
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
+import { ADDRESS_AUTOCOMPLETE_DRIVER_TYPE } from 'src/engine/core-modules/geo-map/constants/address-autocomplete-driver-type.constant';
+import { type AddressAutocompleteDriverType } from 'src/engine/core-modules/geo-map/types/address-autocomplete-driver-type.type';
 import {
   LoggerDriverType,
   type TwentyLogLevel,
@@ -1148,6 +1150,22 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'Direct HTTPS origin URL for deployments that publish frontend HTML separately. Leave unset for standard self-hosted installations to use bundled HTML.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+    isHiddenInAdminPanel: true,
+  })
+  @IsUrl({
+    protocols: ['https'],
+    require_tld: false,
+    require_protocol: true,
+  })
+  @IsOptional()
+  FRONTEND_INDEX_URL: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Default subdomain for the frontend when multi-workspace is enabled',
     type: ConfigVariableType.STRING,
   })
@@ -1746,6 +1764,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
+      'Maximum number of emails a single workspace may send per UTC day, campaign and one-off sends counted together. A workspace limit configured in the app replaces it',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_DAILY_LIMIT = 1_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
       'Time-to-live for the per-workspace outbound email send rate limiting window, in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
@@ -2237,7 +2264,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description: 'Enable or disable google map api usage',
+    description:
+      'Enable or disable address autocomplete (see ADDRESS_AUTOCOMPLETE_DRIVER)',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -2245,11 +2273,29 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Address autocomplete driver: GOOGLE_PLACES (worldwide, requires GOOGLE_MAP_API_KEY) or BASE_ADRESSE_NATIONALE (French national address database, France only, no key needed)',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(ADDRESS_AUTOCOMPLETE_DRIVER_TYPE),
+  })
+  @IsOptional()
+  @CastToUpperSnakeCase()
+  @IsIn(Object.values(ADDRESS_AUTOCOMPLETE_DRIVER_TYPE))
+  ADDRESS_AUTOCOMPLETE_DRIVER: AddressAutocompleteDriverType =
+    ADDRESS_AUTOCOMPLETE_DRIVER_TYPE.GOOGLE_PLACES;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
+  @ValidateIf(
+    (env) =>
+      env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED &&
+      env.ADDRESS_AUTOCOMPLETE_DRIVER ===
+        ADDRESS_AUTOCOMPLETE_DRIVER_TYPE.GOOGLE_PLACES,
+  )
   GOOGLE_MAP_API_KEY: string;
 
   @ConfigVariablesMetadata({

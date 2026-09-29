@@ -1,8 +1,7 @@
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled(StyledAiChatContentContainer)`
   display: flex;
@@ -12,7 +11,7 @@ const StyledSkeletonContainer = styled(StyledAiChatContentContainer)`
 `;
 
 export const AiChatSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <SkeletonTheme

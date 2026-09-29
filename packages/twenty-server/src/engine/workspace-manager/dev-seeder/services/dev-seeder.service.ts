@@ -1,6 +1,6 @@
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -40,7 +40,6 @@ import {
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedEmailingDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
-import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-message-suppressions.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
@@ -62,8 +61,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class DevSeederService {
   constructor(
-    private readonly agentHistoryLifecycleService: AgentHistoryLifecycleService,
-    private readonly agentHistoryStorageService: AgentHistoryStorageService,
+    private readonly agentHistoryStorageService: AgentHistoryWorkspaceStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceSchemaService: WorkspaceSchemaService,
@@ -136,7 +134,7 @@ export class DevSeederService {
       },
     );
 
-    await this.agentHistoryLifecycleService.initializeWorkspace(workspaceId);
+    await this.agentHistoryStorageService.initializeWorkspace(workspaceId);
 
     await this.sdkClientGenerationService.generateSdkClientForApplication({
       workspaceId,
@@ -248,13 +246,17 @@ export class DevSeederService {
   }) {
     await this.agentHistoryStorageService.run(
       workspaceId,
-      async ({ manager, storage }) => {
+      async ({ manager, table }) => {
         await seedAgents({
           queryRunner: manager.queryRunner!,
-          schemaName:
-            storage === 'core' ? 'core' : getWorkspaceSchemaName(workspaceId),
+          schemaName: getWorkspaceSchemaName(workspaceId),
           workspaceId,
           chatReferenceIds,
+        });
+        await backfillWorkspaceChatThreadOwnerGrants({
+          manager,
+          workspaceId,
+          threadTableExpression: table('agentChatThread'),
         });
       },
     );
@@ -328,7 +330,6 @@ export class DevSeederService {
         await seedEmailingDomains({ queryRunner, schemaName, workspaceId });
       }
       await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
-      await seedMessageSuppressions({ queryRunner, schemaName, workspaceId });
       await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
       if (seedBilling) {

@@ -1,0 +1,1 @@
+export const CLIENT_CONFIG_CACHE_VERSION = 'v1';

@@ -3,10 +3,12 @@ import { useEffect, useMemo } from 'react';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
+import { contextStoreRecordIdsInSelectionOrderComponentState } from '@/context-store/states/contextStoreRecordIdsInSelectionOrderComponentState';
 import {
   contextStoreTargetedRecordsRuleComponentState,
   type ContextStoreTargetedRecordsRule,
 } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -62,6 +64,11 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
       contextStoreTargetedRecordsRuleComponentState,
     );
 
+  const contextStoreRecordIdsInSelectionOrderAtom =
+    useAtomComponentStateCallbackState(
+      contextStoreRecordIdsInSelectionOrderComponentState,
+    );
+
   const contextStoreFiltersAtom = useAtomComponentStateCallbackState(
     contextStoreFiltersComponentState,
   );
@@ -107,6 +114,25 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
             set(contextStoreTargetedRecordsRuleAtom, newRule);
           }
 
+          const currentRecordIdsInSelectionOrder = get(
+            contextStoreRecordIdsInSelectionOrderAtom,
+          );
+          const newRecordIdsInSelectionOrder = orderRecordIdsBySelection({
+            previousRecordIdsInSelectionOrder: currentRecordIdsInSelectionOrder,
+            selectedRecordIds: hasUserSelectedAllRows ? [] : selectedRowIds,
+          });
+          if (
+            !isDeeplyEqual(
+              currentRecordIdsInSelectionOrder,
+              newRecordIdsInSelectionOrder,
+            )
+          ) {
+            set(
+              contextStoreRecordIdsInSelectionOrderAtom,
+              newRecordIdsInSelectionOrder,
+            );
+          }
+
           const currentFilters = get(contextStoreFiltersAtom);
           if (!isDeeplyEqual(currentFilters, payload.filters)) {
             set(contextStoreFiltersAtom, payload.filters);
@@ -133,6 +159,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
       selectedRowIds,
       unselectedRowIds,
       contextStoreTargetedRecordsRuleAtom,
+      contextStoreRecordIdsInSelectionOrderAtom,
       contextStoreFiltersAtom,
       contextStoreFilterGroupsAtom,
       contextStoreAnyFieldFilterValueAtom,

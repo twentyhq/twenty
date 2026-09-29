@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
@@ -18,8 +17,8 @@ import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
-import { Tooltip, Card } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
@@ -91,7 +90,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
     trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const label = watch('label');
 
   const { t } = useLingui();
@@ -238,7 +237,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                       hideDot={false}
                       dotPosition="centered"
                     >
-                      <Card rounded>
+                      <Card.Root rounded>
                         <SettingsOptionCardContentSwitch
                           Icon={IconRefresh}
                           title={t`Synchronize Field Label and API Name`}
@@ -262,7 +261,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                             }
                           }}
                         />
-                      </Card>
+                      </Card.Root>
                     </AdvancedSettingsContentWrapperWithDot>
                   )}
                 />

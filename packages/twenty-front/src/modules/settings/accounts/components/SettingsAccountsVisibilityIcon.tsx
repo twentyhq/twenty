@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type VisibilityElementState = 'active' | 'inactive';
 

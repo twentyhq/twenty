@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { AdminPanelAiProviderResolver } from 'src/engine/core-modules/admin-panel/admin-panel-ai-provider.resolver';
 import { AdminPanelApplicationRegistrationResolver } from 'src/engine/core-modules/admin-panel/admin-panel-application-registration.resolver';
+import { AdminPanelUsageLimitResolver } from 'src/engine/core-modules/admin-panel/admin-panel-usage-limit.resolver';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
@@ -16,6 +17,7 @@ import { RedisHealthIndicator } from 'src/engine/core-modules/admin-panel/indica
 import { WorkerHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/worker.health';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelAiProviderService } from 'src/engine/core-modules/admin-panel/services/admin-panel-ai-provider.service';
+import { AdminPanelUsageLimitService } from 'src/engine/core-modules/admin-panel/services/admin-panel-usage-limit.service';
 import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
 import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
@@ -45,6 +47,7 @@ import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-clie
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
@@ -82,6 +85,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     SecureHttpClientModule,
     ApplicationRegistrationModule,
     UsageModule,
+    UsageLimitModule,
     KeyValuePairModule,
     UserVarsModule,
     UpgradeModule,
@@ -96,6 +100,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelResolver,
     AdminPanelAiProviderResolver,
     AdminPanelApplicationRegistrationResolver,
+    AdminPanelUsageLimitResolver,
+    AdminPanelUsageLimitService,
     AdminPanelAiProviderService,
     AdminPanelUserLookupService,
     AdminPanelServerAdminService,

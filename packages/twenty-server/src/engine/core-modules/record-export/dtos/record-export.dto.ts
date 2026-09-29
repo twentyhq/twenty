@@ -17,5 +17,5 @@ export class RecordExportDTO {
   errorMessage: string | null;
 
   @Field(() => String, { nullable: true })
-  downloadUrl?: string;
+  downloadPath?: string;
 }

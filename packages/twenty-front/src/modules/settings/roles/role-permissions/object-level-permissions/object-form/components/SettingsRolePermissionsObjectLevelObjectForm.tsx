@@ -19,7 +19,7 @@ import {
   isDefined,
   isRecordFilterValueValid,
 } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';
 import {
   type BillingEntitlement,

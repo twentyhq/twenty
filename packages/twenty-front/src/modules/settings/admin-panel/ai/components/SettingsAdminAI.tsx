@@ -9,7 +9,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -205,7 +205,7 @@ export const SettingsAdminAI = () => {
             description={t`The model behind each mode for every workspace. Workspaces can pin their own.`}
           />
 
-          <Card rounded>
+          <Card.Root rounded>
             <StyledSettingsSelectGroup controlWidth={260}>
               {AI_MODEL_TIERS.map((tier, index) => (
                 <SettingsOptionCardContentSelect
@@ -232,7 +232,7 @@ export const SettingsAdminAI = () => {
                 </SettingsOptionCardContentSelect>
               ))}
             </StyledSettingsSelectGroup>
-          </Card>
+          </Card.Root>
         </Section.Root>
       )}
 
@@ -293,7 +293,7 @@ export const SettingsAdminAI = () => {
               ))}
             </Table>
           ) : (
-            <Card rounded>
+            <Card.Root rounded>
               <TableRow gridTemplateColumns="1fr">
                 <TableCell
                   color={themeCssVariables.font.color.tertiary}
@@ -302,7 +302,7 @@ export const SettingsAdminAI = () => {
                   {t`No AI usage data recorded yet.`}
                 </TableCell>
               </TableRow>
-            </Card>
+            </Card.Root>
           )
         ) : (
           <SettingsEnterpriseFeatureGateCard

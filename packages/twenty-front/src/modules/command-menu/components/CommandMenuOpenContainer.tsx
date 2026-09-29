@@ -21,8 +21,8 @@ import { useStore } from 'jotai';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@/ui/navigation/link/constants/LinkChipClickOutsideId';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useCallback, useContext, useRef } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useCallback, useRef } from 'react';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -44,7 +44,7 @@ const StyledCommandMenu = motion.create(StyledCommandMenuBase);
 export const CommandMenuOpenContainer = ({
   children,
 }: React.PropsWithChildren) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isMobile = useIsMobile();
 
   const targetVariantForAnimation: SidePanelAnimationVariant = isMobile

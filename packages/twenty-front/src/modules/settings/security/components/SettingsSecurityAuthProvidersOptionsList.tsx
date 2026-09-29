@@ -22,7 +22,7 @@ import {
   IconPassword,
 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
@@ -197,7 +197,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
         <>
-          <Card rounded>
+          <Card.Root rounded>
             {authProviders.google === true && (
               <SettingsOptionCardContentSwitch
                 Icon={IconGoogle}
@@ -234,8 +234,8 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 onChange={() => toggleAuthMethod('password')}
               />
             )}
-          </Card>
-          <Card rounded>
+          </Card.Root>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconLink}
               title={t`Invite by Link`}
@@ -268,7 +268,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               </SettingsOptionCardContentSelect>
             )}
             <TwoFactorAuthenticationSwitch />
-          </Card>
+          </Card.Root>
         </>
       )}
     </StyledSettingsSecurityOptionsList>

@@ -4,8 +4,7 @@ import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
 import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;
@@ -48,7 +47,7 @@ export const SettingsRoleApplicability = ({
   onApplicabilityChange,
   isEditable,
 }: SettingsRoleApplicabilityProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const options = [
     {

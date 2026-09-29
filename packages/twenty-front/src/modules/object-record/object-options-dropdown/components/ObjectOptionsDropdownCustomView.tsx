@@ -6,7 +6,7 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -136,7 +136,7 @@ export const ObjectOptionsDropdownCustomView = ({
   }
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+    <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
       <ObjectOptionsDropdownMenuViewName currentView={customViewData} />
       <DropdownMenuSeparator />
       <SelectableList
@@ -308,6 +308,6 @@ export const ObjectOptionsDropdownCustomView = ({
           </Tooltip>
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

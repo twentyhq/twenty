@@ -16,10 +16,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledSidePanelContent = styled.div`
   flex: 1;
@@ -68,7 +68,7 @@ export const SidePanelRouter = () => {
         })
       : rawPageComponent;
 
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [headerTitlePortal, setHeaderTitlePortal] =
     useState<HTMLElement | null>(null);

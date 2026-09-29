@@ -6,7 +6,7 @@ import { Key } from 'ts-key-enum';
 import { IconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationScreenshotLightboxProps = {
   modalInstanceId: string;

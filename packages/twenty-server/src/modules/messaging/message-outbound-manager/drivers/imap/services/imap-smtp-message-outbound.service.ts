@@ -23,6 +23,8 @@ import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbou
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
@@ -34,8 +36,8 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     private readonly imapFindDraftsFolderService: ImapFindDraftsFolderService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(MessageFolderEntity)
-    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
   ) {}
 
   async sendMessage(
@@ -85,12 +87,15 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       let sentFolder: MessageFolderEntity | null = null;
 
       if (isDefined(messageChannel)) {
-        sentFolder = await this.messageFolderRepository.findOne({
-          where: {
-            messageChannelId: messageChannel.id,
-            isSentFolder: true,
+        sentFolder = await this.messageFolderRepository.findOne(
+          connectedAccount.workspaceId,
+          {
+            where: {
+              messageChannelId: messageChannel.id,
+              isSentFolder: true,
+            },
           },
-        });
+        );
       }
 
       const sentFolderPath = getImapFolderPath(

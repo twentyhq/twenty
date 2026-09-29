@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAddNewRow = styled.button`
   align-items: center;

@@ -8,7 +8,7 @@ Load both theme stylesheets when your application can switch schemes. `ThemeProv
 ```tsx
 import { useState } from 'react';
 import { Switch } from 'twenty-ui/primitives/input';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
@@ -35,7 +35,7 @@ The provider accepts an explicit scheme. Your application owns preference persis
 Set `applyToRoot={false}` on a nested provider to give a subtree a different palette. Both stylesheets must be loaded:
 
 ```tsx
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 export const Preview = () => (
   <ThemeProvider colorScheme="light">
@@ -54,4 +54,4 @@ export const Preview = () => (
 );
 ```
 
-Use `useThemeColorScheme()` from `twenty-ui/theme-constants` to read the provider's active scheme. In a Twenty front component, use `useColorScheme()` from `twenty-sdk/front-component` to read the workspace scheme supplied by the host.
+Use `useThemeColorScheme()` from `twenty-ui/theme` to read the provider's active scheme. In a Twenty front component, use `useColorScheme()` from `twenty-sdk/front-component` to read the workspace scheme supplied by the host.

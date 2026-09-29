@@ -3,13 +3,14 @@ import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflo
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -60,7 +61,7 @@ const meta: Meta<typeof WorkflowEditActionFormBuilder> = {
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
   ],

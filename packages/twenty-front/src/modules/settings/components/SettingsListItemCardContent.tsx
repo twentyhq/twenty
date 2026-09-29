@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { CardContent } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRowContainer = styled.div`
   > div {
@@ -90,12 +90,12 @@ export const SettingsListItemCardContent = ({
   rightComponent,
   to,
 }: SettingsListItemCardContentProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isInteractive = isDefined(onClick) || isDefined(to);
 
   const content = (
     <StyledRowContainer>
-      <CardContent
+      <Card.Content
         onClick={onClick}
         divider={divider}
         isClickable={isInteractive}
@@ -122,7 +122,7 @@ export const SettingsListItemCardContent = ({
             />
           )}
         </StyledRightContainer>
-      </CardContent>
+      </Card.Content>
     </StyledRowContainer>
   );
 

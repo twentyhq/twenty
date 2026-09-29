@@ -50,7 +50,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
         title={t`Sync`}
         description={t`Control what the workspace imports from connected mailboxes and calendars`}
       />
-      <Card rounded>
+      <Card.Root rounded>
         <SettingsOptionCardContentSwitch
           Icon={IconMail}
           title={t`Sync Internal Emails`}
@@ -59,7 +59,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
           onChange={handleSyncInternalEmailsChange}
           advancedMode
         />
-      </Card>
+      </Card.Root>
     </Section.Root>
   );
 };

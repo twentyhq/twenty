@@ -12,7 +12,7 @@ import {
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type CustomSideMenuProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;

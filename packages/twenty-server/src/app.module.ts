@@ -1,15 +1,6 @@
-import {
-  type DynamicModule,
-  type MiddlewareConsumer,
-  Module,
-  RequestMethod,
-} from '@nestjs/common';
+import { type MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ServeStaticModule } from '@nestjs/serve-static';
-
-import { existsSync } from 'fs';
-import { join } from 'path';
 
 import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { SentryModule } from '@sentry/nestjs/setup';
@@ -24,6 +15,7 @@ import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-met
 import { McpModule } from 'src/engine/api/mcp/mcp.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/middlewares/workspace-auth-context.middleware';
+import { FrontendModule } from 'src/engine/core-modules/frontend/frontend.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -79,7 +71,7 @@ const MIGRATED_REST_METHODS = [
     UserSessionModule,
     WorkspaceMetadataVersionModule,
     I18nModule,
-    ...AppModule.getConditionalModules(),
+    FrontendModule,
   ],
   providers: [
     {
@@ -93,25 +85,6 @@ const MIGRATED_REST_METHODS = [
   ],
 })
 export class AppModule {
-  private static getConditionalModules(): DynamicModule[] {
-    const modules: DynamicModule[] = [];
-    const frontPath = join(__dirname, 'front');
-
-    if (existsSync(frontPath)) {
-      modules.push(
-        ServeStaticModule.forRoot({
-          rootPath: frontPath,
-        }),
-      );
-    }
-
-    // Messaque Queue explorer only for sync driver
-    // Maybe we don't need to conditionaly register the explorer, because we're creating a jobs module
-    // that will expose classes that are only used in the queue worker
-
-    return modules;
-  }
-
   configure(consumer: MiddlewareConsumer) {
     const loggedApiPaths = Object.values(ApiPath).filter(
       (apiPath) => apiPath !== ApiPath.Health,

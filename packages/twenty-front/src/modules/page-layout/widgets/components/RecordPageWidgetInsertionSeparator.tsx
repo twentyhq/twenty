@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const INSERT_BUTTON_CLASS_NAME = css`
   background: ${themeCssVariables.background.transparent.primary};

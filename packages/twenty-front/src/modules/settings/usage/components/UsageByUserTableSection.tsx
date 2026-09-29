@@ -8,11 +8,11 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SearchInput, Section } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -43,7 +43,7 @@ export const UsageByUserTableSection = ({
   getDetailPath,
   showAvatar = false,
 }: UsageByUserTableSectionProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatUsageValue } = useUsageValueFormatter();
   const [searchTerm, setSearchTerm] = useState('');
 

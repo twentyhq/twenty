@@ -8,7 +8,7 @@ type GraphqlOperation = {
   variables?: Record<string, unknown>;
 };
 
-export const makeAdminPanelAPIRequest = (
+export const makeAdminPanelApiRequest = (
   graphqlOperation: GraphqlOperation,
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) => {

@@ -5,7 +5,7 @@ import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/use
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -78,7 +78,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -112,6 +112,6 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
           >{t`Edit field values`}</ListItem>
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

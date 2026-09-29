@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconFilter } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};

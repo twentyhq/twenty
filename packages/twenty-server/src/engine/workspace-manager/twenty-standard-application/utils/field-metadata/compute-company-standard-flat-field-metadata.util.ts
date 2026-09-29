@@ -483,6 +483,39 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  agentChatThreadTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'agentChatThreadTargets',
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+          .agentChatThreadTarget.label,
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Chats tied to the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+        .agentChatThreadTarget.icon,
+      isUIEditable: false,
+      isNullable: true,
+      targetObjectName: 'agentChatThreadTarget',
+      targetFieldName: 'targetCompany',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   calendarEventTargets: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

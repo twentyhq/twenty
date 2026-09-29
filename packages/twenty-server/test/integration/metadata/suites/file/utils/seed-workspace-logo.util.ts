@@ -1,5 +1,4 @@
-import { uploadWorkspaceLogoMutation } from 'test/integration/graphql/utils/upload-workspace-logo-mutation.util';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { uploadWorkspaceLogoWithDirectUpload } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -19,27 +18,11 @@ type SeededWorkspaceLogo = {
 };
 
 export const seedWorkspaceLogo = async (): Promise<SeededWorkspaceLogo> => {
-  const response = await makeMetadataAPIRequestWithFileUpload(
-    {
-      query: uploadWorkspaceLogoMutation,
-      variables: { file: null },
-    },
-    {
-      field: 'file',
-      buffer: ONE_BY_ONE_TRANSPARENT_PNG,
+  const { id: fileId, url: signedUrl } =
+    await uploadWorkspaceLogoWithDirectUpload({
       filename: 'logo.png',
-      contentType: 'image/png',
-    },
-  );
-
-  if (response.body.errors !== undefined) {
-    throw new Error(
-      `uploadWorkspaceLogo failed: ${JSON.stringify(response.body.errors)}`,
-    );
-  }
-
-  const { id: fileId, url: signedUrl } = response.body.data
-    .uploadWorkspaceLogo as { id: string; url: string };
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+    });
 
   const workspaceId = SEED_APPLE_WORKSPACE_ID;
 

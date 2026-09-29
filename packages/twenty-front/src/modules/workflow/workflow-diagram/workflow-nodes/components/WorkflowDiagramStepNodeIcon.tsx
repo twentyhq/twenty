@@ -6,15 +6,14 @@ import { WorkflowDiagramStepNodeLogicFunctionIcon } from '@/workflow/workflow-di
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useIcons } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { useTheme } from 'twenty-ui/theme';
 
 export const WorkflowDiagramStepNodeIcon = ({
   data,
 }: {
   data: WorkflowDiagramStepNodeData;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(getWorkflowNodeIconKey(data));
 

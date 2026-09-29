@@ -8,7 +8,7 @@ import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledError = styled.div`
   color: ${themeCssVariables.font.color.secondary};

@@ -3,7 +3,7 @@ import request from 'supertest';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -97,7 +97,7 @@ const isDispatchFailure = (result: {
 const EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS: string[] = [];
 
 const createApiKeyToken = async (roleId: string): Promise<string> => {
-  const createResponse = await makeMetadataAPIRequest({
+  const createResponse = await makeMetadataApiRequest({
     query: gql`
       mutation CreateApiKey($input: CreateApiKeyInput!) {
         createApiKey(input: $input) {
@@ -139,7 +139,7 @@ describe('MCP tool catalog (integration)', () => {
   let restrictedRoleId: string;
 
   beforeAll(async () => {
-    const rolesResponse = await makeMetadataAPIRequest({
+    const rolesResponse = await makeMetadataApiRequest({
       query: gql`
         query GetRoles {
           getRoles {

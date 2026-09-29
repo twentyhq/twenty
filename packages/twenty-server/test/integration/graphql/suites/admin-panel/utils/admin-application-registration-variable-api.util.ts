@@ -2,7 +2,7 @@ import {
   findAdminApplicationRegistrationVariablesQueryFactory,
   updateAdminApplicationRegistrationVariableMutationFactory,
 } from 'test/integration/graphql/suites/admin-panel/utils/admin-application-registration-variable-query-factories.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -34,7 +34,7 @@ export const findAdminApplicationRegistrationVariables = async ({
       applicationRegistrationId,
     });
 
-  const response = await makeAdminPanelAPIRequest(graphqlOperation, token);
+  const response = await makeAdminPanelApiRequest(graphqlOperation, token);
 
   return {
     data: response.body.data,
@@ -57,7 +57,7 @@ export const updateAdminApplicationRegistrationVariable = async ({
   const graphqlOperation =
     updateAdminApplicationRegistrationVariableMutationFactory({ id, value });
 
-  const response = await makeAdminPanelAPIRequest(graphqlOperation, token);
+  const response = await makeAdminPanelApiRequest(graphqlOperation, token);
 
   return {
     data: response.body.data,

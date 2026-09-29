@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

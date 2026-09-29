@@ -14,7 +14,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
-import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
+import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders.type';
 
 import { MicrosoftGetMessageListService } from './microsoft-get-message-list.service';
 import { MicrosoftMessageListFetchErrorHandler } from './microsoft-message-list-fetch-error-handler.service';

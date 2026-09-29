@@ -5,7 +5,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export type ToolContext = {
   resolveExecutionContext?: () => Promise<ToolContext>;

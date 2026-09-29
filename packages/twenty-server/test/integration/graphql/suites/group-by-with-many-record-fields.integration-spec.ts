@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
@@ -144,7 +144,7 @@ describe('group-by with more than 50 selected record columns', () => {
       targetFieldLabel: 'Group By Many Fields Records',
     });
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: OBJECT_NAME_SINGULAR,
         objectMetadataPluralName: OBJECT_NAME_PLURAL,
@@ -186,7 +186,7 @@ describe('group-by with more than 50 selected record columns', () => {
   ])(
     'preserves composite fields and position ordering in the null relation group at offset $offsetForRecords',
     async ({ offsetForRecords, expectedRecords }) => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: OBJECT_NAME_SINGULAR,
           objectMetadataPluralName: OBJECT_NAME_PLURAL,

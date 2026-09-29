@@ -1,4 +1,4 @@
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { pascalCase } from 'twenty-shared/utils';
 
 export const expectRestCreateInputValidationSuccess = async (
@@ -7,7 +7,7 @@ export const expectRestCreateInputValidationSuccess = async (
   input: any,
   validateInput: (record: Record<string, any>) => boolean,
 ) => {
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'post',
     path: `/${objectMetadataPluralName}`,
     body: input,

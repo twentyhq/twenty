@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ViewVisibility } from 'twenty-shared/types';
 
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type ViewAccessContext } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.types';
+import { type ViewAccessContext } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.type';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewException,

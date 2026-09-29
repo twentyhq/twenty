@@ -1,7 +1,7 @@
 import { css, cx } from '@linaria/core';
 import { type MouseEventHandler, type ReactNode } from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsTextLinkVariant = 'primary' | 'secondary';
 

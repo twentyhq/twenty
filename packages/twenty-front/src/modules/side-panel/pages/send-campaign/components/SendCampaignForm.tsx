@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconClock, IconSend } from 'twenty-ui/icon';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
@@ -204,6 +204,11 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
               {excludedReasons.length > 0 && (
                 <StyledHint>
                   {t`${formatNumber(audiencePreview.totalMembers)} in the list, skipping ${excludedReasons.join(', ')}`}
+                </StyledHint>
+              )}
+              {audiencePreview.trackingRefused > 0 && (
+                <StyledHint>
+                  {t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their clicks are not recorded`}
                 </StyledHint>
               )}
               {isScheduling && (

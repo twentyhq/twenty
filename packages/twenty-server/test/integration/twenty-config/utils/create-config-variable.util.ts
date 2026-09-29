@@ -4,7 +4,7 @@ import {
   type CreateConfigVariableFactoryInput,
   createConfigVariableQueryFactory,
 } from './create-config-variable.query-factory.util';
-import { makeAdminPanelAPIRequest } from './make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from './make-admin-panel-api-request.util';
 
 export const createConfigVariable = async ({
   input,
@@ -15,7 +15,7 @@ export const createConfigVariable = async ({
     value: input.value,
   });
 
-  const response = await makeAdminPanelAPIRequest(graphqlOperation);
+  const response = await makeAdminPanelApiRequest(graphqlOperation);
 
   if (!expectToFail) {
     expect(response.body.data).toBeDefined();

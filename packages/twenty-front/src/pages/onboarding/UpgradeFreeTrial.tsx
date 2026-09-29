@@ -31,7 +31,7 @@ import { Info, MainButton } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { RadioGroup } from 'twenty-ui/primitives/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/primitives/navigation';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
   type BillingPlanKey,

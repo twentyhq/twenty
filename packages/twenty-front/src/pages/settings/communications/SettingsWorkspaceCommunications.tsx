@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { ClickTrackingSwitch } from '@/settings/workspace/components/ClickTrackingSwitch';
 import { SettingsWorkspaceBlocklistSection } from '@/settings/workspace/components/SettingsWorkspaceBlocklistSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
@@ -21,8 +22,7 @@ import {
 import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
@@ -34,7 +34,7 @@ const StyledCardsColumn = styled.div`
 `;
 
 export const SettingsWorkspaceCommunications = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { t } = useLingui();
 
@@ -90,6 +90,15 @@ export const SettingsWorkspaceCommunications = () => {
           />
         </Section.Root>
         <SettingsWorkspaceEmailGroupSection />
+        {isMessageCampaignFeatureEnabled && (
+          <Section.Root>
+            <Section.Header
+              title={t`Tracking`}
+              description={t`Measure engagement on the campaigns this workspace sends`}
+            />
+            <ClickTrackingSwitch />
+          </Section.Root>
+        )}
         {isMessageCampaignFeatureEnabled && (
           <Section.Root>
             <Section.Header

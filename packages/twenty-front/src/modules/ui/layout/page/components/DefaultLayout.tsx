@@ -9,10 +9,10 @@ import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { PageDragDropProvider } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProvider';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 const StyledLayout = styled.div`
   background: ${themeCssVariables.grayScale.gray3};
   display: flex;

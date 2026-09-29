@@ -4,7 +4,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { generateTransientToken } from 'test/integration/utils/generate-transient-token.util';
 import { getDataOrThrow } from 'test/integration/utils/query-messaging.util';
 import gql from 'graphql-tag';
@@ -55,7 +55,7 @@ describe('app connection management guards (e2e)', () => {
   };
 
   const generateMemberTransientToken = async (): Promise<string> => {
-    const response = await makeMetadataAPIRequestWithMemberRole({
+    const response = await makeMetadataApiRequestWithMemberRole({
       query: gql`
         mutation GenerateTransientToken {
           generateTransientToken {

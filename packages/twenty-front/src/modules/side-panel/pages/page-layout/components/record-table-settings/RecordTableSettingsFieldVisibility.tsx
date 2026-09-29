@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldListContainer = styled.div`
   display: flex;

@@ -1,8 +1,8 @@
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 describe('Core REST API Authentication', () => {
   it('should return an UnauthorizedException when no token is provided', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       bearer: '',
@@ -15,7 +15,7 @@ describe('Core REST API Authentication', () => {
   });
 
   it('should return an Unauthenticated when an invalid token is provided', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       bearer: INVALID_ACCESS_TOKEN,
@@ -28,7 +28,7 @@ describe('Core REST API Authentication', () => {
   });
 
   it('should return an Unauthenticated when a malformed token is provided', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       bearer: 'invalid-token',
@@ -41,7 +41,7 @@ describe('Core REST API Authentication', () => {
   });
 
   it('should return an Unauthenticated when an expired token is provided', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       bearer: EXPIRED_ACCESS_TOKEN,

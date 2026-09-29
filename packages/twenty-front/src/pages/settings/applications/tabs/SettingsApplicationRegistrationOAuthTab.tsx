@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconKey, IconRefresh, IconShield } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   RotateApplicationRegistrationClientSecretDocument,
   UpdateApplicationRegistrationDocument,

@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  DEPRECATED_IANA_TIME_ZONE_ALIASES,
   GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE,
   IANA_TIME_ZONES,
 } from 'twenty-shared/constants';
@@ -14,7 +15,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { isGroupByDateField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-date-field.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 
@@ -70,12 +71,17 @@ export const getGroupByExpression = ({
     );
   }
 
+  const normalizedTimeZone = isNonEmptyString(groupByField.timeZone)
+    ? (DEPRECATED_IANA_TIME_ZONE_ALIASES[groupByField.timeZone] ??
+      groupByField.timeZone)
+    : groupByField.timeZone;
+
   const timeZoneAsDateTruncParameter = shouldUseTimeZone
-    ? `, '${groupByField.timeZone}'`
+    ? `, '${normalizedTimeZone}'`
     : '';
 
   const timeZoneAsToCharParameter = shouldUseTimeZone
-    ? ` AT TIME ZONE '${groupByField.timeZone}'`
+    ? ` AT TIME ZONE '${normalizedTimeZone}'`
     : '';
 
   switch (dateGranularity) {

@@ -1,10 +1,9 @@
 import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/formatNumberChartTrend';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrendingDown, IconTrendingUp } from 'twenty-ui/icon';
 import { Heading } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 type GraphWidgetAggregateChartProps = {
   value: string | number;
   trendPercentage?: number;
@@ -46,7 +45,7 @@ export const GraphWidgetAggregateChart = ({
   prefix,
   suffix,
 }: GraphWidgetAggregateChartProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const formattedPercentage = isDefined(trendPercentage)
     ? formatNumberChartTrend(trendPercentage)

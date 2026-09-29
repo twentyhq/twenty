@@ -23,6 +23,7 @@ export const getBarChartTickConfig = ({
   axisFontSize,
   layout,
   margins,
+  leftAxisTitleWidth,
 }: {
   width: number;
   height: number;
@@ -31,6 +32,7 @@ export const getBarChartTickConfig = ({
   axisFontSize: number;
   layout: BarChartLayout;
   margins: ChartMargins;
+  leftAxisTitleWidth: number;
 }): BarChartTickConfig => {
   const clampValueTickCount = (tickCount: number) =>
     Math.min(
@@ -76,6 +78,7 @@ export const getBarChartTickConfig = ({
   const maxLeftAxisTickLabelLength = computeMaxLabelLengthForMargin({
     marginSize: margins.left,
     axisFontSize,
+    axisTitleWidth: leftAxisTitleWidth,
   });
 
   return {

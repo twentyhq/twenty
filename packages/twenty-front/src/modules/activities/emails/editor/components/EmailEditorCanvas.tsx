@@ -3,7 +3,7 @@ import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorSt
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { styled } from '@linaria/react';
 import { CANVAS_THEME_DEFAULTS, resolveCanvasTheme } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCanvasBackdrop = styled.div`
   box-sizing: border-box;

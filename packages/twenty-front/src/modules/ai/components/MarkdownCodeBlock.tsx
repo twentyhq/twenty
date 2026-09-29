@@ -4,7 +4,7 @@ import { isNumber, isString } from '@sniptt/guards';
 import { Children, isValidElement } from 'react';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`

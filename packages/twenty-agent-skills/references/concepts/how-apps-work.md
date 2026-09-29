@@ -21,7 +21,7 @@ A Twenty app depends on two SDK packages:
 
 `twenty-sdk/front-component` provides runtime APIs available inside front components: `navigate`, `enqueueSnackbar`, `openSidePanelPage`, `useSelectedRecordIds`, `getApplicationVariable`, and others.
 
-Twenty UI components (`Button`, `Chip`, `Tag`, `Status`, `Heading`, `Section`, `ThemeProvider`, icons, `themeCssVariables`) live in the `twenty-ui` package. Install `twenty-ui` from npm at the same version as `twenty-sdk` and `twenty-client-sdk` and import from its subpaths (`twenty-ui/primitives/input`, `twenty-ui/primitives/data-display`, `twenty-ui/icon`, `twenty-ui/primitives/typography`, `twenty-ui/components`, `twenty-ui/theme-constants`, and others).
+Twenty UI components (`Button`, `Chip`, `Tag`, `Status`, `Heading`, `Section`, `ThemeProvider`, icons, `themeCssVariables`) live in the `twenty-ui` package. Install `twenty-ui` from npm at the same version as `twenty-sdk` and `twenty-client-sdk` and import from its subpaths (`twenty-ui/primitives/input`, `twenty-ui/primitives/data-display`, `twenty-ui/icon`, `twenty-ui/primitives/typography`, `twenty-ui/components`, `twenty-ui/theme`, and others).
 
 `twenty-client-sdk/core` provides `CoreApiClient` for querying and mutating workspace records (companies, people, custom objects). `twenty-client-sdk/metadata` provides access to workspace metadata (object definitions, field definitions).
 
@@ -115,3 +115,4 @@ my-app/
 - **Remotes**: Named connections to Twenty instances. Stored in `~/.twenty/config.json`. Switch with `yarn twenty remote:use <name>`.
 - **Sync**: `yarn twenty apply` builds, deploys, and installs the app on the active remote in one step. This is the standard way to get code changes onto a Twenty instance.
 - **Publish**: `yarn twenty app:publish` packages the app for distribution to other instances or the marketplace. Requires a strictly higher semver version than the previously published version.
+- **Reserved variable names**: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` are set by Twenty for every logic function run. A manifest that declares one of them as an application or server variable is rejected on sync and publish.

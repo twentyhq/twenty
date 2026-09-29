@@ -4,7 +4,7 @@ import { type ComponentProps } from 'react';
 import { isAiModelEffort, parseAiModelVariantId } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconWand } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AUTOMATIC_MODEL_PIN } from '@/settings/ai/constants/AutomaticModelPin';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';

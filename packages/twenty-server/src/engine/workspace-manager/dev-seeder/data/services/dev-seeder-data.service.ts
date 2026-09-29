@@ -14,6 +14,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/data/utils/seed-message-suppressions.util';
 import {
   ATTACHMENT_DATA_SEED_COLUMNS,
   ATTACHMENT_SAMPLE_FILES,
@@ -358,6 +359,12 @@ export class DevSeederDataService {
           featureFlags,
           objectMetadataItems,
           light,
+        });
+
+        await seedMessageSuppressions({
+          entityManager,
+          schemaName,
+          workspaceId,
         });
 
         if (!light) {

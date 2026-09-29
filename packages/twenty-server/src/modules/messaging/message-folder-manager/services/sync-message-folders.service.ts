@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   ConnectedAccountProvider,
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import {
   DiscoveredMessageFolder,
@@ -25,13 +24,16 @@ import { computeFolderIdsToDelete } from 'src/modules/messaging/message-folder-m
 import { computeFoldersToCreate } from 'src/modules/messaging/message-folder-manager/utils/compute-folders-to-create.util';
 import { computeFoldersToUpdate } from 'src/modules/messaging/message-folder-manager/utils/compute-folders-to-update.util';
 import { computeUpdatedFolders } from 'src/modules/messaging/message-folder-manager/utils/compute-updated-folders.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class SyncMessageFoldersService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(MessageFolderEntity)
-    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly gmailGetAllFoldersService: GmailGetAllFoldersService,
     private readonly microsoftGetAllFoldersService: MicrosoftGetAllFoldersService,
     private readonly imapGetAllFoldersService: ImapGetAllFoldersService,
@@ -142,7 +144,8 @@ export class SyncMessageFoldersService {
       async () => {
         if (folderIdsToDelete.length > 0) {
           await this.messageFolderRepository.update(
-            { id: In(folderIdsToDelete), workspaceId },
+            workspaceId,
+            { id: In(folderIdsToDelete) },
             {
               pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_DELETION,
             },
@@ -152,7 +155,8 @@ export class SyncMessageFoldersService {
         if (foldersToUpdate.size > 0) {
           for (const [id, data] of foldersToUpdate.entries()) {
             await this.messageFolderRepository.update(
-              { id, messageChannelId, workspaceId },
+              workspaceId,
+              { id, messageChannelId },
               data as Record<string, unknown>,
             );
           }
@@ -160,16 +164,16 @@ export class SyncMessageFoldersService {
 
         if (foldersToCreate.length > 0) {
           for (const folderToCreate of foldersToCreate) {
-            await this.messageFolderRepository.save({
-              ...folderToCreate,
+            await this.messageFolderRepository.insert(
               workspaceId,
-            });
+              folderToCreate as QueryDeepPartialEntity<MessageFolderEntity>,
+            );
           }
         }
 
         const createdFolders =
           foldersToCreate.length > 0
-            ? await this.messageFolderRepository.find({
+            ? await this.messageFolderRepository.find(workspaceId, {
                 where: {
                   messageChannelId,
                   externalId: In(
@@ -177,7 +181,6 @@ export class SyncMessageFoldersService {
                       .map((folder) => folder.externalId)
                       .filter(isDefined),
                   ),
-                  workspaceId,
                 },
               })
             : [];

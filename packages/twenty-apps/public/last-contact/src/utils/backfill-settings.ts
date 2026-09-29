@@ -1,8 +1,6 @@
 import {
   BACKFILL_BATCH_SIZE_ENV_VAR_NAME,
-  BACKFILL_SLEEP_MS_ENV_VAR_NAME,
   DEFAULT_BACKFILL_BATCH_SIZE,
-  DEFAULT_BACKFILL_SLEEP_MS,
 } from 'src/constants/backfill';
 
 // Application and server variables are injected into process.env on every
@@ -26,6 +24,3 @@ const readPositiveInteger = (
 
 export const getBackfillBatchSize = (): number =>
   readPositiveInteger(BACKFILL_BATCH_SIZE_ENV_VAR_NAME, DEFAULT_BACKFILL_BATCH_SIZE);
-
-export const getBackfillSleepMs = (): number =>
-  readPositiveInteger(BACKFILL_SLEEP_MS_ENV_VAR_NAME, DEFAULT_BACKFILL_SLEEP_MS);

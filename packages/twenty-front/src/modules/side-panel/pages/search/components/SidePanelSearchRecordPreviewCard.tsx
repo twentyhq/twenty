@@ -17,10 +17,10 @@ import { useSidePanelSearchRecordPreviewRecord } from '@/side-panel/pages/search
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useIcons } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const SKELETON_HEIGHT = SKELETON_LOADER_HEIGHT_SIZES.standard.s;
@@ -117,7 +117,7 @@ export const SidePanelSearchRecordPreviewCard = ({
 }: SidePanelSearchRecordPreviewCardProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [areAllFieldsVisible, setAreAllFieldsVisible] = useState(false);
 

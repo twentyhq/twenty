@@ -43,8 +43,9 @@ jest.mock(
     })),
   }),
 );
-jest.mock('@/ui/layout/dropdown/components/DropdownContent', () => ({
-  DropdownContent: ({ children }: { children: React.ReactNode }) => children,
+jest.mock('@/ui/layout/dropdown/components/LegacyDropdownContent', () => ({
+  LegacyDropdownContent: ({ children }: { children: React.ReactNode }) =>
+    children,
 }));
 jest.mock(
   '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader',
