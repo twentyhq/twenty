@@ -29,6 +29,7 @@ import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflo
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
@@ -40,6 +41,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   async run({
@@ -135,12 +137,18 @@ export class WorkflowRunnerWorkspaceService {
       );
     }
 
+    const applicationBoundExecutionContext =
+      await this.workflowExecutionContextService.getApplicationBoundExecutionContext(
+        { workflowRunId, workspaceId },
+      );
+
     const enrichedResponse =
       await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(
         {
           workspaceId,
           step,
           response,
+          recordReadContext: applicationBoundExecutionContext ?? undefined,
         },
       );
 

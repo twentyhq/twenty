@@ -72,6 +72,7 @@ describe('canMemberChangeWorkflowRun', () => {
         workflowRun,
         boundingApplication: null,
         workspaceMemberId: OTHER_MEMBER_ID,
+        callerApplicationId: undefined,
         replacementStep: deleteStep,
       }),
     ).toBe(true);
@@ -83,6 +84,7 @@ describe('canMemberChangeWorkflowRun', () => {
         workflowRun,
         boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: INITIATOR_MEMBER_ID,
+        callerApplicationId: undefined,
       }),
     ).toBe(true);
   });
@@ -93,6 +95,7 @@ describe('canMemberChangeWorkflowRun', () => {
         workflowRun,
         boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: OTHER_MEMBER_ID,
+        callerApplicationId: undefined,
       }),
     ).toBe(false);
     expect(
@@ -100,6 +103,26 @@ describe('canMemberChangeWorkflowRun', () => {
         workflowRun,
         boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: undefined,
+        callerApplicationId: undefined,
+      }),
+    ).toBe(false);
+  });
+
+  it('lets the initiator act through the application bounding the run but not through another one', () => {
+    expect(
+      canMemberChangeWorkflowRun({
+        workflowRun,
+        boundingApplication: BOUNDING_APPLICATION,
+        workspaceMemberId: INITIATOR_MEMBER_ID,
+        callerApplicationId: BOUNDING_APPLICATION.id,
+      }),
+    ).toBe(true);
+    expect(
+      canMemberChangeWorkflowRun({
+        workflowRun,
+        boundingApplication: BOUNDING_APPLICATION,
+        workspaceMemberId: INITIATOR_MEMBER_ID,
+        callerApplicationId: 'other-app-id',
       }),
     ).toBe(false);
   });
@@ -110,6 +133,7 @@ describe('canMemberChangeWorkflowRun', () => {
         workflowRun,
         boundingApplication: BOUNDING_APPLICATION,
         workspaceMemberId: INITIATOR_MEMBER_ID,
+        callerApplicationId: undefined,
         replacementStep: {
           ...FORM_STEP,
           settings: {
@@ -149,6 +173,7 @@ describe('canMemberChangeWorkflowRun', () => {
           workflowRun,
           boundingApplication: BOUNDING_APPLICATION,
           workspaceMemberId: INITIATOR_MEMBER_ID,
+          callerApplicationId: undefined,
           replacementStep,
         }),
       ).toBe(false);

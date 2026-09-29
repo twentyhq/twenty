@@ -152,6 +152,35 @@ const DELAYED_CREATE_COMPANY_WORKFLOW = buildTestWorkflow([
   } as WorkflowStepManifestWithoutEdges,
 ]);
 
+const FORM_WORKFLOW = buildTestWorkflow([
+  {
+    name: 'Pick records',
+    type: 'FORM',
+    input: [
+      {
+        id: randomUUID(),
+        name: 'company',
+        label: 'Company',
+        type: 'RECORD',
+        settings: {
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+        },
+      },
+      {
+        id: randomUUID(),
+        name: 'opportunity',
+        label: 'Opportunity',
+        type: 'RECORD',
+        settings: {
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.opportunity.universalIdentifier,
+        },
+      },
+    ],
+  } as WorkflowStepManifestWithoutEdges,
+]);
+
 const TEST_WORKFLOWS = [
   CREATE_COMPANY_WORKFLOW,
   CREATE_OPPORTUNITY_WORKFLOW,
@@ -159,6 +188,7 @@ const TEST_WORKFLOWS = [
   CREATE_CALENDAR_EVENT_WORKFLOW,
   LOGIC_FUNCTION_WORKFLOW,
   DELAYED_CREATE_COMPANY_WORKFLOW,
+  FORM_WORKFLOW,
 ];
 
 const buildManifest = ({
@@ -253,6 +283,12 @@ const RUN_CORE_WORKFLOW_VERSION = `
   }
 `;
 
+const SUBMIT_FORM_STEP = `
+  mutation SubmitFormStep($input: SubmitFormStepInput!) {
+    submitFormStep(input: $input)
+  }
+`;
+
 const RETRY_WORKFLOW_RUN = `
   mutation RetryWorkflowRun($workflowRunId: UUID!) {
     retryWorkflowRun(workflowRunId: $workflowRunId) {
@@ -266,6 +302,23 @@ const graphqlAs = (token: string, query: string, variables?: object) =>
     .post('/graphql')
     .set('Authorization', `Bearer ${token}`)
     .send({ query, variables });
+
+const buildJaneTokenThroughApplication = async (
+  applicationUniversalIdentifier: string,
+): Promise<string> => {
+  const [{ id: applicationId }] = await globalThis.testDataSource.query(
+    `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+    [applicationUniversalIdentifier, SEED_APPLE_WORKSPACE_ID],
+  );
+  const { applicationAccessToken } = await generateApplicationTokenPair({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    applicationId,
+    userId: USER_DATA_SEED_IDS.JANE,
+    userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+  });
+
+  return applicationAccessToken.token;
+};
 
 const findVersionId = async (workflow: TestWorkflow): Promise<string> => {
   const [version] = await globalThis.testDataSource.query(
@@ -290,7 +343,10 @@ const runWorkflow = async (workflow: TestWorkflow): Promise<string> => {
 type TestWorkflowRun = {
   status: string;
   state: {
-    stepInfos: Record<string, { status: string; error?: string }>;
+    stepInfos: Record<
+      string,
+      { status: string; error?: string; result?: Record<string, unknown> }
+    >;
   };
 };
 
@@ -503,26 +559,9 @@ describe('application workflow execution permissions', () => {
 
   it('only lets an application token start that application workflows', async () => {
     const coreWorkflowVersionId = await findVersionId(CREATE_COMPANY_WORKFLOW);
-    const [{ id: otherApplicationId }] = await globalThis.testDataSource.query(
-      `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
-      [OTHER_APP_ID, SEED_APPLE_WORKSPACE_ID],
-    );
-    const [{ id: applicationId }] = await globalThis.testDataSource.query(
-      `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
-      [APP_ID, SEED_APPLE_WORKSPACE_ID],
-    );
-    const tokenFor = async (tokenApplicationId: string) =>
-      (
-        await generateApplicationTokenPair({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          applicationId: tokenApplicationId,
-          userId: USER_DATA_SEED_IDS.JANE,
-          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-        })
-      ).applicationAccessToken.token;
 
     const crossApplicationStart = await graphqlAs(
-      await tokenFor(otherApplicationId),
+      await buildJaneTokenThroughApplication(OTHER_APP_ID),
       RUN_CORE_WORKFLOW_VERSION,
       { input: { coreWorkflowVersionId } },
     );
@@ -532,7 +571,7 @@ describe('application workflow execution permissions', () => {
     );
 
     const ownApplicationStart = await graphqlAs(
-      await tokenFor(applicationId),
+      await buildJaneTokenThroughApplication(APP_ID),
       RUN_CORE_WORKFLOW_VERSION,
       { input: { coreWorkflowVersionId } },
     );
@@ -544,17 +583,6 @@ describe('application workflow execution permissions', () => {
   }, 120000);
 
   it('keeps the application bound when its token starts a workspace workflow', async () => {
-    const [{ id: applicationId }] = await globalThis.testDataSource.query(
-      `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
-      [APP_ID, SEED_APPLE_WORKSPACE_ID],
-    );
-    const { applicationAccessToken } = await generateApplicationTokenPair({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      applicationId,
-      userId: USER_DATA_SEED_IDS.JANE,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-    });
-
     const { status, stepStatus } = await runWorkflowActionStep({
       name: `${RUN_PREFIX} workspace workflow started by the application`,
       stepType: 'CREATE_RECORD',
@@ -562,7 +590,7 @@ describe('application workflow execution permissions', () => {
         objectName: 'opportunity',
         objectRecord: { name: NESTED_OPPORTUNITY_NAME },
       },
-      runToken: applicationAccessToken.token,
+      runToken: await buildJaneTokenThroughApplication(APP_ID),
     });
 
     expect(status).toBe('FAILED');
@@ -587,6 +615,16 @@ describe('application workflow execution permissions', () => {
       'Only the member who started this application-bound workflow run',
     );
 
+    const retryThroughAnotherApplication = await graphqlAs(
+      await buildJaneTokenThroughApplication(OTHER_APP_ID),
+      RETRY_WORKFLOW_RUN,
+      { workflowRunId },
+    );
+
+    expect(retryThroughAnotherApplication.body.errors?.[0]?.message).toContain(
+      'Only the member who started this application-bound workflow run',
+    );
+
     const retryByInitiator = await workflowGraphqlRequest(RETRY_WORKFLOW_RUN, {
       workflowRunId,
     });
@@ -594,6 +632,53 @@ describe('application workflow execution permissions', () => {
     expect(retryByInitiator.body.errors).toBeUndefined();
     expect((await waitForRunToEnd(workflowRunId)).status).toBe('FAILED');
     expect(await countRecordsByName('opportunity', OPPORTUNITY_NAME)).toBe(0);
+  }, 120000);
+
+  it('reads the records picked in a form with the permissions of the run', async () => {
+    const workflowRunId = await runWorkflow(FORM_WORKFLOW);
+    const [formStep] = FORM_WORKFLOW.steps;
+
+    await waitForRun(
+      workflowRunId,
+      ({ state }) =>
+        state?.stepInfos?.[formStep.universalIdentifier]?.status === 'PENDING',
+    );
+
+    const [opportunity] = await globalThis.testDataSource.query(
+      `SELECT id FROM "${SCHEMA}"."opportunity" WHERE "deletedAt" IS NULL LIMIT 1`,
+    );
+    const [company] = await globalThis.testDataSource.query(
+      `SELECT id FROM "${SCHEMA}"."company" WHERE "deletedAt" IS NULL LIMIT 1`,
+    );
+
+    const unreadableSelection = await workflowGraphqlRequest(SUBMIT_FORM_STEP, {
+      input: {
+        workflowRunId,
+        stepId: formStep.universalIdentifier,
+        response: { opportunity: { id: opportunity.id } },
+      },
+    });
+
+    expect(unreadableSelection.body.errors?.[0]?.message).toContain(
+      'cannot be read with the permissions of this run',
+    );
+
+    const readableSelection = await workflowGraphqlRequest(SUBMIT_FORM_STEP, {
+      input: {
+        workflowRunId,
+        stepId: formStep.universalIdentifier,
+        response: { company: { id: company.id } },
+      },
+    });
+
+    expect(readableSelection.body.errors).toBeUndefined();
+
+    const workflowRun = await waitForRunToEnd(workflowRunId);
+
+    expect(workflowRun.status).toBe('COMPLETED');
+    expect(
+      workflowRun.state.stepInfos[formStep.universalIdentifier].result,
+    ).toMatchObject({ company: { id: company.id } });
   }, 120000);
 
   it('checks the current application permissions again when a delayed run resumes', async () => {

@@ -167,6 +167,8 @@ export class WorkflowTriggerResolver {
   async retryWorkflowRun(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
@@ -174,6 +176,7 @@ export class WorkflowTriggerResolver {
       {
         runInfo: { workflowRunId, workspaceId: workspace.id },
         workspaceMemberId,
+        callerApplicationId: callerApplication?.id,
       },
     );
 

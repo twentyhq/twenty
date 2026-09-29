@@ -23,10 +23,12 @@ export class WorkflowRunChangeAuthorizationWorkspaceService {
   async assertMemberCanChangeRunOrThrow({
     runInfo,
     workspaceMemberId,
+    callerApplicationId,
     replacementStep,
   }: {
     runInfo: WorkflowRunInfo;
     workspaceMemberId: string | undefined;
+    callerApplicationId: string | undefined;
     replacementStep?: WorkflowAction;
   }): Promise<void> {
     const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
@@ -52,11 +54,12 @@ export class WorkflowRunChangeAuthorizationWorkspaceService {
         workflowRun,
         boundingApplication: boundingApplications[0] ?? null,
         workspaceMemberId,
+        callerApplicationId,
         replacementStep,
       })
     ) {
       throw new PermissionsException(
-        'Only the member who started this application-bound workflow run can change it',
+        'Only the member who started this application-bound workflow run, directly or through its application, can change it',
         PermissionsExceptionCode.PERMISSION_DENIED,
         {
           userFriendlyMessage: msg`Only the member who started this run can change it.`,

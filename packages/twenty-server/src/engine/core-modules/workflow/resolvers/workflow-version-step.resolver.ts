@@ -7,6 +7,7 @@ import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/c
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step.input';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step.input';
@@ -23,6 +24,7 @@ import { WorkflowVersionTriggerDTO } from 'src/engine/core-modules/workflow/dtos
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -184,6 +186,8 @@ export class WorkflowVersionStepResolver {
   async submitFormStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args('input')
     { stepId, workflowRunId, response }: SubmitFormStepInput,
   ) {
@@ -191,6 +195,7 @@ export class WorkflowVersionStepResolver {
       {
         runInfo: { workflowRunId, workspaceId },
         workspaceMemberId,
+        callerApplicationId: callerApplication?.id,
       },
     );
 
@@ -208,6 +213,8 @@ export class WorkflowVersionStepResolver {
   async updateWorkflowRunStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
@@ -215,6 +222,7 @@ export class WorkflowVersionStepResolver {
       {
         runInfo: { workflowRunId, workspaceId },
         workspaceMemberId,
+        callerApplicationId: callerApplication?.id,
         replacementStep: step,
       },
     );

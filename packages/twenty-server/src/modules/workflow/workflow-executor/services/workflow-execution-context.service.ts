@@ -62,6 +62,23 @@ export class WorkflowExecutionContextService {
     );
   }
 
+  async getApplicationBoundExecutionContext(
+    runInfo: WorkflowRunInfo,
+  ): Promise<WorkflowExecutionContext | null> {
+    const { workflowRun, workflowRunApplications } =
+      await this.findWorkflowRunWithApplications(runInfo);
+
+    if (workflowRunApplications.boundingApplications.length === 0) {
+      return null;
+    }
+
+    return this.buildExecutionContext(
+      workflowRun,
+      runInfo.workspaceId,
+      workflowRunApplications,
+    );
+  }
+
   async buildConnectedAccountToolContextOrThrow({
     runInfo,
     permissionFlag,

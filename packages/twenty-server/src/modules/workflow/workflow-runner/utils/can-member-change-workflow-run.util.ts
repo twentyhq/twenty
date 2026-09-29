@@ -10,6 +10,7 @@ export const canMemberChangeWorkflowRun = ({
   workflowRun,
   boundingApplication,
   workspaceMemberId,
+  callerApplicationId,
   replacementStep,
 }: {
   workflowRun: {
@@ -18,6 +19,7 @@ export const canMemberChangeWorkflowRun = ({
   };
   boundingApplication: Pick<FlatApplication, 'id'> | null;
   workspaceMemberId: string | undefined;
+  callerApplicationId: string | undefined;
   replacementStep?: WorkflowAction;
 }): boolean => {
   if (!isDefined(boundingApplication)) {
@@ -27,6 +29,13 @@ export const canMemberChangeWorkflowRun = ({
   if (
     !isDefined(workspaceMemberId) ||
     workspaceMemberId !== workflowRun.createdBy.workspaceMemberId
+  ) {
+    return false;
+  }
+
+  if (
+    isDefined(callerApplicationId) &&
+    callerApplicationId !== boundingApplication.id
   ) {
     return false;
   }
