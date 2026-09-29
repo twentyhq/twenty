@@ -189,13 +189,45 @@ export const PauseOnHover: Story = {
   },
 };
 
+export const PauseOnFocus: Story = {
+  ...Countdown,
+  args: {
+    ...Countdown.args,
+    duration: 1200,
+    onFocus: fn(),
+    onBlur: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const toast = canvas.getByRole('status');
+    await userEvent.hover(toast);
+    await userEvent.tab();
+    await userEvent.tab();
+    expect(canvas.getByRole('button', { name: 'Close' })).toHaveFocus();
+    await userEvent.unhover(toast);
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    expect(args.onFocus).toHaveBeenCalledOnce();
+    await userEvent.tab({ shift: true });
+    expect(args.onBlur).toHaveBeenCalledOnce();
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
+      timeout: 3000,
+    });
+  },
+};
+
 export const ExplicitProgress: Story = {
   ...Countdown,
-  args: { progress: 40, duration: 100, onClose: fn() },
+  args: { progress: 0, duration: 100, onClose: fn() },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(canvas.getByRole('status')).toBeVisible();
+    expect(canvas.getByRole('progressbar', { hidden: true })).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
     expect(args.onClose).not.toHaveBeenCalled();
     await userEvent.click(canvas.getByRole('button', { name: 'Close' }));
     expect(args.onClose).toHaveBeenCalledOnce();

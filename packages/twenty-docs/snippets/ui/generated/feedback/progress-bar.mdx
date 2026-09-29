@@ -27,20 +27,8 @@
   CSS class applied to the progress root.
 </ParamField>
 
-<ParamField body="countdownDurationInMs" type="number">
-  Starts a visual animation from full to empty over this duration in milliseconds. Does not update `value`.
-</ParamField>
-
-<ParamField body="isCountdownPaused" type="boolean" default="false">
-  Pauses the countdown animation without resetting its position.
-</ParamField>
-
-<ParamField body="onCountdownComplete" type="(() =&gt; void)">
-  Called when the countdown animation ends.
-</ParamField>
-
 <ParamField body="value" type="number" required>
-  Current progress from 0 to 100. Also supplies the accessible value during a countdown.
+  Current progress from 0 to 100.
 </ParamField>
 
 <ParamField body="withBorderRadius" type="boolean" default="false">

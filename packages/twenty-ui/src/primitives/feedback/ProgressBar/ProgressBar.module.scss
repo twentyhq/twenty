@@ -33,22 +33,3 @@
     min-width: 12px;
   }
 }
-
-.countdown {
-  animation: progressBarCountdown
-    var(--progress-bar-countdown-duration, #{duration(normal)}) linear forwards;
-
-  &[data-paused] {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes progressBarCountdown {
-  from {
-    width: 100%;
-  }
-
-  to {
-    width: 0;
-  }
-}

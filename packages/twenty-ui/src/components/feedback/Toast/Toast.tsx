@@ -1,6 +1,6 @@
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
-import { type MouseEvent, useState } from 'react';
+import { type FocusEvent, type MouseEvent, useState } from 'react';
 
 import {
   IconAlertTriangle,
@@ -8,13 +8,13 @@ import {
   IconSquareRoundedCheck,
   IconX,
 } from '@ui/icon';
-import { ProgressBar } from '@ui/primitives/feedback/ProgressBar/ProgressBar';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { HorizontalSeparator } from '@ui/primitives/layout/HorizontalSeparator/HorizontalSeparator';
 import { useTheme } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Toast.module.scss';
+import { ToastProgress } from './internal/components/ToastProgress';
 import { type ToastProps } from './types/ToastProps';
 import { type ToastVariant } from './types/ToastVariant';
 
@@ -43,12 +43,15 @@ export const Toast = ({
   className,
   onMouseEnter,
   onMouseLeave,
+  onFocus,
+  onBlur,
   render,
   ref,
   ...props
 }: ToastProps) => {
   const theme = useTheme();
-  const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const Icon = TOAST_ICONS[variant];
 
   return useRender({
@@ -60,22 +63,30 @@ export const Toast = ({
       ...props,
       className: clsx(styles.root, className),
       onMouseEnter: (event: MouseEvent<HTMLDivElement>) => {
-        setIsPaused(true);
+        setIsHovered(true);
         onMouseEnter?.(event);
       },
       onMouseLeave: (event: MouseEvent<HTMLDivElement>) => {
-        setIsPaused(false);
+        setIsHovered(false);
         onMouseLeave?.(event);
+      },
+      onFocus: (event: FocusEvent<HTMLDivElement>) => {
+        setIsFocused(true);
+        onFocus?.(event);
+      },
+      onBlur: (event: FocusEvent<HTMLDivElement>) => {
+        setIsFocused(false);
+        onBlur?.(event);
       },
       children: (
         <>
           <div className={styles.progress} aria-hidden>
-            <ProgressBar
+            <ToastProgress
               barColor={theme.snackBar[variant].backgroundColor}
-              value={progress ?? 100}
-              countdownDurationInMs={isDefined(progress) ? undefined : duration}
-              isCountdownPaused={isPaused}
-              onCountdownComplete={onClose}
+              progress={progress}
+              duration={duration}
+              isPaused={isHovered || isFocused}
+              onClose={onClose}
             />
           </div>
           <div className={styles.header}>
