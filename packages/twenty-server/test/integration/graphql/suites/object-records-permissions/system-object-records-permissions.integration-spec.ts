@@ -16,10 +16,17 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 type GraphqlResponse = {
@@ -91,6 +98,9 @@ describe('systemObjectRecordsPermissions', () => {
   let noOverrideRoleId: string | undefined;
   let noOverrideApiKeyId: string | undefined;
   let noOverrideApiKeyToken: string;
+  let messageShare:
+    | Parameters<typeof setManualRecordShare>[0]['share']
+    | undefined;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -123,6 +133,23 @@ describe('systemObjectRecordsPermissions', () => {
 
     expect(createMessageResponse.body.errors).toBeUndefined();
     expect(createMessageResponse.body.data.createMessage.id).toBe(messageId);
+
+    // Messages are private to the members they were shared with, so the API
+    // keys below need the message shared for editing to reach it at all.
+    messageShare = {
+      objectMetadataId: messageObjectMetadataId,
+      recordId: messageId,
+      sourceId: messageId,
+      principalId: EVERYONE_PRINCIPAL_ID,
+      principalType: RecordSharePrincipalType.EVERYONE,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
+    };
+
+    await setManualRecordShare({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      share: messageShare,
+      enabled: true,
+    });
 
     const createPersonResponse = await makeGraphqlApiRequest(
       createOneOperationFactory({
@@ -208,6 +235,14 @@ describe('systemObjectRecordsPermissions', () => {
   });
 
   afterAll(async () => {
+    if (isDefined(messageShare)) {
+      await setManualRecordShare({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        share: messageShare,
+        enabled: false,
+      });
+    }
+
     await deleteRecordsByIds('message', [messageId]);
     await deleteRecordsByIds('person', [personId]);
     await deleteRecordsByIds('messageThread', [messageThreadId]);
