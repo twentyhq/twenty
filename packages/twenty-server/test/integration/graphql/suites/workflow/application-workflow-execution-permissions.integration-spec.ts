@@ -10,7 +10,6 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -307,8 +306,9 @@ const findRun = async (workflowRunId: string): Promise<TestWorkflowRun> => {
 const waitForRun = async (
   workflowRunId: string,
   isDone: (workflowRun: TestWorkflowRun) => boolean,
+  maxAttempts = 900,
 ): Promise<TestWorkflowRun> => {
-  for (let attempt = 0; attempt < 900; attempt++) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const workflowRun = await findRun(workflowRunId);
 
     if (isDone(workflowRun)) {
@@ -321,9 +321,11 @@ const waitForRun = async (
   return findRun(workflowRunId);
 };
 
-const waitForRunToEnd = (workflowRunId: string) =>
-  waitForRun(workflowRunId, ({ status }) =>
-    ['COMPLETED', 'FAILED', 'STOPPED'].includes(status),
+const waitForRunToEnd = (workflowRunId: string, maxAttempts?: number) =>
+  waitForRun(
+    workflowRunId,
+    ({ status }) => ['COMPLETED', 'FAILED', 'STOPPED'].includes(status),
+    maxAttempts,
   );
 
 const countRecordsByName = async (
@@ -340,6 +342,8 @@ const countRecordsByName = async (
 };
 
 describe('application workflow execution permissions', () => {
+  let firstCompanyRun: TestWorkflowRun;
+
   beforeAll(async () => {
     jest.useRealTimers();
 
@@ -375,8 +379,11 @@ describe('application workflow execution permissions', () => {
 
     expect(otherInstallation.errors).toBeUndefined();
 
-    await waitForAllJobsToFinish();
-  }, 300000);
+    firstCompanyRun = await waitForRunToEnd(
+      await runWorkflow(CREATE_COMPANY_WORKFLOW),
+      2400,
+    );
+  }, 420000);
 
   afterAll(async () => {
     await globalThis.testDataSource.query(
@@ -412,11 +419,7 @@ describe('application workflow execution permissions', () => {
   });
 
   it('runs a record step the application role allows', async () => {
-    const workflowRun = await waitForRunToEnd(
-      await runWorkflow(CREATE_COMPANY_WORKFLOW),
-    );
-
-    expect(workflowRun.status).toBe('COMPLETED');
+    expect(firstCompanyRun).toMatchObject({ status: 'COMPLETED' });
     expect(await countRecordsByName('company', COMPANY_NAME)).toBe(1);
   }, 120000);
 
