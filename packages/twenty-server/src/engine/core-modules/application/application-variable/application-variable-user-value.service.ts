@@ -113,6 +113,7 @@ export class ApplicationVariableUserValueService {
             : undefined,
         }),
         this.applicationVariableUserValueRepository.find(workspaceId, {
+          select: { userWorkspaceId: true, value: true },
           where: {
             applicationVariableId: flatApplicationVariable.id,
             ...(isDefined(requestUserWorkspaceId)
@@ -203,20 +204,11 @@ export class ApplicationVariableUserValueService {
       return '';
     }
 
-    const encryptedValue = userValue ?? value;
-
-    if (shouldMaskSecret) {
-      return this.applicationVariableService.getDisplayValue({
-        value: encryptedValue,
-        workspaceId,
-        isSecret,
-      });
-    }
-
-    return this.secretEncryptionService.decryptVersionedOrThrow(
-      encryptedValue,
-      { workspaceId },
-    );
+    return this.applicationVariableService.getDisplayValue({
+      value: userValue ?? value,
+      workspaceId,
+      isSecret: isSecret && shouldMaskSecret,
+    });
   }
 
   private async findUserFlatApplicationVariableOrThrow({

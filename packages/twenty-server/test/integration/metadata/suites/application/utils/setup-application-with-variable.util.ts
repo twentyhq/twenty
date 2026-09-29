@@ -23,7 +23,6 @@ export const setupApplicationWithVariable = async ({
   variableKey,
   variableScope,
   isSecret = false,
-  isRequired = false,
   permissionFlagUniversalIdentifiers = [SystemPermissionFlag.APPLICATIONS],
   objectPermissions = [],
 }: {
@@ -31,7 +30,6 @@ export const setupApplicationWithVariable = async ({
   variableKey: string;
   variableScope?: ApplicationVariableScope;
   isSecret?: boolean;
-  isRequired?: boolean;
   permissionFlagUniversalIdentifiers?: string[];
   // An application-owned role can only be granted object permissions through
   // its own manifest; upserting them afterwards is refused.
@@ -61,7 +59,6 @@ export const setupApplicationWithVariable = async ({
             [variableKey]: {
               universalIdentifier: uuidv4(),
               scope: variableScope,
-              isRequired,
               ...(isSecret ? { isSecret: true } : { value: 'initial' }),
             },
           },

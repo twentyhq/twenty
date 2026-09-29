@@ -26,7 +26,6 @@ describe('Secret application variable user values should succeed', () => {
       variableKey: 'API_KEY',
       variableScope: 'USER',
       isSecret: true,
-      isRequired: true,
     });
 
     const [applicationTokenPair, janeApplicationTokenPair] = await Promise.all([

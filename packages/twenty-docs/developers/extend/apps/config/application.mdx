@@ -152,7 +152,7 @@ export default defineApplication({
 });
 ```
 
-User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest. Secret values are masked when read and return an empty string until the member sets their own value.
+User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest.
 
 For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
 
@@ -181,7 +181,7 @@ await client.mutation({
 });
 ```
 
-`applicationVariableUserValues` works in every logic function run, including cron jobs and webhooks. Each entry carries the member's `userWorkspaceId` and `workspaceMemberId`. A member who has not set a value gets the workspace value, or an empty string for a secret. Query it as the application to get real values: with a token that has a person behind it, it only returns that person's value, with secrets masked.
+`applicationVariableUserValues` works in every logic function run, including cron jobs and webhooks. Each entry carries the member's `userWorkspaceId` and `workspaceMemberId`. Query it as the application to get real values: with a token that has a person behind it, it only returns that person's value, with secrets masked.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
