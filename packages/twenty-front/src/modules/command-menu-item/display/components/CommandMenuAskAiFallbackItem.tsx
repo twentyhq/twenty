@@ -26,7 +26,8 @@ export const CommandMenuAskAiFallbackItem = ({
   const handleClick = () => {
     switchToNewChat();
     stageAiChatPreprompt({
-      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(prompt),
+      serializedDocument:
+        serializePlainTextAsAdvancedTextEditorDocument(prompt),
       mode: 'SEND',
       draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });
