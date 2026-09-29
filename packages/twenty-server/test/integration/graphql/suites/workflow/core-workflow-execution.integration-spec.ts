@@ -1426,7 +1426,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       enqueue.mockRestore();
 
       expect(response.body.errors).toBeUndefined();
-      expect(resumeJobData).toMatchObject({ stepIdToResume: agent.id });
+      expect(resumeJobData).toMatchObject({
+        stepToResume: { stepId: agent.id, threadId },
+      });
 
       // The decision a parallel branch finishing in that window takes.
       await queue.add<RunWorkflowJobData>(

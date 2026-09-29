@@ -124,6 +124,69 @@ describe('WorkflowRunWorkspaceService', () => {
     });
   });
 
+  describe('updateStepInfoIfPending', () => {
+    const claimInConversation = () =>
+      service.updateStepInfoIfPending({
+        stepId: AGENT_STEP_ID,
+        stepInfo: { status: StepStatus.RUNNING },
+        expectedThreadId: THREAD_ID,
+        workflowRunId: WORKFLOW_RUN_ID,
+        workspaceId: WORKSPACE_ID,
+      });
+
+    it('claims a PENDING step still holding the expected conversation', async () => {
+      mockWorkflowRun({
+        stepInfos: {
+          [AGENT_STEP_ID]: { status: StepStatus.PENDING, threadId: THREAD_ID },
+        },
+      });
+
+      expect(await claimInConversation()).toBe(true);
+      expect(updateWorkflowRun).toHaveBeenCalledWith({
+        workflowRunId: WORKFLOW_RUN_ID,
+        workspaceId: WORKSPACE_ID,
+        partialUpdate: {
+          state: {
+            stepInfos: {
+              [AGENT_STEP_ID]: {
+                status: StepStatus.RUNNING,
+                threadId: THREAD_ID,
+              },
+            },
+          },
+        },
+      });
+    });
+
+    it.each([
+      [
+        'the run is no longer running',
+        WorkflowRunStatus.STOPPED,
+        { status: StepStatus.PENDING, threadId: THREAD_ID },
+      ],
+      [
+        'the step already resumed',
+        WorkflowRunStatus.RUNNING,
+        { status: StepStatus.RUNNING, threadId: THREAD_ID },
+      ],
+      [
+        'the step waits on something other than a question',
+        WorkflowRunStatus.RUNNING,
+        { status: StepStatus.PENDING },
+      ],
+      [
+        'the step holds another conversation',
+        WorkflowRunStatus.RUNNING,
+        { status: StepStatus.PENDING, threadId: 'other-thread-id' },
+      ],
+    ])('claims nothing when %s', async (_, status, stepInfo) => {
+      mockWorkflowRun({ status, stepInfos: { [AGENT_STEP_ID]: stepInfo } });
+
+      expect(await claimInConversation()).toBe(false);
+      expect(updateWorkflowRun).not.toHaveBeenCalled();
+    });
+  });
+
   describe('endWorkflowRun', () => {
     it('closes the question a conversation of the run still offers', async () => {
       mockWorkflowRun({

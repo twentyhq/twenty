@@ -519,13 +519,13 @@ export class AgentAsyncExecutorService {
 
       let result: object = { response: textResponse.text };
 
-      const isPaused = endsOnPausingToolCall({
+      const endsOnPausingTool = endsOnPausingToolCall({
         steps: textResponse.steps,
         pausingToolNames,
       });
 
-      // A paused execution has no final answer yet to structure.
-      if (isDefined(agentSchema) && !isPaused) {
+      // An execution stopped on a pausing tool has no final answer to structure.
+      if (isDefined(agentSchema) && !endsOnPausingTool) {
         const structuredResult = await generateText({
           instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
           model: registeredModel.model,
@@ -600,7 +600,9 @@ export class AgentAsyncExecutorService {
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
-        isPaused,
+        // An execution out of credits fails even if it asked something, so it
+        // must not be left waiting for an answer.
+        isPaused: endsOnPausingTool && !hasNoMoreAvailableCredits,
         steps: executionSteps,
         modelId: resolvedModelId,
         totalCostInDollars,
