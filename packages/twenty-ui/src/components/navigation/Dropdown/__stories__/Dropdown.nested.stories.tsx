@@ -35,8 +35,13 @@ const openSortDirection = async (canvasElement: HTMLElement) => {
   await userEvent.click(
     within(canvasElement).getByRole('button', { name: 'Sort' }),
   );
-  await userEvent.click(await body.findByRole('button', { name: 'Direction' }));
-  await body.findByRole('dialog', { name: 'Sort direction' });
+  await waitFor(() =>
+    expect(body.getByRole('dialog', { name: 'Sort fields' })).toBeVisible(),
+  );
+  await userEvent.click(body.getByRole('button', { name: 'Direction' }));
+  await waitFor(() =>
+    expect(body.getByRole('dialog', { name: 'Sort direction' })).toBeVisible(),
+  );
 };
 
 const playDismissesOneLayerAtATime =

@@ -231,7 +231,9 @@ export const SelectionReturnsToPreviousPage: Story = {
     );
 
     expect(onStatusChange).toHaveBeenCalledWith('Archived');
-    expect(body.getByRole('dialog', { name: 'Filters' })).toBeVisible();
+    await waitFor(() =>
+      expect(body.getByRole('dialog', { name: 'Filters' })).toBeVisible(),
+    );
     expect(
       body.queryByRole('button', { name: 'Archived' }),
     ).not.toBeInTheDocument();

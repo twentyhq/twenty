@@ -238,6 +238,7 @@ export const RenameFromTheGroupMenu: Story = {
       expect(renamePanelRect.left).toBeCloseTo(groupHeaderRect.left + 32, 0);
       expect(renamePanelRect.top).toBeCloseTo(groupHeaderRect.bottom, 0);
     });
+    await waitFor(() => expect(renamePanel).toBeVisible());
 
     await userEvent.click(groupHeader);
 

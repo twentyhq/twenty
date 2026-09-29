@@ -31,9 +31,14 @@ const openRecordActions = async (canvasElement: HTMLElement) => {
     within(canvasElement).getByRole('button', { name: 'Record actions' }),
   );
 
-  return within(canvasElement.ownerDocument.body).findByRole('menu', {
-    name: 'Record actions',
-  });
+  const menu = await within(canvasElement.ownerDocument.body).findByRole(
+    'menu',
+    { name: 'Record actions' },
+  );
+
+  await waitFor(() => expect(menu).toBeVisible());
+
+  return menu;
 };
 
 const SubmenuTextEditing = ({ direction }: { direction: 'ltr' | 'rtl' }) => (
@@ -71,6 +76,9 @@ const playSubmenuTextEditing =
     });
 
     await waitFor(() => expect(search).toHaveFocus());
+    await waitFor(() =>
+      expect(body.getByRole('dialog', { name: 'Choose person' })).toBeVisible(),
+    );
     await userEvent.keyboard(backwardKey);
     expect(body.getByRole('dialog', { name: 'Choose person' })).toBeVisible();
     expect(search).toHaveFocus();

@@ -100,7 +100,7 @@ export const FormEditing: Story = {
     expect(name).toHaveValue('Acme company');
     await userEvent.tab();
     expect(body.getByRole('textbox', { name: 'Website' })).toHaveFocus();
-    expect(body.getByRole('dialog')).toBeVisible();
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -117,7 +117,7 @@ export const OwnerControlledVisibility: Story = {
 
     await userEvent.keyboard('{Escape}');
     expect(onOpenChange).toHaveBeenCalledWith(false);
-    expect(dialog).toBeVisible();
+    await waitFor(() => expect(dialog).toBeVisible());
 
     detailsPanelOpen.set(false);
 

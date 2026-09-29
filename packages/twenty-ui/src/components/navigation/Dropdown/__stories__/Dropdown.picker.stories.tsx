@@ -72,6 +72,11 @@ const openAssignees = async (canvasElement: HTMLElement) => {
   );
 
   await waitFor(() => expect(search).toHaveFocus());
+  await waitFor(() =>
+    expect(
+      within(canvasElement.ownerDocument.body).getByRole('dialog'),
+    ).toBeVisible(),
+  );
 
   return search;
 };
@@ -85,6 +90,11 @@ const openFields = async (canvasElement: HTMLElement) => {
   );
 
   await waitFor(() => expect(search).toHaveFocus());
+  await waitFor(() =>
+    expect(
+      within(canvasElement.ownerDocument.body).getByRole('dialog'),
+    ).toBeVisible(),
+  );
 
   return search;
 };
@@ -361,7 +371,7 @@ export const SelectionOverrides: Story = {
     expect(onSelectDisabledOption).not.toHaveBeenCalled();
     await userEvent.click(body.getByRole('button', { name: 'Active' }));
     expect(onSelectOption).toHaveBeenCalledOnce();
-    expect(body.getByRole('dialog')).toBeVisible();
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
   },
 };
 

@@ -97,6 +97,7 @@ export const PreventedOutsidePressKeepsItOpen: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Options' }));
     const panel = await body.findByRole('dialog', { name: 'Options' });
 
+    await waitFor(() => expect(panel).toBeVisible());
     await userEvent.click(canvas.getByRole('button', { name: 'Outside' }));
 
     expect(onOutsideClick).toHaveBeenCalledOnce();
