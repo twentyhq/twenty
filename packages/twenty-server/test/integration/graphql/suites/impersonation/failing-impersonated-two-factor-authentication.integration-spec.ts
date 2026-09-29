@@ -51,8 +51,8 @@ describe('Impersonation - two-factor authentication mutations denial (integratio
     });
 
     impersonationLoginToken = impersonateData.impersonate.loginToken.token;
-    impersonationOrigin = impersonateData.impersonate.workspace.workspaceUrls
-      .subdomainUrl as string;
+    impersonationOrigin =
+      impersonateData.impersonate.workspace.workspaceUrls.subdomainUrl;
 
     const { data: tokensData } = await getAuthTokensFromLoginToken({
       loginToken: impersonationLoginToken,
