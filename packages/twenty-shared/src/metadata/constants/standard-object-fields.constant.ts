@@ -258,6 +258,10 @@ export const STANDARD_OBJECT_FIELDS = {
     clickCount: {
       universalIdentifier: 'c8f3d0b5-4a2e-4d9f-8b7c-3e6a8f2d5b01',
     },
+    openedAt: { universalIdentifier: '21fde6de-38e9-4191-8f50-f56bdaa38187' },
+    openCount: {
+      universalIdentifier: 'd0fa147e-30ff-42cf-8bb3-725eb439c784',
+    },
   },
   messageSuppression: {
     ...buildStandardObjectBaseFields(
@@ -859,6 +863,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     totalClickCount: {
       universalIdentifier: 'ea05f2d7-6c4a-4f1b-8d9e-5a8c0b4f7d23',
+    },
+    uniqueOpenCount: {
+      universalIdentifier: '865d188f-3178-4173-a986-80d01a8c7147',
+    },
+    totalOpenCount: {
+      universalIdentifier: '409447ab-12e3-4275-b0dd-24da9e92b600',
     },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',

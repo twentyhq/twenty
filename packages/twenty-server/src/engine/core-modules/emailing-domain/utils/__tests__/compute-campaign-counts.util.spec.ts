@@ -13,6 +13,8 @@ const buildGroup = (
   providerFailedCount: '0',
   uniqueClickCount: '0',
   totalClickCount: '0',
+  uniqueOpenCount: '0',
+  totalOpenCount: '0',
   ...overrides,
 });
 
@@ -121,6 +123,8 @@ describe('computeCampaignCounts', () => {
       complainedCount: 0,
       uniqueClickCount: 0,
       totalClickCount: 0,
+      uniqueOpenCount: 0,
+      totalOpenCount: 0,
     });
   });
 
@@ -138,5 +142,21 @@ describe('computeCampaignCounts', () => {
 
     expect(counts.uniqueClickCount).toBe(2);
     expect(counts.totalClickCount).toBe(5);
+  });
+
+  it('counts recipients who opened separately from their opens', () => {
+    const counts = computeCampaignCounts({
+      groups: [
+        buildGroup({
+          total: '3',
+          deliveredCount: '3',
+          uniqueOpenCount: '2',
+          totalOpenCount: '7',
+        }),
+      ],
+    });
+
+    expect(counts.uniqueOpenCount).toBe(2);
+    expect(counts.totalOpenCount).toBe(7);
   });
 });

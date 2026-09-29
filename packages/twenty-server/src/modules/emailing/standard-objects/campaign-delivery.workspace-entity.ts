@@ -24,4 +24,6 @@ export class CampaignDeliveryWorkspaceEntity {
   renderingFailedAt: Date | null;
   clickedAt: Date | null;
   clickCount: number;
+  openedAt: Date | null;
+  openCount: number;
 }

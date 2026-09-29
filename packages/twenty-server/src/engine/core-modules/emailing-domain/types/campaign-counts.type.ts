@@ -9,4 +9,6 @@ export type CampaignCounts = {
   complainedCount: number;
   uniqueClickCount: number;
   totalClickCount: number;
+  uniqueOpenCount: number;
+  totalOpenCount: number;
 };

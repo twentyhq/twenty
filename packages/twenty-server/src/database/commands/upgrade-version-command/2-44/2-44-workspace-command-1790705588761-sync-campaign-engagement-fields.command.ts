@@ -19,31 +19,43 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
 const DELIVERY = STANDARD_OBJECTS.campaignDelivery;
 
-const CLICK_FIELD_UNIVERSAL_IDENTIFIERS = [
+const ENGAGEMENT_FIELD_UNIVERSAL_IDENTIFIERS = [
   DELIVERY.fields.clickedAt.universalIdentifier,
   DELIVERY.fields.clickCount.universalIdentifier,
+  DELIVERY.fields.openedAt.universalIdentifier,
+  DELIVERY.fields.openCount.universalIdentifier,
   CAMPAIGN.fields.uniqueClickCount.universalIdentifier,
   CAMPAIGN.fields.totalClickCount.universalIdentifier,
+  CAMPAIGN.fields.uniqueOpenCount.universalIdentifier,
+  CAMPAIGN.fields.totalOpenCount.universalIdentifier,
 ];
 
-const CLICK_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
+const ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   CAMPAIGN.views.allMessageCampaigns.viewFields.uniqueClickCount
     .universalIdentifier,
   CAMPAIGN.views.allMessageCampaigns.viewFields.totalClickCount
+    .universalIdentifier,
+  CAMPAIGN.views.allMessageCampaigns.viewFields.uniqueOpenCount
+    .universalIdentifier,
+  CAMPAIGN.views.allMessageCampaigns.viewFields.totalOpenCount
     .universalIdentifier,
   CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.uniqueClickCount
     .universalIdentifier,
   CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.totalClickCount
     .universalIdentifier,
+  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.uniqueOpenCount
+    .universalIdentifier,
+  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.totalOpenCount
+    .universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.44.0', 1790631584987)
+@RegisteredWorkspaceCommand('2.44.0', 1790705588761)
 @Command({
-  name: 'upgrade:2-44:sync-campaign-click-fields',
+  name: 'upgrade:2-44:sync-campaign-engagement-fields',
   description:
-    'Add the click count fields to campaigns and deliveries, and their columns, in existing workspaces',
+    'Add the click and open count fields to campaigns and deliveries, and their columns, in existing workspaces',
 })
-export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandRunner {
+export class SyncCampaignEngagementFieldsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -101,7 +113,7 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const fieldsToCreate = CLICK_FIELD_UNIVERSAL_IDENTIFIERS.filter(
+    const fieldsToCreate = ENGAGEMENT_FIELD_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>
         !isDefined(
           flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
@@ -115,7 +127,7 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
 
       if (!isDefined(standardField)) {
         throw new Error(
-          `Standard application is missing click field ${universalIdentifier}`,
+          `Standard application is missing engagement field ${universalIdentifier}`,
         );
       }
 
@@ -124,7 +136,7 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
 
     // A workspace that never got the campaign views has no place for the
     // columns; the view backfill command owns those workspaces.
-    const viewFieldsToCreate = CLICK_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
+    const viewFieldsToCreate = ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>
         !isDefined(
           flatViewFieldMaps.byUniversalIdentifier[universalIdentifier],
@@ -138,7 +150,7 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
 
       if (!isDefined(standardViewField)) {
         throw new Error(
-          `Standard application is missing click view column ${universalIdentifier}`,
+          `Standard application is missing engagement view column ${universalIdentifier}`,
         );
       }
 
@@ -159,7 +171,7 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: ${fieldsToCreate.length} click field(s), ${viewFieldsToCreate.length} view column(s)`,
+        `[DRY RUN] Workspace ${workspaceId}: ${fieldsToCreate.length} engagement field(s), ${viewFieldsToCreate.length} view column(s)`,
       );
 
       return;
@@ -190,7 +202,7 @@ export class SyncCampaignClickFieldsCommand extends ProvisionedWorkspaceCommandR
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         result,
-        `Failed to add the campaign click fields for workspace ${workspaceId}`,
+        `Failed to add the campaign engagement fields for workspace ${workspaceId}`,
       );
     }
   }

@@ -20,4 +20,6 @@ export type MessageCampaign = {
   complainedCount: number;
   uniqueClickCount: number;
   totalClickCount: number;
+  uniqueOpenCount: number;
+  totalOpenCount: number;
 };

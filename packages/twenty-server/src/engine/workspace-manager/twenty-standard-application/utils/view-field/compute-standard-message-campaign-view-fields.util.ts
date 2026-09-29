@@ -188,6 +188,30 @@ export const computeStandardMessageCampaignViewFields = (
         size: 120,
       },
     }),
+    allMessageCampaignsUniqueOpenCount: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'uniqueOpenCount',
+        fieldName: 'uniqueOpenCount',
+        position: 17,
+        isVisible: true,
+        size: 120,
+      },
+    }),
+    allMessageCampaignsTotalOpenCount: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'totalOpenCount',
+        fieldName: 'totalOpenCount',
+        position: 18,
+        isVisible: true,
+        size: 120,
+      },
+    }),
     allMessageCampaignsRecipients: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',
@@ -360,6 +384,34 @@ export const computeStandardMessageCampaignViewFields = (
           viewFieldName: 'totalClickCount',
           fieldName: 'totalClickCount',
           position: 10,
+          isVisible: true,
+          size: 120,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsUniqueOpenCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'uniqueOpenCount',
+          fieldName: 'uniqueOpenCount',
+          position: 11,
+          isVisible: true,
+          size: 120,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsTotalOpenCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'totalOpenCount',
+          fieldName: 'totalOpenCount',
+          position: 12,
           isVisible: true,
           size: 120,
           viewFieldGroupName: 'stats',

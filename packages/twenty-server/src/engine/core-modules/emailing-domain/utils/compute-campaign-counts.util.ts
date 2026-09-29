@@ -14,6 +14,8 @@ const EMPTY_CAMPAIGN_COUNTS: CampaignCounts = {
   complainedCount: 0,
   uniqueClickCount: 0,
   totalClickCount: 0,
+  uniqueOpenCount: 0,
+  totalOpenCount: 0,
 };
 
 const countFailedInGroup = (group: CampaignCountGroup): number =>
@@ -48,5 +50,7 @@ export const computeCampaignCounts = ({
       uniqueClickCount:
         counts.uniqueClickCount + Number(group.uniqueClickCount),
       totalClickCount: counts.totalClickCount + Number(group.totalClickCount),
+      uniqueOpenCount: counts.uniqueOpenCount + Number(group.uniqueOpenCount),
+      totalOpenCount: counts.totalOpenCount + Number(group.totalOpenCount),
     };
   }, EMPTY_CAMPAIGN_COUNTS);

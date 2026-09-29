@@ -432,6 +432,55 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  openedAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'openedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: 'Opened At', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'First open of the email',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  openCount: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'openCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: 'Open count', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Opens of the email',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: false,
+        defaultValue: 0,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   createdAt: {
     ...createStandardFieldFlatMetadata({
       ...args,

@@ -22,6 +22,8 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   skippedCount: number;
   uniqueClickCount: number;
   totalClickCount: number;
+  uniqueOpenCount: number;
+  totalOpenCount: number;
   unsubscribeTopicId: string | null;
   list: EntityRelation<MessageListWorkspaceEntity> | null;
   listId: string | null;

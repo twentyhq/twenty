@@ -9,4 +9,6 @@ export type CampaignCountGroup = {
   providerFailedCount: string;
   uniqueClickCount: string;
   totalClickCount: string;
+  uniqueOpenCount: string;
+  totalOpenCount: string;
 };
