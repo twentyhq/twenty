@@ -944,8 +944,23 @@ export class StreamAgentChatJob {
       };
     });
 
-    for (const inputAsk of inputAsks) {
-      await this.inputAskWorkspaceService.open({ workspaceId, inputAsk });
+    const openedToolCallIds: string[] = [];
+
+    try {
+      for (const inputAsk of inputAsks) {
+        await this.inputAskWorkspaceService.open({ workspaceId, inputAsk });
+        openedToolCallIds.push(inputAsk.toolCallId);
+      }
+    } catch (error) {
+      // A retry replaces this turn's calls, so the Asks already opened for them
+      // would wait on calls that no longer exist.
+      for (const toolCallId of openedToolCallIds) {
+        await this.inputAskWorkspaceService
+          .cancel({ workspaceId, match: { threadId, toolCallId } })
+          .catch(() => false);
+      }
+
+      throw error;
     }
 
     if (inputAsks.length > 0) {

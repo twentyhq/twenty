@@ -282,6 +282,7 @@ describe('StreamAgentChatJob', () => {
       open: inputAskOpenRejection
         ? jest.fn().mockRejectedValue(inputAskOpenRejection)
         : jest.fn().mockResolvedValue(undefined),
+      cancel: jest.fn().mockResolvedValue(true),
     };
     const job = new StreamAgentChatJob(
       threadRepository as never,
@@ -883,6 +884,51 @@ describe('StreamAgentChatJob', () => {
       'stream-error',
     );
     expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('cancels the Asks it opened when a later one of the turn cannot be opened', async () => {
+    const askQuestionsCallParts = (toolCallId: string): ModelStreamPart[] => [
+      {
+        type: 'tool-input-start',
+        id: toolCallId,
+        toolName: ASK_QUESTIONS_TOOL_NAME,
+      },
+      {
+        type: 'tool-call',
+        toolCallId,
+        toolName: ASK_QUESTIONS_TOOL_NAME,
+        input: { questions: QUESTIONS },
+      },
+      {
+        type: 'tool-result',
+        toolCallId,
+        toolName: ASK_QUESTIONS_TOOL_NAME,
+        input: { questions: QUESTIONS },
+        output: { result: { questions: QUESTIONS, status: 'pending' } },
+      },
+    ];
+    const { job, inputAskWorkspaceService } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: [
+          ...START_PARTS,
+          ...askQuestionsCallParts('first-call-id'),
+          ...askQuestionsCallParts('second-call-id'),
+          ...FINISH_PARTS,
+        ],
+      }),
+    });
+
+    inputAskWorkspaceService.open
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('Ask insert failed'));
+
+    await expect(job.handle(jobData)).rejects.toThrow('Ask insert failed');
+
+    expect(inputAskWorkspaceService.cancel).toHaveBeenCalledTimes(1);
+    expect(inputAskWorkspaceService.cancel).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      match: { threadId: 'thread-id', toolCallId: 'first-call-id' },
+    });
   });
 
   it('counts an aborted turn as cancelled rather than leaving it unaccounted', async () => {
