@@ -1,15 +1,22 @@
 import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('SettingsPermissionGuard', () => {
   let guard: any;
@@ -94,20 +101,31 @@ describe('SettingsPermissionGuard', () => {
     let mockApplicationRepository: { findOne: jest.Mock };
     let mockRoleRepository: { findOne: jest.Mock };
 
-    beforeEach(() => {
+    beforeEach(async () => {
       mockApplicationRepository = { findOne: jest.fn() };
       mockRoleRepository = { findOne: jest.fn() };
 
       mockGqlContext.req.userWorkspaceId = undefined;
       mockGqlContext.req.application = { id: 'application-id' };
 
-      const permissionsService = new PermissionsService(
-        {} as any,
-        {} as any,
-        {} as any,
-        mockRoleRepository as any,
-        mockApplicationRepository as any,
-      );
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          PermissionsService,
+          { provide: UserRoleService, useValue: {} },
+          { provide: WorkspaceCacheService, useValue: {} },
+          { provide: ApiKeyRoleService, useValue: {} },
+          {
+            provide: getWorkspaceScopedRepositoryToken(RoleEntity),
+            useValue: mockRoleRepository,
+          },
+          {
+            provide: getWorkspaceScopedRepositoryToken(ApplicationEntity),
+            useValue: mockApplicationRepository,
+          },
+        ],
+      }).compile();
+
+      const permissionsService = module.get(PermissionsService);
 
       const GuardClass = SettingsPermissionGuard(PermissionFlagType.LAYOUTS);
 

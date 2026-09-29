@@ -233,7 +233,7 @@ export class PermissionsService {
 
       if (!isDefined(application)) {
         throw new PermissionsException(
-          `Could not find application ${applicationId}`,
+          `Could not find application ${applicationId} of the authentication context`,
           PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
         );
       }
