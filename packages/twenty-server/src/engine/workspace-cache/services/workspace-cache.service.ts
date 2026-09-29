@@ -364,7 +364,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     await this.memoizer.clearKeys(`${workspaceId}-`);
 
     for (const localKey of this.localCache.keys()) {
-      if (localKey.endsWith(`:${workspaceId}`)) {
+      if (localKey.endsWith(`:${this.buildWorkspaceHashTag(workspaceId)}`)) {
         this.localCache.delete(localKey);
       }
     }
@@ -878,6 +878,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     keyName: WorkspaceCacheKeyName,
   ): string {
-    return `${keyName}:${workspaceId}`;
+    return `${keyName}:${this.buildWorkspaceHashTag(workspaceId)}`;
+  }
+
+  // The `:data`/`:hash` keys of a workspace are written in one MULTI (mset),
+  // which clustered Redis rejects with CROSSSLOT unless they share a hash slot.
+  private buildWorkspaceHashTag(workspaceId: string): string {
+    return `{${workspaceId}}`;
   }
 }

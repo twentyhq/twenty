@@ -338,6 +338,8 @@ export class CoreEntityCacheService implements OnModuleInit {
     entityId: string,
     keyName: CoreEntityCacheKeyName,
   ): string {
-    return `${CORE_ENTITY_CACHE_KEYS[keyName]}:${entityId}`;
+    // Hash tag: `:data`/`:hash` are written together in one MULTI (mset),
+    // which clustered Redis rejects with CROSSSLOT unless they share a slot.
+    return `${CORE_ENTITY_CACHE_KEYS[keyName]}:{${entityId}}`;
   }
 }

@@ -23,7 +23,7 @@ const WORKSPACE_1_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const WORKSPACE_2_ID = '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
 
 const buildCacheKey = (workspaceId: string, suffix: 'hash' | 'data') =>
-  `apiKeyRoleMap:${workspaceId}:${suffix}`;
+  `apiKeyRoleMap:{${workspaceId}}:${suffix}`;
 
 describe('WorkspaceCacheService', () => {
   const redisEntries = new Map<string, unknown>([
@@ -121,6 +121,25 @@ describe('WorkspaceCacheService', () => {
 
       expect(countDataFetches(WORKSPACE_2_ID)).toBe(1);
       expect(cacheStorage.mdel).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('redis keys', () => {
+    it('writes every key of a workspace under one hash tag so mset stays in a single slot', async () => {
+      const uncachedWorkspaceId = '7c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
+
+      await service.getOrRecompute(uncachedWorkspaceId, ['apiKeyRoleMap']);
+
+      expect(cacheStorage.mset).toHaveBeenCalledTimes(1);
+
+      const writtenKeys = cacheStorage.mset.mock.calls[0][0].map(
+        ({ key }) => key,
+      );
+
+      expect(writtenKeys.length).toBeGreaterThan(0);
+      expect(
+        writtenKeys.every((key) => key.includes(`{${uncachedWorkspaceId}}`)),
+      ).toBe(true);
     });
   });
 });
