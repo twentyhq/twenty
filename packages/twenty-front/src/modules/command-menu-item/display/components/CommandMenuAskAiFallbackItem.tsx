@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconMessageCirclePlus } from 'twenty-ui/icon';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
@@ -25,7 +26,7 @@ export const CommandMenuAskAiFallbackItem = ({
   const handleClick = () => {
     switchToNewChat();
     stageAiChatPreprompt({
-      text: prompt,
+      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(prompt),
       mode: 'SEND',
       draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });

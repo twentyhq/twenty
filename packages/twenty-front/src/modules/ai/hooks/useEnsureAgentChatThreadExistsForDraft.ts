@@ -31,7 +31,7 @@ export const useEnsureAgentChatThreadExistsForDraft = (
     const draft =
       store.get(agentChatDraftsByThreadIdState.atom)[
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-      ]?.serializedDocument ?? '';
+      ] ?? '';
 
     if (tipTapDocumentToMarkdown(draft).trim() === '') {
       return;

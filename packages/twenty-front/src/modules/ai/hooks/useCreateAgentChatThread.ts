@@ -66,19 +66,17 @@ export const useCreateAgentChatThread = () => {
       const previousDraftKey =
         store.get(currentAiChatThreadState.atom) ??
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-      const newDraft = store.get(agentChatDraftsByThreadIdState.atom)[
-        AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-      ];
+      const draftsSnapshot = store.get(agentChatDraftsByThreadIdState.atom);
+      const newDraft = draftsSnapshot[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '';
 
       setIsCreatingChatThread(false);
 
       if (previousDraftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
         store.set(hasTriggeredCreateForDraftState.atom, true);
-        // The record a new chat was started from moves with its draft.
         setAgentChatDraftsByThreadId((previousDrafts) => ({
           ...previousDrafts,
-          [newThreadId]: newDraft ?? { serializedDocument: '' },
-          [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: { serializedDocument: '' },
+          [newThreadId]: newDraft,
+          [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
         }));
         store.set(shouldFocusChatEditorState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
@@ -87,9 +85,7 @@ export const useCreateAgentChatThread = () => {
 
       setCurrentAiChatThread(newThreadId);
       projectAiChatThreadToUrl(newThreadId);
-      setAgentChatInput(
-        tipTapDocumentToMarkdown(newDraft?.serializedDocument ?? ''),
-      );
+      setAgentChatInput(tipTapDocumentToMarkdown(newDraft));
     },
     onError: () => {
       setIsCreatingChatThread(false);

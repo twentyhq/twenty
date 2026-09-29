@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
-import { findAgentChatThreadTargetFieldInfo } from '@/ai/utils/findAgentChatThreadTargetFieldInfo';
+import { type AgentChatConversationTarget } from '@/ai/types/AgentChatConversationTarget';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -11,7 +11,7 @@ import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
-import { type SearchRecord } from '~/generated/graphql';
+import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 
 const EXISTING_LINK_GQL_FIELDS = { id: true };
 
@@ -34,57 +34,60 @@ export const useAttachChatThreadToRecord = () => {
   });
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
-  // Resolves once the link exists, whoever wrote it: the chat model may attach
-  // the same record through its own tool during the same turn.
+  // The chat model may file the conversation under the same record through
+  // its own tool during the same turn, so an existing link counts as success.
   const attachChatThreadToRecord = async ({
     threadId,
     objectNameSingular,
     recordId,
-  }: Pick<SearchRecord, 'objectNameSingular' | 'recordId'> & {
-    threadId: string;
-  }) => {
-    const targetJoinColumnName = isDefined(junctionConfig)
-      ? findAgentChatThreadTargetFieldInfo({
-          targetFields: junctionConfig.targetFields,
-          objectNameSingular,
-          objectMetadataItems,
-        })?.joinColumnName
-      : undefined;
+  }: AgentChatConversationTarget & { threadId: string }) => {
+    const targetObjectMetadataItem = objectMetadataItems.find(
+      ({ nameSingular }) => nameSingular === objectNameSingular,
+    );
+    const targetJoinColumnName =
+      isDefined(junctionConfig) && isDefined(targetObjectMetadataItem)
+        ? findTargetFieldInfo(
+            junctionConfig.targetFields,
+            targetObjectMetadataItem.id,
+            objectMetadataItems,
+          )?.joinColumnName
+        : undefined;
 
     if (!isDefined(junctionConfig) || !isDefined(targetJoinColumnName)) {
-      return false;
+      return;
     }
 
     try {
-      // Only the standard legs carry a unique index on the thread and the
-      // record, so a link to a custom object is deduplicated by looking first.
-      const { data: existingLinks, error: existingLinksError } =
-        await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
-          query: findExistingLinksQuery,
-          variables: {
-            filter: {
-              [junctionConfig.sourceJoinColumnName]: { eq: threadId },
-              [targetJoinColumnName]: { eq: recordId },
+      // Only the standard legs carry a unique index on the conversation and
+      // the record, which the upsert resolves; a custom leg is looked up first.
+      if (targetObjectMetadataItem?.isCustom === true) {
+        const { data: existingLinks, error: existingLinksError } =
+          await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+            query: findExistingLinksQuery,
+            variables: {
+              filter: {
+                [junctionConfig.sourceJoinColumnName]: { eq: threadId },
+                [targetJoinColumnName]: { eq: recordId },
+              },
+              limit: 1,
             },
-            limit: 1,
-          },
-          fetchPolicy: 'network-only',
-        });
+            fetchPolicy: 'network-only',
+          });
 
-      if (isDefined(existingLinksError)) {
-        throw existingLinksError;
+        if (isDefined(existingLinksError)) {
+          throw existingLinksError;
+        }
+
+        if (
+          isNonEmptyArray(
+            existingLinks?.[junctionConfig.junctionObjectMetadata.namePlural]
+              ?.edges,
+          )
+        ) {
+          return;
+        }
       }
 
-      const hasExistingLink =
-        (existingLinks?.[junctionConfig.junctionObjectMetadata.namePlural]
-          ?.edges.length ?? 0) > 0;
-
-      if (hasExistingLink) {
-        return true;
-      }
-
-      // Upserting resolves a standard leg's link written since the lookup
-      // instead of failing on its unique index.
       await createLinks({
         recordsToCreate: [
           {
@@ -97,17 +100,15 @@ export const useAttachChatThreadToRecord = () => {
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
 
-      return false;
+      return;
     }
 
-    // The link exists by now, so a failed refresh of the counts must not
-    // report the attach as failed and get it retried.
+    // The link exists by now, so a failed refresh of the counts is not
+    // reported as a failed attach.
     refetchAggregateQueries({
       objectMetadataNamePlural:
         junctionConfig.junctionObjectMetadata.namePlural,
     }).catch(() => undefined);
-
-    return true;
   };
 
   return { attachChatThreadToRecord };

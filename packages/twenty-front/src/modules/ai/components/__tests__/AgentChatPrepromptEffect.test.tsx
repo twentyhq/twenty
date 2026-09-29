@@ -2,6 +2,7 @@ import { act, render, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
@@ -41,7 +42,7 @@ const stagePreprompt = ({
 
   act(() => {
     result.current.stageAiChatPreprompt({
-      text,
+      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(text),
       mode,
       draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });

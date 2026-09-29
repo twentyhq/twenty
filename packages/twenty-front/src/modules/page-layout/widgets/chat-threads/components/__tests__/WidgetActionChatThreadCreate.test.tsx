@@ -2,8 +2,10 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -46,10 +48,10 @@ const renderAction = () =>
     },
   );
 
-const readPersistedNewChatDraft = () =>
+const readPersistedNewChatDraft = (): string =>
   JSON.parse(localStorage.getItem('ai/agentChatDraftsByThreadIdState') ?? '{}')[
     AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-  ];
+  ] ?? '';
 
 describe('WidgetActionChatThreadCreate', () => {
   beforeEach(() => {
@@ -58,7 +60,7 @@ describe('WidgetActionChatThreadCreate', () => {
     mockHasPermissionFlag.mockReturnValue(true);
   });
 
-  it('starts a new conversation with the record mentioned and kept for its first send', async () => {
+  it('starts a new conversation that mentions the record to file it under', async () => {
     const user = userEvent.setup();
 
     renderAction();
@@ -66,23 +68,12 @@ describe('WidgetActionChatThreadCreate', () => {
     await user.click(screen.getByRole('button', { name: 'New conversation' }));
 
     expect(switchToNewChat).toHaveBeenCalledTimes(1);
-
-    const newChatDraft = readPersistedNewChatDraft();
-
     expect(
-      JSON.parse(newChatDraft.serializedDocument).content[0].content[0],
-    ).toEqual({
-      type: 'mentionTag',
-      attrs: expect.objectContaining({
-        recordId: COMPANY_ID,
-        objectNameSingular: 'company',
-        label: 'Acme',
-      }),
-    });
-    expect(newChatDraft.pendingRecordTarget).toEqual({
-      objectNameSingular: 'company',
-      recordId: COMPANY_ID,
-    });
+      getConversationTargetsFromSerializedDocument(readPersistedNewChatDraft()),
+    ).toEqual([{ objectNameSingular: 'company', recordId: COMPANY_ID }]);
+    expect(tipTapDocumentToMarkdown(readPersistedNewChatDraft())).toContain(
+      'Acme',
+    );
   });
 
   it('is hidden from members who cannot use AI', () => {

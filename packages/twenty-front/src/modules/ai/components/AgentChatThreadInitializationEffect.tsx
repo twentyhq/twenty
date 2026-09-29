@@ -129,8 +129,7 @@ export const AgentChatThreadInitializationEffect = () => {
     if (sortedThreads.length > 0) {
       const firstThread = sortedThreads[0];
       const draftForThread =
-        store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id]
-          ?.serializedDocument ?? '';
+        store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
 
       setCurrentAiChatThread(firstThread.id);
       setAgentChatInput(tipTapDocumentToMarkdown(draftForThread));
@@ -153,7 +152,7 @@ export const AgentChatThreadInitializationEffect = () => {
         tipTapDocumentToMarkdown(
           store.get(agentChatDraftsByThreadIdState.atom)[
             AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-          ]?.serializedDocument ?? '',
+          ] ?? '',
         ),
       );
     }

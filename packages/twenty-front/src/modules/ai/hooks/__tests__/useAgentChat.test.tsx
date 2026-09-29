@@ -12,8 +12,6 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { type AgentChatDraft } from '@/ai/types/AgentChatDraft';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -31,13 +29,17 @@ const COMPANY_TARGET = {
   objectNameSingular: 'company',
   recordId: '20202020-0000-4000-8000-000000000002',
 };
-const DRAFT_STARTED_FROM_COMPANY = {
-  serializedDocument: serializeMentionTagAsAdvancedTextEditorDocument({
+const DRAFT_STARTED_FROM_COMPANY =
+  serializeMentionTagAsAdvancedTextEditorDocument({
     ...COMPANY_TARGET,
     label: 'Acme',
-  }),
-  pendingRecordTarget: COMPANY_TARGET,
-};
+    isConversationTarget: true,
+  });
+const DRAFT_MENTIONING_COMPANY =
+  serializeMentionTagAsAdvancedTextEditorDocument({
+    ...COMPANY_TARGET,
+    label: 'Acme',
+  });
 
 const buildSendChatMessageMock = (
   outcome: 'sent' | 'failed',
@@ -62,22 +64,19 @@ const readPersistedDrafts = () =>
   JSON.parse(localStorage.getItem(DRAFTS_STORAGE_KEY) ?? '{}');
 
 // The composer subscribes to the drafts, which reads them back from local
-// storage the way a reload of the app does.
-const renderAgentChatAfterReload = ({
+// storage.
+const renderAgentChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
-  currentThreadId = null,
 }: {
-  persistedDrafts: Record<string, AgentChatDraft>;
+  persistedDrafts: Record<string, string>;
   sendChatMessageOutcomes: ('sent' | 'failed')[];
-  currentThreadId?: string | null;
 }) => {
   const ensureThreadIdForSend = jest.fn(() => Promise.resolve(THREAD_ID));
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: sendChatMessageOutcomes.map(buildSendChatMessageMock),
     onInitializeJotaiStore: (store) => {
       store.set(aiModelsState.atom, [{ modelId: 'model', label: 'Model' }]);
-      store.set(currentAiChatThreadState.atom, currentThreadId);
     },
   });
 
@@ -111,11 +110,10 @@ const send = async (result: { current: ReturnType<typeof useAgentChat> }) => {
 describe('useAgentChat', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    attachChatThreadToRecord.mockResolvedValue(true);
   });
 
-  it('files a chat started from a record under it on its first send, after a reload', async () => {
-    const result = renderAgentChatAfterReload({
+  it('files a chat started from a record under it once its message is sent', async () => {
+    const result = renderAgentChat({
       persistedDrafts: {
         [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: DRAFT_STARTED_FROM_COMPANY,
       },
@@ -130,12 +128,12 @@ describe('useAgentChat', () => {
       ...COMPANY_TARGET,
     });
     expect(readPersistedDrafts()).toEqual({
-      [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: { serializedDocument: '' },
+      [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
     });
   });
 
-  it('keeps the record with the draft when the first send fails, so the retry attaches it', async () => {
-    const result = renderAgentChatAfterReload({
+  it('files the chat when the retry of a failed first send goes through', async () => {
+    const result = renderAgentChat({
       persistedDrafts: {
         [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: DRAFT_STARTED_FROM_COMPANY,
       },
@@ -157,59 +155,30 @@ describe('useAgentChat', () => {
     });
   });
 
-  it('retries a failed attach on the next message sent in the thread', async () => {
-    attachChatThreadToRecord.mockResolvedValueOnce(false);
-    const result = renderAgentChatAfterReload({
+  it('does not file a chat under a record it only mentions', async () => {
+    const result = renderAgentChat({
       persistedDrafts: {
-        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: DRAFT_STARTED_FROM_COMPANY,
+        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: DRAFT_MENTIONING_COMPANY,
       },
       sendChatMessageOutcomes: ['sent'],
     });
 
     await send(result);
 
-    expect(readPersistedDrafts()[THREAD_ID]).toEqual({
-      serializedDocument: '',
-      pendingRecordTarget: COMPANY_TARGET,
-    });
-
-    const resultAfterReload = renderAgentChatAfterReload({
-      persistedDrafts: {
-        ...readPersistedDrafts(),
-        [THREAD_ID]: {
-          serializedDocument:
-            serializePlainTextAsAdvancedTextEditorDocument('And then?'),
-          pendingRecordTarget: COMPANY_TARGET,
-        },
-      },
-      sendChatMessageOutcomes: ['sent'],
-      currentThreadId: THREAD_ID,
-    });
-
-    await send(resultAfterReload);
-
-    expect(attachChatThreadToRecord).toHaveBeenCalledTimes(2);
-    expect(readPersistedDrafts()[THREAD_ID]).toEqual({
-      serializedDocument: '',
-    });
+    expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
-  it('leaves a chat that was not started from a record alone', async () => {
-    const result = renderAgentChatAfterReload({
+  it('does not file a chat that mentions no record', async () => {
+    const result = renderAgentChat({
       persistedDrafts: {
-        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: {
-          serializedDocument:
-            serializePlainTextAsAdvancedTextEditorDocument('Hello'),
-        },
+        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
+          serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
       sendChatMessageOutcomes: ['sent'],
     });
 
     await send(result);
 
-    expect(readPersistedDrafts()).toEqual({
-      [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: { serializedDocument: '' },
-    });
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 });
