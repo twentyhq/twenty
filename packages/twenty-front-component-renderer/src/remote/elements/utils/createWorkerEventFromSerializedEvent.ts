@@ -22,7 +22,7 @@ export const createWorkerEventFromSerializedEvent = ({
   });
   const event = new eventClass(eventType, { bubbles: false, cancelable: true });
 
-  applySerializedEventProperties(event, eventData);
+  applySerializedEventProperties({ event, eventData });
   markEventAsHostOriginated(event);
 
   return applySyntheticEventCompatibility(event);
