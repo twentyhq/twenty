@@ -29,7 +29,7 @@ const buildCreationOperations = <TFlatEntity extends SyncableFlatEntity>(
   flatEntityToUpdate: [],
 });
 
-@RegisteredWorkspaceCommand('2.44.0', 1790622117809)
+@RegisteredWorkspaceCommand('2.44.0', 1790681093095)
 @Command({
   name: 'upgrade:2-44:add-input-ask-object',
   description: 'Create the inputAsk standard object in existing workspaces',
