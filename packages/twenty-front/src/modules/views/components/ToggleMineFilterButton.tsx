@@ -16,9 +16,13 @@ const StyledToggleMineFilterContainer = styled.div`
   display: flex;
   flex-shrink: 0;
 
-  [data-checked] {
+  [data-checked]:not([data-disabled]) {
     background: ${themeCssVariables.color.blue};
     color: color(display-p3 1 1 1);
+  }
+
+  [data-disabled] {
+    color: ${themeCssVariables.font.color.light};
   }
 `;
 
