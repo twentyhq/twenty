@@ -12,6 +12,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
@@ -78,6 +79,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
       ConnectedAccountEntity,
     ]),
     EmailAliasManagerModule,
+    ChannelRecordShareModule,
     FeatureFlagModule,
     MessageParticipantManagerModule,
     MessagingFolderSyncManagerModule,

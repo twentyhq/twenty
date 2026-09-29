@@ -16,6 +16,7 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 
 const APPLICATION_ID = '11111111-1111-4111-8111-111111111111';
 const OTHER_APPLICATION_ID = '22222222-2222-4222-8222-222222222222';
@@ -32,6 +33,7 @@ describe('ApplicationMessageChannelsService', () => {
     Repository<ConnectedAccountEntity>
   >;
   let workspaceEventEmitter: jest.Mocked<WorkspaceEventEmitter>;
+  let channelRecordShareService: jest.Mocked<ChannelRecordShareService>;
 
   // No request user: a cron/webhook run acting as the application itself.
   const scope = {
@@ -60,6 +62,10 @@ describe('ApplicationMessageChannelsService', () => {
       emitCustomBatchEvent: jest.fn(),
     } as unknown as jest.Mocked<WorkspaceEventEmitter>;
 
+    channelRecordShareService = {
+      syncChannelRecordShares: jest.fn(),
+    } as unknown as jest.Mocked<ChannelRecordShareService>;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationMessageChannelsService,
@@ -72,6 +78,10 @@ describe('ApplicationMessageChannelsService', () => {
           useValue: connectedAccountRepository,
         },
         { provide: WorkspaceEventEmitter, useValue: workspaceEventEmitter },
+        {
+          provide: ChannelRecordShareService,
+          useValue: channelRecordShareService,
+        },
       ],
     }).compile();
 
@@ -219,6 +229,42 @@ describe('ApplicationMessageChannelsService', () => {
       expect(messageChannelRepository.update).toHaveBeenCalledWith(
         { id: MESSAGE_CHANNEL_ID, workspaceId: WORKSPACE_ID },
         { displayName: null },
+      );
+    });
+
+    it('rewrites the channel grants when its visibility changes, and only then', async () => {
+      const existing = {
+        id: MESSAGE_CHANNEL_ID,
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        type: MessageChannelType.APP,
+        visibility: MessageChannelVisibility.METADATA,
+      } as MessageChannelEntity;
+
+      messageChannelRepository.findOne.mockResolvedValue(existing);
+      messageChannelRepository.findOneOrFail.mockResolvedValue(existing);
+      givenTheAppOwnsTheConnection();
+
+      await service.update({
+        ...scope,
+        id: MESSAGE_CHANNEL_ID,
+        visibility: MessageChannelVisibility.METADATA,
+      });
+      expect(
+        channelRecordShareService.syncChannelRecordShares,
+      ).not.toHaveBeenCalled();
+
+      await service.update({
+        ...scope,
+        id: MESSAGE_CHANNEL_ID,
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      });
+      expect(
+        channelRecordShareService.syncChannelRecordShares,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: WORKSPACE_ID,
+          channelId: MESSAGE_CHANNEL_ID,
+        }),
       );
     });
 

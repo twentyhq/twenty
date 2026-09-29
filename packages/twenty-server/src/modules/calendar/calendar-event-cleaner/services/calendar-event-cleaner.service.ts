@@ -5,6 +5,8 @@ import { In, MoreThan } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/calendar-event-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -14,7 +16,10 @@ const CALENDAR_CLEANUP_PAGE_SIZE = 500;
 export class CalendarEventCleanerService {
   private readonly logger = new Logger(CalendarEventCleanerService.name);
 
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly channelRecordShareService: ChannelRecordShareService,
+  ) {}
 
   async deleteCalendarChannelEventAssociationsByChannelId({
     workspaceId,
@@ -55,12 +60,67 @@ export class CalendarEventCleanerService {
 
               await calendarChannelEventAssociationRepository.delete(ids);
             }
+
+            await this.channelRecordShareService.syncChannelRecordSharesInTransaction(
+              {
+                transactionScope,
+                source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+                channelId: calendarChannelId,
+              },
+            );
           },
         );
       },
       authContext,
       { lite: true },
     );
+  }
+
+  async deleteCalendarChannelEventAssociationsAndOrphans({
+    workspaceId,
+    calendarChannelId,
+    eventExternalIds,
+  }: {
+    workspaceId: string;
+    calendarChannelId: string;
+    eventExternalIds: string[];
+  }) {
+    if (eventExternalIds.length === 0) {
+      return;
+    }
+
+    const calendarChannelEventAssociationRepository =
+      this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const associationsToDelete =
+      await calendarChannelEventAssociationRepository.find({
+        where: {
+          eventExternalId: In(eventExternalIds),
+          calendarChannelId,
+        },
+        select: { calendarEventId: true },
+      });
+
+    await calendarChannelEventAssociationRepository.delete({
+      eventExternalId: In(eventExternalIds),
+      calendarChannelId,
+    });
+
+    const calendarEventIds = associationsToDelete.map(
+      ({ calendarEventId }) => calendarEventId,
+    );
+
+    await this.channelRecordShareService.syncChannelRecordShares({
+      workspaceId,
+      source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+      channelId: calendarChannelId,
+      recordIds: calendarEventIds,
+    });
+
+    await this.deleteOrphanedCalendarEvents({ calendarEventIds, workspaceId });
   }
 
   public async deleteOrphanedCalendarEvents({

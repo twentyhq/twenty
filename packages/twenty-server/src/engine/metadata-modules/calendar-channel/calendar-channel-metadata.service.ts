@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -18,6 +19,8 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/calendar-event-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 
 @Injectable()
 export class CalendarChannelMetadataService {
@@ -26,6 +29,7 @@ export class CalendarChannelMetadataService {
     private readonly repository: Repository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelRecordShareService: ChannelRecordShareService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
@@ -166,10 +170,25 @@ export class CalendarChannelMetadataService {
     workspaceId: string;
     data: Partial<CalendarChannelEntity>;
   }): Promise<CalendarChannelDTO> {
+    const previousCalendarChannel = isDefined(data.visibility)
+      ? await this.repository.findOne({ where: { id, workspaceId } })
+      : null;
+
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
     );
+
+    if (
+      isDefined(data.visibility) &&
+      data.visibility !== previousCalendarChannel?.visibility
+    ) {
+      await this.channelRecordShareService.syncChannelRecordShares({
+        workspaceId,
+        source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+        channelId: id,
+      });
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }

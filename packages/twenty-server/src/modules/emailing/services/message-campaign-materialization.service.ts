@@ -21,6 +21,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/message-thread-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
@@ -58,6 +60,7 @@ export class MessageCampaignMaterializationService {
     @InjectMessageQueue(MessageQueue.campaignSendQueue)
     private readonly campaignSendQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly channelRecordShareService: ChannelRecordShareService,
   ) {}
 
   async processMaterializeJob({
@@ -512,6 +515,15 @@ export class MessageCampaignMaterializationService {
               messageCampaignId: campaignId,
             },
           ]),
+        );
+
+        await this.channelRecordShareService.syncChannelRecordSharesInTransaction(
+          {
+            transactionScope,
+            source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+            channelId: messageChannelId,
+            recordIds: rows.map((row) => row.threadId),
+          },
         );
       },
     );

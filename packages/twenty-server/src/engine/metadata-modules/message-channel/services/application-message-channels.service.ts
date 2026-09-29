@@ -25,6 +25,8 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/message-thread-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 
 type ApplicationScope = {
   applicationId: string;
@@ -79,6 +81,7 @@ export class ApplicationMessageChannelsService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelRecordShareService: ChannelRecordShareService,
   ) {}
 
   async list({
@@ -202,6 +205,17 @@ export class ApplicationMessageChannelsService {
     }
 
     await this.messageChannelRepository.update({ id, workspaceId }, data);
+
+    if (
+      isDefined(data.visibility) &&
+      data.visibility !== messageChannel.visibility
+    ) {
+      await this.channelRecordShareService.syncChannelRecordShares({
+        workspaceId,
+        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+        channelId: id,
+      });
+    }
 
     return this.messageChannelRepository.findOneOrFail({
       where: { id, workspaceId },

@@ -13,6 +13,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -63,6 +64,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     EmailingDomainModule,
     ThrottlerModule,
     MessageChannelMetadataModule,
+    ChannelRecordShareModule,
     FeatureFlagModule,
     PermissionsModule,
     UserRoleModule,

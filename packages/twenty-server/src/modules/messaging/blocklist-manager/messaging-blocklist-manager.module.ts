@@ -7,6 +7,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { BlocklistItemDeleteMessagesJob } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
 import { BlocklistReimportMessagesJob } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-reimport-messages.job';
 import { MessagingBlocklistListener } from 'src/modules/messaging/blocklist-manager/listeners/messaging-blocklist.listener';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 
@@ -14,6 +15,7 @@ import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cle
   imports: [
     MessagingCommonModule,
     MessagingMessageCleanerModule,
+    ChannelRecordShareModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       ConnectedAccountEntity,

@@ -18,6 +18,8 @@ type ConnectMessagingAccountInput = {
   provider: ConnectedAccountProvider;
   handle: string;
   skipChannelConfiguration?: boolean;
+  // Connects on behalf of the member this access token belongs to.
+  token?: string;
 };
 
 type ConnectMessagingAccountResult = {
@@ -37,6 +39,7 @@ export const connectMessagingAccount = async ({
   provider,
   handle,
   skipChannelConfiguration = true,
+  token,
 }: ConnectMessagingAccountInput): Promise<ConnectMessagingAccountResult> => {
   const callbackPath = OAUTH_CALLBACK_PATH[provider];
 
@@ -45,7 +48,7 @@ export const connectMessagingAccount = async ({
   }
 
   const state = JSON.stringify({
-    transientToken: await generateTransientToken(),
+    transientToken: await generateTransientToken(token),
     messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
     calendarVisibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     skipMessageChannelConfiguration: skipChannelConfiguration,
@@ -57,7 +60,7 @@ export const connectMessagingAccount = async ({
 
   await waitForAllJobsToFinish();
 
-  const connectedChannel = (await queryMessageChannels()).find(
+  const connectedChannel = (await queryMessageChannels(token)).find(
     (channel) => channel.handle === handle,
   );
 
@@ -69,6 +72,7 @@ export const connectMessagingAccount = async ({
 
   const [calendarChannel] = await queryCalendarChannels(
     connectedChannel.connectedAccountId,
+    token,
   );
 
   if (!calendarChannel) {
@@ -82,6 +86,7 @@ export const connectMessagingAccount = async ({
     calendarChannelId: calendarChannel.id,
     connectedAccountId: connectedChannel.connectedAccountId,
     handle,
-    cleanup: () => deleteConnectedAccount(connectedChannel.connectedAccountId),
+    cleanup: () =>
+      deleteConnectedAccount(connectedChannel.connectedAccountId, token),
   };
 };

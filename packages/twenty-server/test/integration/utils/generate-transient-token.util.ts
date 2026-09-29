@@ -51,9 +51,12 @@ export const generateTransientTokenResponse = async ({
   return { data: response.body.data, errors: response.body.errors };
 };
 
-export const generateTransientToken = async (): Promise<string> => {
+export const generateTransientToken = async (
+  token?: string,
+): Promise<string> => {
   const response = await makeMetadataApiRequest(
     generateTransientTokenQueryFactory(),
+    token,
   );
 
   const data = getDataOrThrow(response) as {
