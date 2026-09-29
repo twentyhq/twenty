@@ -1263,7 +1263,7 @@ export class AgentChatService {
     );
 
     await this.broadcastThreadUpdated(
-      thread,
+      threadAfter,
       workspaceId,
       ['lastMessageAt'],
       workspaceMemberId,
