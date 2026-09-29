@@ -211,7 +211,6 @@ export class ApplicationInstallResolver {
       version: params.version,
       workspaceId: params.workspaceId,
       hasUserApprovedCapabilities: true,
-      hasUserApprovedRoleGrants: true,
     });
   }
 

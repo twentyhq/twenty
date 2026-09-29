@@ -27,7 +27,6 @@ describe('TriggerInstallApplicationJob', () => {
       appRegistrationId: jobData.applicationRegistrationId,
       workspaceId: jobData.workspaceId,
       hasUserApprovedCapabilities: true,
-      hasUserApprovedRoleGrants: true,
     });
   });
 
