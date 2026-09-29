@@ -20,7 +20,7 @@ import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-age
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -28,7 +28,7 @@ import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-hi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-export type RecordedExecutionResult = {
+type RecordedExecutionResult = {
   steps?: Pick<NonNullable<AgentExecutionResult['steps']>[number], 'content'>[];
   isPaused?: boolean;
 };
@@ -38,10 +38,11 @@ export type RecordedConversation = {
   isAwaitingAnswer: boolean;
 };
 
-// Each execution of an agent step gets its own conversation, so a loop
-// iteration or a retry never reads or continues another one's messages. The
-// conversation has no owner: it belongs to the run and is readable by whoever
-// can read the run.
+// A conversation is recorded only for an execution of an agent step that asks
+// a question, and continued when that execution resumes. Each gets its own, so
+// a loop iteration or a retry never reads or continues another one's messages.
+// The conversation has no owner: it belongs to the run and is readable by
+// whoever can read the run.
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
@@ -75,7 +76,7 @@ export class WorkflowAgentConversationWorkspaceService {
     agentId: string | null;
     prompt: string;
     initiatorUserWorkspaceId: string | null;
-    executionResult: RecordedExecutionResult;
+    executionResult?: RecordedExecutionResult;
   }): Promise<RecordedConversation | null> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -299,7 +300,11 @@ export class WorkflowAgentConversationWorkspaceService {
       ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
     });
 
-    const dbParts = mapUIMessagePartsToDBParts(parts, messageId, workspaceId);
+    const dbParts = mapUIMessagePartsToPersistedDBParts(
+      parts,
+      messageId,
+      workspaceId,
+    );
 
     if (dbParts.length > 0) {
       await this.messagePartRepository.insert(

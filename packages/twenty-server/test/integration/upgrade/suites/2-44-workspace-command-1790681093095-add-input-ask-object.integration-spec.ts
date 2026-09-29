@@ -3,7 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790622117809-add-input-ask-object.command';
+import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -22,7 +22,7 @@ const INVERSE_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.inputAsks.universalIdentifier,
 ];
 
-describe('2-44 workspace command 1790622117809 - AddInputAskObjectCommand (integration)', () => {
+describe('2-44 workspace command 1790681093095 - AddInputAskObjectCommand (integration)', () => {
   let command: AddInputAskObjectCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let workspaceCacheService: WorkspaceCacheService;
