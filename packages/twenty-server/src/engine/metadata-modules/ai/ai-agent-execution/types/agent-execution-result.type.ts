@@ -6,6 +6,7 @@ export interface AgentExecutionResult {
   cacheCreationTokens: number;
   nativeWebSearchCallCount: number;
   hasNoMoreAvailableCredits: boolean;
+  isPaused?: boolean;
   steps?: StepResult<ToolSet>[];
   modelId?: string;
   totalCostInDollars?: number;

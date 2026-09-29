@@ -48,6 +48,9 @@ import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
 
+import { AgentChatWorkflowQuestionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-workflow-question.service';
+import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
+
 @Module({
   imports: [
     RecordShareModule,
@@ -78,10 +81,12 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
+    WorkflowRunnerModule,
   ],
   providers: [
     AgentChatActorService,
     AgentChatSharingService,
+    AgentChatWorkflowQuestionService,
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,

@@ -130,6 +130,11 @@ describe('versioned agent history upgrade (integration)', () => {
     dataSource = owners.manager.connection;
     const owner = await owners.findOneByOrFail({ workspaceId: WORKSPACE_ID });
 
+    // Threads a workflow run owns arrived with 2.44 and have no member to own
+    // them in the core tables 2.42 moves history back to.
+    await dataSource.query(
+      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
+    );
     await runCommand('down');
     await dataSource.query(
       'INSERT INTO core."agentChatThread" (id, "workspaceId", "userWorkspaceId", title, "activeStreamId") VALUES ($1, $2, $3, $4, $5)',

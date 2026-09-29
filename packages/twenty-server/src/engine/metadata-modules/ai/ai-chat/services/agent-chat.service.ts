@@ -29,8 +29,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -45,6 +44,11 @@ import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
+
+type PendingQuestionRollback = {
+  partId: string;
+  previousOutput: Record<string, unknown> & { result?: AskQuestionsToolResult };
+};
 
 @Injectable()
 export class AgentChatService {
@@ -379,8 +383,8 @@ export class AgentChatService {
     const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
-      const dbParts = mapUIMessagePartsToDBParts(
-        finalizeDanglingToolParts(uiMessage.parts),
+      const dbParts = mapUIMessagePartsToPersistedDBParts(
+        uiMessage.parts,
         savedMessageId,
         workspaceId,
       );
@@ -432,11 +436,7 @@ export class AgentChatService {
 
     await this.messagePartRepository.delete(workspaceId, { messageId: id });
 
-    const dbParts = mapUIMessagePartsToDBParts(
-      finalizeDanglingToolParts(parts),
-      id,
-      workspaceId,
-    );
+    const dbParts = mapUIMessagePartsToPersistedDBParts(parts, id, workspaceId);
 
     if (dbParts.length > 0) {
       await this.messagePartRepository.insert(
@@ -795,12 +795,14 @@ export class AgentChatService {
     threadId: string;
     messageId: string;
     answers: AskQuestionAnswer[];
-    streamId: string;
+    // Null for a conversation no chat stream continues, such as a workflow
+    // run's: its question is claimed by its marker alone.
+    streamId: string | null;
     workspaceId: string;
   }): Promise<{
     answerText: string;
     turnId: string | null;
-    rollback: { partId: string; previousOutput: Record<string, unknown> };
+    rollback: PendingQuestionRollback;
   }> {
     const message = await this.messageRepository.findOne(workspaceId, {
       where: { id: messageId, threadId },
@@ -829,42 +831,27 @@ export class AgentChatService {
     }
 
     const previousOutput =
-      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
-    const previousResult = previousOutput.result as
-      | AskQuestionsToolResult
-      | undefined;
-    const questions = previousResult?.questions ?? [];
+      (pendingPart.toolOutput as
+        | PendingQuestionRollback['previousOutput']
+        | null) ?? {};
+    const questions = previousOutput.result?.questions ?? [];
 
     this.validateQuestionAnswers(answers, questions);
 
-    const claim = await this.threadRepository.update(
-      workspaceId,
-      {
-        id: threadId,
-        pendingQuestionMessageId: messageId,
-        activeStreamId: IsNull(),
-      },
-      {
-        pendingQuestionMessageId: null,
-        activeStreamId: streamId,
-        lastStreamError: null,
-      },
-    );
+    const isClaimed = isDefined(streamId)
+      ? await this.claimQuestionForStream({
+          threadId,
+          messageId,
+          streamId,
+          workspaceId,
+        })
+      : await this.claimQuestionMarker({ threadId, messageId, workspaceId });
 
-    if ((claim.affected ?? 0) === 0) {
-      const adopted = await this.claimOrphanedQuestion({
-        threadId,
-        messageId,
-        streamId,
-        workspaceId,
-      });
-
-      if (!adopted) {
-        throw new AiException(
-          'No pending question to answer',
-          AiExceptionCode.QUESTION_NOT_PENDING,
-        );
-      }
+    if (!isClaimed) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
     }
 
     try {
@@ -885,13 +872,12 @@ export class AgentChatService {
         },
       );
     } catch (error) {
-      await this.threadRepository
-        .update(
-          workspaceId,
-          { id: threadId, activeStreamId: streamId },
-          { pendingQuestionMessageId: messageId, activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.releaseQuestionClaim({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId,
+      });
       throw error;
     }
 
@@ -912,6 +898,90 @@ export class AgentChatService {
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
+  }
+
+  private async claimQuestionForStream({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      {
+        id: threadId,
+        pendingQuestionMessageId: messageId,
+        activeStreamId: IsNull(),
+      },
+      {
+        pendingQuestionMessageId: null,
+        activeStreamId: streamId,
+        lastStreamError: null,
+      },
+    );
+
+    if ((claim.affected ?? 0) > 0) {
+      return true;
+    }
+
+    return this.claimOrphanedQuestion({
+      threadId,
+      messageId,
+      streamId,
+      workspaceId,
+    });
+  }
+
+  // Clearing the marker is the claim: of two concurrent answers only one
+  // matches it. No orphan is adopted here, since without a stream an orphaned
+  // question cannot be told apart from one another answer has just claimed.
+  private async claimQuestionMarker({
+    threadId,
+    messageId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null },
+    );
+
+    return (claim.affected ?? 0) > 0;
+  }
+
+  private async releaseQuestionClaim({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string | null;
+    workspaceId: string;
+  }): Promise<void> {
+    const release = isDefined(streamId)
+      ? this.threadRepository.update(
+          workspaceId,
+          { id: threadId, activeStreamId: streamId },
+          { pendingQuestionMessageId: messageId, activeStreamId: null },
+        )
+      : this.threadRepository.update(
+          workspaceId,
+          { id: threadId, pendingQuestionMessageId: IsNull() },
+          { pendingQuestionMessageId: messageId },
+        );
+
+    await release.catch(() => {});
   }
 
   private async claimOrphanedQuestion({
@@ -964,9 +1034,9 @@ export class AgentChatService {
   }: {
     threadId: string;
     messageId: string;
-    streamId: string;
+    streamId: string | null;
     workspaceId: string;
-    rollback: { partId: string; previousOutput: Record<string, unknown> };
+    rollback: PendingQuestionRollback;
   }): Promise<void> {
     await this.messagePartRepository
       .update(
@@ -976,11 +1046,35 @@ export class AgentChatService {
       )
       .catch(() => {});
 
-    await this.threadRepository
+    await this.releaseQuestionClaim({
+      threadId,
+      messageId,
+      streamId,
+      workspaceId,
+    });
+  }
+
+  // For a question nothing can consume any more: its run ended, or the step
+  // moved on to another conversation. Restoring it would leave a card that
+  // every answer is refused on, so it is closed instead. An ending run closes
+  // its questions itself; this covers an answer that claimed one just before.
+  async closePendingQuestion({
+    workspaceId,
+    rollback,
+  }: {
+    workspaceId: string;
+    rollback: PendingQuestionRollback;
+  }): Promise<void> {
+    await this.messagePartRepository
       .update(
         workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        { pendingQuestionMessageId: messageId, activeStreamId: null },
+        { id: rollback.partId },
+        {
+          toolOutput: {
+            ...rollback.previousOutput,
+            result: { ...rollback.previousOutput.result, status: 'skipped' },
+          },
+        },
       )
       .catch(() => {});
   }
