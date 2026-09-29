@@ -17,16 +17,6 @@ import {
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
 import {
-  cardPickerDroppedClickTest,
-  cardPickerTest,
-  checkboxTest,
-  createFieldControlsTest,
-  radioGroupTest,
-  sliderRangeTest,
-  sliderTest,
-  toastTest,
-} from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
-import {
   statusControlsTest,
   tagControlsTest,
   avatarControlsTest,
@@ -52,6 +42,14 @@ import {
   tooltipEscapeDismissalTest,
   tooltipEscapeIgnoredTest,
 } from '@/__stories__/twenty-ui-gallery/utils/tooltipTests';
+import { cardPickerDroppedClickTest } from '@/__stories__/twenty-ui-gallery/utils/cardPickerDroppedClickTest';
+import { cardPickerTest } from '@/__stories__/twenty-ui-gallery/utils/cardPickerTest';
+import { checkboxTest } from '@/__stories__/twenty-ui-gallery/utils/checkboxTest';
+import { createFieldControlsTest } from '@/__stories__/twenty-ui-gallery/utils/createFieldControlsTest';
+import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroupTest';
+import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRangeTest';
+import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
+import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
