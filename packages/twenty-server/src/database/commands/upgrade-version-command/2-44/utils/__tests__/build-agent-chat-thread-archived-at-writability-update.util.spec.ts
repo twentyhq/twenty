@@ -1,18 +1,21 @@
-import { MetadataWritability } from 'twenty-shared/types';
+import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 
 import { AGENT_CHAT_THREAD_ARCHIVED_AT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-44/constants/agent-chat-thread-archived-at-field-universal-identifier.constant';
 import { buildAgentChatThreadArchivedAtWritabilityUpdate } from 'src/database/commands/upgrade-version-command/2-44/utils/build-agent-chat-thread-archived-at-writability-update.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 
 const NOW = '2026-09-29T10:00:00.000Z';
 
 const buildFieldsByUniversalIdentifier = (writability: MetadataWritability) => ({
-  [AGENT_CHAT_THREAD_ARCHIVED_AT_FIELD_UNIVERSAL_IDENTIFIER]: {
-    universalIdentifier: AGENT_CHAT_THREAD_ARCHIVED_AT_FIELD_UNIVERSAL_IDENTIFIER,
-    name: 'archivedAt',
-    writability,
-    updatedAt: '2026-01-01T00:00:00.000Z',
-  } as unknown as FlatFieldMetadata,
+  [AGENT_CHAT_THREAD_ARCHIVED_AT_FIELD_UNIVERSAL_IDENTIFIER]:
+    getFlatFieldMetadataMock({
+      universalIdentifier: AGENT_CHAT_THREAD_ARCHIVED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+      objectMetadataId: 'agent-chat-thread-object-id',
+      type: FieldMetadataType.DATE_TIME,
+      name: 'archivedAt',
+      writability,
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    }),
 });
 
 describe('buildAgentChatThreadArchivedAtWritabilityUpdate', () => {
