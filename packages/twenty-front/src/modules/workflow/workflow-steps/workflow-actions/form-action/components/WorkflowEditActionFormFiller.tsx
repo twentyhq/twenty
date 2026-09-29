@@ -1,4 +1,5 @@
-import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -41,9 +42,10 @@ export const WorkflowEditActionFormFiller = ({
   const [error, setError] = useState<string | undefined>(undefined);
   // A form is submitted by answering its Ask, which a workspace the Ask
   // object has not reached yet cannot do.
-  const doesInputAskObjectExist = useDoObjectMetadataItemsExist([
-    CoreObjectNameSingular.InputAsk,
-  ]);
+  const inputAskObjectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
+  );
 
   const canSubmit = !actionOptions.readonly && !isDefined(error);
 
@@ -166,7 +168,7 @@ export const WorkflowEditActionFormFiller = ({
       {!actionOptions.readonly && (
         <SidePanelFooter
           actions={[
-            doesInputAskObjectExist ? (
+            isDefined(inputAskObjectMetadataItem) ? (
               <WorkflowFormStepAskSubmitButton
                 key="submit"
                 workflowRunId={workflowRunId}
