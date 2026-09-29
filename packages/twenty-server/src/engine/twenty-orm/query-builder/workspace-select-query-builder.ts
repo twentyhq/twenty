@@ -843,6 +843,15 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       return this;
     }
 
+    // Dropping a condition it cannot read would widen the query, and a
+    // delete to every row.
+    if (typeof condition !== 'string') {
+      throw new TwentyOrmException(
+        'A where condition must be a SQL string, a where object or a where factory',
+        TwentyOrmExceptionCode.INVALID_QUERY,
+      );
+    }
+
     if (condition.length > 0) {
       this.whereClauses.push({ operator, sql: `(${condition})` });
     }
