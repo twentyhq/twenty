@@ -279,6 +279,7 @@ describe('record export lifecycle (integration)', () => {
     for (const id of exportIds)
       await exports.removeFile({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
     exportIds.clear();
+    await cache.del(leaseKey);
     downloadTokens.clear();
     const sessions =
       getAppProviderByClassName<UserSessionService>('UserSessionService');
@@ -563,12 +564,19 @@ describe('record export lifecycle (integration)', () => {
     },
     { progress: undefined, expectedProgress: 0 },
   ])(
-    'does not offer a download when its worker failed with progress $progress',
+    'does not offer an uploaded file when its worker failed with progress $progress',
     async ({ progress, expectedProgress }) => {
       const requester = await resolveReadyRequester();
-      jest
-        .spyOn(recordExportQueue(), 'getJobs')
-        .mockImplementation(async ([jobId]) => ({
+      const queue = recordExportQueue();
+      const getJobs = queue.getJobs.bind(queue);
+      let uploadedId: string | undefined;
+      jest.spyOn(queue, 'getJobs').mockImplementation(async ([jobId]) => {
+        exportIds.add(jobId);
+        await waitUntil(
+          async () => (await getJobs([jobId]))[jobId]?.state === 'completed',
+        );
+        uploadedId = jobId;
+        return {
           [jobId]: {
             id: jobId,
             data: {},
@@ -577,10 +585,12 @@ describe('record export lifecycle (integration)', () => {
             timestamp: Date.now(),
             progress,
           },
-        }));
+        };
+      });
       const events = await streamFor(requester);
       try {
         const { value: update } = await events.next();
+        expect(await fileExists({ id: uploadedId! })).toBe(true);
         expect(update.downloadPath).toBeUndefined();
         expect(update.errorMessage).toContain('interrupted');
         expect(update.progress).toBe(expectedProgress);

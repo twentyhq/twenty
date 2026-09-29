@@ -68,7 +68,7 @@ export class TrackedJobWorkspaceService {
     permissionFlag?: PermissionFlagType;
     queue: MessageQueueService;
     jobName: string;
-    data: TData;
+    data: TData & { [TKey in keyof TrackedJob]?: never };
     maxDurationMs: number;
     progressSchema: z.ZodType<TProgress>;
     messages: { alreadyRunning: string; interrupted: string };
