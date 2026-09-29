@@ -3,6 +3,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  MetadataWritability,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -234,242 +235,266 @@ export const buildInputAskStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  name: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'name',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Name`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `What is being asked, in a few words`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconHelpCircle',
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: "''",
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  status: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'status',
-      type: FieldMetadataType.SELECT,
-      label: i18nLabel(
-        msg({ message: `Status`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Whether this ask is still waiting on someone`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconProgress',
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: "'PENDING'",
-      options: [
-        {
-          id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d01',
-          value: InputAskStatus.PENDING,
-          label: i18nLabel(
-            msg({ message: `Pending`, context: 'fieldMetadata.label' }),
-          ),
-          position: 0,
-          color: 'yellow',
-        },
-        {
-          id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d02',
-          value: InputAskStatus.ANSWERED,
-          label: i18nLabel(
-            msg({ message: `Answered`, context: 'fieldMetadata.label' }),
-          ),
-          position: 1,
-          color: 'green',
-        },
-        {
-          id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d03',
-          value: InputAskStatus.CANCELED,
-          label: i18nLabel(
-            msg({ message: `Canceled`, context: 'fieldMetadata.label' }),
-          ),
-          position: 2,
-          color: 'gray',
-        },
-      ],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  form: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'form',
-      type: FieldMetadataType.RAW_JSON,
-      label: i18nLabel(
-        msg({ message: `Form`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `The questions as they were asked`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconForms',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  response: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'response',
-      type: FieldMetadataType.RAW_JSON,
-      label: i18nLabel(
-        msg({ message: `Response`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `What was answered`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconMessageCheck',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  answeredAt: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'answeredAt',
-      type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(
-        msg({ message: `Answered at`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `When it was answered`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconCalendarCheck',
-      isNullable: true,
-      isUIEditable: false,
-      settings: { displayFormat: DateDisplayFormat.RELATIVE },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  stepId: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'stepId',
-      type: FieldMetadataType.UUID,
-      label: i18nLabel(
-        msg({ message: `Step ID`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Which step of the run is waiting`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'Icon123',
-      isSystem: true,
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  toolCallId: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'toolCallId',
-      // Text rather than UUID: a tool call id comes from the model provider
-      // and is only unique within its conversation, not a uuid we mint.
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Tool call ID`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Which proposed tool call is waiting`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconTool',
-      isSystem: true,
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  thread: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'thread',
-      label: i18nLabel(
-        msg({ message: `Conversation`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `The conversation the question was asked in`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconMessage',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'agentChatThread',
-      targetFieldName: 'inputAsks',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'threadId',
+  name: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'name',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Name`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `What is being asked, in a few words`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconHelpCircle',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: "''",
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
+  status: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'status',
+        type: FieldMetadataType.SELECT,
+        label: i18nLabel(
+          msg({ message: `Status`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Whether this ask is still waiting on someone`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconProgress',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: "'PENDING'",
+        options: [
+          {
+            id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d01',
+            value: InputAskStatus.PENDING,
+            label: i18nLabel(
+              msg({ message: `Pending`, context: 'fieldMetadata.label' }),
+            ),
+            position: 0,
+            color: 'yellow',
+          },
+          {
+            id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d02',
+            value: InputAskStatus.ANSWERED,
+            label: i18nLabel(
+              msg({ message: `Answered`, context: 'fieldMetadata.label' }),
+            ),
+            position: 1,
+            color: 'green',
+          },
+          {
+            id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d03',
+            value: InputAskStatus.CANCELED,
+            label: i18nLabel(
+              msg({ message: `Canceled`, context: 'fieldMetadata.label' }),
+            ),
+            position: 2,
+            color: 'gray',
+          },
+        ],
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
+  form: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'form',
+        type: FieldMetadataType.RAW_JSON,
+        label: i18nLabel(
+          msg({ message: `Form`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `The questions as they were asked`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconForms',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
+  response: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'response',
+        type: FieldMetadataType.RAW_JSON,
+        label: i18nLabel(
+          msg({ message: `Response`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `What was answered`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMessageCheck',
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
+  answeredAt: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'answeredAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: `Answered at`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `When it was answered`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendarCheck',
+        isNullable: true,
+        isUIEditable: false,
+        settings: { displayFormat: DateDisplayFormat.RELATIVE },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
+  stepId: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'stepId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({ message: `Step ID`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Which step of the run is waiting`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'Icon123',
+        isSystem: true,
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
+  toolCallId: {
+    ...createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'toolCallId',
+        // Text rather than UUID: a tool call id comes from the model provider
+        // and is only unique within its conversation, not a uuid we mint.
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: `Tool call ID`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Which proposed tool call is waiting`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconTool',
+        isSystem: true,
+        isNullable: true,
+        isUIEditable: false,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
+  thread: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'thread',
+        label: i18nLabel(
+          msg({ message: `Conversation`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `The conversation the question was asked in`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMessage',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'agentChatThread',
+        targetFieldName: 'inputAsks',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'threadId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
   assignee: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -488,7 +513,7 @@ export const buildInputAskStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isNullable: true,
-      isUIEditable: false,
+      isUIEditable: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'inputAsks',
       settings: {
@@ -502,36 +527,39 @@ export const buildInputAskStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  workflowRun: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'workflowRun',
-      label: i18nLabel(
-        msg({ message: `Workflow Run`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `The run that is waiting`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconSettingsAutomation',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'workflowRun',
-      targetFieldName: 'inputAsks',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'workflowRunId',
+  workflowRun: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'workflowRun',
+        label: i18nLabel(
+          msg({ message: `Workflow Run`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `The run that is waiting`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconSettingsAutomation',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'workflowRun',
+        targetFieldName: 'inputAsks',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'workflowRunId',
+        },
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+  },
 });
