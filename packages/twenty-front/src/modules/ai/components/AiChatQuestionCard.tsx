@@ -1,7 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useMemo, useState } from 'react';
-import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
+import {
+  type AskQuestionAnswer,
+  type AskQuestionItem,
+  type AskQuestionsToolResult,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton } from 'twenty-ui/components';
 import {
@@ -25,10 +29,9 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
+import { useResolveToolCall } from '@/ai/hooks/useResolveToolCall';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -203,7 +206,7 @@ export const AiChatQuestionCard = ({
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { messageId, toolCallId, questions } = pendingQuestion;
+  const { toolCallId, questions } = pendingQuestion;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedByQuestion, setSelectedByQuestion] = useState<
@@ -217,7 +220,7 @@ export const AiChatQuestionCard = ({
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { submitAnswer } = useSubmitQuestionAnswer();
+  const { resolveToolCall } = useResolveToolCall();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
@@ -248,8 +251,24 @@ export const AiChatQuestionCard = ({
     }
 
     setIsSubmitting(true);
-    await submitAnswer({ messageId, toolCallId, answers });
-    setIsSubmitting(false);
+
+    const isResolved = await resolveToolCall({
+      toolCallId,
+      output: { answers },
+      optimisticToolOutput: {
+        success: true,
+        result: {
+          questions,
+          status: 'answered',
+          answers,
+        } satisfies AskQuestionsToolResult,
+      },
+    });
+
+    // The card goes once its Ask does, so it stays disabled until then.
+    if (!isResolved) {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSelectOption = (optionIndex: number) => {
@@ -500,7 +519,6 @@ export const AiChatQuestionCard = ({
       <StyledComposerSection>
         <StyledActionsRow>
           <StyledLeftActions>
-            <AgentChatFileUploadButton />
             <AiChatContextUsageButton />
           </StyledLeftActions>
           <StyledRightActions>

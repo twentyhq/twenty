@@ -12,6 +12,8 @@ module.exports = {
     './src/modules/activities/calendar/graphql/queries/**/*.{ts,tsx}',
     './src/modules/search/graphql/**/*.{ts,tsx}',
     './src/modules/command-menu/graphql/**/*.{ts,tsx}',
+    // resolveToolCall is served by /graphql beside submitFormStep.
+    './src/modules/ai/core-graphql/**/*.{ts,tsx}',
 
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',

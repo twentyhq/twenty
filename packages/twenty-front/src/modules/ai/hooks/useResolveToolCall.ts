@@ -1,66 +1,54 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useApolloClient } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { type AskQuestionAnswer } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { ANSWER_AGENT_CHAT_QUESTION } from '@/ai/graphql/mutations/answerAgentChatQuestion';
+import { RESOLVE_TOOL_CALL } from '@/ai/core-graphql/mutations/resolveToolCall';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
-import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
-import { markQuestionPending } from '@/ai/utils/markQuestionPending';
+import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { useToast } from 'twenty-ui/components';
-import { type AnswerAgentChatQuestionMutation } from '~/generated-metadata/graphql';
+import {
+  type ResolveToolCallMutation,
+  type ResolveToolCallMutationVariables,
+} from '~/generated/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-export const useSubmitQuestionAnswer = () => {
-  const apolloClient = useApolloClient();
+export const useResolveToolCall = () => {
+  const apolloCoreClient = useApolloCoreClient();
   const store = useStore();
   const { enqueueToast } = useToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
-  const submitAnswer = useCallback(
+  // Returns whether the call was resolved, so a widget can keep itself
+  // disabled until its Ask is gone rather than invite a second answer.
+  const resolveToolCall = useCallback(
     async ({
-      messageId,
       toolCallId,
-      answers,
+      output,
+      optimisticToolOutput,
     }: {
-      messageId: string;
       toolCallId: string;
-      answers: AskQuestionAnswer[];
-    }) => {
+      output: Record<string, unknown>;
+      optimisticToolOutput?: unknown;
+    }): Promise<boolean> => {
       const threadId = store.get(agentChatDisplayedThreadState.atom);
 
       if (!isDefined(threadId)) {
-        return;
-      }
-
-      const agentChatSelectedFiles = store.get(
-        agentChatSelectedFilesState.atom,
-      );
-
-      if (isNonEmptyArray(agentChatSelectedFiles)) {
-        enqueueToast({
-          variant: 'info',
-          children: t`Wait for files to finish uploading before answering.`,
-        });
-
-        return;
+        return false;
       }
 
       const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily({
@@ -76,49 +64,45 @@ export const useSubmitQuestionAnswer = () => {
         instanceId: AGENT_CHAT_INSTANCE_ID,
         familyKey: { threadId },
       });
-      const previousMessages = store.get(messagesAtom);
 
-      const uploadedFiles = store.get(agentChatUploadedFilesState.atom);
-      const fileAttachments = uploadedFiles.map((file) => ({
-        id: file.fileId,
-        filename: file.filename,
-      }));
+      const previousToolOutput = findToolPartOutput({
+        messages: store.get(messagesAtom),
+        toolCallId,
+      });
 
-      store.set(
-        messagesAtom,
-        markQuestionAnswered(previousMessages, messageId, toolCallId, answers),
-      );
+      if (isDefined(optimisticToolOutput)) {
+        store.set(messagesAtom, (messages) =>
+          updateToolPartOutput({
+            messages,
+            toolCallId,
+            output: optimisticToolOutput,
+          }),
+        );
+      }
+
       store.set(isAwaitingFirstChunkAtom, true);
-      store.set(agentChatUploadedFilesState.atom, []);
 
       try {
-        const { data } =
-          await apolloClient.mutate<AnswerAgentChatQuestionMutation>({
-            mutation: ANSWER_AGENT_CHAT_QUESTION,
-            variables: {
-              threadId,
-              messageId,
-              answers,
-              modelId: modelIdForRequest,
-              fileAttachments: isNonEmptyArray(fileAttachments)
-                ? fileAttachments
-                : undefined,
-            },
-          });
+        const { data } = await apolloCoreClient.mutate<
+          ResolveToolCallMutation,
+          ResolveToolCallMutationVariables
+        >({
+          mutation: RESOLVE_TOOL_CALL,
+          variables: {
+            input: { threadId, toolCallId, output, modelId: modelIdForRequest },
+          },
+        });
 
-        // A workflow agent's answer resumes its run, not a chat stream, so
-        // no first chunk will arrive.
-        if (!isDefined(data?.answerAgentChatQuestion.streamId)) {
+        // A workflow run resumes in its own executor, so no chunk follows.
+        if (!isDefined(data?.resolveToolCall.streamId)) {
           store.set(isAwaitingFirstChunkAtom, false);
         }
 
         dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+
+        return true;
       } catch (error) {
         store.set(isAwaitingFirstChunkAtom, false);
-        store.set(agentChatUploadedFilesState.atom, (currentUploadedFiles) => [
-          ...uploadedFiles,
-          ...currentUploadedFiles,
-        ]);
 
         // The banner reads the workspace flag, then the thread error when no resource credit item carries that flag
         if (isAiChatCreditsExhaustedError(error)) {
@@ -131,22 +115,27 @@ export const useSubmitQuestionAnswer = () => {
           );
         }
 
-        if (isGraphqlErrorOfType(error, AiChatErrorCode.QUESTION_NOT_PENDING)) {
+        if (
+          isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)
+        ) {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
-        } else {
-          const currentMessages = store.get(messagesAtom);
-
-          store.set(
-            messagesAtom,
-            markQuestionPending(currentMessages, messageId, toolCallId),
+        } else if (isDefined(optimisticToolOutput)) {
+          store.set(messagesAtom, (messages) =>
+            updateToolPartOutput({
+              messages,
+              toolCallId,
+              output: previousToolOutput,
+            }),
           );
         }
 
         enqueueToast(getToastOptionsFromError({ error }));
+
+        return false;
       }
     },
-    [apolloClient, store, enqueueToast, modelIdForRequest],
+    [apolloCoreClient, store, enqueueToast, modelIdForRequest],
   );
 
-  return { submitAnswer };
+  return { resolveToolCall };
 };
