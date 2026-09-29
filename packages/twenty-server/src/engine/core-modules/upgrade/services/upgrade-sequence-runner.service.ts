@@ -139,65 +139,31 @@ export class UpgradeSequenceRunnerService {
           break;
         }
 
-        const previousStep = cursor > 0 ? sequence[cursor - 1] : undefined;
-
-        if (previousStep?.kind === 'workspace') {
-          const workspaceCursorBehindBarrier =
-            this.findWorkspaceCursorBehindWorkspaceStep({
-              sequence,
-              workspaceStep: previousStep,
-              workspaceCursors,
-            });
-
-          const hasSimulatedPreviousWorkspaceSegment =
-            options.dryRun === true && cursor !== startCursor;
-
-          if (
-            isDefined(workspaceCursorBehindBarrier) &&
-            hasSimulatedPreviousWorkspaceSegment
-          ) {
-            this.logger.log(
-              formatUpgradeLog({
-                humanMessage:
-                  `Dry run stopped before instance step "${step.name}": ` +
-                  `it runs only once every workspace has completed "${previousStep.name}", ` +
-                  'and a dry run does not record workspace progress. ' +
-                  'A dry run cannot simulate past this point.',
-                event: 'sequence.stopped',
-                logFields: {
-                  before: step.name,
-                  reason: 'dry-run',
-                },
-              }),
-            );
-
-            break;
-          }
-
-          if (isDefined(workspaceCursorBehindBarrier)) {
-            throw new Error(
-              `Cannot run instance step: workspace ${workspaceCursorBehindBarrier.workspaceId} ` +
-                `has not completed "${previousStep.name}" ` +
-                `(cursor: "${workspaceCursorBehindBarrier.name}", status: "${workspaceCursorBehindBarrier.status}")`,
-            );
-          }
-        }
-
         if (options.dryRun) {
           this.logger.log(
             formatUpgradeLog({
-              humanMessage: `Dry run: would run ${step.kind} step "${step.name}"`,
-              event: 'instance.skipped',
+              humanMessage:
+                `Dry run stopped before instance step "${step.name}": ` +
+                'instance commands cannot run in dry-run mode.',
+              event: 'sequence.stopped',
               logFields: {
-                name: step.name,
-                kind: step.kind,
+                before: step.name,
                 reason: 'dry-run',
               },
             }),
           );
 
-          cursor++;
-          continue;
+          break;
+        }
+
+        const previousStep = cursor > 0 ? sequence[cursor - 1] : undefined;
+
+        if (previousStep?.kind === 'workspace') {
+          this.enforceWorkspacesCompletedPreviousWorkspaceSegment({
+            sequence,
+            previousWorkspaceStep: previousStep,
+            workspaceCursors,
+          });
         }
 
         await this.runInstanceStep({
@@ -493,22 +459,22 @@ export class UpgradeSequenceRunnerService {
     return workspaceIds;
   }
 
-  private findWorkspaceCursorBehindWorkspaceStep({
+  private enforceWorkspacesCompletedPreviousWorkspaceSegment({
     sequence,
-    workspaceStep,
+    previousWorkspaceStep,
     workspaceCursors,
   }: {
     sequence: UpgradeStep[];
-    workspaceStep: WorkspaceUpgradeStep;
+    previousWorkspaceStep: WorkspaceUpgradeStep;
     workspaceCursors: Map<string, WorkspaceLastAttemptedCommand>;
-  }): WorkspaceLastAttemptedCommand | undefined {
+  }): void {
     const barrierCursor =
       this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
         sequence,
-        stepName: workspaceStep.name,
+        stepName: previousWorkspaceStep.name,
       });
 
-    for (const workspaceCursor of workspaceCursors.values()) {
+    for (const [workspaceId, workspaceCursor] of workspaceCursors) {
       const cursorPosition =
         this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
           sequence,
@@ -520,10 +486,12 @@ export class UpgradeSequenceRunnerService {
         workspaceCursor.status === 'completed';
 
       if (!isAtBarrierAndCompleted) {
-        return workspaceCursor;
+        throw new Error(
+          `Cannot run instance step: workspace ${workspaceId} ` +
+            `has not completed "${previousWorkspaceStep.name}" ` +
+            `(cursor: "${workspaceCursor.name}", status: "${workspaceCursor.status}")`,
+        );
       }
     }
-
-    return undefined;
   }
 }

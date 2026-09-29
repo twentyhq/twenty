@@ -74,139 +74,132 @@ describe('UpgradeSequenceRunnerService - dry run (integration)', () => {
     };
   };
 
-  it('should log pending instance steps without running or recording them, then stop before the instance step that follows the simulated workspace segment', async () => {
+  it.each([
+    ['fast', makeFastInstance],
+    ['slow', makeSlowInstance],
+  ] as const)(
+    'should stop before a pending %s instance command without running later workspace commands',
+    async (_, makeInstance) => {
+      const pendingWorkspaceCommand = makeWorkspace('Wc1');
+      const sequence = [
+        makeFastInstance('Ic1'),
+        makeInstance('Ic2'),
+        pendingWorkspaceCommand,
+      ];
+
+      setMockActiveWorkspaceIds([WS_1, WS_2]);
+
+      await seedInstanceMigration(context.dataSource, {
+        name: 'Ic1',
+        status: 'completed',
+        workspaceIds: [WS_1, WS_2],
+      });
+
+      const { runFastInstanceCommandSpy, runSlowInstanceCommandSpy } =
+        spyOnInstanceCommandRunner();
+      const pendingRunOnWorkspaceSpy = jest.spyOn(
+        pendingWorkspaceCommand.command,
+        'runOnWorkspace',
+      );
+      const logSpy = jest
+        .spyOn(context.runner['logger'], 'log')
+        .mockImplementation();
+      const migrationKeysBeforeDryRun = await getMigrationKeys();
+
+      const report = await context.runner.run({
+        sequence,
+        options: DRY_RUN_OPTIONS,
+      });
+
+      expect(report).toEqual({ totalSuccesses: 0, totalFailures: 0 });
+      expect(runFastInstanceCommandSpy).not.toHaveBeenCalled();
+      expect(runSlowInstanceCommandSpy).not.toHaveBeenCalled();
+      expect(pendingRunOnWorkspaceSpy).not.toHaveBeenCalled();
+      expect(getDryRunHumanMessages(logSpy)).toStrictEqual([
+        'Dry run stopped before instance step "Ic2": instance commands cannot run in dry-run mode.',
+      ]);
+      expect(await getMigrationKeys()).toStrictEqual(migrationKeysBeforeDryRun);
+    },
+  );
+
+  it.each(['completed', 'failed'] as const)(
+    'should stop before the next instance command when the current workspace segment was %s',
+    async (status) => {
+      const currentWorkspaceCommand = makeWorkspace('Wc0');
+      const nextVersionWorkspaceCommand = makeWorkspace('Wc1');
+      const sequence = [
+        makeFastInstance('Ic0'),
+        currentWorkspaceCommand,
+        makeFastInstance('Ic1'),
+        nextVersionWorkspaceCommand,
+      ];
+
+      setMockActiveWorkspaceIds([WS_1, WS_2]);
+
+      await seedInstanceMigration(context.dataSource, {
+        name: 'Ic0',
+        status: 'completed',
+        workspaceIds: [WS_1, WS_2],
+      });
+      await seedWorkspaceMigration(context.dataSource, {
+        name: 'Wc0',
+        status,
+        workspaceId: WS_1,
+      });
+      await seedWorkspaceMigration(context.dataSource, {
+        name: 'Wc0',
+        status,
+        workspaceId: WS_2,
+      });
+
+      const { runFastInstanceCommandSpy, runSlowInstanceCommandSpy } =
+        spyOnInstanceCommandRunner();
+      const currentRunOnWorkspaceSpy = jest.spyOn(
+        currentWorkspaceCommand.command,
+        'runOnWorkspace',
+      );
+      const nextVersionRunOnWorkspaceSpy = jest.spyOn(
+        nextVersionWorkspaceCommand.command,
+        'runOnWorkspace',
+      );
+      const logSpy = jest
+        .spyOn(context.runner['logger'], 'log')
+        .mockImplementation();
+      const migrationKeysBeforeDryRun = await getMigrationKeys();
+
+      const report = await context.runner.run({
+        sequence,
+        options: DRY_RUN_OPTIONS,
+      });
+
+      expect(report).toEqual({ totalSuccesses: 2, totalFailures: 0 });
+      expect(runFastInstanceCommandSpy).not.toHaveBeenCalled();
+      expect(runSlowInstanceCommandSpy).not.toHaveBeenCalled();
+      if (status === 'completed') {
+        expect(currentRunOnWorkspaceSpy).not.toHaveBeenCalled();
+      } else {
+        expect(currentRunOnWorkspaceSpy).toHaveBeenCalledTimes(2);
+        expect(currentRunOnWorkspaceSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            options: expect.objectContaining({ dryRun: true }),
+          }),
+        );
+      }
+      expect(nextVersionRunOnWorkspaceSpy).not.toHaveBeenCalled();
+      expect(getDryRunHumanMessages(logSpy)).toStrictEqual([
+        'Dry run stopped before instance step "Ic1": instance commands cannot run in dry-run mode.',
+      ]);
+      expect(await getMigrationKeys()).toStrictEqual(migrationKeysBeforeDryRun);
+    },
+  );
+
+  it('should stop before checking the workspace barrier when retrying a failed instance command', async () => {
     const pendingWorkspaceCommand = makeWorkspace('Wc1');
-    const nextVersionWorkspaceCommand = makeWorkspace('Wc3');
-    const sequence = [
-      makeFastInstance('Ic1'),
-      makeFastInstance('Ic2'),
-      makeSlowInstance('Is3'),
-      pendingWorkspaceCommand,
-      makeWorkspace('Wc2'),
-      makeFastInstance('Ic4'),
-      nextVersionWorkspaceCommand,
-    ];
-
-    setMockActiveWorkspaceIds([WS_1, WS_2]);
-
-    await seedInstanceMigration(context.dataSource, {
-      name: 'Ic1',
-      status: 'completed',
-      workspaceIds: [WS_1, WS_2],
-    });
-
-    const { runFastInstanceCommandSpy, runSlowInstanceCommandSpy } =
-      spyOnInstanceCommandRunner();
-    const pendingRunOnWorkspaceSpy = jest.spyOn(
-      pendingWorkspaceCommand.command,
-      'runOnWorkspace',
-    );
-    const nextVersionRunOnWorkspaceSpy = jest.spyOn(
-      nextVersionWorkspaceCommand.command,
-      'runOnWorkspace',
-    );
-    const logSpy = jest
-      .spyOn(context.runner['logger'], 'log')
-      .mockImplementation();
-    const migrationKeysBeforeDryRun = await getMigrationKeys();
-
-    const report = await context.runner.run({
-      sequence,
-      options: DRY_RUN_OPTIONS,
-    });
-
-    expect(report).toEqual({ totalSuccesses: 2, totalFailures: 0 });
-    expect(runFastInstanceCommandSpy).not.toHaveBeenCalled();
-    expect(runSlowInstanceCommandSpy).not.toHaveBeenCalled();
-    expect(pendingRunOnWorkspaceSpy).toHaveBeenCalledTimes(2);
-    expect(pendingRunOnWorkspaceSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        options: expect.objectContaining({ dryRun: true }),
-      }),
-    );
-    expect(nextVersionRunOnWorkspaceSpy).not.toHaveBeenCalled();
-    expect(getDryRunHumanMessages(logSpy)).toStrictEqual([
-      'Dry run: would run fast-instance step "Ic2"',
-      'Dry run: would run slow-instance step "Is3"',
-      'Dry run stopped before instance step "Ic4": it runs only once every workspace has completed "Wc2", and a dry run does not record workspace progress. A dry run cannot simulate past this point.',
-    ]);
-    expect(await getMigrationKeys()).toStrictEqual(migrationKeysBeforeDryRun);
-  });
-
-  it('should preview the next version when every workspace has completed the previous workspace segment', async () => {
-    const completedWorkspaceCommand = makeWorkspace('Wc0');
-    const nextVersionWorkspaceCommand = makeWorkspace('Wc1');
-    const sequence = [
-      makeFastInstance('Ic0'),
-      completedWorkspaceCommand,
-      makeFastInstance('Ic1'),
-      makeSlowInstance('Is2'),
-      nextVersionWorkspaceCommand,
-      makeFastInstance('Ic3'),
-    ];
-
-    setMockActiveWorkspaceIds([WS_1, WS_2]);
-
-    await seedInstanceMigration(context.dataSource, {
-      name: 'Ic0',
-      status: 'completed',
-      workspaceIds: [WS_1, WS_2],
-    });
-    await seedWorkspaceMigration(context.dataSource, {
-      name: 'Wc0',
-      status: 'completed',
-      workspaceId: WS_1,
-    });
-    await seedWorkspaceMigration(context.dataSource, {
-      name: 'Wc0',
-      status: 'completed',
-      workspaceId: WS_2,
-    });
-
-    const { runFastInstanceCommandSpy, runSlowInstanceCommandSpy } =
-      spyOnInstanceCommandRunner();
-    const completedRunOnWorkspaceSpy = jest.spyOn(
-      completedWorkspaceCommand.command,
-      'runOnWorkspace',
-    );
-    const nextVersionRunOnWorkspaceSpy = jest.spyOn(
-      nextVersionWorkspaceCommand.command,
-      'runOnWorkspace',
-    );
-    const logSpy = jest
-      .spyOn(context.runner['logger'], 'log')
-      .mockImplementation();
-    const migrationKeysBeforeDryRun = await getMigrationKeys();
-
-    const report = await context.runner.run({
-      sequence,
-      options: DRY_RUN_OPTIONS,
-    });
-
-    expect(report).toEqual({ totalSuccesses: 4, totalFailures: 0 });
-    expect(runFastInstanceCommandSpy).not.toHaveBeenCalled();
-    expect(runSlowInstanceCommandSpy).not.toHaveBeenCalled();
-    expect(completedRunOnWorkspaceSpy).not.toHaveBeenCalled();
-    expect(nextVersionRunOnWorkspaceSpy).toHaveBeenCalledTimes(2);
-    expect(nextVersionRunOnWorkspaceSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        options: expect.objectContaining({ dryRun: true }),
-      }),
-    );
-    expect(getDryRunHumanMessages(logSpy)).toStrictEqual([
-      'Dry run: would run fast-instance step "Ic1"',
-      'Dry run: would run slow-instance step "Is2"',
-      'Dry run stopped before instance step "Ic3": it runs only once every workspace has completed "Wc1", and a dry run does not record workspace progress. A dry run cannot simulate past this point.',
-    ]);
-    expect(await getMigrationKeys()).toStrictEqual(migrationKeysBeforeDryRun);
-  });
-
-  it('should fail like a real run when a workspace was already behind the workspace segment before the dry run started', async () => {
     const sequence = [
       makeWorkspace('Wc0a'),
       makeWorkspace('Wc0b'),
       makeFastInstance('Ic1'),
-      makeWorkspace('Wc1'),
+      pendingWorkspaceCommand,
     ];
 
     setMockActiveWorkspaceIds([WS_1, WS_2]);
@@ -233,6 +226,10 @@ describe('UpgradeSequenceRunnerService - dry run (integration)', () => {
     });
 
     const { runFastInstanceCommandSpy } = spyOnInstanceCommandRunner();
+    const pendingRunOnWorkspaceSpy = jest.spyOn(
+      pendingWorkspaceCommand.command,
+      'runOnWorkspace',
+    );
     const migrationKeysBeforeDryRun = await getMigrationKeys();
 
     await expect(
@@ -240,9 +237,10 @@ describe('UpgradeSequenceRunnerService - dry run (integration)', () => {
         sequence,
         options: DRY_RUN_OPTIONS,
       }),
-    ).rejects.toThrow('Cannot run instance step');
+    ).resolves.toEqual({ totalSuccesses: 0, totalFailures: 0 });
 
     expect(runFastInstanceCommandSpy).not.toHaveBeenCalled();
+    expect(pendingRunOnWorkspaceSpy).not.toHaveBeenCalled();
     expect(await getMigrationKeys()).toStrictEqual(migrationKeysBeforeDryRun);
   });
 });

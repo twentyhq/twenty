@@ -139,9 +139,9 @@ Workspace commands are executed sequentially across all active/suspended workspa
 
 ## Dry run
 
-`upgrade --dry-run` executes no instance command and records nothing in `upgradeMigration`. Each pending instance command is logged as `Dry run: would run <kind> step "<name>"`, in sequence order. Workspace commands still run, with `options.dryRun` set, so each command is responsible for simulating its own changes.
+`upgrade --dry-run` stops as soon as it reaches an instance command, logging `Dry run stopped before instance step "<name>"`. It does not execute that command or any later step, and records nothing in `upgradeMigration`.
 
-Since a dry run records no workspace progress, it stops before the first instance command that follows a workspace segment with pending commands, logging `Dry run stopped before instance step "<name>"`: a real run only starts that command once every workspace has completed the segment. Workspace commands simulated after listed instance commands run without those instance commands applied, so a dry-run failure there can come from the missing schema rather than from the workspace command itself.
+If the run starts within a workspace segment, pending workspace commands run with `options.dryRun` set until the next instance command or the end of the sequence. Each workspace command is responsible for simulating its own changes. Dry runs cannot preview the full upgrade sequence because later workspace commands may depend on schema changes made by preceding instance commands.
 
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
