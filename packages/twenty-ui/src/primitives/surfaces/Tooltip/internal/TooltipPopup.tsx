@@ -25,6 +25,7 @@ export const TooltipPopup = ({
   sticky,
   disableAnchorTracking,
   arrow = false,
+  withExitAnimation = false,
   maxWidth = DEFAULT_MAX_WIDTH,
   container,
   keepMounted,
@@ -60,6 +61,7 @@ export const TooltipPopup = ({
         <TooltipPrimitive.Popup
           role="tooltip"
           {...props}
+          data-with-exit-animation={withExitAnimation || undefined}
           className={mergeClassNames(styles.popup, className)}
         >
           {hasPlainTextContent ? (
