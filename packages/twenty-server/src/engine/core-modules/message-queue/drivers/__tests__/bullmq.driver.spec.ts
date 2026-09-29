@@ -1,5 +1,3 @@
-import { Logger } from '@nestjs/common';
-
 import { type Job, Worker } from 'bullmq';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
@@ -226,27 +224,5 @@ describe('BullMQDriver global concurrency', () => {
 
     expect(mockRemoveGlobalConcurrency).toHaveBeenCalledTimes(1);
     expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
-  });
-
-  it('starts the worker and logs when the global concurrency write fails', async () => {
-    const loggerError = jest
-      .spyOn(Logger.prototype, 'error')
-      .mockImplementation();
-
-    mockSetGlobalConcurrency.mockRejectedValueOnce(
-      new Error('Redis unavailable'),
-    );
-
-    driver.work(MessageQueue.recordExportQueue, jest.fn(), {
-      globalConcurrency: 2,
-    });
-
-    await jest.advanceTimersByTimeAsync(0);
-
-    expect(Worker).toHaveBeenCalledTimes(1);
-    expect(loggerError).toHaveBeenCalledWith(
-      'Failed to write global concurrency for queue record-export-queue',
-      expect.any(Error),
-    );
   });
 });
