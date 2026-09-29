@@ -6,7 +6,9 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
+import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect';
+import { isSentMessageHandOffForDisplayedThread } from '@/ai/utils/isSentMessageHandOffForDisplayedThread';
 
 export const useAiChatSentMessageHandOff = () => {
   const store = useStore();
@@ -22,8 +24,13 @@ export const useAiChatSentMessageHandOff = () => {
       if (
         !isDefined(messageTextElement) ||
         !isDefined(sentMessageHandOff) ||
-        sentMessageHandOff.threadId !==
-          store.get(agentChatDisplayedThreadState.atom)
+        !isSentMessageHandOffForDisplayedThread({
+          handOffThreadId: sentMessageHandOff.threadId,
+          displayedThreadId: store.get(agentChatDisplayedThreadState.atom),
+          threadIdCreatedFromDraft: store.get(
+            threadIdCreatedFromDraftState.atom,
+          ),
+        })
       ) {
         return;
       }
@@ -31,7 +38,7 @@ export const useAiChatSentMessageHandOff = () => {
       store.set(agentChatSentMessageHandOffState.atom, null);
 
       if (
-        shouldReduceMotion === true ||
+        shouldReduceMotion ||
         !sentMessageHandOff.composerTextElement.isConnected
       ) {
         return;
