@@ -219,7 +219,7 @@ This section only calls out the fields that matter for standalone pages. Use `la
 - Set a clear `name`, `icon`, `color`, and `position`.
 - Use `folderUniversalIdentifier` only when the page belongs under an existing app folder.
 
-Public assets and non-secret application variables make standalone pages richer without hardcoding environment data:
+Public assets and non-secret workspace application variables make standalone pages richer without hardcoding environment data:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
