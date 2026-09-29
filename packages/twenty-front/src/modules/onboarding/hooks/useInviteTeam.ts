@@ -48,6 +48,7 @@ export const useInviteTeam = () => {
   const { openDialog } = useDialog();
 
   const [isNavigating, setIsNavigating] = useState(false);
+  const [emailIndexToFocus, setEmailIndexToFocus] = useState(0);
   const onboardingInviteTeamEmailsDraft = useAtomStateValue(
     onboardingInviteTeamEmailsDraftState,
   );
@@ -70,6 +71,8 @@ export const useInviteTeam = () => {
     watch,
     reset,
     getValues,
+    trigger,
+    getFieldState,
     formState: { isValid, isSubmitting, isDirty },
   } = useForm<InviteTeamFormInput>({
     mode: 'onChange',
@@ -238,6 +241,17 @@ export const useInviteTeam = () => {
     await onSubmit({ emails: [] });
   };
 
+  const openSkipDialog = async () => {
+    await trigger();
+
+    const firstInvalidEmailIndex = getValues('emails').findIndex(
+      (_, index) => getFieldState(`emails.${index}.email`).invalid,
+    );
+
+    setEmailIndexToFocus(Math.max(firstInvalidEmailIndex, 0));
+    openDialog(ONBOARDING_SKIP_DIALOG_IDS.inviteTeam);
+  };
+
   const handleInvite = () => {
     if (isSubmitting || isNavigating) {
       return;
@@ -248,7 +262,7 @@ export const useInviteTeam = () => {
     );
 
     if (!hasInviteEmails) {
-      openDialog(ONBOARDING_SKIP_DIALOG_IDS.inviteTeam);
+      void openSkipDialog();
       return;
     }
 
@@ -266,6 +280,8 @@ export const useInviteTeam = () => {
     remove,
     handleSkip,
     handleInvite,
+    openSkipDialog,
+    emailIndexToFocus,
     getPlaceholder,
     isValid,
     isSubmitting,

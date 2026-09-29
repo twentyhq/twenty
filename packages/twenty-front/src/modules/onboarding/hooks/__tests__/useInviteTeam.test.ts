@@ -348,6 +348,22 @@ describe('useInviteTeam', () => {
     expect(mockSendInvitation).toHaveBeenCalledTimes(1);
   });
 
+  it('should aim the focus at the first invalid email restored from the draft when the skip dialog opens', async () => {
+    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
+      'grace@example.com',
+      'alan@',
+      '',
+    ]);
+
+    const { result } = renderInviteTeam();
+
+    await act(async () => {
+      await result.current.openSkipDialog();
+    });
+
+    expect(result.current.emailIndexToFocus).toBe(1);
+  });
+
   it('should drop the invite credits on skip and keep the typed emails', async () => {
     jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
       'grace@example.com',
