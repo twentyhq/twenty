@@ -1,8 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -167,99 +165,21 @@ export class AgentChatService {
   }): Promise<
     (AgentChatThreadWorkspaceEntity & { lastMessageAt: Date | null })[]
   > {
-    return this.getRankedThreads({ workspaceMemberId, workspaceId });
-  }
-
-  // Attachment, visibility, ranking and paging resolve in one query. Reading the
-  // links first and filtering afterwards would page an arbitrary prefix of the
-  // links rather than the ranked conversations, and would let one member's
-  // attachments crowd everyone else's out of that prefix.
-  async getThreadsAttachedToRecord({
-    joinColumnName,
-    recordId,
-    workspaceMemberId,
-    workspaceId,
-    limit,
-    offset,
-  }: {
-    joinColumnName: string;
-    recordId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    (AgentChatThreadWorkspaceEntity & { lastMessageAt: Date | null })[]
-  > {
-    return this.getRankedThreads({
-      attachedToRecord: { joinColumnName, recordId },
-      workspaceMemberId,
-      workspaceId,
-      limit,
-      offset,
-    });
-  }
-
-  private async getRankedThreads({
-    attachedToRecord,
-    workspaceMemberId,
-    workspaceId,
-    limit,
-    offset,
-  }: {
-    attachedToRecord?: { joinColumnName: string; recordId: string };
-    workspaceMemberId: string;
-    workspaceId: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    (AgentChatThreadWorkspaceEntity & { lastMessageAt: Date | null })[]
-  > {
     const readableThreadIds = await this.sharingService.getReadableThreadIds({
       workspaceId,
       workspaceMemberId,
     });
     const rankedThreads = await this.threadRepository.query(
       workspaceId,
-      async ({ manager, table }) => {
-        const parameters: unknown[] = [readableThreadIds];
-        const conditions = ['thread.id = ANY($1::uuid[])'];
-
-        if (isDefined(attachedToRecord)) {
-          parameters.push(attachedToRecord.recordId);
-
-          conditions.push(
-            `EXISTS (SELECT 1 FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadTarget" target
-             WHERE target."threadId" = thread.id
-               AND target.${escapeIdentifier(attachedToRecord.joinColumnName)} = $${parameters.length}
-               AND target."deletedAt" IS NULL)`,
-          );
-        }
-
-        // The id breaks ties on both timestamps, without which two equally
-        // ranked threads have no defined order and successive pages of that
-        // order can repeat or skip one.
-        let pagination = '';
-
-        if (isDefined(limit)) {
-          parameters.push(limit);
-          pagination += ` LIMIT $${parameters.length}`;
-        }
-
-        if (isDefined(offset)) {
-          parameters.push(offset);
-          pagination += ` OFFSET $${parameters.length}`;
-        }
-
-        return manager.query<{ id: string; last_message_at: Date | null }[]>(
+      ({ manager, table }) =>
+        manager.query<{ id: string; last_message_at: Date | null }[]>(
           `SELECT thread.id, MAX(message."createdAt") AS last_message_at
        FROM ${table('agentChatThread')} thread
        LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
-       WHERE ${conditions.join(' AND ')}
-       GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC, thread.id DESC${pagination}`,
-          parameters,
-        );
-      },
+       WHERE thread.id = ANY($1::uuid[])
+       GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC`,
+          [readableThreadIds],
+        ),
     );
 
     if (rankedThreads.length === 0) {
@@ -801,6 +721,7 @@ export class AgentChatService {
     workspaceId: string;
   }): Promise<{
     answerText: string;
+    toolCallId: string | null;
     turnId: string | null;
     rollback: PendingQuestionRollback;
   }> {
@@ -895,6 +816,7 @@ export class AgentChatService {
 
     return {
       answerText,
+      toolCallId: pendingPart.toolCallId,
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };

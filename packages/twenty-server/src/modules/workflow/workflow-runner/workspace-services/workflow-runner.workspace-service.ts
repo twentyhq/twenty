@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -8,6 +8,7 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -35,6 +36,8 @@ import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunnerWorkspaceService.name);
+
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -43,6 +46,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async run({
@@ -165,6 +169,24 @@ export class WorkflowRunnerWorkspaceService {
         {
           userFriendlyMessage: msg`This form is no longer awaiting a submission`,
         },
+      );
+    }
+
+    // Recorded before the run is resumed: the resumed run can reach its end,
+    // and ending a run cancels whatever is still pending, so an Ask answered
+    // afterwards would read as canceled on a form somebody did answer. The
+    // submission is already accepted, so a failure here must not keep the run
+    // from resuming; the run's end records the answer from the step instead.
+    try {
+      await this.inputAskWorkspaceService.answerForFormStep({
+        workspaceId,
+        workflowRunId,
+        stepId,
+        response: enrichedResponse,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not record the answer to form step ${stepId} of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 

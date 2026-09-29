@@ -5,6 +5,7 @@ export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
   fieldMetadata: [
     'index',
     'searchFieldMetadata',
+    'validationRule',
     'view',
     'viewField',
     'viewFieldGroup',
@@ -15,6 +16,7 @@ export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
     'fieldMetadata',
     'index',
     'searchFieldMetadata',
+    'validationRule',
     'view',
     'viewField',
     'viewFieldGroup',

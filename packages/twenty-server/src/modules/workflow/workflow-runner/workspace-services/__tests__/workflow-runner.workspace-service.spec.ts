@@ -1,5 +1,6 @@
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { type InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { type WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
@@ -22,6 +23,7 @@ describe('WorkflowRunnerWorkspaceService', () => {
     {} as WorkflowThrottlingWorkspaceService,
     {} as CoreWorkflowRunnerService,
     {} as WorkflowVersionCoreSyncService,
+    {} as InputAskWorkspaceService,
   );
 
   const resumeAgentStepWithAnswer = () =>

@@ -93,7 +93,6 @@ const buildResolver = () => {
   const workflowQuestions = { answer: jest.fn() };
   const resolver = new AgentChatResolver(
     chatService,
-    {} as never,
     sharing as never,
     streaming as never,
     events as never,

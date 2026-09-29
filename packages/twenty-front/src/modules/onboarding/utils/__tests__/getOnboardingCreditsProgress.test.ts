@@ -32,6 +32,7 @@ describe('getOnboardingCreditsProgress', () => {
       }),
     ).toEqual({
       earnedCredits: 0,
+      earnedCreditsByStep: [],
       goalCredits: 0,
       currentStep: 'importContacts',
       currentStepCredits: 2,
@@ -85,6 +86,7 @@ describe('getOnboardingCreditsProgress', () => {
       }),
     ).toEqual({
       earnedCredits: 0,
+      earnedCreditsByStep: [],
       goalCredits: 0,
       currentStep: 'importContacts',
       currentStepCredits: 2,
@@ -195,6 +197,42 @@ describe('getOnboardingCreditsProgress', () => {
 
     expect(progress.earnedCredits).toBe(4);
     expect(progress.goalCredits).toBe(4);
+  });
+
+  it('should recap what each step done earned out of its reward', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({
+        importContacts: 2,
+        createProfile: 0.5,
+        inviteTeam: 0.5,
+      }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      isWorkspaceCreator: true,
+      isPlanRequired: true,
+    });
+
+    expect(progress.earnedCreditsByStep).toEqual([
+      { step: 'importContacts', credits: 2, rewardCredits: 2 },
+      { step: 'installApps', credits: 0, rewardCredits: 1 },
+      { step: 'createProfile', credits: 0.5, rewardCredits: 0.5 },
+      { step: 'inviteTeam', credits: 0.5, rewardCredits: 2 },
+      { step: 'upgradeTrial', credits: 0, rewardCredits: 0.5 },
+    ]);
+  });
+
+  it('should leave the step at hand out of the recap until it earns credits', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({ importContacts: 2 }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+      isWorkspaceCreator: true,
+      isPlanRequired: false,
+    });
+
+    expect(progress.earnedCreditsByStep).toEqual([
+      { step: 'importContacts', credits: 2, rewardCredits: 2 },
+    ]);
   });
 
   it('should leave out the workspace creator rewards for other members', () => {

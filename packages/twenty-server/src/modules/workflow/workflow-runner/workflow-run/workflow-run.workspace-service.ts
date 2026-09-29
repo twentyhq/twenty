@@ -21,6 +21,7 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import {
   WorkflowRunStatus,
   type WorkflowRunState,
@@ -48,6 +49,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -218,6 +220,22 @@ export class WorkflowRunWorkspaceService {
       stepInfos: workflowRunToUpdate.state?.stepInfos ?? {},
       workspaceId,
     });
+
+    // A run that ends can no longer consume an answer, so an Ask still
+    // waiting on one stops being actionable here rather than outliving it.
+    // The run has ended either way: a failure here only leaves a stale Ask,
+    // and must not turn the run's outcome into a failure.
+    try {
+      await this.inputAskWorkspaceService.cancelPendingForWorkflowRun({
+        workspaceId,
+        workflowRunId,
+        stepInfos: updatedStepInfos,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to close the Asks of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
     const metricKey =
       status === WorkflowRunStatus.COMPLETED
