@@ -8,6 +8,7 @@ import {
   StepStatus,
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
+  type WorkflowRunStepLog,
 } from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -173,6 +174,9 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
         billingSpenders,
         resumedThreadId,
+        previousStepLog: isDefined(resumedThreadId)
+          ? workflowRun.stepLogs?.[stepId]
+          : undefined,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -516,6 +520,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId,
     billingSpenders,
     resumedThreadId,
+    previousStepLog,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
@@ -524,6 +529,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
     resumedThreadId?: string;
+    previousStepLog?: WorkflowRunStepLog;
   }) {
     const stepId = step.id;
 
@@ -558,6 +564,7 @@ export class WorkflowExecutorWorkspaceService {
           workspaceId,
         },
         resumedThreadId,
+        previousStepLog,
       });
     } catch (error) {
       const isUserError = isUserFacingWorkflowExecutorError(error);

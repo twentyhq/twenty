@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
+import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -51,6 +52,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     context,
     runInfo,
     resumedThreadId,
+    previousStepLog,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = findStepOrThrow({
       stepId: currentStepId,
@@ -182,7 +184,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       stepId: currentStepId,
       executionResult,
       durationMs,
-      isResumed: isDefined(resumedThreadId),
+      previousStepLog,
     });
 
     if (executionResult.hasNoMoreAvailableCredits) {
@@ -214,14 +216,14 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     stepId,
     executionResult,
     durationMs,
-    isResumed,
+    previousStepLog,
   }: {
     workflowRunId: string;
     workspaceId: string;
     stepId: string;
     executionResult: AgentExecutionResult;
     durationMs: number;
-    isResumed: boolean;
+    previousStepLog?: WorkflowRunStepLog;
   }): Promise<void> {
     const stepLog = buildAiAgentStepLog({ executionResult, durationMs });
 
@@ -234,16 +236,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workflowRunId,
         workspaceId,
         stepId,
-        stepLog: isResumed
-          ? mergeAiAgentStepLogs({
-              previousStepLog: await this.workflowRunStepLogService.getStepLog({
-                workflowRunId,
-                workspaceId,
-                stepId,
-              }),
-              nextStepLog: stepLog,
-            })
-          : stepLog,
+        stepLog: mergeAiAgentStepLogs({
+          previousStepLog,
+          nextStepLog: stepLog,
+        }),
       });
     } catch (error) {
       this.logger.warn(

@@ -1,4 +1,8 @@
-import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import {
+  StepStatus,
+  type WorkflowRunStepInfos,
+  type WorkflowRunStepLog,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { type BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -53,11 +57,17 @@ describe('WorkflowExecutorWorkspaceService', () => {
     {} as MessageQueueService,
   );
 
+  const previousStepLog = {
+    status: 'SUCCESS',
+    details: { type: 'AI_AGENT' },
+  } as unknown as WorkflowRunStepLog;
+
   const mockWorkflowRun = (stepInfos: WorkflowRunStepInfos) =>
     workflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValue({
       id: WORKFLOW_RUN_ID,
       status: WorkflowRunStatus.RUNNING,
       coreWorkflowId: 'workflow-id',
+      stepLogs: { [AGENT_STEP_ID]: previousStepLog },
       state: {
         flow: {
           steps: [
@@ -99,6 +109,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         expect.objectContaining({
           currentStepId: AGENT_STEP_ID,
           resumedThreadId: 'thread',
+          previousStepLog,
         }),
       );
       expect(
@@ -127,7 +138,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       expect(workflowAction.execute).toHaveBeenCalledTimes(1);
       expect(workflowAction.execute).toHaveBeenCalledWith(
-        expect.objectContaining({ resumedThreadId: undefined }),
+        expect.objectContaining({
+          resumedThreadId: undefined,
+          previousStepLog: undefined,
+        }),
       );
       expect(billingUsageService.assertUsageAllowed).toHaveBeenCalledTimes(1);
       expect(usageLimitQuotaService.consumeQuota).toHaveBeenCalledTimes(1);
