@@ -1019,6 +1019,9 @@ export const NestedCurrencyPickerKeepsFieldOpen: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(await canvas.findByText('5m'));
+    const amountInput = await body.findByPlaceholderText('Currency');
+    await userEvent.clear(amountInput);
+    await userEvent.type(amountInput, '5000000');
     await userEvent.click(await body.findByRole('button', { name: 'USD' }));
     await body.findByRole('dialog', { name: 'Currency' });
     await userEvent.click(canvasElement);

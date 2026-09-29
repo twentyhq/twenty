@@ -530,12 +530,9 @@ export const TurnIntoHeading: Story = {
 export const SlashMenuKeepsEditorFocus: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await waitFor(() => {
-      expect(canvasElement.querySelector('.tiptap')).toBeInTheDocument();
-    });
-    const editor = canvasElement.querySelector<HTMLElement>('.tiptap')!;
+    const editor = await within(canvasElement).findByRole('textbox');
     await userEvent.click(editor);
-    await userEvent.keyboard('/');
+    await userEvent.keyboard('/heading');
     await body.findByText('Heading 1');
     await expect(editor).toHaveFocus();
     await userEvent.keyboard('{ArrowDown}{Enter}');
@@ -546,7 +543,7 @@ export const SlashMenuKeepsEditorFocus: Story = {
     await userEvent.keyboard('Heading from slash menu');
     await expect(
       within(editor).getByRole('heading', {
-        level: 1,
+        level: 2,
         name: 'Heading from slash menu',
       }),
     ).toBeVisible();

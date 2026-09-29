@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -99,7 +100,7 @@ const DateFieldInputWithContext = ({
           </FieldInputEventContextProviderWithJestMocks>
         </RecordFieldsScopeContextProvider>
       </FieldContext.Provider>
-      <div data-testid="data-field-input-click-outside-div"></div>
+      <Button>Outside date field</Button>
     </RecordFieldComponentInstanceContext.Provider>
   );
 };
@@ -166,15 +167,17 @@ export const ClickOutside: Story = {
     // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
     await body.findByText('January', {}, { timeout: 10000 });
 
-    const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
-    await userEvent.click(emptyDiv);
+    const outsideButton = canvas.getByRole('button', {
+      name: 'Outside date field',
+    });
+    await userEvent.click(outsideButton);
     await waitFor(() => {
       expect(
         body.queryByRole('dialog', { name: 'Select month and year' }),
       ).not.toBeInTheDocument();
     });
     await expect(handleClickoutsideMocked).not.toHaveBeenCalled();
-    await userEvent.click(emptyDiv);
+    await userEvent.click(outsideButton);
 
     await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
   },

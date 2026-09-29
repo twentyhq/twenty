@@ -23,6 +23,7 @@ export const preventDismissingClickActivation = (event: Event) => {
     event.target instanceof Node
       ? (event.target.ownerDocument ?? document)
       : document;
+  const listenerTarget = ownerDocument.defaultView ?? ownerDocument;
   const followingClickListeners = new AbortController();
   const stopListeningForFollowingClick = () => followingClickListeners.abort();
   const listenerOptions = {
@@ -30,7 +31,7 @@ export const preventDismissingClickActivation = (event: Event) => {
     signal: followingClickListeners.signal,
   };
 
-  ownerDocument.addEventListener(
+  listenerTarget.addEventListener(
     'click',
     (clickEvent) => {
       stopActivation(clickEvent);
@@ -38,12 +39,12 @@ export const preventDismissingClickActivation = (event: Event) => {
     },
     listenerOptions,
   );
-  ownerDocument.addEventListener(
+  listenerTarget.addEventListener(
     'pointerdown',
     stopListeningForFollowingClick,
     listenerOptions,
   );
-  ownerDocument.addEventListener(
+  listenerTarget.addEventListener(
     'keydown',
     stopListeningForFollowingClick,
     listenerOptions,

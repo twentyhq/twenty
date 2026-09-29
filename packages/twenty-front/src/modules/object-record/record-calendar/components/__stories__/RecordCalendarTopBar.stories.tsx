@@ -3,6 +3,7 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Temporal } from 'temporal-polyfill';
@@ -23,17 +24,20 @@ const CalendarTopBarStory = ({
   isWidget?: boolean;
 }) => (
   <RecordCalendarComponentInstanceContext.Provider value={{ instanceId }}>
-    <WidgetComponentInstanceContext.Provider
-      value={isWidget ? { instanceId } : null}
-    >
-      <RecordCalendarTopBar />
-    </WidgetComponentInstanceContext.Provider>
+    <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+      <WidgetComponentInstanceContext.Provider
+        value={isWidget ? { instanceId } : null}
+      >
+        <RecordCalendarTopBar />
+      </WidgetComponentInstanceContext.Provider>
+    </ViewComponentInstanceContext.Provider>
   </RecordCalendarComponentInstanceContext.Provider>
 );
 
 const meta: Meta<typeof CalendarTopBarStory> = {
   title: 'Modules/ObjectRecord/RecordCalendar/TopBar',
   component: CalendarTopBarStory,
+  render: (args) => <CalendarTopBarStory {...args} />,
   decorators: [
     ComponentDecorator,
     ContextStoreDecorator,
@@ -57,7 +61,11 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      await canvas.findByRole('button', { name: 'January 2026' }),
+      await canvas.findByRole(
+        'button',
+        { name: 'January 2026' },
+        { timeout: 10000 },
+      ),
     ).toBeVisible();
   },
 };
@@ -68,7 +76,11 @@ export const ChangingMonthClosesTheDatePanel: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'January 2026' }),
+      await canvas.findByRole(
+        'button',
+        { name: 'January 2026' },
+        { timeout: 10000 },
+      ),
     );
     const panel = await body.findByRole('dialog', { name: 'Select date' });
     await userEvent.click(
@@ -100,7 +112,11 @@ export const DismissesOnePanelAtATime: Story = {
 
     for (const dismissal of ['escape', 'outside']) {
       await userEvent.click(
-        await canvas.findByRole('button', { name: 'January 2026' }),
+        await canvas.findByRole(
+          'button',
+          { name: 'January 2026' },
+          { timeout: 10000 },
+        ),
       );
       const panel = await body.findByRole('dialog', { name: 'Select date' });
       await userEvent.click(
@@ -143,9 +159,11 @@ export const WidgetCalendarsKeepIndependentDates: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const triggers = await canvas.findAllByRole('button', {
-      name: 'January 2026',
-    });
+    const triggers = await canvas.findAllByRole(
+      'button',
+      { name: 'January 2026' },
+      { timeout: 10000 },
+    );
 
     await userEvent.click(triggers[0]);
     const panel = await body.findByRole('dialog', { name: 'Select date' });

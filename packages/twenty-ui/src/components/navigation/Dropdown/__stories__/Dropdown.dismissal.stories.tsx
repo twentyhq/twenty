@@ -112,16 +112,37 @@ export const InteractOutside: Story = {
     });
 
     await openRecordActions(canvasElement);
-    await userEvent.click(outside);
+    const handleDocumentClick = fn();
+    canvasElement.ownerDocument.addEventListener(
+      'click',
+      handleDocumentClick,
+      true,
+    );
 
-    expect(args.onInteractOutside).toHaveBeenCalledOnce();
-    expect(args.onInteractOutside).toHaveBeenCalledWith(
-      expect.objectContaining({ target: outside }),
-    );
-    await waitFor(() =>
-      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
-    );
-    expect(args.onOutsideClick).not.toHaveBeenCalled();
+    try {
+      await userEvent.click(outside);
+
+      expect(args.onInteractOutside).toHaveBeenCalledOnce();
+      expect(args.onInteractOutside).toHaveBeenCalledWith(
+        expect.objectContaining({ target: outside }),
+      );
+      await waitFor(() =>
+        expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+      );
+      expect(args.onOutsideClick).not.toHaveBeenCalled();
+      expect(handleDocumentClick).not.toHaveBeenCalled();
+
+      await userEvent.click(outside);
+
+      expect(args.onOutsideClick).toHaveBeenCalledOnce();
+      expect(handleDocumentClick).toHaveBeenCalledOnce();
+    } finally {
+      canvasElement.ownerDocument.removeEventListener(
+        'click',
+        handleDocumentClick,
+        true,
+      );
+    }
   },
 };
 
