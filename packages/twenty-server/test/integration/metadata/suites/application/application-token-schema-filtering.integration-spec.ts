@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { getConnectionTypename, getEdgeTypename } from 'twenty-shared/utils';
@@ -55,13 +55,11 @@ describe('Application token schema filtering', () => {
 
     expect(standardApp).toBeDefined();
 
-    const { data: tokenData } = await generateApplicationToken({
+    const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId: standardApp!.id,
-      expectToFail: false,
     });
 
-    standardAppToken =
-      tokenData.generateApplicationToken.applicationAccessToken.token;
+    standardAppToken = tokenPair.applicationAccessToken.token;
   });
 
   it('should not include custom objects in the schema when using a standard app token', async () => {

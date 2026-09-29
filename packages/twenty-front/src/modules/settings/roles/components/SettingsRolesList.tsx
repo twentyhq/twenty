@@ -1,17 +1,16 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { Table } from '@/ui/layout/table/components/Table';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { SettingsRow, Section } from 'twenty-ui/components';
+import { Dropdown, Section, SettingsRow } from 'twenty-ui/components';
 import {
   IconFilter,
   IconKey,
@@ -20,7 +19,7 @@ import {
   IconSearch,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
@@ -92,35 +91,32 @@ export const SettingsRolesList = () => {
             onChange={setSearchTerm}
           />
         </StyledSearchInputContainer>
-        <Dropdown
-          dropdownId="settings-roles-filter-dropdown"
-          dropdownPlacement="bottom-end"
-          dropdownOffset={{ x: 0, y: 8 }}
-          clickableComponent={
-            <Button
-              startIcon={<IconFilter />}
-              size="md"
-              aria-label={t`Filter`}
-              variant="outline"
-            />
-          }
-          dropdownComponents={
-            <DropdownContent>
-              <DropdownMenuItemsContainer>
-                <SettingsRow
-                  startIcon={<IconLego />}
-                  onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
-                  checked={showAgentRoles}
-                >{t`Agent roles`}</SettingsRow>
-                <SettingsRow
-                  startIcon={<IconKey />}
-                  onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
-                  checked={showApiKeyRoles}
-                >{t`API key roles`}</SettingsRow>
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          }
-        />
+        <DropdownRoot dropdownId="settings-roles-filter-dropdown" type="panel">
+          <Dropdown.Trigger
+            render={
+              <Button
+                startIcon={<IconFilter />}
+                size="md"
+                aria-label={t`Filter`}
+                variant="outline"
+              />
+            }
+          />
+          <DropdownContent align="end" sideOffset={8}>
+            <Dropdown.Section>
+              <SettingsRow
+                startIcon={<IconLego />}
+                onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
+                checked={showAgentRoles}
+              >{t`Agent roles`}</SettingsRow>
+              <SettingsRow
+                startIcon={<IconKey />}
+                onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
+                checked={showApiKeyRoles}
+              >{t`API key roles`}</SettingsRow>
+            </Dropdown.Section>
+          </DropdownContent>
+        </DropdownRoot>
       </StyledSearchAndFilterContainer>
 
       <Table>

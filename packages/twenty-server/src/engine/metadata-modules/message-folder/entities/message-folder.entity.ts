@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -14,13 +15,15 @@ import {
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 registerEnumType(MessageFolderPendingSyncAction, {
   name: 'MessageFolderPendingSyncAction',
 });
 
 @Entity({ name: 'messageFolder', schema: 'core' })
+@Index('IDX_MESSAGE_FOLDER_MESSAGE_CHANNEL_ID', ['messageChannelId'])
+@Index('IDX_MESSAGE_FOLDER_WORKSPACE_ID', ['workspaceId'])
 export class MessageFolderEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

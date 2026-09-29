@@ -4,7 +4,7 @@ import { type EmailAttachment } from 'twenty-shared/types';
 import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/maxAttachmentSize';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 

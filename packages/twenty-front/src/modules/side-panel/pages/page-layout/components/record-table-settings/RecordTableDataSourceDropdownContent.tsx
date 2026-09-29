@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
@@ -161,9 +160,7 @@ export const RecordTableDataSourceDropdownContent = () => {
                   />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={objectMetadataItem.labelPlural}
-                />
+                {objectMetadataItem.labelPlural}
               </ListItem>
             </SelectableListItem>
           ))}

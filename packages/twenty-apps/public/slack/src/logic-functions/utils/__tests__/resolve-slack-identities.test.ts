@@ -9,9 +9,11 @@ import { resolveSlackIdentities } from 'src/logic-functions/utils/resolve-slack-
 const {
   findSlackUserLinksBySlackUserIdsMock,
   findWorkspaceMemberIdsByEmailsMock,
+  getSlackConnectedAccountTeamMock,
 } = vi.hoisted(() => ({
   findSlackUserLinksBySlackUserIdsMock: vi.fn(),
   findWorkspaceMemberIdsByEmailsMock: vi.fn(),
+  getSlackConnectedAccountTeamMock: vi.fn(),
 }));
 
 vi.mock(
@@ -25,6 +27,10 @@ vi.mock('src/logic-functions/data/find-workspace-member-ids-by-emails', () => ({
   findWorkspaceMemberIdsByEmails: findWorkspaceMemberIdsByEmailsMock,
 }));
 
+vi.mock('src/logic-functions/utils/get-slack-connected-account-team', () => ({
+  getSlackConnectedAccountTeam: getSlackConnectedAccountTeamMock,
+}));
+
 const INSTALLED_TEAM_ID = 'T0INSTALLED';
 const EXTERNAL_TEAM_ID = 'T0EXTERNAL';
 
@@ -32,6 +38,8 @@ const client = {} as CoreApiClient;
 
 const authTestMock = vi.fn();
 const usersInfoMock = vi.fn();
+
+const SLACK_CONNECTION_ID = 'connection-1';
 
 const slackClient = {
   auth: { test: authTestMock },
@@ -70,18 +78,35 @@ const resolve = (knownIdentities: SlackUserIdentity[]) =>
     knownIdentities,
     client,
     slackClient,
+    slackConnectionId: SLACK_CONNECTION_ID,
   });
 
 describe('resolveSlackIdentities', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
+    getSlackConnectedAccountTeamMock.mockResolvedValue(null);
     findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(new Map());
     findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
       workspaceMemberIdByEmail: new Map(),
       ambiguousEmailCount: 0,
     });
     usersInfoMock.mockResolvedValue(undefined);
+  });
+
+  it('should read the installed team of the connection the client came from', async () => {
+    getSlackConnectedAccountTeamMock.mockResolvedValue(INSTALLED_TEAM_ID);
+    findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
+      new Map([['U04ABC', link()]]),
+    );
+
+    expect((await resolve([identity()])).get('U04ABC')).toEqual(
+      expect.objectContaining({ outcome: 'confirmedMember' }),
+    );
+    expect(getSlackConnectedAccountTeamMock).toHaveBeenCalledWith(
+      SLACK_CONNECTION_ID,
+    );
+    expect(authTestMock).not.toHaveBeenCalled();
   });
 
   it('should credit a hand-picked consented link as the source of the member', async () => {
@@ -231,6 +256,7 @@ describe('resolveSlackIdentities', () => {
       slackUserIds: ['U0GONE'],
       client,
       slackClient,
+      slackConnectionId: SLACK_CONNECTION_ID,
     });
 
     expect(resolutions.get('U0GONE')).toEqual({
@@ -246,6 +272,7 @@ describe('resolveSlackIdentities', () => {
       slackUserIds: ['U04ABC'],
       client,
       slackClient: undefined,
+      slackConnectionId: SLACK_CONNECTION_ID,
     });
 
     expect(resolutions.get('U04ABC')?.outcome).toBe('unidentified');
@@ -268,6 +295,7 @@ describe('resolveSlackIdentities', () => {
       slackUserIds: Array.from({ length: 30 }, (_unused, index) => `U${index}`),
       client,
       slackClient,
+      slackConnectionId: SLACK_CONNECTION_ID,
     });
 
     expect(usersInfoMock.mock.calls.length).toBeLessThanOrEqual(8);

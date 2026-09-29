@@ -1,14 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  Avatar,
-  getIconTileColorShades,
-} from 'twenty-ui/primitives/data-display';
+import { getIconTileColorShades } from 'twenty-ui/components';
 import {
   IconEdit,
   IconPlus,
@@ -18,9 +13,11 @@ import {
   useIcons,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
 import { type SettingsAgentToolMarketplaceApp } from '~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsToolIconProps = {
   icon?: string | null;
@@ -93,7 +90,7 @@ export const SettingsToolIcon = ({
   marketplaceApp,
 }: SettingsToolIconProps) => {
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {

@@ -1,7 +1,7 @@
 import { getLocalizedToastProps } from '@/ui/feedback/toast/utils/getLocalizedToastProps';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useLingui } from '@lingui/react/macro';
-import { Toaster, type ToasterProps } from 'twenty-ui/primitives/feedback';
+import { Toaster, type ToasterProps } from 'twenty-ui/components';
 
 type AppToasterProps = Pick<ToasterProps, 'container'>;
 

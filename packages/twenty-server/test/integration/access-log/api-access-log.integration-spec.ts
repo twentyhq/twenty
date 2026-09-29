@@ -7,8 +7,8 @@ import request from 'supertest';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -67,7 +67,7 @@ describe('API access log', () => {
   };
 
   const findManyPeople = (requestId: string) =>
-    makeGraphqlAPIRequest({ query: FIND_MANY_PEOPLE }).set(
+    makeGraphqlApiRequest({ query: FIND_MANY_PEOPLE }).set(
       'x-request-id',
       requestId,
     );
@@ -131,7 +131,7 @@ describe('API access log', () => {
   it('should log the api key as the actor of a REST request', async () => {
     const requestId = randomUUID();
 
-    await makeRestAPIRequest({ method: 'get', path: '/people?limit=1' }).set(
+    await makeRestApiRequest({ method: 'get', path: '/people?limit=1' }).set(
       'x-request-id',
       requestId,
     );

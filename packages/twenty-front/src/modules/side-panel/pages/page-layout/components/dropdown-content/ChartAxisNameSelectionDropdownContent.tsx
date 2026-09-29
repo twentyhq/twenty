@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -87,9 +86,7 @@ export const ChartAxisNameSelectionDropdownContent = () => {
                 selected={currentAxisNameDisplay?.toUpperCase() === option}
                 indicator="check"
               >
-                <OverflowingTextWithTooltip
-                  text={getChartAxisNameDisplayOptions(option)}
-                />
+                {getChartAxisNameDisplayOptions(option)}
               </ListItem>
             </SelectableListItem>
           ))}

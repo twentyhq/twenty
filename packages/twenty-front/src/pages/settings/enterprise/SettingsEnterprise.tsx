@@ -32,8 +32,7 @@ import {
 } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section, useToast } from 'twenty-ui/components';
 import {
   IconCalendarRepeat,
   IconCheck,
@@ -43,7 +42,7 @@ import {
   IconUser,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =

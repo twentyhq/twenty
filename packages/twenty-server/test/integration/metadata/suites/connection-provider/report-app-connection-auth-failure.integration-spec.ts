@@ -1,11 +1,11 @@
 import { gql } from 'graphql-tag';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type Manifest } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -130,7 +130,7 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
     reason?: string;
     token?: string;
   }) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: REPORT_AUTH_FAILURE_MUTATION,
         variables: { input: { id, reason } },
@@ -190,15 +190,12 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
 
     adminUserWorkspaceId = userWorkspace.id;
 
-    // Minted with the admin token, so it carries that admin's userWorkspaceId
-    // alongside the owning applicationId.
-    const { data } = await generateApplicationToken({
+    // Carries the admin's userWorkspaceId alongside the owning applicationId.
+    const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId: owningApplicationDbId,
-      expectToFail: false,
     });
 
-    owningApplicationToken =
-      data.generateApplicationToken.applicationAccessToken.token;
+    owningApplicationToken = tokenPair.applicationAccessToken.token;
   }, 180000);
 
   afterEach(async () => {

@@ -1,9 +1,7 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,9 +9,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/primitives/data-display';
 import {
   IconCalendarEvent,
   IconCalendarMonth,
@@ -21,6 +19,7 @@ import {
   IconChevronLeft,
   IconTimelineEvent,
 } from 'twenty-ui/icon';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -64,7 +63,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
   };
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -95,9 +94,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarEvent} />}
-            >
-              <OverflowingTextWithTooltip text={t`Day`} />
-            </ListItem>
+            >{t`Day`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.WEEK}
@@ -113,9 +110,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarWeek} />}
-            >
-              <OverflowingTextWithTooltip text={t`Week`} />
-            </ListItem>
+            >{t`Week`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.MONTH}
@@ -131,9 +126,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.MONTH}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarMonth} />}
-            >
-              <OverflowingTextWithTooltip text={t`Month`} />
-            </ListItem>
+            >{t`Month`}</ListItem>
           </SelectableListItem>
           <SelectableListItem itemId={RECORD_CALENDAR_TIMELINE_VIEW_ID}>
             <ListItem
@@ -146,12 +139,10 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               description={<Pill label={t`Soon`} />}
               descriptionPlacement={'end'}
               startIcon={<SelectOptionIcon Icon={IconTimelineEvent} />}
-            >
-              <OverflowingTextWithTooltip text={t`Timeline`} />
-            </ListItem>
+            >{t`Timeline`}</ListItem>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

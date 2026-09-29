@@ -4,8 +4,8 @@ import { getInstallCountEstimate } from '@/settings/applications/utils/getInstal
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 import { isDefined, isSafeUrl } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconAlertTriangle,
   IconBrandNpm,
@@ -21,8 +21,7 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type DeveloperLinks = {
   websiteUrl?: string;
@@ -154,7 +153,7 @@ export const SettingsApplicationAboutSidebar = ({
   pricingDescription,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatNumber } = useNumberFormat();
 
   const getInstallCountRows = (): AboutRow[] => {

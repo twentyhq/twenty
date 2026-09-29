@@ -2,9 +2,9 @@ import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-import styles from '../Tabs.module.scss';
+import styles from '../../internal/tab/Tab.module.scss';
+import { TabsTabContent } from '../../internal/tab/TabsTabContent';
 import { type TabsTabProps } from '../types/TabsTabProps';
-import { TabsTabContent } from './TabsTabContent';
 
 export const TabsTab = ({
   className,

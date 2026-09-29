@@ -10,6 +10,7 @@ export type RowLevelPermissionPredicate = {
   operand: RowLevelPermissionPredicateOperand;
   value: RowLevelPermissionPredicateValue;
   subFieldName: string | null;
+  rowLevelPermissionPredicateGroupId: string | null;
   workspaceMemberFieldMetadataId: string | null;
   workspaceMemberSubFieldName: string | null;
   roleId: string;

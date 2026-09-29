@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 
 import { buildActionToolStatusMessage } from '@/ai/utils/tool-display/build-action-tool-status-message.util';
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 
 beforeEach(() => {
   i18n.load('en', {});

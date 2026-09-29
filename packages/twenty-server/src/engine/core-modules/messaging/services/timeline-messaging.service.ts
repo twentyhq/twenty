@@ -57,6 +57,7 @@ export class TimelineMessagingService {
       const messageThreadRepository =
         this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
           'messageThread',
+          { shouldBypassPermissionChecks: true },
         );
 
       const totalQueryBuilder = messageThreadRepository
@@ -149,6 +150,7 @@ export class TimelineMessagingService {
       const messageParticipantRepository =
         this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
           'messageParticipant',
+          { shouldBypassPermissionChecks: true },
         );
 
       const threadParticipants = await messageParticipantRepository
@@ -285,6 +287,7 @@ export class TimelineMessagingService {
       const messageThreadRepository =
         this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
           'messageThread',
+          { shouldBypassPermissionChecks: true },
         );
 
       const threadChannelRows = await messageThreadRepository

@@ -1,4 +1,5 @@
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
+import { MetadataReadability } from 'twenty-shared/types';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
@@ -28,6 +29,7 @@ type ObjectMetadataOverrides = Partial<{
   isActive: boolean;
   nameSingular: string;
   shortcut: string | null;
+  readability: MetadataReadability;
   commandMenuItemUniversalIdentifiers: string[];
 }>;
 
@@ -38,6 +40,7 @@ const buildFlatObjectMetadata = (overrides: ObjectMetadataOverrides = {}) => ({
   isActive: true,
   nameSingular: 'ticket',
   shortcut: 'T',
+  readability: MetadataReadability.OPEN,
   commandMenuItemUniversalIdentifiers: [],
   ...overrides,
 });
@@ -202,6 +205,18 @@ describe('ObjectNavigationCommandOnCreateSideEffectHandlerService', () => {
     const result = handler.buildSideEffects(
       buildArgs({
         flatObjectMetadata: buildFlatObjectMetadata({ id: undefined }),
+      }),
+    );
+
+    expect(result.status).toBe('noop');
+  });
+
+  it('noops when the object is SYSTEM-readable', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        flatObjectMetadata: buildFlatObjectMetadata({
+          readability: MetadataReadability.SYSTEM,
+        }),
       }),
     );
 

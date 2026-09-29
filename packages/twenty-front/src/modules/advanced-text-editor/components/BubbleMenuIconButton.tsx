@@ -1,7 +1,7 @@
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import type { IconComponent } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
+import { type IconComponent } from 'twenty-ui/icon';
 
 type BubbleMenuIconButtonProps = {
   label: string;

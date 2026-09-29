@@ -1,10 +1,11 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
-import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { type SearchRecord } from '~/generated/graphql';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
@@ -28,7 +29,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   }
 
   if (!filteredWorkspaceMembers.length && searchFilter.length > 0) {
-    return <MenuItem disabled text={t`No Results`} />;
+    return <Dropdown.Empty>{t`No Results`}</Dropdown.Empty>;
   }
 
   const enrichedWorkspaceMembers = filteredWorkspaceMembers
@@ -45,19 +46,22 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
         const workspaceMemberFullName = `${workspaceMember?.name.firstName ?? ''} ${workspaceMember?.name.lastName ?? ''}`;
 
         return (
-          <MenuItemAvatar
+          <Dropdown.ActionItem
             key={workspaceMember.id}
             onClick={() => onSelect(workspaceMember)}
-            avatar={{
-              shape: 'circle',
-              size: 'md',
-              name: workspaceMemberFullName,
-              colorSeed: workspaceMember.id,
-              src: workspaceMember.avatarUrl,
-            }}
-            text={workspaceMemberFullName}
-            contextualText={workspaceMember.userEmail}
-          />
+            startIcon={
+              <Avatar
+                shape="circle"
+                size="md"
+                name={workspaceMemberFullName}
+                colorSeed={workspaceMember.id}
+                src={workspaceMember.avatarUrl}
+              />
+            }
+            description={workspaceMember.userEmail}
+          >
+            {workspaceMemberFullName}
+          </Dropdown.ActionItem>
         );
       })}
     </>

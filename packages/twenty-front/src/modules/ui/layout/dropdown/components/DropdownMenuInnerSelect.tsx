@@ -1,15 +1,10 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
@@ -30,12 +25,13 @@ const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   width: 100%;
 `;
 
-export type DropdownMenuInnerSelectProps = {
+type DropdownMenuInnerSelectProps = {
   selectedOption: SelectOption;
   onChange: (value: SelectOption) => void;
   options: SelectOption[];
   dropdownId: string;
   widthInPixels?: number;
+  'aria-label': string;
 };
 
 export const DropdownMenuInnerSelect = ({
@@ -44,48 +40,45 @@ export const DropdownMenuInnerSelect = ({
   options,
   dropdownId,
   widthInPixels,
+  'aria-label': ariaLabel,
 }: DropdownMenuInnerSelectProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { closeDropdown } = useCloseDropdown();
+  const theme = useTheme();
 
   return (
-    <Dropdown
-      clickableComponent={
-        <StyledDropdownMenuInnerSelectDropdownButton>
-          <span>{selectedOption.label}</span>
-          <IconChevronDown size={theme.icon.size.sm} />
-        </StyledDropdownMenuInnerSelectDropdownButton>
-      }
-      dropdownComponents={
-        <DropdownContent widthInPixels={widthInPixels}>
-          <DropdownMenuItemsContainer>
-            {options.map((selectOption) => (
-              <ListItem
-                key={`dropdown-menu-inner-select-item-${selectOption.value}`}
-                onClick={() => {
-                  onChange(selectOption);
-                  closeDropdown(dropdownId);
-                }}
-                disabled={selectOption.disabled}
-                role="option"
-                aria-selected={selectOption.value === selectedOption.value}
-                selected={selectOption.value === selectedOption.value}
-                indicator="check"
-              >
-                <OverflowingTextWithTooltip text={selectOption.label} />
-              </ListItem>
-            ))}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
+    <DropdownRoot
+      dropdownId={dropdownId}
+      type="picker"
       globalHotkeysConfig={{
         enableGlobalHotkeysWithModifiers: false,
         enableGlobalHotkeysConflictingWithKeyboard: false,
       }}
-      dropdownId={dropdownId}
-      dropdownOffset={{
-        x: 8,
-      }}
-    />
+    >
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
+        <StyledDropdownMenuInnerSelectDropdownButton>
+          <span>{selectedOption.label}</span>
+          <IconChevronDown size={theme.icon.size.sm} />
+        </StyledDropdownMenuInnerSelectDropdownButton>
+      </Dropdown.Trigger>
+      <DropdownContent
+        width={widthInPixels}
+        side="bottom"
+        align="end"
+        alignOffset={-8}
+        aria-label={ariaLabel}
+      >
+        <Dropdown.Section>
+          {options.map((selectOption) => (
+            <Dropdown.OptionItem
+              key={`dropdown-menu-inner-select-item-${selectOption.value}`}
+              onSelect={() => onChange(selectOption)}
+              disabled={selectOption.disabled}
+              selected={selectOption.value === selectedOption.value}
+            >
+              {selectOption.label}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

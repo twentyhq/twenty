@@ -1,14 +1,17 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
+import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const MoveToTabDropdownContent = () => {
@@ -19,12 +22,19 @@ export const MoveToTabDropdownContent = () => {
     pageLayoutId,
   );
 
+  const pageLayoutPersisted = useAtomComponentStateValue(
+    pageLayoutPersistedComponentState,
+    pageLayoutId,
+  );
+
   const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
   const { moveWidgetToTab } = useMoveWidgetToTab(pageLayoutId);
+
+  const featureFlags = useWorkspaceFeatureFlagsMap();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -42,6 +52,11 @@ export const MoveToTabDropdownContent = () => {
     (tab) =>
       tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
       tab.id !== currentTab?.id &&
+      !isPageLayoutTabHiddenByFeatureFlags({
+        tabId: tab.id,
+        persistedTabs: pageLayoutPersisted?.tabs,
+        featureFlags,
+      }) &&
       isDefined(currentWidget) &&
       canVerticalListAcceptWidget({
         destinationWidgets: tab.widgets,
@@ -56,7 +71,7 @@ export const MoveToTabDropdownContent = () => {
   if (eligibleTabs.length === 0) {
     return (
       <DropdownMenuItemsContainer>
-        <MenuItem text={t`No available tabs`} />
+        <ListItem disabled>{t`No available tabs`}</ListItem>
       </DropdownMenuItemsContainer>
     );
   }
@@ -64,14 +79,15 @@ export const MoveToTabDropdownContent = () => {
   return (
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
-        <MenuItem
+        <ListItem
           key={tab.id}
-          text={tab.title ?? ''}
           onClick={() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);
             closeDropdown();
           }}
-        />
+        >
+          {tab.title ?? ''}
+        </ListItem>
       ))}
     </DropdownMenuItemsContainer>
   );

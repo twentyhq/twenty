@@ -18,14 +18,14 @@ import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   IconCalendar,
   IconChevronLeft,
   IconChevronRight,
   IconClock,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,

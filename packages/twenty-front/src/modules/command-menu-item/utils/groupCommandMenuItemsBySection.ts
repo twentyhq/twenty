@@ -10,11 +10,13 @@ export const groupCommandMenuItemsBySection = (
     CommandMenuItemDefinition[]
   > = {
     SELECTION: [],
-    THIS_VIEW: [],
+    CURRENT_VIEW: [],
+    THIS_OBJECT: [],
     ASK_AND_FIND: [],
     CREATE_RECORD: [],
     WORKSPACE: [],
     GO_TO: [],
+    DEVELOPER: [],
     FALLBACK: [],
   };
 

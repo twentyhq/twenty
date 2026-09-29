@@ -2,7 +2,7 @@ import { type calendar_v3 as calendarV3 } from 'googleapis';
 
 import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const formatGoogleCalendarEvents = (
   events: calendarV3.Schema$Event[],
@@ -45,7 +45,7 @@ const formatGoogleCalendarEvent = (
     recurringEventExternalId: event.recurringEventId ?? '',
     participants:
       event.attendees?.map((attendee) => ({
-        handle: attendee.email ?? '',
+        handle: attendee.email?.toLowerCase() ?? '',
         displayName: attendee.displayName ?? '',
         isOrganizer: attendee.organizer === true,
         responseStatus: formatResponseStatus(attendee.responseStatus),

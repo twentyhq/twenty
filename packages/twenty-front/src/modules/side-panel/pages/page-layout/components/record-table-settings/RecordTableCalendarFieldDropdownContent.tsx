@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
@@ -89,7 +88,7 @@ export const RecordTableCalendarFieldDropdownContent = ({
                 <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
               }
             >
-              <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+              {fieldMetadataItem.label}
             </ListItem>
           </SelectableListItem>
         ))}

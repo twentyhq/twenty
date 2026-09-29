@@ -43,7 +43,7 @@ import {
   buildSourceStepWithAddedEdge,
   buildSourceStepWithRemovedEdge,
 } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
-import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepConnectionOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
@@ -757,18 +757,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       });
     }
 
-    const applicationId =
-      await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
-        workspaceId,
-      );
-
     const { coreWorkflowVersionId } =
       await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersionAndMirror(
         {
           workspaceId,
           coreWorkflowId: coreWorkflow.id,
           workspaceWorkflowId,
-          applicationId,
           trigger: triggerToCopy,
           steps: copiedSteps,
         },

@@ -1,4 +1,5 @@
 import { Collapsible } from '@base-ui/react/collapsible';
+import { type AnimationDuration } from '@ui/theme';
 import { clsx } from 'clsx';
 
 import { type AnimationDimension } from '@ui/primitives/layout/AnimatedExpandableContainer/types/AnimationDimension';
@@ -15,6 +16,7 @@ type AnimatedExpandableContainerProps = {
   mode?: AnimationMode;
   containAnimation?: boolean;
   initial?: boolean;
+  duration?: AnimationDuration;
 };
 
 export const AnimatedExpandableContainer = ({
@@ -23,6 +25,7 @@ export const AnimatedExpandableContainer = ({
   dimension = 'height',
   animationDurations = 'default',
   containAnimation = true,
+  duration,
 }: AnimatedExpandableContainerProps) => {
   const durationStyle =
     animationDurations === 'default'
@@ -37,6 +40,7 @@ export const AnimatedExpandableContainer = ({
       <Collapsible.Panel
         className={clsx(styles.panel, containAnimation && styles.contained)}
         data-dimension={dimension}
+        data-duration={duration}
         style={durationStyle}
       >
         {children}

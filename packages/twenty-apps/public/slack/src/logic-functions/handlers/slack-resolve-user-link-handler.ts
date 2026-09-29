@@ -65,7 +65,10 @@ export const slackResolveUserLinkHandler = async (
   }
 
   const slackClient = slackClientResult.client;
-  const installedTeamId = await getInstalledSlackTeamId(slackClient);
+  const installedTeamId = await getInstalledSlackTeamId({
+    slackClient,
+    slackConnectionId: slackClientResult.connectionId,
+  });
 
   if (!isNonEmptyString(installedTeamId)) {
     return {

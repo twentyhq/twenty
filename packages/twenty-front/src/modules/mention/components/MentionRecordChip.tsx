@@ -1,12 +1,10 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  AvatarOrIcon,
-  LinkChip,
-  Chip,
-} from 'twenty-ui/primitives/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type MentionRecordChipProps = {
   recordId: string;

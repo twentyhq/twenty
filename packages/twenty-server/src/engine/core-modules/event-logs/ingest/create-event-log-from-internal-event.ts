@@ -10,8 +10,11 @@ import {
   buildObjectEventEnvelope,
   computeEventContextFields,
 } from 'src/engine/core-modules/event-logs/emit/build-event-envelope';
+import { type TrackEventName } from 'src/engine/core-modules/event-logs/emit/events.type';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-created';
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-delete';
+import { OBJECT_RECORD_DESTROYED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-destroyed';
+import { OBJECT_RECORD_RESTORED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-restored';
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-updated';
 import { OBJECT_RECORD_UPSERTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-upserted';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -33,6 +36,8 @@ const OBJECT_EVENT_BY_SUFFIX = {
   '.updated': OBJECT_RECORD_UPDATED_EVENT,
   '.deleted': OBJECT_RECORD_DELETED_EVENT,
   '.upserted': OBJECT_RECORD_UPSERTED_EVENT,
+  '.restored': OBJECT_RECORD_RESTORED_EVENT,
+  '.destroyed': OBJECT_RECORD_DESTROYED_EVENT,
 } as const;
 
 @Processor(MessageQueue.eventLogQueue)
@@ -115,17 +120,22 @@ export class CreateEventLogFromInternalEvent {
           userId: eventData.userId,
         }),
         event,
-        this.objectProperties(batch, eventData),
+        this.objectProperties({ batch, eventData, event }),
       ),
     );
   }
 
-  private objectProperties(
-    batch: WorkspaceEventBatch<ObjectRecordEvent>,
-    eventData: ObjectRecordEvent,
-  ) {
+  private objectProperties({
+    batch,
+    eventData,
+    event,
+  }: {
+    batch: WorkspaceEventBatch<ObjectRecordEvent>;
+    eventData: ObjectRecordEvent;
+    event: TrackEventName;
+  }) {
     return {
-      ...eventData.properties,
+      ...(event === OBJECT_RECORD_DESTROYED_EVENT ? {} : eventData.properties),
       recordId: eventData.recordId,
       objectMetadataId: batch.objectMetadata.id,
     };

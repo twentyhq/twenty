@@ -4,8 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -23,7 +24,7 @@ import {
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { useToast } from 'twenty-ui/primitives/feedback';
+
 import { type WorkspaceBillingAdminPanelQuery } from '~/generated-admin/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 

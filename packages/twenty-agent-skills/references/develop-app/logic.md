@@ -21,6 +21,7 @@ Other rules:
 - Return a bulk summary with per-record results for multi-record actions, including counts for success, no match, and failed records.
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
+- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
@@ -75,6 +76,7 @@ When adding AI behavior:
 - Keep instructions grounded in available app data and tools.
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
+- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
 
 ## Connection Providers
 
@@ -109,3 +111,22 @@ Use `defineUninstallLogicFunction` for best-effort cleanup of external resources
 Uninstall hook files live alongside other logic functions (typically `src/logic-functions/uninstall.ts`). Kebab-case filename, one export per file.
 
 The hook runs before the app's metadata, data, and code are removed, so handlers can still query the app's objects and records. Handlers receive `UninstallPayload` (`{ version?: string }`).
+
+## Health Check
+
+Use `defineHealthCheck` to report whether the app is actually able to run. It covers what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. A required variable nobody filled in is already covered by `isRequired` and needs no code.
+
+Health check files live alongside other logic functions (typically `src/logic-functions/health-check.ts`). Only one health check is allowed per app; declaring more than one fails the build.
+
+The config takes `universalIdentifier` and `handler`. The handler takes no arguments and runs server-side, so it reads secret variables like any other logic function.
+
+The handler returns `ApplicationHealthCheckResult`, a discriminated union:
+
+- `{ status: 'OK' }`
+- `{ status: 'SUCCESS' | 'INFO' | 'WARNING' | 'ERROR' | 'NEUTRAL'; title: string; description?: string; action?: { label: string; location?: string } }`
+
+The statuses come from `ApplicationHealthStatus`, exported from `twenty-sdk/define`, so `ApplicationHealthStatus.WARNING` and `'WARNING'` are interchangeable. `UNKNOWN` belongs to Twenty and an app cannot report it.
+
+`title` and the optional `description` are the two lines of a banner on the app's settings page. `action` renders a button labelled `label` that redirects to `location`: a path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab, or a hash alone such as `#variables` to move to a tab of the app's own settings page; omitting it lands on the app's Variables tab, or on its first settings menu item when the app declares no variables. The button is omitted when the location leaves Twenty, and when there is no location and neither of those to fall back to.
+
+Twenty runs the check when the app's settings page opens and shows the result. Nothing is stored. A check that throws, times out, or returns a shape Twenty cannot read is treated as unknown, never as an error, and no banner is shown.

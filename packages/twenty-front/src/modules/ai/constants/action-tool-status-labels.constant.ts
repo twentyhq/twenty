@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { type ToolStatusLabels } from '@/ai/types/tool-status-labels.type';
+import { type ToolStatusLabels } from '@/ai/types/ToolStatusLabels';
 
 export const ACTION_TOOL_STATUS_LABELS: Record<string, ToolStatusLabels> = {
   send_email: {

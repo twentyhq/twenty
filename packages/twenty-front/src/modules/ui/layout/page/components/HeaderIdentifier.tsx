@@ -2,13 +2,13 @@ import { StyledHeaderIdentifierLabel } from '@/ui/layout/page/components/StyledH
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   AVATAR_PROPERTIES_BY_SIZE,
   Avatar,
   type AvatarProps,
 } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const HEADER_IDENTIFIER_TILE_SIZE = AVATAR_PROPERTIES_BY_SIZE.lg.width;
 

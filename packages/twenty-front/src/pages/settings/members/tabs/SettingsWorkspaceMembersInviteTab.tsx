@@ -18,17 +18,15 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, Section } from 'twenty-ui/components';
+import { IconButton, Section, useToast } from 'twenty-ui/components';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -67,7 +65,7 @@ const StyledTableRows = styled.div`
 `;
 
 export const SettingsWorkspaceMembersInviteTab = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const roles = useSettingsAllRoles();

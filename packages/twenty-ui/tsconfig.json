@@ -7,6 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "moduleResolution": "bundler",
+    "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,
     "noEmit": true,
     "types": ["node", "vitest/globals"],
@@ -34,6 +35,8 @@
     "scripts/generateDocsData.ts",
     "docs/**/*.ts",
     "scripts/checkDocsExamples.ts",
-    "scripts/checkOptionalDependencies.ts"
+    "scripts/checkOptionalDependencies.ts",
+    "scripts/checkThemeExports.ts",
+    "scripts/checkModuleOwnership.ts"
   ]
 }

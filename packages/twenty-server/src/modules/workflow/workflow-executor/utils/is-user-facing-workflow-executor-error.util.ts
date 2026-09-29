@@ -1,15 +1,12 @@
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -19,15 +16,6 @@ const USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES = [
   WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
   WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
   WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
-];
-
-const USER_FACING_BILLING_EXCEPTION_CODES = [
-  BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-  BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
-];
-
-const USER_FACING_USAGE_LIMIT_EXCEPTION_CODES = [
-  UsageLimitExceptionCode.QUOTA_EXHAUSTED,
 ];
 
 // A step asking for a model the instance does not serve, or asking it something
@@ -47,16 +35,16 @@ export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
     return USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES.includes(error.code);
   }
 
-  if (error instanceof BillingException) {
-    return USER_FACING_BILLING_EXCEPTION_CODES.includes(error.code);
-  }
-
-  if (error instanceof UsageLimitException) {
-    return USER_FACING_USAGE_LIMIT_EXCEPTION_CODES.includes(error.code);
+  if (isUsageRefusedError(error)) {
+    return true;
   }
 
   if (error instanceof AiException) {
     return USER_FACING_AI_EXCEPTION_CODES.includes(error.code);
+  }
+
+  if (error instanceof LogicFunctionException) {
+    return error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN;
   }
 
   return false;

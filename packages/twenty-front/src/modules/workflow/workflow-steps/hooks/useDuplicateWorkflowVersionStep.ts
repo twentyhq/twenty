@@ -6,7 +6,7 @@ import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnab
 import { DUPLICATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/duplicateWorkflowVersionStep';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 import { useMutation } from '@apollo/client/react';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   DuplicateCoreWorkflowVersionStepDocument,
   type DuplicateWorkflowVersionStepInput,

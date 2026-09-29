@@ -11,7 +11,7 @@ import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -26,8 +26,8 @@ jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/primitives/feedback', () => ({
-  ...jest.requireActual('twenty-ui/primitives/feedback'),
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

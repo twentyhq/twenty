@@ -20,10 +20,10 @@ import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fi
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,17 +34,15 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { getSettingsPath, isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
 const StyledDangerButtons = styled.div`
@@ -159,7 +157,9 @@ export const SettingsObjectFieldEdit = () => {
     workspaceSurface.type,
   ]);
 
-  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const { isValid, isSubmitting, dirtyFields } = formConfig.formState;
+
+  const isDirty = !isEmptyObject(dirtyFields);
 
   const canSave = isDirty && isValid && !isSubmitting;
 
@@ -409,13 +409,10 @@ export const SettingsObjectFieldEdit = () => {
                 title={t`Translations`}
                 description={t`What each language displays for this field's labels`}
               />
-              <SettingsTranslationsButton
-                target={{
-                  metadataName: 'fieldMetadata',
-                  recordId: fieldMetadataItem.id,
-                  objectMetadataId: objectMetadataItem.id,
-                  label: fieldMetadataItem.label,
-                }}
+              <SettingsTranslationsCard
+                objectNamePlural={objectNamePlural}
+                fieldName={fieldMetadataItem.name}
+                disabled={isDirty}
               />
             </Section.Root>
 

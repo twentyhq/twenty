@@ -1,10 +1,10 @@
 import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
-import { EllipsisDisplay } from 'twenty-ui/primitives/data-display';
 
 type DateDisplayProps = {
   value: string | null | undefined;

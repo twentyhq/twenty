@@ -1,8 +1,6 @@
-# Deprecated: twenty-cli
+# Twenty CLI
 
-This package is deprecated. Please install and use [twenty-sdk](https://www.npmjs.com/package/twenty-sdk) instead:
+The new command-line interface for [Twenty](https://twenty.com) is coming soon.
 
-```bash
-npm uninstall twenty-cli
-npm install -g twenty-sdk
-```
+This package does not provide an executable yet. For the currently available CLI,
+use [twenty-sdk](https://www.npmjs.com/package/twenty-sdk).

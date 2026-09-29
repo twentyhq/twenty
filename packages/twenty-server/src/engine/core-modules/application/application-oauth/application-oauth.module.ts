@@ -21,6 +21,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -47,7 +48,11 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     OAuthDiscoveryController,
     OAuthRegistrationController,
   ],
-  providers: [OAuthService, ApplicationOAuthResolver],
+  providers: [
+    OAuthService,
+    ApplicationOAuthResolver,
+    provideWorkspaceScopedRepository(ApplicationEntity),
+  ],
   exports: [OAuthService],
 })
 export class ApplicationOAuthModule {}

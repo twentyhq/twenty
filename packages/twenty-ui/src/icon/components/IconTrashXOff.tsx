@@ -1,6 +1,6 @@
 import IconTrashXOffRaw from '@assets/icons/trash-x-off.svg?react';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IconTrashXOffProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 

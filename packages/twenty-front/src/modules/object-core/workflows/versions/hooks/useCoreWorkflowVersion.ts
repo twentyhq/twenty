@@ -9,16 +9,20 @@ export const useCoreWorkflowVersion = (
 ) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error } = useQuery(GetCoreWorkflowVersionDocument, {
-    client: apolloCoreClient,
-    fetchPolicy: 'cache-and-network',
-    variables: { coreWorkflowVersionId: coreWorkflowVersionId ?? '' },
-    skip: !isDefined(coreWorkflowVersionId),
-  });
+  const { data, loading, error, refetch } = useQuery(
+    GetCoreWorkflowVersionDocument,
+    {
+      client: apolloCoreClient,
+      fetchPolicy: 'cache-and-network',
+      variables: { coreWorkflowVersionId: coreWorkflowVersionId ?? '' },
+      skip: !isDefined(coreWorkflowVersionId),
+    },
+  );
 
   return {
     coreWorkflowVersion: data?.coreWorkflowVersion ?? null,
     loading,
     error,
+    refetchCoreWorkflowVersion: refetch,
   };
 };

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { isValidElement, type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCard = styled.div`
   background-color: ${themeCssVariables.background.primary};

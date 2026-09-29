@@ -4,11 +4,7 @@ import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
-import {
-  ensureAppAccessTokenIsValidOrRefresh,
-  ensureAppRegistration,
-} from '@/cli/utilities/auth';
-import { buildAppTokenPairFetcher } from '@/cli/utilities/auth/build-app-token-pair-fetcher';
+import { ensureAppRegistration } from '@/cli/utilities/auth';
 import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
@@ -207,7 +203,7 @@ const innerAppDevOnce = async (
     };
   }
 
-  const translations = await compileApplicationTranslations(appPath);
+  const translations = await compileApplicationTranslations({ appPath });
 
   const manifest: Manifest = {
     ...manifestUpdateChecksums({
@@ -217,7 +213,7 @@ const innerAppDevOnce = async (
     translations,
   };
 
-  await writeManifestToOutput(appPath, manifest);
+  await writeManifestToOutput({ appPath, manifest });
 
   const makeData = (): AppDevOnceResult => ({
     outputDir: path.join(appPath, OUTPUT_DIR),
@@ -292,14 +288,10 @@ const innerAppDevOnce = async (
 
   const configService = new ConfigService();
 
-  const { clientId, clientSecret } = await ensureAppRegistration(
-    apiService,
-    configService,
-    {
-      name: manifest.application.displayName,
-      universalIdentifier: manifest.application.universalIdentifier,
-    },
-  );
+  await ensureAppRegistration(apiService, configService, {
+    name: manifest.application.displayName,
+    universalIdentifier: manifest.application.universalIdentifier,
+  });
 
   const createDevAppResult = await apiService.createDevelopmentApplication({
     universalIdentifier: manifest.application.universalIdentifier,
@@ -361,22 +353,11 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const appAccessToken = await ensureAppAccessTokenIsValidOrRefresh(
-      configService,
-      {
-        credentials: clientSecret ? { clientId, clientSecret } : undefined,
-        fetchTokenPair: buildAppTokenPairFetcher(
-          apiService,
-          createDevAppResult.data.id,
-        ),
-      },
-    );
-
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
       appPath,
-      appAccessToken,
+      applicationUniversalIdentifier: manifest.application.universalIdentifier,
     });
   } catch (error) {
     return {

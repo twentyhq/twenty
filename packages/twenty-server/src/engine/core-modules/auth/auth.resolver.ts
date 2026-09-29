@@ -8,7 +8,10 @@ import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import omit from 'lodash.omit';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import {
+  FileFolder,
+  TwoFactorAuthenticationStrategy,
+} from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -67,7 +70,10 @@ import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -94,6 +100,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -128,6 +135,7 @@ const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
   WorkspaceGraphqlApiExceptionFilter,
+  FileUploadGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
@@ -162,6 +170,7 @@ export class AuthResolver {
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly fileUploadService: FileUploadService,
     private readonly userSessionService: UserSessionService,
     private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
@@ -603,7 +612,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignUpDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async signUpInNewWorkspace(
     @AuthUser() currentUser: AuthContextUser,
@@ -640,7 +649,10 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => FileWithSignedUrlDTO)
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage.',
+  })
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async uploadNewWorkspaceLogo(
@@ -659,7 +671,7 @@ export class AuthResolver {
 
     const buffer = await streamToBuffer(
       createReadStream(),
-      bytes(settings.storage.maxFileSize) ?? undefined,
+      bytes(settings.storage.maxMultipartFileSize) ?? undefined,
     );
 
     return this.fileCorePictureService.uploadWorkspacePicture({
@@ -669,8 +681,58 @@ export class AuthResolver {
     });
   }
 
-  @Mutation(() => TransientTokenDTO)
+  @Mutation(() => FileUploadTargetDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
+  async createNewWorkspaceLogoUpload(
+    @AuthUser() currentUser: AuthContextUser,
+    @Args('workspaceId') workspaceId: string,
+    @Args({ name: 'filename', type: () => String })
+    filename: string,
+    @Args({ name: 'size', type: () => Number })
+    size: number,
+  ): Promise<FileUploadTargetDTO> {
+    const workspace =
+      await this.fileCorePictureService.getPendingWorkspaceForLogoUploadOrThrow(
+        {
+          userId: currentUser.id,
+          workspaceId,
+        },
+      );
+
+    return this.fileUploadService.createFileUpload({
+      workspaceId: workspace.id,
+      filename,
+      size,
+      fileFolder: FileFolder.CorePicture,
+    });
+  }
+
+  @Mutation(() => FileWithSignedUrlDTO)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
+  async completeNewWorkspaceLogoUpload(
+    @AuthUser() currentUser: AuthContextUser,
+    @Args('workspaceId') workspaceId: string,
+    @Args({ name: 'fileId', type: () => String })
+    fileId: string,
+  ): Promise<FileWithSignedUrlDTO> {
+    const workspace =
+      await this.fileCorePictureService.getPendingWorkspaceForLogoUploadOrThrow(
+        {
+          userId: currentUser.id,
+          workspaceId,
+        },
+      );
+
+    return this.fileCorePictureService.completeWorkspaceLogoUpload({
+      workspaceId: workspace.id,
+      fileId,
+    });
+  }
+
+  @Mutation(() => TransientTokenDTO)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async generateTransientToken(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -954,7 +1016,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeAppDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,

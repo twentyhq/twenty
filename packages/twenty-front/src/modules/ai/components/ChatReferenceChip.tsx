@@ -1,7 +1,8 @@
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, LinkChip } from 'twenty-ui/primitives/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
 import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebounce } from 'use-debounce';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -10,13 +10,13 @@ import { SettingsPaginationControls } from '@/settings/components/SettingsPagina
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { SettingsUnsubscribersFilterDropdown } from '@/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown';
-import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/constants/SettingsUnsubscribersAllFilter';
 import { MESSAGE_SUPPRESSIONS_PAGE_SIZE } from '@/settings/unsubscribers/constants/MessageSuppressionsPageSize';
+import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/constants/SettingsUnsubscribersAllFilter';
 import { useMessageSuppressions } from '@/settings/unsubscribers/hooks/useMessageSuppressions';
 import { getMessageSuppressionReasonBadge } from '@/settings/unsubscribers/utils/getMessageSuppressionReasonBadge';
+import { SearchInput } from 'twenty-ui/components';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   MessageSuppressionReason,
   type MessageSuppressionsQuery,
@@ -105,12 +105,19 @@ export const SettingsUnsubscribersList = () => {
     ]),
   );
 
-  const getScopeLabel = (topicId: string | null) => {
-    if (!isDefined(topicId)) {
+  const getScopeLabel = ({
+    reason,
+    unsubscribeTopicId,
+  }: Pick<MessageSuppression, 'reason' | 'unsubscribeTopicId'>) => {
+    if (reason === MessageSuppressionReason.TRACKING) {
+      return t`Clicks only`;
+    }
+
+    if (!isDefined(unsubscribeTopicId)) {
       return t`All emails`;
     }
 
-    return topicNameById.get(topicId) ?? t`Unknown topic`;
+    return topicNameById.get(unsubscribeTopicId) ?? t`Unknown topic`;
   };
 
   const items = loading ? [] : messageSuppressions;
@@ -124,8 +131,8 @@ export const SettingsUnsubscribersList = () => {
   return (
     <StyledContainer>
       <SettingsTableListSection<MessageSuppression>
-        title={t`Unsubscribers`}
-        description={t`Email addresses that will no longer receive campaign emails`}
+        title={t`Opt-outs`}
+        description={t`Email addresses that opted out of campaign emails, a topic, or click tracking`}
         toolbar={
           <StyledToolbar>
             <StyledSearch>
@@ -155,9 +162,7 @@ export const SettingsUnsubscribersList = () => {
           },
           {
             label: t`Scope`,
-            Cell: ({ item }) => (
-              <>{getScopeLabel(item.unsubscribeTopicId ?? null)}</>
-            ),
+            Cell: ({ item }) => <>{getScopeLabel(item)}</>,
           },
           {
             label: t`Reason`,

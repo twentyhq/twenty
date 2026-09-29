@@ -1,22 +1,22 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { type AiToolCallLog } from 'twenty-shared/workflow';
 
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
-import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
 import { useLingui } from '@lingui/react/macro';
-import { type JsonValue } from 'type-fest';
+import { isDefined } from 'twenty-shared/utils';
+import { JsonTree } from 'twenty-ui/components';
 import {
   IconCheck,
   IconChevronDown,
   IconChevronUp,
   IconCircleX,
 } from 'twenty-ui/icon';
-import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -144,7 +144,7 @@ export const WorkflowRunStepLogsToolCallRow = ({
 }: {
   toolCall: AiToolCallLog;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);

@@ -9,7 +9,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
@@ -106,7 +106,7 @@ describe('Participant matching on person creation (integration)', () => {
 
   it('matches both message and calendar participants when the person is created', async () => {
     const createPerson = async (primaryEmail: string) => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',

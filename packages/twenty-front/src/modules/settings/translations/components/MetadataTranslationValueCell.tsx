@@ -3,14 +3,14 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
 const StyledValue = styled.div<{ isInherited: boolean }>`
   color: ${({ isInherited }) =>
     isInherited
       ? themeCssVariables.font.color.light
-      : themeCssVariables.font.color.primary};
+      : themeCssVariables.font.color.secondary};
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;

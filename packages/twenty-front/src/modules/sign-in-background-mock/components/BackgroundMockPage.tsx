@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { LightIconButton, TintedIconTile } from 'twenty-ui/components';
 import {
   IconBuildingSkyscraper,
   IconDotsVertical,
@@ -8,7 +8,6 @@ import {
   IconPlus,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { LightIconButton } from 'twenty-ui/components';
 
 import { BackgroundMockTable } from '@/sign-in-background-mock/components/BackgroundMockTable';
 import { BackgroundMockViewBar } from '@/sign-in-background-mock/components/BackgroundMockViewBar';

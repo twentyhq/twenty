@@ -27,11 +27,10 @@ export class NativeEvaluationRunner {
     state,
     questions,
     abortSignal,
-  }: Required<Pick<AiEvaluationRequest, 'modelId' | 'state' | 'questions'>> &
-    Pick<
-      AiEvaluationRequest,
-      'abortSignal'
-    >): Promise<AiEvaluationRunnerOutput> {
+  }: { modelId: string } & Pick<
+    AiEvaluationRequest,
+    'state' | 'questions' | 'abortSignal'
+  >): Promise<AiEvaluationRunnerOutput> {
     const registeredModel =
       this.aiModelRegistryService.getEvaluationModel(modelId);
     const modelConfig =

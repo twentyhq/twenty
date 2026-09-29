@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { MainButton } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import 'twenty-ui/style.css';
 
-import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 const LastContactSettings = () => {
   const [isStarting, setIsStarting] = useState(false);
@@ -17,13 +20,12 @@ const LastContactSettings = () => {
 
     try {
       await new MetadataApiClient().mutation({
-        enqueueJob: {
+        enqueueJobs: {
           __args: {
             input: {
               logicFunctionUniversalIdentifier:
                 BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-              payload: {},
-              jobId: 'last-contact-backfill',
+              jobs: [{ payload: {}, jobId: 'last-contact-backfill' }],
             },
           },
           enqueued: true,
@@ -62,8 +64,8 @@ const LastContactSettings = () => {
   );
 };
 
-export default defineSettingsFrontComponent({
-  universalIdentifier: 'fc7e3633-efd9-4d58-a642-39b9b86096d3',
+export default defineFrontComponent({
+  universalIdentifier: SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'last-contact-settings',
   description: 'Backfill last-contact fields from existing emails and meetings.',
   component: LastContactSettings,

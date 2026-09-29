@@ -8,7 +8,7 @@ import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/wor
 import {
   FlatCreateAgentAction,
   UniversalCreateAgentAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,

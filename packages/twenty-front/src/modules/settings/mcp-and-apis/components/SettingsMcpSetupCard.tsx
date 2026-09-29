@@ -3,12 +3,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { Pill } from 'twenty-ui/primitives/data-display';
 import { IconExternalLink } from 'twenty-ui/icon';
-import { Tooltip, Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { Pill } from 'twenty-ui/primitives/data-display';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledCardContent = styled(CardContent)`
+const StyledCardContent = styled(Card.Content)`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
@@ -145,7 +145,7 @@ type SettingsMcpSetupCardProps = {
 };
 
 export const SettingsMcpSetupCard = ({ card }: SettingsMcpSetupCardProps) => (
-  <Card rounded>
+  <Card.Root rounded>
     <StyledCardContent>
       <StyledLogo aria-hidden>{card.logo}</StyledLogo>
       <StyledBody>
@@ -159,5 +159,5 @@ export const SettingsMcpSetupCard = ({ card }: SettingsMcpSetupCardProps) => (
         <StyledDescription>{card.description}</StyledDescription>
       </StyledBody>
     </StyledCardContent>
-  </Card>
+  </Card.Root>
 );

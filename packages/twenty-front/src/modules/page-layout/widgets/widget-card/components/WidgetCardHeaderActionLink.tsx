@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
 import { type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledActionLink = styled(Link)`
   align-items: center;

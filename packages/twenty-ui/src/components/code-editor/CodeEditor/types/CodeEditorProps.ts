@@ -14,6 +14,7 @@ export type CodeEditorProps = Pick<
   isLoading?: boolean;
   transparentBackground?: boolean;
   resizable?: boolean;
+  resizeLabel?: string;
   contentPadding?: CodeEditorContentPadding;
   autoHeight?: boolean;
 };

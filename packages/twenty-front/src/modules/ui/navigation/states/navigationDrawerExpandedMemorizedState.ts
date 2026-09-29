@@ -1,4 +1,4 @@
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 

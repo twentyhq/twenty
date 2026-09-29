@@ -8,7 +8,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import {
   type FlatDeleteIndexAction,
   type UniversalDeleteIndexAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action.type';
 import {
   deleteIndexMetadata,
   dropIndexFromWorkspaceSchema,

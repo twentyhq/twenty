@@ -6,7 +6,7 @@ import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSectionContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};

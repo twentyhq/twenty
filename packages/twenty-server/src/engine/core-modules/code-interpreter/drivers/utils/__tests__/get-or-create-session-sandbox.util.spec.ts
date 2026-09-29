@@ -248,3 +248,59 @@ describe('getOrCreateSessionSandbox', () => {
     expect(mock.create).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('Participant isolation', () => {
+  it.each([undefined, 'owner:direct', 'editor:other-app'])(
+    'does not reuse a sandbox authenticated as %s',
+    async (previousActor) => {
+      const previous = listedSandbox('old-sandbox');
+      if (previousActor) {
+        previous.metadata.twentySessionActor = previousActor;
+      }
+      const sandbox = buildFakeSandbox();
+      const { api, mock } = buildSandboxApi({
+        list: jest.fn(() => paginatorOf([previous])),
+        create: jest.fn().mockResolvedValue(sandbox),
+      });
+      const result = await getOrCreateSessionSandbox({
+        sandboxApi: api,
+        apiKey,
+        sessionId,
+        timeoutMs,
+        idleTimeoutMs,
+        actorKey: 'editor:direct',
+      });
+      expect(result.isReused).toBe(false);
+      expect(mock.connect).not.toHaveBeenCalled();
+      expect(mock.kill).toHaveBeenCalledWith('old-sandbox', { apiKey });
+      expect(mock.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          metadata: {
+            [SESSION_SANDBOX_METADATA_KEY]: sessionId,
+            twentySessionActor: 'editor:direct',
+          },
+        }),
+      );
+    },
+  );
+  it('retains the sandbox for the same authenticated participant', async () => {
+    const previous = listedSandbox('same-sandbox');
+    previous.metadata.twentySessionActor = 'editor:direct';
+    const sandbox = buildFakeSandbox();
+    const { api, mock } = buildSandboxApi({
+      list: jest.fn(() => paginatorOf([previous])),
+      connect: jest.fn().mockResolvedValue(sandbox),
+    });
+    await expect(
+      getOrCreateSessionSandbox({
+        sandboxApi: api,
+        apiKey,
+        sessionId,
+        timeoutMs,
+        idleTimeoutMs,
+        actorKey: 'editor:direct',
+      }),
+    ).resolves.toEqual({ sandbox, isReused: true });
+    expect(mock.create).not.toHaveBeenCalled();
+  });
+});

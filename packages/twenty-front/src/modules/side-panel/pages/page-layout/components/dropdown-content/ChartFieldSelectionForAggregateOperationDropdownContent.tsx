@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ChartAggregateOperationSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -127,7 +126,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
                   <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
                 }
               >
-                <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+                {fieldMetadataItem.label}
               </ListItem>
             </SelectableListItem>
           ))}

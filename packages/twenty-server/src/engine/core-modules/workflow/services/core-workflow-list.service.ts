@@ -24,6 +24,7 @@ import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflo
 import { canChangeCoreWorkflowVisibilitySelectExpression } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility-select-expression.util';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
+import { getCoreWorkflowCurrentVersion } from 'src/engine/core-modules/workflow/utils/get-core-workflow-current-version.util';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import {
   WorkflowVersionEntity,
@@ -184,15 +185,11 @@ export class CoreWorkflowListService {
       coreWorkflowId,
       versionsInCreationOrder,
     ] of versionsByWorkflowId) {
-      const versions = [...versionsInCreationOrder].reverse();
-      const currentVersion =
-        versions.find(
-          (version) => version.status === WorkflowVersionStatus.DRAFT,
-        ) ??
-        versions.find(
-          (version) => version.status === WorkflowVersionStatus.ACTIVE,
-        ) ??
-        versions[0];
+      const currentVersion = getCoreWorkflowCurrentVersion({
+        versionsByRecency: [...versionsInCreationOrder].reverse(),
+        lastPublishedCoreWorkflowVersionId:
+          workflowById.get(coreWorkflowId)?.lastPublishedCoreWorkflowVersionId,
+      });
 
       if (isDefined(currentVersion)) {
         currentVersionIdByWorkflowId.set(coreWorkflowId, currentVersion.id);

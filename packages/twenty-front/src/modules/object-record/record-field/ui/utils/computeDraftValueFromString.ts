@@ -12,7 +12,6 @@ import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
-import { CurrencyCode } from 'twenty-shared/constants';
 import { CustomError } from 'twenty-shared/utils';
 
 type computeDraftValueFromStringParams = {
@@ -40,7 +39,7 @@ export const computeDraftValueFromString = <FieldValue>({
   if (isFieldCurrency(fieldDefinition)) {
     return {
       amount: value,
-      currenyCode: CurrencyCode.USD,
+      currencyCode: '',
     } as unknown as FieldInputDraftValue<FieldValue>;
   }
 

@@ -19,6 +19,7 @@ import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-conf
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 // Server-binding rejections that should surface as an activation failure with
@@ -31,6 +32,7 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
 ];
 
 @Resolver()
+@UseGuards(RequireUserSessionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class EnterpriseResolver {

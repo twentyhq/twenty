@@ -1,5 +1,5 @@
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { assertMetadataRestListResponse } from 'test/integration/rest/utils/rest-test-assertions.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -39,7 +39,7 @@ describe('Metadata REST list contract', () => {
     `/metadata/pageLayoutTabs?pageLayoutId=${EMPTY_PARENT_ID}`,
     `/metadata/pageLayoutWidgets?pageLayoutTabId=${EMPTY_PARENT_ID}`,
   ])('returns the unified page envelope from GET %s', async (path) => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -50,7 +50,7 @@ describe('Metadata REST list contract', () => {
 
   it('keeps deprecated non-metadata aliases as raw arrays', async () => {
     for (const path of ['/webhooks', '/apiKeys']) {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

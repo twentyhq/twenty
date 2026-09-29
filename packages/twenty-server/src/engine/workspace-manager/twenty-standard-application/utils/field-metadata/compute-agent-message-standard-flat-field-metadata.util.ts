@@ -63,6 +63,91 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  senderWorkspaceMember: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'senderWorkspaceMember',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Sender', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workspace member who sent this message',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'agentMessages',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'senderWorkspaceMemberId',
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  senderUserWorkspaceId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'senderUserWorkspaceId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({
+            message: 'Sender workspace membership ID',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Sender workspace membership ID',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  senderApplicationId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'senderApplicationId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({
+            message: 'Sender application ID',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Sender application ID',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   role: {
     ...createStandardFieldFlatMetadata({
       ...args,

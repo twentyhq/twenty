@@ -16,7 +16,7 @@ import {
   type GroupByDateField,
   type GroupByField,
   type GroupByRegularField,
-} from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+} from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getGroupByOrderExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-order-expression.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';

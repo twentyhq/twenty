@@ -10,7 +10,7 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { RESET_COMMAND_MENU_ITEM } from '@/command-menu-item/graphql/mutations/resetCommandMenuItem';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type ResetCommandMenuItemMutation,
   type ResetCommandMenuItemMutationVariables,

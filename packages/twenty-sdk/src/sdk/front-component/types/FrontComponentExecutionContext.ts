@@ -1,5 +1,6 @@
 import { type AppLocale } from 'twenty-shared/translations';
 
+import { type FrontComponentSelectedObjectMetadata } from './FrontComponentSelectedObjectMetadata';
 import { type FrontComponentToolCall } from './FrontComponentToolCall';
 
 export type FrontComponentExecutionContext = {
@@ -11,6 +12,7 @@ export type FrontComponentExecutionContext = {
   recordId: string | null;
   /** All selected record IDs */
   selectedRecordIds: string[];
+  selectedObjectMetadata?: FrontComponentSelectedObjectMetadata | null;
   timelineActivityId: string | null;
   /** Resolved color scheme of the host UI ('System' is already resolved) */
   colorScheme: 'light' | 'dark';

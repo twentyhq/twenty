@@ -7,7 +7,7 @@ import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThro
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
-import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 
 export type OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs = {
   flatAction: AllFlatWorkspaceMigrationAction<'update'>;
@@ -67,8 +67,11 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'fieldPermission':
     case 'webhook':
     case 'applicationVariable':
+    case 'workflow':
+    case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'settingsMenuItem':
     case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,

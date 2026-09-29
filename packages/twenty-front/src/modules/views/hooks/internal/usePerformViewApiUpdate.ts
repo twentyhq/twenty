@@ -5,7 +5,7 @@ import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMet
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { computeViewGroupsReplacementForView } from '@/views/utils/computeViewGroupsReplacementForView';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type UpdateViewMutation,
   type UpdateViewMutationVariables,

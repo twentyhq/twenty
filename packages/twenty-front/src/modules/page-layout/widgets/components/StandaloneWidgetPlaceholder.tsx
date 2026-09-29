@@ -1,13 +1,8 @@
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPlaceholderContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -23,17 +18,17 @@ const StyledPlaceholderContainer = styled.div`
 export const StandaloneWidgetPlaceholder = () => {
   return (
     <StyledPlaceholderContainer className="widget">
-      <AnimatedPlaceholderEmptyContainer>
+      <EmptyState.Root>
         <AnimatedPlaceholder type="noWidgets" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
+        <EmptyState.Content>
+          <EmptyState.Title>
             <Trans>Nothing to see</Trans>
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
+          </EmptyState.Title>
+          <EmptyState.Description>
             <Trans>This page has no content</Trans>
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+          </EmptyState.Description>
+        </EmptyState.Content>
+      </EmptyState.Root>
     </StyledPlaceholderContainer>
   );
 };

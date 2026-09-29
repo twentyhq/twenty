@@ -1,10 +1,11 @@
+import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,9 +14,10 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
+import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
+import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
@@ -26,9 +28,10 @@ import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
+import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -144,11 +147,14 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-export const AiChatEditorSection = () => {
+const EditableAiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
+  const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
+  const shouldShowUsageLimitBanner =
+    !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
 
@@ -179,6 +185,7 @@ export const AiChatEditorSection = () => {
           />
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
+        {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
         {isDefined(pendingQuestion) ? (
           <AiChatQuestionCard pendingQuestion={pendingQuestion} />
         ) : (
@@ -189,7 +196,7 @@ export const AiChatEditorSection = () => {
             <AiChatDictationHint interimText={dictationInterimText} />
             <StyledButtonsContainer>
               <StyledLeftButtonsContainer>
-                <AgentChatFileUploadButton />
+                <AiChatAddMenu editor={editor} />
                 <AiChatDictationButton />
                 <AiChatContextUsageButton />
               </StyledLeftButtonsContainer>
@@ -212,4 +219,25 @@ export const AiChatEditorSection = () => {
       />
     </>
   );
+};
+
+export const AiChatEditorSection = () => {
+  const { t } = useLingui();
+  const isMobile = useIsMobile();
+  const access = useCurrentAiChatThreadAccess();
+  if (access !== 'writer') {
+    return (
+      <StyledInputArea isMobile={isMobile}>
+        <div role="status">
+          {access === 'loading'
+            ? t`Loading conversation…`
+            : access === 'unavailable'
+              ? t`This conversation is no longer available.`
+              : t`View only — You can read this conversation.`}
+        </div>
+        <AiChatStandaloneError />
+      </StyledInputArea>
+    );
+  }
+  return <EditableAiChatEditorSection />;
 };

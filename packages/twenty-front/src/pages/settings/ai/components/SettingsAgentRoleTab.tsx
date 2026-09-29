@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   AssignRoleToAgentDocument,

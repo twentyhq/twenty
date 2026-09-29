@@ -118,6 +118,7 @@ export class ConnectionProviderLifecycleHookService {
         logicFunctionId,
         workspaceId,
         payload: this.buildPayload({ provider, connectedAccountId }),
+        shouldEnforceUsageLimits: false,
       });
 
       if (isDefined(executionResult.error)) {

@@ -34,7 +34,12 @@ export const SettingsApplications = () => {
   );
 
   const tabs = [
-    { id: 'marketplace', title: t`Marketplace`, Icon: IconShoppingBag },
+    {
+      id: 'marketplace',
+      title: t`Marketplace`,
+      Icon: IconShoppingBag,
+      pill: t`Beta`,
+    },
     { id: 'installed', title: t`Installed`, Icon: IconApps },
     ...(hasDeveloperAccess
       ? [{ id: DEVELOPER_TAB_ID, title: t`Developer`, Icon: IconCode }]

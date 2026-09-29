@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
-import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  EmailOperation,
+  WebhookSubscriptionStatus,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
   canConnectedAccountPerformEmailOperation,
@@ -32,6 +36,8 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
+import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
@@ -48,6 +54,8 @@ export class ConnectedAccountMetadataService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
+    private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
   ) {}
 
   async findMailboxesUsableByCaller({
@@ -376,6 +384,28 @@ export class ConnectedAccountMetadataService {
 
     const connectedAccountIds = connectedAccounts.map((account) => account.id);
 
+    const [messageChannels, calendarChannels] = await Promise.all([
+      this.messageChannelRepository.find({
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        select: { id: true },
+      }),
+      this.calendarChannelRepository.find({
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        select: { id: true },
+      }),
+    ]);
+
+    await this.stopWebhookSubscriptions({
+      messageChannels,
+      calendarChannels,
+      workspaceId,
+    }).catch((error) =>
+      this.logger.warn(
+        `WorkspaceId: ${workspaceId} Failed to stop webhook subscriptions while transferring connected accounts from ${fromUserWorkspaceId}`,
+        error,
+      ),
+    );
+
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
         ConnectedAccountEntity,
@@ -405,11 +435,129 @@ export class ConnectedAccountMetadataService {
         { connectedAccountId: In(connectedAccountIds), workspaceId },
         { isSyncEnabled: false },
       );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        {
+          connectedAccountId: In(connectedAccountIds),
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        {
+          connectedAccountId: In(connectedAccountIds),
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+      );
     });
 
     for (const connectedAccount of connectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
     }
+  }
+
+  async disconnect({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.repository.findOneOrFail({
+      where: { id, workspaceId },
+    });
+
+    if (isDefined(connectedAccount.connectionProviderId)) {
+      await this.connectionProviderLifecycleHookService.runOnDisconnect({
+        connectionProviderId: connectedAccount.connectionProviderId,
+        workspaceId,
+        connectedAccountId: id,
+      });
+    }
+
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+
+    const [messageChannels, calendarChannels] = await Promise.all([
+      this.messageChannelRepository.find({
+        where: { connectedAccountId: id, workspaceId },
+        select: { id: true },
+      }),
+      this.calendarChannelRepository.find({
+        where: { connectedAccountId: id, workspaceId },
+        select: { id: true },
+      }),
+    ]);
+
+    await this.stopWebhookSubscriptions({
+      messageChannels,
+      calendarChannels,
+      workspaceId,
+    }).catch((error) =>
+      this.logger.warn(
+        `WorkspaceId: ${workspaceId} Failed to stop webhook subscriptions while disconnecting connected account ${id}`,
+        error,
+      ),
+    );
+
+    await this.repository.manager.transaction(async (entityManager) => {
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id, workspaceId },
+        {
+          accessToken: null,
+          refreshToken: null,
+          connectionParameters: null,
+          authFailedAt: null,
+          authFailedReason: null,
+        },
+      );
+
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id, workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        { connectedAccountId: id, workspaceId },
+        { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        { connectedAccountId: id, workspaceId },
+        { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        {
+          connectedAccountId: id,
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        {
+          connectedAccountId: id,
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+      );
+    });
+
+    return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
   async delete({
@@ -445,6 +593,12 @@ export class ConnectedAccountMetadataService {
         connectedAccountId: id,
       });
     }
+
+    await this.stopWebhookSubscriptions({
+      messageChannels,
+      calendarChannels,
+      workspaceId,
+    });
 
     // The hook may have refreshed the tokens through getConnection, and an
     // overlapping delete may already have removed the row.
@@ -486,5 +640,30 @@ export class ConnectedAccountMetadataService {
     );
 
     return connectedAccount;
+  }
+
+  private async stopWebhookSubscriptions({
+    messageChannels,
+    calendarChannels,
+    workspaceId,
+  }: {
+    messageChannels: Pick<MessageChannelEntity, 'id'>[];
+    calendarChannels: Pick<CalendarChannelEntity, 'id'>[];
+    workspaceId: string;
+  }): Promise<void> {
+    await Promise.all([
+      ...messageChannels.map(({ id: messageChannelId }) =>
+        this.messagingWebhookSubscriptionService.deleteSubscription(
+          messageChannelId,
+          workspaceId,
+        ),
+      ),
+      ...calendarChannels.map(({ id: calendarChannelId }) =>
+        this.calendarWebhookSubscriptionService.deleteSubscription(
+          calendarChannelId,
+          workspaceId,
+        ),
+      ),
+    ]);
   }
 }

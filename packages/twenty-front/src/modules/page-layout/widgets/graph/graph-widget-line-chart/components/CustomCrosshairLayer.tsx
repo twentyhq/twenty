@@ -3,9 +3,9 @@ import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/g
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries, type Point } from '@nivo/line';
 import { motion } from 'framer-motion';
-import { type MouseEvent, useCallback, useContext, useMemo } from 'react';
+import { type MouseEvent, useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 export type SliceHoverData = {
   sliceX: number;
@@ -40,7 +40,7 @@ export const CustomCrosshairLayer = ({
   onSliceClick,
   onRectLeave,
 }: CustomCrosshairLayerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const graphWidgetLineCrosshairX = useAtomComponentStateValue(
     graphWidgetLineCrosshairXComponentState,

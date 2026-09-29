@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
+import { WorkflowRunRecordShareModule } from 'src/engine/core-modules/workflow/workflow-run-record-share.module';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -18,6 +20,8 @@ import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-co
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
@@ -29,7 +33,9 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
 
 @Module({
   imports: [
+    ApplicationModule,
     CoreWorkflowAccessModule,
+    WorkflowRunRecordShareModule,
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     AutomatedTriggerModule,
     CacheLockModule,
@@ -44,6 +50,8 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkflowRunnerModule,
     WorkflowVersionCoreModule,
     WorkflowVersionValidationModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceMigrationModule,
   ],
   providers: [
     CoreWorkflowIdResolutionService,

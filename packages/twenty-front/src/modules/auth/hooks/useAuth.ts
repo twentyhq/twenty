@@ -45,7 +45,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
 import {
   countAvailableWorkspaces,
   getFirstAvailableWorkspaces,
@@ -56,6 +56,7 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspaceActionRequested';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -156,7 +157,10 @@ export const useAuth = () => {
         return;
       }
 
-      if (availableWorkspacesCount === 1) {
+      if (
+        availableWorkspacesCount === 1 &&
+        !isChooseWorkspaceActionRequested()
+      ) {
         const targetWorkspace =
           getFirstAvailableWorkspaces(availableWorkspaces);
 

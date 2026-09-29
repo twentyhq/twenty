@@ -14,15 +14,14 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { paginateByIdCursor } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -59,6 +58,8 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Controller(`${ApiPath.Rest}/metadata/objects`)
 @UseGuards(
@@ -76,10 +77,10 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {
   constructor(
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
@@ -131,8 +132,8 @@ export class ObjectMetadataController {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
-    const object = await this.objectMetadataRepository.findOne({
-      where: { id, workspaceId },
+    const object = await this.objectMetadataRepository.findOne(workspaceId, {
+      where: { id },
     });
 
     if (!object) {
@@ -143,8 +144,8 @@ export class ObjectMetadataController {
     }
 
     const [fields, derivedFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: object.id, workspaceId },
+      this.fieldMetadataRepository.find(workspaceId, {
+        where: { objectMetadataId: object.id },
       }),
       this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
@@ -173,8 +174,8 @@ export class ObjectMetadataController {
     });
 
     const [fields, derivedFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: flatObject.id, workspaceId },
+      this.fieldMetadataRepository.find(workspaceId, {
+        where: { objectMetadataId: flatObject.id },
       }),
       this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
@@ -244,8 +245,8 @@ export class ObjectMetadataController {
     });
 
     const [fields, derivedFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: flatObject.id, workspaceId },
+      this.fieldMetadataRepository.find(workspaceId, {
+        where: { objectMetadataId: flatObject.id },
       }),
       this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
@@ -282,8 +283,8 @@ export class ObjectMetadataController {
       return grouped;
     }
 
-    const fields = await this.fieldMetadataRepository.find({
-      where: { workspaceId, objectMetadataId: In(objectIds) },
+    const fields = await this.fieldMetadataRepository.find(workspaceId, {
+      where: { objectMetadataId: In(objectIds) },
     });
 
     for (const field of fields) {

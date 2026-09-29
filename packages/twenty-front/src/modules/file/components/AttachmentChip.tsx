@@ -1,8 +1,7 @@
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/primitives/data-display';
 import { IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
@@ -66,7 +65,7 @@ export const AttachmentChip = ({
   onRemove,
   readonly = false,
 }: AttachmentChipProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const iconColors = useFileCategoryColors();
 
   const handleChipClick = (event: React.MouseEvent) => {

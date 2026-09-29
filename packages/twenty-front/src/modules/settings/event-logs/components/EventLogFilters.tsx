@@ -1,14 +1,15 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
-import { InputLabel, type SelectOption } from 'twenty-ui/primitives/input';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconBox, IconUser, useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
 

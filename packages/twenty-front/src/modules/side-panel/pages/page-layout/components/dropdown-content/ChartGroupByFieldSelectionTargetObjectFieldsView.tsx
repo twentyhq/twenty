@@ -1,5 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -20,7 +20,6 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -175,12 +174,12 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                   />
                 }
               >
-                <OverflowingTextWithTooltip text={recordOptionLabel} />
+                {recordOptionLabel}
               </ListItem>
             </SelectableListItem>
           )}
           {availableFields.length === 0 && !isRecordOptionVisible ? (
-            <MenuItem text={t`No fields available`} />
+            <ListItem disabled>{t`No fields available`}</ListItem>
           ) : (
             availableFields.map((fieldMetadataItem) => (
               <SelectableListItem
@@ -210,7 +209,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                     <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
                   }
                 >
-                  <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+                  {fieldMetadataItem.label}
                 </ListItem>
               </SelectableListItem>
             ))

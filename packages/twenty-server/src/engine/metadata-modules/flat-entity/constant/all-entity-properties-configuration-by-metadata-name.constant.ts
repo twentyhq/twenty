@@ -447,6 +447,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    groupLoadLimit: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     isActive: {
       isOverridable: true,
       toCompare: true,
@@ -2004,6 +2010,119 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     overrides: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  settingsMenuItem: {
+    frontComponentId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'frontComponentUniversalIdentifier',
+    },
+    title: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    scope: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  workflow: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    visibility: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdByUserWorkspaceId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    lastPublishedVersionId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    lastPublishedCoreWorkflowVersionId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    workspaceWorkflowId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  workflowVersion: {
+    status: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    triggers: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    steps: { toCompare: true, toStringify: true, universalProperty: undefined },
+    coreWorkflowId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    workflowId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    workspaceWorkflowVersionId: {
+      toCompare: false,
+      toStringify: false,
       universalProperty: undefined,
     },
     createdAt: {

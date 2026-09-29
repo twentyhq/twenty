@@ -6,6 +6,7 @@ export const FIND_ONE_LOGIC_FUNCTION = gql`
   query FindOneLogicFunction($input: LogicFunctionIdInput!) {
     findOneLogicFunction(input: $input) {
       ...LogicFunctionFields
+      canRunOnDemand
     }
   }
 `;

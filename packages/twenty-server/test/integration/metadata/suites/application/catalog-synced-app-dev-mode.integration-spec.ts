@@ -121,7 +121,7 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
     expect(res.body.errors[0].message).toContain('claimed by no workspace');
   });
 
-  it('lets a workspace dev-sync the app and mint a dev token once it owns the registration, without touching the shared registration', async () => {
+  it('lets a workspace dev-sync the app once it owns the registration, without touching the shared registration', async () => {
     await ds.query(
       `UPDATE core."applicationRegistration" SET "workspaceId" = $1 WHERE id = $2`,
       [SEED_APPLE_WORKSPACE_ID, registrationId],
@@ -137,9 +137,6 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
     ).expect(200);
 
     expect(createDevAppRes.body.errors).toBeUndefined();
-
-    const applicationId = createDevAppRes.body.data.createDevelopmentApplication
-      .id as string;
 
     // The CLI uploads the app's package.json before syncing the manifest.
     await uploadApplicationFile({
@@ -184,23 +181,6 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
     expect(registrationRow.manifest).toEqual({
       application: { universalIdentifier },
     });
-
-    // Dev tooling gets a workspace-scoped app token via
-    // generateApplicationToken instead of rotating the shared client secret.
-    const tokenRes = await gqlRequest(
-      `mutation GenerateApplicationToken($applicationId: UUID!) {
-        generateApplicationToken(applicationId: $applicationId) {
-          applicationAccessToken { token expiresAt }
-          applicationRefreshToken { token expiresAt }
-        }
-      }`,
-      { applicationId },
-    ).expect(200);
-
-    expect(tokenRes.body.errors).toBeUndefined();
-    expect(
-      tokenRes.body.data.generateApplicationToken.applicationAccessToken.token,
-    ).toBeDefined();
   });
 
   it('still lets a workspace that owns a non-npm registration sync its metadata', async () => {

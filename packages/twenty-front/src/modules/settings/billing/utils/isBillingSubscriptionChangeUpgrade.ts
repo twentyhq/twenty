@@ -1,6 +1,6 @@
-import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
+import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/SettingsBillingPlanComparison';
 import {
   BillingPlanKey,
   SubscriptionInterval,

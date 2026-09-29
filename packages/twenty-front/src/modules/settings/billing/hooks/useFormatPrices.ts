@@ -4,7 +4,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { SETTINGS_BILLING_PLAN_PRICE_FALLBACKS } from '@/settings/billing/constants/SettingsBillingPlanPriceFallbacks';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
-import { type SettingsBillingPlanPrices } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { type SettingsBillingPlanPrices } from '@/settings/billing/types/SettingsBillingPlanComparison';
 
 export const useFormatPrices = () => {
   const { getBaseLicensedPriceByPlanKeyAndInterval } =

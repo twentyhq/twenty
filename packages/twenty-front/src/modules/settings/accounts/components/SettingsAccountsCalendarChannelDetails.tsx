@@ -8,7 +8,7 @@ import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
 import { IconUserPlus } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`
@@ -60,7 +60,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
           title={t`Contact auto-creation`}
           description={t`Automatically create contacts for people you've participated in an event with.`}
         />
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconUserPlus}
             title={t`Auto-creation`}
@@ -72,7 +72,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
               );
             }}
           />
-        </Card>
+        </Card.Root>
       </Section.Root>
     </StyledDetailsContainer>
   );

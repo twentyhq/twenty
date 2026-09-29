@@ -8,7 +8,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
@@ -38,7 +38,7 @@ export class ClassifyWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { modelId, state, questions } = resolveInput(
+    const { state, questions } = resolveInput(
       step.settings.input,
       context,
     ) as WorkflowClassifyActionInput;
@@ -51,25 +51,18 @@ export class ClassifyWorkflowAction implements WorkflowAction {
         ? executionContext.authContext.userWorkspaceId
         : null;
 
-    const {
-      answers,
-      modelId: resolvedModelId,
-      runnerKind,
-    } = await this.aiEvaluationService.evaluate({
-      workspaceId: runInfo.workspaceId,
-      userWorkspaceId,
-      modelId,
-      state,
-      questions: buildEvaluationQuestions(questions),
-    });
+    const { answers, modelId: resolvedModelId } =
+      await this.aiEvaluationService.evaluate({
+        workspaceId: runInfo.workspaceId,
+        userWorkspaceId,
+        state,
+        questions: buildEvaluationQuestions(questions),
+      });
 
     return {
       result: {
         answers,
         modelId: resolvedModelId,
-        // Surfaced in the step output so a downstream branch can tell a
-        // calibrated probability from one a language model made up.
-        runnerKind,
       },
     };
   }

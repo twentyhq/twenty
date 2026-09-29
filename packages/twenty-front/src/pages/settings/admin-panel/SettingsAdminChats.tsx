@@ -1,13 +1,12 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { t } from '@lingui/core/macro';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { SearchInput, Section } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { SettingsAdminChatsContent } from '@/settings/admin-panel/chats/components/SettingsAdminChatsContent';
@@ -63,7 +62,7 @@ export const SettingsAdminChats = () => {
             placeholder={t`Search by workspace, user email or thread id...`}
             value={searchQuery}
             onChange={setSearchQuery}
-            filterDropdown={(filterButton: ReactNode) => (
+            filterDropdown={(filterButton) => (
               <SettingsAdminChatsFilterDropdown
                 filterButton={filterButton}
                 filters={filters}

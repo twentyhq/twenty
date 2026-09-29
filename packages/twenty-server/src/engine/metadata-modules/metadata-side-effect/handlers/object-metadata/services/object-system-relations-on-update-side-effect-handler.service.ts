@@ -19,7 +19,7 @@ export class ObjectSystemRelationsOnUpdateSideEffectHandlerService extends Metad
     metadataName: 'objectMetadata',
     name: 'objectSystemRelationsOnUpdate',
     description:
-      'When an object is renamed, rename the reverse MORPH_RELATION fields of its default relations to the standard objects (timelineActivity, attachment, noteTarget, taskTarget) and recompute their join-column index names. These reverse fields are isSystemSideEffect, so the engine is their sole authority on rename across both the API and manifest-sync paths (the API transpiler renames only user-authored morph relations). The reverse field universal identifier is name-free, so a rename stays a lossless update. The computed updates are emitted unconditionally; any universal identifier collision with a caller-provided operation is arbitrated by the engine merge.',
+      'When an object is renamed, rename the reverse MORPH_RELATION fields of its default relations to the standard objects (timelineActivity, attachment, noteTarget, taskTarget, and agentChatThreadTarget when provisioned) and recompute their join-column index names. These reverse fields are isSystemSideEffect, so the engine is their sole authority on rename across both the API and manifest-sync paths (the API transpiler renames only user-authored morph relations). The reverse field universal identifier is name-free, so a rename stays a lossless update. The computed updates are emitted unconditionally; any universal identifier collision with a caller-provided operation is arbitrated by the engine merge.',
   },
 ) {
   buildSideEffects({

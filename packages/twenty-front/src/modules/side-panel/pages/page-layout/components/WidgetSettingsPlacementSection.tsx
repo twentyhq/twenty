@@ -7,7 +7,7 @@ import { MoveToTabDropdownContent } from '@/side-panel/pages/page-layout/compone
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { type WidgetSettingsPlacement } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacement';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useLingui } from '@lingui/react/macro';
@@ -117,9 +117,9 @@ export const WidgetSettingsPlacementSection = ({
           Icon={IconArrowsVertical}
           dropdownId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_TO_TAB}
           dropdownComponents={
-            <DropdownContent>
+            <LegacyDropdownContent>
               <MoveToTabDropdownContent />
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
           dropdownPlacement="bottom-end"
         />

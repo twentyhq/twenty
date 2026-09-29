@@ -1,18 +1,18 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Loader, useToast } from 'twenty-ui/primitives/feedback';
-import { MainButton } from 'twenty-ui/components';
-import { CardPicker, RadioGroup } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { CardPicker, MainButton, useToast } from 'twenty-ui/components';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { RadioGroup } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCheckoutButton = styled(MainButton)`
   width: 200px;

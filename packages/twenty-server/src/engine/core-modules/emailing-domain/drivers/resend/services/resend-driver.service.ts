@@ -128,7 +128,10 @@ export class ResendDriver implements EmailingDomainDriverInterface {
       );
     }
 
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
     const emailToSend = this.unsubscribeContentService.addTo(
       input,
       unsubscribeBaseUrl,
@@ -190,7 +193,10 @@ export class ResendDriver implements EmailingDomainDriverInterface {
       );
     }
 
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
     const batchToSend = this.unsubscribeContentService.addToBatch(
       input,
       unsubscribeBaseUrl,

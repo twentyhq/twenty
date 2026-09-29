@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
@@ -45,7 +44,7 @@ export const EmailRecipientSuggestionMenuItem = ({
           />
         }
       >
-        <OverflowingTextWithTooltip text={suggestion.label} />
+        {suggestion.label}
       </ListItem>
     </SelectableListItem>
   );

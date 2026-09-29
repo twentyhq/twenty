@@ -13,8 +13,10 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplicationRegistrationOrThrow } from 'src/engine/core-modules/application/utils/can-caller-reach-application-registration-or-throw.util';
+import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
@@ -26,19 +28,25 @@ export class ApplicationRegistrationVariableService {
     private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    // Answers "which workspaces installed this registration" for the whole
+    // instance, so the query filters by registration rather than workspace.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,
   ) {}
 
-  async findVariablesWithObfuscatedValues(
-    applicationRegistrationId: string,
-    workspaceId: string,
-  ): Promise<ApplicationRegistrationVariableDTO[]> {
-    await this.assertRegistrationOwnedByWorkspace(
+  async findVariablesWithObfuscatedValues({
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationRegistrationId: string;
+    workspaceId: string;
+  }): Promise<ApplicationRegistrationVariableDTO[]> {
+    await this.assertRegistrationOwnedByWorkspace({
       applicationRegistrationId,
       workspaceId,
-    );
+    });
 
     return this.findVariablesWithObfuscatedValuesGlobal(
       applicationRegistrationId,
@@ -56,38 +64,26 @@ export class ApplicationRegistrationVariableService {
     return variables.map((variable) => this.toObfuscatedDTO(variable));
   }
 
-  async createVariable(
-    input: CreateApplicationRegistrationVariableInput,
-    workspaceId: string,
-  ): Promise<ApplicationRegistrationVariableDTO> {
-    await this.assertRegistrationOwnedByWorkspace(
-      input.applicationRegistrationId,
-      workspaceId,
-    );
-
-    const encryptedValue = this.encryptionService.encryptVersioned(input.value);
-
-    const variable = this.variableRepository.create({
-      applicationRegistrationId: input.applicationRegistrationId,
-      key: input.key,
-      encryptedValue,
-      description: input.description ?? '',
-      isSecret: input.isSecret ?? true,
-    });
-
-    return this.toObfuscatedDTO(await this.variableRepository.save(variable));
-  }
-
-  async updateVariable(
-    input: UpdateApplicationRegistrationVariableInput,
-    workspaceId: string,
-  ): Promise<ApplicationRegistrationVariableDTO> {
+  async updateVariable({
+    input,
+    workspaceId,
+    callingApplication,
+  }: {
+    input: UpdateApplicationRegistrationVariableInput;
+    workspaceId: string;
+    callingApplication: FlatApplication | undefined;
+  }): Promise<ApplicationRegistrationVariableDTO> {
     const variable = await this.findVariableOrThrow(input.id);
 
-    await this.assertRegistrationOwnedByWorkspace(
-      variable.applicationRegistrationId,
+    await this.assertRegistrationOwnedByWorkspace({
+      applicationRegistrationId: variable.applicationRegistrationId,
       workspaceId,
-    );
+    });
+
+    canCallerReachApplicationRegistrationOrThrow({
+      callingApplication,
+      applicationRegistrationId: variable.applicationRegistrationId,
+    });
 
     return this.toObfuscatedDTO(await this.applyVariableUpdate(input));
   }
@@ -102,19 +98,6 @@ export class ApplicationRegistrationVariableService {
     return this.toObfuscatedDTO(entity);
   }
 
-  async deleteVariable(id: string, workspaceId: string): Promise<boolean> {
-    const variable = await this.findVariableOrThrow(id);
-
-    await this.assertRegistrationOwnedByWorkspace(
-      variable.applicationRegistrationId,
-      workspaceId,
-    );
-
-    await this.variableRepository.delete(id);
-
-    return true;
-  }
-
   // Syncs variable schemas from manifest: creates missing, updates metadata, removes stale
   async syncVariableSchemas(
     applicationRegistrationId: string,
@@ -126,6 +109,15 @@ export class ApplicationRegistrationVariableService {
       : this.variableRepository;
 
     const declaredKeys = Object.keys(serverVariables);
+
+    const reservedKeys = findEngineInjectedEnvVariableNames(declaredKeys);
+
+    if (reservedKeys.length > 0) {
+      throw new ApplicationRegistrationException(
+        `Server variable names are reserved: ${reservedKeys.join(', ')}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const existingVariables = await variableRepository.find({
       where: { applicationRegistrationId },
@@ -324,17 +316,20 @@ export class ApplicationRegistrationVariableService {
     };
   }
 
-  private async assertRegistrationOwnedByWorkspace(
-    registrationId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async assertRegistrationOwnedByWorkspace({
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationRegistrationId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id: registrationId, ownerWorkspaceId: workspaceId },
+      where: { id: applicationRegistrationId, ownerWorkspaceId: workspaceId },
     });
 
     if (!registration) {
       throw new ApplicationRegistrationException(
-        `Application registration with id ${registrationId} not found`,
+        `Application registration with id ${applicationRegistrationId} not found`,
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
       );
     }

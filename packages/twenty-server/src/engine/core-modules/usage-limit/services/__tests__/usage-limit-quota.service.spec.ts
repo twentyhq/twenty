@@ -9,10 +9,7 @@ import {
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
@@ -24,6 +21,7 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
+import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter-key.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -39,6 +37,11 @@ const MONTH_PERIOD = {
 const WEEK_PERIOD = {
   periodStart: new Date('2026-08-24T00:00:00.000Z'),
   periodEnd: new Date('2100-08-31T00:00:00.000Z'),
+};
+
+const DAY_PERIOD = {
+  periodStart: new Date('2026-08-20T00:00:00.000Z'),
+  periodEnd: new Date('2100-08-21T00:00:00.000Z'),
 };
 
 const ALLOWANCE_PERIOD = {
@@ -82,6 +85,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   meter: 'creditsUsedMicro',
   limitValue: 1_000,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 
@@ -121,12 +125,19 @@ describe('UsageLimitQuotaService', () => {
     incrementCounterBy: jest.fn(),
   };
 
+  const twentyConfigService = {
+    get: jest.fn(),
+  };
+
   let periodByUnit: Partial<Record<PeriodUnit, UsagePeriod>>;
 
-  const setLimits = (limits: FlatUsageLimit[]) => {
+  const setLimits = (
+    limits: FlatUsageLimit[],
+    resourceType: UsageResourceType = UsageResourceType.AI,
+  ) => {
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       usageLimits: {
-        byResourceType: { [UsageResourceType.AI]: limits },
+        byResourceType: { [resourceType]: limits },
       },
     });
   };
@@ -147,8 +158,8 @@ describe('UsageLimitQuotaService', () => {
     );
   };
 
-  const assertQuotaNotExhausted = () =>
-    service.assertQuotaNotExhausted({
+  const findExhaustedScope = () =>
+    service.findExhaustedScope({
       workspaceId: 'workspace-1',
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -173,6 +184,7 @@ describe('UsageLimitQuotaService', () => {
     );
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
+    twentyConfigService.get.mockReturnValue(1_000);
     usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([]);
     usageAnalyticsService.getCreditsUsedMicroForBillingPeriod.mockResolvedValue(
       0,
@@ -202,6 +214,7 @@ describe('UsageLimitQuotaService', () => {
         { provide: UsageAnalyticsService, useValue: usageAnalyticsService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
         { provide: MetricsService, useValue: metricsService },
+        { provide: TwentyConfigService, useValue: twentyConfigService },
         {
           provide: DiscoveryService,
           useValue: {
@@ -223,7 +236,7 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([250]);
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(
       usageAnalyticsService.getConsumptionRowsForAllScopes,
     ).not.toHaveBeenCalled();
@@ -233,13 +246,10 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      code: UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-      exhaustedScope: expect.objectContaining({
-        spenderType: 'workspace',
-        limitKind: 'quota',
-        exhaustedKind: 'limit',
-      }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      spenderType: 'workspace',
+      limitKind: 'quota',
+      exhaustedKind: 'limit',
     });
   });
 
@@ -247,7 +257,7 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([undefined]);
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(
       usageAnalyticsService.getConsumptionRowsForAllScopes,
     ).toHaveBeenCalledWith(
@@ -265,7 +275,7 @@ describe('UsageLimitQuotaService', () => {
     ]);
     cacheStorage.mget.mockResolvedValue([undefined, undefined]);
 
-    await assertQuotaNotExhausted();
+    await findExhaustedScope();
 
     expect(
       usageAnalyticsService.getConsumptionRowsForAllScopes,
@@ -279,9 +289,7 @@ describe('UsageLimitQuotaService', () => {
       150,
     );
 
-    await expect(assertQuotaNotExhausted()).rejects.toThrow(
-      UsageLimitException,
-    );
+    await expect(findExhaustedScope()).resolves.not.toBeNull();
     expect(
       usageAnalyticsService.getCreditsUsedMicroForBillingPeriod,
     ).toHaveBeenCalledWith({
@@ -304,7 +312,7 @@ describe('UsageLimitQuotaService', () => {
     });
     cacheStorage.mget.mockResolvedValue([undefined]);
 
-    await assertQuotaNotExhausted();
+    await findExhaustedScope();
 
     const [[entries]] = cacheStorage.mset.mock.calls;
 
@@ -316,11 +324,9 @@ describe('UsageLimitQuotaService', () => {
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      exhaustedScope: expect.objectContaining({
-        exhaustedKind: 'allowance',
-        limitValue: 2_000_000,
-      }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      exhaustedKind: 'allowance',
+      limitValue: 2_000_000,
     });
   });
 
@@ -329,8 +335,8 @@ describe('UsageLimitQuotaService', () => {
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0, 0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      exhaustedScope: expect.objectContaining({ exhaustedKind: 'allowance' }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      exhaustedKind: 'allowance',
     });
   });
 
@@ -340,8 +346,8 @@ describe('UsageLimitQuotaService', () => {
     creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
     cacheStorage.mget.mockResolvedValue([0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      exhaustedScope: expect.objectContaining({ exhaustedKind: 'limit' }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      exhaustedKind: 'limit',
     });
     expect(cacheStorage.mget).toHaveBeenCalledWith([
       expect.not.stringContaining(':allowance:'),
@@ -361,7 +367,7 @@ describe('UsageLimitQuotaService', () => {
     });
     cacheStorage.mget.mockResolvedValue([undefined]);
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(cacheStorage.mset).toHaveBeenCalledWith([]);
   });
 
@@ -391,7 +397,7 @@ describe('UsageLimitQuotaService', () => {
         },
       ]);
 
-      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+      await expect(findExhaustedScope()).resolves.toBeNull();
 
       expect(
         usageAnalyticsService.getConsumptionRowsForAllScopes,
@@ -412,7 +418,7 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(metricsService.incrementCounterBy).toHaveBeenCalledTimes(1);
     expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
       key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
@@ -453,7 +459,7 @@ describe('UsageLimitQuotaService', () => {
       new Error('clickhouse unreachable'),
     );
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(cacheStorage.mset).not.toHaveBeenCalled();
   });
 
@@ -530,7 +536,7 @@ describe('UsageLimitQuotaService', () => {
       setLimits([buildLimit({})]);
       cacheStorage.mget.mockResolvedValue([250]);
 
-      await assertQuotaNotExhausted();
+      await findExhaustedScope();
 
       expect(
         entitlementProvider.hasIntraWorkspaceLimitEntitlement,
@@ -547,7 +553,7 @@ describe('UsageLimitQuotaService', () => {
       ]);
       cacheStorage.mget.mockResolvedValue([250]);
 
-      await assertQuotaNotExhausted();
+      await findExhaustedScope();
 
       expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(1);
     });
@@ -559,7 +565,7 @@ describe('UsageLimitQuotaService', () => {
       ]);
       cacheStorage.mget.mockResolvedValue([250, 250]);
 
-      await assertQuotaNotExhausted();
+      await findExhaustedScope();
 
       expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(2);
     });
@@ -668,6 +674,42 @@ describe('UsageLimitQuotaService', () => {
           meter: 'creditsUsedMicro',
           periodUnit: 'month',
           periodStart: MONTH_PERIOD.periodStart,
+        }),
+      ]);
+    });
+
+    it('also drops the default counter the limit overrides', async () => {
+      periodByUnit.day = DAY_PERIOD;
+
+      await service.dropLimitCounter(
+        buildLimitCounterScope({
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
+          periodUnit: 'day',
+          meter: 'quantity',
+        }),
+      );
+
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
+          spenderType: 'workspace',
+          spenderId: '',
+          meter: 'quantity',
+          periodUnit: 'day',
+          periodStart: DAY_PERIOD.periodStart,
+        }),
+        buildQuotaDefaultCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
+          spenderType: 'workspace',
+          meter: 'quantity',
+          periodUnit: 'day',
+          periodStart: DAY_PERIOD.periodStart,
+          limitValue: 1_000,
         }),
       ]);
     });
@@ -925,6 +967,87 @@ describe('UsageLimitQuotaService', () => {
           ],
         ]),
       );
+    });
+  });
+
+  describe('default limits', () => {
+    const findEmailExhaustedScope = () =>
+      service.findExhaustedScope({
+        workspaceId: 'workspace-1',
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        spenders: {},
+      });
+
+    const mockRemaining = (remaining: number | undefined) =>
+      cacheStorage.mget.mockResolvedValue([remaining]);
+
+    const buildEmailLimit = (overrides: Partial<FlatUsageLimit>) =>
+      buildLimit({
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        periodUnit: 'day',
+        meter: 'quantity',
+        ...overrides,
+      });
+
+    beforeEach(() => {
+      periodByUnit.day = DAY_PERIOD;
+    });
+
+    it('caps a workspace that stores no limit of its own', async () => {
+      mockRemaining(0);
+
+      await expect(findEmailExhaustedScope()).resolves.toMatchObject({
+        exhaustedKind: 'limit',
+        isDefault: true,
+        limitValue: 1_000,
+        periodUnit: 'day',
+        spenderType: 'workspace',
+      });
+    });
+
+    it('warms the default counter against the configured limit value', async () => {
+      mockRemaining(undefined);
+      usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
+        {
+          operationType: UsageOperationType.EMAIL_SEND,
+          userWorkspaceId: '',
+          apiKeyId: '',
+          applicationId: '',
+          agentId: '',
+          logicFunctionId: '',
+          creditsUsedMicro: 0,
+          quantity: 400,
+        },
+      ]);
+
+      await expect(findEmailExhaustedScope()).resolves.toBeNull();
+      expect(cacheStorage.mset).toHaveBeenCalledWith([
+        expect.objectContaining({ value: 600 }),
+      ]);
+    });
+
+    it('declares no default where ClickHouse is not configured', async () => {
+      twentyConfigService.get.mockImplementation((key: string) =>
+        key === 'CLICKHOUSE_URL' ? undefined : 1_000,
+      );
+      mockRemaining(undefined);
+
+      await expect(findEmailExhaustedScope()).resolves.toBeNull();
+      expect(
+        usageAnalyticsService.getConsumptionRowsForAllScopes,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('gives way to a workspace limit that overrides it', async () => {
+      setLimits([buildEmailLimit({ limitValue: 50 })], UsageResourceType.EMAIL);
+      cacheStorage.mget.mockResolvedValue([0]);
+
+      await expect(findEmailExhaustedScope()).resolves.toMatchObject({
+        isDefault: false,
+        limitValue: 50,
+      });
     });
   });
 });

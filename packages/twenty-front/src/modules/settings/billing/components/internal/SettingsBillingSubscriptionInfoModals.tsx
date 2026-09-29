@@ -1,6 +1,6 @@
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
-import { type BillingSubscriptionChangeWording } from '@/settings/billing/types/billingSubscriptionChangeWording.type';
+import { type BillingSubscriptionChangeWording } from '@/settings/billing/types/BillingSubscriptionChangeWording';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useLingui } from '@lingui/react/macro';
 

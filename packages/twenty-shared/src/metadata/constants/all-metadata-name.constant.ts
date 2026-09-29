@@ -31,4 +31,7 @@ export const ALL_METADATA_NAME = {
   connectionProvider: 'connectionProvider',
   searchFieldMetadata: 'searchFieldMetadata',
   timelineActivityType: 'timelineActivityType',
+  settingsMenuItem: 'settingsMenuItem',
+  workflow: 'workflow',
+  workflowVersion: 'workflowVersion',
 } as const;

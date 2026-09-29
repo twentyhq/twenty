@@ -42,16 +42,32 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Workflow index page`,
     description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
   },
-  [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: {
-    label: msg`Message and calendar target reads`,
-    description: msg`Use target relations to find messages and calendar events linked to records.`,
-  },
-  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: {
-    label: msg`Record sharing`,
-    description: msg`Allow sharing individual records with workspace members.`,
+  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
+    label: msg`AI chat sharing dropdown`,
+    description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
   },
   [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
     label: msg`Webhook rate limits`,
     description: msg`Limit the rate of outgoing webhook deliveries.`,
+  },
+  [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
+    label: msg`Deferred workspace migration actions`,
+    description: msg`Run the slow parts of data model changes in the background after they are saved.`,
+  },
+  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: {
+    label: msg`Execution quotas`,
+    description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
+  },
+  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
+    label: msg`Record creation form`,
+    description: msg`Use a dedicated form when creating records.`,
+  },
+  [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
+    label: msg`Logs console`,
+    description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
+  },
+  [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: {
+    label: msg`Conversations tab`,
+    description: msg`Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces.`,
   },
 };

@@ -92,6 +92,13 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => ({}),
 }));
 
+jest.mock(
+  '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents',
+  () => ({
+    useListenToCoreWorkflowEvents: () => undefined,
+  }),
+);
+
 jest.mock('@/object-core/components/CoreObjectTable', () => ({
   CoreObjectTable: () => <div data-testid="workflow-core-index" />,
 }));

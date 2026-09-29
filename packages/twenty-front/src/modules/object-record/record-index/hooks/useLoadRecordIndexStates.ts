@@ -22,6 +22,7 @@ import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
+import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -43,6 +44,7 @@ import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFi
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -77,6 +79,10 @@ export const useLoadRecordIndexStates = () => {
 
   const recordIndexKanbanColumnWidthAtom = useAtomComponentStateCallbackState(
     recordIndexKanbanColumnWidthComponentState,
+  );
+
+  const recordIndexGroupLoadLimitAtom = useAtomComponentStateCallbackState(
+    recordIndexGroupLoadLimitComponentState,
   );
 
   const ambientViewInstanceId = useAvailableComponentInstanceId(
@@ -358,6 +364,12 @@ export const useLoadRecordIndexStates = () => {
             ),
           );
 
+          // Mocks and views cached before this column existed have no groupLoadLimit
+          batchSet(
+            recordIndexGroupLoadLimitAtom,
+            view.groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+          );
+
           if (isDefined(recordIndexGroupFieldMetadataItemValue)) {
             batchSet(
               recordIndexGroupFieldMetadataItemAtom,
@@ -398,6 +410,7 @@ export const useLoadRecordIndexStates = () => {
       recordIndexGroupAggregateFieldMetadataItemAtom,
       recordIndexShouldHideEmptyRecordGroupsAtom,
       recordIndexKanbanColumnWidthAtom,
+      recordIndexGroupLoadLimitAtom,
       getFieldMetadataItemByIdOrThrow,
       setRecordGroupsFromViewGroups,
       syncRecordIndexViewFields,

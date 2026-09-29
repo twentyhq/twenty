@@ -1,8 +1,3 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -10,76 +5,62 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
 type AttachmentDropdownProps = {
+  attachmentId: string;
   onDownload: () => void;
   onDelete: () => void;
   onRename: () => void;
-  attachmentId: string;
   hasDownloadPermission: boolean;
 };
 
 export const AttachmentDropdown = ({
+  attachmentId,
   onDownload,
   onDelete,
   onRename,
-  attachmentId,
   hasDownloadPermission,
 }: AttachmentDropdownProps) => {
   const { t } = useLingui();
-  const dropdownId = `${attachmentId}-attachment-dropdown`;
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleDownload = () => {
-    onDownload();
-    closeDropdown(dropdownId);
-  };
-
-  const handleDelete = () => {
-    onDelete();
-    closeDropdown(dropdownId);
-  };
-
-  const handleRename = () => {
-    onRename();
-    closeDropdown(dropdownId);
-  };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
-          <IconDotsVertical />
-        </LightIconButton>
-      }
-      dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
-          <DropdownMenuItemsContainer>
-            {hasDownloadPermission && (
-              <MenuItem
-                text={t`Download`}
-                LeftIcon={IconDownload}
-                onClick={handleDownload}
-              />
-            )}
-            <MenuItem
-              text={t`Rename`}
-              LeftIcon={IconPencil}
-              onClick={handleRename}
-            />
-            <MenuItem
-              text={t`Delete`}
-              accent="danger"
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot
+      dropdownId={`${attachmentId}-attachment-dropdown`}
+      type="menu"
+    >
+      <Dropdown.Trigger
+        render={
+          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <DropdownContent align="end" width={GenericDropdownContentWidth.Narrow}>
+        <Dropdown.Section>
+          {hasDownloadPermission && (
+            <Dropdown.ActionItem
+              startIcon={<IconDownload />}
+              onClick={onDownload}
+            >
+              {t`Download`}
+            </Dropdown.ActionItem>
+          )}
+          <Dropdown.ActionItem startIcon={<IconPencil />} onClick={onRename}>
+            {t`Rename`}
+          </Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            color="danger"
+            startIcon={<IconTrash />}
+            onClick={onDelete}
+          >
+            {t`Delete`}
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

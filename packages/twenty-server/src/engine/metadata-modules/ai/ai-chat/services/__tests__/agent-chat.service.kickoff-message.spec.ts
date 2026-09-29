@@ -36,6 +36,9 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     {} as never,
     {} as never,
     {} as never,
+    {
+      getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
+    } as never,
   );
 
   return { service, messageRepository, turnRepository, messagePartRepository };
@@ -43,6 +46,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
 
 const ensureKickoff = (service: AgentChatService) =>
   service.ensureHiddenKickoffMessage({
+    userWorkspaceId: 'user-workspace-id',
     threadId: THREAD_ID,
     workspaceId: WORKSPACE_ID,
     text: KICKOFF_TEXT,
@@ -83,8 +87,8 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
 
     const [, insertedMessage] = messageRepository.insert.mock.calls[0];
 
-    expect(insertedMessage.processedAt).toBeInstanceOf(Date);
-    expect(insertedMessage.processedAt.getTime()).toBeGreaterThan(0);
+    expect(typeof insertedMessage.processedAt).toBe('string');
+    expect(new Date(insertedMessage.processedAt).getTime()).toBeGreaterThan(0);
 
     const [, insertedParts] = messagePartRepository.insert.mock.calls[0];
 
@@ -180,7 +184,7 @@ describe('AgentChatService findLatestSentUserMessage', () => {
         status: AgentMessageStatus.SENT,
       },
       order: {
-        processedAt: { direction: 'DESC', nulls: 'LAST' },
+        processedAt: { order: 'DESC', nulls: 'NULLS LAST' },
         createdAt: 'DESC',
         id: 'DESC',
       },

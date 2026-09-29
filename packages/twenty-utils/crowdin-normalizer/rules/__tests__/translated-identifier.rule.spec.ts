@@ -103,12 +103,12 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
     expect(detect(translationText, sourceText)).toBe(false);
   });
 
-  // Translated pages live under /l/<lang>/ and link to each other there, so a
+  // Translated pages live under /<lang>/ and link to each other there, so a
   // locale-prefixed target is the translation being right, not wrong. Paths and
   // link targets are left to a human.
   it('leaves link targets alone, including locale-prefixed ones', () => {
     const sourceText = 'See [the guide](/user-guide/billing).';
-    const translationText = 'Vezi [ghidul](/l/ro/user-guide/billing).';
+    const translationText = 'Vezi [ghidul](/ro/user-guide/billing).';
 
     expect(detect(translationText, sourceText)).toBe(false);
     expect(fix(translationText, sourceText)).toBe(translationText);

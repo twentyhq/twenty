@@ -36,6 +36,18 @@ Use local inline styles for layout containers and custom data displays, but keep
 
 Use Twenty UI icons before custom SVG. Use `themeCssVariables.icon.size.md` for default row and action icons, `themeCssVariables.icon.size.sm` for quiet chevrons, and `themeCssVariables.spacing[6]` for icon-only action targets.
 
+## Dropdowns
+
+Use `Dropdown` from `twenty-ui/components` for action menus, searchable pickers, and compact editor panels. Compose `Dropdown.Root`, `Dropdown.Trigger`, and `Dropdown.Content`; render a Twenty `Button` through the trigger's `render` prop and give the content an accessible label.
+
+Choose the root's `type` for the interaction:
+
+- `type="menu"`: use `Dropdown.ActionItem` for commands and `Dropdown.OptionItem` for selectable settings.
+- `type="picker"`: combine `Dropdown.Search` with `Dropdown.OptionItem`. Own the search and selection state in the component, filter the displayed options, and pass each option's `selected` and `onSelect` props. Set `multiple` on the root for multiple selections that keep the picker open.
+- `type="panel"`: compose form controls inside the content, with normal Tab navigation.
+
+Group rows with `Dropdown.Section` and `Dropdown.Separator`. Use `Dropdown.Loading` and `Dropdown.Empty` for loading and empty results. For navigation within the same popup, use `Dropdown.Page` with an `id`, an action item's matching `page` prop, and `Dropdown.Back`; a page can override `type`. For a nested popup, compose `Dropdown.Submenu`, `Dropdown.SubmenuTrigger`, and `Dropdown.Content`.
+
 ## Token-First Implementation
 
 When turning a Figma observation into code, translate the visual target into a token:

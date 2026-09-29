@@ -4,7 +4,7 @@ import { isToolWidgetName } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { type ToolWidget } from '@/ai/types/tool-widget.type';
+import { type ToolWidget } from '@/ai/types/ToolWidget';
 
 const EMPTY_TOOL_WIDGETS: Map<string, ToolWidget> = new Map();
 

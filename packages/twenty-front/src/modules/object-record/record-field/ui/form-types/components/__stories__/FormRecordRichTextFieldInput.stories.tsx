@@ -2,6 +2,7 @@ import { FormRecordRichTextFieldInput } from '@/object-record/record-field/ui/fo
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -36,6 +37,7 @@ const meta: Meta<typeof FormRecordRichTextFieldInput> = {
   decorators: [
     ObjectMetadataItemsDecorator,
     ToastDecorator,
+    MemoryRouterDecorator,
     ComponentDecorator,
   ],
   parameters: {
@@ -106,6 +108,52 @@ export const WritesBlockNoteBlocks: Story = {
       expect.objectContaining({
         blocknote: expect.stringContaining('"styles"'),
         markdown: null,
+      }),
+    );
+  },
+};
+
+export const KeepsContentAcrossFullScreen: Story = {
+  args: {
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+
+    const editor = await waitFor(() => {
+      const editorElement = canvasElement.querySelector('.ProseMirror');
+
+      expect(editorElement).toBeVisible();
+
+      return editorElement;
+    });
+
+    if (!editor) {
+      throw new Error('Editor element not found');
+    }
+
+    await userEvent.click(editor);
+    await userEvent.keyboard('Hello');
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Expand to full screen' }),
+    );
+
+    await page.findByText('Text Editor');
+    expect(await page.findByText('Hello')).toBeVisible();
+
+    await userEvent.keyboard(' world');
+
+    await userEvent.click(
+      await page.findByRole('button', { name: 'Close page' }),
+    );
+
+    expect(await canvas.findByText('Hello world')).toBeVisible();
+    expect(page.queryByText('Text Editor')).not.toBeInTheDocument();
+    expect(args.onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        blocknote: expect.stringContaining('Hello world'),
       }),
     );
   },

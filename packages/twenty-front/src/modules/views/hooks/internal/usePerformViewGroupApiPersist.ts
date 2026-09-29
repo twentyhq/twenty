@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { usePerformViewEntityApiPersistOperation } from '@/views/hooks/internal/usePerformViewEntityApiPersistOperation';
 import { useMutation } from '@apollo/client/react';
 import { isNonEmptyArray } from '@sniptt/guards';

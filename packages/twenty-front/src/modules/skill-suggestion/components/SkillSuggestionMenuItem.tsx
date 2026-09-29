@@ -1,5 +1,5 @@
+import { MenuItemSuggestion } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
 
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';

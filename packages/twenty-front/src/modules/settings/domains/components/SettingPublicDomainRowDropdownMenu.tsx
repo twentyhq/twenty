@@ -1,14 +1,10 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,
@@ -25,8 +21,6 @@ export const SettingPublicDomainRowDropdownMenu = ({
 
   const { enqueueToast } = useToast();
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { refetch: refetchPublicDomains } = useQuery(
     FindManyPublicDomainsDocument,
   );
@@ -34,44 +28,42 @@ export const SettingPublicDomainRowDropdownMenu = ({
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 
   const handleDeletePublicDomain = async () => {
-    await deletePublicDomain({
-      variables: {
-        domain: publicDomain.domain,
-      },
-      onCompleted: () =>
-        enqueueToast({
-          variant: 'success',
-          children: t`Custom domain successfully deleted`,
-        }),
-      onError: (error) => enqueueToast(getToastOptionsFromError({ error })),
-    });
+    try {
+      await deletePublicDomain({
+        variables: {
+          domain: publicDomain.domain,
+        },
+      });
+
+      enqueueToast({
+        variant: 'success',
+        children: t`Custom domain successfully deleted`,
+      });
+
+      await refetchPublicDomains();
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
+    }
   };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="right-start"
-      clickableComponent={
-        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
-          <IconDotsVertical />
-        </LightIconButton>
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Delete`}
-              onClick={async () => {
-                await handleDeletePublicDomain();
-                closeDropdown(dropdownId);
-                await refetchPublicDomains();
-              }}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot type="menu" dropdownId={dropdownId}>
+      <Dropdown.Trigger
+        render={
+          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <DropdownContent side="right" align="start">
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            color="danger"
+            startIcon={<IconTrash />}
+            onClick={handleDeletePublicDomain}
+          >{t`Delete`}</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

@@ -1,4 +1,5 @@
 import { type RawJsonFilter } from '@/types';
+import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
 
 export const isMatchingRawJsonFilter = ({
   rawJsonFilter,
@@ -9,8 +10,10 @@ export const isMatchingRawJsonFilter = ({
 }) => {
   switch (true) {
     case rawJsonFilter.like !== undefined: {
-      const regexPattern = rawJsonFilter.like.replace(/%/g, '.*');
-      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
+      const regexCaseInsensitive = convertLikePatternToRegexOrThrow({
+        pattern: rawJsonFilter.like,
+        isCaseInsensitive: true,
+      });
 
       const stringValue = JSON.stringify(value, null, 1);
 

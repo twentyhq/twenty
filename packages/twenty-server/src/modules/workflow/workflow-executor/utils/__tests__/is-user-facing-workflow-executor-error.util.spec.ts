@@ -11,21 +11,16 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 
 describe('isUserFacingWorkflowExecutorError', () => {
-  it('returns true for exhausted billing credits', () => {
-    const error = new BillingException(
-      'Credits exhausted',
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-    );
-
-    expect(isUserFacingWorkflowExecutorError(error)).toBe(true);
-  });
-
   it('returns true for an inactive subscription', () => {
     const error = new BillingException(
       'No active subscription',
@@ -91,6 +86,24 @@ describe('isUserFacingWorkflowExecutorError', () => {
     const error = new AiException(
       'Agent execution failed',
       AiExceptionCode.AGENT_EXECUTION_FAILED,
+    );
+
+    expect(isUserFacingWorkflowExecutorError(error)).toBe(false);
+  });
+
+  it('returns true for a code step pointing at a function it may not run', () => {
+    const error = new LogicFunctionException(
+      'Forbidden',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN,
+    );
+
+    expect(isUserFacingWorkflowExecutorError(error)).toBe(true);
+  });
+
+  it('returns false for a logic function failure the user cannot resolve', () => {
+    const error = new LogicFunctionException(
+      'Not ready',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY,
     );
 
     expect(isUserFacingWorkflowExecutorError(error)).toBe(false);

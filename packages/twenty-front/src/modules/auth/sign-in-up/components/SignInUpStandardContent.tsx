@@ -1,14 +1,14 @@
-import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { Logo } from '@/auth/components/Logo';
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { Title } from '@/auth/components/Title';
+import { AnimatedEaseIn } from '@/auth/components/internal/AnimatedEaseIn/AnimatedEaseIn';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { WorkspaceSelectionFooter } from '@/auth/sign-in-up/components/WorkspaceSelectionFooter';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { styled } from '@linaria/react';
 import { type JSX } from 'react';
 import { AppPath } from 'twenty-shared/types';
-import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledTitleContainer = styled.div`

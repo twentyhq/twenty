@@ -1,12 +1,12 @@
 import { gql } from 'graphql-tag';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 export const getWorkflowStepConnectedAccountHandle = async ({
   connectedAccountId,
 }: {
   connectedAccountId: string;
 }) => {
-  const response = await makeGraphqlAPIRequest({
+  const response = await makeGraphqlApiRequest({
     query: gql`
       query WorkflowStepConnectedAccountHandle($connectedAccountId: UUID!) {
         workflowStepConnectedAccountHandle(

@@ -1,7 +1,8 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useResetCommandMenuItemToDefault } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -10,7 +11,6 @@ import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { SettingsRow } from 'twenty-ui/components';
 import { IconRefresh, IconTag } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type CommandMenuItemOptionsDropdownProps = Pick<
@@ -61,7 +61,9 @@ export const CommandMenuItemOptionsDropdown = ({
       clickableComponent={iconButton}
       dropdownPlacement="bottom-end"
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Medium}
+        >
           <DropdownMenuItemsContainer>
             <SettingsRow
               startIcon={<IconTag />}
@@ -69,14 +71,12 @@ export const CommandMenuItemOptionsDropdown = ({
               checked={isLabelHidden || hasNoShortLabel}
               onCheckedChange={handleHiddenLabelChange}
             >{t`Hide label`}</SettingsRow>
-            <MenuItem
-              LeftIcon={IconRefresh}
+            <ListItem
+              startIcon={<IconRefresh />}
               onClick={handleResetToDefault}
-              accent="default"
-              text={t`Reset to default`}
-            />
+            >{t`Reset to default`}</ListItem>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

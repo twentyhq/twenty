@@ -1,4 +1,4 @@
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import {
   ViewOpenRecordIn,
@@ -16,7 +16,7 @@ import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.
 export const findViewByIdWithRestApi = async (
   viewId: string,
 ): Promise<ViewEntity | null> => {
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'get',
     path: `/metadata/views/${viewId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -32,7 +32,7 @@ export const findViewByIdWithRestApi = async (
 export const findViewFilterWithRestApi = async (
   viewFilterId: string,
 ): Promise<ViewFilterEntity | null> => {
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'get',
     path: `/metadata/viewFilters/${viewFilterId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -64,7 +64,7 @@ export const createTestViewWithRestApi = async (
     ...restParams,
   };
 
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'post',
     path: '/metadata/views',
     body: viewData,
@@ -96,7 +96,7 @@ export const createTestViewFieldWithRestApi = async (
     ...restParams,
   };
 
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'post',
     path: '/metadata/viewFields',
     body: viewFieldData,
@@ -127,7 +127,7 @@ export const createTestViewFilterWithRestApi = async (
     ...restParams,
   };
 
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'post',
     path: '/metadata/viewFilters',
     body: viewFilterData,
@@ -157,7 +157,7 @@ export const createTestViewSortWithRestApi = async (
     ...restParams,
   };
 
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'post',
     path: '/metadata/viewSorts',
     body: viewSortData,
@@ -189,7 +189,7 @@ export const createTestViewGroupWithRestApi = async (
     ...restParams,
   };
 
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'post',
     path: '/metadata/viewGroups',
     body: viewGroupData,
@@ -217,7 +217,7 @@ export const createTestViewFilterGroupWithRestApi = async (
     ...restParams,
   };
 
-  const response = await makeRestAPIRequest({
+  const response = await makeRestApiRequest({
     method: 'post',
     path: '/metadata/viewFilterGroups',
     body: viewFilterGroupData,
@@ -236,7 +236,7 @@ export const createTestViewFilterGroupWithRestApi = async (
 export const deleteTestViewWithRestApi = async (
   viewId: string,
 ): Promise<void> => {
-  await makeRestAPIRequest({
+  await makeRestApiRequest({
     method: 'delete',
     path: `/metadata/views/${viewId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -246,7 +246,7 @@ export const deleteTestViewWithRestApi = async (
 export const deleteTestViewFieldWithRestApi = async (
   viewFieldId: string,
 ): Promise<void> => {
-  await makeRestAPIRequest({
+  await makeRestApiRequest({
     method: 'delete',
     path: `/metadata/viewFields/${viewFieldId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -256,7 +256,7 @@ export const deleteTestViewFieldWithRestApi = async (
 export const deleteTestViewFilterWithRestApi = async (
   viewFilterId: string,
 ): Promise<void> => {
-  await makeRestAPIRequest({
+  await makeRestApiRequest({
     method: 'delete',
     path: `/metadata/viewFilters/${viewFilterId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -266,7 +266,7 @@ export const deleteTestViewFilterWithRestApi = async (
 export const deleteTestViewSortWithRestApi = async (
   viewSortId: string,
 ): Promise<void> => {
-  await makeRestAPIRequest({
+  await makeRestApiRequest({
     method: 'delete',
     path: `/metadata/viewSorts/${viewSortId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -276,7 +276,7 @@ export const deleteTestViewSortWithRestApi = async (
 export const deleteTestViewGroupWithRestApi = async (
   viewGroupId: string,
 ): Promise<void> => {
-  await makeRestAPIRequest({
+  await makeRestApiRequest({
     method: 'delete',
     path: `/metadata/viewGroups/${viewGroupId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -286,7 +286,7 @@ export const deleteTestViewGroupWithRestApi = async (
 export const deleteTestViewFilterGroupWithRestApi = async (
   viewFilterGroupId: string,
 ): Promise<void> => {
-  await makeRestAPIRequest({
+  await makeRestApiRequest({
     method: 'delete',
     path: `/metadata/viewFilterGroups/${viewFilterGroupId}`,
     bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

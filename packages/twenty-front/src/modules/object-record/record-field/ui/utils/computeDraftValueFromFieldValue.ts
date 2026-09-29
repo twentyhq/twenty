@@ -16,6 +16,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
+const PERCENTAGE_DRAFT_VALUE_PRECISION = 15;
+
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;
   fieldValue: FieldValue;
@@ -87,8 +89,8 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
   ) {
     return (isUndefinedOrNull(fieldValue)
       ? ''
-      : (
-          fieldValue * 100
+      : parseFloat(
+          (fieldValue * 100).toPrecision(PERCENTAGE_DRAFT_VALUE_PRECISION),
         ).toString()) as unknown as FieldInputDraftValue<FieldValue>;
   }
 

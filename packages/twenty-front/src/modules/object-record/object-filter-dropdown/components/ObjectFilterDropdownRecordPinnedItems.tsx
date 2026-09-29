@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -42,7 +41,7 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
               )
             }
           >
-            <OverflowingTextWithTooltip text={selectableItem.name} />
+            {selectableItem.name}
           </ListItem>
         );
       })}

@@ -1,5 +1,7 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -8,8 +10,7 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { OpenRecordIn } from 'twenty-shared/types';
-import { IconCheck, IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { IconChevronLeft } from 'twenty-ui/icon';
 
 export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
   const { t } = useLingui();
@@ -22,7 +23,7 @@ export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -35,17 +36,23 @@ export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {Object.values(OpenRecordIn).map((openRecordIn) => (
-          <MenuItem
+          <ListItem
             key={openRecordIn}
-            LeftIcon={OPEN_RECORD_IN_OPTIONS[openRecordIn].Icon}
-            text={t(OPEN_RECORD_IN_OPTIONS[openRecordIn].label)}
-            onClick={() => setOpenRecordInPreference(openRecordIn)}
-            RightIcon={
-              openRecordIn === openRecordInPreference ? IconCheck : undefined
+            startIcon={
+              <SelectOptionIcon
+                Icon={OPEN_RECORD_IN_OPTIONS[openRecordIn].Icon}
+              />
             }
-          />
+            onClick={() => setOpenRecordInPreference(openRecordIn)}
+            role="option"
+            aria-selected={openRecordIn === openRecordInPreference}
+            indicator="check"
+            selected={openRecordIn === openRecordInPreference}
+          >
+            {t(OPEN_RECORD_IN_OPTIONS[openRecordIn].label)}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

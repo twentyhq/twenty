@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application registration ownership change without a user session should fail with a user-bound application token should refuse claimApplicationRegistrationOwnership and keep the owner 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application registration ownership change without a user session should fail with a user-bound application token should refuse transferApplicationRegistrationOwnership and keep the owner 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application registration ownership change without a user session should fail with an API key should refuse claimApplicationRegistrationOwnership and keep the owner 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Application registration ownership change without a user session should fail with an API key should refuse transferApplicationRegistrationOwnership and keep the owner 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Application registration ownership change without a user session should fail with an application token without user binding should refuse claimApplicationRegistrationOwnership and keep the owner 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Application registration ownership change without a user session should fail with an application token without user binding should refuse transferApplicationRegistrationOwnership and keep the owner 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;

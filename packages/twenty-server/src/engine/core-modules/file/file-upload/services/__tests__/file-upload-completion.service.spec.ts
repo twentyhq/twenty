@@ -8,7 +8,7 @@ import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upl
 import { FileUploadExceptionCode } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 
 describe('FileUploadCompletionService.completeUploadedFile', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';

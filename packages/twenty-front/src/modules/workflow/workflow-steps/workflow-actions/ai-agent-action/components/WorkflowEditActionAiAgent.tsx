@@ -22,7 +22,7 @@ import { useEffect, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconSparkles } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   FindOneAgentDocument,
@@ -177,7 +177,7 @@ export const WorkflowEditActionAiAgent = ({
     <TabListRoot componentInstanceId={componentInstanceId}>
       <StyledTabListContainer>
         <TabList
-          aria-label={t`AI agent configuration`}
+          aria-label={t`Agent configuration`}
           tabs={tabs}
           componentInstanceId={componentInstanceId}
           behaveAsLinks={false}

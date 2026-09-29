@@ -14,6 +14,22 @@ describe('resolveCommandMenuItemSection', () => {
     ).toBe('SELECTION');
   });
 
+  it('places commands that act on the records in view in the current view section', () => {
+    for (const engineComponentKey of [
+      EngineComponentKey.EXPORT_VIEW,
+      EngineComponentKey.SEE_DELETED_RECORDS,
+      EngineComponentKey.HIDE_DELETED_RECORDS,
+    ]) {
+      expect(
+        resolveCommandMenuItemSection({
+          engineComponentKey,
+          availabilityType:
+            CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+        }),
+      ).toBe('CURRENT_VIEW');
+    }
+  });
+
   it('sends every navigation command to Go to, whatever it targets', () => {
     expect(
       resolveCommandMenuItemSection({
@@ -45,7 +61,7 @@ describe('resolveCommandMenuItemSection', () => {
         engineComponentKey: EngineComponentKey.COMPOSE_CAMPAIGN,
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
       }),
-    ).toBe('THIS_VIEW');
+    ).toBe('THIS_OBJECT');
 
     expect(
       resolveCommandMenuItemSection({
@@ -77,7 +93,7 @@ describe('resolveCommandMenuItemSection', () => {
         engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
       }),
-    ).toBe('THIS_VIEW');
+    ).toBe('THIS_OBJECT');
 
     expect(
       resolveCommandMenuItemSection({

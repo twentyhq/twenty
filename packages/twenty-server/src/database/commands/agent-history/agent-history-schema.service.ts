@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { getAgentHistorySchemaAdditions } from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -13,7 +12,6 @@ export class AgentHistorySchemaService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly lifecycle: AgentHistoryLifecycleService,
     private readonly migrations: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
@@ -45,9 +43,6 @@ export class AgentHistorySchemaService {
       standard,
     });
     if (objects.length + fields.length + indexes.length === 0) {
-      if (!dryRun) {
-        await this.lifecycle.prepareCoreReferences(workspaceId);
-      }
       return;
     }
     // Standard definitions use the same from/to path as standard application
@@ -104,9 +99,6 @@ export class AgentHistorySchemaService {
       throw new Error(
         `Agent history schema validation failed: ${JSON.stringify(result)}`,
       );
-    }
-    if (!dryRun) {
-      await this.lifecycle.prepareCoreReferences(workspaceId);
     }
   }
 }

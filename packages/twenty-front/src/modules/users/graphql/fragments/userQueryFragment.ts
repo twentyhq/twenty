@@ -55,6 +55,7 @@ export const USER_QUERY_FRAGMENT = gql`
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
+      isCampaignClickTrackingEnabled
       workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
@@ -105,7 +106,6 @@ export const USER_QUERY_FRAGMENT = gql`
       aiAgentModelTier
       isAutoModelSelectionEnabled
       aiModelIdByTier
-      aiEvaluationModelId
       aiAdditionalInstructions
       isTwoFactorAuthenticationEnforced
       trashRetentionDays

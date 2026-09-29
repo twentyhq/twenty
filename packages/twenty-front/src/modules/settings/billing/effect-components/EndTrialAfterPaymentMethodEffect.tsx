@@ -10,7 +10,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 export const EndTrialAfterPaymentMethodEffect = () => {

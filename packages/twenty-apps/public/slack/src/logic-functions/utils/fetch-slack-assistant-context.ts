@@ -24,6 +24,7 @@ type SlackAssistantContext = {
   requestMessage: SlackThreadMessage | undefined;
   threadMessages: SlackThreadMessage[];
   slackClient: WebClient | undefined;
+  slackConnectionId: string | undefined;
   assistantBotUserId: string | undefined;
   isDirectMessage: boolean;
 };
@@ -36,18 +37,21 @@ const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   requestMessage: undefined,
   threadMessages: [],
   slackClient: undefined,
+  slackConnectionId: undefined,
   assistantBotUserId: undefined,
   isDirectMessage: false,
 };
 
 const readSlackThreadContext = async ({
   client,
+  connectionId,
   slackChannelId,
   parentMessageTimestamp,
   slackMessageTimestamp,
   slackUserId,
 }: {
   client: WebClient;
+  connectionId: string;
   slackChannelId: string;
   parentMessageTimestamp: string;
   slackMessageTimestamp: string;
@@ -93,6 +97,7 @@ const readSlackThreadContext = async ({
     requestMessage,
     threadMessages: tailMessages,
     slackClient: client,
+    slackConnectionId: connectionId,
     assistantBotUserId,
     isDirectMessage,
   };
@@ -133,11 +138,12 @@ export const fetchSlackAssistantContext = async ({
     return UNREACHABLE_SLACK_CONTEXT;
   }
 
-  const { client } = slackClientResult;
+  const { client, connectionId } = slackClientResult;
 
   return await runWithTimeout({
     operation: readSlackThreadContext({
       client,
+      connectionId,
       slackChannelId,
       parentMessageTimestamp,
       slackMessageTimestamp,
@@ -149,7 +155,11 @@ export const fetchSlackAssistantContext = async ({
         `[slack] assistant context read exceeded ${SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS}ms, answering without thread history`,
       );
 
-      return { ...UNREACHABLE_SLACK_CONTEXT, slackClient: client };
+      return {
+        ...UNREACHABLE_SLACK_CONTEXT,
+        slackClient: client,
+        slackConnectionId: connectionId,
+      };
     },
   });
 };

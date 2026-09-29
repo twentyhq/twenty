@@ -18,6 +18,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -28,7 +29,9 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -66,9 +69,24 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async processStripeEvent(
+    workspaceId: string,
+    event:
+      | Stripe.CustomerSubscriptionUpdatedEvent
+      | Stripe.CustomerSubscriptionCreatedEvent
+      | Stripe.CustomerSubscriptionDeletedEvent,
+  ) {
+    return await this.cacheLockService.withLock(
+      () => this.applySubscriptionEvent(workspaceId, event),
+      buildBillingSubscriptionStateLockKey(String(event.data.object.customer)),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
+  }
+
+  private async applySubscriptionEvent(
     workspaceId: string,
     event:
       | Stripe.CustomerSubscriptionUpdatedEvent

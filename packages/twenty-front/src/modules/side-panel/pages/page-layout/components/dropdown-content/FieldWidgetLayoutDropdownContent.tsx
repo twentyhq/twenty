@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
@@ -283,9 +282,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
                 <SelectOptionIcon Icon={DISPLAY_MODE_ICONS[displayMode]} />
               }
             >
-              <OverflowingTextWithTooltip
-                text={displayModeLabels[displayMode]}
-              />
+              {displayModeLabels[displayMode]}
             </ListItem>
           </SelectableListItem>
         ))}

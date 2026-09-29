@@ -1,18 +1,13 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconCalendarEvent, IconMailCog } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -30,7 +25,7 @@ const StyledCardLinkSlot = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   return (
     <Section.Root>

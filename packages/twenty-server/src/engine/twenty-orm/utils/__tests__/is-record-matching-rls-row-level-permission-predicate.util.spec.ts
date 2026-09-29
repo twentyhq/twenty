@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  type RecordGqlOperationFilter,
   type ObjectRecord,
 } from 'twenty-shared/types';
 
@@ -138,6 +139,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         joinColumnName: 'companyId',
       },
     ),
+    createMockFlatFieldMetadata('users-id', 'users', FieldMetadataType.ARRAY),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -156,6 +158,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       addressCity: 'Paris',
     },
     companyId: 'company-1',
+    users: ['user-1', 'user-2'],
     deletedAt: null,
     id: 'record-1',
     createdAt: new Date().toISOString(),
@@ -357,4 +360,53 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       }),
     ).toBe(false);
   });
+
+  it.each<{ filter: RecordGqlOperationFilter; expected: boolean }>([
+    {
+      filter: { users: { containsIlike: '%user-1%' } },
+      expected: true,
+    },
+    {
+      filter: { users: { containsIlike: '%user-999%' } },
+      expected: false,
+    },
+    {
+      filter: {
+        or: [
+          { users: { containsIlike: '%user-999%' } },
+          { users: { containsIlike: '%user-1%' } },
+        ],
+      },
+      expected: true,
+    },
+    {
+      filter: {
+        or: [
+          { users: { containsIlike: '%user-999%' } },
+          { users: { containsIlike: '%user-998%' } },
+        ],
+      },
+      expected: false,
+    },
+    {
+      filter: { not: { users: { containsIlike: '%user-1%' } } },
+      expected: false,
+    },
+    {
+      filter: { not: { users: { containsIlike: '%user-999%' } } },
+      expected: true,
+    },
+  ])(
+    'evaluates array RLS filter $filter as $expected',
+    ({ filter, expected }) => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: baseRecord,
+          filter,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
 });

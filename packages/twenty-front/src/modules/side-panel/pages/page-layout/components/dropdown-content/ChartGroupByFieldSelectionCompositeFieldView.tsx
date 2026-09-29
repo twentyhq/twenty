@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
@@ -91,12 +90,7 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
                   />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={getCompositeSubFieldLabel(
-                    compositeFieldType,
-                    subFieldName,
-                  )}
-                />
+                {getCompositeSubFieldLabel(compositeFieldType, subFieldName)}
               </ListItem>
             </SelectableListItem>
           ))}

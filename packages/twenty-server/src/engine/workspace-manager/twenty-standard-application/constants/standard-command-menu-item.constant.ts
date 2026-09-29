@@ -50,7 +50,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
     label: i18nLabel(
       msg({
-        message: `Create new {objectLabelSingular}`,
+        message: `Create {objectLabelSingular}`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -59,7 +59,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 3,
     shortLabel: i18nLabel(
       msg({
-        message: `New {objectLabelSingular}`,
+        message: `Create`,
         context: 'commandMenuItem.shortLabel',
       }),
     ),
@@ -149,7 +149,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'arrayLength(favoriteRecordIds) < numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign"',
+      'arrayLength(favoriteRecordIds) < numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign" and not (featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED and objectMetadataItem.nameSingular == "workflow")',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ADD_TO_FAVORITES,
@@ -169,7 +169,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'arrayLength(favoriteRecordIds) == numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign"',
+      'arrayLength(favoriteRecordIds) == numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign" and not (featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED and objectMetadataItem.nameSingular == "workflow")',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.REMOVE_FROM_FAVORITES,
@@ -498,7 +498,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -588,26 +588,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW,
     hotKeys: null,
   },
-  addNodeWorkflow: {
-    universalIdentifier: '818117fa-6cad-4ebc-83c1-40f4afc28d94',
-    label: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconPlus',
-    isPinned: true,
-    position: 30,
-    shortLabel: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.ADD_NODE_WORKFLOW,
-    hotKeys: null,
-  },
   tidyUpWorkflow: {
     universalIdentifier: '1f3a3cab-161a-4775-af47-11be4d0bf411',
     label: i18nLabel(
@@ -646,6 +626,55 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.DUPLICATE_WORKFLOW,
+    hotKeys: null,
+  },
+  makeWorkflowPrivate: {
+    universalIdentifier: '26f98606-8b6e-42f2-bc97-2cfc4359bada',
+    label: i18nLabel(
+      msg({
+        message: `Make Workflow Private`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconCircleDashed',
+    isPinned: false,
+    position: 33,
+    shortLabel: i18nLabel(
+      msg({ message: `Make Private`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "WORKSPACE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.workflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
+    hotKeys: null,
+  },
+  shareWorkflowWithWorkspace: {
+    universalIdentifier: '37745922-ba18-4bea-a1da-8625ad22d233',
+    label: i18nLabel(
+      msg({
+        message: `Share Workflow with Workspace`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconCircle',
+    isPinned: false,
+    position: 33,
+    shortLabel: i18nLabel(
+      msg({
+        message: `Share with Workspace`,
+        context: 'commandMenuItem.shortLabel',
+      }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "PRIVATE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.workflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
     hotKeys: null,
   },
   seeVersionWorkflowRun: {
@@ -945,13 +974,13 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   composeCampaignPinned: {
     universalIdentifier: '7ad6f0c7-ac02-4062-b5cf-1f36e1664bc8',
     label: i18nLabel(
-      msg({ message: `Create new Campaign`, context: 'commandMenuItem.label' }),
+      msg({ message: `Create Campaign`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconPlus',
     isPinned: true,
     position: 67,
     shortLabel: i18nLabel(
-      msg({ message: `New Campaign`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Create`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:

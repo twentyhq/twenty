@@ -8,5 +8,4 @@
  */
 
 export { VisibilityHidden } from './components/VisibilityHidden';
-export { VisibilityHiddenInput } from './components/VisibilityHiddenInput';
 export { handleClickableElementKeyDown } from './utils/handleClickableElementKeyDown';

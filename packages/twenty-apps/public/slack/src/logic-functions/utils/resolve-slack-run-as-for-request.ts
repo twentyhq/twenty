@@ -49,6 +49,7 @@ const isMessageAddressedToBot = ({
 export const resolveSlackRunAsForRequest = async ({
   client,
   slackClient,
+  slackConnectionId,
   assistantBotUserId,
   identity,
   requestId,
@@ -59,6 +60,7 @@ export const resolveSlackRunAsForRequest = async ({
 }: {
   client: CoreApiClient;
   slackClient: WebClient | undefined;
+  slackConnectionId: string | undefined;
   assistantBotUserId: string | undefined;
   identity: SlackUserIdentity | undefined;
   requestId: string;
@@ -105,6 +107,7 @@ export const resolveSlackRunAsForRequest = async ({
   return await resolveSlackRunAsWorkspaceMemberId({
     client,
     slackClient,
+    slackConnectionId,
     identity,
   });
 };

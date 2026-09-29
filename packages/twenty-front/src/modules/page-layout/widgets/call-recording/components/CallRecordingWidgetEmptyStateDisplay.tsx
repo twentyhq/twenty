@@ -1,11 +1,7 @@
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  type AnimatedPlaceholderType,
-} from 'twenty-ui/primitives/feedback';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
+
+import { type AnimatedPlaceholderType } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/types/AnimatedPlaceholderType';
 
 type CallRecordingWidgetEmptyStateDisplayProps = {
   animatedPlaceholderType: AnimatedPlaceholderType;
@@ -18,13 +14,11 @@ export const CallRecordingWidgetEmptyStateDisplay = ({
   title,
   subTitle,
 }: CallRecordingWidgetEmptyStateDisplayProps) => (
-  <AnimatedPlaceholderEmptyContainer>
+  <EmptyState.Root>
     <AnimatedPlaceholder type={animatedPlaceholderType} />
-    <AnimatedPlaceholderEmptyTextContainer>
-      <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
-      <AnimatedPlaceholderEmptySubTitle>
-        {subTitle}
-      </AnimatedPlaceholderEmptySubTitle>
-    </AnimatedPlaceholderEmptyTextContainer>
-  </AnimatedPlaceholderEmptyContainer>
+    <EmptyState.Content>
+      <EmptyState.Title>{title}</EmptyState.Title>
+      <EmptyState.Description>{subTitle}</EmptyState.Description>
+    </EmptyState.Content>
+  </EmptyState.Root>
 );

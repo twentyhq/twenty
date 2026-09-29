@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 const PAGE_SIZE = 3;
@@ -65,7 +65,7 @@ const paginateForward = async ({
 
   // Cap the loop far above the expected page count so a paging bug cannot hang the suite
   for (let iteration = 0; iteration < 20; iteration++) {
-    const response: GraphqlResponse = await makeGraphqlAPIRequest(
+    const response: GraphqlResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName,
         objectMetadataPluralName,
@@ -104,7 +104,7 @@ const paginateBackwardFrom = async ({
   let before: string | undefined = startingBefore;
 
   for (let iteration = 0; iteration < 20; iteration++) {
-    const response: GraphqlResponse = await makeGraphqlAPIRequest(
+    const response: GraphqlResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -135,7 +135,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
   beforeAll(async () => {
     await deleteAllRecords('opportunity');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -218,7 +218,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
   it('should walk backward across the NULL boundary with before cursors', async () => {
     // Reach the last page forward, then walk back from its end cursor: the
     // backward scan re-crosses the null/non-null boundary in reverse
-    const forwardResponse = await makeGraphqlAPIRequest(
+    const forwardResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -249,7 +249,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
       JSON.stringify({ id: datedOpportunityIds[0] }),
     ).toString('base64');
 
-    const response: GraphqlResponse = await makeGraphqlAPIRequest(
+    const response: GraphqlResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -318,7 +318,7 @@ describe('Cursor pagination with composite orderBy not in the selection set', ()
   beforeAll(async () => {
     await deleteAllRecords('person');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -362,7 +362,7 @@ describe('Cursor pagination ordered by a nullable foreign key', () => {
     await deleteAllRecords('opportunity');
     await deleteAllRecords('company');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -374,7 +374,7 @@ describe('Cursor pagination ordered by a nullable foreign key', () => {
       }),
     ).expect(200);
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -426,7 +426,7 @@ describe('Cursor pagination ordered by a nullable composite sub-field', () => {
   beforeAll(async () => {
     await deleteAllRecords('opportunity');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -486,7 +486,7 @@ describe('Cursor pagination with duplicate sort values', () => {
   beforeAll(async () => {
     await deleteAllRecords('opportunity');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -541,7 +541,7 @@ describe('Cursor pagination ordered by a TEXT field with empty values', () => {
   ];
 
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',

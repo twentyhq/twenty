@@ -75,13 +75,7 @@ const isDeclaredInTwentyUi = (prop: PropItem): boolean =>
 const parserOptions: ParserOptions = {
   shouldExtractLiteralValuesFromEnum: true,
   shouldIncludePropTagMap: true,
-  propFilter: (prop) => !isReactNativeAttribute(prop) && !isHiddenProp(prop),
 };
-const parser = new DocumentationParser(program, parserOptions);
-const documentedChildrenParser = new DocumentationParser(program, {
-  ...parserOptions,
-  skipChildrenPropWithoutDoc: false,
-});
 
 const extractProps = ({
   symbol,
@@ -100,8 +94,13 @@ const extractProps = ({
     throw new Error(`Could not find the declaration for ${name}`);
   }
 
-  const componentParser =
-    'children' in propDescriptions ? documentedChildrenParser : parser;
+  const componentParser = new DocumentationParser(program, {
+    ...parserOptions,
+    skipChildrenPropWithoutDoc: !('children' in propDescriptions),
+    propFilter: (prop) =>
+      (!isReactNativeAttribute(prop) || prop.name in propDescriptions) &&
+      !isHiddenProp(prop),
+  });
   const parsed: ComponentDoc | null = componentParser.getComponentInfo(
     symbol,
     declaration.getSourceFile(),
@@ -184,6 +183,9 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
       Record<string, Partial<Record<string, string>>>
     > =
       'partPropDescriptions' in component ? component.partPropDescriptions : {};
+    const partPropDefaults: Partial<
+      Record<string, Partial<Record<string, string>>>
+    > = 'partPropDefaults' in component ? component.partPropDefaults : {};
     const componentParts = type
       .getProperties()
       .filter((part) => COMPONENT_PART_NAME_PATTERN.test(part.name))
@@ -211,6 +213,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
           symbol: partSymbol,
           name: `${component.name}.${part.name}`,
           propDescriptions: partPropDescriptions[part.name],
+          propDefaults: partPropDefaults[part.name],
         }),
       };
     });

@@ -10,10 +10,6 @@ export class RegisterAppOrchestratorStep {
   private state: OrchestratorState;
   private notify: () => void;
 
-  registrationCredentials:
-    | { clientId: string; clientSecret?: string }
-    | undefined;
-
   constructor({
     apiService,
     configService,
@@ -41,11 +37,6 @@ export class RegisterAppOrchestratorStep {
           universalIdentifier: input.manifest.application.universalIdentifier,
         },
       );
-
-      this.registrationCredentials = {
-        clientId: reg.clientId,
-        clientSecret: reg.clientSecret,
-      };
 
       this.state.applyStepEvents([
         {

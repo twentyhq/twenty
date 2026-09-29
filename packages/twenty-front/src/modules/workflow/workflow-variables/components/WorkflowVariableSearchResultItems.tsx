@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
 import { useIcons } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -38,7 +37,7 @@ export const WorkflowVariableSearchResultItems = ({
         />
       }
     >
-      <OverflowingTextWithTooltip text={result.label} />
+      {result.label}
     </ListItem>
   ));
 };

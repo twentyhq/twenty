@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { IconDotsVertical } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconDotsVertical } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledActions = styled.div`
   align-items: center;

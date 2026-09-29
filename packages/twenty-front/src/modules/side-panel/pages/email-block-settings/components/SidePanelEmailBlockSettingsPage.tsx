@@ -2,13 +2,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import {
+  TIPTAP_NODE_TYPES,
   isDefined,
   resolveCanvasTheme,
-  TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
-import { IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconTrash } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { ADVANCED_TEXT_EDITOR_BLOCK_CATALOG } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog';

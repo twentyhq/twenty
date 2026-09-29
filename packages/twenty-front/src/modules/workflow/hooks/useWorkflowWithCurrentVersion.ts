@@ -83,7 +83,10 @@ export const useWorkflowWithCurrentVersion = (
     .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 
   const currentVersionId = isWorkflowCoreIndexPageEnabled
-    ? getWorkflowCurrentVersion(workflowVersions)?.id
+    ? getWorkflowCurrentVersion({
+        versions: workflowVersions,
+        lastPublishedVersionId: coreWorkflow?.lastPublishedVersionId,
+      })?.id
     : (effectiveDraftId ?? workflowVersions[0]?.id);
 
   const { record: workspaceCurrentVersion } = useFindOneRecord<WorkflowVersion>(

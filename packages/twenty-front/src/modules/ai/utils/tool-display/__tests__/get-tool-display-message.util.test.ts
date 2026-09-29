@@ -4,7 +4,7 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 
 const emptyDisplayContext: ToolDisplayContext = {
   labelByName: new Map(),
@@ -343,6 +343,70 @@ describe('getToolDisplayMessage', () => {
       expect(message).not.toBe('Some status');
       expect(message).toContain('Running');
       expect(message).toContain('some_tool');
+    });
+  });
+
+  describe('attach_conversation_to_record', () => {
+    it('should name the object the conversation is attached to', () => {
+      const displayContext = makeDisplayContext({
+        objectMetadataItems: [personMetadata],
+      });
+      const input = {
+        objectNameSingular: 'person',
+        recordId: '20202020-0000-4000-8000-000000000001',
+      };
+
+      expect(
+        getToolDisplayMessage({
+          input,
+          toolName: 'attach_conversation_to_record',
+          isFinished: false,
+          displayContext,
+        }),
+      ).toBe('Attaching this conversation to the person');
+      expect(
+        getToolDisplayMessage({
+          input,
+          toolName: 'attach_conversation_to_record',
+          isFinished: true,
+          displayContext,
+        }),
+      ).toBe('Attached this conversation to the person');
+    });
+
+    it('should fall back to a record when the object is unknown', () => {
+      const message = getToolDisplayMessage({
+        input: {
+          objectNameSingular: 'unknownObject',
+          recordId: '20202020-0000-4000-8000-000000000001',
+        },
+        toolName: 'attach_conversation_to_record',
+        isFinished: false,
+        displayContext: emptyDisplayContext,
+      });
+
+      expect(message).toBe('Attaching this conversation to a record');
+    });
+
+    it('should say the attachment failed when the tool reports a failure', () => {
+      const message = getToolDisplayMessage({
+        input: {
+          objectNameSingular: 'person',
+          recordId: '20202020-0000-4000-8000-000000000001',
+        },
+        toolName: 'attach_conversation_to_record',
+        isFinished: true,
+        displayContext: makeDisplayContext({
+          objectMetadataItems: [personMetadata],
+        }),
+        output: {
+          success: false,
+          message: 'Failed to attach this conversation to the person record',
+          error: 'Record not found',
+        },
+      });
+
+      expect(message).toBe('Could not attach this conversation to the person');
     });
   });
 

@@ -5,7 +5,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { type FieldManifest, type Manifest } from 'twenty-shared/application';
@@ -121,7 +121,7 @@ const buildEstimateFieldManifest = (
 };
 
 const createTicketRecord = async (data: Record<string, unknown>) => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName: TEST_OBJECT.nameSingular,
       gqlFields: `
@@ -136,7 +136,7 @@ const createTicketRecord = async (data: Record<string, unknown>) => {
 };
 
 const findTicketRecordById = async (recordId: string) => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findOneOperationFactory({
       objectMetadataSingularName: TEST_OBJECT.nameSingular,
       gqlFields: `

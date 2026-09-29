@@ -1,15 +1,10 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
 export const CurrencyPickerDropdownSelect = ({
   selectedCurrency,
@@ -32,51 +27,49 @@ export const CurrencyPickerDropdownSelect = ({
     [searchFilter],
   );
 
+  const isSelectedCurrencyMatchingSearch =
+    isDefined(selectedCurrency) &&
+    filteredCurrencies.some(({ value }) => value === selectedCurrency.value);
+
   return (
-    <DropdownContent>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Search
         value={searchFilter}
-        onChange={(event) => setSearchFilter(event.target.value)}
-        autoFocus
-        role="combobox"
+        placeholder={t`Search`}
+        aria-label={t`Search`}
+        onValueChange={setSearchFilter}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredCurrencies.length === 0 ? (
-          <MenuItem text={t`No results`} />
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        {!isNonEmptyArray(filteredCurrencies) ? (
+          <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
         ) : (
           <>
-            {selectedCurrency && (
-              <ListItem
+            {isSelectedCurrencyMatchingSearch && (
+              <Dropdown.OptionItem
                 key={selectedCurrency.value}
-                onClick={() => onChange(selectedCurrency)}
-                role="option"
-                aria-selected={true}
+                onSelect={() => onChange(selectedCurrency)}
                 selected={true}
-                indicator="check"
               >
-                <OverflowingTextWithTooltip text={selectedCurrency.label} />
-              </ListItem>
+                {selectedCurrency.label}
+              </Dropdown.OptionItem>
             )}
             {filteredCurrencies.map((item) =>
               selectedCurrency?.value === item.value ? null : (
-                <ListItem
+                <Dropdown.OptionItem
                   key={item.value}
-                  onClick={() => onChange(item)}
-                  role="option"
-                  aria-selected={selectedCurrency?.value === item.value}
+                  onSelect={() => onChange(item)}
                   selected={selectedCurrency?.value === item.value}
-                  indicator="check"
                 >
                   <OverflowingTextWithTooltip
                     text={`${item.label} (${item.value})`}
                   />
-                </ListItem>
+                </Dropdown.OptionItem>
               ),
             )}
           </>
         )}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

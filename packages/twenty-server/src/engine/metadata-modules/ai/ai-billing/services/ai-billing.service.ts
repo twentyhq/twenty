@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -28,6 +29,7 @@ export class AiBillingService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async assertAiExecutionAllowed({
@@ -58,13 +60,19 @@ export class AiBillingService {
     spenders: UsageSpenders;
     cost: QuotaCost;
   }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
-    return this.billingUsageService.consumeUsageQuota({
+    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
       spenders,
       cost,
     });
+
+    return {
+      hasNoMoreAvailableCredits: exhausted.some(
+        (scope) => scope.exhaustedKind === 'allowance',
+      ),
+    };
   }
 
   // Evaluation models are looked up first: they price like a language model

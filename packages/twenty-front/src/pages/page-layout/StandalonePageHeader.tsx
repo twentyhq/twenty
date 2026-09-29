@@ -4,10 +4,9 @@ import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/state
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type StandalonePageHeaderProps = {
   pageLayoutId: string;
@@ -17,7 +16,7 @@ export const StandalonePageHeader = ({
   pageLayoutId,
 }: StandalonePageHeaderProps) => {
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,

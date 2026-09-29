@@ -27,12 +27,14 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class ApplicationService {
@@ -41,8 +43,8 @@ export class ApplicationService {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -57,8 +59,10 @@ export class ApplicationService {
     private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
     private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(SettingsMenuItemEntity)
+    private readonly settingsMenuItemRepository: WorkspaceScopedRepository<SettingsMenuItemEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
@@ -68,8 +72,8 @@ export class ApplicationService {
     applicationId: string,
     workspaceId: string,
   ): Promise<string> {
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
     });
 
     if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
@@ -152,8 +156,7 @@ export class ApplicationService {
   async findManyApplications(
     workspaceId: string,
   ): Promise<ApplicationEntity[]> {
-    return this.applicationRepository.find({
-      where: { workspaceId },
+    return this.applicationRepository.find(workspaceId, {
       relations: ['applicationRegistration'],
     });
   }
@@ -188,13 +191,8 @@ export class ApplicationService {
       );
     }
 
-    const where = {
-      workspaceId,
-      ...(isDefined(id) ? { id } : { universalIdentifier }),
-    };
-
-    const application = await this.applicationRepository.findOne({
-      where,
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: isDefined(id) ? { id } : { universalIdentifier },
       relations: ['packageJsonFile', 'yarnLockFile', 'applicationRegistration'],
     });
 
@@ -207,6 +205,7 @@ export class ApplicationService {
       agents,
       frontComponents,
       commandMenuItems,
+      settingsMenuItems,
       objects,
       applicationVariables,
     ] = await Promise.all([
@@ -222,8 +221,11 @@ export class ApplicationService {
       this.commandMenuItemRepository.find(workspaceId, {
         where: { applicationId: application.id },
       }),
-      this.objectMetadataRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.settingsMenuItemRepository.find(workspaceId, {
+        where: { applicationId: application.id },
+      }),
+      this.objectMetadataRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.applicationVariableRepository.find(workspaceId, {
         where: { applicationId: application.id },
@@ -234,6 +236,7 @@ export class ApplicationService {
     application.agents = agents;
     application.frontComponents = frontComponents;
     application.commandMenuItems = commandMenuItems;
+    application.settingsMenuItems = settingsMenuItems;
     application.objects = objects;
     application.applicationVariables = applicationVariables;
 
@@ -265,8 +268,14 @@ export class ApplicationService {
     return application;
   }
 
-  async findById(id: string): Promise<ApplicationEntity | null> {
-    return this.applicationRepository.findOne({
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
+    return this.applicationRepository.findOne(workspaceId, {
       where: { id },
     });
   }
@@ -278,8 +287,8 @@ export class ApplicationService {
     applicationId: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
       relations: ['primaryPublicDomain'],
     });
 
@@ -293,10 +302,9 @@ export class ApplicationService {
     universalIdentifier: string;
     workspaceId: string;
   }) {
-    return this.applicationRepository.findOne({
+    return this.applicationRepository.findOne(workspaceId, {
       where: {
         universalIdentifier,
-        workspaceId,
       },
     });
   }
@@ -381,10 +389,9 @@ export class ApplicationService {
         workspace,
       });
 
-    const application = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne(workspace.id, {
       where: {
         id: twentyStandardFlatApplication.id,
-        workspaceId: workspace.id,
       },
     });
 
@@ -478,6 +485,7 @@ export class ApplicationService {
         universalIdentifier: applicationId,
         workspaceId,
         id: applicationId,
+        sourceType: applicationRegistration.sourceType,
         applicationRegistrationId: applicationRegistration.id,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
@@ -637,13 +645,15 @@ export class ApplicationService {
     data: Partial<ApplicationEntity> & { workspaceId: string },
     queryRunner?: QueryRunner,
   ): Promise<ApplicationEntity> {
-    const application = this.applicationRepository.create(data);
-
     if (queryRunner) {
-      return queryRunner.manager.save(ApplicationEntity, application);
+      return queryRunner.manager.save(ApplicationEntity, data);
     }
 
-    const savedApplication = await this.applicationRepository.save(application);
+    const savedApplication =
+      await this.applicationRepository.insertAndReturnOne(
+        data.workspaceId,
+        data as QueryDeepPartialEntity<ApplicationEntity>,
+      );
 
     await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
       'flatApplicationMaps',
@@ -659,22 +669,22 @@ export class ApplicationService {
 
   async update(
     id: string,
-    data: Parameters<typeof this.applicationRepository.update>[1] & {
+    data: QueryDeepPartialEntity<ApplicationEntity> & {
       workspaceId: string;
     },
   ): Promise<ApplicationEntity> {
-    await this.applicationRepository.update(
-      { id, workspaceId: data.workspaceId },
-      data,
-    );
+    await this.applicationRepository.update(data.workspaceId, { id }, data);
 
     await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
       'flatApplicationMaps',
     ]);
 
-    const updatedApplication = await this.applicationRepository.findOne({
-      where: { id, workspaceId: data.workspaceId },
-    });
+    const updatedApplication = await this.applicationRepository.findOne(
+      data.workspaceId,
+      {
+        where: { id },
+      },
+    );
 
     if (!isDefined(updatedApplication)) {
       throw new ApplicationException(

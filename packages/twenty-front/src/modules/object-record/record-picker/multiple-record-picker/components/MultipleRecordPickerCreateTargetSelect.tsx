@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -10,7 +11,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type MultipleRecordPickerCreateTargetSelectProps = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -66,15 +66,16 @@ export const MultipleRecordPickerCreateTargetSelect = ({
               itemId={objectMetadataItem.id}
               onEnter={() => handleSelect(objectMetadataItem.id)}
             >
-              <MenuItem
-                LeftComponent={
+              <ListItem
+                startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
                 }
-                text={objectMetadataItem.labelSingular}
                 focused={selectedItemId === objectMetadataItem.id}
                 disabled={disabled}
                 onClick={() => handleSelect(objectMetadataItem.id)}
-              />
+              >
+                {objectMetadataItem.labelSingular}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

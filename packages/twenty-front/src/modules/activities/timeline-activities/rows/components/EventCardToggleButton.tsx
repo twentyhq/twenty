@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconButton } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type EventCardToggleButtonProps = {
   isOpen: boolean;

@@ -1,11 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { IconCopy, IconExclamationCircle } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 export const useCopyToClipboard = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { enqueueToast } = useToast();
   const { t } = useLingui();
 

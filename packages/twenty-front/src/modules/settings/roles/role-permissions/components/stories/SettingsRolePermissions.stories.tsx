@@ -3,8 +3,9 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isDefined } from 'twenty-shared/utils';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const SettingsRolePermissionsWrapper = (
   args: React.ComponentProps<typeof SettingsRolePermissions>,
@@ -31,7 +32,7 @@ const SettingsRolePermissionsWrapper = (
 const meta: Meta<typeof SettingsRolePermissionsWrapper> = {
   title: 'Modules/Settings/Roles/RolePermissions/SettingsRolePermissions',
   component: SettingsRolePermissionsWrapper,
-  decorators: [RouterDecorator, ComponentDecorator],
+  decorators: [MemoryRouterDecorator, ComponentDecorator],
 };
 
 export default meta;

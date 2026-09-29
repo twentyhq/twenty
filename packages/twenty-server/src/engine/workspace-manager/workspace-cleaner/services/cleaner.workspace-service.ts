@@ -23,8 +23,9 @@ import {
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -34,6 +35,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
+import {
+  DestroySoftDeletedWorkspaceJob,
+  type DestroySoftDeletedWorkspaceJobData,
+} from 'src/engine/workspace-manager/workspace-cleaner/jobs/destroy-soft-deleted-workspace.job';
+import { hasPassedDestroyGracePeriod } from 'src/engine/workspace-manager/workspace-cleaner/utils/has-passed-destroy-grace-period.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const CLEAN_SUSPENDED_WORKSPACES_OPERATIONS = [
@@ -74,8 +80,9 @@ export class CleanerWorkspaceService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly i18nService: I18nService,
-    private readonly metricsService: MetricsService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {
     this.inactiveDaysBeforeSoftDelete = this.twentyConfigService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
@@ -332,49 +339,6 @@ export class CleanerWorkspaceService {
     }
   }
 
-  async destroySoftDeletedWorkspace({
-    workspace,
-    ignoreGracePeriod = false,
-    dryRun = false,
-  }: {
-    ignoreGracePeriod?: boolean;
-    dryRun?: boolean;
-    workspace: WorkspaceEntity;
-  }): Promise<WorkspaceEntity | undefined> {
-    if (!isDefined(workspace.deletedAt)) {
-      return;
-    }
-
-    const daysSinceSoftDeleted = workspace.deletedAt
-      ? differenceInDays(new Date(), workspace.deletedAt)
-      : 0;
-
-    const hasPassedGracePeriod =
-      daysSinceSoftDeleted >
-      this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete;
-
-    const canHardDelete = ignoreGracePeriod || hasPassedGracePeriod;
-
-    if (!canHardDelete) {
-      return;
-    }
-
-    this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
-    );
-    if (dryRun) {
-      return;
-    }
-
-    await this.workspaceService.deleteWorkspace(workspace.id);
-    void this.metricsService.incrementCounterForEvent({
-      key: MetricsKeys.CronJobDeletedWorkspace,
-      shouldStoreInCache: false,
-    });
-
-    return workspace;
-  }
-
   async batchWarnOrCleanSuspendedWorkspaces({
     workspaceIds,
     dryRun = false,
@@ -405,7 +369,7 @@ export class CleanerWorkspaceService {
       warnedUserVars.map((userVar) => userVar.workspaceId),
     );
 
-    let deletedWorkspacesCount = 0;
+    let enqueuedWorkspacesCount = 0;
 
     for (const [index, workspace] of workspaces.entries()) {
       this.logger.log(
@@ -415,7 +379,7 @@ export class CleanerWorkspaceService {
       try {
         const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
         const isWithinDeletionLimit =
-          deletedWorkspacesCount <
+          enqueuedWorkspacesCount <
           this.maxNumberOfWorkspacesDeletedPerExecution;
 
         if (
@@ -423,17 +387,35 @@ export class CleanerWorkspaceService {
           isSoftDeletedWorkspace &&
           isWithinDeletionLimit
         ) {
-          const result = await this.destroySoftDeletedWorkspace({
-            workspace,
-            dryRun,
-            ignoreGracePeriod: ignoreDestroyGracePeriod,
-          });
+          const canDestroy =
+            ignoreDestroyGracePeriod ||
+            hasPassedDestroyGracePeriod({
+              workspace,
+              gracePeriodInDays:
+                this.inactiveDaysBeforeDelete -
+                this.inactiveDaysBeforeSoftDelete,
+            });
 
-          if (isDefined(result)) {
-            deletedWorkspacesCount++;
+          if (canDestroy) {
             this.logger.log(
-              `Destroyed ${deletedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit durings this execution`,
+              `${dryRun ? 'DRY RUN - ' : ''}Enqueuing destruction of workspace ${workspace.id} ${workspace.displayName}`,
             );
+
+            if (!dryRun) {
+              const jobId =
+                await this.messageQueueService.add<DestroySoftDeletedWorkspaceJobData>(
+                  DestroySoftDeletedWorkspaceJob.name,
+                  { workspaceId: workspace.id },
+                  { id: `destroy-soft-deleted-workspace-${workspace.id}` },
+                );
+
+              if (isDefined(jobId)) {
+                enqueuedWorkspacesCount++;
+                this.logger.log(
+                  `Enqueued ${enqueuedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit during this execution`,
+                );
+              }
+            }
           }
           continue;
         }

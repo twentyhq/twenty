@@ -8,7 +8,7 @@ import {
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
 import { IconStar } from 'twenty-ui/icon';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const EMAIL_ROW_HEIGHT = 32;
 const EMAIL_CHECKBOX_SIZE = 12;

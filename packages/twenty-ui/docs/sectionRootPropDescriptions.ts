@@ -1,4 +1,4 @@
-import { type SectionRootProps } from '../src/components/Section/types/SectionRootProps';
+import { type SectionRootProps } from '../src/components/layout/Section/types/SectionRootProps';
 
 export const SECTION_ROOT_PROP_DESCRIPTIONS = {
   align: 'Text alignment within the section. Defaults to `left`.',

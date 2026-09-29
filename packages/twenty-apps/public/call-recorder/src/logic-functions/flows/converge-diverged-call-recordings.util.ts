@@ -5,11 +5,17 @@ import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constan
 import { CALL_RECORDING_ARTIFACT_IMPORT_SCOPES } from 'src/logic-functions/constants/call-recording-artifact-import-scopes';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
+import { enqueueCallRecordingReconciliations } from 'src/logic-functions/data/enqueue-call-recording-reconciliations.util';
 import { type ConnectionPage } from 'src/logic-functions/data/fetch-all-nodes.util';
+import {
+  type CallRecordingRecoveryWork,
+  groupRecoveryWorkIntoMinuteSlots,
+} from 'src/logic-functions/domain/group-recovery-work-into-minute-slots.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
@@ -81,13 +87,12 @@ export const convergeDivergedCallRecordings = async ({
     throw new Error('Call recording recovery returned an invalid next cursor');
   }
 
-  const importCallRecordingIds: string[] = [];
-  const reconcilePayloads: Record<string, unknown>[] = [];
+  const recoveryWork: CallRecordingRecoveryWork[] = [];
   const enqueuedCallRecordingIds: string[] = [];
 
   for (const { node } of page.edges ?? []) {
     if (node.status === CallRecordingStatus.PROCESSING) {
-      importCallRecordingIds.push(node.id);
+      recoveryWork.push({ callRecordingId: node.id, kind: 'import' });
     } else {
       const startsAt = node.calendarEvent?.startsAt;
 
@@ -98,31 +103,48 @@ export const convergeDivergedCallRecordings = async ({
         continue;
       }
 
-      reconcilePayloads.push({ callRecordingId: node.id });
+      recoveryWork.push({ callRecordingId: node.id, kind: 'reconcile' });
     }
 
     enqueuedCallRecordingIds.push(node.id);
   }
 
-  await enqueueCallRecordingArtifactsImport({
-    callRecordingIds: importCallRecordingIds,
-    scopes: CALL_RECORDING_ARTIFACT_IMPORT_SCOPES,
-    trigger: 'recovery',
-    requestedAt: now.toISOString(),
-  });
-  await enqueueLogicFunctionJobs({
-    logicFunctionUniversalIdentifier:
-      STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-    payloads: reconcilePayloads,
-  });
+  const minuteSlots = groupRecoveryWorkIntoMinuteSlots(recoveryWork);
+
+  for (const [slotIndex, slotWork] of minuteSlots.entries()) {
+    const delayMs = slotIndex * MILLISECONDS_PER_MINUTE;
+
+    await enqueueCallRecordingArtifactsImport({
+      callRecordingIds: getCallRecordingIdsOfKind(slotWork, 'import'),
+      scopes: CALL_RECORDING_ARTIFACT_IMPORT_SCOPES,
+      trigger: 'recovery',
+      requestedAt: now.toISOString(),
+      delayMs,
+    });
+    await enqueueCallRecordingReconciliations({
+      callRecordingIds: getCallRecordingIdsOfKind(slotWork, 'reconcile'),
+      recoveryDate: now.toISOString().slice(0, 10),
+      delayMs,
+    });
+  }
 
   if (isNonEmptyString(nextCursor)) {
+    // Start the next page once this page's Recall calls have drained.
     await enqueueLogicFunctionJobs({
       logicFunctionUniversalIdentifier:
         STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payloads: [{ after: nextCursor }],
+      delayMs: minuteSlots.length * MILLISECONDS_PER_MINUTE,
     });
   }
 
   return { candidateCount: page.edges?.length ?? 0, enqueuedCallRecordingIds };
 };
+
+const getCallRecordingIdsOfKind = (
+  recoveryWork: CallRecordingRecoveryWork[],
+  kind: CallRecordingRecoveryWork['kind'],
+): string[] =>
+  recoveryWork
+    .filter((work) => work.kind === kind)
+    .map(({ callRecordingId }) => callRecordingId);

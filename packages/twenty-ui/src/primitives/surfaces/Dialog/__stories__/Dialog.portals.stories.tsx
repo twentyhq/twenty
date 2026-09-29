@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { DialogExample } from './DialogExample';
 import { waitForDialog } from './waitForDialog';

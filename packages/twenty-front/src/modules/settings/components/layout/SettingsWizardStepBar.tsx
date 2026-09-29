@@ -1,9 +1,9 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
-import { IconChevronLeft } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsWizardStepBarProps = {
   label: ReactNode;

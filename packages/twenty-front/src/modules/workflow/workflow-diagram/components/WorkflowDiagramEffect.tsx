@@ -110,7 +110,7 @@ export const WorkflowDiagramEffect = () => {
   );
 
   useEffect(() => {
-    if (!shouldWorkflowRefetchRequest) {
+    if (!shouldWorkflowRefetchRequest || !isDefined(currentVersion?.id)) {
       return;
     }
 
@@ -122,6 +122,7 @@ export const WorkflowDiagramEffect = () => {
       })
       .catch(() => {});
   }, [
+    currentVersion?.id,
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
     refetchContent,
@@ -179,14 +180,14 @@ export const WorkflowDiagramEffect = () => {
     const isTransitionToDraft = currentVersion?.status === 'DRAFT';
     const shouldPreservePositions =
       (isSameVersion || isTransitionToDraft) &&
-      previousDiagramUpdatedAt === contentUpdatedAt;
+      previousDiagramUpdatedAt === seededVersionUpdatedAt;
 
     setPreviousDiagramVersionId(flow.workflowVersionId);
-    setPreviousDiagramUpdatedAt(contentUpdatedAt);
+    setPreviousDiagramUpdatedAt(seededVersionUpdatedAt);
 
     computeAndMergeNewWorkflowDiagram(flow, shouldPreservePositions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [computeAndMergeNewWorkflowDiagram, flow, contentUpdatedAt]);
+  }, [computeAndMergeNewWorkflowDiagram, flow, seededVersionUpdatedAt]);
 
   useEffect(() => {
     if (!isDefined(currentVersion) || !isDefined(flow)) {

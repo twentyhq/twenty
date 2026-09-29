@@ -1,6 +1,6 @@
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 
-import { type ToolWidget } from '@/ai/types/tool-widget.type';
+import { type ToolWidget } from '@/ai/types/ToolWidget';
 
 export const shouldToolPartRenderStandalone = (
   toolPart: ToolUIPart | DynamicToolUIPart,

@@ -1,13 +1,10 @@
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { IconCopyPlus, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowStepOptionsMenuItemsProps = {
-  selectedItemId: string | null;
   changeNodeText: string;
   onChangeNode: () => void;
   onDuplicateNode?: () => void;
@@ -16,7 +13,6 @@ type WorkflowStepOptionsMenuItemsProps = {
 };
 
 export const WorkflowStepOptionsMenuItems = ({
-  selectedItemId,
   changeNodeText,
   onChangeNode,
   onDuplicateNode,
@@ -27,51 +23,22 @@ export const WorkflowStepOptionsMenuItems = ({
 
   return (
     <>
-      <SelectableListItem
-        itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode}
-        onEnter={onChangeNode}
-      >
-        <MenuItem
-          LeftIcon={IconPencil}
-          text={changeNodeText}
-          focused={
-            selectedItemId === WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode
-          }
-          onClick={onChangeNode}
-        />
-      </SelectableListItem>
+      <Dropdown.ActionItem startIcon={<IconPencil />} onClick={onChangeNode}>
+        {changeNodeText}
+      </Dropdown.ActionItem>
       {isDefined(onDuplicateNode) ? (
-        <SelectableListItem
-          itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode}
-          onEnter={onDuplicateNode}
-        >
-          <MenuItem
-            LeftIcon={IconCopyPlus}
-            text={t`Duplicate node`}
-            focused={
-              selectedItemId ===
-              WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode
-            }
-            onClick={onDuplicateNode}
-          />
-        </SelectableListItem>
+        <Dropdown.ActionItem
+          startIcon={<IconCopyPlus />}
+          onClick={onDuplicateNode}
+        >{t`Duplicate node`}</Dropdown.ActionItem>
       ) : null}
       {children}
       {isDefined(onDeleteNode) ? (
-        <SelectableListItem
-          itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode}
-          onEnter={onDeleteNode}
-        >
-          <MenuItem
-            LeftIcon={IconTrash}
-            text={t`Delete node`}
-            accent="danger"
-            focused={
-              selectedItemId === WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode
-            }
-            onClick={onDeleteNode}
-          />
-        </SelectableListItem>
+        <Dropdown.ActionItem
+          startIcon={<IconTrash />}
+          color="danger"
+          onClick={onDeleteNode}
+        >{t`Delete node`}</Dropdown.ActionItem>
       ) : null}
     </>
   );

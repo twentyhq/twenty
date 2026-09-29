@@ -17,6 +17,7 @@ import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     ApplicationMessageIngestionService,
     ApplicationMessageIngestionResolver,
     MessageChannelGraphqlApiExceptionInterceptor,
+    provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
   exports: [MessageChannelMetadataService],
 })

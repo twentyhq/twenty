@@ -2,7 +2,7 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
@@ -51,10 +51,9 @@ describe('Application variable access across applications should fail', () => {
       variableKey: 'OTHER_APPLICATION_VARIABLE',
     });
 
-    const [{ data: userBoundTokenData }, unboundTokenPair] = await Promise.all([
-      generateApplicationToken({
+    const [userBoundTokenPair, unboundTokenPair] = await Promise.all([
+      generateAppleAdminApplicationTokenPair({
         applicationId: callingApplication.id,
-        expectToFail: false,
       }),
       generateApplicationTokenPair({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -65,9 +64,7 @@ describe('Application variable access across applications should fail', () => {
     globalTestContext = {
       callingApplication,
       otherApplication,
-      userBoundToken:
-        userBoundTokenData.generateApplicationToken.applicationAccessToken
-          .token,
+      userBoundToken: userBoundTokenPair.applicationAccessToken.token,
       unboundToken: unboundTokenPair.applicationAccessToken.token,
     };
   }, 120000);

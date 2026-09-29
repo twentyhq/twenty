@@ -6,6 +6,7 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   applicationVariables: [],
   frontComponents: [],
   commandMenuItems: [],
+  settingsMenuItems: [],
   availablePackages: {},
   canBeUninstalled: false,
   autoUpgrade: false,

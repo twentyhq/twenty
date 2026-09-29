@@ -7,11 +7,9 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { MainButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MainButton, useToast } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { read, type WorkBook } from 'xlsx-ugnis';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledContainer = styled.div`
   align-items: center;

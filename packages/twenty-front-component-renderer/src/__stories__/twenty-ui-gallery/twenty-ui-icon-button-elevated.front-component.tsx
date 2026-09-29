@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconButton } from 'twenty-ui/components';
 import { IconPlus, IconSearch } from 'twenty-ui/icon';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 const IconButtonElevatedExample = () => {
   const [activations, setActivations] = useState(0);

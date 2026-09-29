@@ -10,14 +10,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconEye } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const { t } = useLingui();
@@ -153,7 +151,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}
@@ -161,7 +159,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
               checked={isPublic}
               onChange={setIsPublic}
             />
-          </Card>
+          </Card.Root>
         </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>

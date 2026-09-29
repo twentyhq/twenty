@@ -1,3 +1,4 @@
+import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
@@ -5,6 +6,7 @@ import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/Tool
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { JEV_MODEL_ID } from 'twenty-shared/ai';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
 import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
 import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
@@ -26,6 +28,21 @@ export const SidePanelWorkflowSelectAction = ({
   onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
   const { t } = useLingui();
+
+  const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
+  const isJevAvailable = aiEvaluationModels.some(
+    (model) => model.modelId === JEV_MODEL_ID && model.isAvailable,
+  );
+
+  const aiActions = AI_ACTIONS.map((action) =>
+    action.type === 'CLASSIFY' && !isJevAvailable
+      ? {
+          ...action,
+          disabled: true,
+          contextualText: t`TypeSafe AI API key missing`,
+        }
+      : action,
+  );
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -64,7 +81,7 @@ export const SidePanelWorkflowSelectAction = ({
         {t`AI`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={AI_ACTIONS}
+        actions={aiActions}
         onClick={handleActionClick}
       />
 

@@ -119,6 +119,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingImportFolderMessagesService,
     MessagingDeleteGroupEmailMessagesService,
     InboundEmailImportService,
+    provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
   exports: [
     MessagingMessageListFetchCronCommand,
