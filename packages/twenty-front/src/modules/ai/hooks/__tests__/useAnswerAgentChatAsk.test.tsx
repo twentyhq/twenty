@@ -6,7 +6,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { useResolveToolCall } from '@/ai/hooks/useResolveToolCall';
+import { useAnswerAgentChatAsk } from '@/ai/hooks/useAnswerAgentChatAsk';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
@@ -49,26 +49,27 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const renderResolveToolCall = () =>
-  renderHook(() => useResolveToolCall(), { wrapper: Wrapper }).result.current
-    .resolveToolCall;
+const renderAnswerAgentChatAsk = () =>
+  renderHook(() => useAnswerAgentChatAsk(), { wrapper: Wrapper }).result.current
+    .answerAgentChatAsk;
 
-const resolve = async () => {
-  const resolveToolCall = renderResolveToolCall();
-  let isResolved = false;
+const answer = async () => {
+  const answerAgentChatAsk = renderAnswerAgentChatAsk();
+  let isAnswered = false;
 
   await act(async () => {
-    isResolved = await resolveToolCall({
+    isAnswered = await answerAgentChatAsk({
+      askId: 'ask-1',
       toolCallId: 'call-1',
-      output: { answers: [] },
+      response: { answers: [] },
       optimisticToolOutput: ANSWERED_OUTPUT,
     });
   });
 
-  return isResolved;
+  return isAnswered;
 };
 
-describe('useResolveToolCall', () => {
+describe('useAnswerAgentChatAsk', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
@@ -90,17 +91,16 @@ describe('useResolveToolCall', () => {
     ] as unknown as ExtendedUIMessage[]);
   });
 
-  it('resolves the call on the displayed thread and shows the answer right away', async () => {
-    mutate.mockResolvedValue({ data: { resolveToolCall: { streamId: 's' } } });
+  it('answers the Ask and shows the answer in its tool call right away', async () => {
+    mutate.mockResolvedValue({ data: { answerAsk: { streamId: 's' } } });
 
-    expect(await resolve()).toBe(true);
+    expect(await answer()).toBe(true);
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({
         variables: {
           input: {
-            threadId: 'thread-id',
-            toolCallId: 'call-1',
-            output: { answers: [] },
+            askId: 'ask-1',
+            response: { answers: [] },
             modelId: 'model-id',
           },
         },
@@ -112,24 +112,24 @@ describe('useResolveToolCall', () => {
 
   it('expects no stream when the answer resumes a workflow run', async () => {
     mutate.mockResolvedValue({
-      data: { resolveToolCall: { streamId: null } },
+      data: { answerAsk: { streamId: null } },
     });
 
-    await resolve();
+    await answer();
 
     expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
   });
 
-  it('puts the call back as it was when the answer is refused', async () => {
+  it('puts the tool call back as it was when the answer is refused', async () => {
     mutate.mockRejectedValue(new Error('Network down'));
 
-    expect(await resolve()).toBe(false);
+    expect(await answer()).toBe(false);
     expect(readToolOutput()).toEqual(PENDING_OUTPUT);
     expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
     expect(enqueueToast).toHaveBeenCalled();
   });
 
-  it('refetches the conversation instead when the call was already resolved elsewhere', async () => {
+  it('refetches the conversation instead when the Ask was already answered elsewhere', async () => {
     const refetchListener = jest.fn();
     window.addEventListener(
       AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
@@ -141,13 +141,13 @@ describe('useResolveToolCall', () => {
         errors: [
           {
             message: 'No longer waiting',
-            extensions: { code: 'TOOL_CALL_NOT_PENDING' },
+            extensions: { code: 'ASK_NOT_PENDING' },
           },
         ],
       }),
     );
 
-    expect(await resolve()).toBe(false);
+    expect(await answer()).toBe(false);
     expect(refetchListener).toHaveBeenCalledTimes(1);
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
 

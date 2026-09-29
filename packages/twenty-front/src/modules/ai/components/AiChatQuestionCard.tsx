@@ -31,7 +31,7 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { useResolveToolCall } from '@/ai/hooks/useResolveToolCall';
+import { useAnswerAgentChatAsk } from '@/ai/hooks/useAnswerAgentChatAsk';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -206,7 +206,7 @@ export const AiChatQuestionCard = ({
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { toolCallId, questions } = pendingQuestion;
+  const { askId, toolCallId, questions } = pendingQuestion;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedByQuestion, setSelectedByQuestion] = useState<
@@ -220,7 +220,7 @@ export const AiChatQuestionCard = ({
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { resolveToolCall } = useResolveToolCall();
+  const { answerAgentChatAsk } = useAnswerAgentChatAsk();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
@@ -252,9 +252,10 @@ export const AiChatQuestionCard = ({
 
     setIsSubmitting(true);
 
-    const isResolved = await resolveToolCall({
+    const isAnswered = await answerAgentChatAsk({
+      askId,
       toolCallId,
-      output: { answers },
+      response: { answers },
       optimisticToolOutput: {
         success: true,
         result: {
@@ -266,7 +267,7 @@ export const AiChatQuestionCard = ({
     });
 
     // The card goes once its Ask does, so it stays disabled until then.
-    if (!isResolved) {
+    if (!isAnswered) {
       setIsSubmitting(false);
     }
   };

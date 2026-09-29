@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
-import { type AskQuestionItem } from 'twenty-shared/ai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
+import { type AgentChatPendingAsk } from '@/ai/types/AgentChatPendingAsk';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { parseInputAskForm } from '@/input-ask/utils/parseInputAskForm';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -15,21 +15,13 @@ type PendingInputAskRecord = ObjectRecord & {
   form: unknown;
 };
 
-const getAskedQuestions = (form: unknown): AskQuestionItem[] | null =>
-  isPlainObject(form) &&
-  form.kind === 'questions' &&
-  Array.isArray(form.questions) &&
-  isNonEmptyArray(form.questions)
-    ? (form.questions as AskQuestionItem[])
-    : null;
-
 // The Ask is the record of what the conversation waits on, so the card is
 // read from it rather than from the last message, and follows it live.
-export const useAgentChatPendingQuestion = ({
+export const useAgentChatPendingAsk = ({
   threadId,
 }: {
   threadId: string;
-}): AgentChatPendingQuestion | null => {
+}): AgentChatPendingAsk | null => {
   const { objectMetadataItem: inputAskObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.InputAsk,
@@ -79,10 +71,10 @@ export const useAgentChatPendingQuestion = ({
 
   return useMemo(() => {
     for (const record of records) {
-      const questions = getAskedQuestions(record.form);
+      const form = parseInputAskForm(record.form);
 
-      if (isDefined(record.toolCallId) && isDefined(questions)) {
-        return { toolCallId: record.toolCallId, questions };
+      if (isDefined(record.toolCallId) && isDefined(form)) {
+        return { id: record.id, toolCallId: record.toolCallId, form };
       }
     }
 

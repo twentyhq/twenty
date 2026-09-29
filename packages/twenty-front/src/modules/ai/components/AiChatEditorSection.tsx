@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { AiChatPendingQuestionGate } from '@/ai/components/AiChatPendingQuestionGate';
+import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
@@ -172,7 +172,7 @@ const EditableAiChatEditorSection = () => {
     objectMetadataItemFamilySelector,
     { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
   );
-  const pendingQuestionThreadId =
+  const pendingAskThreadId =
     isDefined(inputAskObjectMetadataItem) &&
     isDefined(displayedThreadId) &&
     displayedThreadId !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
@@ -224,10 +224,10 @@ const EditableAiChatEditorSection = () => {
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
-        {isDefined(pendingQuestionThreadId) ? (
-          <AiChatPendingQuestionGate threadId={pendingQuestionThreadId}>
+        {isDefined(pendingAskThreadId) ? (
+          <AiChatPendingAskGate threadId={pendingAskThreadId}>
             {composer}
-          </AiChatPendingQuestionGate>
+          </AiChatPendingAskGate>
         ) : (
           composer
         )}

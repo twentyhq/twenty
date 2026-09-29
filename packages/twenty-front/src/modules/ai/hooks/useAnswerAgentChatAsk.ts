@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { RESOLVE_TOOL_CALL } from '@/ai/core-graphql/mutations/resolveToolCall';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
@@ -18,31 +17,29 @@ import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useAnswerAsk } from '@/input-ask/hooks/useAnswerAsk';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { useToast } from 'twenty-ui/components';
-import {
-  type ResolveToolCallMutation,
-  type ResolveToolCallMutationVariables,
-} from '~/generated/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-export const useResolveToolCall = () => {
-  const apolloCoreClient = useApolloCoreClient();
+export const useAnswerAgentChatAsk = () => {
+  const { answerAsk } = useAnswerAsk();
   const store = useStore();
   const { enqueueToast } = useToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
-  // Returns whether the call was resolved, so a widget can keep itself
-  // disabled until its Ask is gone rather than invite a second answer.
-  const resolveToolCall = useCallback(
+  // Returns whether the Ask was answered, so a card can keep itself disabled
+  // until the Ask is gone rather than invite a second answer.
+  const answerAgentChatAsk = useCallback(
     async ({
+      askId,
       toolCallId,
-      output,
+      response,
       optimisticToolOutput,
     }: {
+      askId: string;
       toolCallId: string;
-      output: Record<string, unknown>;
+      response: Record<string, unknown>;
       optimisticToolOutput?: unknown;
     }): Promise<boolean> => {
       const threadId = store.get(agentChatDisplayedThreadState.atom);
@@ -83,18 +80,14 @@ export const useResolveToolCall = () => {
       store.set(isAwaitingFirstChunkAtom, true);
 
       try {
-        const { data } = await apolloCoreClient.mutate<
-          ResolveToolCallMutation,
-          ResolveToolCallMutationVariables
-        >({
-          mutation: RESOLVE_TOOL_CALL,
-          variables: {
-            input: { threadId, toolCallId, output, modelId: modelIdForRequest },
-          },
+        const { streamId } = await answerAsk({
+          askId,
+          response,
+          modelId: modelIdForRequest,
         });
 
         // A workflow run resumes in its own executor, so no chunk follows.
-        if (!isDefined(data?.resolveToolCall.streamId)) {
+        if (!isDefined(streamId)) {
           store.set(isAwaitingFirstChunkAtom, false);
         }
 
@@ -115,9 +108,7 @@ export const useResolveToolCall = () => {
           );
         }
 
-        if (
-          isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)
-        ) {
+        if (isGraphqlErrorOfType(error, AiChatErrorCode.ASK_NOT_PENDING)) {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
         } else if (isDefined(optimisticToolOutput)) {
           store.set(messagesAtom, (messages) =>
@@ -134,8 +125,8 @@ export const useResolveToolCall = () => {
         return false;
       }
     },
-    [apolloCoreClient, store, enqueueToast, modelIdForRequest],
+    [answerAsk, store, enqueueToast, modelIdForRequest],
   );
 
-  return { resolveToolCall };
+  return { answerAgentChatAsk };
 };
