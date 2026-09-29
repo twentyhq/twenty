@@ -774,7 +774,7 @@ describe('StreamAgentChatJob', () => {
       workspaceId: 'workspace-id',
       inputAsk: {
         name: 'Which plan?',
-        form: { questions: QUESTIONS },
+        form: { kind: 'questions', questions: QUESTIONS },
         threadId: 'thread-id',
         toolCallId: 'tool-call-id',
         assigneeId: 'member',

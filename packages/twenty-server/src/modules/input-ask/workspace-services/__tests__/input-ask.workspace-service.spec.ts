@@ -8,6 +8,7 @@ import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enu
 import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 
 const QUESTIONS_FORM = {
+  kind: 'questions' as const,
   questions: [
     {
       header: 'Plan',
@@ -89,7 +90,7 @@ describe('InputAskWorkspaceService', () => {
         workspaceId: 'workspace-id',
         inputAsk: {
           name: 'Approve',
-          form: { fields: [] },
+          form: { kind: 'formFields', fields: [] },
           workflowRunId: 'workflow-run-id',
           stepId: 'step-id',
           assigneeId: null,
@@ -105,7 +106,7 @@ describe('InputAskWorkspaceService', () => {
         },
         {
           name: 'Approve',
-          form: { fields: [] },
+          form: { kind: 'formFields', fields: [] },
           status: InputAskStatus.PENDING,
           response: null,
           answeredAt: null,
@@ -143,7 +144,7 @@ describe('InputAskWorkspaceService', () => {
         workspaceId: 'workspace-id',
         inputAsk: {
           name: 'Approve',
-          form: { fields: [] },
+          form: { kind: 'formFields', fields: [] },
           workflowRunId: 'workflow-run-id',
           stepId: 'step-id',
           assigneeId: null,

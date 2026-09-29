@@ -103,7 +103,7 @@ export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
     toolOutput.result.status === 'pending',
   buildAsk: ({ questions }) => ({
     name: questions[0]?.question ?? null,
-    form: { questions },
+    form: { kind: 'questions', questions },
   }),
   toToolResult: ({ answers }, { questions }) => ({
     success: true,

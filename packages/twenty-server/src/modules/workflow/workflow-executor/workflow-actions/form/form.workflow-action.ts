@@ -31,7 +31,10 @@ export class FormWorkflowAction implements WorkflowAction {
 
     return {
       pendingEvent: true,
-      pendingAsk: { name: step.name, form: { fields: step.settings.input } },
+      pendingAsk: {
+        name: step.name,
+        form: { kind: 'formFields', fields: step.settings.input },
+      },
     };
   }
 }

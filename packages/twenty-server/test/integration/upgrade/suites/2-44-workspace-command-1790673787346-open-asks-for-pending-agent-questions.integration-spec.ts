@@ -170,7 +170,7 @@ describe('2-44 workspace command 1790673787346 - OpenAsksForPendingAgentQuestion
         name: 'Send the quote to the customer?',
         status: 'PENDING',
         toolCallId,
-        form: { questions: QUESTIONS },
+        form: { kind: 'questions', questions: QUESTIONS },
         assigneeId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         workflowRunId: null,
       },

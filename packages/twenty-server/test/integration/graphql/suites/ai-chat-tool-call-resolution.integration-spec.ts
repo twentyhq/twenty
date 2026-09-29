@@ -74,7 +74,7 @@ describe('Resolving a chat tool call', () => {
       workspaceId,
       inputAsk: {
         name: QUESTIONS[0].question,
-        form: { questions: QUESTIONS },
+        form: { kind: 'questions', questions: QUESTIONS },
         threadId,
         toolCallId,
         assigneeId: workspaceMemberId,

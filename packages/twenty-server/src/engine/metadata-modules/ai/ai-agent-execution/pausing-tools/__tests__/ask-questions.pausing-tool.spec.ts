@@ -56,7 +56,7 @@ describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
   it('asks the first question as the Ask name and keeps every question as its form', () => {
     expect(parseCall().buildAsk()).toEqual({
       name: 'Which plan?',
-      form: { questions: QUESTIONS },
+      form: { kind: 'questions', questions: QUESTIONS },
     });
   });
 

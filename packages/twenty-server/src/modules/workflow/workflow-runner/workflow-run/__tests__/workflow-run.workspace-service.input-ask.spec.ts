@@ -5,6 +5,7 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const QUESTIONS_FORM = {
+  kind: 'questions' as const,
   questions: [
     {
       header: 'Plan',
@@ -192,7 +193,7 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         service.updateWorkflowRunStepInfo({
           stepId: 'step-id',
           stepInfo: { status: StepStatus.PENDING },
-          pendingAsk: { name: 'Approve', form: { fields: [] } },
+          pendingAsk: { name: 'Approve', form: { kind: 'formFields', fields: [] } },
           workflowRunId: 'workflow-run-id',
           workspaceId: 'workspace-id',
         }),

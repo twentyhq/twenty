@@ -219,7 +219,7 @@ export class OpenAsksForPendingAgentQuestionsCommand extends ProvisionedWorkspac
       await inputAskRepository.insert({
         name: pendingPart.questions[0]?.question ?? null,
         status: InputAskStatus.PENDING,
-        form: { questions: pendingPart.questions },
+        form: { kind: 'questions', questions: pendingPart.questions },
         threadId: thread.id,
         toolCallId: pendingPart.toolCallId,
         workflowRunId: thread.workflowRunId,

@@ -894,7 +894,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         response: null,
         answeredAt: null,
       });
-      expect(pendingInputAsk.form).toEqual({ fields: form.settings.input });
+      expect(pendingInputAsk.form).toEqual({
+        kind: 'formFields',
+        fields: form.settings.input,
+      });
 
       const response = await submitForm({
         runId,
@@ -1476,7 +1479,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           toolCallId: 'ask-1',
           stepId: agent.id,
           workflowRunId: runId,
-          form: { questions: QUESTIONS },
+          form: { kind: 'questions', questions: QUESTIONS },
           response: null,
         },
       ]);
