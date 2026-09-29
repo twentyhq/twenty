@@ -1,11 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { type AskQuestionItem } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldActorSource } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
-import { IsNull, Not } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { type FindOptionsWhere, IsNull, Not } from 'typeorm';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -17,321 +14,254 @@ import {
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
+import {
+  InputAskException,
+  InputAskExceptionCode,
+} from 'src/modules/input-ask/input-ask.exception';
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+
+// A form step's Ask is keyed by its run and step; any Ask a tool call opened,
+// in a chat or in a run, by the conversation and the call.
+export type InputAskKey =
+  | { workflowRunId: string; stepId: string }
+  | { threadId: string; toolCallId: string };
+
+export type InputAskToOpen = Pick<
+  InputAskWorkspaceEntity,
+  'name' | 'form' | 'assigneeId'
+> &
+  Partial<
+    Pick<
+      InputAskWorkspaceEntity,
+      'workflowRunId' | 'stepId' | 'threadId' | 'toolCallId'
+    >
+  >;
 
 const isDuplicateEntry = (error: unknown): boolean =>
   error instanceof TwentyOrmException &&
   error.code === TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED;
 
+const isToolCallKey = (
+  key: InputAskKey,
+): key is { threadId: string; toolCallId: string } => 'toolCallId' in key;
+
+const buildKeyWhere = (
+  key: InputAskKey,
+): FindOptionsWhere<InputAskWorkspaceEntity> =>
+  isToolCallKey(key)
+    ? { threadId: key.threadId, toolCallId: key.toolCallId }
+    : {
+        workflowRunId: key.workflowRunId,
+        stepId: key.stepId,
+        toolCallId: IsNull(),
+      };
+
 @Injectable()
 export class InputAskWorkspaceService {
+  private readonly logger = new Logger(InputAskWorkspaceService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // A run can re-enter a form it already asked about (a retried worker, a
-  // retried run, the next item of an iterator): the previous answer belonged
-  // to the previous execution, while a question still pending may be one
-  // someone is looking at.
-  async openForFormStep({
+  // A run can re-enter a step it already asked about (a retried worker, a
+  // retried run, the next item of an iterator): the key's unique index turns
+  // that into a duplicate, and the existing Ask is asked again rather than a
+  // second one opened.
+  async open({
     workspaceId,
-    workflowRunId,
-    stepId,
-    stepName,
-    fields,
+    inputAsk,
   }: {
     workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
-    stepName: string;
-    fields: FormFieldMetadata[];
+    inputAsk: InputAskToOpen;
   }): Promise<void> {
+    const key = this.getKey(inputAsk);
+
     if (!(await this.hasInputAskObject(workspaceId))) {
+      // A form can still be submitted without its Ask, while a tool call is
+      // only ever answered through it.
+      if (isToolCallKey(key)) {
+        throw new InputAskException(
+          'This workspace cannot record a request for input yet',
+          InputAskExceptionCode.INPUT_ASK_OBJECT_MISSING,
+        );
+      }
+
       return;
     }
 
     await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const reopenResult = await inputAskRepository.update(
-        {
-          workflowRunId,
-          stepId,
-          toolCallId: IsNull(),
-          status: Not(InputAskStatus.PENDING),
-        },
-        {
-          name: stepName,
+      const position = await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
+        workspaceId,
+      });
+
+      try {
+        await inputAskRepository.insert({
+          ...inputAsk,
           status: InputAskStatus.PENDING,
-          form: { fields },
+          position,
+        });
+
+        return;
+      } catch (error) {
+        if (!isDuplicateEntry(error)) {
+          throw error;
+        }
+      }
+
+      await inputAskRepository.update(
+        { ...buildKeyWhere(key), status: Not(InputAskStatus.PENDING) },
+        {
+          name: inputAsk.name,
+          form: inputAsk.form,
+          status: InputAskStatus.PENDING,
           response: null,
           answeredAt: null,
         },
       );
-
-      if ((reopenResult.affected ?? 0) > 0) {
-        return;
-      }
-
-      const existingInputAsk = await inputAskRepository.findOne({
-        where: { workflowRunId, stepId, toolCallId: IsNull() },
-      });
-
-      if (isDefined(existingInputAsk)) {
-        return;
-      }
-
-      // Two workers can clear the read above at the same time, and the loser
-      // of that race wants the winner's row rather than a failed step.
-      await this.insertUnlessPresent({
-        workspaceId,
-        inputAskRepository,
-        inputAsk: {
-          name: stepName,
-          form: { fields },
-          workflowRunId,
-          stepId,
-        },
-      });
     });
   }
 
-  // Records the answer the run has already accepted. The run's own step
-  // transition is what refuses a second submission, so nothing here gates
-  // anything: a row that is missing, canceled or already answered simply has
-  // nothing left to record.
-  async answerForFormStep({
+  // Moving an Ask out of PENDING is the claim on it: of two concurrent
+  // answers only one sees a row change, so only one resumes what waits on it.
+  async answer({
     workspaceId,
-    workflowRunId,
-    stepId,
+    key,
     response,
   }: {
     workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
+    key: InputAskKey;
     response: Record<string, unknown>;
-  }): Promise<void> {
+  }): Promise<boolean> {
     if (!(await this.hasInputAskObject(workspaceId))) {
-      return;
+      return false;
     }
 
-    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      await inputAskRepository.update(
-        {
-          workflowRunId,
-          stepId,
-          toolCallId: IsNull(),
-          status: InputAskStatus.PENDING,
-        },
+    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      const result = await inputAskRepository.update(
+        { ...buildKeyWhere(key), status: InputAskStatus.PENDING },
         {
           status: InputAskStatus.ANSWERED,
           response,
           answeredAt: new Date().toISOString(),
         },
       );
+
+      return (result.affected ?? 0) > 0;
     });
   }
 
-  // An agent can ask several times in one conversation, each question its own
-  // Ask keyed on the tool call that asked it. The conversation's pending
-  // marker and the run's step stay what gate the answer; this only records
-  // the question where people can find it.
-  async openForAgentQuestion({
+  async cancel({
     workspaceId,
-    workflowRunId,
-    stepId,
-    threadId,
-    toolCallId,
-    name,
-    questions,
+    match,
   }: {
     workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
-    threadId: string;
-    toolCallId: string;
-    name: string;
-    questions: AskQuestionItem[];
-  }): Promise<void> {
+    match: InputAskKey | { workflowRunId: string };
+  }): Promise<boolean> {
     if (!(await this.hasInputAskObject(workspaceId))) {
-      return;
+      return false;
     }
 
-    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      // A retried recording of the same question wants the existing row.
-      await this.insertUnlessPresent({
-        workspaceId,
-        inputAskRepository,
-        inputAsk: {
-          name,
-          form: { questions },
-          workflowRunId,
-          stepId,
-          threadId,
-          toolCallId,
-        },
+    const cancelPending = () =>
+      this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+        const result = await inputAskRepository.update(
+          {
+            ...('stepId' in match || 'toolCallId' in match
+              ? buildKeyWhere(match)
+              : { workflowRunId: match.workflowRunId }),
+            status: InputAskStatus.PENDING,
+          },
+          { status: InputAskStatus.CANCELED },
+        );
+
+        return (result.affected ?? 0) > 0;
       });
-    });
+
+    if ('stepId' in match || 'toolCallId' in match) {
+      return cancelPending();
+    }
+
+    // Closing what an ended run left pending is housekeeping: the run is over
+    // either way, and a failure here only leaves a stale Ask behind.
+    try {
+      return await cancelPending();
+    } catch (error) {
+      this.logger.error(
+        `Failed to cancel the Asks of workflow run ${match.workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return false;
+    }
   }
 
-  // A conversation has at most one question pending at a time, the one its
-  // pending marker points at, so the thread alone identifies the Ask.
-  async answerPendingForThread({
+  async findPendingForThread({
     workspaceId,
     threadId,
-    response,
   }: {
     workspaceId: string;
     threadId: string;
-    response: Record<string, unknown>;
-  }): Promise<string | null> {
+  }): Promise<Pick<
+    InputAskWorkspaceEntity,
+    'id' | 'toolCallId' | 'workflowRunId'
+  > | null> {
     if (!(await this.hasInputAskObject(workspaceId))) {
       return null;
     }
 
-    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const pendingInputAsk = await inputAskRepository.findOne({
+    return this.executeAsSystem(workspaceId, (inputAskRepository) =>
+      inputAskRepository.findOne({
         where: { threadId, status: InputAskStatus.PENDING },
-        select: { id: true },
-      });
-
-      if (!isDefined(pendingInputAsk)) {
-        return null;
-      }
-
-      await inputAskRepository.update(
-        { id: pendingInputAsk.id, status: InputAskStatus.PENDING },
-        {
-          status: InputAskStatus.ANSWERED,
-          response,
-          answeredAt: new Date().toISOString(),
-        },
-      );
-
-      return pendingInputAsk.id;
-    });
+        select: { id: true, toolCallId: true, workflowRunId: true },
+      }),
+    );
   }
 
-  // Undoes answerPendingForThread when the answer it recorded is rolled back,
-  // so the Ask reads pending again alongside its reopened question.
-  async reopenAnswered({
+  // Read as the caller: an Ask they cannot read is one they cannot answer.
+  async findReadableForToolCall({
     workspaceId,
-    inputAskId,
+    threadId,
+    toolCallId,
   }: {
     workspaceId: string;
-    inputAskId: string;
-  }): Promise<void> {
-    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      await inputAskRepository.update(
-        { id: inputAskId, status: InputAskStatus.ANSWERED },
-        { status: InputAskStatus.PENDING, response: null, answeredAt: null },
-      );
-    });
-  }
-
-  // A run that ends before its answer arrives leaves the question unanswerable,
-  // and an unanswerable question left PENDING sits in someone's list forever.
-  // A form whose step completed was answered even if recording the answer
-  // failed at submission, so it closes as answered from the step's result.
-  async cancelPendingForWorkflowRun({
-    workspaceId,
-    workflowRunId,
-    stepInfos,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    stepInfos: Record<string, WorkflowRunStepInfo>;
-  }): Promise<void> {
+    threadId: string;
+    toolCallId: string;
+  }): Promise<Pick<
+    InputAskWorkspaceEntity,
+    'id' | 'status' | 'workflowRunId'
+  > | null> {
     if (!(await this.hasInputAskObject(workspaceId))) {
-      return;
+      return null;
     }
 
-    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const pendingFormInputAsks = await inputAskRepository.find({
-        where: {
-          workflowRunId,
-          status: InputAskStatus.PENDING,
-          toolCallId: IsNull(),
-        },
-        select: { id: true, stepId: true },
-      });
-
-      for (const pendingFormInputAsk of pendingFormInputAsks) {
-        const stepInfo = isDefined(pendingFormInputAsk.stepId)
-          ? stepInfos[pendingFormInputAsk.stepId]
-          : undefined;
-
-        if (stepInfo?.status !== StepStatus.SUCCESS) {
-          continue;
-        }
-
-        await inputAskRepository.update(
-          { id: pendingFormInputAsk.id, status: InputAskStatus.PENDING },
-          {
-            status: InputAskStatus.ANSWERED,
-            response: isPlainObject(stepInfo.result) ? stepInfo.result : null,
-            answeredAt: new Date().toISOString(),
-          },
-        );
-      }
-
-      await inputAskRepository.update(
-        { workflowRunId, status: InputAskStatus.PENDING },
-        { status: InputAskStatus.CANCELED },
-      );
-    });
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () =>
+      this.workspaceOrmManager
+        .getRepositoryWithContextPermissions<InputAskWorkspaceEntity>(
+          'inputAsk',
+        )
+        .findOne({
+          where: { threadId, toolCallId },
+          select: { id: true, status: true, workflowRunId: true },
+        }),
+    );
   }
 
-  private async insertUnlessPresent({
-    workspaceId,
-    inputAskRepository,
-    inputAsk,
-  }: {
-    workspaceId: string;
-    inputAskRepository: WorkspaceRepository<InputAskWorkspaceEntity>;
-    inputAsk: Pick<InputAskWorkspaceEntity, 'name' | 'form' | 'stepId'> &
-      Partial<Pick<InputAskWorkspaceEntity, 'threadId' | 'toolCallId'>> & {
-        workflowRunId: string;
-      };
-  }): Promise<void> {
-    const position = await this.recordPositionService.buildRecordPosition({
-      value: 'first',
-      objectMetadata: { isCustom: false, nameSingular: 'inputAsk' },
-      workspaceId,
-    });
-
-    try {
-      await inputAskRepository.insert({
-        ...inputAsk,
-        status: InputAskStatus.PENDING,
-        assigneeId: await this.findRunInitiatorWorkspaceMemberId(
-          inputAsk.workflowRunId,
-        ),
-        position,
-      });
-    } catch (error) {
-      if (!isDuplicateEntry(error)) {
-        throw error;
-      }
+  private getKey(inputAsk: InputAskToOpen): InputAskKey {
+    if (isDefined(inputAsk.threadId) && isDefined(inputAsk.toolCallId)) {
+      return { threadId: inputAsk.threadId, toolCallId: inputAsk.toolCallId };
     }
-  }
 
-  // Whoever started a run is who it is waiting on unless someone reassigns
-  // it; a run started by a trigger has nobody to default to.
-  private async findRunInitiatorWorkspaceMemberId(
-    workflowRunId: string,
-  ): Promise<string | null> {
-    const workflowRun = await this.workspaceOrmManager
-      .getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
-        shouldBypassPermissionChecks: true,
-      })
-      .findOne({ where: { id: workflowRunId } });
+    if (isDefined(inputAsk.workflowRunId) && isDefined(inputAsk.stepId)) {
+      return { workflowRunId: inputAsk.workflowRunId, stepId: inputAsk.stepId };
+    }
 
-    return workflowRun?.createdBy?.source === FieldActorSource.MANUAL
-      ? (workflowRun.createdBy.workspaceMemberId ?? null)
-      : null;
+    throw new InputAskException(
+      'An Ask needs a tool call or a workflow step to be answered through',
+      InputAskExceptionCode.INPUT_ASK_WITHOUT_KEY,
+    );
   }
 
   // The object reaches existing workspaces through a workspace upgrade command,

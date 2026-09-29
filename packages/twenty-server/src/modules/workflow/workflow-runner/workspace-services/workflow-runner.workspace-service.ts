@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -8,7 +8,6 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -16,6 +15,7 @@ import {
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
+import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -27,14 +27,15 @@ import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import {
+  type StepInputResolution,
+  WorkflowRunWorkspaceService,
+} from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
-  private readonly logger = new Logger(WorkflowRunnerWorkspaceService.name);
-
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -43,7 +44,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
-    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
+    private readonly workflowAgentConversationWorkspaceService: WorkflowAgentConversationWorkspaceService,
   ) {}
 
   async run({
@@ -155,6 +156,7 @@ export class WorkflowRunnerWorkspaceService {
           status: StepStatus.SUCCESS,
           result: enrichedResponse,
         },
+        inputAskResponse: enrichedResponse,
         workspaceId,
         workflowRunId,
       });
@@ -169,29 +171,77 @@ export class WorkflowRunnerWorkspaceService {
       );
     }
 
-    // Recorded before the run is resumed: the resumed run can reach its end,
-    // and ending a run cancels whatever is still pending, so an Ask answered
-    // afterwards would read as canceled on a form somebody did answer. The
-    // submission is already accepted, so a failure here must not keep the run
-    // from resuming; the run's end records the answer from the step instead.
-    try {
-      await this.inputAskWorkspaceService.answerForFormStep({
-        workspaceId,
-        workflowRunId,
-        stepId,
-        response: enrichedResponse,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Could not record the answer to form step ${stepId} of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-
     await this.resume({
       workspaceId,
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+  }
+
+  // The answer resumes the agent step that asked, not the steps after it:
+  // the agent continues its conversation with the answer as the last message.
+  async resolveAgentStepToolCall({
+    workspaceId,
+    workflowRunId,
+    threadId,
+    toolCallId,
+    response,
+    toolResult,
+    answerText,
+    senderUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    threadId: string;
+    toolCallId: string;
+    response: Record<string, unknown>;
+    toolResult: Record<string, unknown>;
+    answerText: string;
+    senderUserWorkspaceId: string;
+  }): Promise<StepInputResolution> {
+    const resolution =
+      await this.workflowRunWorkspaceService.resolveStepAwaitingToolCall({
+        threadId,
+        toolCallId,
+        response,
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (resolution.status !== 'RESOLVED') {
+      return resolution;
+    }
+
+    // The Ask is answered and cannot be answered again, so a resume that
+    // cannot be recorded or scheduled fails the run, which a retry resumes
+    // from the answered conversation.
+    try {
+      await this.workflowAgentConversationWorkspaceService.recordAnswer({
+        workspaceId,
+        threadId,
+        toolCallId,
+        toolResult,
+        answerText,
+        senderUserWorkspaceId,
+      });
+
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        { workspaceId, workflowRunId, stepIdsToRetry: [resolution.stepId] },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
+    } catch (error) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: 'The run could not resume after its question was answered',
+      });
+
+      throw error;
+    }
+
+    return resolution;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

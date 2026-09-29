@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,6 +21,7 @@ import {
 import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
+import { type WorkflowPendingAsk } from 'src/modules/workflow/workflow-executor/types/workflow-pending-ask.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
@@ -28,15 +29,14 @@ import {
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { findStepIdByThreadId } from 'src/modules/workflow/workflow-runner/utils/find-step-id-by-thread-id.util';
+import { getRunInitiatorWorkspaceMemberId } from 'src/modules/workflow/workflow-runner/utils/get-run-initiator-workspace-member-id.util';
 
-export type StepAnswerRelease =
-  | { status: 'RELEASED'; stepId: string }
-  | { status: 'NOT_YET_AWAITING' | 'NO_LONGER_AWAITING' };
+export type StepInputResolution =
+  | { status: 'RESOLVED'; stepId: string }
+  | { status: 'NOT_AWAITING' };
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
-  private readonly logger = new Logger(WorkflowRunWorkspaceService.name);
-
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
@@ -205,20 +205,11 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
     // A run that ends can no longer consume an answer, so an Ask still
-    // waiting on one stops being actionable here rather than outliving it.
-    // The run has ended either way: a failure here only leaves a stale Ask,
-    // and must not turn the run's outcome into a failure.
-    try {
-      await this.inputAskWorkspaceService.cancelPendingForWorkflowRun({
-        workspaceId,
-        workflowRunId,
-        stepInfos: updatedStepInfos,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to close the Asks of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    // waiting on one stops being actionable rather than outliving it.
+    await this.inputAskWorkspaceService.cancel({
+      workspaceId,
+      match: { workflowRunId },
+    });
 
     const metricKey =
       status === WorkflowRunStatus.COMPLETED
@@ -241,15 +232,20 @@ export class WorkflowRunWorkspaceService {
     }
   }
 
+  // A step that parks on a person opens its Ask in the same locked write, so
+  // an answer can never find the step waiting without it, and a run ending
+  // right after cannot miss it when canceling what is left pending.
   @WithLock('workflowRunId')
   async updateWorkflowRunStepInfo({
     stepId,
     stepInfo,
+    pendingAsk,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: WorkflowRunStepInfo;
+    pendingAsk?: WorkflowPendingAsk;
     workflowRunId: string;
     workspaceId: string;
   }) {
@@ -257,6 +253,18 @@ export class WorkflowRunWorkspaceService {
       workflowRunId,
       workspaceId,
     });
+
+    if (isDefined(pendingAsk) && stepInfo.status === StepStatus.PENDING) {
+      await this.inputAskWorkspaceService.open({
+        workspaceId,
+        inputAsk: {
+          ...pendingAsk,
+          workflowRunId,
+          stepId,
+          assigneeId: getRunInitiatorWorkspaceMemberId(workflowRunToUpdate),
+        },
+      });
+    }
 
     const partialUpdate = {
       state: {
@@ -423,11 +431,13 @@ export class WorkflowRunWorkspaceService {
   async updateStepInfoIfPending({
     stepId,
     stepInfo,
+    inputAskResponse,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: Partial<WorkflowRunStepInfo>;
+    inputAskResponse?: Record<string, unknown>;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -443,6 +453,17 @@ export class WorkflowRunWorkspaceService {
       currentStepInfo?.status !== StepStatus.PENDING
     ) {
       return false;
+    }
+
+    // Answered under the lock that accepts the submission, so an accepted
+    // submission always reads answered and a refused one never does. A form
+    // parked before its workspace had Asks has none, which refuses nothing.
+    if (isDefined(inputAskResponse)) {
+      await this.inputAskWorkspaceService.answer({
+        workspaceId,
+        key: { workflowRunId, stepId },
+        response: inputAskResponse,
+      });
     }
 
     await this.updateWorkflowRun({
@@ -462,23 +483,26 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // Hands the step whose agent asked a question in this conversation back to
-  // the executor, once and only for that question: a stop, a retry or another
-  // loop iteration has moved the step on or replaced its conversation. A step
-  // still RUNNING has asked but not yet been parked, which an answer only has
-  // to wait out.
+  // Answers the Ask an agent step is waiting on and hands the step back to
+  // the executor, once and only for that Ask: a stop, a retry or another loop
+  // iteration has moved the step on or replaced its conversation. The Ask is
+  // answered under the run lock, so a run ending in between cannot cancel an
+  // answer it accepts, and of two concurrent answers the second finds it
+  // answered.
   @WithLock('workflowRunId')
-  async releaseStepAwaitingAnswer({
+  async resolveStepAwaitingToolCall({
     threadId,
+    toolCallId,
+    response,
     workflowRunId,
     workspaceId,
-    onReleased,
   }: {
     threadId: string;
+    toolCallId: string;
+    response: Record<string, unknown>;
     workflowRunId: string;
     workspaceId: string;
-    onReleased?: () => Promise<void>;
-  }): Promise<StepAnswerRelease> {
+  }): Promise<StepInputResolution> {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
@@ -492,17 +516,20 @@ export class WorkflowRunWorkspaceService {
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
       !isDefined(stepId) ||
       !isDefined(currentStepInfo) ||
-      isDefined(currentStepInfo.error)
+      isDefined(currentStepInfo.error) ||
+      currentStepInfo.status !== StepStatus.PENDING
     ) {
-      return { status: 'NO_LONGER_AWAITING' };
+      return { status: 'NOT_AWAITING' };
     }
 
-    if (currentStepInfo.status === StepStatus.RUNNING) {
-      return { status: 'NOT_YET_AWAITING' };
-    }
+    const hasAnswered = await this.inputAskWorkspaceService.answer({
+      workspaceId,
+      key: { threadId, toolCallId },
+      response,
+    });
 
-    if (currentStepInfo.status !== StepStatus.PENDING) {
-      return { status: 'NO_LONGER_AWAITING' };
+    if (!hasAnswered) {
+      return { status: 'NOT_AWAITING' };
     }
 
     await this.updateWorkflowRun({
@@ -519,97 +546,7 @@ export class WorkflowRunWorkspaceService {
       },
     });
 
-    // Still under the run lock, so a run ending right after the release cannot
-    // close what this records as left open. What it records only mirrors the
-    // answer, so it never undoes a release the run already accepted.
-    await this.runBestEffort({
-      workflowRunId,
-      workspaceId,
-      operation: 'record a released answer',
-      callback: onReleased,
-    });
-
-    return { status: 'RELEASED', stepId };
-  }
-
-  // Undoes releaseStepAwaitingAnswer when the resume it prepared could not be
-  // scheduled, so the question can be answered again instead of stranding the
-  // run on a step nobody will execute.
-  @WithLock('workflowRunId')
-  async restoreStepAwaitingAnswer({
-    stepId,
-    threadId,
-    workflowRunId,
-    workspaceId,
-    onRestored,
-  }: {
-    stepId: string;
-    threadId: string;
-    workflowRunId: string;
-    workspaceId: string;
-    onRestored?: () => Promise<void>;
-  }): Promise<boolean> {
-    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
-      workflowRunId,
-      workspaceId,
-    });
-
-    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
-
-    if (
-      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
-      currentStepInfo?.status !== StepStatus.NOT_STARTED ||
-      currentStepInfo.threadId !== threadId
-    ) {
-      return false;
-    }
-
-    await this.updateWorkflowRun({
-      workflowRunId,
-      workspaceId,
-      partialUpdate: {
-        state: {
-          ...workflowRunToUpdate.state,
-          stepInfos: {
-            ...workflowRunToUpdate.state?.stepInfos,
-            [stepId]: { ...currentStepInfo, status: StepStatus.PENDING },
-          },
-        },
-      },
-    });
-
-    await this.runBestEffort({
-      workflowRunId,
-      workspaceId,
-      operation: 'reopen a restored answer',
-      callback: onRestored,
-    });
-
-    return true;
-  }
-
-  private async runBestEffort({
-    workflowRunId,
-    workspaceId,
-    operation,
-    callback,
-  }: {
-    workflowRunId: string;
-    workspaceId: string;
-    operation: string;
-    callback?: () => Promise<void>;
-  }): Promise<void> {
-    if (!isDefined(callback)) {
-      return;
-    }
-
-    try {
-      await callback();
-    } catch (error) {
-      this.logger.error(
-        `Failed to ${operation} for workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    return { status: 'RESOLVED', stepId };
   }
 
   @WithLock('workflowRunId')

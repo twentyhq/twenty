@@ -112,8 +112,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           if (isDefined(resumedThreadId)) {
             return this.workflowAgentConversationService.recordContinuation({
               workspaceId,
-              workflowRunId: runInfo.workflowRunId,
-              stepId: currentStepId,
               threadId: resumedThreadId,
               agentId: agent?.id ?? null,
               executionResult,
@@ -213,13 +211,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     if (executionResult.isPaused === true) {
       // The conversation is where the question is answered, so without it the
       // run would wait for an answer nobody can give.
-      if (recordedConversation?.isAwaitingAnswer !== true) {
+      if (!isDefined(recordedConversation?.pendingAsk)) {
         return {
           error: 'Agent asked a question that could not be recorded.',
         };
       }
 
-      return { pendingEvent: true };
+      return { pendingEvent: true, pendingAsk: recordedConversation.pendingAsk };
     }
 
     return {

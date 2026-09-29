@@ -210,25 +210,29 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
         workspaceId,
       });
 
+      const recordedConversation =
+        await this.workflowAgentConversationService.recordExecution({
+          workspaceId,
+          workflowRunId,
+          stepId: agentStep.id,
+          title: agentStep.name,
+          agentId: null,
+          prompt: seededRun.prompt,
+          initiatorUserWorkspaceId: null,
+          executionResult: this.buildAskingResult({
+            toolCallId: seedId(`toolCall:${seededRun.key}`),
+            questions: seededRun.questions,
+          }),
+        });
+
+      // Parked the way the executor parks a step that asked, which is what
+      // opens its Ask.
       await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
         stepId: agentStep.id,
         stepInfo: { status: StepStatus.PENDING },
+        pendingAsk: recordedConversation?.pendingAsk ?? undefined,
         workflowRunId,
         workspaceId,
-      });
-
-      await this.workflowAgentConversationService.recordExecution({
-        workspaceId,
-        workflowRunId,
-        stepId: agentStep.id,
-        title: agentStep.name,
-        agentId: null,
-        prompt: seededRun.prompt,
-        initiatorUserWorkspaceId: null,
-        executionResult: this.buildAskingResult({
-          toolCallId: seedId(`toolCall:${seededRun.key}`),
-          questions: seededRun.questions,
-        }),
       });
     }
   }
