@@ -1,7 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { Queue } from 'bullmq';
-import IORedis from 'ioredis';
 import request from 'supertest';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
@@ -18,7 +16,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -283,7 +280,7 @@ const findVersionId = async (workflow: TestWorkflow): Promise<string> => {
 const runWorkflow = async (workflow: TestWorkflow): Promise<string> => {
   const response = await workflowGraphqlRequest(RUN_CORE_WORKFLOW_VERSION, {
     input: { coreWorkflowVersionId: await findVersionId(workflow) },
-  }).timeout(90000);
+  });
 
   expect(response.body.errors).toBeUndefined();
 
@@ -292,8 +289,6 @@ const runWorkflow = async (workflow: TestWorkflow): Promise<string> => {
 
 type TestWorkflowRun = {
   status: string;
-  enqueuedAt: string | null;
-  startedAt: string | null;
   state: {
     stepInfos: Record<string, { status: string; error?: string }>;
   };
@@ -301,7 +296,7 @@ type TestWorkflowRun = {
 
 const findRun = async (workflowRunId: string): Promise<TestWorkflowRun> => {
   const [workflowRun] = await globalThis.testDataSource.query(
-    `SELECT status, state, "enqueuedAt", "startedAt" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+    `SELECT status, state FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
     [workflowRunId],
   );
 
@@ -311,9 +306,8 @@ const findRun = async (workflowRunId: string): Promise<TestWorkflowRun> => {
 const waitForRun = async (
   workflowRunId: string,
   isDone: (workflowRun: TestWorkflowRun) => boolean,
-  maxAttempts = 900,
 ): Promise<TestWorkflowRun> => {
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  for (let attempt = 0; attempt < 600; attempt++) {
     const workflowRun = await findRun(workflowRunId);
 
     if (isDone(workflowRun)) {
@@ -326,80 +320,10 @@ const waitForRun = async (
   return findRun(workflowRunId);
 };
 
-const withTimeout = <TResult>(
-  promise: Promise<TResult>,
-  label: string,
-  timeoutMs: number,
-): Promise<TResult> =>
-  Promise.race([
-    promise,
-    new Promise<TResult>((_, reject) =>
-      setTimeout(
-        () => reject(new Error(`${label} did not settle in ${timeoutMs}ms`)),
-        timeoutMs,
-      ),
-    ),
-  ]);
-
-const logSetupPhase = (phase: string) =>
-  // oxlint-disable-next-line no-console
-  console.log(
-    `[app workflow permissions] ${new Date().toISOString()} ${phase}`,
+const waitForRunToEnd = (workflowRunId: string) =>
+  waitForRun(workflowRunId, ({ status }) =>
+    ['COMPLETED', 'FAILED', 'STOPPED'].includes(status),
   );
-
-const hasRunEnded = ({ status }: TestWorkflowRun) =>
-  ['COMPLETED', 'FAILED', 'STOPPED'].includes(status);
-
-const waitForRunToEnd = (workflowRunId: string, maxAttempts?: number) =>
-  waitForRun(workflowRunId, hasRunEnded, maxAttempts);
-
-const describeWorkflowQueueJobsOfRun = async (workflowRunId: string) => {
-  const connection = new IORedis(
-    process.env.REDIS_QUEUE_URL ??
-      process.env.REDIS_URL ??
-      'redis://localhost:6379',
-    { maxRetriesPerRequest: null },
-  );
-  const queue = new Queue(MessageQueue.workflowQueue, { connection });
-
-  try {
-    const jobs = await queue.getJobs(
-      [
-        'waiting',
-        'prioritized',
-        'active',
-        'delayed',
-        'failed',
-        'completed',
-        'paused',
-        'waiting-children',
-      ],
-      0,
-      1000,
-    );
-
-    return {
-      isPaused: await queue.isPaused(),
-      counts: await queue.getJobCounts(),
-      runJobs: await Promise.all(
-        jobs
-          .filter((job) => job.data?.workflowRunId === workflowRunId)
-          .map(async (job) => ({
-            name: job.name,
-            state: await job.getState(),
-            attemptsMade: job.attemptsMade,
-            failedReason: job.failedReason,
-            timestamp: job.timestamp,
-            processedOn: job.processedOn,
-            finishedOn: job.finishedOn,
-          })),
-      ),
-    };
-  } finally {
-    await queue.close();
-    await connection.quit();
-  }
-};
 
 const countRecordsByName = async (
   objectTable: 'company' | 'opportunity',
@@ -415,12 +339,7 @@ const countRecordsByName = async (
 };
 
 describe('application workflow execution permissions', () => {
-  let firstCompanyRun: TestWorkflowRun;
-  let firstCompanyRunQueueJobs: unknown;
-
   beforeAll(async () => {
-    jest.useRealTimers();
-
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
       value: true,
@@ -433,34 +352,26 @@ describe('application workflow execution permissions', () => {
       description: 'Application whose workflows run with its role',
       sourcePath: 'application-workflow-permissions',
     });
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: OTHER_APP_ID,
+      name: 'Other application',
+      description: 'Application that tries to start another one workflows',
+      sourcePath: 'application-workflow-permissions-other',
+    });
+    jest.useRealTimers();
 
     const installation = await syncApplication({
       manifest: buildManifest({ canManageCompanies: true }),
     });
 
     expect(installation.errors).toBeUndefined();
-    logSetupPhase('application installed');
 
-    const firstCompanyRunId = await runWorkflow(CREATE_COMPANY_WORKFLOW);
+    const otherInstallation = await syncApplication({
+      manifest: OTHER_APPLICATION_MANIFEST,
+    });
 
-    logSetupPhase(`first run ${firstCompanyRunId} started`);
-
-    firstCompanyRun = await withTimeout(
-      waitForRunToEnd(firstCompanyRunId, 600),
-      'Waiting for the first run',
-      120000,
-    );
-
-    logSetupPhase(`first run status ${firstCompanyRun.status}`);
-
-    if (!hasRunEnded(firstCompanyRun)) {
-      firstCompanyRunQueueJobs = await withTimeout(
-        describeWorkflowQueueJobsOfRun(firstCompanyRunId),
-        'Reading the workflow queue',
-        30000,
-      ).catch((error: Error) => error.message);
-    }
-  }, 300000);
+    expect(otherInstallation.errors).toBeUndefined();
+  }, 120000);
 
   afterAll(async () => {
     await globalThis.testDataSource.query(
@@ -492,14 +403,14 @@ describe('application workflow execution permissions', () => {
       value: false,
       expectToFail: false,
     });
-    jest.useFakeTimers();
   });
 
   it('runs a record step the application role allows', async () => {
-    expect({
-      run: firstCompanyRun,
-      queueJobs: firstCompanyRunQueueJobs,
-    }).toMatchObject({ run: { status: 'COMPLETED' } });
+    const workflowRun = await waitForRunToEnd(
+      await runWorkflow(CREATE_COMPANY_WORKFLOW),
+    );
+
+    expect(workflowRun.status).toBe('COMPLETED');
     expect(await countRecordsByName('company', COMPANY_NAME)).toBe(1);
   }, 120000);
 
@@ -591,19 +502,6 @@ describe('application workflow execution permissions', () => {
   }, 120000);
 
   it('only lets an application token start that application workflows', async () => {
-    await setupApplicationForSync({
-      applicationUniversalIdentifier: OTHER_APP_ID,
-      name: 'Other application',
-      description: 'Application that tries to start another one workflows',
-      sourcePath: 'application-workflow-permissions-other',
-    });
-
-    const otherInstallation = await syncApplication({
-      manifest: OTHER_APPLICATION_MANIFEST,
-    });
-
-    expect(otherInstallation.errors).toBeUndefined();
-
     const coreWorkflowVersionId = await findVersionId(CREATE_COMPANY_WORKFLOW);
     const [{ id: otherApplicationId }] = await globalThis.testDataSource.query(
       `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
