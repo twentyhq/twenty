@@ -16,8 +16,12 @@ export const parseMediaQueryModifier = (
     return { modifier: null, remainingFirstPart: firstQueryPart };
   }
 
+  const [modifierWithTrailingWhitespace, modifierKeyword] = modifierMatch;
+
   return {
-    modifier: modifierMatch[1] === 'not' ? 'not' : 'only',
-    remainingFirstPart: firstQueryPart.slice(modifierMatch[0].length),
+    modifier: modifierKeyword === 'not' ? 'not' : 'only',
+    remainingFirstPart: firstQueryPart.slice(
+      modifierWithTrailingWhitespace.length,
+    ),
   };
 };

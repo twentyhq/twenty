@@ -70,6 +70,7 @@ describe('installMatchMediaPolyfill', () => {
     );
     expect(matchMedia('(min-resolution: 192dpi)').matches).toBe(true);
     expect(matchMedia('(min-resolution: 3dppx)').matches).toBe(false);
+    expect(matchMedia('(min-device-pixel-ratio: 2)').matches).toBe(false);
   });
 
   it.each([
@@ -248,5 +249,52 @@ describe('installMatchMediaPolyfill', () => {
 
     expect(typeof globalScope.matchMedia).toBe('function');
     expect(globalScope.matchMedia).toBe(polyfillWindow.matchMedia);
+  });
+
+  it('should ignore CSS comments the way browsers do', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(matchMedia('(min-width: 600px) /* tablet */').matches).toBe(true);
+    expect(matchMedia('/* tablet */ (min-width: 600px)').matches).toBe(true);
+    expect(matchMedia('(min-width: /* tablet */ 600px)').matches).toBe(true);
+    expect(
+      matchMedia('screen /* tablet */ and (min-width: 600px)').matches,
+    ).toBe(true);
+    expect(matchMedia('screen/**/and/**/(min-width: 600px)').matches).toBe(
+      true,
+    );
+    expect(matchMedia('/* */').matches).toBe(true);
+    expect(matchMedia('/* */, (min-width: 2000px)').matches).toBe(false);
+    expect(matchMedia('(unknown: "/*"), (min-width: 800px)').matches).toBe(
+      true,
+    );
+  });
+
+  it('should let the rest of a negated query decide around an unknown condition', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(matchMedia('not print and (hover: hover)').matches).toBe(true);
+    expect(matchMedia('not print and (min-width: calc(1px))').matches).toBe(
+      true,
+    );
+    expect(matchMedia('not all and (hover: hover)').matches).toBe(false);
+    expect(
+      matchMedia('not all and (hover: hover) and (min-width: 2000px)').matches,
+    ).toBe(true);
+    expect(matchMedia('not (hover: hover)').matches).toBe(false);
+    expect(matchMedia('print and (hover: hover)').matches).toBe(false);
+  });
+
+  it('should evaluate absolute length units', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1000 });
+
+    expect(matchMedia('(min-width: 480pt)').matches).toBe(true);
+    expect(matchMedia('(max-width: 10in)').matches).toBe(false);
+    expect(matchMedia('(max-width: 11in)').matches).toBe(true);
+    expect(matchMedia('(max-width: 25cm)').matches).toBe(false);
+    expect(matchMedia('(width >= 480pt)').matches).toBe(true);
   });
 });

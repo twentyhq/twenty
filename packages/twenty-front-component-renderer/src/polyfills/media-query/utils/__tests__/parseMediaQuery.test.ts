@@ -336,4 +336,138 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(min-width: 600px\u00a0)')).toBeNull();
     expect(parseMediaQuery('\u00a0screen')).toBeNull();
   });
+
+  it('should let the rest of a negated query decide when a condition is unknown', () => {
+    expect(parseMediaQuery('not print and (hover: hover)')).toEqual({
+      isNegated: true,
+      matchesMediaType: false,
+      conditions: [],
+    });
+    expect(
+      parseMediaQuery('not all and (hover: hover) and (min-width: 600px)'),
+    ).toEqual({
+      isNegated: true,
+      matchesMediaType: true,
+      conditions: [
+        {
+          kind: 'numeric',
+          source: 'componentWidth',
+          operator: '>=',
+          value: 600,
+        },
+      ],
+    });
+    expect(parseMediaQuery('not (hover: hover)')).toEqual({
+      isNegated: true,
+      matchesMediaType: true,
+      conditions: [],
+    });
+    expect(
+      parseMediaQuery('not print and ((min-width: 1px) and (max-width: 2px))'),
+    ).toEqual({
+      isNegated: true,
+      matchesMediaType: false,
+      conditions: [],
+    });
+  });
+
+  it('should reject malformed conditions even when negated', () => {
+    expect(parseMediaQuery('not print and garbage')).toBeNull();
+    expect(parseMediaQuery('not print and (hover)(pointer)')).toBeNull();
+  });
+
+  it('should close blocks left open at the end of the query', () => {
+    expect(parseMediaQuery('(min-width: 600px')?.conditions).toEqual([
+      {
+        kind: 'numeric',
+        source: 'componentWidth',
+        operator: '>=',
+        value: 600,
+      },
+    ]);
+    expect(parseMediaQuery('not print and ((hover)')).toEqual({
+      isNegated: true,
+      matchesMediaType: false,
+      conditions: [],
+    });
+  });
+
+  it('should treat a negative resolution as an unknown condition', () => {
+    expect(parseMediaQuery('(min-resolution: -1dppx)')).toBeNull();
+    expect(parseMediaQuery('not print and (min-resolution: -1dppx)')).toEqual({
+      isNegated: true,
+      matchesMediaType: false,
+      conditions: [],
+    });
+    expect(
+      parseMediaQuery('(-webkit-min-device-pixel-ratio: -1)')?.conditions,
+    ).toEqual([
+      {
+        kind: 'numeric',
+        source: 'devicePixelRatio',
+        operator: '>=',
+        value: -1,
+      },
+    ]);
+  });
+
+  it('should convert absolute length units and accept signed numbers', () => {
+    const readFirstConditionValue = (mediaQuery: string) => {
+      const [firstCondition] = parseMediaQuery(mediaQuery)?.conditions ?? [];
+
+      return firstCondition?.kind === 'numeric' ? firstCondition.value : null;
+    };
+
+    expect(readFirstConditionValue('(max-width: 10in)')).toBeCloseTo(960);
+    expect(readFirstConditionValue('(min-width: 480pt)')).toBeCloseTo(640);
+    expect(readFirstConditionValue('(min-width: 40pc)')).toBeCloseTo(640);
+    expect(readFirstConditionValue('(max-width: 2.54cm)')).toBeCloseTo(96);
+    expect(readFirstConditionValue('(max-width: 25.4mm)')).toBeCloseTo(96);
+    expect(readFirstConditionValue('(max-width: 101.6Q)')).toBeCloseTo(96);
+    expect(readFirstConditionValue('(min-width: +600px)')).toBe(600);
+    expect(readFirstConditionValue('(min-width: -1px)')).toBe(-1);
+    expect(readFirstConditionValue('(min-resolution: +2dppx)')).toBe(2);
+  });
+
+  it('should require the webkit prefix on device pixel ratio features', () => {
+    expect(parseMediaQuery('(device-pixel-ratio: 2)')).toBeNull();
+    expect(parseMediaQuery('(min-device-pixel-ratio: 2)')).toBeNull();
+    expect(parseMediaQuery('(max-device-pixel-ratio: 2)')).toBeNull();
+    expect(parseMediaQuery('(device-pixel-ratio)')).toBeNull();
+    expect(parseMediaQuery('(device-pixel-ratio >= 2)')).toBeNull();
+    expect(
+      parseMediaQuery('(-webkit-device-pixel-ratio >= 2)')?.conditions,
+    ).toEqual([
+      {
+        kind: 'numeric',
+        source: 'devicePixelRatio',
+        operator: '>=',
+        value: 2,
+      },
+    ]);
+  });
+
+  it('should fold only ASCII letters to lowercase', () => {
+    expect(parseMediaQuery('(PREFERS-COLOR-SCHEME: DARK)')?.conditions).toEqual(
+      [{ kind: 'keyword', featureName: 'prefers-color-scheme', value: 'dark' }],
+    );
+    expect(parseMediaQuery('(prefers-color-scheme: dar\u212A)')).toBeNull();
+  });
+
+  it('should parse long whitespace runs in linear time', () => {
+    const WHITESPACE_RUN_LENGTH = 100000;
+    const whitespaceRun = ' '.repeat(WHITESPACE_RUN_LENGTH);
+
+    expect(
+      parseMediaQuery(`(min-width:${whitespaceRun}600px)`)?.conditions,
+    ).toEqual([
+      {
+        kind: 'numeric',
+        source: 'componentWidth',
+        operator: '>=',
+        value: 600,
+      },
+    ]);
+    expect(parseMediaQuery(`(min-width: 1px)${whitespaceRun}x`)).toBeNull();
+  });
 });

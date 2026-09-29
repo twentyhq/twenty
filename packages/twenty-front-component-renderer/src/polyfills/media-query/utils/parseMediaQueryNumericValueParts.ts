@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-const MEDIA_QUERY_NUMERIC_VALUE_PATTERN = /^(\d+(?:\.\d+)?|\.\d+)([a-z]*)$/;
+const MEDIA_QUERY_NUMERIC_VALUE_PATTERN =
+  /^([+-]?(?:\d+(?:\.\d+)?|\.\d+))([a-z]*)$/;
 
 export const parseMediaQueryNumericValueParts = (
   valueString: string,

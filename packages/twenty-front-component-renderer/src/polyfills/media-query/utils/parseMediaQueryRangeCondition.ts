@@ -38,12 +38,13 @@ export const parseMediaQueryRangeCondition = (
   }
 
   const leftFeature = parseMediaQueryBareNumericFeature(leftOperand);
+  const hasSecondOperator = isDefined(secondOperator);
+
+  if (isDefined(leftFeature) && hasSecondOperator) {
+    return null;
+  }
 
   if (isDefined(leftFeature)) {
-    if (isDefined(secondOperator)) {
-      return null;
-    }
-
     const condition = createMediaQueryNumericCondition({
       feature: leftFeature,
       operator: firstOperator,
@@ -69,7 +70,7 @@ export const parseMediaQueryRangeCondition = (
     return null;
   }
 
-  if (!isDefined(secondOperator)) {
+  if (!hasSecondOperator) {
     return [firstCondition];
   }
 

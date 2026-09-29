@@ -12,6 +12,12 @@ export const parseMediaQueryResolutionToDevicePixelRatio = (
     return null;
   }
 
+  const isNegativeResolution = resolutionParts.numericValue < 0;
+
+  if (isNegativeResolution) {
+    return null;
+  }
+
   const devicePixelRatioPerUnit =
     MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO.get(resolutionParts.unit);
 

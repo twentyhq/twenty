@@ -1,92 +1,73 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
 import { MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/MatchingMediaTypes';
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
-import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
 import { isMediaQueryTypeIdentifier } from '@/polyfills/media-query/utils/isMediaQueryTypeIdentifier';
-import { parseMediaQueryCondition } from '@/polyfills/media-query/utils/parseMediaQueryCondition';
+import { normalizeMediaQueryString } from '@/polyfills/media-query/utils/normalizeMediaQueryString';
+import { parseMediaQueryConditionParts } from '@/polyfills/media-query/utils/parseMediaQueryConditionParts';
 import { parseMediaQueryModifier } from '@/polyfills/media-query/utils/parseMediaQueryModifier';
-import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
+import { splitCssAtTopLevel } from '@/polyfills/media-query/utils/splitCssAtTopLevel';
 
-const MEDIA_QUERY_PART_SEPARATOR_PATTERN = new RegExp(
-  `${CSS_WHITESPACE_CHARACTER_CLASS}+and${CSS_WHITESPACE_CHARACTER_CLASS}+`,
-);
+const MEDIA_QUERY_PART_SEPARATOR = ' and ';
 
-const CLOSING_PARENTHESIS_AND_PATTERN = new RegExp(
-  `\\)${CSS_WHITESPACE_CHARACTER_CLASS}*and${CSS_WHITESPACE_CHARACTER_CLASS}+`,
-  'g',
-);
+const CONDITION_OPENING_PARENTHESIS = '(';
 
 export const parseMediaQuery = (
   mediaQueryString: string,
 ): ParsedMediaQuery | null => {
-  const normalizedQuery = trimCssWhitespace(mediaQueryString)
-    .toLowerCase()
-    .replace(CLOSING_PARENTHESIS_AND_PATTERN, ') and ');
+  const normalizedQuery = normalizeMediaQueryString(mediaQueryString);
 
   if (!isNonEmptyString(normalizedQuery)) {
     return null;
   }
 
-  const [firstQueryPart, ...followingQueryParts] = normalizedQuery.split(
-    MEDIA_QUERY_PART_SEPARATOR_PATTERN,
+  const [firstQueryPart, ...followingQueryParts] = splitCssAtTopLevel({
+    cssText: normalizedQuery,
+    separator: MEDIA_QUERY_PART_SEPARATOR,
+  });
+
+  const { modifier, remainingFirstPart } =
+    parseMediaQueryModifier(firstQueryPart);
+
+  const isNegated = modifier === 'not';
+  const startsWithCondition = remainingFirstPart.startsWith(
+    CONDITION_OPENING_PARENTHESIS,
   );
-
-  const { modifier, remainingFirstPart } = parseMediaQueryModifier(
-    trimCssWhitespace(firstQueryPart),
-  );
-
-  const startsWithCondition = remainingFirstPart.startsWith('(');
-
-  if (modifier === 'only' && startsWithCondition) {
-    return null;
-  }
+  const isOnlyWithoutMediaType = modifier === 'only' && startsWithCondition;
+  const isNegatedConditionFollowedByAnd =
+    isNegated && startsWithCondition && isNonEmptyArray(followingQueryParts);
+  const isInvalidMediaType =
+    !startsWithCondition && !isMediaQueryTypeIdentifier(remainingFirstPart);
 
   if (
-    modifier === 'not' &&
-    startsWithCondition &&
-    isNonEmptyArray(followingQueryParts)
+    isOnlyWithoutMediaType ||
+    isNegatedConditionFollowedByAnd ||
+    isInvalidMediaType
   ) {
     return null;
   }
 
-  const queryParts = [remainingFirstPart, ...followingQueryParts];
+  const parsedConditionParts = parseMediaQueryConditionParts(
+    startsWithCondition
+      ? [remainingFirstPart, ...followingQueryParts]
+      : followingQueryParts,
+  );
 
-  let matchesMediaType = true;
-  const conditions: ParsedMediaQueryCondition[] = [];
-
-  for (const [partIndex, queryPart] of queryParts.entries()) {
-    const currentPart = trimCssWhitespace(queryPart);
-    const isFirstQueryPart = partIndex === 0;
-
-    if (currentPart.startsWith('(')) {
-      const parsedConditions = parseMediaQueryCondition(currentPart);
-
-      if (!isDefined(parsedConditions)) {
-        return null;
-      }
-
-      conditions.push(...parsedConditions);
-      continue;
-    }
-
-    if (!isFirstQueryPart) {
-      return null;
-    }
-
-    if (MATCHING_MEDIA_TYPES.has(currentPart)) {
-      continue;
-    }
-
-    if (isMediaQueryTypeIdentifier(currentPart)) {
-      matchesMediaType = false;
-      continue;
-    }
-
+  if (!isDefined(parsedConditionParts)) {
     return null;
   }
 
-  return { isNegated: modifier === 'not', matchesMediaType, conditions };
+  const canNeverMatch = parsedConditionParts.hasUnknownCondition && !isNegated;
+
+  if (canNeverMatch) {
+    return null;
+  }
+
+  return {
+    isNegated,
+    matchesMediaType:
+      startsWithCondition || MATCHING_MEDIA_TYPES.has(remainingFirstPart),
+    conditions: parsedConditionParts.knownConditions,
+  };
 };

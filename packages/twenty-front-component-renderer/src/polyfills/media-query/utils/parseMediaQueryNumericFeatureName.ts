@@ -6,7 +6,7 @@ import { type ParsedMediaQueryNumericFeatureName } from '@/polyfills/media-query
 
 const WEBKIT_FEATURE_PREFIX = '-webkit-';
 
-const WEBKIT_ALLOWED_BASE_FEATURE_NAME = 'device-pixel-ratio';
+const WEBKIT_PREFIXED_BASE_FEATURE_NAME = 'device-pixel-ratio';
 
 const MINIMUM_FEATURE_PREFIX = 'min-';
 
@@ -44,10 +44,10 @@ export const parseMediaQueryNumericFeatureName = (
     unprefixedFeatureName,
   );
 
-  if (
-    isWebkitPrefixed &&
-    baseFeatureName !== WEBKIT_ALLOWED_BASE_FEATURE_NAME
-  ) {
+  const isWebkitPrefixRequired =
+    baseFeatureName === WEBKIT_PREFIXED_BASE_FEATURE_NAME;
+
+  if (isWebkitPrefixed !== isWebkitPrefixRequired) {
     return null;
   }
 

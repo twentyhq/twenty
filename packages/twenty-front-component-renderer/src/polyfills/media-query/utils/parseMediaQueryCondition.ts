@@ -20,7 +20,8 @@ export const parseMediaQueryCondition = (
     return null;
   }
 
-  const conditionContent = trimCssWhitespace(conditionMatch[1]);
+  const [, wrappedConditionContent] = conditionMatch;
+  const conditionContent = trimCssWhitespace(wrappedConditionContent);
   const colonIndex = conditionContent.indexOf(':');
   const hasFeatureNameValueSeparator = colonIndex !== -1;
 
