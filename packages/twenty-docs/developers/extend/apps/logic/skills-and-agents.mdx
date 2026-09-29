@@ -65,6 +65,7 @@ Key points:
 - `icon` (optional) sets the icon displayed in the UI.
 - `modelId` (optional) overrides the default AI model used by the agent.
 - `responseFormat` (optional) controls the shape of the agent's output. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output.
+- `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 
