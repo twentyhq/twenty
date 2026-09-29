@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { generateId } from 'ai';
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -138,6 +139,68 @@ export class AnswerAskService {
       'This Ask gates nothing that can be answered',
       InputAskExceptionCode.ASK_NOT_FOUND,
     );
+  }
+
+  // Behind submitFormStep, kept for clients built before answerAsk: the
+  // form step's Ask is answered as if it had been named.
+  async answerFormStepByStep({
+    workflowRunId,
+    stepId,
+    ...args
+  }: Omit<AnswerAskArgs, 'askId' | 'modelId'> & {
+    workflowRunId: string;
+    stepId: string;
+  }): Promise<void> {
+    const inputAsk = await this.inputAskWorkspaceService.findPendingForStep({
+      workspaceId: args.workspace.id,
+      workflowRunId,
+      stepId,
+    });
+
+    if (!isDefined(inputAsk)) {
+      throw this.notPending();
+    }
+
+    await this.answer({ ...args, askId: inputAsk.id });
+  }
+
+  // Behind answerAgentChatQuestion, kept for clients built before answerAsk:
+  // a question is named by the message that asked it rather than by its Ask.
+  async answerQuestionsOfMessage({
+    threadId,
+    messageId,
+    ...args
+  }: Omit<AnswerAskArgs, 'askId'> & {
+    threadId: string;
+    messageId: string;
+  }): Promise<AnswerAskOutcome> {
+    const workspaceId = args.workspace.id;
+    const pendingInputAsks =
+      await this.inputAskWorkspaceService.findPendingForThread({
+        workspaceId,
+        threadId,
+      });
+
+    for (const { id, toolCallId } of pendingInputAsks) {
+      if (!isDefined(toolCallId)) {
+        continue;
+      }
+
+      const toolPart = await this.agentChatService.findToolPart({
+        threadId,
+        toolCallId,
+        workspaceId,
+      });
+
+      if (
+        toolPart?.messageId === messageId &&
+        toolPart.toolName === ASK_QUESTIONS_TOOL_NAME
+      ) {
+        return this.answer({ ...args, askId: id });
+      }
+    }
+
+    throw this.notPending();
   }
 
   private async answerFormStep({

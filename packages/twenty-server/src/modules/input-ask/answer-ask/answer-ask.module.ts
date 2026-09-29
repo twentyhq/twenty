@@ -8,6 +8,7 @@ import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.mod
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { AnswerAgentChatQuestionResolver } from 'src/modules/input-ask/answer-ask/resolvers/answer-agent-chat-question.resolver';
 import { AnswerAskResolver } from 'src/modules/input-ask/answer-ask/resolvers/answer-ask.resolver';
 import { AnswerAskService } from 'src/modules/input-ask/answer-ask/services/answer-ask.service';
 import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
@@ -28,6 +29,7 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
   providers: [
     AnswerAskService,
     AnswerAskResolver,
+    AnswerAgentChatQuestionResolver,
     AiGraphqlApiExceptionInterceptor,
   ],
 })

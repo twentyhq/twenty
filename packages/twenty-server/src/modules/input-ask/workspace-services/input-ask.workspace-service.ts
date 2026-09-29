@@ -212,6 +212,29 @@ export class InputAskWorkspaceService {
     });
   }
 
+  async findPendingForStep({
+    workspaceId,
+    workflowRunId,
+    stepId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+  }): Promise<Pick<InputAskWorkspaceEntity, 'id'> | null> {
+    return this.execute({
+      workspaceId,
+      whenObjectMissing: () => null,
+      run: (inputAskRepository) =>
+        inputAskRepository.findOne({
+          where: {
+            ...buildKeyWhere({ workflowRunId, stepId }),
+            status: InputAskStatus.PENDING,
+          },
+          select: { id: true },
+        }),
+    });
+  }
+
   async findReadable({
     workspaceId,
     inputAskId,

@@ -52,8 +52,10 @@ describe('Answering a chat tool call through its Ask', () => {
       },
     });
 
+    const assistantMessageId = randomUUID();
+
     await chat.upsertAssistantMessage({
-      id: randomUUID(),
+      id: assistantMessageId,
       threadId,
       turnId: userMessage.turnId,
       workspaceId,
@@ -82,6 +84,8 @@ describe('Answering a chat tool call through its Ask', () => {
         },
       });
     }
+
+    return { assistantMessageId };
   };
 
   const answerToolCallAsk = async (toolCallId: string) => {
@@ -238,6 +242,38 @@ describe('Answering a chat tool call through its Ask', () => {
         streamId: last.body.data.answerAsk.streamId,
       }),
     );
+  });
+
+  it('still answers a question through the deprecated answerAgentChatQuestion', async () => {
+    const { assistantMessageId } = await pauseOnQuestions('call-legacy');
+    enqueueStream.mockClear();
+
+    const response = await makeMetadataApiRequest({
+      query: parse(
+        `mutation Answer($threadId: UUID!, $messageId: UUID!, $answers: [AgentChatQuestionAnswerInput!]!) {
+          answerAgentChatQuestion(threadId: $threadId, messageId: $messageId, answers: $answers) { messageId queued streamId }
+        }`,
+      ),
+      variables: {
+        threadId,
+        messageId: assistantMessageId,
+        answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.answerAgentChatQuestion).toMatchObject({
+      messageId: assistantMessageId,
+      queued: false,
+      streamId: expect.any(String),
+    });
+    expect(await readAsk('call-legacy')).toEqual({
+      status: 'ANSWERED',
+      response: {
+        answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
+      },
+    });
+    expect(enqueueStream).toHaveBeenCalledTimes(1);
   });
 
   it('cancels every pending Ask when a message is sent instead of the answers', async () => {

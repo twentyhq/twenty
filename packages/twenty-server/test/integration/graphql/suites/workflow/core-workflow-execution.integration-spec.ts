@@ -819,6 +819,51 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       response: { answer },
     });
 
+  it('still answers a form through the deprecated submitFormStep', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+
+    const response = await workflowGraphqlRequest(
+      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+      {
+        input: {
+          stepId: form.id,
+          workflowRunId: runId,
+          response: { answer: 'Approved' },
+        },
+      },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.submitFormStep).toBe(true);
+
+    const run = await waitForRun(runId, 'COMPLETED');
+
+    expect(run.state.stepInfos[form.id].result).toMatchObject({
+      answer: 'Approved',
+    });
+
+    const second = await workflowGraphqlRequest(
+      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+      {
+        input: {
+          stepId: form.id,
+          workflowRunId: runId,
+          response: { answer: 'Rejected' },
+        },
+      },
+    );
+
+    expect(JSON.stringify(second.body.errors)).toContain('ASK_NOT_PENDING');
+  });
+
   it('refuses a second submission of the same form and keeps the first answer', async () => {
     const finalStep = emptyStep();
     const form = formStep([finalStep.id]);
