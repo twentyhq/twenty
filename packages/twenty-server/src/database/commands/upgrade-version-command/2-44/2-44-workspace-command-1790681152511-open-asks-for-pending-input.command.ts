@@ -264,10 +264,10 @@ export class OpenAsksForPendingInputCommand extends ProvisionedWorkspaceCommandR
         { shouldBypassPermissionChecks: true },
       );
 
-    // Only a running run accepts a submission.
+    // Only a running run accepts a submission. Loaded whole: the ORM selects
+    // columns, and createdBy is a composite field spread over several.
     const workflowRuns = await workflowRunRepository.find({
       where: { status: WorkflowRunStatus.RUNNING },
-      select: { id: true, state: true, createdBy: true },
     });
 
     let openedCount = 0;

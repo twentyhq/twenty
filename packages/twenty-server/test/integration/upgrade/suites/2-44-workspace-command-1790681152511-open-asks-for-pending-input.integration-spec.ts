@@ -187,6 +187,44 @@ describe('2-44 workspace command 1790681152511 - OpenAsksForPendingInputCommand 
     expect(await findThreadAsks(threadId)).toEqual([]);
   });
 
+  it('reopens the Ask of a form still waiting, assigned to who started the run', async () => {
+    const formAskWhere = {
+      name: 'Approve discount',
+      status: 'PENDING',
+      assigneeId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    };
+    const seededFormAsk = await inWorkspace(() =>
+      repository('inputAsk').findOneOrFail({
+        where: formAskWhere,
+        select: { id: true, workflowRunId: true, stepId: true },
+      }),
+    );
+
+    await inWorkspace(() =>
+      repository('inputAsk').delete({ id: seededFormAsk.id }),
+    );
+
+    await runCommand();
+
+    expect(
+      await inWorkspace(() =>
+        repository('inputAsk').find({
+          where: {
+            workflowRunId: seededFormAsk.workflowRunId,
+            stepId: seededFormAsk.stepId,
+          },
+          select: { status: true, assigneeId: true, form: true },
+        }),
+      ),
+    ).toEqual([
+      {
+        status: 'PENDING',
+        assigneeId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        form: expect.objectContaining({ kind: 'formFields' }),
+      },
+    ]);
+  });
+
   it('is a no-op when run again', async () => {
     const { threadId } = await insertPausedConversation({ status: 'pending' });
 
