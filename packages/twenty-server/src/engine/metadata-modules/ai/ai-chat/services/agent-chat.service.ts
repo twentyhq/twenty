@@ -38,7 +38,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { serializeAgentChatThreadForBroadcast } from 'src/engine/metadata-modules/ai/ai-chat/utils/serialize-agent-chat-thread-for-broadcast.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
-import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
@@ -65,7 +64,6 @@ export class AgentChatService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
-    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
@@ -414,21 +412,6 @@ export class AgentChatService {
       turnId,
       role: AgentMessageRole.ASSISTANT,
     });
-  }
-
-  async hasMessageById({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const existingMessage = await this.messageRepository.findOne(workspaceId, {
-      where: { id },
-      select: ['id'],
-    });
-
-    return isDefined(existingMessage);
   }
 
   async getMessagesForThread({
@@ -1059,101 +1042,73 @@ export class AgentChatService {
       );
     }
 
-    const threadBefore = await this.findThreadForRecordEvent({
-      workspaceId,
-      threadId,
-    });
-    const updated = await this.sharingService.updateThreadWithAccess({
+    return this.updateThread({
       threadId,
       workspaceMemberId,
       workspaceId,
       operationType: 'update',
       changes: { title: trimmed },
+      broadcastFields: ['title'],
     });
-
-    await this.broadcastThreadUpdated(
-      updated,
-      workspaceId,
-      ['title'],
-      workspaceMemberId,
-    );
-    if (isDefined(threadBefore)) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore,
-      });
-    }
-
-    return updated;
   }
 
-  async archiveThread({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
+  async archiveThread(args: {
     threadId: string;
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
-    const threadBefore = await this.findThreadForRecordEvent({
-      workspaceId,
-      threadId,
-    });
-    const thread = await this.sharingService.updateThreadWithAccess({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
+    return this.updateThread({
+      ...args,
       operationType: 'soft-delete',
-      changes: { archivedAt: new Date(), activeStreamId: null },
+      changes: { archivedAt: new Date() },
+      broadcastFields: ['deletedAt'],
     });
-
-    await this.broadcastThreadUpdated(
-      thread,
-      workspaceId,
-      ['deletedAt'],
-      workspaceMemberId,
-    );
-    if (isDefined(threadBefore)) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore,
-      });
-    }
-
-    this.threadLifecycleService.releaseThreadSandboxBestEffort({
-      workspaceId,
-      threadId,
-    });
-
-    return thread;
   }
 
-  async unarchiveThread({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
+  async unarchiveThread(args: {
     threadId: string;
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
-    const threadBefore = await this.findThreadForRecordEvent({
-      workspaceId,
-      threadId,
-    });
-    const thread = await this.sharingService.updateThreadWithAccess({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
+    return this.updateThread({
+      ...args,
       operationType: 'restore',
       changes: { archivedAt: null },
+      broadcastFields: ['deletedAt'],
+    });
+  }
+
+  private async updateThread({
+    threadId,
+    workspaceMemberId,
+    workspaceId,
+    operationType,
+    changes,
+    broadcastFields,
+  }: {
+    threadId: string;
+    workspaceMemberId: string;
+    workspaceId: string;
+    operationType: 'update' | 'soft-delete' | 'restore';
+    changes: { title: string } | { archivedAt: Date | null };
+    broadcastFields: (keyof AgentChatThreadDTO)[];
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    // Access-checked writes return raw rows; record events carry ORM records
+    const threadBefore = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+    const thread = await this.sharingService.updateThreadWithAccess({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+      operationType,
+      changes,
     });
 
     await this.broadcastThreadUpdated(
       thread,
       workspaceId,
-      ['deletedAt'],
+      broadcastFields,
       workspaceMemberId,
     );
     if (isDefined(threadBefore)) {
@@ -1219,37 +1174,6 @@ export class AgentChatService {
     await this.threadRecordEventService.emitThreadDestroyed({
       workspaceId,
       threadBefore: thread,
-    });
-
-    this.threadLifecycleService.releaseThreadSandboxBestEffort({
-      workspaceId,
-      threadId,
-    });
-  }
-
-  async cancelActiveStreamIfAny({
-    threadId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    await this.threadLifecycleService.cancelActiveStreamIfAny({
-      workspaceId,
-      threadId,
-    });
-  }
-
-  // Access-checked writes return raw rows; record events carry ORM records
-  private findThreadForRecordEvent({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<AgentChatThreadWorkspaceEntity | null> {
-    return this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
     });
   }
 
