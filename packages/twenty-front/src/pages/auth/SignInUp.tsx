@@ -30,6 +30,7 @@ import { useMemo } from 'react';
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 import { SignInUpSsoExchangeTokenEffect } from '@/auth/sign-in-up/components/internal/SignInUpSsoExchangeTokenEffect';
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
+import { SignInUpTwoFactorAuthenticationRecovery } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery';
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -116,6 +117,10 @@ export const SignInUp = () => {
       return t`Verify code from the app`;
     }
 
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationRecovery) {
+      return t`Use a recovery code`;
+    }
+
     if (isGlobalScope) {
       return t`Welcome to Twenty`;
     }
@@ -175,6 +180,10 @@ export const SignInUp = () => {
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
       return <SignInUpTOTPVerification />;
+    }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationRecovery) {
+      return <SignInUpTwoFactorAuthenticationRecovery />;
     }
 
     if (isDefined(workspacePublicData) && isOnAWorkspace) {

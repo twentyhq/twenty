@@ -3174,9 +3174,11 @@ export type Mutation = {
   generateFrontComponentApplicationTokenPair: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
+  generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
   getAuthTokensFromSSOExchangeToken: AuthTokens;
+  getAuthTokensFromTwoFactorAuthenticationRecoveryCode: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSso;
   getLoginTokenFromCredentials: LoginToken;
   goBackToPreviousOnboardingStep: OnboardingStepNavigation;
@@ -3207,6 +3209,7 @@ export type Mutation = {
   revokeAllOtherUserSessions: Scalars['Int']['output'];
   revokeApiKey?: Maybe<ApiKey>;
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
+  revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
@@ -3981,6 +3984,12 @@ export type MutationGenerateFrontComponentApplicationTokenPairArgs = {
 };
 
 
+export type MutationGenerateTwoFactorAuthenticationRecoveryCodeArgs = {
+  otp?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['UUID']['input'];
+};
+
+
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String']['input'];
   origin: Scalars['String']['input'];
@@ -3997,6 +4006,14 @@ export type MutationGetAuthTokensFromOtpArgs = {
 
 export type MutationGetAuthTokensFromSsoExchangeTokenArgs = {
   ssoExchangeToken: Scalars['String']['input'];
+};
+
+
+export type MutationGetAuthTokensFromTwoFactorAuthenticationRecoveryCodeArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  loginToken: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
+  recoveryCode: Scalars['String']['input'];
 };
 
 
@@ -4129,6 +4146,11 @@ export type MutationRevokeApiKeyArgs = {
 
 export type MutationRevokeApplicationAuthorizationArgs = {
   applicationAuthorizationId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
+  userId: Scalars['UUID']['input'];
 };
 
 
@@ -5323,6 +5345,7 @@ export type Query = {
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
+  twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   usageLimits: Array<UsageLimit>;
   usageQuotaDefinitions: UsageQuotaDefinitions;
@@ -5807,6 +5830,11 @@ export type QueryRecordSharingArgs = {
 
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryTwoFactorAuthenticationRecoveryStatusArgs = {
+  userId: Scalars['UUID']['input'];
 };
 
 
@@ -6456,6 +6484,18 @@ export type TwoFactorAuthenticationMethodSummary = {
   status: Scalars['String']['output'];
   strategy: Scalars['String']['output'];
   twoFactorAuthenticationMethodId: Scalars['UUID']['output'];
+};
+
+export type TwoFactorAuthenticationRecoveryCode = {
+  __typename?: 'TwoFactorAuthenticationRecoveryCode';
+  expiresAt: Scalars['DateTime']['output'];
+  recoveryCode: Scalars['String']['output'];
+};
+
+export type TwoFactorAuthenticationRecoveryStatus = {
+  __typename?: 'TwoFactorAuthenticationRecoveryStatus';
+  hasVerifiedTwoFactorAuthenticationMethod: Scalars['Boolean']['output'];
+  pendingRecoveryCodeExpiresAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type UuidFilterComparison = {
@@ -8275,6 +8315,16 @@ export type GetAuthTokensFromSsoExchangeTokenMutationVariables = Exact<{
 
 export type GetAuthTokensFromSsoExchangeTokenMutation = { __typename?: 'Mutation', getAuthTokensFromSSOExchangeToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
+export type GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeMutationVariables = Exact<{
+  loginToken: Scalars['String']['input'];
+  recoveryCode: Scalars['String']['input'];
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  origin: Scalars['String']['input'];
+}>;
+
+
+export type GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeMutation = { __typename?: 'Mutation', getAuthTokensFromTwoFactorAuthenticationRecoveryCode: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
 export type GetAuthorizationUrlForSsoMutationVariables = Exact<{
   input: GetAuthorizationUrlForSsoInput;
 }>;
@@ -10074,12 +10124,34 @@ export type MetadataTranslationsQueryVariables = Exact<{
 
 export type MetadataTranslationsQuery = { __typename?: 'Query', metadataTranslations: Array<{ __typename?: 'MetadataTranslation', metadataName: string, recordId: string, objectMetadataId?: string | null, property: string, locale: string, sourceValue: string, canonicalValue: string, value: string, provenance: MetadataTranslationProvenance }> };
 
+export type GenerateTwoFactorAuthenticationRecoveryCodeMutationVariables = Exact<{
+  userId: Scalars['UUID']['input'];
+  otp?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GenerateTwoFactorAuthenticationRecoveryCodeMutation = { __typename?: 'Mutation', generateTwoFactorAuthenticationRecoveryCode: { __typename?: 'TwoFactorAuthenticationRecoveryCode', recoveryCode: string, expiresAt: string } };
+
+export type RevokeTwoFactorAuthenticationRecoveryCodeMutationVariables = Exact<{
+  userId: Scalars['UUID']['input'];
+}>;
+
+
+export type RevokeTwoFactorAuthenticationRecoveryCodeMutation = { __typename?: 'Mutation', revokeTwoFactorAuthenticationRecoveryCode: boolean };
+
 export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables = Exact<{
   otp: Scalars['String']['input'];
 }>;
 
 
 export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation = { __typename?: 'Mutation', verifyTwoFactorAuthenticationMethodForAuthenticatedUser: { __typename?: 'VerifyTwoFactorAuthenticationMethod', success: boolean } };
+
+export type TwoFactorAuthenticationRecoveryStatusQueryVariables = Exact<{
+  userId: Scalars['UUID']['input'];
+}>;
+
+
+export type TwoFactorAuthenticationRecoveryStatusQuery = { __typename?: 'Query', twoFactorAuthenticationRecoveryStatus: { __typename?: 'TwoFactorAuthenticationRecoveryStatus', hasVerifiedTwoFactorAuthenticationMethod: boolean, pendingRecoveryCodeExpiresAt?: string | null } };
 
 export type CreateUnsubscribeTopicMutationVariables = Exact<{
   input: CreateUnsubscribeTopicInput;
@@ -10550,6 +10622,7 @@ export const GenerateTransientTokenDocument = {"kind":"Document","definitions":[
 export const GetAuthTokensFromLoginTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"getAuthTokensFromLoginToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"loginToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"origin"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAuthTokensFromLoginToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"loginToken"}}},{"kind":"Argument","name":{"kind":"Name","value":"origin"},"value":{"kind":"Variable","name":{"kind":"Name","value":"origin"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenPairFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenPairFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthTokenPair"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessOrWorkspaceAgnosticToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}}]}}]} as unknown as DocumentNode<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
 export const GetAuthTokensFromOtpDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"getAuthTokensFromOTP"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"loginToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otp"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"captchaToken"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"origin"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAuthTokensFromOTP"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"loginToken"}}},{"kind":"Argument","name":{"kind":"Name","value":"otp"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otp"}}},{"kind":"Argument","name":{"kind":"Name","value":"captchaToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"captchaToken"}}},{"kind":"Argument","name":{"kind":"Name","value":"origin"},"value":{"kind":"Variable","name":{"kind":"Name","value":"origin"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenPairFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenPairFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthTokenPair"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessOrWorkspaceAgnosticToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}}]}}]} as unknown as DocumentNode<GetAuthTokensFromOtpMutation, GetAuthTokensFromOtpMutationVariables>;
 export const GetAuthTokensFromSsoExchangeTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"getAuthTokensFromSSOExchangeToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ssoExchangeToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAuthTokensFromSSOExchangeToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ssoExchangeToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ssoExchangeToken"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenPairFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenPairFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthTokenPair"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessOrWorkspaceAgnosticToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}}]}}]} as unknown as DocumentNode<GetAuthTokensFromSsoExchangeTokenMutation, GetAuthTokensFromSsoExchangeTokenMutationVariables>;
+export const GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"getAuthTokensFromTwoFactorAuthenticationRecoveryCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"loginToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recoveryCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"captchaToken"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"origin"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAuthTokensFromTwoFactorAuthenticationRecoveryCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"loginToken"}}},{"kind":"Argument","name":{"kind":"Name","value":"recoveryCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recoveryCode"}}},{"kind":"Argument","name":{"kind":"Name","value":"captchaToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"captchaToken"}}},{"kind":"Argument","name":{"kind":"Name","value":"origin"},"value":{"kind":"Variable","name":{"kind":"Name","value":"origin"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenPairFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenPairFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthTokenPair"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessOrWorkspaceAgnosticToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}}]}}]} as unknown as DocumentNode<GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeMutation, GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeMutationVariables>;
 export const GetAuthorizationUrlForSsoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GetAuthorizationUrlForSSO"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GetAuthorizationUrlForSSOInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAuthorizationUrlForSSO"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"authorizationURL"}}]}}]}}]} as unknown as DocumentNode<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>;
 export const GetLoginTokenFromCredentialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GetLoginTokenFromCredentials"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"captchaToken"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"origin"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLoginTokenFromCredentials"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}},{"kind":"Argument","name":{"kind":"Name","value":"captchaToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"captchaToken"}}},{"kind":"Argument","name":{"kind":"Name","value":"origin"},"value":{"kind":"Variable","name":{"kind":"Name","value":"origin"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loginToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}}]} as unknown as DocumentNode<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
 export const ImpersonateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Impersonate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"impersonate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"Argument","name":{"kind":"Name","value":"workspaceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workspace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workspaceUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkspaceUrlsFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"loginToken"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthTokenFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkspaceUrlsFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkspaceUrls"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subdomainUrl"}},{"kind":"Field","name":{"kind":"Name","value":"customUrl"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthTokenFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}}]} as unknown as DocumentNode<ImpersonateMutation, ImpersonateMutationVariables>;
@@ -10753,7 +10826,10 @@ export const ValidateApprovedAccessDomainDocument = {"kind":"Document","definiti
 export const GetApprovedAccessDomainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetApprovedAccessDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getApprovedAccessDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"isValidated"}}]}}]}}]} as unknown as DocumentNode<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>;
 export const GetSsoIdentityProvidersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSSOIdentityProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSSOIdentityProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"issuer"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
 export const MetadataTranslationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MetadataTranslations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MetadataTranslationsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadataTranslations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadataName"}},{"kind":"Field","name":{"kind":"Name","value":"recordId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"property"}},{"kind":"Field","name":{"kind":"Name","value":"locale"}},{"kind":"Field","name":{"kind":"Name","value":"sourceValue"}},{"kind":"Field","name":{"kind":"Name","value":"canonicalValue"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"provenance"}}]}}]}}]} as unknown as DocumentNode<MetadataTranslationsQuery, MetadataTranslationsQueryVariables>;
+export const GenerateTwoFactorAuthenticationRecoveryCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"generateTwoFactorAuthenticationRecoveryCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otp"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"generateTwoFactorAuthenticationRecoveryCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"Argument","name":{"kind":"Name","value":"otp"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recoveryCode"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}}]}}]} as unknown as DocumentNode<GenerateTwoFactorAuthenticationRecoveryCodeMutation, GenerateTwoFactorAuthenticationRecoveryCodeMutationVariables>;
+export const RevokeTwoFactorAuthenticationRecoveryCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"revokeTwoFactorAuthenticationRecoveryCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeTwoFactorAuthenticationRecoveryCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}]}}]} as unknown as DocumentNode<RevokeTwoFactorAuthenticationRecoveryCodeMutation, RevokeTwoFactorAuthenticationRecoveryCodeMutationVariables>;
 export const VerifyTwoFactorAuthenticationMethodForAuthenticatedUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"verifyTwoFactorAuthenticationMethodForAuthenticatedUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otp"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyTwoFactorAuthenticationMethodForAuthenticatedUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"otp"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation, VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables>;
+export const TwoFactorAuthenticationRecoveryStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"twoFactorAuthenticationRecoveryStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"twoFactorAuthenticationRecoveryStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasVerifiedTwoFactorAuthenticationMethod"}},{"kind":"Field","name":{"kind":"Name","value":"pendingRecoveryCodeExpiresAt"}}]}}]}}]} as unknown as DocumentNode<TwoFactorAuthenticationRecoveryStatusQuery, TwoFactorAuthenticationRecoveryStatusQueryVariables>;
 export const CreateUnsubscribeTopicDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUnsubscribeTopic"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUnsubscribeTopicInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUnsubscribeTopic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}}]}}]}}]} as unknown as DocumentNode<CreateUnsubscribeTopicMutation, CreateUnsubscribeTopicMutationVariables>;
 export const DeleteUnsubscribeTopicDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUnsubscribeTopic"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUnsubscribeTopic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteUnsubscribeTopicMutation, DeleteUnsubscribeTopicMutationVariables>;
 export const UpdateUnsubscribeTopicDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUnsubscribeTopic"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUnsubscribeTopicInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUnsubscribeTopic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}}]}}]}}]} as unknown as DocumentNode<UpdateUnsubscribeTopicMutation, UpdateUnsubscribeTopicMutationVariables>;
