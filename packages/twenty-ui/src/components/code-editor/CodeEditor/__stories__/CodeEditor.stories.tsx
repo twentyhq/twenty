@@ -69,8 +69,7 @@ export const Resizable: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
-  play: undefined,
+  decorators: Default.decorators,
   args: { variant: 'with-header' },
   render: (args) => (
     <div style={{ width: '100%' }}>

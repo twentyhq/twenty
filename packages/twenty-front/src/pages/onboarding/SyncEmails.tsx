@@ -1,4 +1,5 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -6,13 +7,14 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEmailsAutoSkipEffect';
+import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
   CalendarChannelVisibility,
@@ -22,8 +24,12 @@ import {
 export const SyncEmails = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
+  const hasConnectedAccountsPermission = useHasPermissionFlag(
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  );
 
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
@@ -39,27 +45,25 @@ export const SyncEmails = () => {
   );
 
   const isGoogleProviderEnabled =
-    isGoogleMessagingEnabled || isGoogleCalendarEnabled;
+    hasConnectedAccountsPermission &&
+    (isGoogleMessagingEnabled || isGoogleCalendarEnabled);
   const isMicrosoftProviderEnabled =
-    isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled;
+    hasConnectedAccountsPermission &&
+    (isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled);
   const hasProviderEnabled =
     isGoogleProviderEnabled || isMicrosoftProviderEnabled;
   const isClientConfigLoaded = useAtomStateValue(
     clientConfigApiStatusState,
   ).isLoadedOnce;
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentUser = useAtomStateValue(currentUserState);
 
-  const isFirstWorkspaceUser = currentWorkspace?.workspaceMembersCount === 1;
-  const creditsReward = isFirstWorkspaceUser
+  const creditsReward = currentUser?.isWorkspaceCreator
     ? onboardingConfig?.importContactsCreditsReward
     : undefined;
 
   const connectWithProvider = async (provider: ConnectedAccountProvider) => {
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      importContacts: creditsReward ?? 0,
-    }));
+    setOnboardingStepFreeCredits('importContacts', creditsReward ?? 0);
 
     try {
       await triggerApisOAuth(provider, {
@@ -69,10 +73,7 @@ export const SyncEmails = () => {
         skipMessageChannelConfiguration: true,
       });
     } catch (error) {
-      setOnboardingFreeCredits((current) => ({
-        ...current,
-        importContacts: 0,
-      }));
+      setOnboardingStepFreeCredits('importContacts', 0);
 
       throw error;
     }
@@ -81,17 +82,14 @@ export const SyncEmails = () => {
   const handleSkip = async () => {
     await skipSyncEmailOnboardingStep({ isAutoSkipped: false });
 
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      importContacts: 0,
-    }));
+    setOnboardingStepFreeCredits('importContacts', 0);
   };
 
   const handleAutoSkipError = useCallback(() => {
     setHasAutoSkipFailed(true);
   }, []);
 
-  if (!isClientConfigLoaded) {
+  if (!isClientConfigLoaded || !isCurrentUserLoaded) {
     return null;
   }
 

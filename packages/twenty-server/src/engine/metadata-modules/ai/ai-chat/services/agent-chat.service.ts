@@ -21,7 +21,6 @@ import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
-import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import {
@@ -30,8 +29,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -42,8 +40,15 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { serializeAgentChatThreadForBroadcast } from 'src/engine/metadata-modules/ai/ai-chat/utils/serialize-agent-chat-thread-for-broadcast.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
+
+type PendingQuestionRollback = {
+  partId: string;
+  previousOutput: Record<string, unknown> & { result?: AskQuestionsToolResult };
+};
 
 @Injectable()
 export class AgentChatService {
@@ -62,8 +67,9 @@ export class AgentChatService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
-    private readonly codeInterpreterService: CodeInterpreterService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly sharingService: AgentChatSharingService,
+    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
   async createThread({
@@ -104,6 +110,11 @@ export class AgentChatService {
           },
         },
       ],
+    });
+
+    await this.threadRecordEventService.emitThreadCreated({
+      workspaceId,
+      threadId: savedThread.id,
     });
 
     return savedThread;
@@ -372,8 +383,8 @@ export class AgentChatService {
     const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
-      const dbParts = mapUIMessagePartsToDBParts(
-        finalizeDanglingToolParts(uiMessage.parts),
+      const dbParts = mapUIMessagePartsToPersistedDBParts(
+        uiMessage.parts,
         savedMessageId,
         workspaceId,
       );
@@ -425,11 +436,7 @@ export class AgentChatService {
 
     await this.messagePartRepository.delete(workspaceId, { messageId: id });
 
-    const dbParts = mapUIMessagePartsToDBParts(
-      finalizeDanglingToolParts(parts),
-      id,
-      workspaceId,
-    );
+    const dbParts = mapUIMessagePartsToPersistedDBParts(parts, id, workspaceId);
 
     if (dbParts.length > 0) {
       await this.messagePartRepository.insert(
@@ -788,12 +795,14 @@ export class AgentChatService {
     threadId: string;
     messageId: string;
     answers: AskQuestionAnswer[];
-    streamId: string;
+    // Null for a conversation no chat stream continues, such as a workflow
+    // run's: its question is claimed by its marker alone.
+    streamId: string | null;
     workspaceId: string;
   }): Promise<{
     answerText: string;
     turnId: string | null;
-    rollback: { partId: string; previousOutput: Record<string, unknown> };
+    rollback: PendingQuestionRollback;
   }> {
     const message = await this.messageRepository.findOne(workspaceId, {
       where: { id: messageId, threadId },
@@ -822,42 +831,27 @@ export class AgentChatService {
     }
 
     const previousOutput =
-      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
-    const previousResult = previousOutput.result as
-      | AskQuestionsToolResult
-      | undefined;
-    const questions = previousResult?.questions ?? [];
+      (pendingPart.toolOutput as
+        | PendingQuestionRollback['previousOutput']
+        | null) ?? {};
+    const questions = previousOutput.result?.questions ?? [];
 
     this.validateQuestionAnswers(answers, questions);
 
-    const claim = await this.threadRepository.update(
-      workspaceId,
-      {
-        id: threadId,
-        pendingQuestionMessageId: messageId,
-        activeStreamId: IsNull(),
-      },
-      {
-        pendingQuestionMessageId: null,
-        activeStreamId: streamId,
-        lastStreamError: null,
-      },
-    );
+    const isClaimed = isDefined(streamId)
+      ? await this.claimQuestionForStream({
+          threadId,
+          messageId,
+          streamId,
+          workspaceId,
+        })
+      : await this.claimQuestionMarker({ threadId, messageId, workspaceId });
 
-    if ((claim.affected ?? 0) === 0) {
-      const adopted = await this.claimOrphanedQuestion({
-        threadId,
-        messageId,
-        streamId,
-        workspaceId,
-      });
-
-      if (!adopted) {
-        throw new AiException(
-          'No pending question to answer',
-          AiExceptionCode.QUESTION_NOT_PENDING,
-        );
-      }
+    if (!isClaimed) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
     }
 
     try {
@@ -878,13 +872,12 @@ export class AgentChatService {
         },
       );
     } catch (error) {
-      await this.threadRepository
-        .update(
-          workspaceId,
-          { id: threadId, activeStreamId: streamId },
-          { pendingQuestionMessageId: messageId, activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.releaseQuestionClaim({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId,
+      });
       throw error;
     }
 
@@ -905,6 +898,90 @@ export class AgentChatService {
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
+  }
+
+  private async claimQuestionForStream({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      {
+        id: threadId,
+        pendingQuestionMessageId: messageId,
+        activeStreamId: IsNull(),
+      },
+      {
+        pendingQuestionMessageId: null,
+        activeStreamId: streamId,
+        lastStreamError: null,
+      },
+    );
+
+    if ((claim.affected ?? 0) > 0) {
+      return true;
+    }
+
+    return this.claimOrphanedQuestion({
+      threadId,
+      messageId,
+      streamId,
+      workspaceId,
+    });
+  }
+
+  // Clearing the marker is the claim: of two concurrent answers only one
+  // matches it. No orphan is adopted here, since without a stream an orphaned
+  // question cannot be told apart from one another answer has just claimed.
+  private async claimQuestionMarker({
+    threadId,
+    messageId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null },
+    );
+
+    return (claim.affected ?? 0) > 0;
+  }
+
+  private async releaseQuestionClaim({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string | null;
+    workspaceId: string;
+  }): Promise<void> {
+    const release = isDefined(streamId)
+      ? this.threadRepository.update(
+          workspaceId,
+          { id: threadId, activeStreamId: streamId },
+          { pendingQuestionMessageId: messageId, activeStreamId: null },
+        )
+      : this.threadRepository.update(
+          workspaceId,
+          { id: threadId, pendingQuestionMessageId: IsNull() },
+          { pendingQuestionMessageId: messageId },
+        );
+
+    await release.catch(() => {});
   }
 
   private async claimOrphanedQuestion({
@@ -957,9 +1034,9 @@ export class AgentChatService {
   }: {
     threadId: string;
     messageId: string;
-    streamId: string;
+    streamId: string | null;
     workspaceId: string;
-    rollback: { partId: string; previousOutput: Record<string, unknown> };
+    rollback: PendingQuestionRollback;
   }): Promise<void> {
     await this.messagePartRepository
       .update(
@@ -969,11 +1046,35 @@ export class AgentChatService {
       )
       .catch(() => {});
 
-    await this.threadRepository
+    await this.releaseQuestionClaim({
+      threadId,
+      messageId,
+      streamId,
+      workspaceId,
+    });
+  }
+
+  // For a question nothing can consume any more: its run ended, or the step
+  // moved on to another conversation. Restoring it would leave a card that
+  // every answer is refused on, so it is closed instead. An ending run closes
+  // its questions itself; this covers an answer that claimed one just before.
+  async closePendingQuestion({
+    workspaceId,
+    rollback,
+  }: {
+    workspaceId: string;
+    rollback: PendingQuestionRollback;
+  }): Promise<void> {
+    await this.messagePartRepository
       .update(
         workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        { pendingQuestionMessageId: messageId, activeStreamId: null },
+        { id: rollback.partId },
+        {
+          toolOutput: {
+            ...rollback.previousOutput,
+            result: { ...rollback.previousOutput.result, status: 'skipped' },
+          },
+        },
       )
       .catch(() => {});
   }
@@ -1036,6 +1137,10 @@ export class AgentChatService {
       );
     }
 
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const updated = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -1050,6 +1155,12 @@ export class AgentChatService {
       ['title'],
       workspaceMemberId,
     );
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
     return updated;
   }
@@ -1063,6 +1174,10 @@ export class AgentChatService {
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -1077,8 +1192,17 @@ export class AgentChatService {
       ['deletedAt'],
       workspaceMemberId,
     );
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
-    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+    this.threadLifecycleService.releaseThreadSandboxBestEffort({
+      workspaceId,
+      threadId,
+    });
 
     return thread;
   }
@@ -1092,6 +1216,10 @@ export class AgentChatService {
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -1106,6 +1234,12 @@ export class AgentChatService {
       ['deletedAt'],
       workspaceMemberId,
     );
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
     return thread;
   }
@@ -1130,7 +1264,7 @@ export class AgentChatService {
       operationType: 'delete',
     });
 
-    const deleted = await this.sharingService.deleteThreadWithShares({
+    const deleted = await this.sharingService.deleteThreadWithAccess({
       workspaceId,
       threadId,
       workspaceMemberId,
@@ -1160,23 +1294,41 @@ export class AgentChatService {
         },
       ],
     });
+    await this.threadRecordEventService.emitThreadDestroyed({
+      workspaceId,
+      threadBefore: thread,
+    });
 
-    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+    this.threadLifecycleService.releaseThreadSandboxBestEffort({
+      workspaceId,
+      threadId,
+    });
   }
 
-  private releaseThreadSandboxBestEffort(
-    workspaceId: string,
-    threadId: string,
-  ): void {
-    void this.codeInterpreterService
-      .releaseThreadSandbox(workspaceId, threadId)
-      .catch((error) =>
-        this.logger.warn(
-          `Failed to release code interpreter sandbox for thread ${threadId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        ),
-      );
+  async cancelActiveStreamIfAny({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.threadLifecycleService.cancelActiveStreamIfAny({
+      workspaceId,
+      threadId,
+    });
+  }
+
+  // Access-checked writes return raw rows; record events carry ORM records
+  private findThreadForRecordEvent({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<AgentChatThreadWorkspaceEntity | null> {
+    return this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
   }
 
   async notifyThreadActivityUpdated({
@@ -1194,23 +1346,39 @@ export class AgentChatService {
       workspaceId,
     });
 
+    const threadAfter = { ...thread, updatedAt: new Date().toISOString() };
+
+    // Conversations are listed by most recent change, so a message moves its
+    // conversation to the top when it is sent, not only once the turn ends.
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      { updatedAt: threadAfter.updatedAt },
+    );
+
     await this.broadcastThreadUpdated(
-      thread,
+      threadAfter,
       workspaceId,
       ['lastMessageAt'],
       workspaceMemberId,
     );
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+      threadAfter,
+    });
   }
 
   async notifyThreadUsageUpdated({
-    threadId,
+    threadBefore,
     workspaceMemberId,
     workspaceId,
   }: {
-    threadId: string;
+    threadBefore: AgentChatThreadWorkspaceEntity;
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<void> {
+    const threadId = threadBefore.id;
     const thread = await this.getWritableThread({
       threadId,
       workspaceMemberId,
@@ -1230,6 +1398,11 @@ export class AgentChatService {
       ],
       workspaceMemberId,
     );
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore,
+      threadAfter: thread,
+    });
   }
 
   private async broadcastThreadUpdated(
@@ -1316,6 +1489,10 @@ export class AgentChatService {
       ['title'],
       workspaceMemberId,
     );
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+    });
 
     return title;
   }

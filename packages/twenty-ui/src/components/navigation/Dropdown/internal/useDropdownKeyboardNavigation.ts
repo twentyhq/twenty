@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -20,6 +21,7 @@ export const useDropdownKeyboardNavigation = ({
   isSubmenu: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
   return (event: KeyboardEvent<HTMLDivElement>) => {
@@ -40,7 +42,7 @@ export const useDropdownKeyboardNavigation = ({
     const isEditable = target.matches(
       'input,textarea,select,[contenteditable="true"]',
     );
-    const isRightToLeft = getComputedStyle(content).direction === 'rtl';
+    const isRightToLeft = direction === 'rtl';
     const backwardKey = isRightToLeft ? 'ArrowRight' : 'ArrowLeft';
 
     const shouldCloseSubmenu =

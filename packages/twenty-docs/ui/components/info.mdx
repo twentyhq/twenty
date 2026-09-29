@@ -1,0 +1,33 @@
+---
+title: Info
+description: An inline information message with an optional button or link.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InfoReference from '/snippets/ui/generated/components/info.mdx';
+
+`Info` displays a message with a blue or danger accent. Supply `buttonTitle` with `onClick` for an action, or with `href` for a link. When both are supplied, `href` takes precedence.
+
+```tsx
+import { Info } from 'twenty-ui/components';
+
+export const ConnectionInfo = ({ onConnect }: { onConnect: () => void }) => (
+  <Info
+    text="Connect your account to sync contacts."
+    buttonTitle="Connect account"
+    onClick={onConnect}
+  />
+);
+```
+
+Use `accent="danger"` for an error. `render` customizes the link action when `href` is supplied. The message has no automatic dismissal or announcement behavior.
+
+<StoryEmbed
+  storyId="ui-feedback-info--default"
+  title="Info example"
+  height={280}
+/>
+
+## Props
+
+<InfoReference />

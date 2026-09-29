@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -13,6 +14,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 
 @Module({
   imports: [
+    AgentHistoryModule,
     WorkflowCommonModule,
     RecordPositionModule,
     CacheLockModule,

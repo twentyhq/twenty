@@ -832,7 +832,7 @@ describe('core workflow visibility (e2e)', () => {
           'WorkflowAgentConversationWorkspaceService',
         );
 
-      const recordedThreadId = await conversationService.recordExecution({
+      const recordedConversation = await conversationService.recordExecution({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         workflowRunId,
         stepId: 'trigger',
@@ -847,8 +847,8 @@ describe('core workflow visibility (e2e)', () => {
         },
       });
 
-      expect(recordedThreadId).not.toBeNull();
-      threadId = recordedThreadId!;
+      expect(recordedConversation).not.toBeNull();
+      threadId = recordedConversation!.threadId;
     });
 
     afterAll(async () => {
