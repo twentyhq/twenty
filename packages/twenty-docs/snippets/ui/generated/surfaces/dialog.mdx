@@ -117,7 +117,7 @@
 ### Dialog.Popup
 
 <ParamField body="Popup.backdrop" type="boolean | DialogBackdropProps" default="true">
-
+  Show the backdrop, customize its native props, or pass `false` to hide it.
 </ParamField>
 
 <ParamField body="Popup.className" type="string | ((state: DialogPopupState) =&gt; string | undefined)">
@@ -126,7 +126,7 @@
 </ParamField>
 
 <ParamField body="Popup.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
-
+  Portal destination. Defaults to the theme container; `null` defers mounting.
 </ParamField>
 
 <ParamField body="Popup.finalFocus" type="boolean | RefObject&lt;HTMLElement | null&gt; | ((closeType: InteractionType) =&gt; boolean | void | HTMLElement | null)">
@@ -152,7 +152,7 @@
 </ParamField>
 
 <ParamField body="Popup.keepMounted" type="boolean">
-
+  Keeps content mounted while the dialog is closed.
 </ParamField>
 
 <ParamField body="Popup.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogPopupState&gt;">
@@ -163,7 +163,7 @@
 </ParamField>
 
 <ParamField body="Popup.size" type="&quot;fullscreen&quot; | &quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xl&quot;" default="md">
-
+  Width of the dialog, or `fullscreen` to fill the viewport.
 </ParamField>
 
 <ParamField body="Popup.style" type="CSSProperties | ((state: DialogPopupState) =&gt; CSSProperties | undefined)">
@@ -172,7 +172,7 @@
 </ParamField>
 
 <ParamField body="Popup.viewportProps" type="DialogViewportProps">
-
+  Native props and render composition for the viewport surrounding the popup.
 </ParamField>
 
 ### Dialog.Title

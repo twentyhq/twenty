@@ -1,0 +1,47 @@
+---
+title: AnimatedIconCrossfade
+description: Crossfade between two icons as application state changes.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/animated-icon-crossfade.mdx';
+
+`AnimatedIconCrossfade` displays one of two icon components according to `isActive`. It does not own the action or state. Compose it inside a labeled [Button](/ui/primitives/input/button).
+
+```tsx
+import { useState } from 'react';
+import { AnimatedIconCrossfade } from 'twenty-ui/components';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const EditToggle = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          ActiveIcon={IconX}
+          InactiveIcon={IconPencil}
+        />
+      }
+    >
+      {isEditing ? 'Finish editing' : 'Edit record'}
+    </Button>
+  );
+};
+```
+
+`size` defaults to the small theme icon size. Keep the accessible action name on the surrounding control. The icons communicate its state visually.
+
+<StoryEmbed
+  storyId="ui-input-button-button--animated-icon-documentation"
+  title="AnimatedIconCrossfade example"
+  height={280}
+/>
+
+## Props
+
+<AnimatedIconCrossfadeReference />

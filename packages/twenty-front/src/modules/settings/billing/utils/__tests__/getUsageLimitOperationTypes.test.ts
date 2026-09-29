@@ -4,13 +4,16 @@ import {
   UsageResourceType,
 } from '~/generated-metadata/graphql';
 
-const buildDefinition = (allowedMeters: string[]) => ({
-  __typename: 'UsageQuotaDefinition' as const,
-  resourceType: UsageResourceType.AI,
-  allowedOperationTypes: [
+const buildDefinition = (
+  allowedMeters: string[],
+  allowedOperationTypes: UsageOperationType[] = [
     UsageOperationType.AI_CHAT_TOKEN,
     UsageOperationType.WEB_SEARCH,
   ],
+) => ({
+  __typename: 'UsageQuotaDefinition' as const,
+  resourceType: UsageResourceType.AI,
+  allowedOperationTypes,
   allowedSpenderTypes: ['workspace'],
   allowedMeters,
 });
@@ -33,5 +36,16 @@ describe('getUsageLimitOperationTypes', () => {
       UsageOperationType.AI_CHAT_TOKEN,
       UsageOperationType.WEB_SEARCH,
     ]);
+  });
+
+  it('skips "all operations" when the resource has a single operation', () => {
+    expect(
+      getUsageLimitOperationTypes(
+        buildDefinition(
+          ['creditsUsedMicro', 'quantity'],
+          [UsageOperationType.WEB_SEARCH],
+        ),
+      ),
+    ).toEqual([UsageOperationType.WEB_SEARCH]);
   });
 });

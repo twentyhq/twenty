@@ -10,8 +10,8 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   MessageDescriptor
 > = {
   [UsageOperationType.ALL]: msg`All operations`,
-  [UsageOperationType.AI_CHAT_TOKEN]: msg`AI Chat`,
-  [UsageOperationType.AI_WORKFLOW_TOKEN]: msg`AI Workflow`,
+  [UsageOperationType.AI_CHAT_TOKEN]: msg`Chats`,
+  [UsageOperationType.AI_WORKFLOW_TOKEN]: msg`Agents`,
   [UsageOperationType.WORKFLOW_EXECUTION]: msg`Workflow Execution`,
   [UsageOperationType.CODE_EXECUTION]: msg`Code Execution`,
   [UsageOperationType.WEB_SEARCH]: msg`Web Search`,

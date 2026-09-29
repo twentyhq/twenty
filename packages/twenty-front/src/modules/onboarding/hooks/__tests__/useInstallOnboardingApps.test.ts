@@ -2,16 +2,18 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement } from 'react';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const mockTriggerInstallAppsOnboardingStep = jest.fn();
 
@@ -22,10 +24,11 @@ jest.mock('@/onboarding/hooks/useTriggerInstallAppsOnboardingStep', () => ({
 
 const onboardingConfig: OnboardingConfig = {
   importContactsCreditsReward: 2,
-  inviteTeamMaxCreditsReward: 9,
   inviteTeamCreditsRewardPerUser: 3,
+  installAppsCreditsReward: 1,
+  createProfileCreditsReward: 0.5,
   upgradeCreditsReward: 5,
-  installAppsCreditsRewardPerApp: 1,
+  inviteTeamMaxInvites: 3,
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
@@ -35,8 +38,9 @@ const renderInstallHook = () => {
   const { result } = renderHook(
     () => {
       const setOnboardingConfig = useSetAtomState(onboardingConfigState);
-      const onboardingFreeCredits = useAtomStateValue(
-        onboardingFreeCreditsState,
+      const onboardingFreeCredits = useAtomFamilyStateValue(
+        onboardingFreeCreditsFamilyState,
+        mockCurrentWorkspace.id,
       );
       const installOnboardingApps = useInstallOnboardingApps();
 
@@ -60,6 +64,7 @@ describe('useInstallOnboardingApps', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     mockTriggerInstallAppsOnboardingStep.mockReset();
   });
 
@@ -83,7 +88,7 @@ describe('useInstallOnboardingApps', () => {
       universalIdentifiers: ['app-1', 'app-2'],
       isAutoSkipped: false,
     });
-    expect(result.current.onboardingFreeCredits.installApps).toBe(2);
+    expect(result.current.onboardingFreeCredits.installApps).toBe(1);
   });
 
   it('should reset the completing state and not credit when the step fails', async () => {

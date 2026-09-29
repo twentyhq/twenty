@@ -23,6 +23,7 @@ const buildService = () => {
       getThreadWithAccess: jest.fn().mockResolvedValue({ id: THREAD_ID }),
       getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
     } as never,
+    {} as never,
   );
 
   return { service, messageRepository };

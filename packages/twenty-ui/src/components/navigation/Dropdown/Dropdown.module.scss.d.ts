@@ -5,6 +5,7 @@ declare const classNames: {
   readonly section: 'section';
   readonly separator: 'separator';
   readonly back: 'back';
+  readonly backIcon: 'backIcon';
   readonly searchContainer: 'searchContainer';
   readonly search: 'search';
   readonly status: 'status';

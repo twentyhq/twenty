@@ -20,6 +20,7 @@ import {
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-exchange-code-for-token.guard';
 import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-request-code.guard';
+import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
@@ -38,6 +39,7 @@ export class MicrosoftAPIsAuthController {
   constructor(
     private readonly microsoftAPIsService: MicrosoftAPIsService,
     private readonly transientTokenService: TransientTokenService,
+    private readonly connectedAccountOAuthService: ConnectedAccountOAuthService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly onboardingService: OnboardingService,
@@ -97,6 +99,11 @@ export class MicrosoftAPIsAuthController {
         id: workspaceId,
       });
 
+      await this.connectedAccountOAuthService.verifyUserCanConnectAccount({
+        userId,
+        workspaceId,
+      });
+
       if (emails.length === 0) {
         throw new AuthException(
           'No email - Ask your Azure Entra Admin to add you one on top of your User Principal Name',
@@ -119,12 +126,10 @@ export class MicrosoftAPIsAuthController {
           skipMessageChannelConfiguration,
         });
 
-      if (userId) {
-        await this.onboardingService.completeOnboardingConnectAccountStep({
-          userId,
-          workspaceId,
-        });
-      }
+      await this.onboardingService.completeOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+      });
 
       if (!workspace) {
         throw new AuthException(

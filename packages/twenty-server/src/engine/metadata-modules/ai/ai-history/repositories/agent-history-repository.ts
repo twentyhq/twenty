@@ -190,7 +190,9 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
         .execute();
       return {
         affected: result.generatedMaps.length,
-        generatedMaps: result.generatedMaps,
+        generatedMaps: result.generatedMaps.map(
+          ({ id }): Pick<TRecord, 'id'> => ({ id }),
+        ),
         raw: result.generatedMaps,
       };
     });

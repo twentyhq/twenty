@@ -1,4 +1,3 @@
-import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import {
   type AgentChatPrepromptMode,
@@ -16,19 +15,19 @@ export const useStageAiChatPreprompt = () => {
   const setAgentChatPreprompt = useSetAtomState(agentChatPrepromptState);
 
   const stageAiChatPreprompt = ({
-    text,
+    serializedDocument,
     mode,
     draftKey,
   }: {
-    text: string;
+    serializedDocument: string;
     mode: AgentChatPrepromptMode;
     draftKey: string;
   }) => {
     setAgentChatDraftsByThreadId((previousDrafts) => ({
       ...previousDrafts,
-      [draftKey]: serializePlainTextAsAdvancedTextEditorDocument(text),
+      [draftKey]: serializedDocument,
     }));
-    setAgentChatPreprompt({ text, mode });
+    setAgentChatPreprompt({ serializedDocument, mode });
   };
 
   return { stageAiChatPreprompt };

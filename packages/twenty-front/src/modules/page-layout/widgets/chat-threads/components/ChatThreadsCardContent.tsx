@@ -7,13 +7,11 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
-import { type GetChatThreadsForRecordQuery } from '~/generated-metadata/graphql';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const StyledThreadsContainer = styled.div`
   display: flex;
@@ -27,16 +25,14 @@ const StyledThreadsContainer = styled.div`
 type ChatThreadsCardContentProps = {
   loading: boolean;
   error?: unknown;
-  widgetId: string;
   onRetry: () => void;
   onDetachThread: (threadId: string) => void;
-  threads: GetChatThreadsForRecordQuery['chatThreadsForRecord'];
+  threads: AgentChatThreadRecord[];
 };
 
 export const ChatThreadsCardContent = ({
   loading,
   error,
-  widgetId,
   onRetry,
   onDetachThread,
   threads,
@@ -45,13 +41,6 @@ export const ChatThreadsCardContent = ({
 
   if (loading && isThreadsEmpty) {
     return <SkeletonLoader />;
-  }
-
-  // A denial is not transient: the resolver is behind the AI permission flag,
-  // so offering a retry here would loop forever on a role that cannot read
-  // conversations at all.
-  if (isGraphqlErrorOfType(error, 'FORBIDDEN')) {
-    return <PageLayoutWidgetErrorDisplay widgetId={widgetId} error={error} />;
   }
 
   if (isDefined(error) && isThreadsEmpty) {

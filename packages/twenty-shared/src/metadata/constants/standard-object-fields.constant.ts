@@ -63,9 +63,6 @@ export const STANDARD_OBJECT_FIELDS = {
     workflowRun: {
       universalIdentifier: '2187f4c6-bff3-4b80-8585-c82965faf79b',
     },
-    workflowStepId: {
-      universalIdentifier: 'ba4091ef-dfa2-4a99-bfb3-322ef9a745ab',
-    },
     pendingQuestionMessageId: {
       universalIdentifier: '51a9b421-7d90-4a59-9712-036ea9721e65',
     },
@@ -87,6 +84,7 @@ export const STANDARD_OBJECT_FIELDS = {
     recordTargets: {
       universalIdentifier: '5b37eceb-2992-4d27-9897-14af3e3ce9b2',
     },
+    inputAsks: { universalIdentifier: '0c2444ed-7f90-4984-9f56-a3fe16fa6296' },
   },
   agentChatThreadTarget: {
     ...buildStandardObjectBaseFields(
@@ -1502,6 +1500,9 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
       }),
     },
+    inputAsks: {
+      universalIdentifier: 'f3b2f310-9aa4-40da-82bb-3388d26e7cde',
+    },
   },
   workflowVersion: {
     ...buildStandardObjectSystemFields(
@@ -1604,5 +1605,27 @@ export const STANDARD_OBJECT_FIELDS = {
     numberFormat: {
       universalIdentifier: '20202020-7f40-4e7f-b126-11c0eda6b141',
     },
+    inputAsks: {
+      universalIdentifier: '552a26c5-21fd-4e3a-ad0d-2f561c96b7d4',
+    },
+  },
+  inputAsk: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+    ),
+    name: { universalIdentifier: 'f8d3b0ed-f134-420a-9194-ca0f96345642' },
+    status: { universalIdentifier: '919f0339-ee8e-4197-8b6a-b57bbd31035b' },
+    form: { universalIdentifier: 'b25c6916-71bc-435e-a547-ecb384083902' },
+    response: { universalIdentifier: '04906a36-ec59-4d3f-8da9-7ef6696ed326' },
+    assignee: { universalIdentifier: '410fabce-972b-40d3-8b11-3c0807ecab90' },
+    answeredAt: { universalIdentifier: '618f303d-123b-480f-9d40-64fcb0db2e01' },
+    workflowRun: {
+      universalIdentifier: 'cf2d5592-f51c-4dca-a6f2-cb4f7d1fcc80',
+    },
+    stepId: { universalIdentifier: '334c8abb-6ebe-4e08-a746-0098425ef421' },
+    toolCallId: {
+      universalIdentifier: 'f353edad-fe7e-4efc-ab0d-e21a0ee16262',
+    },
+    thread: { universalIdentifier: '21ee043a-d3d6-4545-8771-34aca316aeea' },
   },
 } satisfies Record<string, Record<string, { universalIdentifier: string }>>;

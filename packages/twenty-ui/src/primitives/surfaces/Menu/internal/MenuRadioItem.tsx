@@ -7,8 +7,13 @@ import { getMenuListItemProps } from './getMenuListItemProps';
 export const MenuRadioItem = (props: MenuRadioItemProps) => (
   <MenuPrimitive.RadioItem
     {...getMenuListItemProps<MenuPrimitive.RadioItem.State, MenuRadioItemProps>(
-      props,
-      (state) => ({ indicator: 'check', selected: state.checked }),
+      {
+        props,
+        getListItemState: (state) => ({
+          indicator: 'check',
+          selected: state.checked,
+        }),
+      },
     )}
   />
 );

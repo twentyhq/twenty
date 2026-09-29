@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import {
   IconHeadphones,
   IconPlayerPause,
@@ -187,15 +187,12 @@ export const CallRecordingAudioPlayer = ({
         <>
           <IconButton
             aria-label={isPlaying ? t`Pause` : t`Play`}
+            aria-busy={isStalled}
             size="sm"
             variant="ghost"
             onClick={handleTogglePlayback}
           >
-            {isStalled ? (
-              <CircularProgressBar barWidth={2} size={24} />
-            ) : (
-              <PlaybackIcon />
-            )}
+            {isStalled ? <Loader /> : <PlaybackIcon />}
           </IconButton>
           <StyledTrack>
             {isDurationKnown ? (
