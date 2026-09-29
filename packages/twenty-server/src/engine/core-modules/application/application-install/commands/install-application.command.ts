@@ -227,7 +227,6 @@ export class InstallApplicationCommand extends CommandRunner {
           version: targetVersion ?? undefined,
           workspaceId,
           hasUserApprovedCapabilities: true,
-          hasUserApprovedRoleGrants: true,
         });
       },
     });
