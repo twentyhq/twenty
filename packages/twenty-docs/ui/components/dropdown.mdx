@@ -77,7 +77,7 @@ Pass custom trigger elements through `render` so the trigger remains one interac
 `Search` provides the input and navigation into the result rows. Pass `value` and `onValueChange`; compute or fetch matching results in your application. Render `Loading` while a request is pending and `Empty` when no results match. Both accept caller-provided status text.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--picker"
+  storyId="ui-components-dropdown--picker-documentation"
   title="Searchable picker with inline creation"
   height={420}
 />
@@ -125,7 +125,7 @@ While `Search` holds text, the first enabled `OptionItem` is highlighted and Ent
 Actions and single selection close by default. Set `multiple` on the root to keep option selection open. The application still owns the selected values. `closeOnClick` on actions and `closeOnSelect` on options override those defaults, including repeated actions or asynchronous progress. Use `disabled` to prevent activation while retaining the row's appearance.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--multiple-selection"
+  storyId="ui-components-dropdown--multiple-selection-documentation"
   title="Multiple selection"
   height={420}
 />
@@ -137,7 +137,7 @@ Use `Page` for navigation that replaces the contents of the same popup. Wrap the
 A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--pages"
+  storyId="ui-components-dropdown--pages-documentation"
   title="Menu to picker page navigation"
   height={420}
 />
@@ -212,7 +212,7 @@ Dropdown.Content
 Place another `Dropdown.Root` inside `Content` when a control opens its own picker, such as a sort direction selector. Selecting an inner option closes only that picker and restores focus to its trigger. Escape and outside presses dismiss one layer at a time. Use `Submenu` for commands that should close the entire menu tree when selected.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--nested"
+  storyId="ui-components-dropdown--nested-documentation"
   title="Sort picker with a nested direction picker"
   height={420}
 />
@@ -222,12 +222,16 @@ Place another `Dropdown.Root` inside `Content` when a control opens its own pick
 Use `type="panel"` for form inputs. Input interaction keeps the panel open; a save action can close it. Own `open` and `onOpenChange` when another component or a shortcut needs to open the dropdown. Keep that state with the feature that coordinates the interaction.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--panel"
+  storyId="ui-components-dropdown--panel-documentation"
   title="Controlled form panel"
   height={380}
 />
 
 Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
+
+## Labels
+
+Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `hotkeysJoinLabel` to replace the default `then` between shortcut keys. Native `aria-labelledby` takes precedence over `aria-label`.
 
 ## Props
 

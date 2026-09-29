@@ -1,4 +1,4 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -48,10 +48,9 @@ export const SyncEmails = () => {
     clientConfigApiStatusState,
   ).isLoadedOnce;
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentUser = useAtomStateValue(currentUserState);
 
-  const isFirstWorkspaceUser = currentWorkspace?.workspaceMembersCount === 1;
-  const creditsReward = isFirstWorkspaceUser
+  const creditsReward = currentUser?.isWorkspaceCreator
     ? onboardingConfig?.importContactsCreditsReward
     : undefined;
 

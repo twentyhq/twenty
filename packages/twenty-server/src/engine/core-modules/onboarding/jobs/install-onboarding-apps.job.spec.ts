@@ -80,7 +80,6 @@ describe('InstallOnboardingAppsJob', () => {
 
     expect(onboardingService.creditInstallAppsReward).toHaveBeenCalledWith({
       workspaceId,
-      rewardAppsCount: 2,
     });
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       2,
@@ -182,7 +181,6 @@ describe('InstallOnboardingAppsJob', () => {
 
     expect(onboardingService.creditInstallAppsReward).toHaveBeenCalledWith({
       workspaceId,
-      rewardAppsCount: 1,
     });
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       1,

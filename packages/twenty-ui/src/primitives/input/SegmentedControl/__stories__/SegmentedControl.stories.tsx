@@ -42,6 +42,8 @@ export const Default: Story = {
   },
 };
 
+export const Documentation: Story = {};
+
 export const Dark: Story = {
   globals: { colorScheme: 'dark' },
 };
@@ -129,4 +131,8 @@ export const RightToLeft: Story = {
     await userEvent.keyboard('{ArrowRight}');
     await waitFor(() => expect(annual).toBeChecked());
   },
+};
+
+export const RightToLeftDocumentation: Story = {
+  render: RightToLeft.render,
 };
