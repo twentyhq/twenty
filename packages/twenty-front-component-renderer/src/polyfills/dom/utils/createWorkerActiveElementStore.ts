@@ -7,7 +7,7 @@ type NodeWithIsConnected = {
 };
 
 const isElementConnectedToDocument = (element: object): boolean =>
-  (element as NodeWithIsConnected).isConnected === true;
+  (element as NodeWithIsConnected).isConnected ?? false;
 
 export const createWorkerActiveElementStore = (): WorkerActiveElementStore => {
   let activeElement: object | null = null;
