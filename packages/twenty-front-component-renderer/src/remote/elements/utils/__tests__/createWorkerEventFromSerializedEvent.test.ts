@@ -1,5 +1,7 @@
 import '@/remote/generated/remote-elements';
 
+import { Window } from '@remote-dom/polyfill';
+
 import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
 import { isHostOriginatedEvent } from '@/polyfills/events/utils/isHostOriginatedEvent';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
@@ -12,6 +14,39 @@ const createTarget = (): HTMLElement =>
   document.createElement('html-input') as HTMLElement;
 
 describe('createWorkerEventFromSerializedEvent', () => {
+  it.each([
+    ['focusin', 'FocusEvent'],
+    ['paste', 'ClipboardEvent'],
+  ])(
+    'should use the existing worker %s constructor',
+    (eventType, eventClassName) => {
+      const polyfillWindow = new Window();
+      const target = polyfillWindow.document.createElement(
+        'input',
+      ) as unknown as Element;
+      const eventClassScope = toGlobalScopeRecord(polyfillWindow);
+      const eventClass = eventClassScope[eventClassName];
+
+      installEventConstructorPolyfills({ globalScope: eventClassScope });
+
+      const event = createWorkerEventFromSerializedEvent({
+        target,
+        eventType,
+        eventData: { type: eventType, clipboardText: 'pasted' },
+      });
+      const listener = jest.fn();
+
+      target.addEventListener(eventType, listener);
+      target.dispatchEvent(event);
+
+      expect(eventClassScope[eventClassName]).toBe(eventClass);
+      expect(event).toBeInstanceOf(eventClass);
+      expect(listener).toHaveBeenCalledWith(event);
+      expect(event.target).toBe(target);
+      expect(isHostOriginatedEvent(event)).toBe(true);
+    },
+  );
+
   it('should build a typed pointer event carrying the serialized properties', () => {
     const event = createWorkerEventFromSerializedEvent({
       target: createTarget(),
