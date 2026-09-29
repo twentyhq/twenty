@@ -11,10 +11,17 @@ type PhoneDisplayValueProps = {
   callingCode: string | null | undefined;
 };
 
+// Phone numbers read left to right in every locale; without an explicit
+// direction, an RTL page reorders their digit groups.
 export const PhoneDisplay = ({
   value: { number, callingCode },
 }: PhoneDisplayProps) => {
-  if (!isDefined(number)) return <ContactLink href="#">{number}</ContactLink>;
+  if (!isDefined(number))
+    return (
+      <ContactLink href="#" dir="ltr">
+        {number}
+      </ContactLink>
+    );
 
   const callingCodeSanitized = callingCode?.replace('+', '');
 
@@ -26,10 +33,23 @@ export const PhoneDisplay = ({
     });
   } catch (error) {
     if (!(error instanceof Error))
-      return <ContactLink href="#">{number}</ContactLink>;
+      return (
+        <ContactLink href="#" dir="ltr">
+          {number}
+        </ContactLink>
+      );
     if (error.message === 'NOT_A_NUMBER')
-      return <ContactLink href="#">{`+${callingCodeSanitized}`}</ContactLink>;
-    return <ContactLink href="#">{number}</ContactLink>;
+      return (
+        <ContactLink
+          href="#"
+          dir="ltr"
+        >{`+${callingCodeSanitized}`}</ContactLink>
+      );
+    return (
+      <ContactLink href="#" dir="ltr">
+        {number}
+      </ContactLink>
+    );
   }
 
   const URI = parsedPhoneNumber.getURI();
@@ -37,6 +57,7 @@ export const PhoneDisplay = ({
   return (
     <ContactLink
       href={URI}
+      dir="ltr"
       onClick={(event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
       }}
