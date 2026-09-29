@@ -17,9 +17,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Side effects a conversation needs whichever API changed it: the chat
-// commands call these directly, and the record API reaches them through the
-// agentChatThread query hooks.
 @Injectable()
 export class AgentChatThreadLifecycleService {
   private readonly logger = new Logger(AgentChatThreadLifecycleService.name);
@@ -81,9 +78,8 @@ export class AgentChatThreadLifecycleService {
       );
   }
 
-  // A record update only says which rows it touched, not whether it archived
-  // them, so the stored archivedAt decides. Repeating this for a thread that
-  // was already archived is harmless: it has no stream and no sandbox left.
+  // Archiving sets archivedAt rather than soft deleting, so it reaches the
+  // update hooks, which only know which rows they touched
   async stopArchivedThreads({
     workspaceId,
     threadIds,
@@ -100,13 +96,7 @@ export class AgentChatThreadLifecycleService {
     });
 
     for (const archivedThread of archivedThreads) {
-      if (isNonEmptyString(archivedThread.activeStreamId)) {
-        await this.stopStream({
-          workspaceId,
-          threadId: archivedThread.id,
-          streamId: archivedThread.activeStreamId,
-        });
-      }
+      await this.stopStreamIfAny({ workspaceId, thread: archivedThread });
 
       this.releaseThreadSandboxBestEffort({
         workspaceId,
@@ -129,10 +119,8 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // The owner field is not writable through the record API, so a conversation
-  // created there is attributed to its creator once it exists. Threads that
-  // already have an owner or belong to a workflow run are left alone, which
-  // keeps an upsert onto an existing thread from reassigning it.
+  // The owner field is not writable through the record API. Owned and
+  // workflow-run threads are skipped so an upsert cannot reassign them
   async assignCreatedThreadsToCreator({
     authContext,
     threadIds,
@@ -153,16 +141,27 @@ export class AgentChatThreadLifecycleService {
       workspaceId,
       this.workspaceCacheService,
     );
+    const unassignedThreadCriteria = {
+      workspaceMemberId: IsNull(),
+      ...(hasWorkflowRunThreadFields(flatFieldMetadataMaps)
+        ? { workflowRunId: IsNull() }
+        : {}),
+    };
+
+    const threadsBefore = await this.threadRepository.find(workspaceId, {
+      where: { id: In(threadIds), ...unassignedThreadCriteria },
+    });
+
+    if (!isNonEmptyArray(threadsBefore)) {
+      return;
+    }
 
     const { generatedMaps: assignedThreads } =
       await this.threadRepository.update(
         workspaceId,
         {
-          id: In(threadIds),
-          workspaceMemberId: IsNull(),
-          ...(hasWorkflowRunThreadFields(flatFieldMetadataMaps)
-            ? { workflowRunId: IsNull() }
-            : {}),
+          id: In(threadsBefore.map(({ id }) => id)),
+          ...unassignedThreadCriteria,
         },
         {
           workspaceMemberId: authContext.workspaceMemberId,
@@ -172,41 +171,57 @@ export class AgentChatThreadLifecycleService {
         },
       );
 
-    for (const { id } of assignedThreads as { id: string }[]) {
+    if (!isNonEmptyArray(assignedThreads)) {
+      return;
+    }
+
+    const threadsAfter = await this.threadRepository.find(workspaceId, {
+      where: { id: In(assignedThreads.map(({ id }) => id)) },
+    });
+
+    for (const threadAfter of threadsAfter) {
+      const threadBefore = threadsBefore.find(
+        ({ id }) => id === threadAfter.id,
+      );
+
+      if (!isDefined(threadBefore)) {
+        continue;
+      }
+
       await this.threadRecordEventService.emitThreadUpdated({
         workspaceId,
-        threadId: id,
-        updatedFields: [
-          'workspaceMember',
-          'workspaceMemberId',
-          ...(writesLegacyOwner ? (['userWorkspaceId'] as const) : []),
-        ],
+        threadBefore,
+        threadAfter,
       });
     }
   }
 
-  private async stopStream({
+  private async stopStreamIfAny({
     workspaceId,
-    threadId,
-    streamId,
+    thread,
   }: {
     workspaceId: string;
-    threadId: string;
-    streamId: string;
+    thread: AgentChatThreadWorkspaceEntity;
   }): Promise<void> {
-    await this.cancelStream({ threadId, streamId });
+    if (!isNonEmptyString(thread.activeStreamId)) {
+      return;
+    }
+
+    await this.cancelStream({
+      threadId: thread.id,
+      streamId: thread.activeStreamId,
+    });
 
     const { affected } = await this.threadRepository.update(
       workspaceId,
-      { id: threadId, activeStreamId: streamId },
+      { id: thread.id, activeStreamId: thread.activeStreamId },
       { activeStreamId: null },
     );
 
     if (affected > 0) {
       await this.threadRecordEventService.emitThreadUpdated({
         workspaceId,
-        threadId,
-        updatedFields: ['activeStreamId', 'updatedAt'],
+        threadBefore: thread,
       });
     }
   }

@@ -844,12 +844,11 @@ export class StreamAgentChatJob {
       return outcome;
     }
 
-    const threadStatus = await this.threadRepository.findOne(workspaceId, {
+    const threadBeforeUsage = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'archivedAt'],
     });
 
-    if (!threadStatus || threadStatus.archivedAt) {
+    if (!threadBeforeUsage || threadBeforeUsage.archivedAt) {
       return resolveSupersededTurnOutcome(outcome);
     }
 
@@ -886,7 +885,7 @@ export class StreamAgentChatJob {
     }
 
     await this.agentChatService.notifyThreadUsageUpdated({
-      threadId,
+      threadBefore: threadBeforeUsage,
       workspaceMemberId,
       workspaceId,
     });

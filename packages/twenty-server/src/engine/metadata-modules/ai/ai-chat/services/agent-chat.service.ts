@@ -1043,6 +1043,10 @@ export class AgentChatService {
       );
     }
 
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const updated = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -1057,11 +1061,12 @@ export class AgentChatService {
       ['title'],
       workspaceMemberId,
     );
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadId,
-      updatedFields: ['title', 'updatedAt'],
-    });
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
     return updated;
   }
@@ -1075,6 +1080,10 @@ export class AgentChatService {
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -1089,11 +1098,12 @@ export class AgentChatService {
       ['deletedAt'],
       workspaceMemberId,
     );
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadId,
-      updatedFields: ['archivedAt', 'activeStreamId', 'updatedAt'],
-    });
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
     this.threadLifecycleService.releaseThreadSandboxBestEffort({
       workspaceId,
@@ -1112,6 +1122,10 @@ export class AgentChatService {
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -1126,11 +1140,12 @@ export class AgentChatService {
       ['deletedAt'],
       workspaceMemberId,
     );
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadId,
-      updatedFields: ['archivedAt', 'updatedAt'],
-    });
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
     return thread;
   }
@@ -1209,6 +1224,19 @@ export class AgentChatService {
     });
   }
 
+  // Access-checked writes return raw rows; record events carry ORM records
+  private findThreadForRecordEvent({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<AgentChatThreadWorkspaceEntity | null> {
+    return this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+  }
+
   async notifyThreadActivityUpdated({
     threadId,
     workspaceMemberId,
@@ -1224,12 +1252,14 @@ export class AgentChatService {
       workspaceId,
     });
 
+    const threadAfter = { ...thread, updatedAt: new Date().toISOString() };
+
     // Conversations are listed by most recent change, so a message moves its
     // conversation to the top when it is sent, not only once the turn ends.
     await this.threadRepository.update(
       workspaceId,
       { id: threadId },
-      { updatedAt: new Date().toISOString() },
+      { updatedAt: threadAfter.updatedAt },
     );
 
     await this.broadcastThreadUpdated(
@@ -1240,21 +1270,21 @@ export class AgentChatService {
     );
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId,
-      threadId,
-      updatedFields: ['updatedAt'],
       threadBefore: thread,
+      threadAfter,
     });
   }
 
   async notifyThreadUsageUpdated({
-    threadId,
+    threadBefore,
     workspaceMemberId,
     workspaceId,
   }: {
-    threadId: string;
+    threadBefore: AgentChatThreadWorkspaceEntity;
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<void> {
+    const threadId = threadBefore.id;
     const thread = await this.getWritableThread({
       threadId,
       workspaceMemberId,
@@ -1276,20 +1306,8 @@ export class AgentChatService {
     );
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId,
-      threadId,
-      updatedFields: [
-        'totalInputTokens',
-        'totalOutputTokens',
-        'totalInputCredits',
-        'totalOutputCredits',
-        'totalCacheReadTokens',
-        'totalCacheCreationTokens',
-        'contextWindowTokens',
-        'conversationSize',
-        'pendingQuestionMessageId',
-        'lastStreamError',
-        'updatedAt',
-      ],
+      threadBefore,
+      threadAfter: thread,
     });
   }
 
@@ -1379,8 +1397,6 @@ export class AgentChatService {
     );
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId,
-      threadId,
-      updatedFields: ['title', 'updatedAt'],
       threadBefore: thread,
     });
 

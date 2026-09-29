@@ -3,33 +3,20 @@ import { Injectable } from '@nestjs/common';
 import {
   ObjectRecordCreateEvent,
   ObjectRecordDestroyEvent,
-  ObjectRecordUpdateEvent,
-  type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { buildAgentChatThreadUpdateEvent } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-update-event.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-type AgentChatThreadFieldName = keyof AgentChatThreadWorkspaceEntity & string;
-
-type AgentChatThreadRecordEvent =
-  | ObjectRecordCreateEvent<AgentChatThreadWorkspaceEntity>
-  | ObjectRecordUpdateEvent<AgentChatThreadWorkspaceEntity>
-  | ObjectRecordDestroyEvent<AgentChatThreadWorkspaceEntity>;
-
-// Chat history writes go through a repository that skips record events, so
-// subscribers of the record API (live lists, webhooks, triggers) only learn
-// about server-side thread changes from what this service emits.
+// Chat history writes skip record events, so record subscribers only hear of
+// them from here
 @Injectable()
 export class AgentChatThreadRecordEventService {
   constructor(
@@ -47,64 +34,61 @@ export class AgentChatThreadRecordEventService {
     threadId: string;
   }): Promise<void> {
     const thread = await this.findThread({ workspaceId, threadId });
+    const metadata = await this.findThreadMetadata(workspaceId);
 
-    if (!isDefined(thread)) {
+    if (!isDefined(thread) || !isDefined(metadata)) {
       return;
     }
 
-    await this.emit({
-      workspaceId,
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: metadata.objectMetadata.nameSingular,
       action: DatabaseEventAction.CREATED,
-      buildEvent: () =>
+      events: [
         Object.assign(
           new ObjectRecordCreateEvent<AgentChatThreadWorkspaceEntity>(),
           { recordId: thread.id, properties: { after: thread } },
         ),
+      ],
+      objectMetadata: metadata.objectMetadata,
+      workspaceId,
     });
   }
 
-  // Callers name the fields their write changed: the write happened in SQL
-  // they own, so the previous values are only known when they pass them.
   async emitThreadUpdated({
     workspaceId,
-    threadId,
-    updatedFields,
     threadBefore,
+    threadAfter,
   }: {
     workspaceId: string;
-    threadId: string;
-    updatedFields: AgentChatThreadFieldName[];
-    threadBefore?: AgentChatThreadWorkspaceEntity;
+    threadBefore: AgentChatThreadWorkspaceEntity;
+    threadAfter?: AgentChatThreadWorkspaceEntity;
   }): Promise<void> {
-    const threadAfter = await this.findThread({ workspaceId, threadId });
+    const storedThreadAfter =
+      threadAfter ??
+      (await this.findThread({ workspaceId, threadId: threadBefore.id }));
+    const metadata = await this.findThreadMetadata(workspaceId);
 
-    if (!isDefined(threadAfter)) {
+    if (!isDefined(storedThreadAfter) || !isDefined(metadata)) {
       return;
     }
 
-    const recordBefore = threadBefore ?? threadAfter;
+    const event = buildAgentChatThreadUpdateEvent({
+      threadBefore,
+      threadAfter: storedThreadAfter,
+      objectMetadata: metadata.objectMetadata,
+      flatFieldMetadataMaps: metadata.flatFieldMetadataMaps,
+    });
 
-    await this.emit({
-      workspaceId,
+    if (!isDefined(event)) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: metadata.objectMetadata.nameSingular,
       action: DatabaseEventAction.UPDATED,
-      buildEvent: ({ objectMetadata, flatFieldMetadataMaps }) =>
-        Object.assign(
-          new ObjectRecordUpdateEvent<AgentChatThreadWorkspaceEntity>(),
-          {
-            recordId: threadAfter.id,
-            properties: {
-              before: recordBefore,
-              after: threadAfter,
-              updatedFields,
-              diff: objectRecordChangedValues(
-                recordBefore,
-                threadAfter,
-                objectMetadata,
-                flatFieldMetadataMaps,
-              ) as Partial<ObjectRecordDiff<AgentChatThreadWorkspaceEntity>>,
-            },
-          },
-        ),
+      events: [event],
+      objectMetadata: metadata.objectMetadata,
+      workspaceId,
     });
   }
 
@@ -115,14 +99,23 @@ export class AgentChatThreadRecordEventService {
     workspaceId: string;
     threadBefore: AgentChatThreadWorkspaceEntity;
   }): Promise<void> {
-    await this.emit({
-      workspaceId,
+    const metadata = await this.findThreadMetadata(workspaceId);
+
+    if (!isDefined(metadata)) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: metadata.objectMetadata.nameSingular,
       action: DatabaseEventAction.DESTROYED,
-      buildEvent: () =>
+      events: [
         Object.assign(
           new ObjectRecordDestroyEvent<AgentChatThreadWorkspaceEntity>(),
           { recordId: threadBefore.id, properties: { before: threadBefore } },
         ),
+      ],
+      objectMetadata: metadata.objectMetadata,
+      workspaceId,
     });
   }
 
@@ -138,18 +131,7 @@ export class AgentChatThreadRecordEventService {
     });
   }
 
-  private async emit({
-    workspaceId,
-    action,
-    buildEvent,
-  }: {
-    workspaceId: string;
-    action: DatabaseEventAction;
-    buildEvent: (context: {
-      objectMetadata: FlatObjectMetadata;
-      flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    }) => AgentChatThreadRecordEvent;
-  }): Promise<void> {
+  private async findThreadMetadata(workspaceId: string) {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -161,16 +143,8 @@ export class AgentChatThreadRecordEventService {
         STANDARD_OBJECTS.agentChatThread.universalIdentifier
       ];
 
-    if (!isDefined(objectMetadata)) {
-      return;
-    }
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: objectMetadata.nameSingular,
-      action,
-      events: [buildEvent({ objectMetadata, flatFieldMetadataMaps })],
-      objectMetadata,
-      workspaceId,
-    });
+    return isDefined(objectMetadata)
+      ? { objectMetadata, flatFieldMetadataMaps }
+      : undefined;
   }
 }
