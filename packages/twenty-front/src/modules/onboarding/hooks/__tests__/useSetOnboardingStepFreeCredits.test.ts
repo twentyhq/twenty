@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement } from 'react';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
@@ -11,10 +12,20 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
+
+const setOnboardingStatus = (onboardingStatus: OnboardingStatus) =>
+  jotaiStore.set(currentUserState.atom, {
+    ...mockedUserData,
+    onboardingStatus,
+  });
 
 const renderSetStepFreeCreditsHook = () =>
   renderHook(
@@ -60,6 +71,7 @@ describe('useSetOnboardingStepFreeCredits', () => {
   });
 
   it('should count quiet credits as already seen', () => {
+    setOnboardingStatus(OnboardingStatus.PLAN_REQUIRED);
     jotaiStore.set(
       onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
       {
@@ -88,6 +100,7 @@ describe('useSetOnboardingStepFreeCredits', () => {
   });
 
   it('should keep unseen credits when a quiet reward is removed', () => {
+    setOnboardingStatus(OnboardingStatus.PLAN_REQUIRED);
     jotaiStore.set(
       onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
       {
@@ -121,6 +134,31 @@ describe('useSetOnboardingStepFreeCredits', () => {
     expect(result.current.onboardingFreeCredits).toEqual({
       ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
       importContacts: 2,
+      seenCredits: 0,
+    });
+  });
+
+  it('should not count quiet credits as seen before their step counts', () => {
+    setOnboardingStatus(OnboardingStatus.SYNC_EMAIL);
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      {
+        ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+        seenCredits: 0,
+      },
+    );
+
+    const result = renderSetStepFreeCreditsHook();
+
+    act(() => {
+      result.current.setOnboardingStepFreeCredits('upgradeTrial', 2, {
+        isQuiet: true,
+      });
+    });
+
+    expect(result.current.onboardingFreeCredits).toEqual({
+      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+      upgradeTrial: 2,
       seenCredits: 0,
     });
   });

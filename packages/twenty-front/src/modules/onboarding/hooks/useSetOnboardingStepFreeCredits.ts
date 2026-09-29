@@ -1,6 +1,10 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
+import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
+import { getOnboardingCountedFreeCredits } from '@/onboarding/utils/getOnboardingCountedFreeCredits';
 import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 type SetOnboardingStepFreeCreditsOptions = {
@@ -8,6 +12,7 @@ type SetOnboardingStepFreeCreditsOptions = {
 };
 
 export const useSetOnboardingStepFreeCredits = () => {
+  const store = useStore();
   const setOnboardingFreeCredits =
     useSetCurrentWorkspaceOnboardingFreeCredits();
 
@@ -18,8 +23,23 @@ export const useSetOnboardingStepFreeCredits = () => {
       { isQuiet = false }: SetOnboardingStepFreeCreditsOptions = {},
     ) =>
       setOnboardingFreeCredits((current) => {
+        const onboardingStatus = store.get(
+          currentUserState.atom,
+        )?.onboardingStatus;
+        const getCountedEarnedCredits = (
+          onboardingFreeCredits: OnboardingFreeCredits,
+        ) =>
+          getOnboardingEarnedCredits(
+            getOnboardingCountedFreeCredits({
+              onboardingFreeCredits,
+              onboardingStatus,
+            }),
+          );
         const onboardingFreeCredits = { ...current, [step]: credits };
-        const quietCreditsChange = isQuiet ? credits - current[step] : 0;
+        const quietCreditsChange = isQuiet
+          ? getCountedEarnedCredits(onboardingFreeCredits) -
+            getCountedEarnedCredits(current)
+          : 0;
 
         return {
           ...onboardingFreeCredits,
@@ -29,6 +49,6 @@ export const useSetOnboardingStepFreeCredits = () => {
           ),
         };
       }),
-    [setOnboardingFreeCredits],
+    [setOnboardingFreeCredits, store],
   );
 };
