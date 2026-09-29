@@ -27,9 +27,11 @@ type LocalStorageOptions = { getOnInit?: boolean };
 
 // Wraps the default JSON localStorage so a persisted value that fails
 // validateInitFn falls back to the initial value instead of hydrating the atom
-// with an invalid payload.
+// with an invalid payload. A value written by an earlier shape of the state
+// is upgraded by migrateInitFn instead, when it can be.
 const createValidatedLocalStorage = <ValueType>(
   validateInitFn: (payload: NonNullable<ValueType>) => boolean,
+  migrateInitFn?: (payload: unknown) => ValueType | undefined,
 ) => {
   const storage = createJSONStorage<ValueType>(() => localStorage);
 
@@ -39,13 +41,18 @@ const createValidatedLocalStorage = <ValueType>(
       const value = storage.getItem(key, initialValue) as ValueType;
 
       if (
-        isDefined(value) &&
-        !validateInitFn(value as NonNullable<ValueType>)
+        !isDefined(value) ||
+        validateInitFn(value as NonNullable<ValueType>)
       ) {
-        return initialValue;
+        return value;
       }
 
-      return value;
+      const migratedValue = migrateInitFn?.(value);
+
+      return isDefined(migratedValue) &&
+        validateInitFn(migratedValue as NonNullable<ValueType>)
+        ? migratedValue
+        : initialValue;
     },
   };
 };
@@ -57,6 +64,7 @@ export const createAtomState = <ValueType>({
   useSessionStorage = false,
   localStorageOptions,
   validateInitFn,
+  migrateInitFn,
   useCookieStorage,
   scope,
 }: {
@@ -66,6 +74,7 @@ export const createAtomState = <ValueType>({
   useSessionStorage?: boolean;
   localStorageOptions?: LocalStorageOptions;
   validateInitFn?: (payload: NonNullable<ValueType>) => boolean;
+  migrateInitFn?: (payload: unknown) => ValueType | undefined;
   useCookieStorage?: CookieStorageConfig<ValueType>;
   scope?: 'routed-flow';
 }): State<ValueType> => {
@@ -89,7 +98,7 @@ export const createAtomState = <ValueType>({
       }) as StateAtom<ValueType>;
     } else if (useLocalStorage) {
       const storage = isDefined(validateInitFn)
-        ? createValidatedLocalStorage<ValueType>(validateInitFn)
+        ? createValidatedLocalStorage<ValueType>(validateInitFn, migrateInitFn)
         : undefined;
       baseAtom = atomWithStorage<ValueType>(
         atomKey,
