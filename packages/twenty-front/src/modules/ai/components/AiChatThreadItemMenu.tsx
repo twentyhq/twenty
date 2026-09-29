@@ -9,6 +9,7 @@ import {
   IconDotsVertical,
   IconPencil,
   IconTrash,
+  IconUnlink,
 } from 'twenty-ui/icon';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
@@ -27,6 +28,7 @@ type AiChatThreadItemMenuProps = {
   isArchived: boolean;
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
+  onDetach?: () => void;
   trigger?: ReactElement;
 };
 
@@ -36,6 +38,7 @@ export const AiChatThreadItemMenu = ({
   isArchived,
   surface,
   onRenameRequested,
+  onDetach,
   trigger,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
@@ -55,6 +58,11 @@ export const AiChatThreadItemMenu = ({
   const handleRename = (event: React.MouseEvent) => {
     event.stopPropagation();
     onRenameRequested();
+  };
+
+  const handleDetach = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    onDetach?.();
   };
 
   const handleArchive = async (event: React.MouseEvent) => {
@@ -98,6 +106,14 @@ export const AiChatThreadItemMenu = ({
       />
       <Dropdown.Content align="end" aria-label={t`Chat actions`}>
         <Dropdown.Section>
+          {isDefined(onDetach) && permissions.canUpdate && (
+            <Dropdown.ActionItem
+              startIcon={<IconUnlink />}
+              onClick={handleDetach}
+            >
+              {t`Detach`}
+            </Dropdown.ActionItem>
+          )}
           {permissions.canUpdate && (
             <Dropdown.ActionItem
               startIcon={<IconPencil />}

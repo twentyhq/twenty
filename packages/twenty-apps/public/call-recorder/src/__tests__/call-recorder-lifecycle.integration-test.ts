@@ -4,6 +4,7 @@ import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { getJobs } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 import {
   afterEach,
   beforeAll,
@@ -68,35 +69,13 @@ const RESTRICTED_TITLE_PLACEHOLDER =
 
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
-// hits the workspace GraphQL API directly with the test API key.
-const workspaceGraphql = async (
+// hits the GraphQL APIs directly with the test API key.
+const twentyGraphql = async <TData>(
+  endpointPath: '/graphql' | '/metadata',
   query: string,
   variables: Record<string, unknown> = {},
-): Promise<any> => {
-  const response = await fetch(`${process.env.TWENTY_API_URL}/graphql`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ query, variables }),
-  });
-  const payload = await response.json();
-
-  if (payload.errors !== undefined) {
-    throw new Error(
-      `Workspace GraphQL request failed: ${JSON.stringify(payload.errors)}`,
-    );
-  }
-
-  return payload.data;
-};
-
-const metadataGraphql = async <TData>(
-  query: string,
-  variables: Record<string, unknown>,
 ): Promise<TData> => {
-  const response = await fetch(`${process.env.TWENTY_API_URL}/metadata`, {
+  const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
@@ -109,9 +88,9 @@ const metadataGraphql = async <TData>(
     errors?: unknown[];
   };
 
-  if (!isUndefined(payload.errors)) {
+  if (isDefined(payload.errors)) {
     throw new Error(
-      `Metadata GraphQL request failed: ${JSON.stringify(payload.errors)}`,
+      `GraphQL request to ${endpointPath} failed: ${JSON.stringify(payload.errors)}`,
     );
   }
 
@@ -121,12 +100,13 @@ const metadataGraphql = async <TData>(
 const fetchApplicationAccessToken = async (): Promise<string> => {
   const {
     findApplicationRegistrationByUniversalIdentifier: applicationRegistration,
-  } = await metadataGraphql<{
+  } = await twentyGraphql<{
     findApplicationRegistrationByUniversalIdentifier: {
       id: string;
       oAuthClientId: string;
     } | null;
   }>(
+    '/metadata',
     `query FindApplicationRegistration($universalIdentifier: String!) {
       findApplicationRegistrationByUniversalIdentifier(
         universalIdentifier: $universalIdentifier
@@ -144,9 +124,10 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
 
   const {
     rotateApplicationRegistrationClientSecret: { clientSecret },
-  } = await metadataGraphql<{
+  } = await twentyGraphql<{
     rotateApplicationRegistrationClientSecret: { clientSecret: string };
   }>(
+    '/metadata',
     `mutation RotateApplicationRegistrationClientSecret($id: String!) {
       rotateApplicationRegistrationClientSecret(id: $id) {
         clientSecret
@@ -193,6 +174,13 @@ type CalendarEventFixture = {
   };
 };
 
+type CalendarEventFixturesPage = {
+  calendarEvents: {
+    edges: Array<{ node: CalendarEventFixture }>;
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  };
+};
+
 const discoverVisibleCalendarEventFixtures = async (): Promise<
   CalendarEventFixture[]
 > => {
@@ -200,7 +188,8 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
   let after: string | null = null;
 
   do {
-    const eventsData = await workspaceGraphql(
+    const eventsData: CalendarEventFixturesPage = await twentyGraphql(
+      '/graphql',
       `query ($after: String) {
         calendarEvents(first: 200, after: $after) {
           edges {
@@ -229,7 +218,7 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
 
     fixtures.push(
       ...connection.edges
-        .map((edge: any) => edge.node)
+        .map((edge) => edge.node)
         .filter(
           (node: CalendarEventFixture) =>
             node.title !== RESTRICTED_TITLE_PLACEHOLDER &&

@@ -11,6 +11,7 @@ import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { useWorkflowRunStepLog } from '@/workflow/hooks/useWorkflowRunStepLog';
 import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
+import { WorkflowRunStepAiAgentConversationButton } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton';
 import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail';
 import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail';
 import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail';
@@ -62,6 +63,7 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
           <IconInfoCircle size={20} />
           <div>{t`No logs were recorded for this step.`}</div>
         </StyledEmptyState>
+        <WorkflowRunStepAiAgentConversationButton stepId={stepId} />
       </StyledRoot>
     );
   }
@@ -93,7 +95,12 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
   const renderDetails = () => {
     switch (stepLog.details.type) {
       case 'AI_AGENT':
-        return <WorkflowRunStepLogsAiAgentDetail details={stepLog.details} />;
+        return (
+          <>
+            <WorkflowRunStepAiAgentConversationButton stepId={stepId} />
+            <WorkflowRunStepLogsAiAgentDetail details={stepLog.details} />
+          </>
+        );
       case 'CODE':
         return <WorkflowRunStepLogsCodeDetail details={stepLog.details} />;
       case 'HTTP_REQUEST':

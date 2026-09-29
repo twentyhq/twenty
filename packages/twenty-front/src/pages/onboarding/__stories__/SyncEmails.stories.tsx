@@ -4,7 +4,7 @@ import { HttpResponse, graphql } from 'msw';
 import { expect, within } from 'storybook/test';
 import { AppPath } from 'twenty-shared/types';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
@@ -15,14 +15,14 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockCurrentWorkspace,
   mockedOnboardingUserData,
+  mockedUserData,
 } from '~/testing/mock-data/users';
 
-const setWorkspaceMembersCount = (workspaceMembersCount: number) => {
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    workspaceMembersCount,
+const setIsWorkspaceCreator = (isWorkspaceCreator: boolean) => {
+  jotaiStore.set(currentUserState.atom, {
+    ...mockedUserData,
+    isWorkspaceCreator,
   });
 };
 
@@ -55,7 +55,7 @@ export type Story = StoryObj<typeof SyncEmails>;
 
 export const Default: Story = {
   beforeEach: () => {
-    setWorkspaceMembersCount(1);
+    setIsWorkspaceCreator(true);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
@@ -66,7 +66,7 @@ export const Default: Story = {
 
 export const InvitedUser: Story = {
   beforeEach: () => {
-    setWorkspaceMembersCount(2);
+    setIsWorkspaceCreator(false);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);

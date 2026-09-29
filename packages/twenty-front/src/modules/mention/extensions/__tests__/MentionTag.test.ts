@@ -4,6 +4,7 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
 import { MentionTag } from '@/mention/extensions/MentionTag';
+import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 
 // Mock ReactNodeViewRenderer since we're testing in a non-DOM environment
 jest.mock('@tiptap/react', () => ({
@@ -136,27 +137,17 @@ describe('MentionTag', () => {
   });
 
   describe('insertContent command', () => {
-    it('should insert a mention tag via editor commands', () => {
-      editor.commands.setContent('<p></p>');
-      editor.commands.focus();
+    it('should insert a picked record as a reference followed by a space', () => {
+      editor.commands.insertContent(
+        getMentionTagContent({
+          recordId: 'test-id',
+          objectNameSingular: 'opportunity',
+          label: 'Big Deal',
+          imageUrl: null,
+        }),
+      );
 
-      editor
-        .chain()
-        .focus()
-        .insertContent({
-          type: 'mentionTag',
-          attrs: {
-            recordId: 'test-id',
-            objectNameSingular: 'opportunity',
-            label: 'Big Deal',
-            imageUrl: 'https://example.com/img.png',
-          },
-        })
-        .run();
-
-      const text = editor.getText();
-
-      expect(text).toContain('[[record:opportunity:test-id:Big Deal]]');
+      expect(editor.getText()).toBe('[[record:opportunity:test-id:Big Deal]] ');
     });
   });
 

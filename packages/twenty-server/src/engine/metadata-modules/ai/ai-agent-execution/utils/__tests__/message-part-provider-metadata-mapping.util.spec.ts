@@ -1,6 +1,6 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 
@@ -35,7 +35,7 @@ describe('message part provider metadata mapping', () => {
     ]);
 
     expect(
-      mapDBPartToUIMessagePart(dbParts[0] as AgentMessagePartEntity),
+      mapDBPartToUIMessagePart(dbParts[0] as AgentMessagePartWorkspaceEntity),
     ).toEqual({
       type: 'reasoning',
       text: 'reasoning summary',

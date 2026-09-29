@@ -5,6 +5,7 @@ import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/Co
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 
 export const useCommandMenuItemWorkspaceSectionContext =
   (): CommandMenuItemSectionContext => {
@@ -15,6 +16,7 @@ export const useCommandMenuItemWorkspaceSectionContext =
         <Avatar
           size="md"
           name={currentWorkspace?.displayName ?? ''}
+          colorSeed={getWorkspaceAvatarColorSeed(currentWorkspace?.displayName)}
           src={getAbsoluteImageUrl(
             currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
           )}
