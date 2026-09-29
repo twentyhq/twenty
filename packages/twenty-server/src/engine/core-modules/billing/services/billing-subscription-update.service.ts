@@ -38,6 +38,7 @@ import {
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
+import { isNoOpSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/is-no-op-subscription-update.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-licensed-billing-subscription-item-or-throw.util';
@@ -302,35 +303,47 @@ export class BillingSubscriptionUpdateService {
         });
       }
     } else {
-      const subscriptionOptions = computeSubscriptionUpdateOptions(
-        subscriptionUpdate,
-        {
-          currentSeats: licensedItem.quantity,
-          isTrialing: subscription.status === SubscriptionStatus.Trialing,
-        },
-      );
+      const isNoOpUpdate = isNoOpSubscriptionUpdate({
+        toUpdatePrices: toUpdateCurrentPrices,
+        currentLicensedPriceId: licensedItem.stripePriceId,
+        currentResourceCreditPriceId: resourceCreditItem.stripePriceId,
+        currentSeats: licensedItem.quantity,
+      });
 
-      if (
-        subscriptionUpdate.type === SubscriptionUpdateType.RESOURCE_CREDIT_PRICE
-      ) {
-        assertIsDefinedOrThrow(resourceCreditItem);
-        await this.createResourceCreditUpgradeInvoice({
-          subscription,
-          currentResourceCreditPriceId: resourceCreditItem.stripePriceId,
-          newResourceCreditPriceId: subscriptionUpdate.newResourceCreditPriceId,
+      if (!isNoOpUpdate) {
+        const subscriptionOptions = computeSubscriptionUpdateOptions(
+          subscriptionUpdate,
+          {
+            currentSeats: licensedItem.quantity,
+            isTrialing: subscription.status === SubscriptionStatus.Trialing,
+          },
+        );
+
+        if (
+          subscriptionUpdate.type ===
+          SubscriptionUpdateType.RESOURCE_CREDIT_PRICE
+        ) {
+          assertIsDefinedOrThrow(resourceCreditItem);
+          await this.createResourceCreditUpgradeInvoice({
+            subscription,
+            currentResourceCreditPriceId: resourceCreditItem.stripePriceId,
+            newResourceCreditPriceId:
+              subscriptionUpdate.newResourceCreditPriceId,
+          });
+        }
+
+        await this.runSubscriptionUpdate({
+          stripeSubscriptionId: subscription.stripeSubscriptionId,
+          licensedStripeItemId: licensedItem.stripeSubscriptionItemId,
+          resourceCreditStripeItemId:
+            resourceCreditItem.stripeSubscriptionItemId,
+          licensedStripePriceId: toUpdateCurrentPrices.licensedPriceId,
+          resourceCreditStripePriceId:
+            toUpdateCurrentPrices.resourceCreditPriceId,
+          seats: toUpdateCurrentPrices.seats,
+          ...subscriptionOptions,
         });
       }
-
-      await this.runSubscriptionUpdate({
-        stripeSubscriptionId: subscription.stripeSubscriptionId,
-        licensedStripeItemId: licensedItem.stripeSubscriptionItemId,
-        resourceCreditStripeItemId: resourceCreditItem.stripeSubscriptionItemId,
-        licensedStripePriceId: toUpdateCurrentPrices.licensedPriceId,
-        resourceCreditStripePriceId:
-          toUpdateCurrentPrices.resourceCreditPriceId,
-        seats: toUpdateCurrentPrices.seats,
-        ...subscriptionOptions,
-      });
 
       if (isDefined(nextPhase)) {
         assertIsDefinedOrThrow(schedule);
