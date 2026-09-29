@@ -109,13 +109,13 @@ export class UnsubscribeHostnameService {
     emailingDomainId: string,
     { provision }: { provision: boolean },
   ): Promise<void> {
-    if (!this.dnsManagerService.isConfigured()) {
-      await this.useServerHostname(workspaceId, emailingDomainId);
-
-      return;
-    }
-
     try {
+      if (!this.dnsManagerService.isConfigured()) {
+        await this.useServerHostname(workspaceId, emailingDomainId);
+
+        return;
+      }
+
       const emailingDomain = await this.emailingDomainRepository.findOneOrFail(
         workspaceId,
         { where: { id: emailingDomainId } },
@@ -194,12 +194,18 @@ export class UnsubscribeHostnameService {
     workspaceId: string,
     emailingDomainId: string,
   ): Promise<void> {
+    const serverUrl = new URL(this.twentyConfigService.get('SERVER_URL'));
+
+    if (serverUrl.protocol !== 'https:') {
+      return;
+    }
+
     await this.emailingDomainRepository.update(
       workspaceId,
       { id: emailingDomainId },
       {
-        unsubscribeHostname: new URL(this.twentyConfigService.get('SERVER_URL'))
-          .host,
+        unsubscribeHostname: serverUrl.host,
+        unsubscribeHostnameId: null,
         unsubscribeHostnameStatus: UnsubscribeHostnameStatus.ACTIVE,
       },
     );
