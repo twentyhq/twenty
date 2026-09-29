@@ -28,10 +28,22 @@ export type ScheduleRecallBotForCallRecordingResult =
   | { status: 'blocked'; failureReason: string }
   | { status: 'failed'; reason: string };
 
-// The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
+export type ScheduleRecallBotForCallRecordingOptions = {
+  // Join time to send instead of the one derived from the join-early setting.
+  joinAt?: string;
+  // The bot this creation replaces. The row keeps its id until the new bot
+  // exists, so the update trigger never sees a pending row and races this run.
+  replacedExternalBotId?: string;
+};
+
+// The sole place a Recall bot is created. Only the deterministic-create winner, the stale-state cron and the send-now command call it, so one writer per meeting POSTs exactly one bot.
 export const scheduleRecallBotForCallRecording = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
+  {
+    joinAt: requestedJoinAt,
+    replacedExternalBotId,
+  }: ScheduleRecallBotForCallRecordingOptions = {},
 ): Promise<ScheduleRecallBotForCallRecordingResult> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const meetingStartsAt = calendarEvent.startsAt;
@@ -44,7 +56,7 @@ export const scheduleRecallBotForCallRecording = async (
     return { status: 'skipped', reason: 'calendar bot scheduling is off' };
   }
 
-  const joinAt = computeRecallBotJoinAt(meetingStartsAt);
+  const joinAt = requestedJoinAt ?? computeRecallBotJoinAt(meetingStartsAt);
 
   const freshCallRecording = (
     await findCallRecordingsByIds(client, [callRecording.id])
@@ -55,7 +67,7 @@ export const scheduleRecallBotForCallRecording = async (
     freshCallRecording.recordingRequestStatus !==
       CallRecordingRequestStatus.REQUESTED ||
     freshCallRecording.status !== CallRecordingStatus.SCHEDULED ||
-    !isUndefined(freshCallRecording.externalBotId)
+    freshCallRecording.externalBotId !== replacedExternalBotId
   ) {
     return {
       status: 'skipped',
@@ -104,8 +116,10 @@ export const scheduleRecallBotForCallRecording = async (
   // inputs, recovery can re-send the creation idempotently instead of asking
   // Recall whether a bot already exists. Re-sends of the recorded attempt keep
   // its timestamp, and with it its key, so repeated unknown outcomes age out of
-  // the resend window instead of staying trusted forever.
+  // the resend window instead of staying trusted forever. A requested join
+  // time is a new attempt: its key must not collide with the regular one.
   const attemptedAt =
+    isUndefined(requestedJoinAt) &&
     !isUndefined(freshCallRecording.botScheduleAttemptedAt) &&
     hasUnchangedBotScheduleIdempotencyKey({
       callRecording: freshCallRecording,
@@ -124,6 +138,7 @@ export const scheduleRecallBotForCallRecording = async (
   const isAttemptRecorded = await recordBotScheduleAttempt(client, {
     id: callRecording.id,
     expectedAttemptedAt: freshCallRecording.botScheduleAttemptedAt,
+    expectedExternalBotId: replacedExternalBotId,
     attemptedAt,
     idempotencyKey,
   });

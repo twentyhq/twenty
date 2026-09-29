@@ -9,11 +9,14 @@ export const recordBotScheduleAttempt = async (
   {
     id,
     expectedAttemptedAt,
+    expectedExternalBotId,
     attemptedAt,
     idempotencyKey,
   }: {
     id: string;
     expectedAttemptedAt: string | undefined;
+    // The bot this attempt replaces; a pending row carries none.
+    expectedExternalBotId?: string;
     attemptedAt: string;
     idempotencyKey: string;
   },
@@ -27,7 +30,9 @@ export const recordBotScheduleAttempt = async (
             eq: CallRecordingRequestStatus.REQUESTED,
           },
           status: { in: [CallRecordingStatus.SCHEDULED] },
-          externalBotId: { is: 'NULL' },
+          externalBotId: isUndefined(expectedExternalBotId)
+            ? { is: 'NULL' }
+            : { eq: expectedExternalBotId },
           botScheduleAttemptedAt: isUndefined(expectedAttemptedAt)
             ? { is: 'NULL' }
             : { eq: expectedAttemptedAt },

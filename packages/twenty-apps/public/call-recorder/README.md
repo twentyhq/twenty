@@ -36,6 +36,11 @@ happens once the meeting is within the seven-day scheduling window. Set it to
 Off to skip a meeting. Past meetings the recorder never joined simply stay
 blank.
 
+When a call starts before its scheduled join time, open the calendar event and
+run **Send recorder now** from its actions menu: the recorder joins right away
+instead of waiting, and a meeting whose Recording Bot was Off is switched back
+to On.
+
 ## 🗓️ Pausing the recorder
 
 The **Record my calendar meetings** toggle in the app settings is on

@@ -3,7 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
-import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
+import {
+  scheduleRecallBotForCallRecording,
+  type ScheduleRecallBotForCallRecordingOptions,
+} from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 
 const getCreditAvailabilityMock = vi.hoisted(() => vi.fn());
 const enqueueJobsMock = vi.hoisted(() => vi.fn());
@@ -66,7 +69,12 @@ class FakeCoreApiClient {
   async mutation(mutation: any): Promise<any> {
     if (mutation.updateCallRecordings !== undefined) {
       const { filter, data } = mutation.updateCallRecordings.__args;
-      const isMatch = filter.status.in.includes(this.callRecording.status);
+      const isMatch =
+        filter.status.in.includes(this.callRecording.status) &&
+        (filter.externalBotId === undefined ||
+          (filter.externalBotId.is === 'NULL'
+            ? this.callRecording.externalBotId === null
+            : this.callRecording.externalBotId === filter.externalBotId.eq));
 
       if (isMatch) {
         Object.assign(this.callRecording, data);
@@ -93,23 +101,29 @@ class FakeCoreApiClient {
 const scheduleBot = ({
   client,
   meetingStartsAt,
+  options,
 }: {
   client: FakeCoreApiClient;
   meetingStartsAt: string;
+  options?: ScheduleRecallBotForCallRecordingOptions;
 }) =>
-  scheduleRecallBotForCallRecording(client as unknown as CoreApiClient, {
-    callRecording: { id: 'call-recording-1' },
-    calendarEvent: {
-      id: 'calendar-event-1',
-      title: 'Customer sync',
-      isCanceled: false,
-      startsAt: meetingStartsAt,
-      endsAt: '2026-01-01T14:00:00.000Z',
-      iCalUid: 'calendar-event-uid',
-      conferenceLinkUrl: 'https://meet.example.com/customer-sync',
-      callRecorderPreference: 'ON',
+  scheduleRecallBotForCallRecording(
+    client as unknown as CoreApiClient,
+    {
+      callRecording: { id: 'call-recording-1' },
+      calendarEvent: {
+        id: 'calendar-event-1',
+        title: 'Customer sync',
+        isCanceled: false,
+        startsAt: meetingStartsAt,
+        endsAt: '2026-01-01T14:00:00.000Z',
+        iCalUid: 'calendar-event-uid',
+        conferenceLinkUrl: 'https://meet.example.com/customer-sync',
+        callRecorderPreference: 'ON',
+      },
     },
-  });
+    options,
+  );
 
 const createBotCalls = () =>
   fetchMock.mock.calls.filter(
@@ -209,6 +223,67 @@ describe('scheduleRecallBotForCallRecording', () => {
     expect(createBotCalls()).toHaveLength(1);
     expect(enqueueJobsMock).not.toHaveBeenCalled();
     expect(client.callRecording.status).toBe('SCHEDULED');
+  });
+
+  it('skips a row that already has a bot', async () => {
+    const client = new FakeCoreApiClient();
+    client.callRecording.externalBotId = 'recall-bot-old';
+
+    const scheduleResult = await scheduleBot({
+      client,
+      meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
+    });
+
+    expect(scheduleResult).toEqual({
+      status: 'skipped',
+      reason: 'call recording no longer awaits a bot',
+    });
+    expect(createBotCalls()).toHaveLength(0);
+    expect(client.callRecording.externalBotId).toBe('recall-bot-old');
+  });
+
+  it('replaces the given bot with one created at the requested join time', async () => {
+    getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
+    const client = new FakeCoreApiClient();
+    client.callRecording.externalBotId = 'recall-bot-old';
+
+    const scheduleResult = await scheduleBot({
+      client,
+      meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
+      options: {
+        joinAt: NOW.toISOString(),
+        replacedExternalBotId: 'recall-bot-old',
+      },
+    });
+
+    expect(scheduleResult).toEqual({ status: 'scheduled' });
+    expect(createBotCalls()).toHaveLength(1);
+    expect(JSON.parse(createBotCalls()[0][1]?.body as string)).toEqual(
+      expect.objectContaining({ join_at: '2026-01-01T12:00:01.000Z' }),
+    );
+    expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+    expect(getCreditAvailabilityMock).toHaveBeenCalledOnce();
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
+  });
+
+  it('skips the replacement when the row no longer carries the replaced bot', async () => {
+    const client = new FakeCoreApiClient();
+    client.callRecording.externalBotId = 'recall-bot-other';
+
+    const scheduleResult = await scheduleBot({
+      client,
+      meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
+      options: {
+        joinAt: NOW.toISOString(),
+        replacedExternalBotId: 'recall-bot-old',
+      },
+    });
+
+    expect(scheduleResult).toEqual({
+      status: 'skipped',
+      reason: 'call recording no longer awaits a bot',
+    });
+    expect(createBotCalls()).toHaveLength(0);
   });
 
   it('still schedules the bot when the credit check cannot be enqueued', async () => {

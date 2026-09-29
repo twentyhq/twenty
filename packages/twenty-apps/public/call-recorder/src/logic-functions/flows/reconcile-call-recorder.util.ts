@@ -751,7 +751,7 @@ const buildCalendarDrivenCallRecordingFields = (
   calendarEventId: calendarEvent.id,
 });
 
-const buildScheduledCallRecordingFields = (
+export const buildScheduledCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
 ): ScheduledCallRecordingFields => ({
   ...buildCalendarDrivenCallRecordingFields(calendarEvent),
