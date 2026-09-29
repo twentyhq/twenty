@@ -40,7 +40,6 @@ const buildManifest = (): Manifest => {
         },
         RECORD_MY_MEETINGS: {
           universalIdentifier: USER_VARIABLE_ID,
-          value: 'true',
           scope: 'USER',
         },
       },

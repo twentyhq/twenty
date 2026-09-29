@@ -14,9 +14,21 @@ export class AddScopeToApplicationVariablesFastInstanceCommand
     await queryRunner.query(
       `ALTER TABLE "core"."applicationVariable" ADD "scope" "core"."applicationVariable_scope_enum" NOT NULL DEFAULT 'WORKSPACE'`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationVariable" ALTER COLUMN "value" DROP NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationVariable" ADD CONSTRAINT "CHK_applicationVariable_value_null_only_for_user_scope" CHECK (("scope" = 'USER') = ("value" IS NULL))`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "CHK_applicationVariable_value_null_only_for_user_scope"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationVariable" ALTER COLUMN "value" SET NOT NULL`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationVariable" DROP COLUMN "scope"`,
     );

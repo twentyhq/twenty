@@ -39,6 +39,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'CHK_applicationVariable_deprecated_not_required',
   `NOT ("isRequired" AND "isDeprecated")`,
 )
+@Check(
+  'CHK_applicationVariable_value_null_only_for_user_scope',
+  `("scope" = 'USER') = ("value" IS NULL)`,
+)
 export class ApplicationVariableEntity extends SyncableEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -47,8 +51,8 @@ export class ApplicationVariableEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'text' })
   key: string;
 
-  @Column({ nullable: false, type: 'text' })
-  value: EncryptedString;
+  @Column({ nullable: true, type: 'text' })
+  value: EncryptedString | null;
 
   @Column({ nullable: false, type: 'text', default: '' })
   description: string;
