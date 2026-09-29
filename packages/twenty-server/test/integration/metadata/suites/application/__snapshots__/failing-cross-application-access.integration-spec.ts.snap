@@ -606,7 +606,7 @@ exports[`Application token access to another application should fail with an app
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
