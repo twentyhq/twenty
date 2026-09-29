@@ -79,8 +79,6 @@ describe('mergeAiAgentStepLogs', () => {
       durationMs: 50,
     });
 
-    expect(mergeAiAgentStepLogs({ previousStepLog: null, nextStepLog })).toBe(
-      nextStepLog,
-    );
+    expect(mergeAiAgentStepLogs({ nextStepLog })).toBe(nextStepLog);
   });
 });
