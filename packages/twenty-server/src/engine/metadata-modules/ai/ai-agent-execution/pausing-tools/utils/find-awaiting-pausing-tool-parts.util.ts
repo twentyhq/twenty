@@ -3,13 +3,13 @@ import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
-import { type PausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool.type';
+import { type PausingToolAsk } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-ask.type';
 
+// A call whose input cannot be read has no Ask: nothing can answer it.
 export type AwaitingPausingToolPart = {
   toolName: string;
   toolCallId: string;
-  input: unknown;
-  pausingTool: PausingTool;
+  ask: PausingToolAsk | null;
 };
 
 // A step can call several pausing tools at once: each waits on its own Ask,
@@ -33,8 +33,7 @@ export const findAwaitingPausingToolParts = (
       {
         toolName,
         toolCallId: part.toolCallId,
-        input: part.input,
-        pausingTool,
+        ask: pausingTool.parseCall(part.input)?.buildAsk() ?? null,
       },
     ];
   });

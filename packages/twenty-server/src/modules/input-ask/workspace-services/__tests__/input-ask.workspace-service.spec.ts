@@ -210,17 +210,14 @@ describe('InputAskWorkspaceService', () => {
       );
     });
 
-    it('cancels what an ended run left pending without failing the run', async () => {
+    it('cancels what an ended run left pending', async () => {
       const { service, inputAskRepository } = buildService();
 
-      inputAskRepository.update.mockRejectedValue(new Error('db down'));
+      await service.cancel({
+        workspaceId: 'workspace-id',
+        match: { workflowRunId: 'workflow-run-id' },
+      });
 
-      expect(
-        await service.cancel({
-          workspaceId: 'workspace-id',
-          match: { workflowRunId: 'workflow-run-id' },
-        }),
-      ).toBe(false);
       expect(inputAskRepository.update).toHaveBeenCalledWith(
         { workflowRunId: 'workflow-run-id', status: InputAskStatus.PENDING },
         { status: InputAskStatus.CANCELED },

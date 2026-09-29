@@ -16,7 +16,6 @@ export const inputAskGraphqlApiExceptionHandler = (
 ): never => {
   switch (exception.code) {
     case InputAskExceptionCode.ASK_NOT_FOUND:
-    case InputAskExceptionCode.INPUT_ASK_WITHOUT_KEY:
       throw new NotFoundError(exception);
     case InputAskExceptionCode.ASK_NOT_PENDING:
     case InputAskExceptionCode.INVALID_ASK_RESPONSE:

@@ -72,6 +72,9 @@ describe('AgentChatStreamingService claim & reap', () => {
       findPendingForThread: jest
         .fn()
         .mockResolvedValue(isDefined(pendingInputAsk) ? [pendingInputAsk] : []),
+      hasPendingForThread: jest
+        .fn()
+        .mockResolvedValue(isDefined(pendingInputAsk)),
       cancel: jest.fn().mockResolvedValue(true),
     };
     const eventPublisherService = {

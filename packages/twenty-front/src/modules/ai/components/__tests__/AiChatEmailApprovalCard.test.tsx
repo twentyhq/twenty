@@ -74,7 +74,7 @@ describe('AiChatEmailApprovalCard', () => {
     );
     await user.type(
       screen.getByRole('textbox', { name: 'Add a recipient to To' }),
-      'phil@apple.dev{Enter}',
+      'Phil Schiller <phil@apple.dev>{Enter}',
     );
     await user.click(screen.getByRole('button', { name: 'Save as draft' }));
 

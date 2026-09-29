@@ -29,7 +29,7 @@ import {
   AgentMessageRole,
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
+import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -148,15 +148,16 @@ export class AgentChatStreamingService {
       workspaceId: workspace.id,
     });
 
-    await this.settlePendingInputAsksBeforeSending({
-      threadId,
-      workspaceId: workspace.id,
-    });
-
-    const hasQueuedBacklog = await this.agentChatService.hasQueuedMessages({
-      threadId,
-      workspaceId: workspace.id,
-    });
+    const [, hasQueuedBacklog] = await Promise.all([
+      this.settlePendingInputAsksBeforeSending({
+        threadId,
+        workspaceId: workspace.id,
+      }),
+      this.agentChatService.hasQueuedMessages({
+        threadId,
+        workspaceId: workspace.id,
+      }),
+    ]);
 
     const streamId = generateId();
 
@@ -600,13 +601,12 @@ export class AgentChatStreamingService {
 
     // Queued messages wait behind an Ask: they are the conversation after
     // the answer, not a replacement for it.
-    const pendingInputAsks =
-      await this.inputAskWorkspaceService.findPendingForThread({
+    if (
+      await this.inputAskWorkspaceService.hasPendingForThread({
         threadId,
         workspaceId,
-      });
-
-    if (pendingInputAsks.length > 0) {
+      })
+    ) {
       return;
     }
 
@@ -828,9 +828,7 @@ export class AgentChatStreamingService {
       toolCallId,
       workspaceId,
     });
-    const pausingToolCall = isDefined(toolPart?.toolName)
-      ? PAUSING_TOOLS.get(toolPart.toolName)?.parseCall(toolPart.toolInput)
-      : undefined;
+    const pausingToolCall = parsePausingToolCall(toolPart);
 
     if (!isDefined(toolPart) || !isDefined(pausingToolCall)) {
       return;

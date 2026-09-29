@@ -1,6 +1,5 @@
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
@@ -12,16 +11,20 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
 const THREAD_ID = 'thread-id';
+const TOOL_PART = {
+  id: 'part-id',
+  messageId: 'question-message-id',
+  turnId: 'question-turn-id',
+};
 
 describe('WorkflowRunnerWorkspaceService', () => {
-  const workflowRunWorkspaceService = { endWorkflowRun: jest.fn() };
   const messageQueueService = { add: jest.fn() };
   const workflowAgentConversationWorkspaceService = {
     recordAnswer: jest.fn().mockResolvedValue({ hasAwaitingToolCalls: false }),
   };
 
   const service = new WorkflowRunnerWorkspaceService(
-    workflowRunWorkspaceService as unknown as WorkflowRunWorkspaceService,
+    {} as WorkflowRunWorkspaceService,
     messageQueueService as unknown as MessageQueueService,
     {} as WorkflowVersionStepOperationsWorkspaceService,
     {} as WorkflowThrottlingWorkspaceService,
@@ -36,7 +39,7 @@ describe('WorkflowRunnerWorkspaceService', () => {
       workflowRunId: WORKFLOW_RUN_ID,
       stepId: 'agent-step-id',
       threadId: THREAD_ID,
-      toolCallId: 'tool-call-id',
+      toolPart: TOOL_PART,
       toolResult: { success: true },
       answerText: 'Send it',
       senderUserWorkspaceId: 'user-workspace-id',
@@ -55,7 +58,7 @@ describe('WorkflowRunnerWorkspaceService', () => {
       ).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
-        toolCallId: 'tool-call-id',
+        toolPart: TOOL_PART,
         toolResult: { success: true },
         answerText: 'Send it',
         senderUserWorkspaceId: 'user-workspace-id',
@@ -73,7 +76,6 @@ describe('WorkflowRunnerWorkspaceService', () => {
         workflowAgentConversationWorkspaceService.recordAnswer.mock
           .invocationCallOrder[0],
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
-      expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
     });
 
     it('schedules nothing while another call of the step still waits on its answer', async () => {
@@ -84,27 +86,9 @@ describe('WorkflowRunnerWorkspaceService', () => {
       await resumeAnsweredAgentStep();
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
-      expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
     });
 
-    it('fails the run when the resume cannot be scheduled', async () => {
-      messageQueueService.add.mockRejectedValueOnce(
-        new Error('Queue unavailable'),
-      );
-
-      await expect(resumeAnsweredAgentStep()).rejects.toThrow(
-        'Queue unavailable',
-      );
-      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workflowRunId: WORKFLOW_RUN_ID,
-          workspaceId: WORKSPACE_ID,
-          status: WorkflowRunStatus.FAILED,
-        }),
-      );
-    });
-
-    it('schedules nothing and fails the run when the answer cannot be recorded', async () => {
+    it('schedules nothing when the answer cannot be recorded', async () => {
       workflowAgentConversationWorkspaceService.recordAnswer.mockRejectedValueOnce(
         new Error('History unavailable'),
       );
@@ -113,9 +97,6 @@ describe('WorkflowRunnerWorkspaceService', () => {
         'History unavailable',
       );
       expect(messageQueueService.add).not.toHaveBeenCalled();
-      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith(
-        expect.objectContaining({ status: WorkflowRunStatus.FAILED }),
-      );
     });
   });
 });

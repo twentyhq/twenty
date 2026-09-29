@@ -689,13 +689,13 @@ export class AgentChatService {
   }): Promise<
     | (Pick<
         AgentMessagePartWorkspaceEntity,
-        'id' | 'messageId' | 'toolName' | 'toolInput' | 'toolOutput'
+        'id' | 'messageId' | 'toolName' | 'toolInput'
       > & { turnId: string | null })
     | null
   > {
     const parts = await this.messagePartRepository.find(workspaceId, {
       where: { toolCallId },
-      select: ['id', 'messageId', 'toolName', 'toolInput', 'toolOutput'],
+      select: ['id', 'messageId', 'toolName', 'toolInput'],
     });
 
     if (!isNonEmptyArray(parts)) {

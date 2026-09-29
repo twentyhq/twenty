@@ -1,13 +1,4 @@
-const HTML_ESCAPES: Record<string, string> = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;',
-};
-
-const escapeHtml = (text: string) =>
-  text.replace(/[&<>"']/g, (character) => HTML_ESCAPES[character]);
+import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 
 // The approval card edits a plain-text body, while the email tools read a
 // string body as HTML, where line breaks would otherwise collapse.

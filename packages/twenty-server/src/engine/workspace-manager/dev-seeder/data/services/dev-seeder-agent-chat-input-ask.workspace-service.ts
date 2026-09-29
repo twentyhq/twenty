@@ -24,6 +24,8 @@ import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -109,30 +111,27 @@ const STRIPE_QUOTE_EMAIL: ProposedEmail = {
   body: 'Hi Stripe team,\n\nPlease find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.\n\nLet me know if anything needs to change before you sign.\n\nBest,\nTim',
 };
 
-type CallToSeed = {
+export type SeededToolCall = {
   toolName: string;
   input: Record<string, unknown>;
-  pendingOutput: Record<string, unknown>;
+  buildPendingOutput: () => Promise<Record<string, unknown>>;
 };
 
-const proposeEmailCall = (email: ProposedEmail): CallToSeed => ({
+export const proposeEmailCall = (email: ProposedEmail): SeededToolCall => ({
   toolName: PROPOSE_EMAIL_TOOL_NAME,
   input: email,
-  pendingOutput: {
-    success: true,
-    message: 'Email proposed to the user; awaiting their decision.',
-    result: { status: 'pending', email },
-  },
+  buildPendingOutput: () => createProposeEmailTool().execute(email),
 });
 
-const askQuestionsCall = (questions: AskQuestionItem[]): CallToSeed => ({
+export const askQuestionsCall = (
+  questions: AskQuestionItem[],
+): SeededToolCall => ({
   toolName: ASK_QUESTIONS_TOOL_NAME,
   input: { questions },
-  pendingOutput: {
-    success: true,
-    message: 'Questions presented to the user; awaiting their answer.',
-    result: { questions, status: 'pending' },
-  },
+  buildPendingOutput: () =>
+    createAskQuestionsTool({ isWorkspaceSetupThread: false }).execute({
+      questions,
+    }),
 });
 
 const LINEAR_WELCOME_EMAIL: ProposedEmail = {
@@ -154,7 +153,7 @@ type ConversationToSeed = {
   prompt: string;
   intro: string;
   // Calls made in the same step, each waiting on its own Ask.
-  calls: CallToSeed[];
+  calls: SeededToolCall[];
   // Answers the first call, in a conversation that made only one.
   answer?: {
     response: Record<string, unknown>;
@@ -282,22 +281,25 @@ export class DevSeederAgentChatInputAskWorkspaceService {
       );
     const { threadId } = conversation;
     const askedBy = MEMBERS[conversation.askedBy];
-    const calls = conversation.calls.map((call, callIndex) => {
-      const pausingToolCall = PAUSING_TOOLS.get(call.toolName)?.parseCall(
-        call.input,
-      );
+    const calls = await Promise.all(
+      conversation.calls.map(async (call, callIndex) => {
+        const pausingToolCall = PAUSING_TOOLS.get(call.toolName)?.parseCall(
+          call.input,
+        );
 
-      if (!isDefined(pausingToolCall)) {
-        throw new Error(`Seeded ${call.toolName} call does not parse`);
-      }
+        if (!isDefined(pausingToolCall)) {
+          throw new Error(`Seeded ${call.toolName} call does not parse`);
+        }
 
-      return {
-        ...call,
-        pausingToolCall,
-        // The first call keeps the id it had when conversations made one.
-        toolCallId: `call_${seedId(callIndex === 0 ? 'toolCall' : `toolCall${callIndex}`).replace(/-/g, '')}`,
-      };
-    });
+        return {
+          ...call,
+          pausingToolCall,
+          pendingOutput: await call.buildPendingOutput(),
+          // The first call keeps the id it had when conversations made one.
+          toolCallId: `call_${seedId(callIndex === 0 ? 'toolCall' : `toolCall${callIndex}`).replace(/-/g, '')}`,
+        };
+      }),
+    );
     const [firstCall] = calls;
 
     await this.threadRepository.insert(workspaceId, {
@@ -325,13 +327,16 @@ export class DevSeederAgentChatInputAskWorkspaceService {
     });
 
     const completion = isDefined(conversation.answer)
-      ? await firstCall.pausingToolCall.complete(conversation.answer.response, {
-          // Seeds never send anything: the email reads as sent, as it would
-          // once the person's own send_email succeeded.
-          executeTool: async () => ({
-            success: true,
-            message: 'Email sent successfully',
-          }),
+      ? await firstCall.pausingToolCall.complete({
+          output: conversation.answer.response,
+          context: {
+            // Seeds never send anything: the email reads as sent, as it would
+            // once the person's own send_email succeeded.
+            executeTool: async () => ({
+              success: true,
+              message: 'Email sent successfully',
+            }),
+          },
         })
       : undefined;
 

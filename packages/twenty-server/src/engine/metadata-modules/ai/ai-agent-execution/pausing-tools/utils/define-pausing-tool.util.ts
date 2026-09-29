@@ -1,3 +1,5 @@
+import { isPlainObject } from 'twenty-shared/utils';
+
 import { type PausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool.type';
 import { type PausingToolDefinition } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-definition.type';
 
@@ -7,7 +9,10 @@ export const definePausingTool = <
 >(
   definition: PausingToolDefinition<TInput, TOutput>,
 ): PausingTool => ({
-  isAwaitingOutput: definition.isAwaitingOutput,
+  isAwaitingOutput: (toolOutput) =>
+    isPlainObject(toolOutput) &&
+    isPlainObject(toolOutput.result) &&
+    toolOutput.result.status === 'pending',
   parseCall: (toolInput) => {
     const parsedInput = definition.inputSchema.safeParse(toolInput);
 
@@ -33,7 +38,7 @@ export const definePausingTool = <
                 .join(' '),
             };
       },
-      complete: (output, context) =>
+      complete: ({ output, context }) =>
         definition.complete({
           output: outputSchema.parse(output),
           input,

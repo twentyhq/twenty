@@ -1,28 +1,19 @@
+import type z from 'zod';
+
 import { type AskQuestionItem } from '@/ai/types/AskQuestionItem';
-import { type InputAskFormField } from '@/ai/types/InputAskFormField';
 import { type ProposedEmail } from '@/ai/types/ProposedEmail';
+import { type workflowFormActionSettingsSchema } from '@/workflow/schemas/form-action-settings-schema';
 
 // What an Ask shows the person it waits on. The kind decides how it renders
 // and which response answers it:
-// - questions: InputAskQuestionsResponse
-// - formFields: InputAskFormFieldsResponse
+// - questions: the answer to each question
+// - formFields: each field's value, keyed by its name
 // - emailApproval: InputAskEmailApprovalResponse
-export type InputAskQuestionsForm = {
-  kind: 'questions';
-  questions: AskQuestionItem[];
-};
-
-export type InputAskFormFieldsForm = {
-  kind: 'formFields';
-  fields: InputAskFormField[];
-};
-
-export type InputAskEmailApprovalForm = {
-  kind: 'emailApproval';
-  email: ProposedEmail;
-};
-
 export type InputAskForm =
-  | InputAskQuestionsForm
-  | InputAskFormFieldsForm
-  | InputAskEmailApprovalForm;
+  | { kind: 'questions'; questions: AskQuestionItem[] }
+  | {
+      kind: 'formFields';
+      // A snapshot of the form step's fields.
+      fields: z.infer<typeof workflowFormActionSettingsSchema>['input'];
+    }
+  | { kind: 'emailApproval'; email: ProposedEmail };

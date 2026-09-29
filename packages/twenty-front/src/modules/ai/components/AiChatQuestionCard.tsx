@@ -27,6 +27,7 @@ import {
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
+import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
@@ -48,16 +49,6 @@ const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber8,
   IconSquareNumber9,
 ];
-
-const StyledCard = styled.div`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
 
 const StyledQuestionSection = styled.div`
   display: flex;
@@ -387,7 +378,7 @@ export const AiChatQuestionCard = ({
   };
 
   return (
-    <StyledCard>
+    <StyledAiChatAskCard>
       <StyledQuestionSection>
         <StyledQuestionHeaderRow>
           <StyledQuestionText>
@@ -532,6 +523,6 @@ export const AiChatQuestionCard = ({
           </StyledRightActions>
         </StyledActionsRow>
       </StyledComposerSection>
-    </StyledCard>
+    </StyledAiChatAskCard>
   );
 };

@@ -10,9 +10,9 @@ export type PausingToolCall = {
   buildAsk: () => PausingToolAsk;
   validate: (output: unknown) => PausingToolValidation;
   // Takes an output validate accepted.
-  complete: (
-    output: Record<string, unknown>,
-    context: PausingToolCompletionContext,
-  ) => Promise<PausingToolCompletion>;
+  complete: (args: {
+    output: Record<string, unknown>;
+    context: PausingToolCompletionContext;
+  }) => Promise<PausingToolCompletion>;
   toSkippedToolResult: () => Record<string, unknown>;
 };

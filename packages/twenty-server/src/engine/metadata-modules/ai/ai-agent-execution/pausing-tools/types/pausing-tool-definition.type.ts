@@ -9,7 +9,6 @@ export type PausingToolDefinition<TInput, TOutput> = {
   // The output a person may submit depends on what the call asked, so the
   // schema is built from the call's input.
   outputSchema: (input: TInput) => z.ZodType<TOutput>;
-  isAwaitingOutput: (toolOutput: unknown) => boolean;
   buildAsk: (input: TInput) => PausingToolAsk;
   // Runs once the person's output is accepted, and only then: whatever the
   // call does on the person's behalf happens here, and the tool result says

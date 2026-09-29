@@ -30,11 +30,15 @@ const proposeEmailOutputSchema: z.ZodType<ProposeEmailToolOutput> = z
     }
   });
 
-const buildResult = (
-  status: ProposeEmailToolResult['status'],
-  email: ProposedEmail,
-  error?: string,
-): ProposeEmailToolResult => ({
+const buildResult = ({
+  status,
+  email,
+  error,
+}: {
+  status: ProposeEmailToolResult['status'];
+  email: ProposedEmail;
+  error?: string;
+}): ProposeEmailToolResult => ({
   status,
   email,
   ...(isDefined(error) ? { error } : {}),
@@ -53,10 +57,6 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
 >({
   inputSchema: proposeEmailInputSchema,
   outputSchema: () => proposeEmailOutputSchema,
-  isAwaitingOutput: (toolOutput) =>
-    isPlainObject(toolOutput) &&
-    isPlainObject(toolOutput.result) &&
-    toolOutput.result.status === 'pending',
   buildAsk: (email) => ({
     name: email.subject.trim(),
     form: { kind: 'emailApproval', email },
@@ -74,7 +74,7 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
         toolResult: {
           success: true,
           message: 'The user discarded the email.',
-          result: buildResult('discarded', input),
+          result: buildResult({ status: 'discarded', email: input }),
         },
         answerText: `Discard the email "${input.subject}".`,
       };
@@ -82,13 +82,16 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
 
     const { toolName, status } = DECISION_TOOLS[decision];
 
-    const toolOutput = await context.executeTool(toolName, {
-      recipients: finalEmail.recipients,
-      subject: finalEmail.subject,
-      body: convertPlainTextToEmailHtml(finalEmail.body),
-      ...(isDefined(finalEmail.connectedAccountId)
-        ? { connectedAccountId: finalEmail.connectedAccountId }
-        : {}),
+    const toolOutput = await context.executeTool({
+      toolName,
+      args: {
+        recipients: finalEmail.recipients,
+        subject: finalEmail.subject,
+        body: convertPlainTextToEmailHtml(finalEmail.body),
+        ...(isDefined(finalEmail.connectedAccountId)
+          ? { connectedAccountId: finalEmail.connectedAccountId }
+          : {}),
+      },
     });
 
     return {
@@ -98,11 +101,11 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
           ? toolOutput.message
           : `The user approved the email, but it could not go through: ${toolOutput.error ?? toolOutput.message}`,
         result: {
-          ...buildResult(
-            toolOutput.success ? status : 'failed',
-            finalEmail,
-            toolOutput.success ? undefined : toolOutput.error,
-          ),
+          ...buildResult({
+            status: toolOutput.success ? status : 'failed',
+            email: finalEmail,
+            error: toolOutput.success ? undefined : toolOutput.error,
+          }),
           ...(isPlainObject(toolOutput.result)
             ? { details: toolOutput.result }
             : {}),
@@ -117,6 +120,6 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
   toSkippedToolResult: (email) => ({
     success: true,
     message: 'User sent another message instead of deciding on the email.',
-    result: buildResult('skipped', email),
+    result: buildResult({ status: 'skipped', email }),
   }),
 });

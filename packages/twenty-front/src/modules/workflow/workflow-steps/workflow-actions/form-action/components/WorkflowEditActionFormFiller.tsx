@@ -1,16 +1,19 @@
+import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
-import { WorkflowFormFillerFields } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFillerFields';
+import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
 import { WorkflowFormStepAskSubmitButton } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepAskSubmitButton';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -38,10 +41,9 @@ export const WorkflowEditActionFormFiller = ({
   const [error, setError] = useState<string | undefined>(undefined);
   // A form is submitted by answering its Ask, which a workspace the Ask
   // object has not reached yet cannot do.
-  const inputAskObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
-  );
+  const doesInputAskObjectExist = useDoObjectMetadataItemsExist([
+    CoreObjectNameSingular.InputAsk,
+  ]);
 
   const canSubmit = !actionOptions.readonly && !isDefined(error);
 
@@ -97,17 +99,74 @@ export const WorkflowEditActionFormFiller = ({
     <>
       <WorkflowRunSSESubscribeEffect workflowRunId={workflowRunId} />
       <WorkflowStepBody>
-        <WorkflowFormFillerFields
-          fields={formData}
-          readonly={actionOptions.readonly}
-          onFieldUpdate={onFieldUpdate}
-          onError={setError}
-        />
+        {formData.map((field) => {
+          if (field.type === 'RECORD') {
+            const objectNameSingular = field.settings?.objectName;
+
+            if (!isDefined(objectNameSingular)) {
+              return null;
+            }
+
+            return (
+              <FormSingleRecordPicker
+                key={field.id}
+                label={field.label}
+                defaultValue={field.value?.id}
+                onChange={(recordId) => {
+                  onFieldUpdate({ fieldId: field.id, value: { id: recordId } });
+                }}
+                objectNameSingulars={[objectNameSingular]}
+                disabled={actionOptions.readonly}
+              />
+            );
+          }
+
+          if (field.type === 'SELECT' || field.type === 'MULTI_SELECT') {
+            const selectedFieldId = field.settings?.selectedFieldId;
+
+            if (!isDefined(selectedFieldId)) {
+              return null;
+            }
+
+            return (
+              <WorkflowFormFieldInput
+                key={field.id}
+                fieldMetadataId={selectedFieldId}
+                defaultValue={field.value}
+                readonly={actionOptions.readonly}
+                onChange={(value) => {
+                  onFieldUpdate({ fieldId: field.id, value });
+                }}
+              />
+            );
+          }
+
+          return (
+            <FormFieldInput
+              key={field.id}
+              field={{
+                label: field.label,
+                type: field.type,
+                metadata: {} as FieldMetadata,
+              }}
+              onChange={(value) => {
+                onFieldUpdate({ fieldId: field.id, value });
+              }}
+              defaultValue={field.value}
+              readonly={actionOptions.readonly}
+              placeholder={
+                field.placeholder ??
+                getDefaultFormFieldSettings(field.type).placeholder
+              }
+              onError={setError}
+            />
+          );
+        })}
       </WorkflowStepBody>
       {!actionOptions.readonly && (
         <SidePanelFooter
           actions={[
-            isDefined(inputAskObjectMetadataItem) ? (
+            doesInputAskObjectExist ? (
               <WorkflowFormStepAskSubmitButton
                 key="submit"
                 workflowRunId={workflowRunId}

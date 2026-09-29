@@ -12,6 +12,7 @@ import { AnswerAgentChatQuestionResolver } from 'src/modules/input-ask/answer-as
 import { AnswerAskResolver } from 'src/modules/input-ask/answer-ask/resolvers/answer-ask.resolver';
 import { AnswerAskService } from 'src/modules/input-ask/answer-ask/services/answer-ask.service';
 import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
+import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
     InputAskModule,
     PermissionsModule,
     ToolProviderModule,
+    WorkflowRunModule,
     WorkflowRunnerModule,
     WorkspaceCacheModule,
   ],

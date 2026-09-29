@@ -6,7 +6,6 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum InputAskExceptionCode {
   INPUT_ASK_OBJECT_MISSING = 'INPUT_ASK_OBJECT_MISSING',
-  INPUT_ASK_WITHOUT_KEY = 'INPUT_ASK_WITHOUT_KEY',
   ASK_NOT_FOUND = 'ASK_NOT_FOUND',
   ASK_NOT_PENDING = 'ASK_NOT_PENDING',
   INVALID_ASK_RESPONSE = 'INVALID_ASK_RESPONSE',
@@ -19,8 +18,6 @@ const getInputAskExceptionUserFriendlyMessage = (
   switch (code) {
     case InputAskExceptionCode.INPUT_ASK_OBJECT_MISSING:
       return msg`This workspace is still being upgraded and cannot wait for an answer yet. Try again in a moment.`;
-    case InputAskExceptionCode.INPUT_ASK_WITHOUT_KEY:
-      return msg`This request for input cannot be answered.`;
     case InputAskExceptionCode.ASK_NOT_FOUND:
       return msg`This request for input could not be found.`;
     case InputAskExceptionCode.ASK_NOT_PENDING:

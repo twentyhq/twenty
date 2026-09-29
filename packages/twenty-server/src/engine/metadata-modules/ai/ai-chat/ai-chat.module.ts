@@ -43,6 +43,7 @@ import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-s
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentChatThreadTargetService } from './services/agent-chat-thread-target.service';
+import { AgentChatTurnPreflightService } from './services/agent-chat-turn-preflight.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
@@ -94,6 +95,7 @@ import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
     AgentChatService,
     AgentChatThreadTargetService,
     AgentChatStreamingService,
+    AgentChatTurnPreflightService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
@@ -109,6 +111,7 @@ import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
     AgentChatService,
     AgentChatStreamingService,
     AgentChatThreadTargetService,
+    AgentChatTurnPreflightService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
   ],
 })

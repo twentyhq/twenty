@@ -924,24 +924,15 @@ export class StreamAgentChatJob {
     workspaceId: string;
     workspaceMemberId: string;
   }): Promise<void> {
-    const inputAsks = awaitingParts.map((awaitingPart) => {
-      const pausingToolCall = awaitingPart.pausingTool.parseCall(
-        awaitingPart.input,
-      );
-
-      if (!isDefined(pausingToolCall)) {
+    const inputAsks = awaitingParts.map(({ toolName, toolCallId, ask }) => {
+      if (!isDefined(ask)) {
         throw new AiException(
-          `The ${awaitingPart.toolName} call could not be read`,
+          `The ${toolName} call could not be read`,
           AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
         );
       }
 
-      return {
-        ...pausingToolCall.buildAsk(),
-        threadId,
-        toolCallId: awaitingPart.toolCallId,
-        assigneeId: workspaceMemberId,
-      };
+      return { ...ask, threadId, toolCallId, assigneeId: workspaceMemberId };
     });
 
     const openedToolCallIds: string[] = [];

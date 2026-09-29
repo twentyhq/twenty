@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,6 +37,8 @@ export type StepInputResolution =
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunWorkspaceService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
@@ -205,12 +207,17 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
     // A run that ends can no longer consume an answer, so an Ask still
-    // waiting on one stops being actionable rather than outliving it.
+    // waiting on one stops being actionable rather than outliving it. This is
+    // housekeeping: the run is over either way, and a failure here only
+    // leaves a stale Ask behind.
     if (canWorkflowRunHaveAsks(workflowRunToUpdate.state)) {
-      await this.inputAskWorkspaceService.cancel({
-        workspaceId,
-        match: { workflowRunId },
-      });
+      await this.inputAskWorkspaceService
+        .cancel({ workspaceId, match: { workflowRunId } })
+        .catch((error: unknown) => {
+          this.logger.error(
+            `Failed to cancel the Asks of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        });
     }
 
     const metricKey =

@@ -7,8 +7,7 @@ import {
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
@@ -37,6 +36,12 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 export type RecordedExecutionResult = {
   steps?: Pick<NonNullable<AgentExecutionResult['steps']>[number], 'content'>[];
   isPaused?: boolean;
+};
+
+export type AnsweredToolPart = {
+  id: string;
+  messageId: string;
+  turnId: string | null;
 };
 
 export type RecordedConversation = {
@@ -186,38 +191,21 @@ export class WorkflowAgentConversationWorkspaceService {
   async recordAnswer({
     workspaceId,
     threadId,
-    toolCallId,
+    toolPart,
     toolResult,
     answerText,
     senderUserWorkspaceId,
   }: {
     workspaceId: string;
     threadId: string;
-    toolCallId: string;
+    toolPart: AnsweredToolPart;
     toolResult: Record<string, unknown>;
     answerText: string;
     senderUserWorkspaceId: string;
   }): Promise<{ hasAwaitingToolCalls: boolean }> {
-    const toolParts = await this.messagePartRepository.find(workspaceId, {
-      where: { toolCallId },
-      select: ['id', 'messageId'],
-    });
-    const toolCallMessage = isNonEmptyArray(toolParts)
-      ? await this.messageRepository.findOne(workspaceId, {
-          where: {
-            id: In(toolParts.map((toolPart) => toolPart.messageId)),
-            threadId,
-          },
-          select: ['id', 'turnId'],
-        })
-      : null;
-    const toolPart = toolParts.find(
-      (candidate) => candidate.messageId === toolCallMessage?.id,
-    );
-
-    if (!isDefined(toolPart) || !isDefined(toolCallMessage?.turnId)) {
+    if (!isDefined(toolPart.turnId)) {
       throw new WorkflowStepExecutorException(
-        `Tool call ${toolCallId} not found in conversation ${threadId}`,
+        `Tool call message ${toolPart.messageId} has no turn in conversation ${threadId}`,
         WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
       );
     }
@@ -231,7 +219,7 @@ export class WorkflowAgentConversationWorkspaceService {
     await this.insertMessage({
       workspaceId,
       threadId,
-      turnId: toolCallMessage.turnId,
+      turnId: toolPart.turnId,
       role: AgentMessageRole.USER,
       agentId: null,
       senderUserWorkspaceId,
@@ -241,7 +229,7 @@ export class WorkflowAgentConversationWorkspaceService {
     // Read after this answer is written, so of answers recorded concurrently
     // the last to write always sees the others.
     const messageParts = await this.messagePartRepository.find(workspaceId, {
-      where: { messageId: toolCallMessage.id },
+      where: { messageId: toolPart.messageId },
       select: ['toolName', 'toolOutput'],
     });
 
@@ -293,22 +281,16 @@ export class WorkflowAgentConversationWorkspaceService {
 
     const pendingAsks: WorkflowPendingAsk[] = [];
 
-    for (const awaitingPart of findAwaitingPausingToolParts(replyParts)) {
-      const pausingToolCall = awaitingPart.pausingTool.parseCall(
-        awaitingPart.input,
-      );
-
+    for (const { toolCallId, ask } of findAwaitingPausingToolParts(
+      replyParts,
+    )) {
       // One call nobody can answer would keep the step waiting forever on
       // the others, so the step fails as if none had been recorded.
-      if (!isDefined(pausingToolCall)) {
+      if (!isDefined(ask)) {
         return [];
       }
 
-      pendingAsks.push({
-        ...pausingToolCall.buildAsk(),
-        threadId,
-        toolCallId: awaitingPart.toolCallId,
-      });
+      pendingAsks.push({ ...ask, threadId, toolCallId });
     }
 
     return pendingAsks;

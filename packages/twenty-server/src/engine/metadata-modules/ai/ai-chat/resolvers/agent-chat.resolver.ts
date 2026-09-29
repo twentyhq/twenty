@@ -35,12 +35,10 @@ import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import {
   AiException,
   AiExceptionCode,
@@ -48,7 +46,6 @@ import {
 import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
@@ -70,8 +67,7 @@ export class AgentChatResolver {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
-    private readonly aiBillingService: AiBillingService,
-    private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
@@ -183,30 +179,12 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Configure at least one AI provider.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
-
-    const resolvedModelId = getChatModelId({
-      requestedModelId: modelId,
-      workspace,
-    });
-
-    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
-
-    const thread = await this.agentChatService.getWritableThread({
+    const thread = await this.turnPreflightService.assertCanStartChatTurn({
       threadId,
+      modelId,
+      userWorkspaceId,
       workspaceMemberId,
-      workspaceId: workspace.id,
-    });
-
-    await this.aiBillingService.assertAiExecutionAllowed({
-      workspaceId: workspace.id,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
-      spenders: { userWorkspaceId },
+      workspace,
     });
 
     if (isDefined(thread.archivedAt)) {
@@ -295,27 +273,12 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Configure at least one AI provider.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
-
-    this.aiModelRegistryService.validateModelAvailability(
-      getChatModelId({ requestedModelId: modelId, workspace }),
-    );
-
-    await this.agentChatService.getWritableThread({
+    await this.turnPreflightService.assertCanStartChatTurn({
       threadId,
+      modelId,
+      userWorkspaceId,
       workspaceMemberId,
-      workspaceId: workspace.id,
-    });
-
-    await this.aiBillingService.assertAiExecutionAllowed({
-      workspaceId: workspace.id,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
-      spenders: { userWorkspaceId },
+      workspace,
     });
 
     const result = await this.agentChatStreamingService.retryLastFailedTurn({

@@ -10,32 +10,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconMail } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
+import {
+  StyledAiChatAskStatusContainer,
+  StyledAiChatAskStatusMessage,
+} from '@/ai/components/AiChatAskStyledComponents';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-
-const StyledContainer = styled.div`
-  align-items: flex-start;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[1]} 0;
-
-  svg {
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-`;
 
 const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
   min-width: 0;
-`;
-
-const StyledMessage = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledDetail = styled.span`
@@ -79,15 +64,17 @@ export const AiChatEmailApprovalStatusRenderer = ({
     isNonEmptyString(recipients);
 
   return (
-    <StyledContainer>
+    <StyledAiChatAskStatusContainer>
       <IconMail size={theme.icon.size.sm} />
       <StyledContent>
         {isStreaming && status === 'pending' ? (
           <ShimmeringText>
-            <StyledMessage>{message}</StyledMessage>
+            <StyledAiChatAskStatusMessage>
+              {message}
+            </StyledAiChatAskStatusMessage>
           </ShimmeringText>
         ) : (
-          <StyledMessage>{message}</StyledMessage>
+          <StyledAiChatAskStatusMessage>{message}</StyledAiChatAskStatusMessage>
         )}
         {hasEmailDetail && (
           <StyledDetail>{t`"${subject}" to ${recipients}`}</StyledDetail>
@@ -96,6 +83,6 @@ export const AiChatEmailApprovalStatusRenderer = ({
           <StyledDetail>{result.error}</StyledDetail>
         )}
       </StyledContent>
-    </StyledContainer>
+    </StyledAiChatAskStatusContainer>
   );
 };

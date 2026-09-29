@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  ASK_QUESTIONS_TOOL_NAME,
-  type AskQuestionItem,
-  PROPOSE_EMAIL_TOOL_NAME,
-  type ProposedEmail,
-} from 'twenty-shared/ai';
+import { type AskQuestionItem, type ProposedEmail } from 'twenty-shared/ai';
 import {
   type ActorMetadata,
   FieldActorSource,
   FieldMetadataType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { v5 } from 'uuid';
 
@@ -24,19 +20,21 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import {
+  askQuestionsCall,
+  proposeEmailCall,
+  type SeededToolCall,
+} from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-input-ask.workspace-service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowStatus,
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import {
-  type RecordedExecutionResult,
-  WorkflowAgentConversationWorkspaceService,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { type WorkflowPendingAsk } from 'src/modules/workflow/workflow-executor/types/workflow-pending-ask.type';
+import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import {
   type WorkflowAction,
-  type WorkflowAiAgentAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -111,10 +109,74 @@ const RENEWAL_REMINDER_EMAIL: ProposedEmail = {
   body: 'Hi Stripe team,\n\nYour Twenty subscription renews on October 31 for another year at the same price. If you want to add seats or change plans before then, just reply to this email.\n\nBest,\nPhil',
 };
 
-const DISCOUNT_APPROVAL_RESPONSE = {
-  discount: 15,
-  justification: 'Three-year commitment signed by Airbnb procurement.',
+type AgentWorkflowToSeed = {
+  key: string;
+  name: string;
+  position: number;
+  icon: string;
+  stepKey: string;
+  stepName: string;
+  stepPrompt: string;
+  runKey: string;
+  initiator: Initiator;
+  runPrompt: string;
+  call: SeededToolCall;
 };
+
+const AGENT_WORKFLOWS_TO_SEED: AgentWorkflowToSeed[] = [
+  {
+    key: 'qualifyInboundLead',
+    name: 'Qualify inbound lead',
+    position: 3,
+    icon: 'IconUserCheck',
+    stepKey: 'agentStep',
+    stepName: 'Qualify the lead',
+    stepPrompt: 'Qualify the inbound lead and draft the first reply.',
+    runKey: 'qualification',
+    initiator: 'TIM',
+    runPrompt:
+      'Qualify the inbound lead from Figma and decide who should follow up.',
+    call: askQuestionsCall(QUALIFICATION_QUESTIONS),
+  },
+  {
+    key: 'draftRenewalReminder',
+    name: 'Draft renewal reminder',
+    position: 4,
+    icon: 'IconMail',
+    stepKey: 'renewalAgentStep',
+    stepName: 'Draft the reminder',
+    stepPrompt:
+      'Draft a renewal reminder for the account and have it reviewed before it goes out.',
+    runKey: 'renewalReminder',
+    initiator: 'PHIL',
+    runPrompt:
+      'Stripe renews on October 31. Draft the renewal reminder for their procurement team.',
+    call: proposeEmailCall(RENEWAL_REMINDER_EMAIL),
+  },
+];
+
+const DISCOUNT_RUNS_TO_SEED: {
+  suffix: string;
+  initiator: Initiator;
+  endStatus?: WorkflowRunStatus.COMPLETED | WorkflowRunStatus.STOPPED;
+  response?: Record<string, unknown>;
+}[] = [
+  {
+    suffix: 'Answered',
+    initiator: 'TIM',
+    endStatus: WorkflowRunStatus.COMPLETED,
+    response: {
+      discount: 15,
+      justification: 'Three-year commitment signed by Airbnb procurement.',
+    },
+  },
+  {
+    suffix: 'Stopped',
+    initiator: 'PHIL',
+    endStatus: WorkflowRunStatus.STOPPED,
+  },
+  { suffix: 'Pending', initiator: 'JONY' },
+];
 
 const ERROR_HANDLING_OPTIONS = {
   retryOnFailure: { value: 0 },
@@ -153,72 +215,74 @@ export class DevSeederWorkflowInputAskWorkspaceService {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
-    const qualifyWorkflow = await this.insertWorkflow({
-      workspaceId,
-      applicationId,
-      key: 'qualifyInboundLead',
-      name: 'Qualify inbound lead',
-      position: 3,
-      icon: 'IconUserCheck',
-      step: this.buildAgentStep({
-        id: seedId('agentStep', workspaceId),
-        name: 'Qualify the lead',
-        prompt: 'Qualify the inbound lead and draft the first reply.',
-      }),
-    });
-
-    await this.seedAgentRun({
-      workspaceId,
-      workflowRunId: seedId('workflowRun:qualification', workspaceId),
-      workflow: qualifyWorkflow,
-      initiator: 'TIM',
-      prompt:
-        'Qualify the inbound lead from Figma and decide who should follow up.',
-      executionResult: this.buildPausedResult({
-        toolCallId: seedId('toolCall:qualification', workspaceId),
-        toolName: ASK_QUESTIONS_TOOL_NAME,
-        input: { questions: QUALIFICATION_QUESTIONS },
-        output: {
-          success: true,
-          message: 'Questions presented to the user; awaiting their answer.',
-          result: { questions: QUALIFICATION_QUESTIONS, status: 'pending' },
+    for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {
+      const workflow = await this.insertWorkflow({
+        workspaceId,
+        applicationId,
+        key: agentWorkflow.key,
+        name: agentWorkflow.name,
+        position: agentWorkflow.position,
+        icon: agentWorkflow.icon,
+        step: {
+          id: seedId(agentWorkflow.stepKey, workspaceId),
+          name: agentWorkflow.stepName,
+          type: WorkflowActionType.AI_AGENT,
+          valid: true,
+          settings: {
+            input: { prompt: agentWorkflow.stepPrompt, canAskQuestions: true },
+            outputSchema: {},
+            errorHandlingOptions: ERROR_HANDLING_OPTIONS,
+          },
+          nextStepIds: [],
         },
-      }),
-    });
+      });
+      const workflowRunId = seedId(
+        `workflowRun:${agentWorkflow.runKey}`,
+        workspaceId,
+      );
+      const toolCallId = seedId(
+        `toolCall:${agentWorkflow.runKey}`,
+        workspaceId,
+      );
+      const { toolName, input } = agentWorkflow.call;
+      const output = await agentWorkflow.call.buildPendingOutput();
 
-    const renewalWorkflow = await this.insertWorkflow({
-      workspaceId,
-      applicationId,
-      key: 'draftRenewalReminder',
-      name: 'Draft renewal reminder',
-      position: 4,
-      icon: 'IconMail',
-      step: this.buildAgentStep({
-        id: seedId('renewalAgentStep', workspaceId),
-        name: 'Draft the reminder',
-        prompt:
-          'Draft a renewal reminder for the account and have it reviewed before it goes out.',
-      }),
-    });
-
-    await this.seedAgentRun({
-      workspaceId,
-      workflowRunId: seedId('workflowRun:renewalReminder', workspaceId),
-      workflow: renewalWorkflow,
-      initiator: 'PHIL',
-      prompt:
-        'Stripe renews on October 31. Draft the renewal reminder for their procurement team.',
-      executionResult: this.buildPausedResult({
-        toolCallId: seedId('toolCall:renewalReminder', workspaceId),
-        toolName: PROPOSE_EMAIL_TOOL_NAME,
-        input: RENEWAL_REMINDER_EMAIL,
-        output: {
-          success: true,
-          message: 'Email proposed to the user; awaiting their decision.',
-          result: { status: 'pending', email: RENEWAL_REMINDER_EMAIL },
-        },
-      }),
-    });
+      await this.seedPausedRun({
+        workspaceId,
+        workflowRunId,
+        workflow,
+        initiator: agentWorkflow.initiator,
+        recordPendingAsks: async () =>
+          (
+            await this.workflowAgentConversationService.recordExecution({
+              workspaceId,
+              workflowRunId,
+              stepId: workflow.step.id,
+              title: workflow.step.name,
+              agentId: null,
+              prompt: agentWorkflow.runPrompt,
+              initiatorUserWorkspaceId: null,
+              executionResult: {
+                isPaused: true,
+                steps: [
+                  {
+                    content: [
+                      { type: 'tool-call', toolCallId, toolName, input },
+                      {
+                        type: 'tool-result',
+                        toolCallId,
+                        toolName,
+                        input,
+                        output,
+                      },
+                    ],
+                  },
+                ],
+              },
+            })
+          )?.pendingAsks,
+      });
+    }
 
     const formStep: WorkflowFormAction = {
       id: seedId('formStep', workspaceId),
@@ -258,91 +322,62 @@ export class DevSeederWorkflowInputAskWorkspaceService {
       step: formStep,
     });
 
-    const answeredRunId = seedId('workflowRun:discountAnswered', workspaceId);
+    for (const discountRun of DISCOUNT_RUNS_TO_SEED) {
+      const workflowRunId = seedId(
+        `workflowRun:discount${discountRun.suffix}`,
+        workspaceId,
+      );
 
-    await this.seedFormRun({
-      workspaceId,
-      workflowRunId: answeredRunId,
-      workflow: discountWorkflow,
-      formStep,
-      initiator: 'TIM',
-    });
+      await this.seedPausedRun({
+        workspaceId,
+        workflowRunId,
+        workflow: discountWorkflow,
+        initiator: discountRun.initiator,
+        recordPendingAsks: async () => [
+          {
+            name: formStep.name,
+            form: { kind: 'formFields', fields: formStep.settings.input },
+          },
+        ],
+      });
 
-    await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-      stepId: formStep.id,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: DISCOUNT_APPROVAL_RESPONSE,
-      },
-      inputAskResponse: DISCOUNT_APPROVAL_RESPONSE,
-      workflowRunId: answeredRunId,
-      workspaceId,
-    });
+      if (isDefined(discountRun.response)) {
+        await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+          stepId: formStep.id,
+          stepInfo: {
+            status: StepStatus.SUCCESS,
+            result: discountRun.response,
+          },
+          inputAskResponse: discountRun.response,
+          workflowRunId,
+          workspaceId,
+        });
+      }
 
-    await this.workflowRunWorkspaceService.endWorkflowRun({
-      workflowRunId: answeredRunId,
-      workspaceId,
-      status: WorkflowRunStatus.COMPLETED,
-    });
-
-    const stoppedRunId = seedId('workflowRun:discountStopped', workspaceId);
-
-    await this.seedFormRun({
-      workspaceId,
-      workflowRunId: stoppedRunId,
-      workflow: discountWorkflow,
-      formStep,
-      initiator: 'PHIL',
-    });
-
-    await this.workflowRunWorkspaceService.endWorkflowRun({
-      workflowRunId: stoppedRunId,
-      workspaceId,
-      status: WorkflowRunStatus.STOPPED,
-    });
-
-    await this.seedFormRun({
-      workspaceId,
-      workflowRunId: seedId('workflowRun:discountPending', workspaceId),
-      workflow: discountWorkflow,
-      formStep,
-      initiator: 'JONY',
-    });
+      if (isDefined(discountRun.endStatus)) {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workflowRunId,
+          workspaceId,
+          status: discountRun.endStatus,
+        });
+      }
+    }
   }
 
-  private buildAgentStep({
-    id,
-    name,
-    prompt,
-  }: {
-    id: string;
-    name: string;
-    prompt: string;
-  }): WorkflowAiAgentAction {
-    return {
-      id,
-      name,
-      type: WorkflowActionType.AI_AGENT,
-      valid: true,
-      settings: {
-        input: { prompt, canAskQuestions: true },
-        outputSchema: {},
-        errorHandlingOptions: ERROR_HANDLING_OPTIONS,
-      },
-      nextStepIds: [],
-    };
-  }
-
-  private async startRun({
+  // Parks the run's step the way the executor parks a step that waits on a
+  // person, opening its Asks assigned to whoever started the run.
+  private async seedPausedRun({
     workspaceId,
     workflowRunId,
     workflow,
     initiator,
+    recordPendingAsks,
   }: {
     workspaceId: string;
     workflowRunId: string;
     workflow: SeededWorkflow;
     initiator: Initiator;
+    recordPendingAsks: () => Promise<WorkflowPendingAsk[] | undefined>;
   }): Promise<void> {
     await this.workflowRunWorkspaceService.createCoreWorkflowRun({
       workflowRunId,
@@ -367,99 +402,14 @@ export class DevSeederWorkflowInputAskWorkspaceService {
       workflowRunId,
       workspaceId,
     });
-  }
-
-  // Parked the way the executor parks a step that asked, which is what opens
-  // its Ask, assigned to whoever started the run.
-  private async seedAgentRun({
-    workspaceId,
-    workflowRunId,
-    workflow,
-    initiator,
-    prompt,
-    executionResult,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    workflow: SeededWorkflow;
-    initiator: Initiator;
-    prompt: string;
-    executionResult: RecordedExecutionResult;
-  }): Promise<void> {
-    await this.startRun({ workspaceId, workflowRunId, workflow, initiator });
-
-    const recordedConversation =
-      await this.workflowAgentConversationService.recordExecution({
-        workspaceId,
-        workflowRunId,
-        stepId: workflow.step.id,
-        title: workflow.step.name,
-        agentId: null,
-        prompt,
-        initiatorUserWorkspaceId: null,
-        executionResult,
-      });
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId: workflow.step.id,
       stepInfo: { status: StepStatus.PENDING },
-      pendingAsks: recordedConversation?.pendingAsks,
+      pendingAsks: await recordPendingAsks(),
       workflowRunId,
       workspaceId,
     });
-  }
-
-  private async seedFormRun({
-    workspaceId,
-    workflowRunId,
-    workflow,
-    formStep,
-    initiator,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    workflow: SeededWorkflow;
-    formStep: WorkflowFormAction;
-    initiator: Initiator;
-  }): Promise<void> {
-    await this.startRun({ workspaceId, workflowRunId, workflow, initiator });
-
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId: formStep.id,
-      stepInfo: { status: StepStatus.PENDING },
-      pendingAsks: [
-        {
-          name: formStep.name,
-          form: { kind: 'formFields', fields: formStep.settings.input },
-        },
-      ],
-      workflowRunId,
-      workspaceId,
-    });
-  }
-
-  private buildPausedResult({
-    toolCallId,
-    toolName,
-    input,
-    output,
-  }: {
-    toolCallId: string;
-    toolName: string;
-    input: Record<string, unknown>;
-    output: Record<string, unknown>;
-  }): RecordedExecutionResult {
-    return {
-      isPaused: true,
-      steps: [
-        {
-          content: [
-            { type: 'tool-call', toolCallId, toolName, input },
-            { type: 'tool-result', toolCallId, toolName, input, output },
-          ],
-        },
-      ],
-    };
   }
 
   private async insertWorkflow({

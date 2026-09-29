@@ -29,9 +29,6 @@ jest.mock('@/ai/components/AiChatEmailApprovalCard', () => ({
     </div>
   ),
 }));
-jest.mock('@/ai/components/AiChatFormFieldsAskCard', () => ({
-  AiChatFormFieldsAskCard: () => <div role="group" aria-label="Form" />,
-}));
 
 const QUESTIONS: AskQuestionItem[] = [
   {

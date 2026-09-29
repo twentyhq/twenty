@@ -1,31 +1,34 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { ASK_QUESTIONS_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 
-const QUESTIONS = [{ header: 'h', question: 'q', options: [] }];
+const QUESTIONS = [
+  { header: 'h', question: 'q', options: [{ label: 'a' }, { label: 'b' }] },
+];
 
 const toolPart = ({
   toolName,
   status,
   toolCallId = 'call-1',
+  input = { questions: QUESTIONS },
 }: {
   toolName: string;
   status: 'pending' | 'answered';
   toolCallId?: string;
+  input?: unknown;
 }): ExtendedUIMessagePart =>
   ({
     type: `tool-${toolName}`,
     toolCallId,
     state: 'output-available',
-    input: { questions: QUESTIONS },
+    input,
     output: { success: true, result: { questions: QUESTIONS, status } },
   }) as unknown as ExtendedUIMessagePart;
 
 const textPart = { type: 'text', text: 'hello' } as ExtendedUIMessagePart;
 
 describe('findAwaitingPausingToolParts', () => {
-  it('finds the pausing tool call still waiting on an output', () => {
+  it('finds the pausing tool call still waiting on an output, with its Ask', () => {
     expect(
       findAwaitingPausingToolParts([
         textPart,
@@ -35,10 +38,21 @@ describe('findAwaitingPausingToolParts', () => {
       {
         toolName: 'ask_questions',
         toolCallId: 'call-1',
-        input: { questions: QUESTIONS },
-        pausingTool: ASK_QUESTIONS_PAUSING_TOOL,
+        ask: { name: 'q', form: { kind: 'questions', questions: QUESTIONS } },
       },
     ]);
+  });
+
+  it('finds a waiting call it cannot read, without an Ask', () => {
+    expect(
+      findAwaitingPausingToolParts([
+        toolPart({
+          toolName: 'ask_questions',
+          status: 'pending',
+          input: { questions: [] },
+        }),
+      ]),
+    ).toEqual([{ toolName: 'ask_questions', toolCallId: 'call-1', ask: null }]);
   });
 
   it('finds every waiting call of a step, in the order they were made', () => {

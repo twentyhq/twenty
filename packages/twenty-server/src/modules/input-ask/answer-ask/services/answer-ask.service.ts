@@ -9,25 +9,18 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { type PausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-call.type';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
+import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
@@ -40,7 +33,11 @@ import {
 } from 'src/modules/input-ask/input-ask.exception';
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  type WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 type AnswerAskArgs = {
@@ -58,14 +55,12 @@ type AnswerAskOutcome = {
   turnId: string | null;
 };
 
-type ToolCallToAnswer = {
+type ToolCallToAnswer = AnswerAskArgs & {
   threadId: string;
   toolCallId: string;
   toolPart: NonNullable<Awaited<ReturnType<AgentChatService['findToolPart']>>>;
   pausingToolCall: PausingToolCall;
   output: Record<string, unknown>;
-  userWorkspaceId: string;
-  workspace: WorkspaceEntity;
 };
 
 const NO_STREAM: AnswerAskOutcome = {
@@ -87,9 +82,9 @@ export class AnswerAskService {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly inputAskWorkspaceService: InputAskWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly permissionsService: PermissionsService,
-    private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiBillingService: AiBillingService,
+    private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly agentActorContextService: AgentActorContextService,
@@ -116,12 +111,49 @@ export class AnswerAskService {
     }
 
     if (isDefined(inputAsk.threadId) && isDefined(inputAsk.toolCallId)) {
-      return this.answerToolCall({
-        ...args,
-        threadId: inputAsk.threadId,
-        toolCallId: inputAsk.toolCallId,
-        workflowRunId: inputAsk.workflowRunId,
+      const { threadId, toolCallId, workflowRunId } = inputAsk;
+      const toolPart = await this.agentChatService.findToolPart({
+        threadId,
+        toolCallId,
+        workspaceId,
       });
+      const pausingToolCall = parsePausingToolCall(toolPart);
+
+      if (!isDefined(toolPart) || !isDefined(pausingToolCall)) {
+        throw new InputAskException(
+          'The tool call this Ask waits on could not be found',
+          InputAskExceptionCode.ASK_NOT_FOUND,
+        );
+      }
+
+      const validation = pausingToolCall.validate(args.response);
+
+      if (!validation.isValid) {
+        throw new InputAskException(
+          validation.errorMessage,
+          InputAskExceptionCode.INVALID_ASK_RESPONSE,
+        );
+      }
+
+      const toolCallToAnswer: ToolCallToAnswer = {
+        ...args,
+        threadId,
+        toolCallId,
+        toolPart,
+        pausingToolCall,
+        output: validation.output,
+      };
+
+      if (isDefined(workflowRunId)) {
+        await this.answerWorkflowRunToolCall({
+          ...toolCallToAnswer,
+          workflowRunId,
+        });
+
+        return NO_STREAM;
+      }
+
+      return this.answerChatToolCall(toolCallToAnswer);
     }
 
     if (isDefined(inputAsk.workflowRunId) && isDefined(inputAsk.stepId)) {
@@ -250,71 +282,6 @@ export class AnswerAskService {
     }
   }
 
-  private async answerToolCall({
-    threadId,
-    toolCallId,
-    workflowRunId,
-    response,
-    modelId,
-    userWorkspaceId,
-    workspaceMemberId,
-    workspace,
-  }: AnswerAskArgs & {
-    threadId: string;
-    toolCallId: string;
-    workflowRunId: string | null;
-  }): Promise<AnswerAskOutcome> {
-    const toolPart = await this.agentChatService.findToolPart({
-      threadId,
-      toolCallId,
-      workspaceId: workspace.id,
-    });
-    const pausingToolCall = isDefined(toolPart?.toolName)
-      ? PAUSING_TOOLS.get(toolPart.toolName)?.parseCall(toolPart.toolInput)
-      : undefined;
-
-    if (!isDefined(toolPart) || !isDefined(pausingToolCall)) {
-      throw new InputAskException(
-        'The tool call this Ask waits on could not be found',
-        InputAskExceptionCode.ASK_NOT_FOUND,
-      );
-    }
-
-    const validation = pausingToolCall.validate(response);
-
-    if (!validation.isValid) {
-      throw new InputAskException(
-        validation.errorMessage,
-        InputAskExceptionCode.INVALID_ASK_RESPONSE,
-      );
-    }
-
-    const toolCallToAnswer: ToolCallToAnswer = {
-      threadId,
-      toolCallId,
-      toolPart,
-      pausingToolCall,
-      output: validation.output,
-      userWorkspaceId,
-      workspace,
-    };
-
-    if (isDefined(workflowRunId)) {
-      await this.answerWorkflowRunToolCall({
-        ...toolCallToAnswer,
-        workflowRunId,
-      });
-
-      return NO_STREAM;
-    }
-
-    return this.answerChatToolCall({
-      ...toolCallToAnswer,
-      modelId,
-      workspaceMemberId,
-    });
-  }
-
   private async answerChatToolCall({
     threadId,
     toolCallId,
@@ -325,10 +292,7 @@ export class AnswerAskService {
     workspace,
     modelId,
     workspaceMemberId,
-  }: ToolCallToAnswer & {
-    modelId?: string;
-    workspaceMemberId: string;
-  }): Promise<AnswerAskOutcome> {
+  }: ToolCallToAnswer): Promise<AnswerAskOutcome> {
     const workspaceId = workspace.id;
 
     await this.assertHasSettingPermission({
@@ -337,27 +301,12 @@ export class AnswerAskService {
       workspaceId,
     });
 
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Configure at least one AI provider.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
-
-    this.aiModelRegistryService.validateModelAvailability(
-      getChatModelId({ requestedModelId: modelId, workspace }),
-    );
-
-    const thread = await this.agentChatService.getWritableThread({
+    const thread = await this.turnPreflightService.assertCanStartChatTurn({
       threadId,
+      modelId,
+      userWorkspaceId,
       workspaceMemberId,
-      workspaceId,
-    });
-
-    await this.aiBillingService.assertAiExecutionAllowed({
-      workspaceId,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
-      spenders: { userWorkspaceId },
+      workspace,
     });
 
     await this.actorService.authorizeToolCallResolution({
@@ -387,28 +336,25 @@ export class AnswerAskService {
       );
     }
 
-    const hasAnswered = await this.inputAskWorkspaceService
-      .answer({
+    let hasAnswered = false;
+
+    try {
+      hasAnswered = await this.inputAskWorkspaceService.answer({
         workspaceId,
         key: { threadId, toolCallId },
         response: output,
-      })
-      .catch(async (error: unknown) => {
+      });
+    } finally {
+      if (!hasAnswered) {
         await this.agentChatStreamingService.releaseStreamClaim(
           threadId,
           workspaceId,
           streamId,
         );
-        throw error;
-      });
+      }
+    }
 
     if (!hasAnswered) {
-      await this.agentChatStreamingService.releaseStreamClaim(
-        threadId,
-        workspaceId,
-        streamId,
-      );
-
       throw this.notPending();
     }
 
@@ -418,10 +364,14 @@ export class AnswerAskService {
     // The answer is already recorded, so a failure from here on leaves a
     // failed turn to retry rather than an answer that can be given twice.
     try {
-      const completion = await pausingToolCall.complete(
+      const completion = await pausingToolCall.complete({
         output,
-        this.buildCompletionContext({ workspaceId, userWorkspaceId, threadId }),
-      );
+        context: this.buildCompletionContext({
+          workspaceId,
+          userWorkspaceId,
+          threadId,
+        }),
+      });
 
       await this.agentChatService.updateToolPartOutput({
         partId: toolPart.id,
@@ -445,12 +395,10 @@ export class AnswerAskService {
       // answer holds the stream claim until here, so exactly one of them,
       // the last, finds none left.
       hasOtherPendingAsks =
-        (
-          await this.inputAskWorkspaceService.findPendingForThread({
-            threadId,
-            workspaceId,
-          })
-        ).length > 0;
+        await this.inputAskWorkspaceService.hasPendingForThread({
+          threadId,
+          workspaceId,
+        });
 
       if (hasOtherPendingAsks) {
         await this.agentChatStreamingService.releaseStreamClaim(
@@ -512,6 +460,7 @@ export class AnswerAskService {
   private async answerWorkflowRunToolCall({
     threadId,
     toolCallId,
+    toolPart,
     pausingToolCall,
     output,
     userWorkspaceId,
@@ -526,42 +475,54 @@ export class AnswerAskService {
       workflowRunId,
     });
 
+    // The answer resumes the agent step that asked, not the steps after it:
+    // the agent continues its conversation with the answer as the last message.
     const claim =
-      await this.workflowRunnerWorkspaceService.claimAgentStepToolCall({
-        workspaceId,
-        workflowRunId,
+      await this.workflowRunWorkspaceService.resolveStepAwaitingToolCall({
         threadId,
         toolCallId,
         response: output,
+        workflowRunId,
+        workspaceId,
       });
 
     if (claim.status !== 'RESOLVED') {
       throw this.notPending();
     }
 
-    const completion = await pausingToolCall
-      .complete(
+    // The Ask is answered and cannot be answered again, so a completion or a
+    // resume that fails fails the run, which can then be retried, rather than
+    // leaving it waiting on an answer nobody can give anymore.
+    try {
+      const completion = await pausingToolCall.complete({
         output,
-        this.buildCompletionContext({ workspaceId, userWorkspaceId, threadId }),
-      )
-      .catch(async (error: unknown) => {
-        await this.workflowRunnerWorkspaceService.failAnsweredAgentStep({
+        context: this.buildCompletionContext({
           workspaceId,
-          workflowRunId,
-        });
-        throw error;
+          userWorkspaceId,
+          threadId,
+        }),
       });
 
-    await this.workflowRunnerWorkspaceService.resumeAnsweredAgentStep({
-      workspaceId,
-      workflowRunId,
-      stepId: claim.stepId,
-      threadId,
-      toolCallId,
-      toolResult: completion.toolResult,
-      answerText: completion.answerText,
-      senderUserWorkspaceId: userWorkspaceId,
-    });
+      await this.workflowRunnerWorkspaceService.resumeAnsweredAgentStep({
+        workspaceId,
+        workflowRunId,
+        stepId: claim.stepId,
+        threadId,
+        toolPart,
+        toolResult: completion.toolResult,
+        answerText: completion.answerText,
+        senderUserWorkspaceId: userWorkspaceId,
+      });
+    } catch (error) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: 'The run could not resume after its question was answered',
+      });
+
+      throw error;
+    }
 
     await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
   }
@@ -583,7 +544,24 @@ export class AnswerAskService {
       workspaceId,
     });
 
-    if (!(await this.isWorkflowRunReadable(workflowRunId))) {
+    let workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id'> | null = null;
+
+    try {
+      workflowRun = await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepositoryWithContextPermissions<WorkflowRunWorkspaceEntity>(
+              'workflowRun',
+            )
+            .findOne({ where: { id: workflowRunId }, select: { id: true } }),
+      );
+    } catch (error) {
+      if (!(error instanceof PermissionsException)) {
+        throw error;
+      }
+    }
+
+    if (!isDefined(workflowRun)) {
       throw new InputAskException(
         'Ask not found',
         InputAskExceptionCode.ASK_NOT_FOUND,
@@ -603,62 +581,43 @@ export class AnswerAskService {
     threadId: string;
   }): PausingToolCompletionContext {
     return {
-      executeTool: async (toolName, toolArguments) =>
-        this.toolRegistryService.resolveAndExecute(
-          toolName,
-          toolArguments,
-          await this.buildAnswererToolContext({
-            workspaceId,
+      executeTool: async ({ toolName, args }) => {
+        const authContext = workspaceAuthContextStorage.getStore();
+
+        if (!isDefined(authContext) || !isUserAuthContext(authContext)) {
+          throw new InputAskException(
+            'Answering requires a signed-in person',
+            InputAskExceptionCode.ASK_ANSWER_FORBIDDEN,
+          );
+        }
+
+        const { userWorkspaceRoleMap } =
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'userWorkspaceRoleMap',
+          ]);
+        const { actorContext, roleId, userId, userContext } =
+          await this.agentActorContextService.buildUserAndAgentActorContext(
             userWorkspaceId,
-            threadId,
-          }),
-        ),
-    };
-  }
+            workspaceId,
+          );
 
-  private async buildAnswererToolContext({
-    workspaceId,
-    userWorkspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    threadId: string;
-  }): Promise<ToolContext> {
-    const authContext = workspaceAuthContextStorage.getStore();
-
-    if (!isDefined(authContext) || !isUserAuthContext(authContext)) {
-      throw new InputAskException(
-        'Answering requires a signed-in person',
-        InputAskExceptionCode.ASK_ANSWER_FORBIDDEN,
-      );
-    }
-
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-      ]);
-    const { actorContext, roleId, userId, userContext } =
-      await this.agentActorContextService.buildUserAndAgentActorContext(
-        userWorkspaceId,
-        workspaceId,
-      );
-
-    return {
-      workspaceId,
-      roleId,
-      rolePermissionConfig:
-        resolveRolePermissionConfig({
+        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+          workspaceId,
+          roleId,
+          rolePermissionConfig:
+            resolveRolePermissionConfig({
+              authContext,
+              userWorkspaceRoleMap,
+              apiKeyRoleMap: {},
+            }) ?? undefined,
           authContext,
-          userWorkspaceRoleMap,
-          apiKeyRoleMap: {},
-        }) ?? undefined,
-      authContext,
-      actorContext,
-      userId,
-      userWorkspaceId,
-      threadId,
-      locale: userContext.locale as ToolContext['locale'],
+          actorContext,
+          userId,
+          userWorkspaceId,
+          threadId,
+          locale: userContext.locale as ToolContext['locale'],
+        });
+      },
     };
   }
 
@@ -690,27 +649,6 @@ export class AnswerAskService {
         `Answering this Ask requires the ${setting} permission`,
         InputAskExceptionCode.ASK_ANSWER_FORBIDDEN,
       );
-    }
-  }
-
-  private async isWorkflowRunReadable(workflowRunId: string): Promise<boolean> {
-    try {
-      const workflowRun =
-        await this.workspaceOrmManager.executeInWorkspaceContext(() =>
-          this.workspaceOrmManager
-            .getRepositoryWithContextPermissions<WorkflowRunWorkspaceEntity>(
-              'workflowRun',
-            )
-            .findOne({ where: { id: workflowRunId }, select: { id: true } }),
-        );
-
-      return isDefined(workflowRun);
-    } catch (error) {
-      if (error instanceof PermissionsException) {
-        return false;
-      }
-
-      throw error;
     }
   }
 

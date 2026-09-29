@@ -15,7 +15,10 @@ import {
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import {
+  type AnsweredToolPart,
+  WorkflowAgentConversationWorkspaceService,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -27,10 +30,7 @@ import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
-import {
-  type StepInputResolution,
-  WorkflowRunWorkspaceService,
-} from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 
@@ -176,40 +176,14 @@ export class WorkflowRunnerWorkspaceService {
     return true;
   }
 
-  // The answer resumes the agent step that asked, not the steps after it:
-  // the agent continues its conversation with the answer as the last message.
-  async claimAgentStepToolCall({
-    workspaceId,
-    workflowRunId,
-    threadId,
-    toolCallId,
-    response,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    threadId: string;
-    toolCallId: string;
-    response: Record<string, unknown>;
-  }): Promise<StepInputResolution> {
-    return this.workflowRunWorkspaceService.resolveStepAwaitingToolCall({
-      threadId,
-      toolCallId,
-      response,
-      workflowRunId,
-      workspaceId,
-    });
-  }
-
-  // The Ask is answered and cannot be answered again, so a resume that
-  // cannot be recorded or scheduled fails the run, which can then be retried,
-  // rather than leaving it waiting on an answer nobody can give anymore. The
-  // step stays PENDING until the resume job claims it in its conversation.
+  // The step stays PENDING until the resume job claims it in its
+  // conversation.
   async resumeAnsweredAgentStep({
     workspaceId,
     workflowRunId,
     stepId,
     threadId,
-    toolCallId,
+    toolPart,
     toolResult,
     answerText,
     senderUserWorkspaceId,
@@ -218,58 +192,37 @@ export class WorkflowRunnerWorkspaceService {
     workflowRunId: string;
     stepId: string;
     threadId: string;
-    toolCallId: string;
+    toolPart: AnsweredToolPart;
     toolResult: Record<string, unknown>;
     answerText: string;
     senderUserWorkspaceId: string;
   }): Promise<void> {
-    try {
-      const { hasAwaitingToolCalls } =
-        await this.workflowAgentConversationWorkspaceService.recordAnswer({
-          workspaceId,
-          threadId,
-          toolCallId,
-          toolResult,
-          answerText,
-          senderUserWorkspaceId,
-        });
+    const { hasAwaitingToolCalls } =
+      await this.workflowAgentConversationWorkspaceService.recordAnswer({
+        workspaceId,
+        threadId,
+        toolPart,
+        toolResult,
+        answerText,
+        senderUserWorkspaceId,
+      });
 
-      // The agent paused on several calls and continues once all are
-      // answered. Two answers that both see none left each queue a resume,
-      // and the resume's claim on the step lets only one of them run it.
-      if (hasAwaitingToolCalls) {
-        return;
-      }
-
-      await this.messageQueueService.add<RunWorkflowJobData>(
-        RunWorkflowJob.name,
-        {
-          workspaceId,
-          workflowRunId,
-          stepToResume: { stepId, threadId },
-        },
-        buildRunWorkflowJobOptions(workflowRunId),
-      );
-    } catch (error) {
-      await this.failAnsweredAgentStep({ workspaceId, workflowRunId });
-
-      throw error;
+    // The agent paused on several calls and continues once all are
+    // answered. Two answers that both see none left each queue a resume,
+    // and the resume's claim on the step lets only one of them run it.
+    if (hasAwaitingToolCalls) {
+      return;
     }
-  }
 
-  async failAnsweredAgentStep({
-    workspaceId,
-    workflowRunId,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-  }): Promise<void> {
-    await this.workflowRunWorkspaceService.endWorkflowRun({
-      workflowRunId,
-      workspaceId,
-      status: WorkflowRunStatus.FAILED,
-      error: 'The run could not resume after its question was answered',
-    });
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+        stepToResume: { stepId, threadId },
+      },
+      buildRunWorkflowJobOptions(workflowRunId),
+    );
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

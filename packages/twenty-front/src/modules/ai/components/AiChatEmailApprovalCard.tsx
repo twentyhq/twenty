@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useState } from 'react';
+import { type FocusEvent, useId, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   type EmailApprovalDecision,
@@ -13,22 +13,14 @@ import { IconDeviceFloppy, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
+import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
+import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
 import { AiChatEmailRecipientsRow } from '@/ai/components/internal/AiChatEmailRecipientsRow';
 import { useAnswerAgentChatAsk } from '@/ai/hooks/useAnswerAgentChatAsk';
-import { splitEmailRecipients } from '@/ai/utils/splitEmailRecipients';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-
-const StyledCard = styled.div`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
 
 const StyledHeader = styled.div`
   color: ${themeCssVariables.font.color.primary};
@@ -104,10 +96,10 @@ export const AiChatEmailApprovalCard = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const [to, setTo] = useState(() => splitEmailRecipients(email.recipients.to));
-  const [cc, setCc] = useState(() => splitEmailRecipients(email.recipients.cc));
+  const [to, setTo] = useState(() => parseEmailRecipients(email.recipients.to));
+  const [cc, setCc] = useState(() => parseEmailRecipients(email.recipients.cc));
   const [bcc, setBcc] = useState(() =>
-    splitEmailRecipients(email.recipients.bcc),
+    parseEmailRecipients(email.recipients.bcc),
   );
   // Shown from the start when the draft has any, and kept once opened, so
   // removing the last recipient does not take the field away.
@@ -120,8 +112,17 @@ export const AiChatEmailApprovalCard = ({
 
   const isAnswering = pendingDecision !== null;
 
-  // Typing in the card must not trigger the page's keyboard shortcuts.
-  const handleFieldFocus = () => {
+  // Typing in the card must not trigger the page's keyboard shortcuts. Focus
+  // events bubble up from every field, and from the buttons between them,
+  // which are left out since a button removed on click may never blur.
+  const handleFieldFocus = (event: FocusEvent) => {
+    if (
+      !(event.target instanceof HTMLInputElement) &&
+      !(event.target instanceof HTMLTextAreaElement)
+    ) {
+      return;
+    }
+
     pushFocusItemToFocusStack({
       focusId,
       component: { type: FocusComponentType.TEXT_AREA, instanceId: focusId },
@@ -136,15 +137,15 @@ export const AiChatEmailApprovalCard = ({
   };
 
   const decide = async (decision: EmailApprovalDecision) => {
-    if (isAnswering) {
-      return;
-    }
-
     setPendingDecision(decision);
 
     const editedEmail: ProposedEmail = {
       ...email,
-      recipients: { to: to.join(', '), cc: cc.join(', '), bcc: bcc.join(', ') },
+      recipients: {
+        to: serializeEmailRecipients(to),
+        cc: serializeEmailRecipients(cc),
+        bcc: serializeEmailRecipients(bcc),
+      },
       subject,
       body,
     };
@@ -176,16 +177,14 @@ export const AiChatEmailApprovalCard = ({
   };
 
   return (
-    <StyledCard>
+    <StyledAiChatAskCard>
       <StyledHeader>{t`Review this email before it goes out`}</StyledHeader>
-      <StyledFields>
+      <StyledFields onFocus={handleFieldFocus} onBlur={handleFieldBlur}>
         <AiChatEmailRecipientsRow
           label={t`To`}
           recipients={to}
           disabled={isAnswering}
           onChange={setTo}
-          onFocus={handleFieldFocus}
-          onBlur={handleFieldBlur}
         />
         {(!isCcShown || !isBccShown) && (
           <StyledRecipientToggles>
@@ -213,8 +212,6 @@ export const AiChatEmailApprovalCard = ({
             recipients={cc}
             disabled={isAnswering}
             onChange={setCc}
-            onFocus={handleFieldFocus}
-            onBlur={handleFieldBlur}
           />
         )}
         {isBccShown && (
@@ -223,8 +220,6 @@ export const AiChatEmailApprovalCard = ({
             recipients={bcc}
             disabled={isAnswering}
             onChange={setBcc}
-            onFocus={handleFieldFocus}
-            onBlur={handleFieldBlur}
           />
         )}
         <StyledSubjectInput
@@ -233,8 +228,6 @@ export const AiChatEmailApprovalCard = ({
           value={subject}
           disabled={isAnswering}
           onChange={(event) => setSubject(event.target.value)}
-          onFocus={handleFieldFocus}
-          onBlur={handleFieldBlur}
         />
         <StyledBodyTextarea
           aria-label={t`Email body`}
@@ -243,8 +236,6 @@ export const AiChatEmailApprovalCard = ({
           value={body}
           disabled={isAnswering}
           onChange={(event) => setBody(event.target.value)}
-          onFocus={handleFieldFocus}
-          onBlur={handleFieldBlur}
         />
       </StyledFields>
       <StyledDivider />
@@ -281,6 +272,6 @@ export const AiChatEmailApprovalCard = ({
           {t`Send`}
         </Button>
       </StyledActions>
-    </StyledCard>
+    </StyledAiChatAskCard>
   );
 };

@@ -35,6 +35,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { answerAsk } from 'test/integration/graphql/suites/workflow/utils/answer-ask.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
@@ -52,31 +53,6 @@ import { type WorkflowActionFactory } from 'src/modules/workflow/workflow-execut
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 
-const answerAsk = ({
-  askId,
-  response,
-}: {
-  askId: string;
-  response: Record<string, unknown>;
-}) =>
-  workflowGraphqlRequest(
-    'mutation Answer($input: AnswerAskInput!) { answerAsk(input: $input) { streamId } }',
-    { input: { askId, response } },
-  );
-
-const findStepAskId = async ({
-  runId,
-  stepId,
-}: {
-  runId: string;
-  stepId: string;
-}): Promise<string> =>
-  (
-    await global.testDataSource.query(
-      `SELECT id FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1 AND "stepId" = $2 AND "toolCallId" IS NULL`,
-      [runId, stepId],
-    )
-  )[0]?.id;
 const settings = {
   input: {},
   outputSchema: {},
@@ -775,7 +751,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       await migratePendingRun(fixture, runId);
       await clearDefinitions(fixture);
       const response = await answerAsk({
-        askId: await findStepAskId({ runId, stepId: form.id }),
+        ask: { workflowRunId: runId, stepId: form.id },
         response: { answer: 'From the stored form' },
       });
 
@@ -805,7 +781,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     },
   });
 
-  const submitForm = async ({
+  const submitForm = ({
     runId,
     stepId,
     answer,
@@ -814,10 +790,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     stepId: string;
     answer: string;
   }) =>
-    answerAsk({
-      askId: await findStepAskId({ runId, stepId }),
-      response: { answer },
-    });
+    answerAsk({ ask: { workflowRunId: runId, stepId }, response: { answer } });
 
   it('still answers a form through the deprecated submitFormStep', async () => {
     const finalStep = emptyStep();
@@ -862,70 +835,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
 
     expect(JSON.stringify(second.body.errors)).toContain('ASK_NOT_PENDING');
-  });
-
-  it('refuses a second submission of the same form and keeps the first answer', async () => {
-    const finalStep = emptyStep();
-    const form = formStep([finalStep.id]);
-    const fixture = await createFixture({
-      mirrorless: true,
-      steps: [form, finalStep],
-    });
-    const runId = await runFixture(fixture);
-
-    await waitForStep(runId, form.id, 'PENDING');
-
-    const first = await submitForm({
-      runId,
-      stepId: form.id,
-      answer: 'Approved',
-    });
-
-    expect(first.body.errors).toBeUndefined();
-    await waitForRun(runId, 'COMPLETED');
-
-    const second = await submitForm({
-      runId,
-      stepId: form.id,
-      answer: 'Approved again',
-    });
-
-    expect(JSON.stringify(second.body.errors)).toContain('ASK_NOT_PENDING');
-    expect((await getRun(runId)).state.stepInfos[form.id].result).toEqual({
-      answer: 'Approved',
-    });
-  });
-
-  it('refuses a submission once its run has been stopped', async () => {
-    const finalStep = emptyStep();
-    const form = formStep([finalStep.id]);
-    const fixture = await createFixture({
-      mirrorless: true,
-      steps: [form, finalStep],
-    });
-    const runId = await runFixture(fixture);
-
-    await waitForStep(runId, form.id, 'PENDING');
-
-    await workflowGraphqlRequest(
-      'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
-      { id: runId },
-    );
-    await waitForRun(runId, 'STOPPED');
-
-    const response = await submitForm({
-      runId,
-      stepId: form.id,
-      answer: 'Too late',
-    });
-
-    expect(JSON.stringify(response.body.errors)).toContain('ASK_NOT_PENDING');
-
-    const run = await getRun(runId);
-
-    expect(run.status).toBe('STOPPED');
-    expect(run.state.stepInfos[form.id].status).toBe('FAILED');
-    expect(run.state.stepInfos[finalStep.id].status).toBe('NOT_STARTED');
   });
 
   describe('the Ask a form step opens', () => {
@@ -1221,7 +1130,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
-    it('keeps the first answer when a second submission is refused', async () => {
+    it('refuses a second submission and keeps the first answer', async () => {
       const finalStep = emptyStep();
       const form = approvalForm([finalStep.id]);
       const fixture = await createFixture({
@@ -1231,7 +1140,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const runId = await runFixture(fixture);
 
       await waitForStep(runId, form.id, 'PENDING');
-      await submitForm({ runId, stepId: form.id, answer: 'Approved' });
+
+      const first = await submitForm({
+        runId,
+        stepId: form.id,
+        answer: 'Approved',
+      });
+
+      expect(first.body.errors).toBeUndefined();
       await waitForRun(runId, 'COMPLETED');
 
       const second = await submitForm({
@@ -1240,7 +1156,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         answer: 'Approved again',
       });
 
-      expect(second.body.errors).toBeDefined();
+      expect(JSON.stringify(second.body.errors)).toContain('ASK_NOT_PENDING');
+      expect((await getRun(runId)).state.stepInfos[form.id].result).toEqual({
+        answer: 'Approved',
+      });
       expect(await getInputAsks(runId)).toMatchObject([
         { status: 'ANSWERED', response: { answer: 'Approved' } },
       ]);
@@ -1335,10 +1254,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         answer: 'Too late',
       });
 
-      expect(late.body.errors).toBeDefined();
+      expect(JSON.stringify(late.body.errors)).toContain('ASK_NOT_PENDING');
       expect(await getInputAsks(runId)).toMatchObject([
         { status: 'CANCELED', response: null },
       ]);
+
+      const run = await getRun(runId);
+
+      expect(run.status).toBe('STOPPED');
+      expect(run.state.stepInfos[form.id].status).toBe('FAILED');
+      expect(run.state.stepInfos[finalStep.id].status).toBe('NOT_STARTED');
     });
   });
 
@@ -1483,7 +1408,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       return { runId, agent, finalStep, threadId };
     };
 
-    const answer = async ({
+    const answer = ({
       threadId,
       toolCallId = 'ask-1',
     }: {
@@ -1491,12 +1416,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       toolCallId?: string;
     }) =>
       answerAsk({
-        askId: (
-          await global.testDataSource.query(
-            `SELECT id FROM "${schema}"."inputAsk" WHERE "threadId" = $1 AND "toolCallId" = $2`,
-            [threadId, toolCallId],
-          )
-        )[0]?.id,
+        ask: { threadId, toolCallId },
         response: {
           answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
         },

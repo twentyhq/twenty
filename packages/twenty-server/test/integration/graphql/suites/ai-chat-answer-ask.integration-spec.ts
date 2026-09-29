@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import request from 'supertest';
+import { answerAsk } from 'test/integration/graphql/suites/workflow/utils/answer-ask.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -10,6 +10,7 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -53,6 +54,9 @@ describe('Answering a chat tool call through its Ask', () => {
     });
 
     const assistantMessageId = randomUUID();
+    const pendingOutput = await createAskQuestionsTool({
+      isWorkspaceSetupThread: false,
+    }).execute({ questions: QUESTIONS });
 
     await chat.upsertAssistantMessage({
       id: assistantMessageId,
@@ -64,11 +68,7 @@ describe('Answering a chat tool call through its Ask', () => {
         toolCallId,
         state: 'output-available',
         input: { questions: QUESTIONS },
-        output: {
-          success: true,
-          message: 'Questions presented to the user; awaiting their answer.',
-          result: { questions: QUESTIONS, status: 'pending' },
-        },
+        output: pendingOutput,
       })) as never,
     });
 
@@ -88,29 +88,11 @@ describe('Answering a chat tool call through its Ask', () => {
     return { assistantMessageId };
   };
 
-  const answerToolCallAsk = async (toolCallId: string) => {
-    const [{ id: askId }] = await global.testDataSource.query(
-      `SELECT id FROM "${schema}"."inputAsk" WHERE "threadId" = $1 AND "toolCallId" = $2`,
-      [threadId, toolCallId],
-    );
-
-    return request(`http://localhost:${APP_PORT}`)
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `mutation Answer($input: AnswerAskInput!) {
-          answerAsk(input: $input) { streamId }
-        }`,
-        variables: {
-          input: {
-            askId,
-            response: {
-              answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
-            },
-          },
-        },
-      });
-  };
+  const answerToolCallAsk = (toolCallId: string) =>
+    answerAsk({
+      ask: { threadId, toolCallId },
+      response: { answers: [{ questionIndex: 0, selectedOptionIndices: [1] }] },
+    });
 
   const readAsk = async (toolCallId: string) =>
     (
@@ -289,6 +271,7 @@ describe('Answering a chat tool call through its Ask', () => {
     });
 
     expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendChatMessage.queued).toBe(false);
 
     for (const toolCallId of ['call-skipped-first', 'call-skipped-last']) {
       expect(await readAsk(toolCallId)).toEqual({
@@ -297,29 +280,8 @@ describe('Answering a chat tool call through its Ask', () => {
       });
       expect(await readToolCallStatus(toolCallId)).toBe('skipped');
     }
-  });
 
-  it('cancels a pending Ask when a message is sent instead of an answer', async () => {
-    await pauseOnQuestions('call-skipped');
-
-    const response = await makeMetadataApiRequest({
-      query: parse(
-        `mutation Send($threadId: UUID!, $text: String!, $messageId: UUID!) {
-          sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued streamId }
-        }`,
-      ),
-      variables: { threadId, text: 'Never mind', messageId: randomUUID() },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.sendChatMessage.queued).toBe(false);
-    expect(await readAsk('call-skipped')).toEqual({
-      status: 'CANCELED',
-      response: null,
-    });
-    expect(await readToolCallStatus('call-skipped')).toBe('skipped');
-
-    const lateAnswer = await answerToolCallAsk('call-skipped');
+    const lateAnswer = await answerToolCallAsk('call-skipped-first');
 
     expect(JSON.stringify(lateAnswer.body.errors)).toContain('ASK_NOT_PENDING');
   });

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,26 +17,30 @@ import {
 } from 'src/modules/input-ask/input-ask.exception';
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 
+export type InputAskToolCallKey = { threadId: string; toolCallId: string };
+
 // A form step's Ask is keyed by its run and step; any Ask a tool call opened,
 // in a chat or in a run, by the conversation and the call.
 export type InputAskKey =
   | { workflowRunId: string; stepId: string }
-  | { threadId: string; toolCallId: string };
+  | InputAskToolCallKey;
 
 export type InputAskToOpen = Pick<
   InputAskWorkspaceEntity,
   'name' | 'form' | 'assigneeId'
 > &
-  Partial<
-    Pick<
-      InputAskWorkspaceEntity,
-      'workflowRunId' | 'stepId' | 'threadId' | 'toolCallId'
-    >
-  >;
+  (
+    | (InputAskToolCallKey & { workflowRunId?: string; stepId?: string })
+    | {
+        workflowRunId: string;
+        stepId: string;
+        threadId?: undefined;
+        toolCallId?: undefined;
+      }
+  );
 
-const isToolCallKey = (
-  key: InputAskKey,
-): key is { threadId: string; toolCallId: string } => 'toolCallId' in key;
+const isToolCallKey = (key: InputAskKey): key is InputAskToolCallKey =>
+  'toolCallId' in key;
 
 const buildKeyWhere = (
   key: InputAskKey,
@@ -51,8 +55,6 @@ const buildKeyWhere = (
 
 @Injectable()
 export class InputAskWorkspaceService {
-  private readonly logger = new Logger(InputAskWorkspaceService.name);
-
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
@@ -70,7 +72,10 @@ export class InputAskWorkspaceService {
     workspaceId: string;
     inputAsk: InputAskToOpen;
   }): Promise<void> {
-    const key = this.getKey(inputAsk);
+    const key: InputAskKey =
+      inputAsk.toolCallId !== undefined
+        ? { threadId: inputAsk.threadId, toolCallId: inputAsk.toolCallId }
+        : { workflowRunId: inputAsk.workflowRunId, stepId: inputAsk.stepId };
 
     await this.execute({
       workspaceId,
@@ -154,42 +159,20 @@ export class InputAskWorkspaceService {
     match,
   }: {
     workspaceId: string;
-    match: InputAskKey | { workflowRunId: string };
+    match: InputAskToolCallKey | { workflowRunId: string };
   }): Promise<boolean> {
-    const cancelPending = () =>
-      this.execute({
-        workspaceId,
-        whenObjectMissing: () => false,
-        run: async (inputAskRepository) => {
-          const result = await inputAskRepository.update(
-            {
-              ...('stepId' in match || 'toolCallId' in match
-                ? buildKeyWhere(match)
-                : { workflowRunId: match.workflowRunId }),
-              status: InputAskStatus.PENDING,
-            },
-            { status: InputAskStatus.CANCELED },
-          );
+    return this.execute({
+      workspaceId,
+      whenObjectMissing: () => false,
+      run: async (inputAskRepository) => {
+        const result = await inputAskRepository.update(
+          { ...match, status: InputAskStatus.PENDING },
+          { status: InputAskStatus.CANCELED },
+        );
 
-          return (result.affected ?? 0) > 0;
-        },
-      });
-
-    if ('stepId' in match || 'toolCallId' in match) {
-      return cancelPending();
-    }
-
-    // Closing what an ended run left pending is housekeeping: the run is over
-    // either way, and a failure here only leaves a stale Ask behind.
-    try {
-      return await cancelPending();
-    } catch (error) {
-      this.logger.error(
-        `Failed to cancel the Asks of workflow run ${match.workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-
-      return false;
-    }
+        return (result.affected ?? 0) > 0;
+      },
+    });
   }
 
   async findPendingForThread({
@@ -208,6 +191,24 @@ export class InputAskWorkspaceService {
         inputAskRepository.find({
           where: { threadId, status: InputAskStatus.PENDING },
           select: { id: true, toolCallId: true, workflowRunId: true },
+        }),
+    });
+  }
+
+  async hasPendingForThread({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<boolean> {
+    return this.execute({
+      workspaceId,
+      whenObjectMissing: () => false,
+      run: (inputAskRepository) =>
+        inputAskRepository.existsBy({
+          threadId,
+          status: InputAskStatus.PENDING,
         }),
     });
   }
@@ -269,21 +270,6 @@ export class InputAskWorkspaceService {
           },
         }),
     });
-  }
-
-  private getKey(inputAsk: InputAskToOpen): InputAskKey {
-    if (isDefined(inputAsk.threadId) && isDefined(inputAsk.toolCallId)) {
-      return { threadId: inputAsk.threadId, toolCallId: inputAsk.toolCallId };
-    }
-
-    if (isDefined(inputAsk.workflowRunId) && isDefined(inputAsk.stepId)) {
-      return { workflowRunId: inputAsk.workflowRunId, stepId: inputAsk.stepId };
-    }
-
-    throw new InputAskException(
-      'An Ask needs a tool call or a workflow step to be answered through',
-      InputAskExceptionCode.INPUT_ASK_WITHOUT_KEY,
-    );
   }
 
   private async hasInputAskObject(workspaceId: string): Promise<boolean> {

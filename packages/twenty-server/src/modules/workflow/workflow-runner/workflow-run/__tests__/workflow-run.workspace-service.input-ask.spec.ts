@@ -334,6 +334,21 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
       });
     });
 
+    it('still ends the run when its Asks cannot be canceled', async () => {
+      const { service, inputAskWorkspaceService, updateWorkflowRun } =
+        buildService();
+
+      inputAskWorkspaceService.cancel.mockRejectedValue(new Error('db down'));
+
+      await service.endWorkflowRun({
+        workflowRunId: 'workflow-run-id',
+        workspaceId: 'workspace-id',
+        status: WorkflowRunStatus.STOPPED,
+      });
+
+      expect(updateWorkflowRun).toHaveBeenCalled();
+    });
+
     it('leaves the Asks alone for a run that could not open any', async () => {
       const { service, inputAskWorkspaceService } = buildService({
         stepInfo: { status: StepStatus.SUCCESS },

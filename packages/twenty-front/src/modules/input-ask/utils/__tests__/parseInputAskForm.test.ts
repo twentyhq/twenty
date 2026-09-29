@@ -15,7 +15,6 @@ describe('parseInputAskForm', () => {
         questions: [{ header: 'Plan', question: 'Which plan?', options: [] }],
       },
     ],
-    ['form fields', { kind: 'formFields', fields: [] }],
     ['an email approval', { kind: 'emailApproval', email: EMAIL }],
   ])('reads %s', (_description, form) => {
     expect(parseInputAskForm(form)).toEqual(form);
@@ -24,6 +23,7 @@ describe('parseInputAskForm', () => {
   it.each([
     ['no form', null],
     ['an unknown kind', { kind: 'signature' }],
+    ["a form step's fields", { kind: 'formFields', fields: [] }],
     ['questions without any question', { kind: 'questions', questions: [] }],
     [
       'an email without a subject',

@@ -1,6 +1,3 @@
-import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
-
-import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { ASK_QUESTIONS_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
 
 const QUESTIONS = [
@@ -28,26 +25,6 @@ const parseCall = () => {
 };
 
 describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
-  it('is the pausing tool declared for ask_questions', () => {
-    expect(PAUSING_TOOLS.get(ASK_QUESTIONS_TOOL_NAME)).toBe(
-      ASK_QUESTIONS_PAUSING_TOOL,
-    );
-  });
-
-  it('waits on a call whose result is still pending', () => {
-    expect(
-      ASK_QUESTIONS_PAUSING_TOOL.isAwaitingOutput({
-        result: { questions: QUESTIONS, status: 'pending' },
-      }),
-    ).toBe(true);
-    expect(
-      ASK_QUESTIONS_PAUSING_TOOL.isAwaitingOutput({
-        result: { questions: QUESTIONS, status: 'answered' },
-      }),
-    ).toBe(false);
-    expect(ASK_QUESTIONS_PAUSING_TOOL.isAwaitingOutput(undefined)).toBe(false);
-  });
-
   it('cannot read a call without questions', () => {
     expect(ASK_QUESTIONS_PAUSING_TOOL.parseCall({ questions: [] })).toBeNull();
     expect(ASK_QUESTIONS_PAUSING_TOOL.parseCall(undefined)).toBeNull();
@@ -73,7 +50,9 @@ describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
       isValid: true,
       output: { answers },
     });
-    expect(await call.complete({ answers }, NO_TOOLS)).toEqual({
+    expect(
+      await call.complete({ output: { answers }, context: NO_TOOLS }),
+    ).toEqual({
       toolResult: {
         success: true,
         message: 'User answered the questions.',
@@ -85,15 +64,15 @@ describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
   });
 
   it('prefers free text and leaves unanswered questions out of the answer message', async () => {
-    const completion = await parseCall().complete(
-      {
+    const completion = await parseCall().complete({
+      output: {
         answers: [
           { questionIndex: 0, selectedOptionIndices: [0], freeText: ' Both ' },
           { questionIndex: 1, selectedOptionIndices: [] },
         ],
       },
-      NO_TOOLS,
-    );
+      context: NO_TOOLS,
+    });
 
     expect(completion.answerText).toBe('Which plan?\nBoth');
   });

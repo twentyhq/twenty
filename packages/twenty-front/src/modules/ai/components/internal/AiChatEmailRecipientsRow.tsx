@@ -6,7 +6,8 @@ import { IconX } from 'twenty-ui/icon';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { splitEmailRecipients } from '@/ai/utils/splitEmailRecipients';
+import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 
 const StyledRow = styled.div`
   align-items: center;
@@ -39,11 +40,9 @@ const StyledInput = styled.input`
 
 type AiChatEmailRecipientsRowProps = {
   label: string;
-  recipients: string[];
+  recipients: EmailRecipient[];
   disabled: boolean;
-  onChange: (recipients: string[]) => void;
-  onFocus: () => void;
-  onBlur: () => void;
+  onChange: (recipients: EmailRecipient[]) => void;
 };
 
 export const AiChatEmailRecipientsRow = ({
@@ -51,15 +50,14 @@ export const AiChatEmailRecipientsRow = ({
   recipients,
   disabled,
   onChange,
-  onFocus,
-  onBlur,
 }: AiChatEmailRecipientsRowProps) => {
   const { t } = useLingui();
   const [draftRecipient, setDraftRecipient] = useState('');
 
   const addDraftRecipients = () => {
-    const addedRecipients = splitEmailRecipients(draftRecipient).filter(
-      (recipient) => !recipients.includes(recipient),
+    const addedRecipients = parseEmailRecipients(draftRecipient).filter(
+      ({ address }) =>
+        !recipients.some((recipient) => recipient.address === address),
     );
 
     setDraftRecipient('');
@@ -86,26 +84,23 @@ export const AiChatEmailRecipientsRow = ({
     }
   };
 
-  const handleBlur = () => {
-    addDraftRecipients();
-    onBlur();
-  };
-
   return (
     <StyledRow>
       <StyledRowLabel>{label}</StyledRowLabel>
-      {recipients.map((recipient) => (
+      {recipients.map(({ address }) => (
         <Chip
-          key={recipient}
+          key={address}
           variant="soft"
           endElement={
             disabled ? undefined : (
               <LightIconButton
                 size="sm"
-                aria-label={t`Remove ${recipient}`}
+                aria-label={t`Remove ${address}`}
                 onClick={() =>
                   onChange(
-                    recipients.filter((candidate) => candidate !== recipient),
+                    recipients.filter(
+                      (recipient) => recipient.address !== address,
+                    ),
                   )
                 }
               >
@@ -114,7 +109,7 @@ export const AiChatEmailRecipientsRow = ({
             )
           }
         >
-          {recipient}
+          {address}
         </Chip>
       ))}
       {!disabled && (
@@ -124,8 +119,7 @@ export const AiChatEmailRecipientsRow = ({
           value={draftRecipient}
           onChange={(event) => setDraftRecipient(event.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={onFocus}
-          onBlur={handleBlur}
+          onBlur={addDraftRecipients}
         />
       )}
     </StyledRow>

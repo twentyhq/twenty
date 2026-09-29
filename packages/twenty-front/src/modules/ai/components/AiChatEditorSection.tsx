@@ -32,10 +32,9 @@ import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCre
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
@@ -170,12 +169,11 @@ const EditableAiChatEditorSection = () => {
     agentChatDisplayedThreadState,
   );
   // A workspace the Ask object has not reached yet has nothing to wait on.
-  const inputAskObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
-  );
+  const doesInputAskObjectExist = useDoObjectMetadataItemsExist([
+    CoreObjectNameSingular.InputAsk,
+  ]);
   const pendingAskThreadId =
-    isDefined(inputAskObjectMetadataItem) &&
+    doesInputAskObjectExist &&
     isDefined(agentChatDisplayedThread) &&
     agentChatDisplayedThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
       ? agentChatDisplayedThread

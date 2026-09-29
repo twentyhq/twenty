@@ -1,6 +1,3 @@
-import { PROPOSE_EMAIL_TOOL_NAME } from 'twenty-shared/ai';
-
-import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { PROPOSE_EMAIL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-email.pausing-tool';
 
 const PROPOSED_EMAIL = {
@@ -25,30 +22,11 @@ const buildContext = (toolOutput: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
-  it('is the pausing tool declared for propose_email', () => {
-    expect(PAUSING_TOOLS.get(PROPOSE_EMAIL_TOOL_NAME)).toBe(
-      PROPOSE_EMAIL_PAUSING_TOOL,
-    );
-  });
-
   it('asks for approval of the proposed email, named after its subject', () => {
     expect(parseCall().buildAsk()).toEqual({
       name: 'Your renewal',
       form: { kind: 'emailApproval', email: PROPOSED_EMAIL },
     });
-  });
-
-  it('waits on a proposal still pending', () => {
-    expect(
-      PROPOSE_EMAIL_PAUSING_TOOL.isAwaitingOutput({
-        result: { status: 'pending', email: PROPOSED_EMAIL },
-      }),
-    ).toBe(true);
-    expect(
-      PROPOSE_EMAIL_PAUSING_TOOL.isAwaitingOutput({
-        result: { status: 'sent', email: PROPOSED_EMAIL },
-      }),
-    ).toBe(false);
   });
 
   it.each([
@@ -76,16 +54,19 @@ describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
     });
     const editedEmail = { ...PROPOSED_EMAIL, subject: 'Renewal confirmed' };
 
-    const completion = await parseCall().complete(
-      { decision: 'send', email: editedEmail },
+    const completion = await parseCall().complete({
+      output: { decision: 'send', email: editedEmail },
       context,
-    );
+    });
 
-    expect(context.executeTool).toHaveBeenCalledWith('send_email', {
-      recipients: PROPOSED_EMAIL.recipients,
-      subject: 'Renewal confirmed',
-      body: '<p>Hi Tim,<br>Thanks for renewing.</p><p>Best, Jane</p>',
-      connectedAccountId: PROPOSED_EMAIL.connectedAccountId,
+    expect(context.executeTool).toHaveBeenCalledWith({
+      toolName: 'send_email',
+      args: {
+        recipients: PROPOSED_EMAIL.recipients,
+        subject: 'Renewal confirmed',
+        body: '<p>Hi Tim,<br>Thanks for renewing.</p><p>Best, Jane</p>',
+        connectedAccountId: PROPOSED_EMAIL.connectedAccountId,
+      },
     });
     expect(completion.toolResult).toEqual({
       success: true,
@@ -104,8 +85,8 @@ describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
   it('sends from the proposed account even when the answer names another', async () => {
     const context = buildContext({ success: true, message: 'Email sent' });
 
-    await parseCall().complete(
-      {
+    await parseCall().complete({
+      output: {
         decision: 'send',
         email: {
           ...PROPOSED_EMAIL,
@@ -113,28 +94,28 @@ describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
         },
       },
       context,
-    );
+    });
 
-    expect(context.executeTool).toHaveBeenCalledWith(
-      'send_email',
-      expect.objectContaining({
+    expect(context.executeTool).toHaveBeenCalledWith({
+      toolName: 'send_email',
+      args: expect.objectContaining({
         connectedAccountId: PROPOSED_EMAIL.connectedAccountId,
       }),
-    );
+    });
   });
 
   it('saves the email as a draft through draft_email', async () => {
     const context = buildContext({ success: true, message: 'Draft created' });
 
-    const completion = await parseCall().complete(
-      { decision: 'saveDraft', email: PROPOSED_EMAIL },
+    const completion = await parseCall().complete({
+      output: { decision: 'saveDraft', email: PROPOSED_EMAIL },
       context,
-    );
+    });
 
-    expect(context.executeTool).toHaveBeenCalledWith(
-      'draft_email',
-      expect.objectContaining({ subject: 'Your renewal' }),
-    );
+    expect(context.executeTool).toHaveBeenCalledWith({
+      toolName: 'draft_email',
+      args: expect.objectContaining({ subject: 'Your renewal' }),
+    });
     expect(completion.toolResult).toMatchObject({
       success: true,
       result: { status: 'drafted' },
@@ -149,10 +130,10 @@ describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
         'The connected email account does not have permission to send emails.',
     });
 
-    const completion = await parseCall().complete(
-      { decision: 'send', email: PROPOSED_EMAIL },
+    const completion = await parseCall().complete({
+      output: { decision: 'send', email: PROPOSED_EMAIL },
       context,
-    );
+    });
 
     expect(completion.toolResult).toMatchObject({
       success: false,
@@ -167,10 +148,10 @@ describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
   it('runs no tool when the email is discarded', async () => {
     const context = buildContext({ success: true, message: '' });
 
-    const completion = await parseCall().complete(
-      { decision: 'discard' },
+    const completion = await parseCall().complete({
+      output: { decision: 'discard' },
       context,
-    );
+    });
 
     expect(context.executeTool).not.toHaveBeenCalled();
     expect(completion.toolResult).toMatchObject({

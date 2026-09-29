@@ -5,6 +5,7 @@ import {
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 
 const WORKSPACE_ID = 'workspace';
 const THREAD_ID = 'thread';
@@ -99,11 +100,14 @@ const buildResolver = () => {
     streaming as never,
     events as never,
     {} as never,
-    { assertAiExecutionAllowed: jest.fn() } as never,
-    {
-      getAvailableModels: () => ['model'],
-      validateModelAvailability: jest.fn(),
-    } as never,
+    new AgentChatTurnPreflightService(
+      {
+        getAvailableModels: () => ['model'],
+        validateModelAvailability: jest.fn(),
+      } as never,
+      chatService,
+      { assertAiExecutionAllowed: jest.fn() } as never,
+    ),
     threadLifecycle,
   );
   return {

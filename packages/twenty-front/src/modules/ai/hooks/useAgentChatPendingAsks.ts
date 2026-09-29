@@ -69,12 +69,8 @@ export const useAgentChatPendingAsks = ({
     onSseReconnected: refetchPendingInputAsks,
   });
 
-  const handleInputAskOperation = useCallback(() => {
-    void refetchPendingInputAsks();
-  }, [refetchPendingInputAsks]);
-
   useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: handleInputAskOperation,
+    onObjectRecordOperationBrowserEvent: refetchPendingInputAsks,
     objectMetadataItemId: inputAskObjectMetadataItem.id,
   });
 

@@ -64,19 +64,8 @@ export type {
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
-export type {
-  InputAskQuestionsForm,
-  InputAskFormFieldsForm,
-  InputAskEmailApprovalForm,
-  InputAskForm,
-} from './types/InputAskForm';
-export type { InputAskFormField } from './types/InputAskFormField';
-export type {
-  InputAskQuestionsResponse,
-  InputAskFormFieldsResponse,
-  InputAskEmailApprovalResponse,
-  InputAskResponse,
-} from './types/InputAskResponse';
+export type { InputAskForm } from './types/InputAskForm';
+export type { InputAskEmailApprovalResponse } from './types/InputAskResponse';
 export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
 export type { ProposedEmail } from './types/ProposedEmail';

@@ -1,5 +1,6 @@
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AnswerAskService } from 'src/modules/input-ask/answer-ask/services/answer-ask.service';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 
@@ -26,7 +27,7 @@ type BuildOptions = {
   hasAnswered?: boolean;
   hasPermission?: boolean;
   hasSubmittedForm?: boolean;
-  otherPendingAsks?: Record<string, unknown>[];
+  hasOtherPendingAsks?: boolean;
 };
 
 const chatInputAsk = {
@@ -66,7 +67,7 @@ describe('AnswerAskService', () => {
     hasAnswered = true,
     hasPermission = true,
     hasSubmittedForm = true,
-    otherPendingAsks = [],
+    hasOtherPendingAsks = false,
   }: BuildOptions = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
     const agentChatService = {
@@ -98,15 +99,17 @@ describe('AnswerAskService', () => {
     const inputAskWorkspaceService = {
       findReadable: jest.fn().mockResolvedValue(inputAsk),
       answer: jest.fn().mockResolvedValue(hasAnswered),
-      findPendingForThread: jest.fn().mockResolvedValue(otherPendingAsks),
+      hasPendingForThread: jest.fn().mockResolvedValue(hasOtherPendingAsks),
     };
     const workflowRunnerWorkspaceService = {
-      claimAgentStepToolCall: jest
+      resumeAnsweredAgentStep: jest.fn().mockResolvedValue(undefined),
+      submitFormStep: jest.fn().mockResolvedValue(hasSubmittedForm),
+    };
+    const workflowRunWorkspaceService = {
+      resolveStepAwaitingToolCall: jest
         .fn()
         .mockResolvedValue({ status: 'RESOLVED', stepId: 'step-id' }),
-      resumeAnsweredAgentStep: jest.fn().mockResolvedValue(undefined),
-      failAnsweredAgentStep: jest.fn().mockResolvedValue(undefined),
-      submitFormStep: jest.fn().mockResolvedValue(hasSubmittedForm),
+      endWorkflowRun: jest.fn().mockResolvedValue(undefined),
     };
     const permissionsService = {
       userHasWorkspaceSettingPermission: jest
@@ -144,9 +147,13 @@ describe('AnswerAskService', () => {
       eventPublisherService as never,
       inputAskWorkspaceService as never,
       workflowRunnerWorkspaceService as never,
+      workflowRunWorkspaceService as never,
       permissionsService as never,
-      aiModelRegistryService as never,
-      aiBillingService as never,
+      new AgentChatTurnPreflightService(
+        aiModelRegistryService as never,
+        agentChatService as never,
+        aiBillingService as never,
+      ),
       workspaceOrmManager as never,
       {
         getOrRecompute: jest.fn().mockResolvedValue({
@@ -170,6 +177,7 @@ describe('AnswerAskService', () => {
       agentChatStreamingService,
       inputAskWorkspaceService,
       workflowRunnerWorkspaceService,
+      workflowRunWorkspaceService,
       permissionsService,
       workflowRunRepository,
       toolRegistryService,
@@ -261,11 +269,7 @@ describe('AnswerAskService', () => {
         agentChatService,
         agentChatStreamingService,
         publishedEvents,
-      } = buildService({
-        otherPendingAsks: [
-          { id: 'other-ask', toolCallId: 'other-call', workflowRunId: null },
-        ],
-      });
+      } = buildService({ hasOtherPendingAsks: true });
 
       const result = await service.answer(answerArguments);
 
@@ -495,6 +499,7 @@ describe('AnswerAskService', () => {
       const {
         service,
         workflowRunnerWorkspaceService,
+        workflowRunWorkspaceService,
         agentChatStreamingService,
         permissionsService,
         publishedEvents,
@@ -509,7 +514,7 @@ describe('AnswerAskService', () => {
         permissionsService.userHasWorkspaceSettingPermission,
       ).toHaveBeenCalledWith(expect.objectContaining({ setting: 'WORKFLOWS' }));
       expect(
-        workflowRunnerWorkspaceService.claimAgentStepToolCall,
+        workflowRunWorkspaceService.resolveStepAwaitingToolCall,
       ).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         workflowRunId: 'workflow-run-id',
@@ -522,10 +527,12 @@ describe('AnswerAskService', () => {
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           stepId: 'step-id',
+          toolPart: questionPart,
           answerText: 'Which plan?\nTeam',
           senderUserWorkspaceId: 'user-workspace-id',
         }),
       );
+      expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
       expect(agentChatStreamingService.tryClaimStream).not.toHaveBeenCalled();
       expect(publishedEvents).toContainEqual({
         type: 'tool-call-resolved',
@@ -534,13 +541,15 @@ describe('AnswerAskService', () => {
     });
 
     it('refuses an answer the run no longer waits for', async () => {
-      const { service, workflowRunnerWorkspaceService } = buildService({
-        inputAsk: runInputAsk,
-      });
+      const {
+        service,
+        workflowRunnerWorkspaceService,
+        workflowRunWorkspaceService,
+      } = buildService({ inputAsk: runInputAsk });
 
-      workflowRunnerWorkspaceService.claimAgentStepToolCall.mockResolvedValue({
-        status: 'NOT_AWAITING',
-      });
+      workflowRunWorkspaceService.resolveStepAwaitingToolCall.mockResolvedValue(
+        { status: 'NOT_AWAITING' },
+      );
 
       await expect(service.answer(answerArguments)).rejects.toMatchObject({
         code: 'ASK_NOT_PENDING',
@@ -550,8 +559,31 @@ describe('AnswerAskService', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('fails the run when the answered step cannot resume', async () => {
+      const {
+        service,
+        workflowRunnerWorkspaceService,
+        workflowRunWorkspaceService,
+      } = buildService({ inputAsk: runInputAsk });
+
+      workflowRunnerWorkspaceService.resumeAnsweredAgentStep.mockRejectedValue(
+        new Error('Queue unavailable'),
+      );
+
+      await expect(service.answer(answerArguments)).rejects.toThrow(
+        'Queue unavailable',
+      );
+      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workflowRunId: 'workflow-run-id',
+          workspaceId: 'workspace-id',
+          status: 'FAILED',
+        }),
+      );
+    });
+
     it('treats a run the caller cannot read as not found', async () => {
-      const { service, workflowRunRepository, workflowRunnerWorkspaceService } =
+      const { service, workflowRunRepository, workflowRunWorkspaceService } =
         buildService({ inputAsk: runInputAsk });
 
       workflowRunRepository.findOne.mockResolvedValue(null);
@@ -560,7 +592,7 @@ describe('AnswerAskService', () => {
         code: 'ASK_NOT_FOUND',
       });
       expect(
-        workflowRunnerWorkspaceService.claimAgentStepToolCall,
+        workflowRunWorkspaceService.resolveStepAwaitingToolCall,
       ).not.toHaveBeenCalled();
     });
   });

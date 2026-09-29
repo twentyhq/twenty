@@ -4,7 +4,7 @@ import {
   type AskQuestionsToolInput,
   type AskQuestionsToolResult,
 } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
@@ -111,10 +111,6 @@ export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
 >({
   inputSchema: askQuestionsInputSchema,
   outputSchema: buildAskQuestionsOutputSchema,
-  isAwaitingOutput: (toolOutput) =>
-    isPlainObject(toolOutput) &&
-    isPlainObject(toolOutput.result) &&
-    toolOutput.result.status === 'pending',
   buildAsk: ({ questions }) => ({
     name: questions[0]?.question ?? '',
     form: { kind: 'questions', questions },
