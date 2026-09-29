@@ -4,7 +4,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -27,9 +26,9 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
                 ...processedRecord,
                 [field.name]: {
                   // Preserve empty amounts instead of coercing null to 0
-                  amountMicros: isUndefinedOrNull(amountMicros)
-                    ? null
-                    : convertCurrencyMicrosToCurrencyAmount(amountMicros),
+                  amountMicros: isDefined(amountMicros)
+                    ? convertCurrencyMicrosToCurrencyAmount(amountMicros)
+                    : null,
                   currencyCode: record[field.name].currencyCode,
                 } satisfies FieldCurrencyValue,
               };
