@@ -1,5 +1,7 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -50,6 +52,20 @@ export class ShareEmailAndCalendarThroughRecordSharesCommand extends Provisioned
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
       ]);
+
+    if (
+      !isDefined(
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.recordShare.universalIdentifier
+        ],
+      )
+    ) {
+      this.logger.log(
+        `Record share object missing for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     const flatObjectMetadatasToUpdate =
       buildDiscoverableEmailAndCalendarObjectUpdates({
