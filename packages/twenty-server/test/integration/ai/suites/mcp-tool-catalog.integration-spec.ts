@@ -20,9 +20,6 @@ import { ToolCategory } from 'twenty-shared/ai';
  * 2. Permission gating: the catalog is role-dependent. An API key bound to a
  *    role without settings permissions must not see settings-gated tools
  *    (e.g. the ROLE category), while an admin-bound key must.
- * 3. Direct mode: /mcp?mode=direct lists registry tools by name, with object
- *    input schemas and without MCP-excluded tools, while plain /mcp keeps
- *    the meta-tools.
  */
 
 const baseUrl = `http://localhost:${APP_PORT}`;

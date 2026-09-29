@@ -28,7 +28,7 @@ export class McpInstructionBuilderService {
     workspaceId: string;
     roleId: string;
     rolePermissionConfig: RolePermissionConfig;
-    isDirectMode?: boolean;
+    isDirectMode: boolean;
   }): Promise<string> {
     const [{ flatObjectMetadataMaps }, allSkills, actionToolCatalog] =
       await Promise.all([

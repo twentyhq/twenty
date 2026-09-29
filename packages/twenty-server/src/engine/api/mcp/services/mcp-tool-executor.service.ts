@@ -173,9 +173,6 @@ export class McpToolExecutorService {
         return {
           name,
           description: toolDefinition.description,
-          // Clients reject the whole tools/list when one root is not an
-          // object, e.g. an app_* tool whose record root becomes
-          // {type:'string'} or a discriminated union serialized as a bare anyOf
           inputSchema: {
             ...(isPlainObject(inputSchema) ? inputSchema : {}),
             type: 'object',

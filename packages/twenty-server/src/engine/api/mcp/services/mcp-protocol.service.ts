@@ -114,7 +114,7 @@ export class McpProtocolService {
       workspaceId: string;
       roleId: string;
       rolePermissionConfig: RolePermissionConfig;
-      isDirectMode?: boolean;
+      isDirectMode: boolean;
     },
   ) {
     const instructions =
@@ -339,7 +339,7 @@ export class McpProtocolService {
       userWorkspaceId?: string;
       apiKey: FlatApiKey | undefined;
       application?: FlatApplication;
-      isDirectMode?: boolean;
+      isDirectMode: boolean;
     },
     sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
@@ -424,9 +424,6 @@ export class McpProtocolService {
           });
         }
 
-        // Direct mode lists registry tools by name; routing their calls through
-        // execute_tool reuses its MCP exclusion check, role and app scoping,
-        // and metrics
         const shouldForwardToExecuteTool =
           isDirectMode &&
           isNonEmptyString(params.name) &&
@@ -471,8 +468,6 @@ export class McpProtocolService {
           ),
         );
 
-        // Native tools go last so search_help_center, also produced by the
-        // registry, keeps its own annotations
         return this.mcpToolExecutorService.handleToolsListing(id, {
           ...annotatedRegistryTools,
           ...nativeTools,

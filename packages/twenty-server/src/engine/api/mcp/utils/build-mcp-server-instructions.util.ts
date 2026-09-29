@@ -4,12 +4,12 @@ export const buildMcpServerInstructions = ({
   objectNames,
   actionToolNames,
   skillNames,
-  isDirectMode = false,
+  isDirectMode,
 }: {
   objectNames: string;
   actionToolNames: string[];
   skillNames?: string;
-  isDirectMode?: boolean;
+  isDirectMode: boolean;
 }): string => {
   const availableActionTools = new Set(actionToolNames);
 
