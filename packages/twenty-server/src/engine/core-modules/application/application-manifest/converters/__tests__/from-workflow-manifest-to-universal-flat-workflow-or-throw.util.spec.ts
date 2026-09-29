@@ -1,6 +1,6 @@
 import { type WorkflowManifest } from 'twenty-shared/application';
 
-import { fromWorkflowManifestToCoreDefinitionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions-or-throw.util';
+import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
@@ -41,10 +41,22 @@ const options = {
   ]),
 };
 
+const convert = (
+  args: Parameters<
+    typeof fromWorkflowManifestToUniversalFlatWorkflowOrThrow
+  >[0],
+) => {
+  const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow(args);
+  const version = workflow.flatUniversalWorkflowVersion;
+  if (!version) {
+    throw new Error('Expected application version payload');
+  }
+  return { workflow, version };
+};
+
 describe('application workflow definitions', () => {
   it('creates one active core version without workspace projections', () => {
-    const { workflow, version } =
-      fromWorkflowManifestToCoreDefinitionsOrThrow(options);
+    const { workflow, version } = convert(options);
     expect(workflow.lastPublishedCoreWorkflowVersionId).toBe(version.id);
     expect(version.coreWorkflowId).toBe(workflow.id);
     expect(workflow.workspaceWorkflowId).toBeNull();
@@ -58,7 +70,7 @@ describe('application workflow definitions', () => {
   });
 
   it('updates the same version and keeps graph identity across updates', () => {
-    const before = fromWorkflowManifestToCoreDefinitionsOrThrow(options);
+    const before = convert(options);
     const existingWorkflow: FlatWorkflow = {
       ...before.workflow,
       workspaceId: APPLICATION_ID,
@@ -75,7 +87,7 @@ describe('application workflow definitions', () => {
       throw new Error('Expected a function step');
     }
     changedStep.input.greeting = 'After';
-    const after = fromWorkflowManifestToCoreDefinitionsOrThrow({
+    const after = convert({
       ...options,
       manifest: changed,
       existingWorkflow,
@@ -93,8 +105,8 @@ describe('application workflow definitions', () => {
   });
 
   it('resolves the same definition to different workspace function IDs', () => {
-    const first = fromWorkflowManifestToCoreDefinitionsOrThrow(options);
-    const second = fromWorkflowManifestToCoreDefinitionsOrThrow({
+    const first = convert(options);
+    const second = convert({
       ...options,
       logicFunctionIdByUniversalIdentifier: new Map([
         [FUNCTION_ID, '88888888-8888-4888-8888-888888888888'],
@@ -111,7 +123,7 @@ describe('application workflow definitions', () => {
 
   it('refuses missing or non-exposed application functions', () => {
     expect(() =>
-      fromWorkflowManifestToCoreDefinitionsOrThrow({
+      convert({
         ...options,
         logicFunctionIdByUniversalIdentifier: new Map(),
       }),
@@ -122,7 +134,7 @@ describe('application workflow definitions', () => {
     const invalid = structuredClone(manifest);
     Object.assign(invalid.version.trigger, { type: 'WEBHOOK' });
     expect(() =>
-      fromWorkflowManifestToCoreDefinitionsOrThrow({
+      convert({
         ...options,
         manifest: invalid,
       }),
@@ -188,33 +200,11 @@ describe('application workflow action graphs', () => {
     'accepts steps reachable only through %s edges',
     (type) => {
       expect(() =>
-        fromWorkflowManifestToCoreDefinitionsOrThrow({
+        convert({
           ...options,
           manifest: branchingWorkflow(type),
         }),
       ).not.toThrow();
-    },
-  );
-
-  it.each(['IF_ELSE', 'ITERATOR'] as const)(
-    'rejects missing and cyclic %s edges',
-    (type) => {
-      const missing = branchingWorkflow(type);
-      missing.version.steps.pop();
-      expect(() =>
-        fromWorkflowManifestToCoreDefinitionsOrThrow({
-          ...options,
-          manifest: missing,
-        }),
-      ).toThrow();
-      const cyclic = branchingWorkflow(type);
-      cyclic.version.steps[2].nextStepIds = [BODY_ID];
-      expect(() =>
-        fromWorkflowManifestToCoreDefinitionsOrThrow({
-          ...options,
-          manifest: cyclic,
-        }),
-      ).toThrow();
     },
   );
 
@@ -225,7 +215,7 @@ describe('application workflow action graphs', () => {
       input: { method: 'BOGUS' },
     });
     expect(() =>
-      fromWorkflowManifestToCoreDefinitionsOrThrow({
+      convert({
         ...options,
         manifest: invalid,
       }),

@@ -1,3 +1,5 @@
+import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -60,6 +62,17 @@ const compute = ({
   fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps(),
   inferDeletionFromMissingEntities = true,
 } = {}) => {
+  for (const workflow of Object.values(
+    fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
+  )) {
+    const version = (workflow as UniversalFlatWorkflow | undefined)
+      ?.flatUniversalWorkflowVersion;
+    if (isDefined(version)) {
+      fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
+        version.universalIdentifier
+      ] = version as FlatWorkflowVersion;
+    }
+  }
   const toAllUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
   addWorkflowManifestsToFlatEntityMapsOrThrow({
@@ -100,14 +113,19 @@ describe('application workflow manifest updates', () => {
       ]?.id,
       name: 'Updated',
     });
+    expect(after.flatWorkflowVersionMaps.byUniversalIdentifier).toEqual({});
     expect(
-      after.flatWorkflowVersionMaps.byUniversalIdentifier[
-        workflow.version.universalIdentifier
-      ]?.id,
+      (
+        after.flatWorkflowMaps.byUniversalIdentifier[
+          workflow.universalIdentifier
+        ] as UniversalFlatWorkflow
+      ).flatUniversalWorkflowVersion?.id,
     ).toBe(
-      before.flatWorkflowVersionMaps.byUniversalIdentifier[
-        workflow.version.universalIdentifier
-      ]?.id,
+      (
+        before.flatWorkflowMaps.byUniversalIdentifier[
+          workflow.universalIdentifier
+        ] as UniversalFlatWorkflow
+      ).flatUniversalWorkflowVersion?.id,
     );
   });
 

@@ -1,0 +1,299 @@
+import { type WorkflowManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+import { type DiscoveryService } from '@nestjs/core';
+
+import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+import { WorkflowVersionOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/services/workflow-version-on-create-side-effect-handler.service';
+import { WorkflowVersionOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/services/workflow-version-on-update-side-effect-handler.service';
+import { MetadataSideEffectHandlerRegistryService } from 'src/engine/metadata-modules/metadata-side-effect/registry/metadata-side-effect-handler-registry.service';
+import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
+import { FlatWorkflowVersionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
+
+const APPLICATION_ID = '11111111-1111-4111-8111-111111111111';
+const WORKFLOW_ID = '22222222-2222-4222-8222-222222222222';
+const VERSION_ID = '33333333-3333-4333-8333-333333333333';
+const TRIGGER_ID = '44444444-4444-4444-8444-444444444444';
+const STEP_ID = '55555555-5555-4555-8555-555555555555';
+const buildOptions = {
+  isSystemBuild: false,
+  applicationUniversalIdentifier: APPLICATION_ID,
+  inferDeletionFromMissingEntities: true,
+};
+const manifest: WorkflowManifest = {
+  universalIdentifier: WORKFLOW_ID,
+  name: 'Application workflow',
+  version: {
+    universalIdentifier: VERSION_ID,
+    trigger: {
+      universalIdentifier: TRIGGER_ID,
+      type: 'MANUAL',
+      nextStepIds: [STEP_ID],
+    },
+    steps: [
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Finish',
+        type: 'EMPTY',
+        input: {},
+        nextStepIds: [],
+      },
+    ],
+  },
+};
+
+const handlers = [
+  new WorkflowVersionOnCreateSideEffectHandlerService(),
+  new WorkflowVersionOnUpdateSideEffectHandlerService(),
+];
+const registry = new MetadataSideEffectHandlerRegistryService({
+  getProviders: () =>
+    handlers.map((instance) => ({ instance, metatype: instance.constructor })),
+} as unknown as DiscoveryService);
+registry.onModuleInit();
+const engine = new MetadataSideEffectEngineService(registry);
+
+const convert = (
+  definition = manifest,
+  existing = createEmptyAllFlatEntityMaps(),
+  now = '2026-09-29T10:00:00.000Z',
+) => {
+  const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+    manifest: definition,
+    applicationUniversalIdentifier: APPLICATION_ID,
+    now,
+    logicFunctionIdByUniversalIdentifier: new Map(),
+    existingWorkflow:
+      existing.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID],
+    existingVersion:
+      existing.flatWorkflowVersionMaps.byUniversalIdentifier[VERSION_ID],
+  });
+  const version = workflow.flatUniversalWorkflowVersion;
+  if (!isDefined(version)) {
+    throw new Error('Expected managed version');
+  }
+  return { workflow, version };
+};
+
+const persisted = ({ workflow, version }: ReturnType<typeof convert>) => {
+  const maps = createEmptyAllFlatEntityMaps();
+  const { flatUniversalWorkflowVersion: _payload, ...storedWorkflow } =
+    workflow;
+  maps.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID] = {
+    ...storedWorkflow,
+    workspaceId: APPLICATION_ID,
+    applicationId: APPLICATION_ID,
+  };
+  maps.flatWorkflowVersionMaps.byUniversalIdentifier[VERSION_ID] = {
+    ...version,
+    workspaceId: APPLICATION_ID,
+    applicationId: APPLICATION_ID,
+  };
+  return maps;
+};
+
+const expand = (
+  workflow: ReturnType<typeof convert>['workflow'],
+  from = createEmptyAllFlatEntityMaps(),
+) => {
+  const to = createEmptyAllFlatEntityMaps();
+  to.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID] =
+    workflow as FlatWorkflow;
+  const operations = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+    fromAllFlatEntityMaps: from,
+    toAllUniversalFlatEntityMaps: to,
+    buildOptions,
+  });
+  const result = engine.expandWithSideEffects({
+    allFlatEntityOperationRecordByMetadataName: operations,
+    sideEffectRelatedFlatEntityMaps: from,
+    context: { buildOptions },
+  });
+  if (result.status !== 'success') {
+    throw new Error(JSON.stringify(result));
+  }
+  return result.allFlatEntityOperationRecordByMetadataName;
+};
+
+describe('application workflow version side effects', () => {
+  it('creates the companion through the registered side-effect engine and excludes its payload from storage', () => {
+    const { workflow, version } = convert();
+    const operations = expand(workflow);
+    expect(operations.workflowVersion?.flatEntityToCreate[VERSION_ID]).toEqual(
+      version,
+    );
+    expect(version.isSystemSideEffect).toBe(true);
+    expect(
+      flatEntityToScalarFlatEntity({
+        metadataName: 'workflow',
+        flatEntity: workflow as FlatWorkflow,
+      }),
+    ).not.toHaveProperty('flatUniversalWorkflowVersion');
+    expect(engine.getSideEffectRelatedMetadataNames(['workflow'])).toContain(
+      'workflowVersion',
+    );
+  });
+
+  it('updates the same version for a graph-only change without mutating the previous definition', () => {
+    const before = convert();
+    const changed = structuredClone(manifest);
+    changed.version.steps[0].name = 'Updated step';
+    const after = convert(changed, persisted(before));
+    const operations = expand(after.workflow, persisted(before));
+    expect(after.workflow.versionDefinitionHash).not.toBe(
+      before.workflow.versionDefinitionHash,
+    );
+    expect(
+      operations.workflowVersion?.flatEntityToUpdate[VERSION_ID],
+    ).toMatchObject({
+      id: before.version.id,
+      steps: [{ name: 'Updated step' }],
+    });
+    expect(operations.workflowVersion?.flatEntityToDelete).toEqual({});
+    expect(before.version.steps?.[0].name).toBe('Finish');
+  });
+
+  it('does not generate operations when only sync timestamps change', () => {
+    const before = convert();
+    const after = convert(
+      manifest,
+      persisted(before),
+      '2026-09-30T10:00:00.000Z',
+    );
+    expect(after.workflow.versionDefinitionHash).toBe(
+      before.workflow.versionDefinitionHash,
+    );
+    expect(expand(after.workflow, persisted(before))).toEqual({});
+  });
+
+  it('adopts the existing POC companion in place without inferring its deletion', () => {
+    const before = convert();
+    const existing = persisted(before);
+    existing.flatWorkflowMaps.byUniversalIdentifier[
+      WORKFLOW_ID
+    ]!.versionDefinitionHash = null;
+    existing.flatWorkflowVersionMaps.byUniversalIdentifier[
+      VERSION_ID
+    ]!.isSystemSideEffect = false;
+    const after = convert(manifest, existing);
+    const operations = expand(after.workflow, existing);
+    expect(
+      operations.workflowVersion?.flatEntityToUpdate[VERSION_ID],
+    ).toMatchObject({ id: before.version.id, isSystemSideEffect: true });
+    expect(operations.workflowVersion?.flatEntityToDelete).toEqual({});
+  });
+
+  it.each(handlers)(
+    'leaves API workflow operations without a version payload unchanged (%s)',
+    (handler) => {
+      const { workflow } = convert();
+      const { flatUniversalWorkflowVersion: _payload, ...apiWorkflow } =
+        workflow;
+      expect(
+        handler.buildSideEffects({
+          flatEntity: apiWorkflow,
+          allFlatEntityOperationRecordByMetadataName: {},
+          relatedFlatEntityMaps: createEmptyAllFlatEntityMaps(),
+          context: { buildOptions },
+        }),
+      ).toEqual({ status: 'noop' });
+    },
+  );
+});
+
+const validator = new FlatWorkflowVersionValidatorService();
+const validate = (
+  version: ReturnType<typeof convert>['version'],
+  maps: AllFlatEntityMaps,
+) =>
+  validator.validateFlatWorkflowVersionCreation({
+    flatEntityToValidate: version,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: maps,
+    buildOptions,
+  } as UniversalFlatEntityValidationArgs<'workflowVersion'>);
+
+describe('managed workflow version validation', () => {
+  it('accepts a valid companion and accumulates missing edge and self-cycle errors', () => {
+    const definition = convert();
+    const maps = persisted(definition);
+    maps.flatWorkflowVersionMaps =
+      createEmptyAllFlatEntityMaps().flatWorkflowVersionMaps;
+    expect(validate(definition.version, maps).errors).toEqual([]);
+    const invalid = structuredClone(manifest);
+    invalid.version.trigger.nextStepIds = [APPLICATION_ID];
+    invalid.version.steps[0].nextStepIds = [STEP_ID];
+    const { version } = convert(invalid);
+    expect(validate(version, maps).errors.length).toBeGreaterThan(1);
+  });
+
+  it('returns record field and update selection errors together', () => {
+    const invalid = structuredClone(manifest);
+    invalid.version.steps = [
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Update',
+        type: 'UPDATE_RECORD',
+        nextStepIds: [],
+        input: {
+          objectUniversalIdentifier: APPLICATION_ID,
+          objectRecordId: 'record',
+          objectRecord: { missing: true },
+          fieldsToUpdate: ['missing'],
+        },
+      },
+    ];
+    const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+      manifest: invalid,
+      applicationUniversalIdentifier: APPLICATION_ID,
+      now: '2026-09-29T10:00:00.000Z',
+      logicFunctionIdByUniversalIdentifier: new Map(),
+      objectByUniversalIdentifier: new Map([
+        [APPLICATION_ID, { nameSingular: 'company' }],
+      ]),
+    });
+    const version = workflow.flatUniversalWorkflowVersion!;
+    const maps = persisted({ workflow, version });
+    maps.flatWorkflowVersionMaps =
+      createEmptyAllFlatEntityMaps().flatWorkflowVersionMaps;
+    maps.flatObjectMetadataMaps.byUniversalIdentifier[APPLICATION_ID] = {
+      universalIdentifier: APPLICATION_ID,
+      nameSingular: 'company',
+    } as AllFlatEntityMaps['flatObjectMetadataMaps']['byUniversalIdentifier'][string];
+    const errors = validate(version, maps).errors;
+    expect(errors.map(({ message }) => message)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('unknown record field missing'),
+        expect.stringContaining('fieldsToUpdate'),
+      ]),
+    );
+  });
+
+  it('validates graph changes on updates but keeps API version validation unchanged', () => {
+    const definition = convert();
+    const maps = persisted(definition);
+    const args = {
+      universalIdentifier: VERSION_ID,
+      flatEntityUpdate: { triggers: null },
+      optimisticFlatEntityMapsAndRelatedFlatEntityMaps: maps,
+      buildOptions,
+    } as FlatEntityUpdateValidationArgs<'workflowVersion'>;
+    expect(
+      validator.validateFlatWorkflowVersionUpdate(args).errors,
+    ).not.toEqual([]);
+    const apiVersion: FlatWorkflowVersion = {
+      ...maps.flatWorkflowVersionMaps.byUniversalIdentifier[VERSION_ID]!,
+      isSystemSideEffect: false,
+    };
+    maps.flatWorkflowVersionMaps.byUniversalIdentifier[VERSION_ID] = apiVersion;
+    expect(validator.validateFlatWorkflowVersionUpdate(args).errors).toEqual(
+      [],
+    );
+  });
+});

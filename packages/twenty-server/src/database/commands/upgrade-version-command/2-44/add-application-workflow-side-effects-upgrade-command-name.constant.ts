@@ -1,0 +1,2 @@
+export const ADD_APPLICATION_WORKFLOW_SIDE_EFFECTS_UPGRADE_COMMAND_NAME =
+  '2.44.0_AddApplicationWorkflowSideEffectsFastInstanceCommand_1790695684732';

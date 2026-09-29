@@ -149,32 +149,6 @@ const convert = (type: WorkflowActionType) =>
   });
 
 describe('application workflow actions', () => {
-  it('rejects unknown record fields before installing the workflow', () => {
-    const step = stepFor(WorkflowActionType.UPDATE_RECORD);
-    if (step.type !== 'UPDATE_RECORD') {
-      throw new Error('Expected update');
-    }
-    step.input.objectRecord = { employees: 10 };
-    step.input.fieldsToUpdate = ['employees'];
-    expect(() =>
-      fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references }),
-    ).toThrow('unknown record field employees');
-  });
-
-  it.each([{ fieldsToUpdate: [] }, { fieldsToUpdate: ['owner'] }])(
-    'rejects an update with no supplied values for its selection %j',
-    ({ fieldsToUpdate }) => {
-      const step = stepFor(WorkflowActionType.UPDATE_RECORD);
-      if (step.type !== 'UPDATE_RECORD') {
-        throw new Error('Expected update');
-      }
-      step.input.fieldsToUpdate = fieldsToUpdate;
-      expect(() =>
-        fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references }),
-      ).toThrow('fieldsToUpdate');
-    },
-  );
-
   it('derives a nested code output schema from an expected result', () => {
     const step = stepFor(WorkflowActionType.CODE);
     step.expectedOutputSchema = { company: { name: 'Example' }, count: 2 };

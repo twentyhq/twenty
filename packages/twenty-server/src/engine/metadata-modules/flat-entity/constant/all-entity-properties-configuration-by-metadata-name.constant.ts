@@ -2061,6 +2061,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   workflow: {
+    versionDefinitionHash: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
     visibility: {
       toCompare: true,
@@ -2099,6 +2104,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   workflowVersion: {
+    isSystemSideEffect: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     status: {
       toCompare: true,
       toStringify: false,

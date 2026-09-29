@@ -3,7 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { type WorkflowManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { fromWorkflowManifestToCoreDefinitionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions-or-throw.util';
+import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
 import {
   ApplicationException,
@@ -114,24 +114,18 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
           },
         );
       }
-      const { workflow, version } =
-        fromWorkflowManifestToCoreDefinitionsOrThrow({
-          manifest: workflowManifest,
-          applicationUniversalIdentifier,
-          existingWorkflow,
-          existingVersion,
-          ...references,
-          now,
-        });
+      const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+        manifest: workflowManifest,
+        applicationUniversalIdentifier,
+        existingWorkflow,
+        existingVersion,
+        ...references,
+        now,
+      });
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: workflow,
         universalFlatEntityMapsToMutate:
           toAllUniversalFlatEntityMaps.flatWorkflowMaps,
-      });
-      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: version,
-        universalFlatEntityMapsToMutate:
-          toAllUniversalFlatEntityMaps.flatWorkflowVersionMaps,
       });
     }
   }

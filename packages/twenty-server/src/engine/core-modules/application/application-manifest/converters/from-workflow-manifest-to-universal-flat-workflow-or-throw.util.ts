@@ -1,7 +1,5 @@
-import {
-  buildWorkflowGraph,
-  validateWorkflowVariableReferences,
-} from 'twenty-shared/workflow';
+import { createHash } from 'crypto';
+import { z } from 'zod';
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { msg } from '@lingui/core/macro';
@@ -25,9 +23,8 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
-import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 
-export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
+export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
   manifest,
   applicationUniversalIdentifier,
   existingWorkflow,
@@ -40,11 +37,10 @@ export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
   existingWorkflow?: FlatWorkflow;
   existingVersion?: FlatWorkflowVersion;
   now: string;
-} & WorkflowManifestReferences): {
-  workflow: UniversalFlatWorkflow & { id: string };
-  version: UniversalFlatWorkflowVersion & { id: string };
-} => {
-  const parsed = workflowManifestSchema.safeParse(manifest);
+} & WorkflowManifestReferences): UniversalFlatWorkflow & { id: string } => {
+  const parsed = z
+    .strictObject(workflowManifestSchema.shape)
+    .safeParse(manifest);
   if (!parsed.success) {
     throw new ApplicationException(
       `Invalid workflow definition: ${parsed.error.message}`,
@@ -62,22 +58,8 @@ export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
       },
     );
   }
-
   const workflowId = existingWorkflow?.id ?? v4();
   const versionId = existingVersion?.id ?? v4();
-
-  if (
-    isDefined(existingVersion) &&
-    existingVersion.coreWorkflowId !== workflowId
-  ) {
-    throw new ApplicationException(
-      'A workflow version cannot move to a different workflow',
-      ApplicationExceptionCode.INVALID_INPUT,
-      {
-        userFriendlyMessage: msg`A workflow version cannot move to a different workflow.`,
-      },
-    );
-  }
 
   const steps = definition.version.steps.map((step, index) =>
     fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
@@ -90,43 +72,35 @@ export const fromWorkflowManifestToCoreDefinitionsOrThrow = ({
     position: { x: 0, y: 0 },
     settings: { outputSchema: {} },
   } satisfies WorkflowManualTrigger;
-  const content = { trigger, steps };
-  const variableIssues = validateWorkflowVariableReferences({
-    workflow: content,
-    graph: buildWorkflowGraph(content),
-    stepsById: new Map(steps.map((step) => [step.id, step])),
-  });
-  if (variableIssues.length > 0) {
-    throw new ApplicationException(
-      variableIssues.map(({ message }) => message).join('; '),
-      ApplicationExceptionCode.INVALID_INPUT,
-      {
-        userFriendlyMessage: msg`The workflow contains invalid variable references.`,
-      },
-    );
-  }
-
   return {
-    workflow: {
-      id: workflowId,
-      universalIdentifier: definition.universalIdentifier,
-      applicationUniversalIdentifier,
-      name: definition.name,
-      visibility: WorkflowVisibility.WORKSPACE,
-      createdByUserWorkspaceId: null,
-      workspaceWorkflowId: null,
-      lastPublishedVersionId: null,
-      lastPublishedCoreWorkflowVersionId: versionId,
-      createdAt: existingWorkflow?.createdAt ?? now,
-      updatedAt: now,
-    },
-    version: {
+    id: workflowId,
+    universalIdentifier: definition.universalIdentifier,
+    applicationUniversalIdentifier,
+    name: definition.name,
+    visibility: WorkflowVisibility.WORKSPACE,
+    createdByUserWorkspaceId: null,
+    workspaceWorkflowId: null,
+    lastPublishedVersionId: null,
+    lastPublishedCoreWorkflowVersionId: versionId,
+    createdAt: existingWorkflow?.createdAt ?? now,
+    updatedAt: now,
+    versionDefinitionHash: createHash('sha256')
+      .update(
+        JSON.stringify({
+          universalIdentifier: definition.version.universalIdentifier,
+          trigger,
+          steps,
+        }),
+      )
+      .digest('hex'),
+    flatUniversalWorkflowVersion: {
       id: versionId,
       universalIdentifier: definition.version.universalIdentifier,
       applicationUniversalIdentifier,
       coreWorkflowId: workflowId,
       workflowId: null,
       workspaceWorkflowVersionId: null,
+      isSystemSideEffect: true,
       status: WorkflowVersionStatus.ACTIVE,
       triggers: [trigger],
       steps,
