@@ -101,7 +101,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
     quota: {
       allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
       allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      allowedMeters: ['creditsUsedMicro'],
       defaults: [],
     },
   },

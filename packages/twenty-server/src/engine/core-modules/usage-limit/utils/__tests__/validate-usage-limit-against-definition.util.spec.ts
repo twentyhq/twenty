@@ -121,6 +121,15 @@ describe('validateUsageLimitAgainstDefinition', () => {
     rejects({ ...validQuotaLimit, meter: 'bytes' });
   });
 
+  it('rejects a logic function quota metered on quantity, because each run records invocations and milliseconds under one scope', () => {
+    rejects({
+      ...validQuotaLimit,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      meter: 'quantity',
+    });
+  });
+
   it('rejects a stock scoped below the workspace', () => {
     rejects({
       ...validStockLimit,
