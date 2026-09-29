@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -8,15 +7,9 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  ASK_QUESTIONS_TOOL_NAME,
-  type AskQuestionAnswer,
-  type AskQuestionItem,
-  type AskQuestionsToolResult,
-  ExtendedUIMessage,
-} from 'twenty-shared/ai';
+import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull } from 'typeorm';
+import { In } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
@@ -44,11 +37,6 @@ import { serializeAgentChatThreadForBroadcast } from 'src/engine/metadata-module
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
-
-type PendingQuestionRollback = {
-  partId: string;
-  previousOutput: Record<string, unknown> & { result?: AskQuestionsToolResult };
-};
 
 @Injectable()
 export class AgentChatService {
@@ -783,277 +771,61 @@ export class AgentChatService {
     return savedTurnId;
   }
 
-  async resolvePendingQuestion({
+  // A tool call id is only unique within the conversation that made it, so
+  // the part is looked up through its message's thread.
+  async findToolPart({
     threadId,
-    messageId,
-    answers,
-    streamId,
+    toolCallId,
     workspaceId,
   }: {
     threadId: string;
-    messageId: string;
-    answers: AskQuestionAnswer[];
-    streamId: string;
+    toolCallId: string;
     workspaceId: string;
-  }): Promise<{
-    answerText: string;
-    turnId: string | null;
-    rollback: PendingQuestionRollback;
-  }> {
-    const message = await this.messageRepository.findOne(workspaceId, {
-      where: { id: messageId, threadId },
-      relations: ['parts'],
+  }): Promise<
+    | (Pick<
+        AgentMessagePartWorkspaceEntity,
+        'id' | 'messageId' | 'toolName' | 'toolInput' | 'toolOutput'
+      > & { turnId: string | null })
+    | null
+  > {
+    const parts = await this.messagePartRepository.find(workspaceId, {
+      where: { toolCallId },
+      select: ['id', 'messageId', 'toolName', 'toolInput', 'toolOutput'],
     });
 
-    if (!message) {
-      throw new AiException(
-        'Question message not found',
-        AiExceptionCode.MESSAGE_NOT_FOUND,
-      );
+    if (!isNonEmptyArray(parts)) {
+      return null;
     }
 
-    const pendingPart = (message.parts ?? []).find(
-      (part) =>
-        part.toolName === ASK_QUESTIONS_TOOL_NAME &&
-        (part.toolOutput as { result?: AskQuestionsToolResult } | null)?.result
-          ?.status === 'pending',
-    );
-
-    if (!pendingPart) {
-      throw new AiException(
-        'No pending question to answer',
-        AiExceptionCode.QUESTION_NOT_PENDING,
-      );
-    }
-
-    const previousOutput =
-      (pendingPart.toolOutput as
-        | PendingQuestionRollback['previousOutput']
-        | null) ?? {};
-    const questions = previousOutput.result?.questions ?? [];
-
-    this.validateQuestionAnswers(answers, questions);
-
-    const claim = await this.threadRepository.update(
-      workspaceId,
-      {
-        id: threadId,
-        pendingQuestionMessageId: messageId,
-        activeStreamId: IsNull(),
-      },
-      {
-        pendingQuestionMessageId: null,
-        activeStreamId: streamId,
-        lastStreamError: null,
-      },
-    );
-
-    if ((claim.affected ?? 0) === 0) {
-      const adopted = await this.claimOrphanedQuestion({
+    const message = await this.messageRepository.findOne(workspaceId, {
+      where: {
+        id: In(parts.map((part) => part.messageId)),
         threadId,
-        messageId,
-        streamId,
-        workspaceId,
-      });
-
-      if (!adopted) {
-        throw new AiException(
-          'No pending question to answer',
-          AiExceptionCode.QUESTION_NOT_PENDING,
-        );
-      }
-    }
-
-    try {
-      await this.messagePartRepository.update(
-        workspaceId,
-        { id: pendingPart.id },
-        {
-          toolOutput: {
-            ...previousOutput,
-            success: true,
-            message: 'User answered the questions.',
-            result: {
-              questions,
-              status: 'answered',
-              answers,
-            },
-          },
-        },
-      );
-    } catch (error) {
-      await this.threadRepository
-        .update(
-          workspaceId,
-          { id: threadId, activeStreamId: streamId },
-          { pendingQuestionMessageId: messageId, activeStreamId: null },
-        )
-        .catch(() => {});
-      throw error;
-    }
-
-    const answerText = answers
-      .map((answer) => {
-        const question = questions[answer.questionIndex];
-        const value = isNonEmptyString(answer.freeText)
-          ? answer.freeText
-          : answer.selectedOptionIndices
-              .map((optionIndex) => question.options[optionIndex].label)
-              .join(', ');
-        return `${question.question}\n${value}`;
-      })
-      .join('\n\n');
-
-    return {
-      answerText,
-      turnId: message.turnId,
-      rollback: { partId: pendingPart.id, previousOutput },
-    };
-  }
-
-  private async claimOrphanedQuestion({
-    threadId,
-    messageId,
-    streamId,
-    workspaceId,
-  }: {
-    threadId: string;
-    messageId: string;
-    streamId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const latestAssistantMessage = await this.messageRepository.findOne(
-      workspaceId,
-      {
-        where: { threadId, role: AgentMessageRole.ASSISTANT },
-        order: {
-          processedAt: { order: 'DESC', nulls: 'NULLS LAST' },
-          createdAt: 'DESC',
-          id: 'DESC',
-        },
-        select: ['id'],
       },
-    );
+      select: ['id', 'turnId'],
+    });
 
-    if (latestAssistantMessage?.id !== messageId) {
-      return false;
-    }
+    const part = parts.find((candidate) => candidate.messageId === message?.id);
 
-    const claim = await this.threadRepository.update(
+    return isDefined(part) && isDefined(message)
+      ? { ...part, turnId: message.turnId }
+      : null;
+  }
+
+  async updateToolPartOutput({
+    partId,
+    toolOutput,
+    workspaceId,
+  }: {
+    partId: string;
+    toolOutput: Record<string, unknown>;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messagePartRepository.update(
       workspaceId,
-      {
-        id: threadId,
-        pendingQuestionMessageId: IsNull(),
-        activeStreamId: IsNull(),
-      },
-      { activeStreamId: streamId, lastStreamError: null },
+      { id: partId },
+      { toolOutput },
     );
-
-    return (claim.affected ?? 0) > 0;
-  }
-
-  async restorePendingQuestion({
-    threadId,
-    messageId,
-    streamId,
-    workspaceId,
-    rollback,
-  }: {
-    threadId: string;
-    messageId: string;
-    streamId: string;
-    workspaceId: string;
-    rollback: PendingQuestionRollback;
-  }): Promise<void> {
-    await this.messagePartRepository
-      .update(
-        workspaceId,
-        { id: rollback.partId },
-        { toolOutput: rollback.previousOutput },
-      )
-      .catch(() => {});
-
-    await this.threadRepository
-      .update(
-        workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        { pendingQuestionMessageId: messageId, activeStreamId: null },
-      )
-      .catch(() => {});
-  }
-
-  // For a question nothing can consume any more: its run ended, or the step
-  // moved on to another conversation. Restoring it would leave a card that
-  // every answer is refused on, so it is closed instead.
-  async closePendingQuestion({
-    threadId,
-    streamId,
-    workspaceId,
-    rollback,
-  }: {
-    threadId: string;
-    streamId: string;
-    workspaceId: string;
-    rollback: PendingQuestionRollback;
-  }): Promise<void> {
-    await this.messagePartRepository
-      .update(
-        workspaceId,
-        { id: rollback.partId },
-        {
-          toolOutput: {
-            ...rollback.previousOutput,
-            result: { ...rollback.previousOutput.result, status: 'skipped' },
-          },
-        },
-      )
-      .catch(() => {});
-
-    await this.threadRepository
-      .update(
-        workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        { activeStreamId: null },
-      )
-      .catch(() => {});
-  }
-
-  private validateQuestionAnswers(
-    answers: AskQuestionAnswer[],
-    questions: AskQuestionItem[],
-  ): void {
-    for (const answer of answers) {
-      const question = questions[answer.questionIndex];
-
-      if (!isDefined(question)) {
-        throw new AiException(
-          'Answer references an unknown question.',
-          AiExceptionCode.INVALID_QUESTION_ANSWER,
-        );
-      }
-
-      const hasInvalidOption = answer.selectedOptionIndices.some(
-        (optionIndex) =>
-          optionIndex < 0 || optionIndex >= question.options.length,
-      );
-
-      if (hasInvalidOption) {
-        throw new AiException(
-          'Answer references an unknown option.',
-          AiExceptionCode.INVALID_QUESTION_ANSWER,
-        );
-      }
-
-      if (
-        question.allowMultiSelect !== true &&
-        answer.selectedOptionIndices.length > 1
-      ) {
-        throw new AiException(
-          'This question allows only one selection.',
-          AiExceptionCode.INVALID_QUESTION_ANSWER,
-        );
-      }
-    }
   }
 
   async updateThreadTitle({

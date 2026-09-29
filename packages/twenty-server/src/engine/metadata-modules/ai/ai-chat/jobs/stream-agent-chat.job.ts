@@ -36,6 +36,10 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import {
+  type AwaitingPausingToolPart,
+  findAwaitingPausingToolPart,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-part.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
@@ -47,7 +51,6 @@ import {
   classifyAgentChatTurnOutcome,
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
-import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
@@ -58,6 +61,7 @@ import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/typ
 import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
@@ -75,6 +79,10 @@ export class StreamAgentChatJob {
   // handle(), which would otherwise count the same turn a second time.
   private hasRecordedTurnOutcome = false;
 
+  // Set once the turn has paused on an Ask, which is what the queue waits on:
+  // a queued message drained now would bypass the answer it is waiting for.
+  private isAwaitingInput = false;
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -89,6 +97,7 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -250,7 +259,7 @@ export class StreamAgentChatJob {
         )
         .catch(() => {});
 
-      if (!abortController.signal.aborted) {
+      if (!abortController.signal.aborted && !this.isAwaitingInput) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage({
             threadId: data.threadId,
@@ -813,9 +822,9 @@ export class StreamAgentChatJob {
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
-    const pendingQuestionPart = findPendingQuestionPart(responseMessage.parts);
+    const awaitingPart = findAwaitingPausingToolPart(responseMessage.parts);
 
-    if ((isAborted || !hasText) && !isDefined(pendingQuestionPart)) {
+    if ((isAborted || !hasText) && !isDefined(awaitingPart)) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -836,7 +845,7 @@ export class StreamAgentChatJob {
     const outcome = classifyAgentChatTurnOutcome({
       hasText,
       isAborted,
-      isAwaitingUserAnswer: isDefined(pendingQuestionPart),
+      isAwaitingUserAnswer: isDefined(awaitingPart),
       outOfCredits,
     });
 
@@ -875,14 +884,20 @@ export class StreamAgentChatJob {
         totalCacheCreationTokens,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
-        pendingQuestionMessageId: isDefined(pendingQuestionPart)
-          ? assistantMessageId
-          : null,
       },
     });
 
     if (!totalsUpdate.affected) {
       return resolveSupersededTurnOutcome(outcome);
+    }
+
+    if (isDefined(awaitingPart)) {
+      await this.openAskForAwaitingPart({
+        awaitingPart,
+        threadId,
+        workspaceId,
+        workspaceMemberId,
+      });
     }
 
     await this.agentChatService.notifyThreadUsageUpdated({
@@ -892,6 +907,44 @@ export class StreamAgentChatJob {
     });
 
     return outcome;
+  }
+
+  // Pausing is only complete once its Ask exists: without it nothing can
+  // answer the call, so failing here fails the turn, which leaves it
+  // retryable rather than silently stuck.
+  private async openAskForAwaitingPart({
+    awaitingPart,
+    threadId,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    awaitingPart: AwaitingPausingToolPart;
+    threadId: string;
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<void> {
+    const pausingToolCall = awaitingPart.pausingTool.parseCall(
+      awaitingPart.input,
+    );
+
+    if (!isDefined(pausingToolCall)) {
+      throw new AiException(
+        `The ${awaitingPart.toolName} call could not be read`,
+        AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+      );
+    }
+
+    await this.inputAskWorkspaceService.open({
+      workspaceId,
+      inputAsk: {
+        ...pausingToolCall.buildAsk(),
+        threadId,
+        toolCallId: awaitingPart.toolCallId,
+        assigneeId: workspaceMemberId,
+      },
+    });
+
+    this.isAwaitingInput = true;
   }
 
   private logAssistantTurnWithoutText({

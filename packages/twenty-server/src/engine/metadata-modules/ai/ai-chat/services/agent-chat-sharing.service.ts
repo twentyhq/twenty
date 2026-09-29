@@ -19,7 +19,6 @@ import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-wo
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
-import { isWorkflowRunThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import {
   AiException,
@@ -69,11 +68,6 @@ export class AgentChatSharingService {
     });
     if (!isDefined(thread)) {
       return this.throwNotFound();
-    }
-    // A run's conversation is the record of what its agent step did, and it is
-    // readable by whoever reads the run, so nobody may add to or edit it.
-    if (operationType !== 'select') {
-      this.assertNotWorkflowRunThread(thread);
     }
     const allowedIds = await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -285,8 +279,6 @@ export class AgentChatSharingService {
             objectMetadataId: objectMetadata.id,
             threadId: args.threadId,
           });
-          this.assertNotWorkflowRunThread(thread);
-
           const allowedIds = await this.workspaceOrmManager
             .getRepositoryWithContextPermissions('agentChatThread')
             .findRecordIdsAllowedForOperation({
@@ -303,17 +295,6 @@ export class AgentChatSharingService {
         }),
       authContext,
     );
-  }
-
-  private assertNotWorkflowRunThread(
-    thread: AgentChatThreadWorkspaceEntity,
-  ): void {
-    if (isWorkflowRunThread(thread)) {
-      throw new AiException(
-        'A workflow run conversation is read-only',
-        AiExceptionCode.WORKFLOW_RUN_THREAD_READ_ONLY,
-      );
-    }
   }
 
   async getAuthContext(args: Omit<ThreadAccessArgs, 'threadId'>) {

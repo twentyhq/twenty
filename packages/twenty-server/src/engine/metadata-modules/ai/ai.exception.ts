@@ -16,8 +16,9 @@ export enum AiExceptionCode {
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
   INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
-  QUESTION_NOT_PENDING = 'QUESTION_NOT_PENDING',
-  INVALID_QUESTION_ANSWER = 'INVALID_QUESTION_ANSWER',
+  TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
+  TOOL_CALL_NOT_PENDING = 'TOOL_CALL_NOT_PENDING',
+  INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
   USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
@@ -30,8 +31,8 @@ export enum AiExceptionCode {
   EVALUATION_MODEL_NOT_FOUND = 'EVALUATION_MODEL_NOT_FOUND',
   EVALUATION_QUESTION_UNSUPPORTED = 'EVALUATION_QUESTION_UNSUPPORTED',
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
-  WORKFLOW_RUN_THREAD_READ_ONLY = 'WORKFLOW_RUN_THREAD_READ_ONLY',
-  WORKFLOW_RUN_QUESTION_FORBIDDEN = 'WORKFLOW_RUN_QUESTION_FORBIDDEN',
+  TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
+  THREAD_AWAITING_WORKFLOW_INPUT = 'THREAD_AWAITING_WORKFLOW_INPUT',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -58,10 +59,12 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Chat thread title cannot be empty.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
-    case AiExceptionCode.QUESTION_NOT_PENDING:
-      return msg`This question has already been answered.`;
-    case AiExceptionCode.INVALID_QUESTION_ANSWER:
-      return msg`Invalid answer for this question.`;
+    case AiExceptionCode.TOOL_CALL_NOT_FOUND:
+      return msg`This request for input could not be found.`;
+    case AiExceptionCode.TOOL_CALL_NOT_PENDING:
+      return msg`This request is no longer waiting for an answer.`;
+    case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:
+      return msg`Invalid answer for this request.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       return msg`API key is not configured.`;
     case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
@@ -86,10 +89,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This model cannot answer one of the questions asked.`;
     case AiExceptionCode.INVALID_EVALUATION_REQUEST:
       return msg`Invalid classification request.`;
-    case AiExceptionCode.WORKFLOW_RUN_THREAD_READ_ONLY:
-      return msg`This conversation belongs to a workflow run and can only be read.`;
-    case AiExceptionCode.WORKFLOW_RUN_QUESTION_FORBIDDEN:
-      return msg`You need the Workflows permission to answer a workflow's question.`;
+    case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
+      return msg`You are not allowed to answer this request.`;
+    case AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT:
+      return msg`This workflow is waiting for an answer. Answer it before sending a message.`;
     default:
       assertUnreachable(code);
   }

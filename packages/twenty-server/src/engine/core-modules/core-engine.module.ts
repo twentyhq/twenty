@@ -71,6 +71,7 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
+import { AiToolCallResolutionModule } from 'src/engine/metadata-modules/ai/ai-tool-call-resolution/ai-tool-call-resolution.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
@@ -128,6 +129,7 @@ import { FileApiModule } from './file/file-api.module';
     CloudflareModule,
     DnsManagerModule,
     WorkflowApiModule,
+    AiToolCallResolutionModule,
     WorkspaceEventEmitterModule,
     ActorModule,
     TelemetryModule,
