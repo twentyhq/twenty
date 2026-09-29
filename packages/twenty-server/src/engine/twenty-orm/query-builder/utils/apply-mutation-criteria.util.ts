@@ -16,6 +16,17 @@ export type MutationCriteria =
   | ObjectWhereLike
   | ObjectWhereLike[];
 
+// A where object with no key filters nothing, so the mutation would reach
+// every row of the table.
+const assertWhereObjectFilters = (whereObject: ObjectWhereLike): void => {
+  if (Object.keys(whereObject).length === 0) {
+    throw new TwentyOrmException(
+      'A mutation criteria where object cannot be empty',
+      TwentyOrmExceptionCode.INVALID_PARAMETER,
+    );
+  }
+};
+
 export const applyMutationCriteriaToQueryBuilder = (
   queryBuilder: WorkspaceSelectQueryBuilder,
   criteria: MutationCriteria,
@@ -54,6 +65,8 @@ export const applyMutationCriteriaToQueryBuilder = (
       );
     }
 
+    criteria.forEach(assertWhereObjectFilters);
+
     queryBuilder.where({
       whereFactory: (nestedQueryBuilder) => {
         criteria.forEach((entry, index) => {
@@ -68,6 +81,8 @@ export const applyMutationCriteriaToQueryBuilder = (
 
     return queryBuilder;
   }
+
+  assertWhereObjectFilters(criteria);
 
   queryBuilder.where(criteria);
 
