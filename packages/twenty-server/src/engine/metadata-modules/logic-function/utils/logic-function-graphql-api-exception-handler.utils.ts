@@ -20,6 +20,7 @@ export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
         throw new NotFoundError(error);
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_ALREADY_EXIST:
         throw new ConflictError(error);
+      case LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_BUILDING:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_LIMIT_REACHED:

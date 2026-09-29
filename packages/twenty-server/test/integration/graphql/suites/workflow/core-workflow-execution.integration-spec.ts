@@ -749,6 +749,136 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     },
   );
 
+  const formStep = (nextStepIds: string[]): WorkflowAction => ({
+    ...emptyStep(),
+    type: WorkflowActionType.FORM,
+    nextStepIds,
+    settings: {
+      ...settings,
+      input: [
+        {
+          id: randomUUID(),
+          name: 'answer',
+          label: 'Answer',
+          type: FieldMetadataType.TEXT,
+        },
+      ],
+    },
+  });
+
+  const submitForm = ({
+    runId,
+    stepId,
+    answer,
+  }: {
+    runId: string;
+    stepId: string;
+    answer: string;
+  }) =>
+    workflowGraphqlRequest(
+      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+      { input: { workflowRunId: runId, stepId, response: { answer } } },
+    );
+
+  it('refuses a second submission of the same form and keeps the first answer', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+
+    const first = await submitForm({
+      runId,
+      stepId: form.id,
+      answer: 'Approved',
+    });
+
+    expect(first.body.errors).toBeUndefined();
+    await waitForRun(runId, 'COMPLETED');
+
+    const second = await submitForm({
+      runId,
+      stepId: form.id,
+      answer: 'Approved again',
+    });
+
+    expect(second.body.errors?.[0]?.message).toContain(
+      'no longer awaiting a submission',
+    );
+    expect((await getRun(runId)).state.stepInfos[form.id].result).toEqual({
+      answer: 'Approved',
+    });
+  });
+
+  it('refuses a submission once its run has been stopped', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+
+    await workflowGraphqlRequest(
+      'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+      { id: runId },
+    );
+    await waitForRun(runId, 'STOPPED');
+
+    const response = await submitForm({
+      runId,
+      stepId: form.id,
+      answer: 'Too late',
+    });
+
+    expect(response.body.errors?.[0]?.message).toContain(
+      'no longer awaiting a submission',
+    );
+
+    const run = await getRun(runId);
+
+    expect(run.status).toBe('STOPPED');
+    expect(run.state.stepInfos[form.id].status).toBe('FAILED');
+    expect(run.state.stepInfos[finalStep.id].status).toBe('NOT_STARTED');
+  });
+
+  // A stop waiting on a step still running on another branch parks the run in
+  // STOPPING with the form still PENDING; nothing would resume an answer.
+  it('refuses a submission while its run is stopping', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."workflowRun" SET status = 'STOPPING' WHERE id = $1`,
+      [runId],
+    );
+
+    const response = await submitForm({
+      runId,
+      stepId: form.id,
+      answer: 'While stopping',
+    });
+
+    expect(response.body.errors?.[0]?.message).toContain(
+      'no longer awaiting a submission',
+    );
+    expect((await getRun(runId)).state.stepInfos[form.id].status).toBe(
+      'PENDING',
+    );
+  });
+
   it('stops a pending delay and ignores its later resume job', async () => {
     const finalStep = emptyStep();
     const delay: WorkflowAction = {

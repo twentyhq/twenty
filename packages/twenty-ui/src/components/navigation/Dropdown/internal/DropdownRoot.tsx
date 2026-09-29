@@ -10,6 +10,7 @@ import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
 import { preventDismissingClickActivation } from './preventDismissingClickActivation';
+import { useRegisteredElementId } from './useRegisteredElementId';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -51,6 +52,8 @@ export const DropdownRoot = ({
   );
   const [focusOnOpen, setFocusOnOpen] = useState(true);
   const [searchTargetId, setSearchTargetId] = useState<string>();
+  const [triggerId, registerTrigger] = useRegisteredElementId();
+  const [titleId, registerTitle] = useRegisteredElementId();
 
   if (previousOpen !== open) {
     setPreviousOpen(open);
@@ -86,7 +89,7 @@ export const DropdownRoot = ({
     trigger,
   }: {
     id: string;
-    trigger: DropdownFocusTarget;
+    trigger?: DropdownFocusTarget;
   }) => {
     setPageFocusRequest({ pageId: id });
     setPageHistory((history) => [...history, { id, trigger }]);
@@ -177,6 +180,10 @@ export const DropdownRoot = ({
           registerOpenNestedRoot,
           searchTargetId,
           setSearchTargetId,
+          triggerId,
+          registerTrigger,
+          titleId,
+          registerTitle,
         }}
       >
         <DropdownNestedRootEffect

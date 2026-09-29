@@ -87,8 +87,8 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
 
     const [, insertedMessage] = messageRepository.insert.mock.calls[0];
 
-    expect(insertedMessage.processedAt).toBeInstanceOf(Date);
-    expect(insertedMessage.processedAt.getTime()).toBeGreaterThan(0);
+    expect(typeof insertedMessage.processedAt).toBe('string');
+    expect(new Date(insertedMessage.processedAt).getTime()).toBeGreaterThan(0);
 
     const [, insertedParts] = messagePartRepository.insert.mock.calls[0];
 
@@ -184,7 +184,7 @@ describe('AgentChatService findLatestSentUserMessage', () => {
         status: AgentMessageStatus.SENT,
       },
       order: {
-        processedAt: { direction: 'DESC', nulls: 'LAST' },
+        processedAt: { order: 'DESC', nulls: 'NULLS LAST' },
         createdAt: 'DESC',
         id: 'DESC',
       },

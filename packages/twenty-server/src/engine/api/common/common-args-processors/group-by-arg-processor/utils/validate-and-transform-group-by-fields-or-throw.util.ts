@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
+  isFieldMetadataArrayKind,
   isFieldMetadataSupportedInGroupBy,
   isPlainObject,
 } from 'twenty-shared/utils';
@@ -160,6 +161,35 @@ const validateAndTransformSingleGroupByFieldOrThrow = ({
 
   const fieldGroupByDefinition = fieldNames[fieldName];
   const isObjectFieldGroupByDefinition = isPlainObject(fieldGroupByDefinition);
+
+  if (isObjectFieldGroupByDefinition && 'unnest' in fieldGroupByDefinition) {
+    const errorMessage = `Invalid unnest groupBy for field "${fieldName}". Use {"${fieldName}": {"unnest": true}} on ARRAY or MULTI_SELECT fields.`;
+
+    validateSingleKeyForGroupByOrThrow({
+      groupByKeys: Object.keys(fieldGroupByDefinition),
+      errorMessage,
+    });
+
+    if (
+      fieldGroupByDefinition.unnest !== true ||
+      !isFieldMetadataArrayKind(fieldMetadata.type)
+    ) {
+      throw new CommonQueryRunnerException(
+        errorMessage,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    groupByFields.push({
+      fieldMetadata,
+      subFieldName: undefined,
+      shouldUnnest: true,
+    });
+
+    return;
+  }
+
   const isGroupByRelationField =
     isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
     isObjectFieldGroupByDefinition &&
@@ -196,16 +226,6 @@ const validateAndTransformSingleGroupByFieldOrThrow = ({
       dateGranularity: fieldGroupByDefinition.granularity,
       weekStartDay: fieldGroupByDefinition.weekStartDay,
       timeZone: fieldGroupByDefinition.timeZone,
-    });
-
-    return;
-  }
-
-  if (isObjectFieldGroupByDefinition && 'unnest' in fieldGroupByDefinition) {
-    groupByFields.push({
-      fieldMetadata,
-      subFieldName: undefined,
-      shouldUnnest: true,
     });
 
     return;
@@ -279,6 +299,19 @@ export const validateAndTransformGroupByFieldsOrThrow = ({
         groupByFields,
       });
     }
+  }
+
+  const unnestedGroupByFields = groupByFields.filter(
+    (groupByField) =>
+      'shouldUnnest' in groupByField && groupByField.shouldUnnest,
+  );
+
+  if (unnestedGroupByFields.length > 1) {
+    throw new CommonQueryRunnerException(
+      'Only one groupBy field can use unnest',
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
   }
 
   return groupByFields;

@@ -246,15 +246,29 @@ export class ClientConfigService {
                 'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
               ),
             ),
-            upgradeCreditsReward: toDisplayCredits(
+            installAppsCreditsReward: toDisplayCredits(
               this.twentyConfigService.get(
-                'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD',
               ),
             ),
-            installAppsCreditsRewardPerApp: toDisplayCredits(
+            createProfileCreditsReward: toDisplayCredits(
               this.twentyConfigService.get(
-                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
+                'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
               ),
+            ),
+            upgradeCreditsReward: toDisplayCredits(
+              Math.max(
+                0,
+                this.twentyConfigService.get(
+                  'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+                ) -
+                  this.twentyConfigService.get(
+                    'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+                  ),
+              ),
+            ),
+            inviteTeamMaxInvites: this.twentyConfigService.get(
+              'ONBOARDING_INVITE_TEAM_MAX_INVITES',
             ),
           }
         : null,

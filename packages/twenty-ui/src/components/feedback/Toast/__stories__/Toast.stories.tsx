@@ -37,9 +37,9 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
+  decorators: Default.decorators,
+  args: Default.args,
   render: (args) => <DismissibleToast {...args} />,
-  play: undefined,
 };
 
 export const WithDescriptionAndAction: Story = {
