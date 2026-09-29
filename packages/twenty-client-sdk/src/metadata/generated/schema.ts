@@ -8957,7 +8957,7 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationVariableUserValue"')
       return ApplicationVariableUserValue_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const MyApplicationVariable_possibleTypes: string[] = ['MyApplicationVariable']
@@ -8965,7 +8965,7 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
       if (!obj?.__typename) throw new Error('__typename is missing in "isMyApplicationVariable"')
       return MyApplicationVariable_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const UsageQuotaDefinition_possibleTypes: string[] = ['UsageQuotaDefinition']

@@ -113,7 +113,12 @@ export class ApplicationVariableUserValueService {
             : undefined,
         }),
         this.applicationVariableUserValueRepository.find(workspaceId, {
-          where: { applicationVariableId: flatApplicationVariable.id },
+          where: {
+            applicationVariableId: flatApplicationVariable.id,
+            ...(isDefined(requestUserWorkspaceId)
+              ? { userWorkspaceId: requestUserWorkspaceId }
+              : {}),
+          },
         }),
         this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatWorkspaceMemberMaps',
