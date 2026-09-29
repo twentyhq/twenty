@@ -142,9 +142,10 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   }
 
   // A run that POSTed a bot but died before the id write-back leaves the bot
-  // claimable by metadata; one workspace-wide lookup finds them all without a
-  // per-recording list call.
-  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+  // claimable by metadata.
+  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId(
+    ambiguousCallRecordings.map(({ callRecording }) => callRecording.id),
+  );
 
   // A failed lookup can hide existing bots; creating one now could duplicate
   // them, so defer to the next run.

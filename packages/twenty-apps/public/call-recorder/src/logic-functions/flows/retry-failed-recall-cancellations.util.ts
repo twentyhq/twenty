@@ -95,8 +95,7 @@ export const retryFailedRecallCancellations = async ({
   return { canceledExternalBotCallRecordingIds };
 };
 
-// One workspace-wide list request covers every recoverable row; undefined
-// means the lookup failed and recovery must wait for the next run.
+// Undefined means the lookup failed and recovery must wait for the next run.
 const lookupRecoverableExternalBotIds = async (
   recoverableCallRecordingIds: Set<string>,
 ): Promise<Map<string, string> | undefined> => {
@@ -104,7 +103,9 @@ const lookupRecoverableExternalBotIds = async (
     return new Map();
   }
 
-  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId([
+    ...recoverableCallRecordingIds,
+  ]);
 
   return lookupResult.ok
     ? lookupResult.externalBotIdByCallRecordingId

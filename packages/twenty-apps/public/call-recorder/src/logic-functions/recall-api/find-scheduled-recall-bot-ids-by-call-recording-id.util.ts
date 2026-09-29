@@ -1,28 +1,31 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { ACTIVE_RECALL_BOT_STATUSES } from 'src/logic-functions/constants/active-recall-bot-statuses';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { hasRecallBotEnded } from 'src/logic-functions/recall-api/has-recall-bot-ended.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 export type FindScheduledRecallBotIdsByCallRecordingIdResult =
   | { ok: true; externalBotIdByCallRecordingId: Map<string, string> }
   | { ok: false };
 
-// One workspace-wide list request covers every pending recording; Recall's
-// list endpoint has the tightest rate budget, so per-recording lookups must
-// not fan out.
-export const findScheduledRecallBotIdsByCallRecordingId =
-  async (): Promise<FindScheduledRecallBotIdsByCallRecordingIdResult> => {
-    const workspaceId = getCurrentWorkspaceId();
+export const findScheduledRecallBotIdsByCallRecordingId = async (
+  callRecordingIds: string[],
+): Promise<FindScheduledRecallBotIdsByCallRecordingIdResult> => {
+  const workspaceId = getCurrentWorkspaceId();
 
-    if (isUndefined(workspaceId)) {
-      return { ok: true, externalBotIdByCallRecordingId: new Map() };
-    }
+  if (isUndefined(workspaceId)) {
+    return { ok: true, externalBotIdByCallRecordingId: new Map() };
+  }
 
+  const externalBotIdByCallRecordingId = new Map<string, string>();
+
+  for (const callRecordingId of callRecordingIds) {
+    // No status filter: Recall gives a bot no status until it starts joining, so filtering by status hides every bot that is only scheduled.
     const listResult = await listScheduledRecallBots({
-      metadata: { twentyWorkspaceId: workspaceId },
-      statuses: ACTIVE_RECALL_BOT_STATUSES,
+      metadata: {
+        twentyWorkspaceId: workspaceId,
+        twentyCallRecordingId: callRecordingId,
+      },
     });
 
     if (!listResult.ok) {
@@ -43,20 +46,16 @@ export const findScheduledRecallBotIdsByCallRecordingId =
       return { ok: false };
     }
 
-    const externalBotIdByCallRecordingId = new Map<string, string>();
+    const scheduledBot = listResult.bots.find(
+      (bot) =>
+        bot.metadata.twentyCallRecordingId === callRecordingId &&
+        !hasRecallBotEnded(bot),
+    );
 
-    for (const bot of listResult.bots) {
-      const callRecordingId = bot.metadata.twentyCallRecordingId;
-
-      if (
-        !isNonEmptyString(callRecordingId) ||
-        externalBotIdByCallRecordingId.has(callRecordingId)
-      ) {
-        continue;
-      }
-
-      externalBotIdByCallRecordingId.set(callRecordingId, bot.id);
+    if (!isUndefined(scheduledBot)) {
+      externalBotIdByCallRecordingId.set(callRecordingId, scheduledBot.id);
     }
+  }
 
-    return { ok: true, externalBotIdByCallRecordingId };
-  };
+  return { ok: true, externalBotIdByCallRecordingId };
+};

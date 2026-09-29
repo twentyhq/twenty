@@ -260,7 +260,7 @@ type FakeRecallBotStatusChange = {
 type FakeRecallBot = {
   id: string;
   metadata: Record<string, string>;
-  statusCode: string;
+  statusCode?: string;
   statusChanges?: FakeRecallBotStatusChange[];
   recordings?: Array<{ id: string; started_at: string; completed_at: string }>;
 };
@@ -284,6 +284,32 @@ const MP3_FRAME_HEADER_BYTES = Uint8Array.from([
   0x64,
   ...new Array(412).fill(0),
 ]);
+
+const RECALL_METADATA_FILTER_PREFIX = 'metadata__';
+
+const matchesRecallBotListFilters = (
+  bot: FakeRecallBot,
+  listFilters: URLSearchParams,
+): boolean => {
+  const statusFilters = listFilters.getAll('status');
+
+  if (
+    statusFilters.length > 0 &&
+    (bot.statusCode === undefined || !statusFilters.includes(bot.statusCode))
+  ) {
+    return false;
+  }
+
+  return [...listFilters.entries()]
+    .filter(([filterKey]) =>
+      filterKey.startsWith(RECALL_METADATA_FILTER_PREFIX),
+    )
+    .every(
+      ([filterKey, filterValue]) =>
+        bot.metadata[filterKey.slice(RECALL_METADATA_FILTER_PREFIX.length)] ===
+        filterValue,
+    );
+};
 
 class FakeRecallApi {
   bots = new Map<string, FakeRecallBot>();
@@ -481,15 +507,19 @@ class FakeRecallApi {
     if (method === 'GET' && requestUrl.startsWith(`${RECALL_BASE_URL}/bot/?`)) {
       this.listRequestCount += 1;
 
+      const listFilters = new URL(requestUrl).searchParams;
+
       return jsonResponse(200, {
         next: null,
-        results: [...this.bots.values()].map((bot) => ({
-          id: bot.id,
-          metadata: bot.metadata,
-          status: { code: bot.statusCode },
-          status_changes: bot.statusChanges ?? [],
-          recordings: bot.recordings ?? [],
-        })),
+        results: [...this.bots.values()]
+          .filter((bot) => matchesRecallBotListFilters(bot, listFilters))
+          .map((bot) => ({
+            id: bot.id,
+            metadata: bot.metadata,
+            status: { code: bot.statusCode },
+            status_changes: bot.statusChanges ?? [],
+            recordings: bot.recordings ?? [],
+          })),
       });
     }
 
@@ -2374,6 +2404,30 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-bot-from-crashed-run',
       );
       expect(recall.listRequestCount).toBe(1);
+    });
+
+    it('attaches a scheduled bot that has no status yet instead of creating a twin', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: hoursAgo(24),
+      });
+
+      recall.seedBot({
+        id: 'recall-bot-scheduled-before-lost-write-back',
+        metadata: buildBotMetadata(callRecordingId, workspaceId),
+      });
+
+      await runPendingRecoveryCron();
+
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        'recall-bot-scheduled-before-lost-write-back',
+      );
+      expect(
+        [...recall.bots.values()].filter(
+          (bot) => bot.metadata.twentyCallRecordingId === callRecordingId,
+        ),
+      ).toHaveLength(1);
     });
 
     it('fails a recording whose meeting ended before any bot creation was attempted', async () => {
