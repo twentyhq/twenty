@@ -33,10 +33,11 @@ i18n.activate(SOURCE_LOCALE);
 
 const onboardingConfig: OnboardingConfig = {
   importContactsCreditsReward: 2,
-  inviteTeamMaxCreditsReward: 9,
   inviteTeamCreditsRewardPerUser: 3,
+  installAppsCreditsReward: 1,
+  createProfileCreditsReward: 0.5,
   upgradeCreditsReward: 5,
-  installAppsCreditsRewardPerApp: 1,
+  inviteTeamMaxInvites: 3,
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (

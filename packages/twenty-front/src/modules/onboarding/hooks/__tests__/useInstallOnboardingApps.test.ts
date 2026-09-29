@@ -22,10 +22,11 @@ jest.mock('@/onboarding/hooks/useTriggerInstallAppsOnboardingStep', () => ({
 
 const onboardingConfig: OnboardingConfig = {
   importContactsCreditsReward: 2,
-  inviteTeamMaxCreditsReward: 9,
   inviteTeamCreditsRewardPerUser: 3,
+  installAppsCreditsReward: 1,
+  createProfileCreditsReward: 0.5,
   upgradeCreditsReward: 5,
-  installAppsCreditsRewardPerApp: 1,
+  inviteTeamMaxInvites: 3,
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
@@ -83,7 +84,7 @@ describe('useInstallOnboardingApps', () => {
       universalIdentifiers: ['app-1', 'app-2'],
       isAutoSkipped: false,
     });
-    expect(result.current.onboardingFreeCredits.installApps).toBe(2);
+    expect(result.current.onboardingFreeCredits.installApps).toBe(1);
   });
 
   it('should reset the completing state and not credit when the step fails', async () => {

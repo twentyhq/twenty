@@ -14,7 +14,6 @@ import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
-import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import {
@@ -34,6 +33,8 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { serializeAgentChatThreadForBroadcast } from 'src/engine/metadata-modules/ai/ai-chat/utils/serialize-agent-chat-thread-for-broadcast.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
@@ -54,8 +55,9 @@ export class AgentChatService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
-    private readonly codeInterpreterService: CodeInterpreterService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly sharingService: AgentChatSharingService,
+    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
   async createThread({
@@ -96,6 +98,11 @@ export class AgentChatService {
           },
         },
       ],
+    });
+
+    await this.threadRecordEventService.emitThreadCreated({
+      workspaceId,
+      threadId: savedThread.id,
     });
 
     return savedThread;
@@ -843,6 +850,10 @@ export class AgentChatService {
       );
     }
 
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const updated = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -857,6 +868,12 @@ export class AgentChatService {
       ['title'],
       workspaceMemberId,
     );
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
     return updated;
   }
@@ -870,6 +887,10 @@ export class AgentChatService {
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -884,8 +905,17 @@ export class AgentChatService {
       ['deletedAt'],
       workspaceMemberId,
     );
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
-    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+    this.threadLifecycleService.releaseThreadSandboxBestEffort({
+      workspaceId,
+      threadId,
+    });
 
     return thread;
   }
@@ -899,6 +929,10 @@ export class AgentChatService {
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.findThreadForRecordEvent({
+      workspaceId,
+      threadId,
+    });
     const thread = await this.sharingService.updateThreadWithAccess({
       threadId,
       workspaceMemberId,
@@ -913,6 +947,12 @@ export class AgentChatService {
       ['deletedAt'],
       workspaceMemberId,
     );
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+    }
 
     return thread;
   }
@@ -937,7 +977,7 @@ export class AgentChatService {
       operationType: 'delete',
     });
 
-    const deleted = await this.sharingService.deleteThreadWithShares({
+    const deleted = await this.sharingService.deleteThreadWithAccess({
       workspaceId,
       threadId,
       workspaceMemberId,
@@ -967,23 +1007,41 @@ export class AgentChatService {
         },
       ],
     });
+    await this.threadRecordEventService.emitThreadDestroyed({
+      workspaceId,
+      threadBefore: thread,
+    });
 
-    this.releaseThreadSandboxBestEffort(workspaceId, threadId);
+    this.threadLifecycleService.releaseThreadSandboxBestEffort({
+      workspaceId,
+      threadId,
+    });
   }
 
-  private releaseThreadSandboxBestEffort(
-    workspaceId: string,
-    threadId: string,
-  ): void {
-    void this.codeInterpreterService
-      .releaseThreadSandbox(workspaceId, threadId)
-      .catch((error) =>
-        this.logger.warn(
-          `Failed to release code interpreter sandbox for thread ${threadId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        ),
-      );
+  async cancelActiveStreamIfAny({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.threadLifecycleService.cancelActiveStreamIfAny({
+      workspaceId,
+      threadId,
+    });
+  }
+
+  // Access-checked writes return raw rows; record events carry ORM records
+  private findThreadForRecordEvent({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<AgentChatThreadWorkspaceEntity | null> {
+    return this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
   }
 
   async notifyThreadActivityUpdated({
@@ -1001,23 +1059,39 @@ export class AgentChatService {
       workspaceId,
     });
 
+    const threadAfter = { ...thread, updatedAt: new Date().toISOString() };
+
+    // Conversations are listed by most recent change, so a message moves its
+    // conversation to the top when it is sent, not only once the turn ends.
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      { updatedAt: threadAfter.updatedAt },
+    );
+
     await this.broadcastThreadUpdated(
-      thread,
+      threadAfter,
       workspaceId,
       ['lastMessageAt'],
       workspaceMemberId,
     );
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+      threadAfter,
+    });
   }
 
   async notifyThreadUsageUpdated({
-    threadId,
+    threadBefore,
     workspaceMemberId,
     workspaceId,
   }: {
-    threadId: string;
+    threadBefore: AgentChatThreadWorkspaceEntity;
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<void> {
+    const threadId = threadBefore.id;
     const thread = await this.getWritableThread({
       threadId,
       workspaceMemberId,
@@ -1037,6 +1111,11 @@ export class AgentChatService {
       ],
       workspaceMemberId,
     );
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore,
+      threadAfter: thread,
+    });
   }
 
   private async broadcastThreadUpdated(
@@ -1123,6 +1202,10 @@ export class AgentChatService {
       ['title'],
       workspaceMemberId,
     );
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+    });
 
     return title;
   }

@@ -489,7 +489,10 @@ export class AgentChatResolver {
       workspaceId,
       operationType: 'soft-delete',
     });
-    await this.cancelActiveStreamIfAny(id, workspaceId);
+    await this.agentChatService.cancelActiveStreamIfAny({
+      threadId: id,
+      workspaceId,
+    });
 
     return this.agentChatService.archiveThread({
       threadId: id,
@@ -525,7 +528,10 @@ export class AgentChatResolver {
       workspaceId,
       operationType: 'delete',
     });
-    await this.cancelActiveStreamIfAny(id, workspaceId);
+    await this.agentChatService.cancelActiveStreamIfAny({
+      threadId: id,
+      workspaceId,
+    });
 
     await this.agentChatService.hardDeleteThread({
       threadId: id,
@@ -534,26 +540,6 @@ export class AgentChatResolver {
     });
 
     return true;
-  }
-
-  private async cancelActiveStreamIfAny(
-    threadId: string,
-    workspaceId: string,
-  ): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-
-    if (!isDefined(thread) || !isNonEmptyString(thread.activeStreamId)) {
-      return;
-    }
-
-    const redis = this.redisClientService.getClient();
-
-    await redis.publish(
-      getCancelChannel(threadId, thread.activeStreamId),
-      'cancel',
-    );
   }
 
   @Mutation(() => Boolean)
