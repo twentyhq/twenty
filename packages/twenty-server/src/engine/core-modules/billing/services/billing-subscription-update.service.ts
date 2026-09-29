@@ -43,6 +43,7 @@ import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/b
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { buildPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/build-phase-update-params.util';
+import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils/build-schedule-phases-update.util';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
@@ -300,6 +301,7 @@ export class BillingSubscriptionUpdateService {
           toUpdateNextPrices,
           toUpdateCurrentPrices: undefined,
           currentPhase: toPhaseUpdateParams(currentPhase),
+          nextPhase: toPhaseUpdateParams(nextPhase),
           subscriptionCurrentPeriodEnd: Math.floor(
             subscription.currentPeriodEnd.getTime() / 1000,
           ),
@@ -355,6 +357,7 @@ export class BillingSubscriptionUpdateService {
           toUpdateNextPrices,
           toUpdateCurrentPrices: undefined,
           currentPhase: toPhaseUpdateParams(refreshedCurrentPhase),
+          nextPhase: toPhaseUpdateParams(nextPhase),
           subscriptionCurrentPeriodEnd: Math.floor(
             subscription.currentPeriodEnd.getTime() / 1000,
           ),
@@ -521,36 +524,33 @@ export class BillingSubscriptionUpdateService {
     toUpdateNextPrices,
     toUpdateCurrentPrices,
     currentPhase,
+    nextPhase,
     subscriptionCurrentPeriodEnd,
   }: {
     stripeScheduleId: string;
     toUpdateNextPrices: SubscriptionStripePrices;
     toUpdateCurrentPrices: SubscriptionStripePrices | undefined;
     currentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase;
+    nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
     subscriptionCurrentPeriodEnd: number;
   }) {
-    const productKeyByPriceId = await this.getProductKeyByPriceId(
-      (currentPhase.items ?? []).map(({ price }) => price).filter(isDefined),
-    );
+    const productKeyByPriceId = await this.getProductKeyByPriceId([
+      ...new Set(
+        [...(currentPhase.items ?? []), ...(nextPhase?.items ?? [])]
+          .map(({ price }) => price)
+          .filter(isDefined),
+      ),
+    ]);
 
-    const toUpdateCurrentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase =
-      isDefined(toUpdateCurrentPrices)
-        ? buildPhaseUpdateParams({
-            currentPhase,
-            productKeyByPriceId,
-            toUpdatePrices: toUpdateCurrentPrices,
-            endDate: subscriptionCurrentPeriodEnd,
-            startDate: currentPhase.start_date,
-          })
-        : { ...currentPhase, end_date: subscriptionCurrentPeriodEnd };
-
-    const toUpdateNextPhase = buildPhaseUpdateParams({
-      currentPhase,
-      productKeyByPriceId,
-      toUpdatePrices: toUpdateNextPrices,
-      startDate: subscriptionCurrentPeriodEnd,
-      endDate: undefined,
-    });
+    const { toUpdateCurrentPhase, toUpdateNextPhase } =
+      buildSchedulePhasesUpdate({
+        currentPhase,
+        nextPhase,
+        productKeyByPriceId,
+        toUpdateCurrentPrices,
+        toUpdateNextPrices,
+        subscriptionCurrentPeriodEnd,
+      });
 
     if (isSamePhaseSignature(toUpdateCurrentPhase, toUpdateNextPhase)) {
       return await this.stripeSubscriptionScheduleService.releaseSubscriptionSchedule(
