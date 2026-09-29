@@ -48,10 +48,10 @@ export class ValidationRuleResolver {
     objectMetadataId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ValidationRuleDTO[]> {
-    return await this.validationRuleService.findByObjectMetadataId(
+    return await this.validationRuleService.findByObjectMetadataId({
       objectMetadataId,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => ValidationRuleDTO)
@@ -61,7 +61,10 @@ export class ValidationRuleResolver {
     @Args('input') input: CreateValidationRuleInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ValidationRuleDTO> {
-    return await this.validationRuleService.create(input, workspace.id);
+    return await this.validationRuleService.create({
+      input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => ValidationRuleDTO)
@@ -71,7 +74,10 @@ export class ValidationRuleResolver {
     @Args('input') input: UpdateValidationRuleInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ValidationRuleDTO> {
-    return await this.validationRuleService.update(input, workspace.id);
+    return await this.validationRuleService.update({
+      input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => ValidationRuleDTO)
@@ -81,6 +87,9 @@ export class ValidationRuleResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ValidationRuleDTO> {
-    return await this.validationRuleService.delete(id, workspace.id);
+    return await this.validationRuleService.delete({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 }

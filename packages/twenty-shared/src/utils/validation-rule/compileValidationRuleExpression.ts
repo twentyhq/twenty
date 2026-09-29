@@ -9,7 +9,6 @@ import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evalua
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
-import { isDefined } from '@/utils/validation/isDefined';
 
 export const compileValidationRuleExpression = ({
   expression,
@@ -47,22 +46,25 @@ export const compileValidationRuleExpression = ({
     };
   }
 
-  const identifierPaths = parsedExpression.variables({ withMembers: true });
-  const tokenizedPaths = new Set(
-    tokenizeValidationRuleExpression(expression)
-      .filter((token) => token.type === 'path')
-      .map((token) => token.text),
+  const meaningfulTokens = tokenizeValidationRuleExpression(expression).filter(
+    (token) => token.type !== 'whitespace',
   );
-  const spacedMemberPath = identifierPaths.find(
-    (path) => path.includes('.') && !tokenizedPaths.has(path),
+  const spacedMemberDotIndex = meaningfulTokens.findIndex(
+    (token, index) =>
+      token.type === 'symbol' &&
+      token.text === '.' &&
+      meaningfulTokens[index - 1]?.type === 'path' &&
+      meaningfulTokens[index + 1]?.type === 'path',
   );
 
-  if (isDefined(spacedMemberPath)) {
+  if (spacedMemberDotIndex !== -1) {
     return {
       isValid: false,
-      errorMessage: `Write ${spacedMemberPath} without spaces around the dot`,
+      errorMessage: `Write ${meaningfulTokens[spacedMemberDotIndex - 1]?.text}.${meaningfulTokens[spacedMemberDotIndex + 1]?.text} without spaces around the dot`,
     };
   }
+
+  const identifierPaths = parsedExpression.variables({ withMembers: true });
 
   let bindings: ValidationRuleBindings = {};
 

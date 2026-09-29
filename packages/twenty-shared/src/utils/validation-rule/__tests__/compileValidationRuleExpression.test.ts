@@ -136,6 +136,10 @@ describe('compileValidationRuleExpression', () => {
       isValid: false,
       errorMessage: 'Write company.industry without spaces around the dot',
     });
+    expect(
+      compile('company.industry == "SaaS" or company . industry == "B2B"')
+        .isValid,
+    ).toBe(false);
     expect(compile('company.industry == "SaaS"').isValid).toBe(true);
   });
 

@@ -59,7 +59,7 @@ const buildScalarEditorFields = ({
     objectIconName: objectMetadataItem.icon ?? DEFAULT_OBJECT_ICON,
     selectOptionValues:
       fieldMetadataItem.options?.map((option) => option.value) ?? [],
-    isSystem: fieldMetadataItem.isSystem === true,
+    isSystem: fieldMetadataItem.isSystem ?? false,
     hasMembers: isDefined(compositeType),
     readsRelatedRecord,
   };
@@ -89,7 +89,7 @@ export const buildValidationRuleEditorFields = ({
   objectMetadataItems: ValidationRuleEditorObject[];
 }): ValidationRuleEditorField[] =>
   objectMetadataItem.fields
-    .filter((fieldMetadataItem) => fieldMetadataItem.isActive === true)
+    .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
     .flatMap((fieldMetadataItem) => {
       if (!isRelationType(fieldMetadataItem.type)) {
         return buildScalarEditorFields({
@@ -126,7 +126,7 @@ export const buildValidationRuleEditorFields = ({
         objectLabelSingular: objectMetadataItem.labelSingular,
         objectIconName: objectMetadataItem.icon ?? DEFAULT_OBJECT_ICON,
         selectOptionValues: [],
-        isSystem: fieldMetadataItem.isSystem === true,
+        isSystem: fieldMetadataItem.isSystem ?? false,
         hasMembers: isDefined(targetObjectMetadataItem),
         readsRelatedRecord: true,
       };
@@ -138,7 +138,7 @@ export const buildValidationRuleEditorFields = ({
       const targetFields = targetObjectMetadataItem.fields
         .filter(
           (targetField) =>
-            targetField.isActive === true && !isRelationType(targetField.type),
+            targetField.isActive && !isRelationType(targetField.type),
         )
         .flatMap((targetField) =>
           buildScalarEditorFields({
