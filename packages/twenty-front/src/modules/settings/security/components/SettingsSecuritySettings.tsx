@@ -153,7 +153,15 @@ export const SettingsSecuritySettings = () => {
               description={t`Configure an SSO connection`}
               adornment={<OrganizationAdornment />}
             />
-            <SettingsSsoIdentitiesProvidersListCard />
+            {hasEnterpriseAccess ? (
+              <SettingsSsoIdentitiesProvidersListCard />
+            ) : (
+              <SettingsEnterpriseFeatureGateCard
+                title={t`Organization feature`}
+                description={t`Upgrade to Organization to configure SSO.`}
+                buttonTitle={t`Activate`}
+              />
+            )}
           </Section.Root>
         </StyledSectionContainer>
 
