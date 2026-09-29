@@ -60,8 +60,7 @@ import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/t
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-// oxlint-disable-next-line twenty/inject-workspace-repository
-export class DevSeederService {
+export class DevSeederWorkspaceService {
   constructor(
     private readonly agentHistoryStorageService: AgentHistoryWorkspaceStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
