@@ -23,8 +23,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -365,8 +364,8 @@ export class AgentChatService {
     const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
-      const dbParts = mapUIMessagePartsToDBParts(
-        finalizeDanglingToolParts(uiMessage.parts),
+      const dbParts = mapUIMessagePartsToPersistedDBParts(
+        uiMessage.parts,
         savedMessageId,
         workspaceId,
       );
@@ -418,11 +417,7 @@ export class AgentChatService {
 
     await this.messagePartRepository.delete(workspaceId, { messageId: id });
 
-    const dbParts = mapUIMessagePartsToDBParts(
-      finalizeDanglingToolParts(parts),
-      id,
-      workspaceId,
-    );
+    const dbParts = mapUIMessagePartsToPersistedDBParts(parts, id, workspaceId);
 
     if (dbParts.length > 0) {
       await this.messagePartRepository.insert(

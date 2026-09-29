@@ -74,7 +74,7 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
       workspaceId: 'workspace-id',
     };
 
-    it('answers the Ask and hands the step back to the executor', async () => {
+    it('answers the Ask and leaves the step PENDING for the resume job to claim', async () => {
       const { service, inputAskWorkspaceService, updateWorkflowRun } =
         buildService();
 
@@ -86,20 +86,7 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         key: { threadId: 'thread-id', toolCallId: 'tool-call-id' },
         response: { answers: [] },
       });
-      expect(updateWorkflowRun).toHaveBeenCalledWith(
-        expect.objectContaining({
-          partialUpdate: {
-            state: expect.objectContaining({
-              stepInfos: {
-                'step-id': {
-                  status: StepStatus.NOT_STARTED,
-                  threadId: 'thread-id',
-                },
-              },
-            }),
-          },
-        }),
-      );
+      expect(updateWorkflowRun).not.toHaveBeenCalled();
     });
 
     it('moves nothing when another answer already claimed the Ask', async () => {
@@ -272,6 +259,58 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         }),
       ).toBe(false);
       expect(inputAskWorkspaceService.answer).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateStepInfoIfPending in a conversation', () => {
+    const claimInConversation = (service: WorkflowRunWorkspaceService) =>
+      service.updateStepInfoIfPending({
+        stepId: 'step-id',
+        stepInfo: { status: StepStatus.RUNNING },
+        expectedThreadId: 'thread-id',
+        workflowRunId: 'workflow-run-id',
+        workspaceId: 'workspace-id',
+      });
+
+    it('claims a PENDING step still holding the expected conversation', async () => {
+      const { service, updateWorkflowRun } = buildService();
+
+      expect(await claimInConversation(service)).toBe(true);
+      expect(updateWorkflowRun).toHaveBeenCalledWith(
+        expect.objectContaining({
+          partialUpdate: {
+            state: expect.objectContaining({
+              stepInfos: {
+                'step-id': {
+                  status: StepStatus.RUNNING,
+                  threadId: 'thread-id',
+                },
+              },
+            }),
+          },
+        }),
+      );
+    });
+
+    it.each([
+      ['the run is no longer running', { status: WorkflowRunStatus.STOPPED }],
+      [
+        'the step already resumed',
+        { stepInfo: { status: StepStatus.RUNNING, threadId: 'thread-id' } },
+      ],
+      [
+        'the step waits on something other than a question',
+        { stepInfo: { status: StepStatus.PENDING } },
+      ],
+      [
+        'the step holds another conversation',
+        { stepInfo: { status: StepStatus.PENDING, threadId: 'other-thread' } },
+      ],
+    ])('claims nothing when %s', async (_description, overrides) => {
+      const { service, updateWorkflowRun } = buildService(overrides);
+
+      expect(await claimInConversation(service)).toBe(false);
+      expect(updateWorkflowRun).not.toHaveBeenCalled();
     });
   });
 

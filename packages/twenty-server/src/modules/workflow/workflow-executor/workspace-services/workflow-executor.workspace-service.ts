@@ -8,6 +8,7 @@ import {
   StepStatus,
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
+  type WorkflowRunStepLog,
 } from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -82,6 +83,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId,
     shouldComputeWorkflowRunStatus = true,
     executedStepsCount = 0,
+    resumedThreadId,
   }: WorkflowExecutorInput) {
     await Promise.all(
       stepIds.map(async (stepIdToExecute) => {
@@ -90,6 +92,7 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
           executedStepsCount,
+          resumedThreadId,
         });
       }),
     );
@@ -107,6 +110,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     executedStepsCount,
+    resumedThreadId,
   }: WorkflowBranchExecutorInput): Promise<void> {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -152,12 +156,9 @@ export class WorkflowExecutorWorkspaceService {
 
     let actionOutput: WorkflowActionOutput;
 
-    // A step that already holds its conversation is resuming after its
-    // question was answered. Its node run was charged, and the quota checked,
-    // when it first ran and paused, so neither happens a second time.
-    const isResumingAnsweredStep = isDefined(stepInfos[stepId]?.threadId);
-
+    // A resumed step was claimed as started, which shouldExecuteStep refuses.
     if (
+      isDefined(resumedThreadId) ||
       shouldExecuteStep({
         step: stepToExecute,
         steps,
@@ -172,7 +173,10 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         workspaceId,
         billingSpenders,
-        shouldCheckNodeRunQuota: !isResumingAnsweredStep,
+        resumedThreadId,
+        previousStepLog: isDefined(resumedThreadId)
+          ? workflowRun.stepLogs?.[stepId]
+          : undefined,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -234,11 +238,12 @@ export class WorkflowExecutorWorkspaceService {
     const isError =
       isDefined(actionOutput.error) && !actionOutput.shouldFailSafely;
 
+    // A resumed step's node run was charged when it first ran and paused.
     if (
       !isError &&
       !actionOutput.shouldFailSafely &&
       !actionOutput.shouldSkipStepExecution &&
-      !isResumingAnsweredStep
+      !isDefined(resumedThreadId)
     ) {
       await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
@@ -515,7 +520,8 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     billingSpenders,
-    shouldCheckNodeRunQuota,
+    resumedThreadId,
+    previousStepLog,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
@@ -523,7 +529,8 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
-    shouldCheckNodeRunQuota: boolean;
+    resumedThreadId?: string;
+    previousStepLog?: WorkflowRunStepLog;
   }) {
     const stepId = step.id;
 
@@ -540,9 +547,10 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      const nodeRunRefusal = shouldCheckNodeRunQuota
-        ? await this.getNodeRunRefusal({ workspaceId, billingSpenders })
-        : undefined;
+      // A resumed step's quota was checked when it first ran and paused.
+      const nodeRunRefusal = isDefined(resumedThreadId)
+        ? undefined
+        : await this.getNodeRunRefusal({ workspaceId, billingSpenders });
 
       if (isDefined(nodeRunRefusal)) {
         return nodeRunRefusal;
@@ -556,6 +564,8 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
         },
+        resumedThreadId,
+        previousStepLog,
       });
     } catch (error) {
       const isUserError = isUserFacingWorkflowExecutorError(error);

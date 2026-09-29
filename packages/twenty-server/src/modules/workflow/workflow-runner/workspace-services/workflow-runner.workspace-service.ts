@@ -201,8 +201,9 @@ export class WorkflowRunnerWorkspaceService {
   }
 
   // The Ask is answered and cannot be answered again, so a resume that
-  // cannot be recorded or scheduled fails the run, which a retry resumes
-  // from the answered conversation.
+  // cannot be recorded or scheduled fails the run, which can then be retried,
+  // rather than leaving it waiting on an answer nobody can give anymore. The
+  // step stays PENDING until the resume job claims it in its conversation.
   async resumeAnsweredAgentStep({
     workspaceId,
     workflowRunId,
@@ -234,7 +235,11 @@ export class WorkflowRunnerWorkspaceService {
 
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
-        { workspaceId, workflowRunId, stepIdsToRetry: [stepId] },
+        {
+          workspaceId,
+          workflowRunId,
+          stepToResume: { stepId, threadId },
+        },
         buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {

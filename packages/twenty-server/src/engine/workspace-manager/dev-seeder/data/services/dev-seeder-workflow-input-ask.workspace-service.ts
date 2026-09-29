@@ -48,6 +48,9 @@ import {
 const WORKFLOW_INPUT_ASK_SEED_NAMESPACE =
   '6f0a9a3e-2b1f-4c55-9f0b-7c1d2e3f4a5b';
 
+const seedId = (name: string, workspaceId: string) =>
+  v5(`${name}:${workspaceId}`, WORKFLOW_INPUT_ASK_SEED_NAMESPACE);
+
 const SYSTEM_ACTOR: ActorMetadata = {
   source: FieldActorSource.SYSTEM,
   workspaceMemberId: null,
@@ -150,19 +153,15 @@ export class DevSeederWorkflowInputAskWorkspaceService {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
-    const seedId = (name: string) =>
-      v5(`${name}:${workspaceId}`, WORKFLOW_INPUT_ASK_SEED_NAMESPACE);
-
     const qualifyWorkflow = await this.insertWorkflow({
       workspaceId,
       applicationId,
-      seedId,
       key: 'qualifyInboundLead',
       name: 'Qualify inbound lead',
       position: 3,
       icon: 'IconUserCheck',
       step: this.buildAgentStep({
-        id: seedId('agentStep'),
+        id: seedId('agentStep', workspaceId),
         name: 'Qualify the lead',
         prompt: 'Qualify the inbound lead and draft the first reply.',
       }),
@@ -170,13 +169,13 @@ export class DevSeederWorkflowInputAskWorkspaceService {
 
     await this.seedAgentRun({
       workspaceId,
-      workflowRunId: seedId('workflowRun:qualification'),
+      workflowRunId: seedId('workflowRun:qualification', workspaceId),
       workflow: qualifyWorkflow,
       initiator: 'TIM',
       prompt:
         'Qualify the inbound lead from Figma and decide who should follow up.',
       executionResult: this.buildPausedResult({
-        toolCallId: seedId('toolCall:qualification'),
+        toolCallId: seedId('toolCall:qualification', workspaceId),
         toolName: ASK_QUESTIONS_TOOL_NAME,
         input: { questions: QUALIFICATION_QUESTIONS },
         output: {
@@ -190,13 +189,12 @@ export class DevSeederWorkflowInputAskWorkspaceService {
     const renewalWorkflow = await this.insertWorkflow({
       workspaceId,
       applicationId,
-      seedId,
       key: 'draftRenewalReminder',
       name: 'Draft renewal reminder',
       position: 4,
       icon: 'IconMail',
       step: this.buildAgentStep({
-        id: seedId('renewalAgentStep'),
+        id: seedId('renewalAgentStep', workspaceId),
         name: 'Draft the reminder',
         prompt:
           'Draft a renewal reminder for the account and have it reviewed before it goes out.',
@@ -205,13 +203,13 @@ export class DevSeederWorkflowInputAskWorkspaceService {
 
     await this.seedAgentRun({
       workspaceId,
-      workflowRunId: seedId('workflowRun:renewalReminder'),
+      workflowRunId: seedId('workflowRun:renewalReminder', workspaceId),
       workflow: renewalWorkflow,
       initiator: 'PHIL',
       prompt:
         'Stripe renews on October 31. Draft the renewal reminder for their procurement team.',
       executionResult: this.buildPausedResult({
-        toolCallId: seedId('toolCall:renewalReminder'),
+        toolCallId: seedId('toolCall:renewalReminder', workspaceId),
         toolName: PROPOSE_EMAIL_TOOL_NAME,
         input: RENEWAL_REMINDER_EMAIL,
         output: {
@@ -223,21 +221,21 @@ export class DevSeederWorkflowInputAskWorkspaceService {
     });
 
     const formStep: WorkflowFormAction = {
-      id: seedId('formStep'),
+      id: seedId('formStep', workspaceId),
       name: 'Approve discount',
       type: WorkflowActionType.FORM,
       valid: true,
       settings: {
         input: [
           {
-            id: seedId('formField:discount'),
+            id: seedId('formField:discount', workspaceId),
             name: 'discount',
             label: 'Approved discount (%)',
             type: FieldMetadataType.NUMBER,
             placeholder: '10',
           },
           {
-            id: seedId('formField:justification'),
+            id: seedId('formField:justification', workspaceId),
             name: 'justification',
             label: 'Justification',
             type: FieldMetadataType.TEXT,
@@ -253,7 +251,6 @@ export class DevSeederWorkflowInputAskWorkspaceService {
     const discountWorkflow = await this.insertWorkflow({
       workspaceId,
       applicationId,
-      seedId,
       key: 'approveDiscount',
       name: 'Approve discount',
       position: 5,
@@ -261,7 +258,7 @@ export class DevSeederWorkflowInputAskWorkspaceService {
       step: formStep,
     });
 
-    const answeredRunId = seedId('workflowRun:discountAnswered');
+    const answeredRunId = seedId('workflowRun:discountAnswered', workspaceId);
 
     await this.seedFormRun({
       workspaceId,
@@ -288,7 +285,7 @@ export class DevSeederWorkflowInputAskWorkspaceService {
       status: WorkflowRunStatus.COMPLETED,
     });
 
-    const stoppedRunId = seedId('workflowRun:discountStopped');
+    const stoppedRunId = seedId('workflowRun:discountStopped', workspaceId);
 
     await this.seedFormRun({
       workspaceId,
@@ -306,7 +303,7 @@ export class DevSeederWorkflowInputAskWorkspaceService {
 
     await this.seedFormRun({
       workspaceId,
-      workflowRunId: seedId('workflowRun:discountPending'),
+      workflowRunId: seedId('workflowRun:discountPending', workspaceId),
       workflow: discountWorkflow,
       formStep,
       initiator: 'JONY',
@@ -466,7 +463,6 @@ export class DevSeederWorkflowInputAskWorkspaceService {
   private async insertWorkflow({
     workspaceId,
     applicationId,
-    seedId,
     key,
     name,
     position,
@@ -475,17 +471,22 @@ export class DevSeederWorkflowInputAskWorkspaceService {
   }: {
     workspaceId: string;
     applicationId: string;
-    seedId: (name: string) => string;
     key: string;
     name: string;
     position: number;
     icon: string;
     step: WorkflowAction;
   }): Promise<SeededWorkflow> {
-    const workspaceWorkflowId = seedId(`workflow:${key}`);
-    const workspaceWorkflowVersionId = seedId(`workflowVersion:${key}`);
-    const coreWorkflowId = seedId(`coreWorkflow:${key}`);
-    const coreWorkflowVersionId = seedId(`coreWorkflowVersion:${key}`);
+    const workspaceWorkflowId = seedId(`workflow:${key}`, workspaceId);
+    const workspaceWorkflowVersionId = seedId(
+      `workflowVersion:${key}`,
+      workspaceId,
+    );
+    const coreWorkflowId = seedId(`coreWorkflow:${key}`, workspaceId);
+    const coreWorkflowVersionId = seedId(
+      `coreWorkflowVersion:${key}`,
+      workspaceId,
+    );
 
     const trigger: WorkflowManualTrigger = {
       name: 'Launch manually',
@@ -536,7 +537,10 @@ export class DevSeederWorkflowInputAskWorkspaceService {
 
     await this.coreWorkflowRepository.insert(workspaceId, {
       id: coreWorkflowId,
-      universalIdentifier: seedId(`workflowUniversalIdentifier:${key}`),
+      universalIdentifier: seedId(
+        `workflowUniversalIdentifier:${key}`,
+        workspaceId,
+      ),
       applicationId,
       name,
       lastPublishedVersionId: workspaceWorkflowVersionId,
@@ -546,7 +550,10 @@ export class DevSeederWorkflowInputAskWorkspaceService {
 
     await this.coreWorkflowVersionRepository.insert(workspaceId, {
       id: coreWorkflowVersionId,
-      universalIdentifier: seedId(`workflowVersionUniversalIdentifier:${key}`),
+      universalIdentifier: seedId(
+        `workflowVersionUniversalIdentifier:${key}`,
+        workspaceId,
+      ),
       applicationId,
       triggers: [trigger],
       steps: [step],

@@ -29,7 +29,6 @@ import {
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { canWorkflowRunHaveAsks } from 'src/modules/workflow/workflow-runner/utils/can-workflow-run-have-asks.util';
-import { findStepIdByThreadId } from 'src/modules/workflow/workflow-runner/utils/find-step-id-by-thread-id.util';
 import { getRunInitiatorWorkspaceMemberId } from 'src/modules/workflow/workflow-runner/utils/get-run-initiator-workspace-member-id.util';
 
 export type StepInputResolution =
@@ -430,17 +429,21 @@ export class WorkflowRunWorkspaceService {
   // the step no longer PENDING. A stop is refused too: endWorkflowRun turns a
   // pending step into FAILED, and a stop still waiting on another branch
   // leaves the run STOPPING with the step PENDING but nothing left to resume.
+  // An expected conversation must still be the step's: a retry or another loop
+  // iteration replaces it.
   @WithLock('workflowRunId')
   async updateStepInfoIfPending({
     stepId,
     stepInfo,
     inputAskResponse,
+    expectedThreadId,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: Partial<WorkflowRunStepInfo>;
     inputAskResponse?: Record<string, unknown>;
+    expectedThreadId?: string;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -453,7 +456,9 @@ export class WorkflowRunWorkspaceService {
 
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
-      currentStepInfo?.status !== StepStatus.PENDING
+      currentStepInfo?.status !== StepStatus.PENDING ||
+      (isDefined(expectedThreadId) &&
+        currentStepInfo.threadId !== expectedThreadId)
     ) {
       return false;
     }
@@ -488,12 +493,12 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // Answers the Ask an agent step is waiting on and hands the step back to
-  // the executor, once and only for that Ask: a stop, a retry or another loop
-  // iteration has moved the step on or replaced its conversation. The Ask is
-  // answered under the run lock, so a run ending in between cannot cancel an
-  // answer it accepts, and of two concurrent answers the second finds it
-  // answered.
+  // Answers the Ask an agent step is waiting on, once and only for that Ask:
+  // a stop, a retry or another loop iteration has moved the step on or
+  // replaced its conversation. The Ask is answered under the run lock, so a
+  // run ending in between cannot cancel an answer it accepts, and of two
+  // concurrent answers the second finds it answered. The step stays PENDING,
+  // which keeps its run alive, until the resume job claims it.
   @WithLock('workflowRunId')
   async resolveStepAwaitingToolCall({
     threadId,
@@ -508,17 +513,21 @@ export class WorkflowRunWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }): Promise<StepInputResolution> {
-    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+    const workflowRun = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
     });
 
-    const stepInfos = workflowRunToUpdate.state?.stepInfos ?? {};
-    const stepId = findStepIdByThreadId({ stepInfos, threadId });
-    const currentStepInfo = isDefined(stepId) ? stepInfos[stepId] : undefined;
+    // A run conversation names no step: it belongs to the step whose current
+    // execution recorded it, so one replaced by a retry or a later loop
+    // iteration belongs to no step anymore.
+    const [stepId, currentStepInfo] =
+      Object.entries(workflowRun.state?.stepInfos ?? {}).find(
+        ([, stepInfo]) => stepInfo?.threadId === threadId,
+      ) ?? [];
 
     if (
-      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
+      workflowRun.status !== WorkflowRunStatus.RUNNING ||
       !isDefined(stepId) ||
       !isDefined(currentStepInfo) ||
       isDefined(currentStepInfo.error) ||
@@ -536,20 +545,6 @@ export class WorkflowRunWorkspaceService {
     if (!hasAnswered) {
       return { status: 'NOT_AWAITING' };
     }
-
-    await this.updateWorkflowRun({
-      workflowRunId,
-      workspaceId,
-      partialUpdate: {
-        state: {
-          ...workflowRunToUpdate.state,
-          stepInfos: {
-            ...workflowRunToUpdate.state?.stepInfos,
-            [stepId]: { ...currentStepInfo, status: StepStatus.NOT_STARTED },
-          },
-        },
-      },
-    });
 
     return { status: 'RESOLVED', stepId };
   }

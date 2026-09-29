@@ -1,6 +1,6 @@
 import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
-import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790622117809-add-input-ask-object.command';
+import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -145,31 +145,43 @@ describe('versioned agent history upgrade (integration)', () => {
     seededAgentChatThreadTarget =
       await describeAgentChatThreadTarget(dataSource);
 
+    // Objects later upgrades add on top of history hold a relation into it,
+    // which the deleted thread object would take along and strand them without.
+    const historyObjectNames = AGENT_HISTORY_TABLES.map(({ name }) => name);
+    const laterObjectNames = (
+      await dataSource.query<{ nameSingular: string }[]>(
+        `SELECT DISTINCT objectMetadata."nameSingular"
+         FROM core."fieldMetadata" fieldMetadata
+         JOIN core."objectMetadata" objectMetadata ON objectMetadata.id = fieldMetadata."objectMetadataId"
+         JOIN core."objectMetadata" targetObjectMetadata ON targetObjectMetadata.id = fieldMetadata."relationTargetObjectMetadataId"
+         WHERE fieldMetadata."workspaceId" = $1
+           AND fieldMetadata.type = 'RELATION'
+           AND fieldMetadata.settings->>'relationType' = 'MANY_TO_ONE'
+           AND targetObjectMetadata."nameSingular" = ANY($2)
+           AND NOT objectMetadata."nameSingular" = ANY($2)`,
+        [WORKSPACE_ID, historyObjectNames],
+      )
+    ).map(({ nameSingular }) => nameSingular);
+
+    expect(laterObjectNames).toContain('agentChatThreadTarget');
+
     // Recreate a pre-upgrade workspace: history exists only in core, and none
-    // of the five standard objects has been installed yet, nor the link object
-    // 2.43 adds on top of them, nor the Ask 2.44 adds. Leaving those in place
-    // would strand them without their thread relation, which the deleted
-    // thread object takes along.
+    // of the five standard objects has been installed yet, nor the objects
+    // later upgrades add on top of them.
     await dataSource.query(
       'DELETE FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
-      [
-        WORKSPACE_ID,
-        [
-          ...AGENT_HISTORY_TABLES.map(({ name }) => name),
-          'agentChatThreadTarget',
-          'inputAsk',
-        ],
-      ],
+      [WORKSPACE_ID, [...historyObjectNames, ...laterObjectNames]],
     );
-    await dataSource.query(`DROP TABLE "${SCHEMA}"."agentChatThreadTarget"`);
-    await dataSource.query(`DROP TABLE "${SCHEMA}"."inputAsk"`);
-    // Its select columns leave their enum types behind the table.
-    const inputAskEnumTypes: { typname: string }[] = await dataSource.query(
+    for (const name of laterObjectNames) {
+      await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}"`);
+    }
+    // Their select columns leave their enum types behind the tables.
+    const laterObjectEnumTypes: { typname: string }[] = await dataSource.query(
       `SELECT typname FROM pg_type JOIN pg_namespace ON pg_namespace.oid = pg_type.typnamespace
-       WHERE nspname = $1 AND typname LIKE 'inputAsk\\_%'`,
-      [SCHEMA],
+       WHERE nspname = $1 AND split_part(typname, '_', 1) = ANY($2)`,
+      [SCHEMA, laterObjectNames],
     );
-    for (const { typname } of inputAskEnumTypes) {
+    for (const { typname } of laterObjectEnumTypes) {
       await dataSource.query(`DROP TYPE "${SCHEMA}"."${typname}"`);
     }
     for (const { name } of [...AGENT_HISTORY_TABLES].reverse()) {
@@ -198,7 +210,7 @@ describe('versioned agent history upgrade (integration)', () => {
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
-      // The Ask's views went with its object in the database.
+      // Views of the later objects went with them in the database.
       'flatViewMaps',
       'flatViewFieldGroupMaps',
       'flatViewFieldMaps',

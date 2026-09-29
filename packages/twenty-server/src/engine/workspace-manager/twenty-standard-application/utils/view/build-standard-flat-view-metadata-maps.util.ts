@@ -67,10 +67,10 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   timelineActivity: computeStandardTimelineActivityViews,
   workflow: computeStandardWorkflowViews,
   workflowAutomatedTrigger: computeStandardWorkflowAutomatedTriggerViews,
-  inputAsk: computeStandardInputAskViews,
   workflowRun: computeStandardWorkflowRunViews,
   workflowVersion: computeStandardWorkflowVersionViews,
   workspaceMember: computeStandardWorkspaceMemberViews,
+  inputAsk: computeStandardInputAskViews,
 } as const satisfies {
   [P in AllStandardObjectName]?: StandardViewBuilder<P>;
 };
