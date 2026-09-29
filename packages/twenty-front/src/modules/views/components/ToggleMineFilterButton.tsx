@@ -21,8 +21,8 @@ const StyledToggleMineFilterContainer = styled.div`
     color: color(display-p3 1 1 1);
   }
 
-  [data-disabled] {
-    color: ${themeCssVariables.font.color.light};
+  > [data-disabled] {
+    opacity: 0.5;
   }
 `;
 
