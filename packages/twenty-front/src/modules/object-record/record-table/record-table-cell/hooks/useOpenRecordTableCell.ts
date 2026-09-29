@@ -129,7 +129,6 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
         onFileUploadClose: () => {
           setRecordTableCellEditModePosition(null);
-
           removeLastFocusItemFromFocusStackByComponentType({
             componentType: FocusComponentType.OPENED_FIELD_INPUT,
           });
