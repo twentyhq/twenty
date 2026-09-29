@@ -69,6 +69,14 @@ const TEXT_PARTS: ModelStreamPart[] = [
 
 const EMPTY_REPLY_PARTS: ModelStreamPart[] = [...START_PARTS, ...FINISH_PARTS];
 
+const QUESTIONS = [
+  {
+    header: 'Plan',
+    question: 'Which plan?',
+    options: [{ label: 'Pro' }, { label: 'Team' }],
+  },
+];
+
 const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
   ...START_PARTS,
   {
@@ -80,14 +88,14 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
     type: 'tool-call',
     toolCallId: 'tool-call-id',
     toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: {},
+    input: { questions: QUESTIONS },
   },
   {
     type: 'tool-result',
     toolCallId: 'tool-call-id',
     toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: {},
-    output: { result: { status: 'pending' } },
+    input: { questions: QUESTIONS },
+    output: { result: { questions: QUESTIONS, status: 'pending' } },
   },
   ...FINISH_PARTS,
 ];
@@ -159,7 +167,9 @@ describe('StreamAgentChatJob', () => {
     assistantPersistRejection,
     totalsUpdateAffected = 1,
     finalPublishRejection,
+    inputAskOpenRejection,
   }: {
+    inputAskOpenRejection?: Error;
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
     streamChatRejection?: Error;
@@ -261,6 +271,11 @@ describe('StreamAgentChatJob', () => {
         message: { id: 'user-message-id', turnId: 'turn-id' },
       }),
     };
+    const inputAskWorkspaceService = {
+      open: inputAskOpenRejection
+        ? jest.fn().mockRejectedValue(inputAskOpenRejection)
+        : jest.fn().mockResolvedValue(undefined),
+    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -273,6 +288,7 @@ describe('StreamAgentChatJob', () => {
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
+      inputAskWorkspaceService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -292,6 +308,7 @@ describe('StreamAgentChatJob', () => {
       cancelCallbacks,
       metricsService,
       aiModelRegistryService,
+      inputAskWorkspaceService,
       turnCounts,
     };
   };
@@ -743,6 +760,60 @@ describe('StreamAgentChatJob', () => {
       }),
     ]);
     expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+  });
+
+  it('opens the Ask of a turn that paused on a question and leaves the queue waiting on it', async () => {
+    const { job, inputAskWorkspaceService, agentChatStreamingService } =
+      buildJob({
+        chatStream: createFakeChatStream({ parts: PENDING_QUESTION_PARTS }),
+      });
+
+    await job.handle(jobData);
+
+    expect(inputAskWorkspaceService.open).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      inputAsk: {
+        name: 'Which plan?',
+        form: { questions: QUESTIONS },
+        threadId: 'thread-id',
+        toolCallId: 'tool-call-id',
+        assigneeId: 'member',
+      },
+    });
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('opens no Ask for a turn that did not pause', async () => {
+    const { job, inputAskWorkspaceService } = buildJob();
+
+    await job.handle(jobData);
+
+    expect(inputAskWorkspaceService.open).not.toHaveBeenCalled();
+  });
+
+  it('fails the turn, leaving it retryable, when its Ask cannot be opened', async () => {
+    const { job, publishedEvents, threadRepository, turnCounts } = buildJob({
+      chatStream: createFakeChatStream({ parts: PENDING_QUESTION_PARTS }),
+      inputAskOpenRejection: new Error('Ask insert failed'),
+    });
+
+    await expect(job.handle(jobData)).rejects.toThrow('Ask insert failed');
+
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      {
+        lastStreamError: expect.objectContaining({
+          message: 'Ask insert failed',
+        }),
+      },
+    );
+    expect(publishedEvents.map((event) => event.type)).toContain(
+      'stream-error',
+    );
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
   });
 
   it('counts an aborted turn as cancelled rather than leaving it unaccounted', async () => {

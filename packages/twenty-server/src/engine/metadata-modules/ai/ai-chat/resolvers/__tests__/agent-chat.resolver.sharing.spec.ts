@@ -74,7 +74,6 @@ const buildResolver = () => {
     streamAgentChat: jest
       .fn()
       .mockResolvedValue({ queued: false, messageId: 'message' }),
-    answerPendingQuestionAndResumeStream: jest.fn(),
     reapDeadStream: jest.fn().mockResolvedValue(null),
   };
   const events = {
@@ -84,7 +83,6 @@ const buildResolver = () => {
       .mockResolvedValue({ chunks: [], maxSeq: 0 }),
   };
   const redis = { getClient: jest.fn() };
-  const workflowQuestions = { answer: jest.fn() };
   const resolver = new AgentChatResolver(
     chatService,
     {} as never,
@@ -98,7 +96,6 @@ const buildResolver = () => {
       validateModelAvailability: jest.fn(),
     } as never,
     redis as never,
-    workflowQuestions as never,
     threadRepository as never,
   );
   return {
@@ -149,7 +146,6 @@ describe('Shared conversation API boundaries', () => {
 
   it.each([
     'send',
-    'answer',
     'rename',
     'archive',
     'unarchive',
@@ -167,17 +163,6 @@ describe('Shared conversation API boundaries', () => {
             'Execute a tool',
             'message',
             null,
-            undefined,
-            null,
-            VIEWER_ID,
-            'member',
-            workspace,
-          ),
-        answer: () =>
-          resolver.answerAgentChatQuestion(
-            THREAD_ID,
-            'message',
-            [],
             undefined,
             null,
             VIEWER_ID,
@@ -210,9 +195,6 @@ describe('Shared conversation API boundaries', () => {
       expect(context.threadRepository.delete).not.toHaveBeenCalled();
       expect(context.messages.delete).not.toHaveBeenCalled();
       expect(context.streaming.streamAgentChat).not.toHaveBeenCalled();
-      expect(
-        context.streaming.answerPendingQuestionAndResumeStream,
-      ).not.toHaveBeenCalled();
       expect(context.events.publish).not.toHaveBeenCalled();
       expect(context.redis.getClient).not.toHaveBeenCalled();
     },

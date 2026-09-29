@@ -19,7 +19,6 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     conversationSize: 0,
     activeStreamId: null,
     lastStreamError: null,
-    pendingQuestionMessageId: null,
   } as unknown as AgentChatThreadWorkspaceEntity;
 
   const hiddenKickoffMessageEntity = {
@@ -98,6 +97,10 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
             applicationId: null,
           },
         }),
+      } as never,
+      {
+        findPendingForThread: jest.fn().mockResolvedValue(null),
+        cancel: jest.fn().mockResolvedValue(false),
       } as never,
     );
 

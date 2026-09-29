@@ -16,7 +16,9 @@ type PendingInputAskRecord = ObjectRecord & {
 };
 
 const getAskedQuestions = (form: unknown): AskQuestionItem[] | null =>
-  isPlainObject(form) && isNonEmptyArray(form.questions)
+  isPlainObject(form) &&
+  Array.isArray(form.questions) &&
+  isNonEmptyArray(form.questions)
     ? (form.questions as AskQuestionItem[])
     : null;
 

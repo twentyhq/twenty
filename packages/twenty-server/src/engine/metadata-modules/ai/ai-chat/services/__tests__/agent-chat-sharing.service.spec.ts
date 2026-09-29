@@ -284,14 +284,13 @@ describe('Conversation common record access', () => {
   });
 
   it.each(['update', 'delete', 'soft-delete', 'restore'] as const)(
-    'refuses %s on a workflow run conversation while still letting its readers read it',
+    'lets whoever may %s a workflow run conversation do so, like any other',
     async (operation) => {
       const { service, thread } = buildService();
       thread.workflowRunId = 'workflow-run';
-      await expect(service.getReadableThread(args)).resolves.toBeDefined();
       await expect(
         service.getThreadWithAccess({ ...args, operationType: operation }),
-      ).rejects.toMatchObject({ code: 'WORKFLOW_RUN_THREAD_READ_ONLY' });
+      ).resolves.toBe(thread);
     },
   );
 

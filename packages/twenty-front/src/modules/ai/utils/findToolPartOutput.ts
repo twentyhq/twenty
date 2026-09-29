@@ -7,8 +7,14 @@ export const findToolPartOutput = ({
 }: {
   messages: ExtendedUIMessage[];
   toolCallId: string;
-}): unknown =>
-  messages
-    .flatMap((message) => message.parts)
-    .find((part) => isToolUIPart(part) && part.toolCallId === toolCallId)
-    ?.output;
+}): unknown => {
+  for (const message of messages) {
+    for (const part of message.parts) {
+      if (isToolUIPart(part) && part.toolCallId === toolCallId) {
+        return part.output;
+      }
+    }
+  }
+
+  return undefined;
+};
