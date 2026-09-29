@@ -1,5 +1,5 @@
 import { type Hooks } from '@remote-dom/polyfill';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { type WorkerActiveElementStore } from '@/polyfills/dom/types/WorkerActiveElementStore';
 import { isAncestorOrSelfOfNode } from '@/polyfills/dom/utils/isAncestorOrSelfOfNode';
@@ -14,7 +14,10 @@ export const installActiveElementDetachmentHook = ({
   activeElementStore,
 }: InstallActiveElementDetachmentHookInput): void => {
   if (!isDefined(hooks)) {
-    throw new Error('Worker focus tracking requires DOM mutation hooks');
+    throw new CustomError(
+      'Worker focus tracking requires DOM mutation hooks',
+      'FRONT_COMPONENT_DOM_MUTATION_HOOKS_UNAVAILABLE',
+    );
   }
 
   const previousRemoveChildHook = hooks.removeChild;
