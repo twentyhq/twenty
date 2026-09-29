@@ -3,7 +3,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { PENDING_CALL_RECORDING_REQUESTS_CRON_PATTERN } from 'src/logic-functions/constants/pending-call-recording-requests-cron-pattern';
 import { recoverPendingCallRecording } from 'src/logic-functions/flows/recover-pending-call-recording.util';
 import {
   retryFailedRecallCancellations,
@@ -86,7 +85,4 @@ export default defineLogicFunction({
     'Processes pending CallRecording requests by attaching or scheduling missing Recall bots and retrying incomplete cancellations.',
   timeoutSeconds: 250,
   handler: processPendingCallRecordingRequestsHandler,
-  cronTriggerSettings: {
-    pattern: PENDING_CALL_RECORDING_REQUESTS_CRON_PATTERN,
-  },
 });
