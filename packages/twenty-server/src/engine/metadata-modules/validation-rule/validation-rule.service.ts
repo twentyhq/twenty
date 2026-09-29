@@ -80,10 +80,13 @@ export class ValidationRuleService {
     }
   }
 
-  private async findDtoByIdOrThrow(
-    id: string,
-    workspaceId: string,
-  ): Promise<ValidationRuleDTO> {
+  private async findDtoByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
     const { flatValidationRuleMaps } = await this.getFlatMaps(workspaceId);
 
     return fromFlatValidationRuleToValidationRuleDto(
@@ -94,10 +97,13 @@ export class ValidationRuleService {
     );
   }
 
-  private async findExistingFlatValidationRuleOrThrow(
-    id: string,
-    workspaceId: string,
-  ) {
+  private async findExistingFlatValidationRuleOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }) {
     const flatMaps = await this.getFlatMaps(workspaceId);
 
     const existingFlatValidationRule = findFlatEntityByIdInFlatEntityMaps({
@@ -115,10 +121,13 @@ export class ValidationRuleService {
     return { existingFlatValidationRule, flatMaps };
   }
 
-  async findByObjectMetadataId(
-    objectMetadataId: string,
-    workspaceId: string,
-  ): Promise<ValidationRuleDTO[]> {
+  async findByObjectMetadataId({
+    objectMetadataId,
+    workspaceId,
+  }: {
+    objectMetadataId: string;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO[]> {
     const { flatValidationRuleMaps } = await this.getFlatMaps(workspaceId);
 
     return Object.values(flatValidationRuleMaps.byUniversalIdentifier)
@@ -135,10 +144,13 @@ export class ValidationRuleService {
       .map(fromFlatValidationRuleToValidationRuleDto);
   }
 
-  async create(
-    input: CreateValidationRuleInput,
-    workspaceId: string,
-  ): Promise<ValidationRuleDTO> {
+  async create({
+    input,
+    workspaceId,
+  }: {
+    input: CreateValidationRuleInput;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.getFlatMaps(workspaceId);
 
@@ -175,17 +187,26 @@ export class ValidationRuleService {
         'Multiple validation errors occurred while creating validation rule',
     });
 
-    return this.findDtoByIdOrThrow(flatValidationRuleToCreate.id, workspaceId);
+    return this.findDtoByIdOrThrow({
+      id: flatValidationRuleToCreate.id,
+      workspaceId,
+    });
   }
 
-  async update(
-    input: UpdateValidationRuleInput,
-    workspaceId: string,
-  ): Promise<ValidationRuleDTO> {
+  async update({
+    input,
+    workspaceId,
+  }: {
+    input: UpdateValidationRuleInput;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
     const {
       existingFlatValidationRule,
       flatMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
-    } = await this.findExistingFlatValidationRuleOrThrow(input.id, workspaceId);
+    } = await this.findExistingFlatValidationRuleOrThrow({
+      id: input.id,
+      workspaceId,
+    });
 
     const expression =
       input.update.expression ?? existingFlatValidationRule.expression;
@@ -224,12 +245,18 @@ export class ValidationRuleService {
         'Multiple validation errors occurred while updating validation rule',
     });
 
-    return this.findDtoByIdOrThrow(input.id, workspaceId);
+    return this.findDtoByIdOrThrow({ id: input.id, workspaceId });
   }
 
-  async delete(id: string, workspaceId: string): Promise<ValidationRuleDTO> {
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
     const { existingFlatValidationRule } =
-      await this.findExistingFlatValidationRuleOrThrow(id, workspaceId);
+      await this.findExistingFlatValidationRuleOrThrow({ id, workspaceId });
 
     await this.runValidationRuleMigration({
       workspaceId,
