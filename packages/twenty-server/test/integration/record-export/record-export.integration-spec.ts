@@ -46,7 +46,9 @@ import { type FileStorageService } from 'src/engine/core-modules/file-storage/se
 import { type CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
-import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type TrackedJobWorkspaceService } from 'src/engine/core-modules/tracked-job/services/tracked-job.workspace-service';
+import { type CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -71,7 +73,8 @@ describe('record export lifecycle (integration)', () => {
   let exports: RecordExportWorkspaceService;
   let cache: CacheStorageService;
   let storage: FileStorageService;
-  let query: RecordExportWorkspaceService;
+  let findMany: CommonFindManyQueryRunnerService;
+  let trackedJobs: TrackedJobWorkspaceService;
   let originalRoleId: string;
   let roleId: string;
   let wasAsyncCsvExportEnabled: boolean;
@@ -181,13 +184,22 @@ describe('record export lifecycle (integration)', () => {
         `http://localhost:${APP_PORT}`,
       ).searchParams.get('token')!,
     );
-  const isConnected = async ({
-    workspaceId,
-    id,
-  }: {
-    workspaceId: string;
-    id: string;
-  }) => (await cache.get<string>(`{${workspaceId}}:active`)) === id;
+  const leaseKey = `{${SEED_APPLE_WORKSPACE_ID}}:GenerateRecordExportJob:active`;
+  const getLeaseHolder = () => cache.get<string>(leaseKey);
+  const recordExportQueue = () =>
+    global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.recordExportQueue),
+    );
+  const resolveReadyRequester = async () =>
+    trackedJobs.resolveRequester(
+      await authorization(await exportToCompletion()),
+    );
+  const streamFor = (requester: UserWorkspaceAuthContext) =>
+    exports.stream({
+      parameters: input,
+      authContext: requester,
+      requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
+    });
 
   const changeRole = async (updatePayload: {
     canAccessAllTools?: boolean;
@@ -214,10 +226,11 @@ describe('record export lifecycle (integration)', () => {
     });
     exports = getAppProviderByClassName('RecordExportWorkspaceService');
     cache = global.app.get<CacheStorageService>(
-      CacheStorageNamespace.EngineRecordExport,
+      CacheStorageNamespace.EngineTrackedJob,
     );
     storage = getAppProviderByClassName('FileStorageService');
-    query = getAppProviderByClassName('RecordExportWorkspaceService');
+    findMany = getAppProviderByClassName('CommonFindManyQueryRunnerService');
+    trackedJobs = getAppProviderByClassName('TrackedJobWorkspaceService');
     const { objects } = await findManyObjectMetadata({
       input: { filter: {}, paging: { first: 1000 } },
       gqlFields: 'id nameSingular fieldsList { id name }',
@@ -264,7 +277,7 @@ describe('record export lifecycle (integration)', () => {
     for (const connection of connections.splice(0)) connection.dispose();
     jest.restoreAllMocks();
     for (const id of exportIds)
-      await exports.cancel({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
+      await exports.removeFile({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
     exportIds.clear();
     downloadTokens.clear();
     const sessions =
@@ -404,28 +417,22 @@ describe('record export lifecycle (integration)', () => {
     const recordExport = await nextExport(events);
     expect(recordExport.downloadPath).toBeNull();
     connection.dispose();
-    await waitUntil(
-      async () =>
-        !(await isConnected({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          id: recordExport.id,
-        })),
-    );
+    await waitUntil(async () => (await getLeaseHolder()) !== recordExport.id);
     const next = await exportToCompletion();
     await download(next).expect(200);
   });
 
   it('reports progress between pages and rejects a second active export', async () => {
-    const readPage = query.readPage.bind(query);
+    const execute = findMany.execute.bind(findMany);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    jest.spyOn(findMany, 'execute').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         await pageGate;
       }
-      return readPage(...args);
+      return execute(...args);
     });
     const first = subscribe();
     try {
@@ -444,87 +451,57 @@ describe('record export lifecycle (integration)', () => {
   });
 
   it('releases the workspace slot when the export queue cannot accept a job', async () => {
-    const completed = await exportToCompletion();
-    const requester = await query.resolveRequester(
-      await authorization(completed),
-    );
-    const queue = global.app.get<MessageQueueService>(
-      getQueueToken(MessageQueue.recordExportQueue),
-    );
-    const create = exports.create.bind(exports);
-    let failed: RecordExport | undefined;
-    jest.spyOn(exports, 'create').mockImplementation(async (parameters) => {
-      const recordExport = await create(parameters);
-      exportIds.add(recordExport.id);
-      failed = recordExport;
-      return recordExport;
-    });
+    const requester = await resolveReadyRequester();
     jest
-      .spyOn(queue, 'add')
+      .spyOn(recordExportQueue(), 'add')
       .mockRejectedValueOnce(new Error('Queue unavailable'));
-    await expect(
-      exports.stream({
-        parameters: input,
-        authContext: requester,
-        requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-      }),
-    ).rejects.toThrow('Queue unavailable');
-    expect(await isConnected(failed!)).toBe(false);
-    await expect(getExport(failed!.id)).rejects.toThrow('Export not found');
+    await expect(streamFor(requester)).rejects.toThrow('Queue unavailable');
+    expect(await getLeaseHolder()).toBeUndefined();
     const next = await exportToCompletion();
     await download(next).expect(200);
   });
 
   it('renews the lease during queue handoff and paused event consumption', async () => {
-    const ready = await exportToCompletion();
-    const requester = await query.resolveRequester(await authorization(ready));
-    const storageCache = global.app.get<CacheStorageService>(
-      CacheStorageNamespace.EngineRecordExport,
-    );
-    const enqueue = exports.enqueue.bind(exports);
+    const requester = await resolveReadyRequester();
+    const queue = recordExportQueue();
+    const add = queue.add.bind(queue);
     let releaseEnqueue = () => {};
-    let notifyEnqueue = (recordExport: RecordExport) => {
-      void recordExport;
-    };
+    let notifyEnqueue = () => {};
     const enqueueGate = new Promise<void>((resolve) => {
       releaseEnqueue = resolve;
     });
-    const enqueueStarted = new Promise<RecordExport>((resolve) => {
+    const enqueueStarted = new Promise<void>((resolve) => {
       notifyEnqueue = resolve;
     });
-    jest.spyOn(exports, 'enqueue').mockImplementation(async (recordExport) => {
-      exportIds.add(recordExport.id);
-      notifyEnqueue(recordExport);
+    jest.spyOn(queue, 'add').mockImplementation(async (...args) => {
+      notifyEnqueue();
       await enqueueGate;
-      return enqueue(recordExport);
+      return add(...args);
     });
-    const readPage = query.readPage.bind(query);
+    const execute = findMany.execute.bind(findMany);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (args) => {
+    jest.spyOn(findMany, 'execute').mockImplementation(async (...args) => {
       await pageGate;
-      return readPage(args);
+      return execute(...args);
     });
-    const subscription = exports.stream({
-      parameters: input,
-      authContext: requester,
-      requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-    });
+    const subscription = streamFor(requester);
     try {
-      const recordExport = await enqueueStarted;
+      await enqueueStarted;
+      const leaseHolder = await getLeaseHolder();
       const assertLeaseSurvives = async () => {
-        await storageCache.runScript({
+        await cache.runScript({
           script: {
             name: 'shorten-export-test-lease',
             source: "return redis.call('PEXPIRE', KEYS[1], 2000)",
           },
-          keys: [`{${SEED_APPLE_WORKSPACE_ID}}:active`],
+          keys: [leaseKey],
           args: [],
         });
         await setTimeout(2500);
-        expect(await isConnected(recordExport)).toBe(true);
+        expect(await getLeaseHolder()).toBe(leaseHolder);
       };
       await assertLeaseSurvives();
       releaseEnqueue();
@@ -532,7 +509,7 @@ describe('record export lifecycle (integration)', () => {
       expect((await events.next()).done).toBe(false);
       await assertLeaseSurvives();
       await events.return?.();
-      expect(await isConnected(recordExport)).toBe(false);
+      expect(await getLeaseHolder()).toBeUndefined();
     } finally {
       releaseEnqueue();
       releasePage();
@@ -542,31 +519,22 @@ describe('record export lifecycle (integration)', () => {
   });
 
   it('retrieves completed worker output when the SSE consumer missed all progress', async () => {
-    const ready = await exportToCompletion();
-    const requester = await query.resolveRequester(await authorization(ready));
-    const enqueue = exports.enqueue.bind(exports);
-    let recordExport: RecordExport;
-    let jobId: string;
-    jest.spyOn(exports, 'enqueue').mockImplementation(async (created) => {
-      recordExport = created;
-      exportIds.add(created.id);
-      jobId = await enqueue(created);
+    const requester = await resolveReadyRequester();
+    const queue = recordExportQueue();
+    const add = queue.add.bind(queue);
+    let jobId: string | undefined;
+    jest.spyOn(queue, 'add').mockImplementation(async (...args) => {
+      jobId = await add(...args);
       return jobId;
     });
-    const events = await exports.stream({
-      parameters: input,
-      authContext: requester,
-      requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-    });
+    const events = await streamFor(requester);
     try {
-      const queue = global.app.get<MessageQueueService>(
-        getQueueToken(MessageQueue.recordExportQueue),
-      );
+      exportIds.add(jobId!);
       await waitUntil(
         async () =>
-          (await queue.getJobs([jobId]))[jobId]?.state === 'completed',
+          (await queue.getJobs([jobId!]))[jobId!]?.state === 'completed',
       );
-      expect(await fileExists(await getExport(recordExport!.id))).toBe(true);
+      expect(await fileExists(await getExport(jobId!))).toBe(true);
       const completed = await events.next();
       expect(completed.value).toMatchObject({
         progress: 100,
@@ -580,106 +548,95 @@ describe('record export lifecycle (integration)', () => {
   it.each([
     {
       progress: {
-        processedRecordCount: companies.length,
-        totalRecordCount: companies.length,
+        processedCount: companies.length,
+        totalCount: companies.length,
       },
       expectedProgress: 99,
     },
     {
       progress: {
-        processedRecordCount: 'invalid',
-        totalRecordCount: companies.length,
+        processedCount: 'invalid',
+        totalCount: companies.length,
         errorMessage: 42,
       },
       expectedProgress: 0,
     },
     { progress: undefined, expectedProgress: 0 },
   ])(
-    'does not offer an uploaded file when its worker failed with progress $progress',
+    'does not offer a download when its worker failed with progress $progress',
     async ({ progress, expectedProgress }) => {
-      const ready = await exportToCompletion();
-      const queue = global.app.get<MessageQueueService>(
-        getQueueToken(MessageQueue.recordExportQueue),
-      );
-      const claims = await authorization(ready);
-      const recordExport: RecordExport = {
-        ...claims,
-        id: ready.id,
-        parameters: input,
-        createdAt: Date.now(),
-      };
-      jest.spyOn(queue, 'getJobs').mockResolvedValue({
-        job: {
-          id: 'job',
-          data: recordExport,
-          state: 'failed',
-          attemptsMade: 1,
-          timestamp: Date.now(),
-          progress,
-        },
-      });
-      const update = await exports.getProgress(recordExport, 'job');
-      expect(await fileExists(await getExport(ready.id))).toBe(true);
-      expect(update.downloadPath).toBeUndefined();
-      expect(update.errorMessage).toContain('interrupted');
-      expect(update.progress).toBe(expectedProgress);
+      const requester = await resolveReadyRequester();
+      jest
+        .spyOn(recordExportQueue(), 'getJobs')
+        .mockImplementation(async ([jobId]) => ({
+          [jobId]: {
+            id: jobId,
+            data: {},
+            state: 'failed',
+            attemptsMade: 1,
+            timestamp: Date.now(),
+            progress,
+          },
+        }));
+      const events = await streamFor(requester);
+      try {
+        const { value: update } = await events.next();
+        expect(update.downloadPath).toBeUndefined();
+        expect(update.errorMessage).toContain('interrupted');
+        expect(update.progress).toBe(expectedProgress);
+      } finally {
+        await events.return?.();
+      }
     },
   );
 
   it('allows concurrent cleanup of the same completed export', async () => {
     const ready = await exportToCompletion();
     const identity = { workspaceId: SEED_APPLE_WORKSPACE_ID, id: ready.id };
-    await Promise.all([exports.cancel(identity), exports.cancel(identity)]);
+    await Promise.all([
+      exports.removeFile(identity),
+      exports.removeFile(identity),
+    ]);
     expect(await fileExists(ready)).toBe(false);
     await expect(getExport(ready.id)).rejects.toThrow('Export not found');
-    await expect(exports.cancel(identity)).resolves.toBeUndefined();
+    await expect(exports.removeFile(identity)).resolves.toBeUndefined();
   });
 
-  it('does not let cancellation of an older export release a newer connection', async () => {
-    const ready = await exportToCompletion();
-    const requester = await query.resolveRequester(await authorization(ready));
-    const current = await exports.create({
-      parameters: input,
-      authContext: requester,
-      requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
+  it('does not let an older export release a newer connection', async () => {
+    const requester = await resolveReadyRequester();
+    jest.spyOn(recordExportQueue(), 'add').mockResolvedValue('not-started');
+    const older = await streamFor(requester);
+    await cache.runScript({
+      script: {
+        name: 'drop-export-test-lease',
+        source: "return redis.call('DEL', KEYS[1])",
+      },
+      keys: [leaseKey],
+      args: [],
     });
-    exportIds.add(current.id);
-    await exports.cancel({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      id: ready.id,
-    });
-    expect(await isConnected(current)).toBe(true);
-    await exports.cancel(current);
-    expect(await isConnected(current)).toBe(false);
+    const newer = await streamFor(requester);
+    const newerLeaseHolder = await getLeaseHolder();
+    await older.return?.();
+    expect(await getLeaseHolder()).toBe(newerLeaseHolder);
+    await newer.return?.();
+    expect(await getLeaseHolder()).toBeUndefined();
   });
 
   it('closes the subscription when its connection lease expires', async () => {
-    const ready = await exportToCompletion();
-    const requester = await query.resolveRequester(await authorization(ready));
-    const create = exports.create.bind(exports);
-    let created: RecordExport;
-    jest.spyOn(exports, 'create').mockImplementation(async (args) => {
-      created = await create(args);
-      exportIds.add(created.id);
-      return created;
-    });
-    jest.spyOn(exports, 'enqueue').mockResolvedValue('not-started');
-    const events = await exports.stream({
-      parameters: input,
-      authContext: requester,
-      requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-    });
+    const requester = await resolveReadyRequester();
+    jest.spyOn(recordExportQueue(), 'add').mockResolvedValue('not-started');
+    const events = await streamFor(requester);
     try {
       await cache.runScript({
         script: {
           name: 'expire-export-test-lease',
           source: "return redis.call('PEXPIRE', KEYS[1], 1)",
         },
-        keys: [`{${SEED_APPLE_WORKSPACE_ID}}:active`],
+        keys: [leaseKey],
         args: [],
       });
       await setTimeout(1500);
-      expect(await isConnected(created!)).toBe(false);
+      expect(await getLeaseHolder()).toBeUndefined();
       await expect(events.next()).rejects.toThrow('export was interrupted');
     } finally {
       await events.return?.();
@@ -798,7 +755,7 @@ describe('record export lifecycle (integration)', () => {
   it.each(['export', 'row'])(
     'stops generation when %s permission changes between pages',
     async (permission) => {
-      const readPage = query.readPage.bind(query);
+      const execute = findMany.execute.bind(findMany);
       let releasePage = () => {};
       let notifyPage = () => {};
       const pageGate = new Promise<void>((resolve) => {
@@ -807,12 +764,12 @@ describe('record export lifecycle (integration)', () => {
       const pageStarted = new Promise<void>((resolve) => {
         notifyPage = resolve;
       });
-      jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+      jest.spyOn(findMany, 'execute').mockImplementation(async (...args) => {
         if (isDefined(args[0].after)) {
           notifyPage();
           await pageGate;
         }
-        return readPage(...args);
+        return execute(...args);
       });
       const { events } = subscribe(input, APPLE_JONY_MEMBER_ACCESS_TOKEN);
       try {
@@ -875,12 +832,12 @@ describe('record export lifecycle (integration)', () => {
         );
         return writeFileStream(resource);
       });
-    const readPage = query.readPage.bind(query);
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    const execute = findMany.execute.bind(findMany);
+    jest.spyOn(findMany, 'execute').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         throw new Error('Interrupted database read');
       }
-      return readPage(...args);
+      return execute(...args);
     });
     const { events } = subscribe();
     let recordExport = await nextExport(events);
@@ -920,7 +877,7 @@ describe('record export lifecycle (integration)', () => {
       recordExport.downloadPath!,
       `http://localhost:${APP_PORT}`,
     );
-    const requester = await query.resolveRequester(
+    const requester = await trackedJobs.resolveRequester(
       await authorization(recordExport),
     );
     const tokens =
@@ -943,7 +900,7 @@ describe('record export lifecycle (integration)', () => {
     'requires the originating cookie session, revoked: %s',
     async (isRevoked) => {
       const ready = await exportToCompletion();
-      const requester = await query.resolveRequester(
+      const requester = await trackedJobs.resolveRequester(
         await authorization(ready),
       );
       const sessions =
@@ -1088,9 +1045,9 @@ describe('record export lifecycle (integration)', () => {
           value: companies[0].name,
         });
       if (when === 'access-check') {
-        const resolveRequester = query.resolveRequester.bind(query);
+        const resolveRequester = trackedJobs.resolveRequester.bind(trackedJobs);
         jest
-          .spyOn(query, 'resolveRequester')
+          .spyOn(trackedJobs, 'resolveRequester')
           .mockImplementationOnce(async (args) => {
             const result = await resolveRequester(args);
             await restrictRows();

@@ -4,6 +4,7 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RECORD_EXPORT_DOWNLOAD_TOKEN_TTL_SECONDS } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
+import { TrackedJobWorkspaceService } from 'src/engine/core-modules/tracked-job/services/tracked-job.workspace-service';
 
 describe('RecordExportWorkspaceService', () => {
   it('returns an API-relative download path with a token bound to the requester', async () => {
@@ -14,13 +15,18 @@ describe('RecordExportWorkspaceService', () => {
       providers: [
         RecordExportWorkspaceService,
         { provide: JwtWrapperService, useValue: jwtWrapperService },
+        {
+          provide: TrackedJobWorkspaceService,
+          useValue: {
+            resolveRequester: jest.fn().mockResolvedValue({}),
+            assertPermissionsUnchanged: jest.fn().mockResolvedValue(undefined),
+          },
+        },
       ],
     })
       .useMocker(() => ({}))
       .compile();
     const service = module.get(RecordExportWorkspaceService);
-    jest.spyOn(service, 'resolveRequester').mockResolvedValue({} as never);
-    jest.spyOn(service, 'assertPermissionsUnchanged').mockResolvedValue();
     jest.spyOn(service, 'findOrThrow').mockResolvedValue({} as never);
 
     const recordExport = {

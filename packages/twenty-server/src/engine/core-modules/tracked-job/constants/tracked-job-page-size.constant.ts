@@ -1,0 +1,1 @@
+export const TRACKED_JOB_PAGE_SIZE = 1000;
