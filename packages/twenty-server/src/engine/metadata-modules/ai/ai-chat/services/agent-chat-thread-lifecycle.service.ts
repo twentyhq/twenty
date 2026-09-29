@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
@@ -31,7 +29,6 @@ export class AgentChatThreadLifecycleService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly redisClientService: RedisClientService,
     private readonly codeInterpreterService: CodeInterpreterService,
-    private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
@@ -118,32 +115,18 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  async cleanUpDestroyedThreads({
+  // Sharing grants stay, as for any destroyed record, so that the destroy
+  // event still reaches the thread's audience
+  releaseDestroyedThreadSandboxes({
     workspaceId,
     threadIds,
   }: {
     workspaceId: string;
     threadIds: string[];
-  }): Promise<void> {
-    if (!isNonEmptyArray(threadIds)) {
-      return;
-    }
-
+  }): void {
     for (const threadId of threadIds) {
       this.releaseThreadSandboxBestEffort({ workspaceId, threadId });
     }
-
-    const objectMetadataId = await this.findThreadObjectMetadataId(workspaceId);
-
-    if (!isDefined(objectMetadataId)) {
-      return;
-    }
-
-    await this.recordShareStorageService.deleteByRecordIds({
-      workspaceId,
-      objectMetadataId,
-      recordIds: threadIds,
-    });
   }
 
   // The owner field is not writable through the record API, so a conversation
@@ -226,18 +209,5 @@ export class AgentChatThreadLifecycleService {
         updatedFields: ['activeStreamId', 'updatedAt'],
       });
     }
-  }
-
-  private async findThreadObjectMetadataId(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-
-    return flatObjectMetadataMaps.byUniversalIdentifier[
-      STANDARD_OBJECTS.agentChatThread.universalIdentifier
-    ]?.id;
   }
 }

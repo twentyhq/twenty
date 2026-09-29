@@ -53,7 +53,7 @@ const buildResolver = () => {
       .mockRejectedValue(
         new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
       ),
-    deleteThreadWithShares: jest.fn(),
+    deleteThreadWithAccess: jest.fn(),
   };
   const broadcaster = { broadcast: jest.fn() };
   const sandbox = {
@@ -127,8 +127,8 @@ describe('Shared conversation API boundaries', () => {
       workspaceMemberId: 'owner',
       workspaceId: WORKSPACE_ID,
     });
-    context.sharing.deleteThreadWithShares.mockRejectedValue(
-      new Error('cleanup failed'),
+    context.sharing.deleteThreadWithAccess.mockRejectedValue(
+      new Error('delete failed'),
     );
     await expect(
       context.chatService.hardDeleteThread({
@@ -136,7 +136,7 @@ describe('Shared conversation API boundaries', () => {
         workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,
       }),
-    ).rejects.toThrow('cleanup failed');
+    ).rejects.toThrow('delete failed');
     expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
     expect(
       context.sandbox.releaseThreadSandboxBestEffort,

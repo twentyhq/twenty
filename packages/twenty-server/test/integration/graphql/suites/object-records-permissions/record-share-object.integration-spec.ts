@@ -4,9 +4,7 @@ import { setManualRecordShare } from 'test/integration/utils/set-manual-record-s
 
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { randomUUID } from 'node:crypto';
 
@@ -156,12 +154,9 @@ describe('recordShare object', () => {
     }
   });
 
-  it('rolls back thread deletion if grant cleanup fails, then deletes both together', async () => {
+  it('keeps the grants of a deleted thread until a new thread reuses its id', async () => {
     const chatService =
       getAppProviderByClassName<AgentChatService>('AgentChatService');
-    const sharingService = getAppProviderByClassName<AgentChatSharingService>(
-      'AgentChatSharingService',
-    );
     const metadata = await getCoreRepository<ObjectMetadataEntity>(
       ObjectMetadataEntity,
     ).findOneOrFail({
@@ -176,10 +171,16 @@ describe('recordShare object', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       threadId: randomUUID(),
     };
+    const readGrants = () =>
+      recordShareStorageService.findByRecordIds({
+        workspaceId: args.workspaceId,
+        objectMetadataId: metadata.id,
+        recordIds: [args.threadId],
+      });
     await chatService.createThread({
       ...args,
       id: args.threadId,
-      title: 'Sharing transaction test',
+      title: 'Deleted thread grants test',
     });
     await setManualRecordShare({
       workspaceId: args.workspaceId,
@@ -191,58 +192,29 @@ describe('recordShare object', () => {
         sourceId: args.threadId,
       },
     });
-    const repository = sharingService['threadRepository'];
-    const originalQuery = repository.query.bind(repository);
-    const querySpy = jest.spyOn(repository, 'query').mockImplementation(
-      <TResult>(
-        workspaceId: string,
-        work: (context: AgentHistoryStorageContext) => Promise<TResult>,
-      ): Promise<TResult> =>
-        originalQuery(
-          workspaceId,
-          async (context: AgentHistoryStorageContext) => {
-            const originalManagerQuery = context.manager.query.bind(
-              context.manager,
-            );
-            jest
-              .spyOn(context.manager, 'query')
-              .mockImplementationOnce(originalManagerQuery)
-              .mockRejectedValueOnce(new Error('grant cleanup failed'));
-            return work(context);
-          },
-        ),
-    );
     try {
-      await expect(sharingService.deleteThreadWithShares(args)).rejects.toThrow(
-        'grant cleanup failed',
-      );
-      querySpy.mockRestore();
-      await expect(chatService.findWritableThread(args)).resolves.toMatchObject(
-        {
-          id: args.threadId,
-        },
-      );
-      await expect(
-        recordShareStorageService.findByRecordIds({
-          workspaceId: args.workspaceId,
-          objectMetadataId: metadata.id,
-          recordIds: [args.threadId],
-        }),
-      ).resolves.toHaveLength(2);
       await chatService.hardDeleteThread(args);
       await expect(chatService.findWritableThread(args)).resolves.toBeNull();
-      await expect(
-        recordShareStorageService.findByRecordIds({
-          workspaceId: args.workspaceId,
-          objectMetadataId: metadata.id,
-          recordIds: [args.threadId],
-        }),
-      ).resolves.toEqual([]);
+      await expect(readGrants()).resolves.toHaveLength(2);
+
+      await chatService.createThread({
+        ...args,
+        id: args.threadId,
+        title: 'Thread reusing a deleted id',
+      });
+      const grants = await readGrants();
+      expect(grants.map(({ rowCause }) => rowCause)).toEqual([
+        RecordShareRowCause.OWNER,
+      ]);
     } finally {
-      querySpy.mockRestore();
       if (await chatService.findWritableThread(args)) {
-        await sharingService.deleteThreadWithShares(args);
+        await chatService.hardDeleteThread(args);
       }
+      await recordShareStorageService.deleteByRecordIds({
+        workspaceId: args.workspaceId,
+        objectMetadataId: metadata.id,
+        recordIds: [args.threadId],
+      });
     }
   });
 

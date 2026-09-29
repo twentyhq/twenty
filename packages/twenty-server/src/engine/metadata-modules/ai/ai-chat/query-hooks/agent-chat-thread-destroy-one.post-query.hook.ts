@@ -23,7 +23,7 @@ export class AgentChatThreadDestroyOnePostQueryHook implements WorkspacePostQuer
     _objectName: string,
     payload: Pick<AgentChatThreadWorkspaceEntity, 'id'>[],
   ): Promise<void> {
-    await this.threadLifecycleService.cleanUpDestroyedThreads({
+    this.threadLifecycleService.releaseDestroyedThreadSandboxes({
       workspaceId: authContext.workspace.id,
       threadIds: payload.map((thread) => thread.id),
     });

@@ -1155,7 +1155,7 @@ export class AgentChatService {
       operationType: 'delete',
     });
 
-    const deleted = await this.sharingService.deleteThreadWithShares({
+    const deleted = await this.sharingService.deleteThreadWithAccess({
       workspaceId,
       threadId,
       workspaceMemberId,

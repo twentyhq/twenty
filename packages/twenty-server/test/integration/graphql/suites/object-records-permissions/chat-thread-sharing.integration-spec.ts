@@ -15,6 +15,9 @@ import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
+import { type EventEmitter2 } from '@nestjs/event-emitter';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import {
   FeatureFlagKey,
   RecordShareAccessLevel,
@@ -34,6 +37,10 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
 // Avoid loading the migration runner's ESM file dependencies inside Jest. The
 // command below receives the real migration service from the running test app.
@@ -844,7 +851,7 @@ describe('Conversations through the record API', () => {
       );
       expect(destroyed.body.errors).toBeUndefined();
       expect(await readStoredThread(threadId)).toBeNull();
-      expect(await readShares(threadId)).toEqual([]);
+      expect(await readShares(threadId)).toHaveLength(1);
     } finally {
       await global.testDataSource.query(
         `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,
@@ -856,4 +863,167 @@ describe('Conversations through the record API', () => {
       );
     }
   });
+
+  const waitForDestroyedThread = (threadId: string) => {
+    const eventEmitter =
+      getAppProviderByClassName<EventEmitter2>('EventEmitter2');
+    const eventName = computeEventName(
+      'agentChatThread',
+      DatabaseEventAction.DESTROYED,
+    );
+
+    return new Promise<WorkspaceEventBatch<ObjectRecordDestroyEvent>>(
+      (resolve, reject) => {
+        const listener = (
+          batch: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
+        ) => {
+          if (batch.events.some((event) => event.recordId === threadId)) {
+            clearTimeout(timeout);
+            eventEmitter.off(eventName, listener);
+            resolve(batch);
+          }
+        };
+        const timeout = setTimeout(() => {
+          eventEmitter.off(eventName, listener);
+          reject(new Error(`No destroy event for conversation ${threadId}`));
+        }, 10_000);
+
+        eventEmitter.on(eventName, listener);
+      },
+    );
+  };
+
+  const isAdmittedByDestroyEvent = async ({
+    batch,
+    threadId,
+    userWorkspaceId,
+    workspaceMemberId,
+  }: {
+    batch: WorkspaceEventBatch<ObjectRecordDestroyEvent>;
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceMemberId: string;
+  }) => {
+    const { userWorkspaceRoleMap, rolesPermissions } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'userWorkspaceRoleMap',
+        'rolesPermissions',
+      ]);
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+
+    if (!isDefined(roleId)) {
+      throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
+    }
+
+    const admittedRecordIds =
+      await getAppProviderByClassName<RecordAccessPolicyService>(
+        'RecordAccessPolicyService',
+      )
+        .buildEventRecordAccessGate(batch)
+        .resolveAdmittedRecordIds({
+          isSystemContext: false,
+          objectsPermissions: rolesPermissions[roleId],
+          principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
+          isOwningApplication: () => false,
+          resolveRowLevelPermissionRecordFilter: () => null,
+        });
+
+    return admittedRecordIds.has(threadId);
+  };
+
+  it.each(['chat', 'record API'])(
+    'delivers the destroy of a conversation through the %s to its owner and grantees only',
+    async (api) => {
+      const threadId = randomUUID();
+      const owner = {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      };
+      const chatService =
+        getAppProviderByClassName<AgentChatService>('AgentChatService');
+      const { flatObjectMetadataMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
+
+      await chatService.createThread({
+        ...owner,
+        id: threadId,
+        title: 'Destroyed conversation audience',
+      });
+
+      try {
+        await setManualRecordShare({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          enabled: true,
+          share: {
+            objectMetadataId:
+              flatObjectMetadataMaps.byUniversalIdentifier[
+                STANDARD_OBJECTS.agentChatThread.universalIdentifier
+              ]!.id,
+            recordId: threadId,
+            sourceId: threadId,
+            principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+        });
+
+        const destroyedEvent = waitForDestroyedThread(threadId);
+
+        if (api === 'chat') {
+          await chatService.hardDeleteThread({ ...owner, threadId });
+        } else {
+          const destroyed = await makeGraphqlApiRequest(
+            destroyOneOperationFactory({
+              objectMetadataSingularName: 'agentChatThread',
+              gqlFields: 'id',
+              recordId: threadId,
+            }),
+          );
+          expect(destroyed.body.errors).toBeUndefined();
+        }
+
+        const batch = await destroyedEvent;
+
+        expect(await readStoredThread(threadId)).toBeNull();
+        expect(
+          await isAdmittedByDestroyEvent({
+            batch,
+            threadId,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          }),
+        ).toBe(true);
+        expect(
+          await isAdmittedByDestroyEvent({
+            batch,
+            threadId,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          }),
+        ).toBe(true);
+        expect(
+          await isAdmittedByDestroyEvent({
+            batch,
+            threadId,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          }),
+        ).toBe(false);
+      } finally {
+        await global.testDataSource.query(
+          `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,
+          [threadId],
+        );
+        await global.testDataSource.query(
+          `DELETE FROM ${schema}."recordShare" WHERE "recordId" = $1`,
+          [threadId],
+        );
+      }
+    },
+  );
 });
