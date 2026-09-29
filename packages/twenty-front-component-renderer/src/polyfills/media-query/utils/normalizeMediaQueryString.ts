@@ -1,9 +1,9 @@
-import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
+import { ASCII_WHITESPACE_REGEX } from '@/polyfills/dom/constants/AsciiWhitespaceRegex';
 import { lowercaseAsciiLetters } from '@/polyfills/media-query/utils/lowercaseAsciiLetters';
 import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
 
 const CSS_WHITESPACE_RUN_PATTERN = new RegExp(
-  `${CSS_WHITESPACE_CHARACTER_CLASS}+`,
+  ASCII_WHITESPACE_REGEX.source,
   'g',
 );
 

@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
+import { ASCII_WHITESPACE_REGEX } from '@/polyfills/dom/constants/AsciiWhitespaceRegex';
 import { type ParsedMediaQueryModifier } from '@/polyfills/media-query/types/ParsedMediaQueryModifier';
 
 const MODIFIER_PATTERN = new RegExp(
-  `^(not|only)${CSS_WHITESPACE_CHARACTER_CLASS}+`,
+  `^(not|only)${ASCII_WHITESPACE_REGEX.source}`,
 );
 
 export const parseMediaQueryModifier = (
