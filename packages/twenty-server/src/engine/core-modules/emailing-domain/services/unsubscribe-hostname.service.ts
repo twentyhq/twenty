@@ -13,6 +13,7 @@ import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-doma
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -24,6 +25,7 @@ export class UnsubscribeHostnameService {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly dnsManagerService: DnsManagerService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async provision(emailingDomain: EmailingDomainEntity): Promise<void> {
@@ -108,6 +110,8 @@ export class UnsubscribeHostnameService {
     { provision }: { provision: boolean },
   ): Promise<void> {
     if (!this.dnsManagerService.isConfigured()) {
+      await this.useServerHostname(workspaceId, emailingDomainId);
+
       return;
     }
 
@@ -154,7 +158,10 @@ export class UnsubscribeHostnameService {
   async getDnsRecords(
     emailingDomain: EmailingDomainEntity,
   ): Promise<VerificationRecord[]> {
-    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
+    if (
+      !this.dnsManagerService.isConfigured() ||
+      !isNonEmptyString(emailingDomain.unsubscribeHostname)
+    ) {
       return [];
     }
 
@@ -181,6 +188,21 @@ export class UnsubscribeHostnameService {
 
       return [];
     }
+  }
+
+  private async useServerHostname(
+    workspaceId: string,
+    emailingDomainId: string,
+  ): Promise<void> {
+    await this.emailingDomainRepository.update(
+      workspaceId,
+      { id: emailingDomainId },
+      {
+        unsubscribeHostname: new URL(this.twentyConfigService.get('SERVER_URL'))
+          .host,
+        unsubscribeHostnameStatus: UnsubscribeHostnameStatus.ACTIVE,
+      },
+    );
   }
 
   private buildHostname(domain: string): string {
