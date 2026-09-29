@@ -338,7 +338,8 @@ export class CoreEntityCacheService implements OnModuleInit {
   // Servers still on a version without the hash tag read the untagged keys.
   // Deleting them too lets an invalidation reach those servers during a rolling
   // deployment. One DEL per key, since the legacy keys hash to different slots.
-  // TODO: remove once no supported version reads the untagged keys.
+  // TODO: remove once the minimum cross-upgrade source version includes the
+  // hash-tagged cache keys (twenty#26881).
   private async deleteLegacyKeys(
     entityId: string,
     keyName: CoreEntityCacheKeyName,
