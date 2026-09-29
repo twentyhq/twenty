@@ -98,7 +98,7 @@ describe('agent history workspace metadata', () => {
     >
   > = {
     agentChatThread: {
-      readability: MetadataReadability.PRIVATE,
+      readability: MetadataReadability.INHERITED,
       writability: MetadataWritability.OPEN,
     },
     agentChatThreadTarget: {
@@ -123,6 +123,21 @@ describe('agent history workspace metadata', () => {
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
       }),
+    });
+  });
+
+  it('retains messages when a sender member is deleted', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
+          .universalIdentifier
+      ],
+    ).toMatchObject({
+      isNullable: true,
+      settings: {
+        onDelete: 'SET_NULL',
+        joinColumnName: 'senderWorkspaceMemberId',
+      },
     });
   });
 

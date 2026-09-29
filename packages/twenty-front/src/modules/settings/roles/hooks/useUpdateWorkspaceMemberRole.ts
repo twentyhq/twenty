@@ -48,6 +48,7 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
           id: workspaceMember.id,
           name: workspaceMember.name,
           userEmail: workspaceMember.userEmail,
+          userId: workspaceMember.userId,
           avatarUrl: workspaceMember.avatarUrl,
         },
       ],
@@ -73,6 +74,7 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
           name: updatedWorkspaceMember.name,
           colorScheme: updatedWorkspaceMember.colorScheme,
           userEmail: updatedWorkspaceMember.userEmail,
+          userId: updatedWorkspaceMember.userId,
         },
       ];
 

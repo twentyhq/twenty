@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -72,6 +73,7 @@ export const CurrencyPickerDropdownButton = ({
         align="start"
         sideOffset={4}
         alignOffset={0}
+        aria-label={t`Currency`}
       >
         <CurrencyPickerDropdownSelect
           selectedCurrency={currency}

@@ -1,6 +1,6 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 
@@ -95,7 +95,9 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
       'message-1',
       'workspace-1',
     );
-    const reloaded = mapDBPartToUIMessagePart(row as AgentMessagePartEntity);
+    const reloaded = mapDBPartToUIMessagePart(
+      row as AgentMessagePartWorkspaceEntity,
+    );
 
     expect(reloaded).toEqual({
       type: 'dynamic-tool',
@@ -125,7 +127,9 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
       providerMetadata: { anthropic: { encryptedContent: 'abc123' } },
     });
 
-    const reloaded = mapDBPartToUIMessagePart(row as AgentMessagePartEntity);
+    const reloaded = mapDBPartToUIMessagePart(
+      row as AgentMessagePartWorkspaceEntity,
+    );
 
     expect(reloaded).toMatchObject({
       providerExecuted: true,
@@ -141,7 +145,9 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
       'message-1',
       'workspace-1',
     );
-    const reloaded = mapDBPartToUIMessagePart(row as AgentMessagePartEntity);
+    const reloaded = mapDBPartToUIMessagePart(
+      row as AgentMessagePartWorkspaceEntity,
+    );
 
     expect(reloaded).toMatchObject({
       type: 'tool-execute_tool',

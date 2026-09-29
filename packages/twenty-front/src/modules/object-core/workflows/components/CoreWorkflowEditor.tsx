@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui/primitives/feedback';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
@@ -30,7 +29,7 @@ export const CoreWorkflowEditor = ({
   });
 
   if (loading && !isDefined(coreWorkflowVersion)) {
-    return <Loader />;
+    return null;
   }
   if (isDefined(error)) {
     return (

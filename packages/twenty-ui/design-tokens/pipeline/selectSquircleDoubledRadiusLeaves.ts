@@ -1,7 +1,9 @@
 import { ROUND_RADIUS_TOKENS } from '../roundRadiusTokens';
 import { type CollectedTokenLeaf } from '../types/CollectedTokenLeaf';
 
-const isRadiusLeaf = (leaf: CollectedTokenLeaf): boolean =>
+type RadiusLeaf = CollectedTokenLeaf & { path: [string, string, string] };
+
+const isRadiusLeaf = (leaf: CollectedTokenLeaf): leaf is RadiusLeaf =>
   leaf.path.length === 3 &&
   leaf.path[0] === 'border' &&
   leaf.path[1] === 'radius';

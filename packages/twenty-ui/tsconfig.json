@@ -7,6 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "moduleResolution": "bundler",
+    "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,
     "noEmit": true,
     "types": ["node", "vitest/globals"],

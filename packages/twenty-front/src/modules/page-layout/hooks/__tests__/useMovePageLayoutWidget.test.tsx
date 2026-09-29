@@ -2,6 +2,7 @@ import { useMovePageLayoutWidget } from '@/page-layout/hooks/useMovePageLayoutWi
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import {
   makeDraft,
+  makeFlagGatedWidget,
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
@@ -138,6 +139,34 @@ describe('useMovePageLayoutWidget', () => {
               : undefined,
           ),
         ).toEqual([0, 1, 2]);
+      });
+
+      it('should skip a widget feature flags hide', () => {
+        const store = createStore();
+
+        store.set(
+          getDraftAtom(),
+          makeDraft([
+            makeTab('tab-1', [
+              makeWidget('widget-a', 0),
+              makeFlagGatedWidget('flag-gated-widget', 1),
+              makeWidget('widget-b', 2),
+            ]),
+          ]),
+        );
+
+        const { result } = renderMoveHook(store);
+
+        act(() => {
+          result.current.movePageLayoutWidget(movedWidgetId, direction);
+        });
+
+        expect(
+          store
+            .get(getDraftAtom())
+            .tabs[0].widgets.map((widget) => widget.id)
+            .filter((widgetId) => widgetId !== 'flag-gated-widget'),
+        ).toEqual(['widget-b', 'widget-a']);
       });
 
       it('should not move a viewport-filling widget', () => {
