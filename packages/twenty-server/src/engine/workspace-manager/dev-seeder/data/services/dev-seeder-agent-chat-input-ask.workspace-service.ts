@@ -75,7 +75,7 @@ const WEBINAR_QUESTIONS: AskQuestionItem[] = [
     allowMultiSelect: true,
     options: [
       { label: 'Customers', isRecommended: true },
-      { label: 'Open opportunities', isRecommended: true },
+      { label: 'Open opportunities' },
       { label: 'Churned accounts' },
       { label: 'Partners' },
     ],
