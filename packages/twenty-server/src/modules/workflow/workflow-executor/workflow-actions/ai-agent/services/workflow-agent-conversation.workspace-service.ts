@@ -88,9 +88,9 @@ export class WorkflowAgentConversationWorkspaceService {
 
     await this.threadRepository.query(workspaceId, ({ manager, table }) =>
       manager.query(
-        `INSERT INTO ${table('agentChatThread')} (id, title, "workflowRunId", "workflowStepId")
-         VALUES ($1, $2, $3, $4)`,
-        [threadId, title, workflowRunId, stepId],
+        `INSERT INTO ${table('agentChatThread')} (id, title, "workflowRunId")
+         VALUES ($1, $2, $3)`,
+        [threadId, title, workflowRunId],
       ),
     );
 
