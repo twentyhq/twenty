@@ -7,9 +7,8 @@
   margin-block-start: 0;
   max-inline-size: 100%;
   overflow: hidden;
+}
 
-  > :not([aria-hidden]) {
-    font-weight: var(--t-font-weight-regular);
-    position: relative;
-  }
+.message {
+  font-weight: var(--t-font-weight-regular);
 }

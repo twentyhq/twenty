@@ -20,7 +20,7 @@ export const Notification = ({
       closeLabel={closeLabel}
       onClose={onClose}
     >
-      {message}
+      <span className={styles.message}>{message}</span>
     </Toast>
   );
 };
