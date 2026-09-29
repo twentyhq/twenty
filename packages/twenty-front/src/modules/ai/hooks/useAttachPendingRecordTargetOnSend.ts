@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useChatThreadRecordAttachmentActions } from '@/ai/hooks/useChatThreadRecordAttachmentActions';
 import { agentChatPendingRecordTargetByDraftKeyState } from '@/ai/states/agentChatPendingRecordTargetByDraftKeyState';
+import { movePendingRecordTargetToDraftKey } from '@/ai/utils/movePendingRecordTargetToDraftKey';
 
 export const useAttachPendingRecordTargetOnSend = () => {
   const store = useStore();
@@ -18,16 +19,14 @@ export const useAttachPendingRecordTargetOnSend = () => {
     draftKey: string;
     threadId: string;
   }) => {
-    if (draftKey === threadId) {
-      return;
-    }
-
     store.set(
       agentChatPendingRecordTargetByDraftKeyState.atom,
-      ({ [draftKey]: pendingRecordTarget, ...otherRecordTargets }) =>
-        isDefined(pendingRecordTarget)
-          ? { ...otherRecordTargets, [threadId]: pendingRecordTarget }
-          : otherRecordTargets,
+      (pendingRecordTargetByDraftKey) =>
+        movePendingRecordTargetToDraftKey({
+          pendingRecordTargetByDraftKey,
+          fromDraftKey: draftKey,
+          toDraftKey: threadId,
+        }),
     );
   };
 
