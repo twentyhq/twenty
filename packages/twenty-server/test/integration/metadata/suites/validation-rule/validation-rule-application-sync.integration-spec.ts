@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const REFERENCE_FIELD_ID = uuidv4();
+const PRIORITY_FIELD_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
   applicationUniversalIdentifier: TEST_APP_ID,
@@ -27,10 +28,21 @@ const TEST_OBJECT = buildDefaultObjectManifest({
   description: 'Object used to test validation rules across application syncs',
 });
 
+const PRIORITY_FIELD = {
+  universalIdentifier: PRIORITY_FIELD_ID,
+  type: FieldMetadataType.TEXT,
+  name: 'priority',
+  label: 'Priority',
+  icon: 'IconFlag',
+  isNullable: true,
+  objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+};
+
 const buildManifest = ({
   name = 'reference',
   label = 'Reference',
-}: { name?: string; label?: string } = {}) =>
+  withPriority = false,
+}: { name?: string; label?: string; withPriority?: boolean } = {}) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
@@ -46,6 +58,7 @@ const buildManifest = ({
           isNullable: true,
           objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
         },
+        ...(withPriority ? [PRIORITY_FIELD] : []),
       ],
     },
   });
@@ -137,6 +150,47 @@ describe('Validation rules across application syncs', () => {
         isActive: true,
       },
     ]);
+  }, 60000);
+
+  it('should apply every field change of one sync to a rule reading several fields', async () => {
+    await syncApplication({
+      manifest: buildManifest({ name: 'code', withPriority: true }),
+      expectToFail: false,
+    });
+
+    const response = await createValidationRule({
+      objectMetadataId,
+      name: 'Ticket has a code or a priority',
+      expression: 'isNonEmptyString(code) or isNonEmptyString(priority)',
+      message: 'A ticket needs a code or a priority',
+    });
+    const twoFieldValidationRuleId =
+      response.body.data?.createValidationRule?.id;
+
+    jestExpectToBeDefined(twoFieldValidationRuleId);
+
+    const { errors } = await syncApplication({
+      manifest: buildManifest({ name: 'ticketCode' }),
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const validationRuleById = new Map(
+      (await findValidationRules(objectMetadataId)).map((validationRule) => [
+        validationRule.id,
+        validationRule,
+      ]),
+    );
+
+    expect(validationRuleById.get(twoFieldValidationRuleId)).toMatchObject({
+      expression: 'isNonEmptyString(ticketCode) or isNonEmptyString(priority)',
+      isActive: false,
+    });
+    expect(validationRuleById.get(validationRuleId)).toMatchObject({
+      expression: 'isNonEmptyString(ticketCode)',
+      isActive: true,
+    });
   }, 60000);
 
   it('should delete a workspace rule when the application owning its object is uninstalled', async () => {

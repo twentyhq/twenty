@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { buildValidationRuleUpdatesAfterFieldChangeSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rule-updates-after-field-change-side-effect.util';
+import { buildValidationRuleUpdatesAfterFieldChangesSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rule-updates-after-field-changes-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -18,17 +18,10 @@ export class FieldValidationRulesOnDeleteSideEffectHandlerService extends Metada
   },
 ) {
   buildSideEffects({
-    flatEntity: flatFieldMetadata,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    return buildValidationRuleUpdatesAfterFieldChangeSideEffect({
-      fieldChange: {
-        fieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-        newFieldName: null,
-        shouldDisableRulesReadingField: true,
-        shouldDetachErrorField: true,
-      },
+    return buildValidationRuleUpdatesAfterFieldChangesSideEffect({
       allFlatEntityOperationRecordByMetadataName,
       relatedFlatEntityMaps,
     });

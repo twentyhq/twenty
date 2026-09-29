@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
-import { buildValidationRuleUpdatesAfterFieldChangeSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rule-updates-after-field-change-side-effect.util';
+import { buildValidationRuleUpdatesAfterFieldChangesSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rule-updates-after-field-changes-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
+import { computeValidationRuleFieldChanges } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-field-changes.util';
 
 @Injectable()
 export class FieldValidationRulesOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -24,31 +23,18 @@ export class FieldValidationRulesOnUpdateSideEffectHandlerService extends Metada
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    const existingFlatFieldMetadata =
-      relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        flatFieldMetadata.universalIdentifier
-      ];
+    const triggerFieldChanges = computeValidationRuleFieldChanges({
+      updatedFields: [flatFieldMetadata],
+      deletedFields: [],
+      existingFieldByUniversalIdentifier:
+        relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+    });
 
-    if (!isDefined(existingFlatFieldMetadata)) {
+    if (triggerFieldChanges.length === 0) {
       return { status: 'noop' };
     }
 
-    const isRenamed = existingFlatFieldMetadata.name !== flatFieldMetadata.name;
-    const isRetyped = existingFlatFieldMetadata.type !== flatFieldMetadata.type;
-    const isDeactivated =
-      existingFlatFieldMetadata.isActive && !flatFieldMetadata.isActive;
-
-    if (!isRenamed && !isRetyped && !isDeactivated) {
-      return { status: 'noop' };
-    }
-
-    return buildValidationRuleUpdatesAfterFieldChangeSideEffect({
-      fieldChange: {
-        fieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-        newFieldName: isRenamed ? flatFieldMetadata.name : null,
-        shouldDisableRulesReadingField: isRetyped || isDeactivated,
-        shouldDetachErrorField: isDeactivated,
-      },
+    return buildValidationRuleUpdatesAfterFieldChangesSideEffect({
       allFlatEntityOperationRecordByMetadataName,
       relatedFlatEntityMaps,
     });

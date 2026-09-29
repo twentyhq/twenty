@@ -11,7 +11,7 @@ export type ValidationRuleFieldChange = {
   shouldDetachErrorField: boolean;
 };
 
-type ValidationRuleFieldChangeTarget = {
+export type ValidationRuleFieldChangeTarget = {
   expression: string;
   bindings: ValidationRuleBindings;
   isActive: boolean;
