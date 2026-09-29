@@ -14,13 +14,14 @@ import {
 export const enqueuePendingCallRecordingRequestsHandler = (
   _payload: unknown,
   { workspaceId }: LogicFunctionExecutionContext,
-): Promise<EnqueueWorkspaceDistributedJobResult> =>
-  enqueueWorkspaceDistributedJob({
+): Promise<EnqueueWorkspaceDistributedJobResult> => {
+  return enqueueWorkspaceDistributedJob({
     workspaceId,
     logicFunctionUniversalIdentifier:
       PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     stepLabel: 'pending call recording requests enqueueing',
   });
+};
 
 export default defineLogicFunction({
   universalIdentifier:

@@ -9,10 +9,11 @@ export type PendingCallRecordingRecoveryMinuteSlot = {
 
 export const groupPendingCallRecordingRecoveriesIntoMinuteSlots = (
   callRecordingIds: string[],
-): PendingCallRecordingRecoveryMinuteSlot[] =>
-  getBatches(callRecordingIds, RECALL_RECOVERY_CALLS_PER_MINUTE).map(
+): PendingCallRecordingRecoveryMinuteSlot[] => {
+  return getBatches(callRecordingIds, RECALL_RECOVERY_CALLS_PER_MINUTE).map(
     (slotCallRecordingIds, slotIndex) => ({
       delayMs: slotIndex * MILLISECONDS_PER_MINUTE,
       callRecordingIds: slotCallRecordingIds,
     }),
   );
+};
