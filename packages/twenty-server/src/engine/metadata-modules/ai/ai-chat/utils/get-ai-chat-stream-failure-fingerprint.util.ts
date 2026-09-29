@@ -1,4 +1,4 @@
-import { AISDKError, APICallError, RetryError } from 'ai';
+import { AISDKError, APICallError, RetryError, StreamProviderError } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getAiChatStreamFailureFingerprint = ({
@@ -15,13 +15,15 @@ export const getAiChatStreamFailureFingerprint = ({
   }
 
   const [provider] = modelId.split('/');
+  const statusCode =
+    APICallError.isInstance(failure) || StreamProviderError.isInstance(failure)
+      ? failure.statusCode
+      : undefined;
 
   return [
     'ai-chat-stream-failure',
     provider,
     failure instanceof Error ? failure.name : typeof failure,
-    APICallError.isInstance(failure) && isDefined(failure.statusCode)
-      ? String(failure.statusCode)
-      : 'no-status',
+    isDefined(statusCode) ? String(statusCode) : 'no-status',
   ];
 };
