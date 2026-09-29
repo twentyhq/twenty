@@ -50,6 +50,30 @@ type CalendarEventNode = {
   conferenceLink?: { primaryLinkUrl?: string | null } | null;
 };
 
+const matchesCallRecordingFilter = (
+  callRecording: CallRecordingNode,
+  filter: Record<string, { eq?: unknown; in?: unknown[]; is?: 'NULL' }>,
+): boolean =>
+  Object.entries(filter).every(([field, condition]) => {
+    const value = callRecording[field as keyof CallRecordingNode] ?? null;
+
+    if (condition.is === 'NULL') {
+      return value === null || value === '';
+    }
+
+    if (condition.in !== undefined) {
+      return condition.in.includes(value);
+    }
+
+    if ('eq' in condition) {
+      return value === condition.eq;
+    }
+
+    throw new Error(
+      `Unhandled filter on ${field}: ${JSON.stringify(condition)}`,
+    );
+  });
+
 class FakeCoreApiClient {
   callRecordings: CallRecordingNode[];
   calendarEvents: CalendarEventNode[];
@@ -99,6 +123,21 @@ class FakeCoreApiClient {
   }
 
   async mutation(mutation: any): Promise<any> {
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) => matchesCallRecordingFilter(callRecording, filter),
+      );
+
+      matchingCallRecordings.forEach((callRecording) =>
+        Object.assign(callRecording, data),
+      );
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
+      };
+    }
+
     if (mutation.updateCallRecording !== undefined) {
       const { id, data } = mutation.updateCallRecording.__args;
       const callRecording = this.callRecordings.find(
@@ -381,6 +420,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
       },
+      attemptedAt: '2026-01-01T11:55:00.000Z',
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
@@ -419,6 +459,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
       },
+      attemptedAt: '2025-12-30T12:00:00.000Z',
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
@@ -447,6 +488,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
       },
+      attemptedAt: '2026-01-01T11:55:00.000Z',
     });
     const client = new FakeCoreApiClient({
       callRecordings: [

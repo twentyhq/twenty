@@ -77,6 +77,30 @@ type CallRecordingNode = {
   callRecorderFailureReason?: string | null;
 };
 
+const matchesCallRecordingFilter = (
+  callRecording: CallRecordingNode,
+  filter: Record<string, { eq?: unknown; in?: unknown[]; is?: 'NULL' }>,
+): boolean =>
+  Object.entries(filter).every(([field, condition]) => {
+    const value = callRecording[field as keyof CallRecordingNode] ?? null;
+
+    if (condition.is === 'NULL') {
+      return value === null || value === '';
+    }
+
+    if (condition.in !== undefined) {
+      return condition.in.includes(value);
+    }
+
+    if ('eq' in condition) {
+      return value === condition.eq;
+    }
+
+    throw new Error(
+      `Unhandled filter on ${field}: ${JSON.stringify(condition)}`,
+    );
+  });
+
 type FakeCoreApiClientFixture = {
   calendarEvents: CalendarEventNode[];
   callRecordings?: CallRecordingNode[];
@@ -149,6 +173,25 @@ class FakeCoreApiClient {
         createCallRecording: {
           id: createdCallRecording.id,
         },
+      };
+    }
+
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) => matchesCallRecordingFilter(callRecording, filter),
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        Object.assign(callRecording, data);
+        this.mutations.push({
+          name: 'updateCallRecording',
+          args: { id: callRecording.id, data },
+        });
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
       };
     }
 
@@ -922,8 +965,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     class CancelCleanupFailureFakeCoreApiClient extends FakeCoreApiClient {
       override async mutation(mutation: any): Promise<any> {
         if (
-          mutation.updateCallRecording !== undefined &&
-          mutation.updateCallRecording.__args.data.externalBotId === null
+          mutation.updateCallRecordings !== undefined &&
+          mutation.updateCallRecordings.__args.data.externalBotId === null
         ) {
           throw new Error('recall exploded');
         }
