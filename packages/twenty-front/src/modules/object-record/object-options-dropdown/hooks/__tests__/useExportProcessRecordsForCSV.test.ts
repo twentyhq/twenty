@@ -62,7 +62,7 @@ describe('useExportProcessRecordsForCSV', () => {
     ]);
   });
 
-  it('preserves null currency amounts instead of converting them to 0', () => {
+  it('preserves null or undefined currency amounts instead of converting them to 0', () => {
     const { result } = renderHook(() =>
       useExportProcessRecordsForCSV('someObject'),
     );
@@ -72,7 +72,19 @@ describe('useExportProcessRecordsForCSV', () => {
         __typename: 'ObjectRecord',
         id: '1',
         price: { amountMicros: null, currencyCode: 'USD' },
-        name: 'Item 1',
+        name: 'Null amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '2',
+        price: { amountMicros: undefined, currencyCode: 'EUR' },
+        name: 'Undefined amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '3',
+        price: { amountMicros: 0, currencyCode: 'GBP' },
+        name: 'Zero amount',
       },
     ];
 
@@ -87,7 +99,19 @@ describe('useExportProcessRecordsForCSV', () => {
         __typename: 'ObjectRecord',
         id: '1',
         price: { amountMicros: null, currencyCode: 'USD' },
-        name: 'Item 1',
+        name: 'Null amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '2',
+        price: { amountMicros: null, currencyCode: 'EUR' },
+        name: 'Undefined amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '3',
+        price: { amountMicros: 0, currencyCode: 'GBP' },
+        name: 'Zero amount',
       },
     ]);
   });
@@ -122,6 +146,18 @@ describe('useExportProcessRecordsForCSV', () => {
         price: { amountMicros: 123456000, currencyCode: 'EUR' },
         name: 'Has amount',
       },
+      {
+        __typename: 'ObjectRecord',
+        id: '3',
+        price: { amountMicros: undefined, currencyCode: 'GBP' },
+        name: 'Missing amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '4',
+        price: { amountMicros: 0, currencyCode: 'CAD' },
+        name: 'Zero amount',
+      },
     ];
 
     let processedRecords: Parameters<typeof generateCsv>[0]['rows'] = [];
@@ -136,7 +172,10 @@ describe('useExportProcessRecordsForCSV', () => {
     expect(csv).toContain('Price / Currency');
     expect(csv).toContain('1,,USD');
     expect(csv).toContain('2,123.456,EUR');
-    expect(csv).not.toContain(',0,');
+    expect(csv).toContain('3,,GBP');
+    expect(csv).toContain('4,0,CAD');
+    expect(csv).not.toContain('1,0,USD');
+    expect(csv).not.toContain('3,0,GBP');
   });
 
   it('processes records with multi-select and array fields correctly', () => {
